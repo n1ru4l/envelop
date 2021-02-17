@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "types": ["node"],
+  },
+  "include": ["packages", "benchmark"]
+}
