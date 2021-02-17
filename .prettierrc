@@ -1,0 +1,14 @@
+{
+  "trailingComma": "es5",
+  "printWidth": 160,
+  "singleQuote": true,
+  "arrowParens": "avoid",
+  "overrides": [
+    {
+      "files": "*.flow.js",
+      "options": {
+        "parser": "flow"
+      }
+    }
+  ]
+}

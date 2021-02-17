@@ -1,0 +1,57 @@
+{
+  "private": true,
+  "author": "Dotan Simha <dotansimha@gmail.com>",
+  "license": "MIT",
+  "workspaces": [
+    "./packages/*",
+    "./packages/plugins/*"
+  ],
+  "scripts": {
+    "postinstall": "patch-package",
+    "lint": "eslint --config .eslintrc.json --ext .ts .",
+    "prebuild": "rimraf packages/*/dist",
+    "build": "tsc --project tsconfig.json && bob build",
+    "test": "jest",
+    "prerelease": "yarn build",
+    "release": "changeset publish",
+    "release:canary": "(node scripts/canary-release.js && yarn build && yarn changeset publish --tag alpha) || echo Skipping Canary...",
+    "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\""
+  },
+  "devDependencies": {
+    "ts-node": "9.1.1",
+    "patch-package": "6.4.2",
+    "@changesets/cli": "2.14.0",
+    "@typescript-eslint/eslint-plugin": "4.16.1",
+    "@typescript-eslint/parser": "4.16.1",
+    "eslint": "7.21.0",
+    "husky": "4.3.8",
+    "lint-staged": "10.5.4",
+    "@types/node": "14.14.31",
+    "bob-the-bundler": "1.1.0",
+    "eslint-config-standard": "16.0.2",
+    "eslint-plugin-import": "2.22.1",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-promise": "4.3.1",
+    "eslint-plugin-standard": "5.0.0",
+    "eslint-config-prettier": "8.1.0",
+    "@types/jest": "26.0.20",
+    "ts-jest": "26.5.2",
+    "rimraf": "3.0.2",
+    "typescript": "4.2.2",
+    "jest": "26.6.3"
+  },
+  "resolutions": {
+    "@changesets/git": "1.1.0"
+  },
+  "lint-staged": {
+    "packages/**/src/**/*.{ts,tsx}": [
+      "eslint --fix"
+    ],
+    "**/*.{ts,tsx,graphql,yml}": [
+      "prettier --write"
+    ],
+    "**/*.json": [
+      "prettier --write"
+    ]
+  }
+}
