@@ -3,7 +3,8 @@
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "workspaces": [
-    "./packages/*"
+    "./packages/*",
+    "./packages/plugins/*"
   ],
   "scripts": {
     "postinstall": "patch-package",

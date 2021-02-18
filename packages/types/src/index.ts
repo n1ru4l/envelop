@@ -7,15 +7,32 @@ import {
   ValidationRule,
   TypeInfo,
   GraphQLError,
-  GraphQLFieldResolver,
-  GraphQLTypeResolver,
   ExecutionResult,
   execute,
   ExecutionArgs,
+  GraphQLFieldResolver,
+  GraphQLTypeResolver,
 } from 'graphql';
 import { processRequest } from 'graphql-helix';
 import { ExecutionContext } from 'graphql-helix/dist/types';
 import { Maybe } from 'graphql/jsutils/Maybe';
+import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
+import { ResolversComposerMapping } from '@graphql-tools/resolvers-composition';
+
+export type ExecuteFn = (
+  schema: GraphQLSchema,
+  document: DocumentNode,
+  rootValue?: any,
+  contextValue?: any,
+  variableValues?: Maybe<{ [key: string]: any }>,
+  operationName?: Maybe<string>,
+  fieldResolver?: Maybe<GraphQLFieldResolver<any, any>>,
+  typeResolver?: Maybe<GraphQLTypeResolver<any, any>>
+) => PromiseOrValue<ExecutionResult>;
+
+export type ExecutionParams = ExecutionArgs & {
+  isIntrospection: boolean;
+};
 
 export type AllEvents = {
   onInit: {
@@ -23,6 +40,7 @@ export type AllEvents = {
     replaceSchema: (newSchema: GraphQLSchema) => void;
   };
   beforeSchemaReady: {
+    wrapResolvers: (wrapping: ResolversComposerMapping) => void;
     getSchema: () => GraphQLSchema;
     getOriginalSchema: () => GraphQLSchema;
     replaceSchema: (newSchema: GraphQLSchema) => void;
@@ -59,9 +77,9 @@ export type AllEvents = {
     getErrors: () => readonly GraphQLError[];
   };
   beforeExecute: {
-    setExecuteFn: (newExecute: typeof execute) => void;
+    setExecuteFn: (newExecute: ExecuteFn) => void;
     getOperationId: () => string;
-    getExecutionParams: () => ExecutionArgs;
+    getExecutionParams: () => ExecutionParams;
     setDocument: (newDocument: DocumentNode) => void;
     setRootValue: (newRootValue: any) => void;
     setContext: (newContext: any) => void;
@@ -70,7 +88,7 @@ export type AllEvents = {
   afterExecute: {
     getResult: () => ExecutionResult;
     getOperationId: () => string;
-    getExecutionParams: () => ExecutionArgs;
+    getExecutionParams: () => ExecutionParams;
   };
 };
 
