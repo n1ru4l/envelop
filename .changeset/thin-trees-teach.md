@@ -1,8 +1,8 @@
 ---
 '@guildql/opentelemetry': patch
-'@guildql/auth0': patch
 '@guildql/server': patch
 '@guildql/types': patch
+'@guildql/parser-cache': patch
 ---
 
 Initial bump
