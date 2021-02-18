@@ -31,31 +31,45 @@ export async function configureServer(options: { plugins: PluginFn[] }, initialS
   }
 
   const customParse: typeof parse = (source, options) => {
-    let result: DocumentNode = null;
+    let result: DocumentNode | Error = null;
+    let parseFn: typeof parse = parse;
 
     emitter.emit('beforeOperationParse', {
       getParams: () => ({ source, options }),
+      getParseFn: () => parseFn,
       setParsedDocument: document => {
         result = document;
+      },
+      setParseFn: newFn => {
+        parseFn = newFn;
       },
     });
 
     if (!result) {
-      result = parse(source, options);
+      try {
+        result = parseFn(source, options);
+      } catch (e) {
+        result = e;
+      }
     }
 
     emitter.emit('afterOperationParse', {
       getParams: () => ({ source, options }),
-      getParsedDocument: () => result,
-      replaceParsedDocument: newDocument => {
-        result = newDocument;
+      getParseResult: () => result,
+      replaceParseResult: newResult => {
+        result = newResult;
       },
     });
+
+    if (result instanceof Error) {
+      throw result;
+    }
 
     return result;
   };
 
   const customValidate: typeof validate = (schema, documentAST, rules, typeInfo, options) => {
+    let validateFn = validate;
     let result: readonly GraphQLError[] = null;
 
     emitter.emit('beforeValidate', {
@@ -63,10 +77,14 @@ export async function configureServer(options: { plugins: PluginFn[] }, initialS
       setValidationErrors: (errors: GraphQLError[]) => {
         result = errors;
       },
+      setValidationFn: newFunc => {
+        validateFn = newFunc;
+      },
+      getValidationFn: () => validateFn,
     });
 
     if (result === null) {
-      result = validate(schema, documentAST, rules, typeInfo, options);
+      result = validateFn(schema, documentAST, rules, typeInfo, options);
     }
 
     emitter.emit('afterValidate', {

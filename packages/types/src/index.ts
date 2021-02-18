@@ -12,6 +12,8 @@ import {
   ExecutionArgs,
   GraphQLFieldResolver,
   GraphQLTypeResolver,
+  parse,
+  validate,
 } from 'graphql';
 import { processRequest } from 'graphql-helix';
 import { ExecutionContext } from 'graphql-helix/dist/types';
@@ -47,12 +49,14 @@ export type AllEvents = {
   };
   beforeOperationParse: {
     getParams: () => { source: string | Source; options?: ParseOptions };
+    getParseFn: () => typeof parse;
+    setParseFn: (newFn: typeof parse) => void;
     setParsedDocument: (doc: DocumentNode) => void;
   };
   afterOperationParse: {
     getParams: () => { source: string | Source; options?: ParseOptions };
-    getParsedDocument: () => DocumentNode;
-    replaceParsedDocument: (newDocument: DocumentNode) => void;
+    getParseResult: () => DocumentNode | Error;
+    replaceParseResult: (newDocument: DocumentNode | Error) => void;
   };
   beforeContextBuilding: {
     getExecutionContext: () => ExecutionContext;
@@ -70,6 +74,8 @@ export type AllEvents = {
       typeInfo?: TypeInfo;
       options?: { maxErrors?: number };
     };
+    getValidationFn(): typeof validate;
+    setValidationFn(newValidate: typeof validate): void;
     setValidationErrors: (errors: GraphQLError[]) => void;
   };
   afterValidate: {
