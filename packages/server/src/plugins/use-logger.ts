@@ -1,4 +1,4 @@
-import { PluginFn } from '../types';
+import { PluginFn } from '@guildql/types';
 import { print } from 'graphql';
 
 type LoggerPluginOptions = {
@@ -8,14 +8,16 @@ type LoggerPluginOptions = {
     info: typeof console.info;
     error: typeof console.error;
   };
-  request?: boolean;
-  response?: boolean;
+  operation?: boolean;
+  result?: boolean;
+  ignoreIntrospection?: boolean;
 };
 
-const DEFAULT_OPTIONS = {
+const DEFAULT_OPTIONS: LoggerPluginOptions = {
   logger: console,
-  request: true,
-  response: true,
+  operation: true,
+  result: true,
+  ignoreIntrospection: true,
 };
 
 export const useLogger = (rawOptions: LoggerPluginOptions = DEFAULT_OPTIONS): PluginFn => api => {
@@ -24,15 +26,27 @@ export const useLogger = (rawOptions: LoggerPluginOptions = DEFAULT_OPTIONS): Pl
     ...rawOptions,
   };
 
-  if (options.request) {
+  if (options.operation) {
     api.on('beforeExecute', support => {
-      options.logger.log('Going to execute operation: ', print(support.getExecutionParams().document));
+      const params = support.getExecutionParams();
+
+      if (options.ignoreIntrospection && params.isIntrospection) {
+        return;
+      }
+
+      options.logger.log(`[START][${support.getOperationId()}]: `, print(params.document));
     });
   }
 
-  if (options.response) {
+  if (options.result) {
     api.on('afterExecute', support => {
-      options.logger.log('Operation execution done:', support.getResult());
+      const params = support.getExecutionParams();
+
+      if (options.ignoreIntrospection && params.operationName === 'IntrospectionQuery') {
+        return;
+      }
+
+      options.logger.log(`[END][${support.getOperationId()}]: `, support.getResult());
     });
   }
 };

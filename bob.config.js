@@ -1,3 +1,1 @@
-module.exports = {
-  ignore: ['@graphql-eslint/example'],
-};
+module.exports = {};

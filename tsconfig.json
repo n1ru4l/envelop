@@ -23,7 +23,10 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "paths": {
-      "@guildql/*": ["packages/*/src/index.ts"]
+      "@guildql/*": [
+        "packages/*/src/index.ts",
+        "packages/plugins/*/src/index.ts"
+      ]
     }
   },
   "include": ["packages"],
