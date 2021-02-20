@@ -27,7 +27,7 @@ async function emitAsync<T>(emitter: EventsHandler, event: string, payload: T) {
   }
 }
 
-export async function configureServer(options: { plugins: PluginFn[]; initialSchema?: GraphQLSchema; emitter?: EventsHandler }): Promise<ServerProxy> {
+export function configureServer(options: { plugins: PluginFn[]; initialSchema?: GraphQLSchema; emitter?: EventsHandler }): ServerProxy {
   const emitter = options.emitter || new EventsHandler();
   const api = {
     on: emitter.on.bind(emitter),
@@ -46,7 +46,7 @@ export async function configureServer(options: { plugins: PluginFn[]; initialSch
   };
 
   for (const plugin of options.plugins) {
-    await plugin(api);
+    plugin(api);
   }
 
   const customParse: typeof parse = (source, options) => {

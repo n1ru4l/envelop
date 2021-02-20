@@ -1,0 +1,5 @@
+---
+'@guildql/server': patch
+---
+
+Wip
