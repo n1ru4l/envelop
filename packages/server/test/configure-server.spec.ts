@@ -1,9 +1,6 @@
 import { buildSchema } from 'graphql';
 import { getGraphQLParameters, processRequest } from 'graphql-helix';
-import { configureServer } from '../src/configure-server';
-import { useLogger } from '../src/plugins/use-logger';
-import { useSchema } from '../src/plugins/use-schema';
-import { useTiming } from '../src/plugins/use-timing';
+import { useTiming, useSchema, useLogger, configureServer } from '../src';
 
 describe('configureServer', () => {
   it('test', async () => {

@@ -1,4 +1,4 @@
-import Emittery from 'emittery';
+import * as EE from 'eventemitter3';
 import {
   DocumentNode,
   GraphQLSchema,
@@ -98,7 +98,7 @@ export type AllEvents = {
   };
 };
 
-export class EventsHandler extends Emittery<AllEvents> {}
+export class EventsHandler extends EE.EventEmitter<AllEvents> {}
 
 export type PluginApi = {
   on: EventsHandler['on'];

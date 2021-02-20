@@ -20,8 +20,8 @@ import { composeResolvers } from '@graphql-tools/resolvers-composition';
 
 const generateUuid = hyperId({ fixedLength: true });
 
-export async function configureServer(options: { plugins: PluginFn[] }, initialSchema?: GraphQLSchema): Promise<ServerProxy> {
-  const emitter = new EventsHandler();
+export async function configureServer(options: { plugins: PluginFn[]; initialSchema?: GraphQLSchema; emitter?: EventsHandler }): Promise<ServerProxy> {
+  const emitter = options.emitter || new EventsHandler();
   const api = {
     on: emitter.on.bind(emitter),
   };
@@ -45,7 +45,7 @@ export async function configureServer(options: { plugins: PluginFn[] }, initialS
       },
     });
 
-    if (!result) {
+    if (result === null) {
       try {
         result = parseFn(source, options);
       } catch (e) {
@@ -98,7 +98,7 @@ export async function configureServer(options: { plugins: PluginFn[] }, initialS
   const customContextFactory: Parameters<typeof processRequest>[0]['contextFactory'] = async executionContext => {
     let context = Object.freeze({});
 
-    await emitter.emit('beforeContextBuilding', {
+    emitter.emit('beforeContextBuilding', {
       getExecutionContext: () => executionContext,
       getCurrentContext: () => context,
       replaceContext: newContext => {
@@ -106,7 +106,7 @@ export async function configureServer(options: { plugins: PluginFn[] }, initialS
       },
     });
 
-    await emitter.emit('afterContextBuilding', {
+    emitter.emit('afterContextBuilding', {
       getContext: () => context,
     });
 
@@ -131,7 +131,7 @@ export async function configureServer(options: { plugins: PluginFn[] }, initialS
     let executeFn = execute;
     const actualOperationName = operationName || getOperationAST(execDoc).name?.value;
 
-    await emitter.emit('beforeExecute', {
+    emitter.emit('beforeExecute', {
       getOperationId: () => operationId,
       getExecutionParams: () => ({
         isIntrospection: actualOperationName === 'IntrospectionQuery',
@@ -163,7 +163,7 @@ export async function configureServer(options: { plugins: PluginFn[] }, initialS
 
     const result = await executeFn(schema, execDoc, execRootValue, execContext, execVariablesValue, operationName, fieldResolver, typeResolver);
 
-    await emitter.emit('afterExecute', {
+    emitter.emit('afterExecute', {
       getOperationId: () => operationId,
       getResult: () => result,
       getExecutionParams: () => ({
@@ -182,16 +182,16 @@ export async function configureServer(options: { plugins: PluginFn[] }, initialS
     return result;
   };
 
-  let schema: GraphQLSchema = initialSchema;
+  let schema: GraphQLSchema | undefined | null = options.initialSchema;
 
-  await emitter.emit('onInit', {
+  emitter.emit('onInit', {
     getOriginalSchema: () => schema,
     replaceSchema: newSchema => {
       schema = newSchema;
     },
   });
 
-  await emitter.emit('beforeSchemaReady', {
+  emitter.emit('beforeSchemaReady', {
     getSchema: () => schema,
     getOriginalSchema: () => schema,
     replaceSchema: newSchema => {
