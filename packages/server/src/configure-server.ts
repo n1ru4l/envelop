@@ -8,6 +8,7 @@ import {
   GraphQLSchema,
   GraphQLTypeResolver,
   parse,
+  print,
   validate,
 } from 'graphql';
 import { EventsHandler, ServerProxy, PluginFn } from '@guildql/types';
@@ -24,6 +25,18 @@ export async function configureServer(options: { plugins: PluginFn[]; initialSch
   const emitter = options.emitter || new EventsHandler();
   const api = {
     on: emitter.on.bind(emitter),
+  };
+  let initDone = false;
+  let schema: GraphQLSchema | undefined | null = options.initialSchema;
+
+  const replaceSchema = (newSchema: GraphQLSchema) => {
+    schema = newSchema;
+
+    if (initDone) {
+      emitter.emit('schemaChange', {
+        getSchema: () => schema,
+      });
+    }
   };
 
   for (const plugin of options.plugins) {
@@ -71,9 +84,12 @@ export async function configureServer(options: { plugins: PluginFn[]; initialSch
   const customValidate: typeof validate = (schema, documentAST, rules, typeInfo, options) => {
     let validateFn = validate;
     let result: readonly GraphQLError[] = null;
+    // TODO: Get the origin documentAST as param here?
+    const document = print(documentAST);
+    const params = { schema, documentAST, rules, typeInfo, options, document };
 
     emitter.emit('beforeValidate', {
-      getValidationParams: () => ({ schema, documentAST, rules, typeInfo, options }),
+      getValidationParams: () => params,
       setValidationErrors: (errors: GraphQLError[]) => {
         result = errors;
       },
@@ -88,6 +104,7 @@ export async function configureServer(options: { plugins: PluginFn[]; initialSch
     }
 
     emitter.emit('afterValidate', {
+      getValidationParams: () => params,
       getErrors: () => result,
       isValid: () => result.length === 0,
     });
@@ -123,6 +140,7 @@ export async function configureServer(options: { plugins: PluginFn[]; initialSch
     fieldResolver?: Maybe<GraphQLFieldResolver<any, any>>,
     typeResolver?: Maybe<GraphQLTypeResolver<any, any>>
   ): Promise<ExecutionResult> => {
+    // TODO: Generate operationId in a more simple way, maybe when https://github.com/contrawork/graphql-helix/pull/21 gets in
     const operationId = generateUuid();
     let execDoc = document;
     let execRootValue = rootValue;
@@ -132,6 +150,13 @@ export async function configureServer(options: { plugins: PluginFn[]; initialSch
     const actualOperationName = operationName || getOperationAST(execDoc).name?.value;
 
     emitter.emit('beforeExecute', {
+      extendContext: (obj: unknown) => {
+        if (typeof obj === 'object') {
+          execContext = { ...(execContext || {}), ...obj };
+        }
+
+        throw new Error(`Invalid context extension provided! Expected "object", got: "${JSON.stringify(obj)}"`);
+      },
       getOperationId: () => operationId,
       getExecutionParams: () => ({
         isIntrospection: actualOperationName === 'IntrospectionQuery',
@@ -182,21 +207,16 @@ export async function configureServer(options: { plugins: PluginFn[]; initialSch
     return result;
   };
 
-  let schema: GraphQLSchema | undefined | null = options.initialSchema;
-
   emitter.emit('onInit', {
     getOriginalSchema: () => schema,
-    replaceSchema: newSchema => {
-      schema = newSchema;
-    },
+    replaceSchema,
   });
+  initDone = true;
 
   emitter.emit('beforeSchemaReady', {
     getSchema: () => schema,
     getOriginalSchema: () => schema,
-    replaceSchema: newSchema => {
-      schema = newSchema;
-    },
+    replaceSchema,
     wrapResolvers: wrapping => {
       const extractResolvers = getResolversFromSchema(schema);
       const newResolvers = composeResolvers(extractResolvers, wrapping);

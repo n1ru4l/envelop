@@ -72,6 +72,7 @@ export type AllEvents = EventToEEParam<{
   };
   beforeValidate: {
     getValidationParams: () => {
+      document: string;
       schema: GraphQLSchema;
       documentAST: DocumentNode;
       rules?: ReadonlyArray<ValidationRule>;
@@ -80,9 +81,17 @@ export type AllEvents = EventToEEParam<{
     };
     getValidationFn(): typeof validate;
     setValidationFn(newValidate: typeof validate): void;
-    setValidationErrors: (errors: GraphQLError[]) => void;
+    setValidationErrors: (errors: readonly GraphQLError[]) => void;
   };
   afterValidate: {
+    getValidationParams: () => {
+      document: string;
+      schema: GraphQLSchema;
+      documentAST: DocumentNode;
+      rules?: ReadonlyArray<ValidationRule>;
+      typeInfo?: TypeInfo;
+      options?: { maxErrors?: number };
+    };
     isValid: () => boolean;
     getErrors: () => readonly GraphQLError[];
   };
@@ -93,12 +102,17 @@ export type AllEvents = EventToEEParam<{
     setDocument: (newDocument: DocumentNode) => void;
     setRootValue: (newRootValue: any) => void;
     setContext: (newContext: any) => void;
+    // TODO: Switch `any` to be a globally available interface that can be extended?
+    extendContext: (obj: any) => void;
     setVariables: (newVariables: any) => void;
   };
   afterExecute: {
     getResult: () => ExecutionResult;
     getOperationId: () => string;
     getExecutionParams: () => ExecutionParams;
+  };
+  schemaChange: {
+    getSchema: () => GraphQLSchema;
   };
 }>;
 

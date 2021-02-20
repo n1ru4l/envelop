@@ -18,7 +18,7 @@ describe('useParserCache', () => {
 
     useTestPlugin = api => {
       api.on('beforeOperationParse', support => {
-        support.setParseFn(testParser as any as typeof parse);
+        support.setParseFn((testParser as any) as typeof parse);
       });
     };
   });
@@ -29,8 +29,8 @@ describe('useParserCache', () => {
 
   it('Should register to afterOperationParse and beforeOperationParse', async () => {
     const testInstance = await createTestkit(testSchema, [useParserCache()]);
-    expect(testInstance.onSpy.mock.calls[0][0]).toBe('beforeOperationParse');
-    expect(testInstance.onSpy.mock.calls[1][0]).toBe('afterOperationParse');
+    expect(testInstance.emitter.listeners('afterOperationParse').length).toBe(1);
+    expect(testInstance.emitter.listeners('beforeOperationParse').length).toBe(1);
   });
 
   it('Should call original parse when cache is empty', async () => {

@@ -1,5 +1,5 @@
 {
-  "name": "@guildql/parser-cache",
+  "name": "@guildql/validation-cache",
   "version": "0.0.2",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
