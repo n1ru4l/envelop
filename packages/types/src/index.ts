@@ -36,7 +36,11 @@ export type ExecutionParams = ExecutionArgs & {
   isIntrospection: boolean;
 };
 
-export type AllEvents = {
+export type EventToEEParam<T extends Record<string, unknown>> = {
+  [Key in keyof T]: (support: T[Key]) => void;
+};
+
+export type AllEvents = EventToEEParam<{
   onInit: {
     getOriginalSchema: () => GraphQLSchema;
     replaceSchema: (newSchema: GraphQLSchema) => void;
@@ -96,7 +100,7 @@ export type AllEvents = {
     getOperationId: () => string;
     getExecutionParams: () => ExecutionParams;
   };
-};
+}>;
 
 export class EventsHandler extends EE.EventEmitter<AllEvents> {}
 

@@ -18,7 +18,7 @@ describe('useParserCache', () => {
 
     useTestPlugin = api => {
       api.on('beforeOperationParse', support => {
-        support.setParseFn(testParser);
+        support.setParseFn(testParser as any as typeof parse);
       });
     };
   });
