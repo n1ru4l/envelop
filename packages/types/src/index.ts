@@ -37,7 +37,7 @@ export type ExecutionParams = ExecutionArgs & {
 };
 
 export type EventToEEParam<T extends Record<string, unknown>> = {
-  [Key in keyof T]: (support: T[Key]) => void;
+  [Key in keyof T]: (support: T[Key]) => void | Promise<void>;
 };
 
 export type AllEvents = EventToEEParam<{
@@ -63,6 +63,7 @@ export type AllEvents = EventToEEParam<{
     replaceParseResult: (newDocument: DocumentNode | Error) => void;
   };
   beforeContextBuilding: {
+    extendContext: (obj: unknown) => void;
     getExecutionContext: () => ExecutionContext;
     replaceContext: (currentContext: Record<string, unknown>) => void;
     getCurrentContext: () => Readonly<Record<string, unknown>>;
@@ -102,8 +103,6 @@ export type AllEvents = EventToEEParam<{
     setDocument: (newDocument: DocumentNode) => void;
     setRootValue: (newRootValue: any) => void;
     setContext: (newContext: any) => void;
-    // TODO: Switch `any` to be a globally available interface that can be extended?
-    extendContext: (obj: any) => void;
     setVariables: (newVariables: any) => void;
   };
   afterExecute: {

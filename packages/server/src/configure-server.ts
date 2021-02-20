@@ -21,6 +21,12 @@ import { composeResolvers } from '@graphql-tools/resolvers-composition';
 
 const generateUuid = hyperId({ fixedLength: true });
 
+async function emitAsync<T>(emitter: EventsHandler, event: string, payload: T) {
+  for (const listener of emitter.listeners(event as any)) {
+    await listener(payload);
+  }
+}
+
 export async function configureServer(options: { plugins: PluginFn[]; initialSchema?: GraphQLSchema; emitter?: EventsHandler }): Promise<ServerProxy> {
   const emitter = options.emitter || new EventsHandler();
   const api = {
@@ -113,9 +119,16 @@ export async function configureServer(options: { plugins: PluginFn[]; initialSch
   };
 
   const customContextFactory: Parameters<typeof processRequest>[0]['contextFactory'] = async executionContext => {
-    let context = Object.freeze({});
+    let context = {};
 
-    emitter.emit('beforeContextBuilding', {
+    await emitAsync(emitter, 'beforeContextBuilding', {
+      extendContext: (obj: unknown) => {
+        if (typeof obj === 'object') {
+          context = { ...(context || {}), ...obj };
+        } else {
+          throw new Error(`Invalid context extension provided! Expected "object", got: "${JSON.stringify(obj)}" (${typeof obj})`);
+        }
+      },
       getExecutionContext: () => executionContext,
       getCurrentContext: () => context,
       replaceContext: newContext => {
@@ -150,13 +163,6 @@ export async function configureServer(options: { plugins: PluginFn[]; initialSch
     const actualOperationName = operationName || getOperationAST(execDoc).name?.value;
 
     emitter.emit('beforeExecute', {
-      extendContext: (obj: unknown) => {
-        if (typeof obj === 'object') {
-          execContext = { ...(execContext || {}), ...obj };
-        }
-
-        throw new Error(`Invalid context extension provided! Expected "object", got: "${JSON.stringify(obj)}"`);
-      },
       getOperationId: () => operationId,
       getExecutionParams: () => ({
         isIntrospection: actualOperationName === 'IntrospectionQuery',
