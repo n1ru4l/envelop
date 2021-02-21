@@ -11,7 +11,7 @@ import {
   print,
   validate,
 } from 'graphql';
-import { EventsHandler, ServerProxy, PluginFn } from '@guildql/types';
+import { EventsHandler, GraphQLServerOptions, PluginFn } from '@guildql/types';
 import { processRequest } from 'graphql-helix';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import hyperId from 'hyperid';
@@ -27,7 +27,7 @@ async function emitAsync<T>(emitter: EventsHandler, event: string, payload: T) {
   }
 }
 
-export function configureServer(options: { plugins: PluginFn[]; initialSchema?: GraphQLSchema; emitter?: EventsHandler }): ServerProxy {
+export function configureServer(options: { plugins: PluginFn[]; initialSchema?: GraphQLSchema; emitter?: EventsHandler }): GraphQLServerOptions {
   const emitter = options.emitter || new EventsHandler();
   const api = {
     on: emitter.on.bind(emitter),
@@ -239,6 +239,6 @@ export function configureServer(options: { plugins: PluginFn[]; initialSchema?: 
     validate: customValidate,
     contextFactory: customContextFactory,
     execute: customExecute as any,
-    schema,
+    schema: () => schema,
   };
 }

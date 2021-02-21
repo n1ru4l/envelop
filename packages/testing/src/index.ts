@@ -1,7 +1,7 @@
 import { DocumentNode, ExecutionResult, GraphQLSchema, print } from 'graphql';
 import { getGraphQLParameters, processRequest } from 'graphql-helix';
 import { configureServer } from '@guildql/server';
-import { EventsHandler, PluginFn, ServerProxy } from '@guildql/types';
+import { EventsHandler, PluginFn, GraphQLServerOptions } from '@guildql/types';
 
 export async function createTestkit(
   schema: GraphQLSchema,
@@ -9,7 +9,7 @@ export async function createTestkit(
 ): Promise<{
   emitter: EventsHandler;
   onSpy: jest.SpyInstance;
-  proxy: ServerProxy;
+  proxy: GraphQLServerOptions;
   execute: (operation: DocumentNode | string) => Promise<ExecutionResult<any>>;
   replaceSchema: (schema: GraphQLSchema) => void;
   wait: (ms: number) => Promise<void>;
@@ -53,7 +53,11 @@ export async function createTestkit(
         query,
         variables,
         request,
-        ...executionProxy,
+        execute: executionProxy.execute,
+        parse: executionProxy.parse,
+        validate: executionProxy.validate,
+        contextFactory: executionProxy.contextFactory,
+        schema: executionProxy.schema(),
       });
 
       return (r as any).payload as ExecutionResult;

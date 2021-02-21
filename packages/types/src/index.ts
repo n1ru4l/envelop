@@ -14,9 +14,8 @@ import {
   GraphQLTypeResolver,
   parse,
   validate,
+  subscribe,
 } from 'graphql';
-import { processRequest } from 'graphql-helix';
-import { ExecutionContext } from 'graphql-helix/dist/types';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { ResolversComposerMapping } from '@graphql-tools/resolvers-composition';
@@ -36,42 +35,33 @@ export type ExecutionParams = ExecutionArgs & {
   isIntrospection: boolean;
 };
 
-export type EventToEEParam<T extends Record<string, unknown>> = {
-  [Key in keyof T]: (support: T[Key]) => void | Promise<void>;
-};
-
-export type AllEvents = EventToEEParam<{
-  onInit: {
-    getOriginalSchema: () => GraphQLSchema;
-    replaceSchema: (newSchema: GraphQLSchema) => void;
-  };
-  beforeSchemaReady: {
+export type AllEvents = {
+  onInit: (support: { getOriginalSchema: () => GraphQLSchema; replaceSchema: (newSchema: GraphQLSchema) => void }) => void;
+  beforeSchemaReady: (support: {
     wrapResolvers: (wrapping: ResolversComposerMapping) => void;
     getSchema: () => GraphQLSchema;
     getOriginalSchema: () => GraphQLSchema;
     replaceSchema: (newSchema: GraphQLSchema) => void;
-  };
-  beforeOperationParse: {
+  }) => void;
+  beforeOperationParse: (support: {
     getParams: () => { source: string | Source; options?: ParseOptions };
     getParseFn: () => typeof parse;
     setParseFn: (newFn: typeof parse) => void;
     setParsedDocument: (doc: DocumentNode) => void;
-  };
-  afterOperationParse: {
+  }) => void;
+  afterOperationParse: (support: {
     getParams: () => { source: string | Source; options?: ParseOptions };
     getParseResult: () => DocumentNode | Error;
     replaceParseResult: (newDocument: DocumentNode | Error) => void;
-  };
-  beforeContextBuilding: {
+  }) => void;
+  beforeContextBuilding: (support: {
     extendContext: (obj: unknown) => void;
-    getExecutionContext: () => ExecutionContext;
+    getExecutionContext: () => any;
     replaceContext: (currentContext: Record<string, unknown>) => void;
     getCurrentContext: () => Readonly<Record<string, unknown>>;
-  };
-  afterContextBuilding: {
-    getContext: () => Readonly<Record<string, unknown>>;
-  };
-  beforeValidate: {
+  }) => void | Promise<void>;
+  afterContextBuilding: (support: { getContext: () => Readonly<Record<string, unknown>> }) => void;
+  beforeValidate: (support: {
     getValidationParams: () => {
       document: string;
       schema: GraphQLSchema;
@@ -83,8 +73,8 @@ export type AllEvents = EventToEEParam<{
     getValidationFn(): typeof validate;
     setValidationFn(newValidate: typeof validate): void;
     setValidationErrors: (errors: readonly GraphQLError[]) => void;
-  };
-  afterValidate: {
+  }) => void;
+  afterValidate: (support: {
     getValidationParams: () => {
       document: string;
       schema: GraphQLSchema;
@@ -95,8 +85,8 @@ export type AllEvents = EventToEEParam<{
     };
     isValid: () => boolean;
     getErrors: () => readonly GraphQLError[];
-  };
-  beforeExecute: {
+  }) => void;
+  beforeExecute: (support: {
     setExecuteFn: (newExecute: ExecuteFn) => void;
     getOperationId: () => string;
     getExecutionParams: () => ExecutionParams;
@@ -104,16 +94,10 @@ export type AllEvents = EventToEEParam<{
     setRootValue: (newRootValue: any) => void;
     setContext: (newContext: any) => void;
     setVariables: (newVariables: any) => void;
-  };
-  afterExecute: {
-    getResult: () => ExecutionResult;
-    getOperationId: () => string;
-    getExecutionParams: () => ExecutionParams;
-  };
-  schemaChange: {
-    getSchema: () => GraphQLSchema;
-  };
-}>;
+  }) => void;
+  afterExecute: (support: { getResult: () => ExecutionResult; getOperationId: () => string; getExecutionParams: () => ExecutionParams }) => void;
+  schemaChange: (support: { getSchema: () => GraphQLSchema }) => void;
+};
 
 export class EventsHandler extends EE.EventEmitter<AllEvents> {}
 
@@ -123,9 +107,12 @@ export type PluginApi = {
 
 export type PluginFn = (api: PluginApi) => void | Promise<void>;
 
-export type ServerProxy = Pick<
-  Parameters<typeof processRequest>[0],
-  'contextFactory' | 'formatPayload' | 'parse' | 'rootValueFactory' | 'subscribe' | 'validate' | 'schema'
-> & {
+export type GraphQLServerOptions<ExecutionParams = unknown, Context = unknown> = {
   execute: typeof execute;
+  // subscribe: typeof subscribe;
+  validate: typeof validate;
+  parse: typeof parse;
+  contextFactory: (executionParams: ExecutionParams) => Context | Promise<Context>;
+  // rootValueFactory: (executionParams: ExecutionParams) => RootValue | Promise<RootValue>;
+  schema: () => GraphQLSchema;
 };

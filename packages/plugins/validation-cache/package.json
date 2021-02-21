@@ -1,6 +1,6 @@
 {
   "name": "@guildql/validation-cache",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,

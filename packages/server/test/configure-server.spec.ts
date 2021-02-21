@@ -25,7 +25,11 @@ describe('configureServer', () => {
       query,
       variables,
       request,
-      ...executionProxy,
+      execute: executionProxy.execute,
+      parse: executionProxy.parse,
+      validate: executionProxy.validate,
+      contextFactory: executionProxy.contextFactory,
+      schema: executionProxy.schema(),
     });
   });
 });
