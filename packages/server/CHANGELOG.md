@@ -1,5 +1,13 @@
 # @guildql/server
 
+## 0.0.5
+
+### Patch Changes
+
+- 50a816a: Fixes for bundle
+- Updated dependencies [50a816a]
+  - @guildql/types@0.0.5
+
 ## 0.0.4
 
 ### Patch Changes
