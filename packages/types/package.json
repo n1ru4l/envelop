@@ -14,9 +14,10 @@
     "test": "jest",
     "prepack": "bob prepack"
   },
-  "dependencies": {},
+  "dependencies": {
+    "eventemitter3": "4.0.7"
+  },
   "devDependencies": {
-    "eventemitter3": "4.0.7",
     "bob-the-bundler": "1.1.0",
     "@graphql-tools/resolvers-composition": "6.2.5",
     "graphql-helix": "1.2.3",
