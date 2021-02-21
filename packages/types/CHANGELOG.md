@@ -1,5 +1,11 @@
 # @guildql/types
 
+## 0.0.5
+
+### Patch Changes
+
+- 50a816a: Fixes for bundle
+
 ## 0.0.4
 
 ### Patch Changes
