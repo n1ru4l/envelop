@@ -109,8 +109,8 @@ export function configureServer(options: { plugins: PluginFn[]; initialSchema?: 
     return result;
   };
 
-  const customContextFactory = async executionContext => {
-    let context = {};
+  const customContextFactory = async initialContext => {
+    let context = initialContext;
 
     await emitAsync(emitter, 'beforeContextBuilding', {
       extendContext: (obj: unknown) => {
@@ -120,7 +120,7 @@ export function configureServer(options: { plugins: PluginFn[]; initialSchema?: 
           throw new Error(`Invalid context extension provided! Expected "object", got: "${JSON.stringify(obj)}" (${typeof obj})`);
         }
       },
-      getExecutionContext: () => executionContext,
+      getExecutionContext: () => initialContext,
       getCurrentContext: () => context,
       replaceContext: newContext => {
         context = newContext;
