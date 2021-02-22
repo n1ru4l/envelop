@@ -10,26 +10,10 @@ import {
   ExecutionResult,
   execute,
   ExecutionArgs,
-  GraphQLFieldResolver,
-  GraphQLTypeResolver,
   parse,
   validate,
-  subscribe,
 } from 'graphql';
-import { Maybe } from 'graphql/jsutils/Maybe';
-import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { ResolversComposerMapping } from '@graphql-tools/resolvers-composition';
-
-export type ExecuteFn = (
-  schema: GraphQLSchema,
-  document: DocumentNode,
-  rootValue?: any,
-  contextValue?: any,
-  variableValues?: Maybe<{ [key: string]: any }>,
-  operationName?: Maybe<string>,
-  fieldResolver?: Maybe<GraphQLFieldResolver<any, any>>,
-  typeResolver?: Maybe<GraphQLTypeResolver<any, any>>
-) => PromiseOrValue<ExecutionResult>;
 
 export type ExecutionParams = ExecutionArgs & {
   isIntrospection: boolean;
@@ -87,7 +71,8 @@ export type AllEvents = {
     getErrors: () => readonly GraphQLError[];
   }) => void;
   beforeExecute: (support: {
-    setExecuteFn: (newExecute: ExecuteFn) => void;
+    setExecuteFn: (newExecute: typeof execute) => void;
+    getExecuteFn: () => typeof execute;
     getOperationId: () => string;
     getExecutionParams: () => ExecutionParams;
     setDocument: (newDocument: DocumentNode) => void;

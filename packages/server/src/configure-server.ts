@@ -12,20 +12,11 @@ import {
   validate,
 } from 'graphql';
 import { EventsHandler, GraphQLServerOptions, PluginFn } from '@guildql/types';
-import { processRequest } from 'graphql-helix';
 import { Maybe } from 'graphql/jsutils/Maybe';
-import hyperId from 'hyperid';
 import { getResolversFromSchema } from '@graphql-tools/utils';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { composeResolvers } from '@graphql-tools/resolvers-composition';
-
-const generateUuid = hyperId({ fixedLength: true });
-
-async function emitAsync<T>(emitter: EventsHandler, event: string, payload: T) {
-  for (const listener of emitter.listeners(event as any)) {
-    await listener(payload);
-  }
-}
+import { emitAsync, getRequestId } from './utils';
 
 export function configureServer(options: { plugins: PluginFn[]; initialSchema?: GraphQLSchema; emitter?: EventsHandler }): GraphQLServerOptions {
   const emitter = options.emitter || new EventsHandler();
@@ -118,7 +109,7 @@ export function configureServer(options: { plugins: PluginFn[]; initialSchema?: 
     return result;
   };
 
-  const customContextFactory: Parameters<typeof processRequest>[0]['contextFactory'] = async executionContext => {
+  const customContextFactory = async executionContext => {
     let context = {};
 
     await emitAsync(emitter, 'beforeContextBuilding', {
@@ -153,17 +144,17 @@ export function configureServer(options: { plugins: PluginFn[]; initialSchema?: 
     fieldResolver?: Maybe<GraphQLFieldResolver<any, any>>,
     typeResolver?: Maybe<GraphQLTypeResolver<any, any>>
   ): Promise<ExecutionResult> => {
-    // TODO: Generate operationId in a more simple way, maybe when https://github.com/contrawork/graphql-helix/pull/21 gets in
-    const operationId = generateUuid();
+    const operationId = getRequestId(contextValue);
     let execDoc = document;
     let execRootValue = rootValue;
     let execContext = contextValue;
     let execVariablesValue = variableValues;
-    let executeFn = execute;
+    let executeFn: typeof execute = execute;
     const actualOperationName = operationName || getOperationAST(execDoc).name?.value;
 
     emitter.emit('beforeExecute', {
       getOperationId: () => operationId,
+      getExecuteFn: () => executeFn,
       getExecutionParams: () => ({
         isIntrospection: actualOperationName === 'IntrospectionQuery',
         schema,

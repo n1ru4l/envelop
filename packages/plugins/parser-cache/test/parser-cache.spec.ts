@@ -28,19 +28,19 @@ describe('useParserCache', () => {
   });
 
   it('Should register to afterOperationParse and beforeOperationParse', async () => {
-    const testInstance = await createTestkit(testSchema, [useParserCache()]);
+    const testInstance = await createTestkit([useParserCache()], testSchema);
     expect(testInstance.emitter.listeners('afterOperationParse').length).toBe(1);
     expect(testInstance.emitter.listeners('beforeOperationParse').length).toBe(1);
   });
 
   it('Should call original parse when cache is empty', async () => {
-    const testInstance = await createTestkit(testSchema, [useTestPlugin, useParserCache()]);
+    const testInstance = await createTestkit([useTestPlugin, useParserCache()], testSchema);
     await testInstance.execute(`query { foo }`);
     expect(testParser).toHaveBeenCalledTimes(1);
   });
 
   it('Should call parse once once when operation is cached', async () => {
-    const testInstance = await createTestkit(testSchema, [useTestPlugin, useParserCache()]);
+    const testInstance = await createTestkit([useTestPlugin, useParserCache()], testSchema);
     await testInstance.execute(`query { foo }`);
     await testInstance.execute(`query { foo }`);
     await testInstance.execute(`query { foo }`);
@@ -48,7 +48,7 @@ describe('useParserCache', () => {
   });
 
   it('Should call parse once once when operation is cached and errored', async () => {
-    const testInstance = await createTestkit(testSchema, [useTestPlugin, useParserCache()]);
+    const testInstance = await createTestkit([useTestPlugin, useParserCache()], testSchema);
     const r1 = await testInstance.execute(`FAILED\ { foo }`);
     const r2 = await testInstance.execute(`FAILED\ { foo }`);
     expect(testParser).toHaveBeenCalledTimes(1);
@@ -58,19 +58,22 @@ describe('useParserCache', () => {
   });
 
   it('Should call parse multiple times on different operations', async () => {
-    const testInstance = await createTestkit(testSchema, [useTestPlugin, useParserCache()]);
+    const testInstance = await createTestkit([useTestPlugin, useParserCache()], testSchema);
     await testInstance.execute(`query t { foo }`);
     await testInstance.execute(`query t2 { foo }`);
     expect(testParser).toHaveBeenCalledTimes(2);
   });
 
   it('should call parse multiple times when operation is invalidated', async () => {
-    const testInstance = await createTestkit(testSchema, [
-      useTestPlugin,
-      useParserCache({
-        ttl: 1,
-      }),
-    ]);
+    const testInstance = await createTestkit(
+      [
+        useTestPlugin,
+        useParserCache({
+          ttl: 1,
+        }),
+      ],
+      testSchema
+    );
     await testInstance.execute(`query t { foo }`);
     await testInstance.wait(10);
     await testInstance.execute(`query t { foo }`);
