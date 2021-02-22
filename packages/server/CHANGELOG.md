@@ -1,5 +1,11 @@
 # @guildql/server
 
+## 0.0.6
+
+### Patch Changes
+
+- 12acec9: WIP
+
 ## 0.0.5
 
 ### Patch Changes
