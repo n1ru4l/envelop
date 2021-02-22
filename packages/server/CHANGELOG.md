@@ -1,5 +1,11 @@
 # @guildql/server
 
+## 0.0.7
+
+### Patch Changes
+
+- c3f99d6: Fix issues with schema building and initial context
+
 ## 0.0.6
 
 ### Patch Changes
