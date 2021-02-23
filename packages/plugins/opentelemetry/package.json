@@ -1,6 +1,6 @@
 {
   "name": "@guildql/opentelemetry",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
