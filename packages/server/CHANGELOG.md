@@ -1,5 +1,13 @@
 # @guildql/server
 
+## 0.0.8
+
+### Patch Changes
+
+- dfeb90e: Fixes for all packages, cleanup
+- Updated dependencies [dfeb90e]
+  - @guildql/types@0.0.6
+
 ## 0.0.7
 
 ### Patch Changes
