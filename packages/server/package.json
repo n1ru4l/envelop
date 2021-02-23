@@ -15,7 +15,7 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "@guildql/types": "0.0.6"
+    "@guildql/types": "0.0.5"
   },
   "devDependencies": {
     "@graphql-tools/utils": "7.5.0",
