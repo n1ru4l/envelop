@@ -5,7 +5,7 @@ import { useTiming, useSchema, useLogger, configureServer } from '../src';
 describe('configureServer', () => {
   it('test', async () => {
     const schema = buildSchema(`type Query { dummy: String }`);
-    const executionProxy = await configureServer({
+    const requestInit = configureServer({
       plugins: [useSchema(schema), useTiming(), useLogger()],
     });
 
@@ -18,18 +18,21 @@ describe('configureServer', () => {
       },
     };
 
+    const proxy = requestInit(request);
     const { operationName, query, variables } = getGraphQLParameters(request);
 
-    const result = await processRequest({
+    await processRequest({
       operationName,
       query,
       variables,
       request,
-      execute: executionProxy.execute,
-      parse: executionProxy.parse,
-      validate: executionProxy.validate,
-      contextFactory: executionProxy.contextFactory,
-      schema: executionProxy.schema(),
+      execute: proxy.execute,
+      parse: proxy.parse,
+      validate: proxy.validate,
+      contextFactory: proxy.contextFactory,
+      schema: proxy.schema,
     });
+
+    proxy.dispose();
   });
 });

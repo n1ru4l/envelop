@@ -1,59 +1,66 @@
 import {
+  defaultFieldResolver,
   DocumentNode,
   execute,
+  ExecutionArgs,
   ExecutionResult,
-  getOperationAST,
   GraphQLError,
   GraphQLFieldResolver,
   GraphQLSchema,
   GraphQLTypeResolver,
+  isIntrospectionType,
+  isObjectType,
   parse,
-  print,
   validate,
 } from 'graphql';
-import { EventsHandler, GraphQLServerOptions, PluginFn } from '@guildql/types';
+import { AfterCallback, GraphQLServerOptions, OnResolverCalledHooks, Plugin } from '@guildql/types';
 import { Maybe } from 'graphql/jsutils/Maybe';
-import { getResolversFromSchema } from '@graphql-tools/utils';
-import { addResolversToSchema } from '@graphql-tools/schema';
-import { composeResolvers } from '@graphql-tools/resolvers-composition';
-import { emitAsync, getRequestId } from './utils';
 
-export function configureServer(options: { plugins: PluginFn[]; initialSchema?: GraphQLSchema; emitter?: EventsHandler }): GraphQLServerOptions {
-  const emitter = options.emitter || new EventsHandler();
-  const api = {
-    on: emitter.on.bind(emitter),
-  };
+const trackedSchemaSymbol = Symbol('TRACKED_SCHEMA');
+const resolversHooksSymbol = Symbol('RESOLVERS_HOOKS');
+
+export function configureServer(serverOptions: { plugins: Plugin[]; initialSchema?: GraphQLSchema }): GraphQLServerOptions {
+  let schema: GraphQLSchema | undefined | null = serverOptions.initialSchema;
   let initDone = false;
-  let schema: GraphQLSchema | undefined | null = options.initialSchema;
 
   const replaceSchema = (newSchema: GraphQLSchema) => {
     schema = newSchema;
 
     if (initDone) {
-      emitter.emit('schemaChange', {
-        getSchema: () => schema,
-      });
+      for (const plugin of serverOptions.plugins) {
+        plugin.onSchemaChange && plugin.onSchemaChange({ schema });
+      }
     }
   };
 
-  for (const plugin of options.plugins) {
-    plugin(api);
+  for (const plugin of serverOptions.plugins) {
+    plugin.onPluginInit &&
+      plugin.onPluginInit({
+        setSchema: replaceSchema,
+      });
   }
 
   const customParse: typeof parse = (source, options) => {
     let result: DocumentNode | Error = null;
     let parseFn: typeof parse = parse;
 
-    emitter.emit('beforeOperationParse', {
-      getParams: () => ({ source, options }),
-      getParseFn: () => parseFn,
-      setParsedDocument: document => {
-        result = document;
-      },
-      setParseFn: newFn => {
-        parseFn = newFn;
-      },
-    });
+    const afterCalls: AfterCallback<'onParse'>[] = [];
+    for (const plugin of serverOptions.plugins) {
+      const afterFn =
+        plugin.onParse &&
+        plugin.onParse({
+          params: { source, options },
+          parseFn,
+          setParseFn: newFn => {
+            parseFn = newFn;
+          },
+          setParsedDocument: newDoc => {
+            result = newDoc;
+          },
+        });
+
+      afterFn && afterCalls.push(afterFn);
+    }
 
     if (result === null) {
       try {
@@ -63,13 +70,14 @@ export function configureServer(options: { plugins: PluginFn[]; initialSchema?: 
       }
     }
 
-    emitter.emit('afterOperationParse', {
-      getParams: () => ({ source, options }),
-      getParseResult: () => result,
-      replaceParseResult: newResult => {
-        result = newResult;
-      },
-    });
+    for (const afterCb of afterCalls) {
+      afterCb({
+        replaceParseResult: newResult => {
+          result = newResult;
+        },
+        result,
+      });
+    }
 
     if (result instanceof Error) {
       throw result;
@@ -78,33 +86,37 @@ export function configureServer(options: { plugins: PluginFn[]; initialSchema?: 
     return result;
   };
 
-  const customValidate: typeof validate = (schema, documentAST, rules, typeInfo, options) => {
+  const customValidate: typeof validate = (...args) => {
     let validateFn = validate;
     let result: readonly GraphQLError[] = null;
-    // TODO: Get the origin documentAST as param here?
-    const document = print(documentAST);
-    const params = { schema, documentAST, rules, typeInfo, options, document };
 
-    emitter.emit('beforeValidate', {
-      getValidationParams: () => params,
-      setValidationErrors: (errors: GraphQLError[]) => {
-        result = errors;
-      },
-      setValidationFn: newFunc => {
-        validateFn = newFunc;
-      },
-      getValidationFn: () => validateFn,
-    });
+    const afterCalls: AfterCallback<'onValidate'>[] = [];
+    for (const plugin of serverOptions.plugins) {
+      const afterFn =
+        plugin.onValidate &&
+        plugin.onValidate({
+          params: args,
+          validateFn,
+          setValidationFn: newFn => {
+            validateFn = newFn;
+          },
+          setResult: newResults => {
+            result = newResults;
+          },
+        });
 
-    if (result === null) {
-      result = validateFn(schema, documentAST, rules, typeInfo, options);
+      afterFn && afterCalls.push(afterFn);
     }
 
-    emitter.emit('afterValidate', {
-      getValidationParams: () => params,
-      getErrors: () => result,
-      isValid: () => result.length === 0,
-    });
+    if (result === null) {
+      result = validateFn(...args);
+    }
+
+    const valid = result.length === 0;
+
+    for (const afterCb of afterCalls) {
+      afterCb({ valid, result });
+    }
 
     return result;
   };
@@ -112,124 +124,192 @@ export function configureServer(options: { plugins: PluginFn[]; initialSchema?: 
   const customContextFactory = async initialContext => {
     let context = initialContext;
 
-    await emitAsync(emitter, 'beforeContextBuilding', {
-      extendContext: (obj: unknown) => {
-        if (typeof obj === 'object') {
-          context = { ...(context || {}), ...obj };
-        } else {
-          throw new Error(`Invalid context extension provided! Expected "object", got: "${JSON.stringify(obj)}" (${typeof obj})`);
-        }
-      },
-      getExecutionContext: () => initialContext,
-      getCurrentContext: () => context,
-      replaceContext: newContext => {
-        context = newContext;
-      },
-    });
+    const afterCalls: AfterCallback<'onContextBuilding'>[] = [];
 
-    emitter.emit('afterContextBuilding', {
-      getContext: () => context,
-    });
+    for (const plugin of serverOptions.plugins) {
+      const afterFn =
+        plugin.onContextBuilding &&
+        (await plugin.onContextBuilding({
+          context,
+          setContext: newContext => {
+            context = newContext;
+          },
+          extendContext: extension => {
+            if (typeof extension === 'object') {
+              context = {
+                ...(context || {}),
+                ...extension,
+              };
+            } else {
+              throw new Error(`Invalid context extension provided! Expected "object", got: "${JSON.stringify(extension)}" (${typeof extension})`);
+            }
+          },
+        }));
+
+      afterFn && afterCalls.push(afterFn);
+    }
+
+    for (const afterCb of afterCalls) {
+      afterCb({ eventualContext: context });
+    }
 
     return context;
   };
 
   const customExecute = async (
-    schema: GraphQLSchema,
-    document: DocumentNode,
+    argsOrSchema: ExecutionArgs | GraphQLSchema,
+    document?: DocumentNode,
     rootValue?: any,
     contextValue?: any,
     variableValues?: Maybe<{ [key: string]: any }>,
     operationName?: Maybe<string>,
     fieldResolver?: Maybe<GraphQLFieldResolver<any, any>>,
     typeResolver?: Maybe<GraphQLTypeResolver<any, any>>
-  ): Promise<ExecutionResult> => {
-    const operationId = getRequestId(contextValue);
-    let execDoc = document;
-    let execRootValue = rootValue;
-    let execContext = contextValue;
-    let execVariablesValue = variableValues;
+  ) => {
+    const args: ExecutionArgs =
+      argsOrSchema instanceof GraphQLSchema
+        ? {
+            schema: argsOrSchema,
+            document,
+            rootValue,
+            contextValue,
+            variableValues,
+            operationName,
+            fieldResolver,
+            typeResolver,
+          }
+        : argsOrSchema;
+
+    const onResolversHandlers: OnResolverCalledHooks[] = [];
     let executeFn: typeof execute = execute;
-    const actualOperationName = operationName || getOperationAST(execDoc).name?.value;
 
-    emitter.emit('beforeExecute', {
-      getOperationId: () => operationId,
-      getExecuteFn: () => executeFn,
-      getExecutionParams: () => ({
-        isIntrospection: actualOperationName === 'IntrospectionQuery',
-        schema,
-        document: execDoc,
-        rootValue: execRootValue,
-        contextValue: execContext,
-        variableValues: execVariablesValue,
-        operationName,
-        fieldResolver,
-        typeResolver,
-      }),
-      setExecuteFn: (newExecute: typeof execute) => {
-        executeFn = newExecute;
-      },
-      setDocument: newDocument => {
-        execDoc = newDocument;
-      },
-      setRootValue: newValue => {
-        execRootValue = newValue;
-      },
-      setContext: newContext => {
-        execContext = newContext;
-      },
-      setVariables: newVariables => {
-        execVariablesValue = newVariables;
-      },
+    const afterCalls: ((options: { result: unknown }) => void)[] = [];
+    let context = args.contextValue;
+
+    for (const plugin of serverOptions.plugins) {
+      const after =
+        plugin.onExecute &&
+        (await plugin.onExecute({
+          executeFn,
+          setExecuteFn: newExecuteFn => {
+            executeFn = newExecuteFn;
+          },
+          setContext: newContext => {
+            context = newContext;
+          },
+          extendContext: extension => {
+            if (typeof extension === 'object') {
+              context = {
+                ...(context || {}),
+                ...extension,
+              };
+            } else {
+              throw new Error(`Invalid context extension provided! Expected "object", got: "${JSON.stringify(extension)}" (${typeof extension})`);
+            }
+          },
+          args,
+        }));
+
+      if (after) {
+        if (after.onExecuteDone) {
+          afterCalls.push(after.onExecuteDone);
+        }
+
+        if (after.onResolverCalled) {
+          onResolversHandlers.push(after.onResolverCalled);
+        }
+      }
+    }
+
+    if (!context[resolversHooksSymbol] && onResolversHandlers.length > 0) {
+      context[resolversHooksSymbol] = onResolversHandlers;
+    }
+
+    const result = await executeFn({
+      ...args,
+      contextValue: context,
     });
 
-    const result = await executeFn(schema, execDoc, execRootValue, execContext, execVariablesValue, operationName, fieldResolver, typeResolver);
-
-    emitter.emit('afterExecute', {
-      getOperationId: () => operationId,
-      getResult: () => result,
-      getExecutionParams: () => ({
-        isIntrospection: actualOperationName === 'IntrospectionQuery',
-        schema,
-        document: execDoc,
-        rootValue: execRootValue,
-        contextValue: execContext,
-        variableValues: execVariablesValue,
-        operationName,
-        fieldResolver,
-        typeResolver,
-      }),
-    });
+    for (const afterCb of afterCalls) {
+      afterCb({ result });
+    }
 
     return result;
   };
 
-  emitter.emit('onInit', {
-    getOriginalSchema: () => schema,
-    replaceSchema,
-  });
+  function prepareSchema() {
+    if (schema[trackedSchemaSymbol]) {
+      return;
+    }
+
+    schema[trackedSchemaSymbol] = true;
+
+    const entries = Object.values(schema.getTypeMap());
+
+    for (const type of entries) {
+      if (!isIntrospectionType(type) && isObjectType(type)) {
+        const fields = Object.values(type.getFields());
+
+        for (const field of fields) {
+          const originalFn: GraphQLFieldResolver<any, any> = field.resolve || defaultFieldResolver;
+
+          field.resolve = async (root, args, context, info) => {
+            if (context && context[resolversHooksSymbol]) {
+              const hooks: OnResolverCalledHooks[] = context[resolversHooksSymbol];
+              const afterCalls: (({ result }) => void)[] = [];
+
+              for (const hook of hooks) {
+                const afterFn = await hook({ root, args, context, info });
+                afterFn && afterCalls.push(afterFn);
+              }
+
+              try {
+                const result = await originalFn(info, args, context, info);
+
+                for (const afterFn of afterCalls) {
+                  afterFn({ result });
+                }
+
+                return result;
+              } catch (e) {
+                for (const afterFn of afterCalls) {
+                  afterFn({ result: e });
+                }
+
+                throw e;
+              }
+            } else {
+              return originalFn(root, args, context, info);
+            }
+          };
+        }
+      }
+    }
+  }
+
   initDone = true;
 
-  emitter.emit('beforeSchemaReady', {
-    getSchema: () => schema,
-    getOriginalSchema: () => schema,
-    replaceSchema,
-    wrapResolvers: wrapping => {
-      const extractResolvers = getResolversFromSchema(schema);
-      const newResolvers = composeResolvers(extractResolvers, wrapping);
+  return requestContext => {
+    const afterCalls: AfterCallback<'onRequest'>[] = [];
 
-      schema = addResolversToSchema({
-        schema,
-        resolvers: newResolvers,
-      });
-    },
-  });
+    for (const plugin of serverOptions.plugins) {
+      const afterFn = plugin.onRequest && plugin.onRequest({ requestContext });
+      afterFn && afterCalls.push(afterFn);
+    }
 
-  return {
-    parse: customParse,
-    validate: customValidate,
-    contextFactory: customContextFactory,
-    execute: customExecute as any,
-    schema: () => schema,
+    prepareSchema();
+
+    return {
+      dispose: () => {
+        for (const afterCb of afterCalls) {
+          afterCb({});
+        }
+      },
+      parse: customParse,
+      validate: customValidate,
+      contextFactory: customContextFactory,
+      execute: customExecute,
+      schema,
+    };
   };
 }

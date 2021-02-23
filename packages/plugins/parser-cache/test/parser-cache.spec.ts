@@ -1,7 +1,7 @@
 import { buildSchema, parse } from 'graphql';
 import { createTestkit } from '@guildql/testing';
 import { useParserCache } from '../src';
-import { PluginFn } from 'packages/types/src';
+import { Plugin } from '@guildql/types';
 
 describe('useParserCache', () => {
   const testSchema = buildSchema(/* GraphQL */ `
@@ -11,26 +11,20 @@ describe('useParserCache', () => {
   `);
 
   let testParser: jest.Mock<typeof parse>;
-  let useTestPlugin: PluginFn;
+  let useTestPlugin: Plugin;
 
   beforeEach(() => {
     testParser = jest.fn().mockImplementation((source, options) => parse(source, options));
 
-    useTestPlugin = api => {
-      api.on('beforeOperationParse', support => {
-        support.setParseFn((testParser as any) as typeof parse);
-      });
+    useTestPlugin = {
+      onParse({ setParseFn }) {
+        setParseFn((testParser as any) as typeof parse);
+      },
     };
   });
 
   afterEach(() => {
     testParser.mockReset();
-  });
-
-  it('Should register to afterOperationParse and beforeOperationParse', async () => {
-    const testInstance = await createTestkit([useParserCache()], testSchema);
-    expect(testInstance.emitter.listeners('afterOperationParse').length).toBe(1);
-    expect(testInstance.emitter.listeners('beforeOperationParse').length).toBe(1);
   });
 
   it('Should call original parse when cache is empty', async () => {

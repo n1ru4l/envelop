@@ -35,12 +35,6 @@ describe('useGraphQLModules', () => {
     });
   });
 
-  it('should register to the correct workflow events', () => {
-    const testInstance = createTestkit([useGraphQLModules(app)]);
-    expect(testInstance.emitter.listenerCount('afterExecute')).toBe(1);
-    expect(testInstance.emitter.listenerCount('beforeExecute')).toBe(1);
-  });
-
   it('Should work correctly and init all providers at the right time', async () => {
     const testInstance = createTestkit([useGraphQLModules(app)]);
     const result = await testInstance.execute(`query { foo }`);

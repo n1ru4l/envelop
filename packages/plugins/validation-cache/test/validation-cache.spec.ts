@@ -1,7 +1,7 @@
 import { buildSchema, validate } from 'graphql';
 import { createTestkit } from '@guildql/testing';
 import { useValidationCache } from '../src';
-import { PluginFn } from '@guildql/types';
+import { Plugin } from '@guildql/types';
 
 describe('useValidationCache', () => {
   const testSchema = buildSchema(/* GraphQL */ `
@@ -11,27 +11,20 @@ describe('useValidationCache', () => {
   `);
 
   let testValidator: jest.Mock<typeof validate>;
-  let useTestPlugin: PluginFn;
+  let useTestPlugin: Plugin;
 
   beforeEach(() => {
     testValidator = jest.fn().mockImplementation((source, options) => validate(source, options));
 
-    useTestPlugin = api => {
-      api.on('beforeValidate', support => {
-        support.setValidationFn((testValidator as any) as typeof validate);
-      });
+    useTestPlugin = {
+      onValidate({ setValidationFn }) {
+        setValidationFn((testValidator as any) as typeof validate);
+      },
     };
   });
 
   afterEach(() => {
     testValidator.mockReset();
-  });
-
-  it('Should register to events', async () => {
-    const testInstance = await createTestkit([useValidationCache()], testSchema);
-    expect(testInstance.emitter.listeners('schemaChange').length).toBe(1);
-    expect(testInstance.emitter.listeners('beforeValidate').length).toBe(1);
-    expect(testInstance.emitter.listeners('afterValidate').length).toBe(1);
   });
 
   it('Should call original validate when cache is empty', async () => {

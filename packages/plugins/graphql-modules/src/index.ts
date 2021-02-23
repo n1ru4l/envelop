@@ -1,33 +1,33 @@
-import { PluginFn } from '@guildql/types';
+import { Plugin } from '@guildql/types';
 import { Application } from 'graphql-modules';
 
-export const useGraphQLModules = (app: Application): PluginFn => api => {
-  api.on('onInit', support => {
-    support.replaceSchema(app.schema);
-  });
+const graphqlModulesControllerSymbol = Symbol('GRAPHQL_MODULES');
 
-  api.on('beforeExecute', support => {
-    const params = support.getExecutionParams();
+export const useGraphQLModules = (app: Application): Plugin => {
+  return {
+    onPluginInit({ setSchema }) {
+      setSchema(app.schema);
+    },
+    onContextBuilding({ extendContext, context }) {
+      const controller = app.createOperationController({
+        context,
+        autoDestroy: false,
+      });
 
-    const controller = app.createOperationController({
-      context: params.contextValue,
-      autoDestroy: false,
-    });
-
-    support.setContext({
-      ...(params.contextValue || {}),
-      ...controller.context,
-      __modulesController: controller,
-    });
-  });
-
-  api.on('afterExecute', support => {
-    const params = support.getExecutionParams();
-    const context = params.contextValue;
-
-    if (context && context.__modulesController) {
-      context.__modulesController.destroy();
-      context.__modulesController = null;
-    }
-  });
+      extendContext({
+        ...controller.context,
+        [graphqlModulesControllerSymbol]: controller,
+      });
+    },
+    onExecute({ args }) {
+      return {
+        onExecuteDone: () => {
+          if (args.contextValue && args.contextValue[graphqlModulesControllerSymbol]) {
+            args.contextValue[graphqlModulesControllerSymbol].destroy();
+            args.contextValue[graphqlModulesControllerSymbol] = null;
+          }
+        },
+      };
+    },
+  };
 };
