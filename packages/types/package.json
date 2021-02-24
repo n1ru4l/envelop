@@ -20,7 +20,7 @@
     "@graphql-tools/resolvers-composition": "6.2.5",
     "graphql-helix": "1.2.3",
     "graphql": "15.5.0",
-    "typescript": "4.1.5"
+    "typescript": "4.2.2"
   },
   "peerDependencies": {
     "graphql-helix": "^1.2.0",
