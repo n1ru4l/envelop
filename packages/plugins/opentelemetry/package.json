@@ -15,7 +15,7 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "@opentelemetry/api": "0.17.0",
+    "@opentelemetry/api": "0.18.0",
     "@opentelemetry/tracing": "0.17.0"
   },
   "devDependencies": {
