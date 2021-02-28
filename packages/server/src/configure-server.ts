@@ -264,7 +264,7 @@ export function configureServer(serverOptions: { plugins: Plugin[]; initialSchem
               }
 
               try {
-                const result = await originalFn(info, args, context, info);
+                const result = await originalFn(root, args, context, info);
 
                 for (const afterFn of afterCalls) {
                   afterFn({ result });
