@@ -1,5 +1,11 @@
 # @guildql/server
 
+## 0.0.10
+
+### Patch Changes
+
+- b3fc962: Fixes for logger
+
 ## 0.0.9
 
 ### Patch Changes
