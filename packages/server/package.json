@@ -1,6 +1,6 @@
 {
   "name": "@guildql/server",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
