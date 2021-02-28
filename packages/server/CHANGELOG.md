@@ -1,5 +1,11 @@
 # @guildql/server
 
+## 0.0.9
+
+### Patch Changes
+
+- 536cd8b: fix issues with resolvers wrapping
+
 ## 0.0.8
 
 ### Patch Changes
