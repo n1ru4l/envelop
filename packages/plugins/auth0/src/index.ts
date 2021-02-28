@@ -14,6 +14,8 @@ export type Auth0PluginOptions = {
   jwtVerifyOptions?: VerifyOptions;
   jwtDecodeOptions?: DecodeOptions;
   extendContextField?: string;
+  tokenType?: string;
+  headerName?: string;
 };
 
 export class UnauthenticatedError extends Error {}
@@ -28,6 +30,8 @@ export const useAuth0 = (options: Auth0PluginOptions): Plugin => {
   });
 
   const contextField = options.extendContextField || '_auth0';
+  const tokenType = options.tokenType || 'Bearer';
+  const headerName = options.headerName || 'authorization';
 
   const extractFn =
     options.extractTokenFn ||
@@ -40,8 +44,21 @@ export const useAuth0 = (options: Auth0PluginOptions): Plugin => {
           `useAuth0 plugin unable to locate your request or headers on the execution context. Please make sure to pass that, or provide custom "extractTokenFn" function.`
         );
       } else {
-        if (headers['authorization'] && typeof headers['authorization'] === 'string') {
-          return headers['authorization'];
+        if (headers[headerName] && typeof headers[headerName] === 'string') {
+          const authHeader = headers[headerName] || '';
+          const split = authHeader.split(' ');
+
+          if (split.length !== 2) {
+            throw new Error(`Invalid value provided for header "${headerName}"!`);
+          } else {
+            const [type, value] = split;
+
+            if (type !== tokenType) {
+              throw new Error(`Unsupported token type provided: ${type}!`);
+            } else {
+              return value;
+            }
+          }
         }
       }
 
@@ -50,16 +67,21 @@ export const useAuth0 = (options: Auth0PluginOptions): Plugin => {
 
   const verifyToken = async (token: string): Promise<any> => {
     const decodedToken = (decode(token, { complete: true, ...(options.jwtDecodeOptions || {}) }) as Record<string, { kid?: string }>) || {};
-    const secret = await jkwsClient.getSigningKeyAsync(decodedToken.header.kid);
-    const signingKey = secret.getPublicKey();
-    const decoded = verify(token, signingKey, {
-      algorithms: ['RS256'],
-      audience: options.audience,
-      issuer: `https://${options.domain}/`,
-      ...(options.jwtVerifyOptions || {}),
-    }) as { sub: string };
 
-    return decoded;
+    if (decodedToken && decodedToken.header && decodedToken.header.kid) {
+      const secret = await jkwsClient.getSigningKeyAsync(decodedToken.header.kid);
+      const signingKey = secret.getPublicKey();
+      const decoded = verify(token, signingKey, {
+        algorithms: ['RS256'],
+        audience: options.audience,
+        issuer: `https://${options.domain}/`,
+        ...(options.jwtVerifyOptions || {}),
+      }) as { sub: string };
+
+      return decoded;
+    } else {
+      throw new Error(`Failed to decode authentication token!`);
+    }
   };
 
   return {
