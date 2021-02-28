@@ -1,20 +1,17 @@
+/* eslint-disable no-console */
 import { Plugin } from '@guildql/types';
-import { print } from 'graphql';
+
+export type LoggerEventType = 'execute-start' | 'execute-end';
 
 type LoggerPluginOptions = {
-  logger?: {
-    log: typeof console.log;
-    warn: typeof console.warn;
-    info: typeof console.info;
-    error: typeof console.error;
-  };
+  logFn: typeof console.log;
   operation?: boolean;
   result?: boolean;
   ignoreIntrospection?: boolean;
 };
 
 const DEFAULT_OPTIONS: LoggerPluginOptions = {
-  logger: console,
+  logFn: console.log,
   operation: true,
   result: true,
   ignoreIntrospection: true,
@@ -34,11 +31,11 @@ export const useLogger = (rawOptions: LoggerPluginOptions = DEFAULT_OPTIONS): Pl
           .toString(36)
           .slice(2);
 
-      options.logger.log(`[START][${uuid}][${args.operationName}]: `, print(args.document));
+      options.logFn('execute-start', { uuid, args });
 
       return {
-        onExecuteDone: () => {
-          options.logger.log(`[END][${uuid}][${args.operationName}]`);
+        onExecuteDone: ({ result }) => {
+          options.logFn('execute-end', { uuid, args, result });
         },
       };
     },

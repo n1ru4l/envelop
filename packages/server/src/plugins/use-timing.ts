@@ -16,7 +16,7 @@ export type TimingPluginOptions = {
 };
 
 const DEFAULT_OPTIONS: TimingPluginOptions = {
-  onExecutionMeasurement: (args, timing) => console.log(`Execution "${args.operationName} done in ${timing.ms}ms`),
+  onExecutionMeasurement: (args, timing) => console.log(`Operation execution "${args.operationName}" done in ${timing.ms}ms`),
   onParsingMeasurement: (source: Source | string, timing: ResultTiming) => console.log(`Parsing "${source}" done in ${timing.ms}ms`),
   onValidationMeasurement: (document: DocumentNode, timing: ResultTiming) =>
     console.log(`Validation "${getOperationAST(document).name?.value}" done in ${timing.ms}ms`),
