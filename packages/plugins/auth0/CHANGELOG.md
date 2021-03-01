@@ -1,5 +1,11 @@
 # @guildql/auth0
 
+## 0.0.5
+
+### Patch Changes
+
+- f40595d: Allow validation to fail silently
+
 ## 0.0.4
 
 ### Patch Changes
