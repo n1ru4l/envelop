@@ -1,5 +1,11 @@
 # @guildql/types
 
+## 0.0.7
+
+### Patch Changes
+
+- c03e510: WIP
+
 ## 0.0.6
 
 ### Patch Changes

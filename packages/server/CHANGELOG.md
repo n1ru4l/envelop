@@ -1,5 +1,13 @@
 # @guildql/server
 
+## 0.0.11
+
+### Patch Changes
+
+- c03e510: WIP
+- Updated dependencies [c03e510]
+  - @guildql/types@0.0.7
+
 ## 0.0.10
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @guildql/parser-cache
 
+## 0.0.6
+
+### Patch Changes
+
+- c03e510: WIP
+
 ## 0.0.5
 
 ### Patch Changes
