@@ -17,9 +17,10 @@ export type SentryPluginOptions = {
 export const useSentry = (options: SentryPluginOptions): Plugin => {
   return {
     onExecute({ args, extendContext }) {
-      const operationType = (args.document.definitions.find(o => o.kind === Kind.OPERATION_DEFINITION) as OperationDefinitionNode).operation;
+      const rootOperation = args.document.definitions.find(o => o.kind === Kind.OPERATION_DEFINITION) as OperationDefinitionNode;
+      const operationType = rootOperation.operation;
       const document = print(args.document);
-      const opName = args.operationName || 'Anonymous Operation';
+      const opName = args.operationName || rootOperation.name?.value || 'Anonymous Operation';
       const addedTags: Record<string, any> = (options.appendTags && options.appendTags(args)) || {};
 
       const rootTransaction = Sentry.startTransaction({
@@ -31,6 +32,8 @@ export const useSentry = (options: SentryPluginOptions): Plugin => {
           ...(addedTags || {}),
         },
       });
+
+      rootTransaction.setData('document', document);
 
       extendContext({
         [tracingSpanSymbol]: rootTransaction,
