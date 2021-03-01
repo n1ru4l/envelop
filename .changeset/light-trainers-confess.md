@@ -1,0 +1,5 @@
+---
+'@guildql/sentry': patch
+---
+
+Fixes
