@@ -9,6 +9,8 @@ export type Auth0PluginOptions = {
   audience: string;
 
   preventUnauthenticatedAccess?: boolean;
+  failSilently?: boolean;
+
   extractTokenFn?: (context: unknown) => Promise<string> | string;
   jwksClientOptions?: ClientOptions;
   jwtVerifyOptions?: VerifyOptions;
@@ -86,17 +88,25 @@ export const useAuth0 = (options: Auth0PluginOptions): Plugin => {
 
   return {
     async onContextBuilding({ context, extendContext }) {
-      const token = await extractFn(context);
+      try {
+        const token = await extractFn(context);
 
-      if (token) {
-        const decodedPayload = await verifyToken(token);
+        if (token) {
+          const decodedPayload = await verifyToken(token);
 
-        extendContext({
-          [contextField]: decodedPayload,
-        });
-      } else {
-        if (options.preventUnauthenticatedAccess) {
-          throw new UnauthenticatedError(`Unauthenticated!`);
+          extendContext({
+            [contextField]: decodedPayload,
+          });
+        } else {
+          if (options.preventUnauthenticatedAccess) {
+            throw new UnauthenticatedError(`Unauthenticated!`);
+          }
+        }
+      } catch (e) {
+        if (!options.failSilently) {
+          throw e;
+        } else {
+          console.error(`Failed to validate auth0 token:`, e);
         }
       }
     },
