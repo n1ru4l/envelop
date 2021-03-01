@@ -36,7 +36,8 @@ export type OnExecuteHookResult = {
   onResolverCalled?: OnResolverCalledHooks;
 };
 
-export interface Plugin {
+export type DefaultContext = Record<string, unknown>;
+export interface Plugin<PluginContext = DefaultContext> {
   onSchemaChange?: (options: { schema: GraphQLSchema }) => void;
   onPluginInit?: (options: { setSchema: (newSchema: GraphQLSchema) => void }) => void;
   onRequest?: BeforeAfterHook<
@@ -49,8 +50,7 @@ export interface Plugin {
     executeFn: typeof execute;
     args: ExecutionArgs;
     setExecuteFn: (newExecute: typeof execute) => void;
-    setContext: (newCtx: Record<string, unknown>) => void;
-    extendContext: (contextExtension: Record<string, unknown>) => void;
+    extendContext: (contextExtension: Partial<PluginContext>) => void;
   }) => void | OnExecuteHookResult | Promise<OnExecuteHookResult>;
   onParse?: BeforeAfterHook<
     {
@@ -85,12 +85,11 @@ export interface Plugin {
   >;
   onContextBuilding?: BeforeAfterHook<
     {
-      context: Readonly<Record<string, unknown>>;
-      setContext: (newCtx: Record<string, unknown>) => void;
-      extendContext: (contextExtension: Record<string, unknown>) => void;
+      context: Readonly<PluginContext>;
+      extendContext: (contextExtension: Partial<PluginContext>) => void;
     },
     {
-      eventualContext: Record<string, unknown>;
+      context: PluginContext;
     },
     true
   >;

@@ -4,20 +4,25 @@ import { configureServer } from '@guildql/server';
 import { Plugin } from '@guildql/types';
 
 export function createSpiedPlugin() {
-  const afterSpies = {
+  const afterResolver = jest.fn();
+
+  const baseSpies = {
     afterParse: jest.fn(),
     afterValidate: jest.fn(),
     afterContextBuilding: jest.fn(),
     afterExecute: jest.fn(),
+    afterResolver,
+    beforeResolver: jest.fn(() => afterResolver),
   };
 
   const spies = {
-    ...afterSpies,
-    beforeParse: jest.fn(() => afterSpies.afterParse),
-    beforeValidate: jest.fn(() => afterSpies.afterValidate),
-    beforeContextBuilding: jest.fn(() => afterSpies.afterContextBuilding),
+    ...baseSpies,
+    beforeParse: jest.fn(() => baseSpies.afterParse),
+    beforeValidate: jest.fn(() => baseSpies.afterValidate),
+    beforeContextBuilding: jest.fn(() => baseSpies.afterContextBuilding),
     beforeExecute: jest.fn(() => ({
-      onExecuteDone: afterSpies.afterExecute,
+      onExecuteDone: baseSpies.afterExecute,
+      onResolverCalled: baseSpies.beforeResolver,
     })),
   };
 
@@ -41,7 +46,7 @@ export function createTestkit(
   plugins: Plugin[],
   schema?: GraphQLSchema
 ): {
-  execute: (operation: DocumentNode | string) => Promise<ExecutionResult<any>>;
+  execute: (operation: DocumentNode | string, initialContext?: any) => Promise<ExecutionResult<any>>;
   replaceSchema: (schema: GraphQLSchema) => void;
   wait: (ms: number) => Promise<void>;
 } {
@@ -61,7 +66,7 @@ export function createTestkit(
   return {
     wait: ms => new Promise(resolve => setTimeout(resolve, ms)),
     replaceSchema,
-    execute: async operation => {
+    execute: async (operation, initialContext = null) => {
       const request = {
         headers: {},
         method: 'POST',
@@ -81,7 +86,7 @@ export function createTestkit(
         execute: proxy.execute,
         parse: proxy.parse,
         validate: proxy.validate,
-        contextFactory: () => proxy.contextFactory({}),
+        contextFactory: initialContext ? () => proxy.contextFactory(initialContext) : proxy.contextFactory,
         schema: proxy.schema,
       });
 

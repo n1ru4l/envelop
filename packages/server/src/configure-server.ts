@@ -136,9 +136,6 @@ export function configureServer(serverOptions: { plugins: Plugin[]; initialSchem
         plugin.onContextBuilding &&
         (await plugin.onContextBuilding({
           context,
-          setContext: newContext => {
-            context = newContext;
-          },
           extendContext: extension => {
             if (typeof extension === 'object') {
               context = {
@@ -155,7 +152,7 @@ export function configureServer(serverOptions: { plugins: Plugin[]; initialSchem
     }
 
     for (const afterCb of afterCalls) {
-      afterCb({ eventualContext: context });
+      afterCb({ context });
     }
 
     return context;
@@ -198,9 +195,6 @@ export function configureServer(serverOptions: { plugins: Plugin[]; initialSchem
           executeFn,
           setExecuteFn: newExecuteFn => {
             executeFn = newExecuteFn;
-          },
-          setContext: newContext => {
-            context = newContext;
           },
           extendContext: extension => {
             if (typeof extension === 'object') {
