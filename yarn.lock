@@ -944,6 +944,74 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
+"@sentry/core@6.2.0":
+  version "6.2.0"
+  resolved "https://registry.npmjs.org/@sentry/core/-/core-6.2.0.tgz#be1c33854fc94e1a4d867f7c2c311cf1cefb8ee9"
+  integrity sha512-oTr2b25l+0bv/+d6IgMamPuGleWV7OgJb0NFfd+WZhw6UDRgr7CdEJy2gW6tK8SerwXgPHdn4ervxsT3WIBiXw==
+  dependencies:
+    "@sentry/hub" "6.2.0"
+    "@sentry/minimal" "6.2.0"
+    "@sentry/types" "6.2.0"
+    "@sentry/utils" "6.2.0"
+    tslib "^1.9.3"
+
+"@sentry/hub@6.2.0":
+  version "6.2.0"
+  resolved "https://registry.npmjs.org/@sentry/hub/-/hub-6.2.0.tgz#e7502652bc9608cf8fb63e43cd49df9019a28f29"
+  integrity sha512-BDTEFK8vlJydWXp/KMX0stvv73V7od224iLi+w3k7BcPwMKXBuURBXPU8d5XIC4G8nwg8X6cnDvwL+zBBlBbkg==
+  dependencies:
+    "@sentry/types" "6.2.0"
+    "@sentry/utils" "6.2.0"
+    tslib "^1.9.3"
+
+"@sentry/minimal@6.2.0":
+  version "6.2.0"
+  resolved "https://registry.npmjs.org/@sentry/minimal/-/minimal-6.2.0.tgz#718b70babb55912eeb38babaf7823d1bcdd77d1e"
+  integrity sha512-haxsx8/ZafhZUaGeeMtY7bJt9HbDlqeiaXrRMp1CxGtd0ZRQwHt60imEjl6IH1I73SEWxNfqScGsX2s3HzztMg==
+  dependencies:
+    "@sentry/hub" "6.2.0"
+    "@sentry/types" "6.2.0"
+    tslib "^1.9.3"
+
+"@sentry/node@6.2.0":
+  version "6.2.0"
+  resolved "https://registry.npmjs.org/@sentry/node/-/node-6.2.0.tgz#4c1860822a4a73d24242e5254124bd3bf9028d52"
+  integrity sha512-02lXk+56tPA3lWTvNLMGorp77wUVti8wOs+TlYARkJ+N+16dwqEBSBTy3hCDxlxriB+qHchSIS+ovPGi6WNiYA==
+  dependencies:
+    "@sentry/core" "6.2.0"
+    "@sentry/hub" "6.2.0"
+    "@sentry/tracing" "6.2.0"
+    "@sentry/types" "6.2.0"
+    "@sentry/utils" "6.2.0"
+    cookie "^0.4.1"
+    https-proxy-agent "^5.0.0"
+    lru_map "^0.3.3"
+    tslib "^1.9.3"
+
+"@sentry/tracing@6.2.0":
+  version "6.2.0"
+  resolved "https://registry.npmjs.org/@sentry/tracing/-/tracing-6.2.0.tgz#76c17e5dd3f1e61c8a4e3bd090f904a63d674765"
+  integrity sha512-pzgM1dePPJysVnzaFCMp+BKtjM5q46HZeyShiR+KcQYvneD3fmUPJigDkkcsB2DcrY3mFvDcswjoqxaTIW7ZBQ==
+  dependencies:
+    "@sentry/hub" "6.2.0"
+    "@sentry/minimal" "6.2.0"
+    "@sentry/types" "6.2.0"
+    "@sentry/utils" "6.2.0"
+    tslib "^1.9.3"
+
+"@sentry/types@6.2.0":
+  version "6.2.0"
+  resolved "https://registry.npmjs.org/@sentry/types/-/types-6.2.0.tgz#ca020ff42913c6b9f88a9d0c375b5ee3965a2590"
+  integrity sha512-vN4P/a+QqAuVfWFB9G3nQ7d6bgnM9jd/RLVi49owMuqvM24pv5mTQHUk2Hk4S3k7ConrHFl69E7xH6Dv5VpQnQ==
+
+"@sentry/utils@6.2.0":
+  version "6.2.0"
+  resolved "https://registry.npmjs.org/@sentry/utils/-/utils-6.2.0.tgz#39c81ad5ba92cec54d690e3fa8ea4e777d8e9c2b"
+  integrity sha512-YToUC7xYf2E/pIluI7upYTlj8fKXOtdwoOBkcQZifHgX/dP+qDaHibbBFe5PyZwdmU2UiLnWFsBr0gjo0QFo1g==
+  dependencies:
+    "@sentry/types" "6.2.0"
+    tslib "^1.9.3"
+
 "@sinonjs/commons@^1.7.0":
   version "1.8.2"
   resolved "https://registry.npmjs.org/@sinonjs/commons/-/commons-1.8.2.tgz#858f5c4b48d80778fde4b9d541f27edc0d56488b"
@@ -2020,6 +2088,11 @@ convert-source-map@^1.4.0, convert-source-map@^1.6.0, convert-source-map@^1.7.0:
   integrity sha512-4FJkXzKXEDB1snCFZlLP4gpC3JILicCpGbzG9f9G7tGqGCzETQ2hWPrcinA9oU4wtf2biUaEH5065UnMeR33oA==
   dependencies:
     safe-buffer "~5.1.1"
+
+cookie@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.npmjs.org/cookie/-/cookie-0.4.1.tgz#afd713fe26ebd21ba95ceb61f9a8116e50a537d1"
+  integrity sha512-ZwrFkGJxUR3EIoXtO+yVE69Eb7KlixbaeAWfBQB9vVsNn/o+Yw69gBWSSDK825hQNdN+wF8zELf3dFNl/kxkUA==
 
 copy-descriptor@^0.1.0:
   version "0.1.1"
@@ -4456,6 +4529,11 @@ lru-memoizer@^2.1.2:
     lodash.clonedeep "^4.5.0"
     lru-cache "~4.0.0"
 
+lru_map@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.npmjs.org/lru_map/-/lru_map-0.3.3.tgz#b5c8351b9464cbd750335a79650a0ec0e56118dd"
+  integrity sha1-tcg1G5Rky9dQM1p5ZQoOwOVhGN0=
+
 make-dir@^2.1.0:
   version "2.1.0"
   resolved "https://registry.npmjs.org/make-dir/-/make-dir-2.1.0.tgz#5f0310e18b8be898cc07009295a30ae41e91e6f5"
@@ -6153,7 +6231,7 @@ tslib@1.11.1:
   resolved "https://registry.npmjs.org/tslib/-/tslib-1.11.1.tgz#eb15d128827fbee2841549e171f45ed338ac7e35"
   integrity sha512-aZW88SY8kQbU7gpV19lN24LtXh/yD4ZZg6qieAJDDg+YBsJcSmLGK9QpnUjAKVG/xefmvJGd1WUmfpT/g6AJGA==
 
-tslib@^1.11.1, tslib@^1.8.1, tslib@^1.9.0:
+tslib@^1.11.1, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
   version "1.14.1"
   resolved "https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==

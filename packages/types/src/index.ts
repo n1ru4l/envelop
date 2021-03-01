@@ -10,6 +10,8 @@ import {
   GraphQLResolveInfo,
   ExecutionArgs,
   ExecutionResult,
+  ValidationRule,
+  TypeInfo,
 } from 'graphql';
 
 type AfterFnOrVoid<Result> = void | ((afterOptions: Result) => void);
@@ -65,7 +67,13 @@ export interface Plugin {
   >;
   onValidate?: BeforeAfterHook<
     {
-      params: Parameters<typeof validate>;
+      params: {
+        schema: GraphQLSchema;
+        documentAST: DocumentNode;
+        rules?: ReadonlyArray<ValidationRule>;
+        typeInfo?: TypeInfo;
+        options?: { maxErrors?: number };
+      };
       validateFn: typeof validate;
       setValidationFn: (newValidate: typeof validate) => void;
       setResult: (errors: readonly GraphQLError[]) => void;

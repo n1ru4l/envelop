@@ -1,7 +1,41 @@
 import { DocumentNode, ExecutionResult, GraphQLSchema, print } from 'graphql';
 import { getGraphQLParameters, processRequest } from 'graphql-helix';
 import { configureServer } from '@guildql/server';
-import { Plugin, GraphQLServerOptions } from '@guildql/types';
+import { Plugin } from '@guildql/types';
+
+export function createSpiedPlugin() {
+  const afterSpies = {
+    afterParse: jest.fn(),
+    afterValidate: jest.fn(),
+    afterContextBuilding: jest.fn(),
+    afterExecute: jest.fn(),
+  };
+
+  const spies = {
+    ...afterSpies,
+    beforeParse: jest.fn(() => afterSpies.afterParse),
+    beforeValidate: jest.fn(() => afterSpies.afterValidate),
+    beforeContextBuilding: jest.fn(() => afterSpies.afterContextBuilding),
+    beforeExecute: jest.fn(() => ({
+      onExecuteDone: afterSpies.afterExecute,
+    })),
+  };
+
+  return {
+    reset: () => {
+      for (const [, value] of Object.entries(spies)) {
+        value.mockReset();
+      }
+    },
+    spies,
+    plugin: <Plugin>{
+      onParse: spies.beforeParse,
+      onValidate: spies.beforeValidate,
+      onExecute: spies.beforeExecute,
+      onContextBuilding: spies.beforeContextBuilding,
+    },
+  };
+}
 
 export function createTestkit(
   plugins: Plugin[],

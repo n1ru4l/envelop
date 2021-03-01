@@ -28,13 +28,13 @@ describe('useValidationCache', () => {
   });
 
   it('Should call original validate when cache is empty', async () => {
-    const testInstance = await createTestkit([useTestPlugin, useValidationCache()], testSchema);
+    const testInstance = createTestkit([useTestPlugin, useValidationCache()], testSchema);
     await testInstance.execute(`query { foo }`);
     expect(testValidator).toHaveBeenCalledTimes(1);
   });
 
   it('Should call validate once once when operation is cached', async () => {
-    const testInstance = await createTestkit([useTestPlugin, useValidationCache()], testSchema);
+    const testInstance = createTestkit([useTestPlugin, useValidationCache()], testSchema);
     await testInstance.execute(`query { foo }`);
     await testInstance.execute(`query { foo }`);
     await testInstance.execute(`query { foo }`);
@@ -42,7 +42,7 @@ describe('useValidationCache', () => {
   });
 
   it('Should call validate once once when operation is cached and errored', async () => {
-    const testInstance = await createTestkit([useTestPlugin, useValidationCache()], testSchema);
+    const testInstance = createTestkit([useTestPlugin, useValidationCache()], testSchema);
     const r1 = await testInstance.execute(`query { foo2 }`);
     const r2 = await testInstance.execute(`query { foo2 }`);
     expect(testValidator).toHaveBeenCalledTimes(1);
@@ -50,14 +50,14 @@ describe('useValidationCache', () => {
   });
 
   it('Should call validate multiple times on different operations', async () => {
-    const testInstance = await createTestkit([useTestPlugin, useValidationCache()], testSchema);
+    const testInstance = createTestkit([useTestPlugin, useValidationCache()], testSchema);
     await testInstance.execute(`query t { foo }`);
     await testInstance.execute(`query t2 { foo }`);
     expect(testValidator).toHaveBeenCalledTimes(2);
   });
 
   it('should call validate multiple times when operation is invalidated', async () => {
-    const testInstance = await createTestkit(
+    const testInstance = createTestkit(
       [
         useTestPlugin,
         useValidationCache({
@@ -73,7 +73,7 @@ describe('useValidationCache', () => {
   });
 
   it('should call validate multiple times when schema changes', async () => {
-    const testInstance = await createTestkit([useTestPlugin, useValidationCache()], testSchema);
+    const testInstance = createTestkit([useTestPlugin, useValidationCache()], testSchema);
     await testInstance.execute(`query t { foo }`);
 
     testInstance.replaceSchema(

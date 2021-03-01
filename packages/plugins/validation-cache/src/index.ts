@@ -20,7 +20,7 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
       resultCache.clear();
     },
     onValidate({ params, setResult }) {
-      const key = print(params[1]);
+      const key = print(params.documentAST);
 
       if (resultCache.get(key)) {
         const errors = resultCache.get(key);

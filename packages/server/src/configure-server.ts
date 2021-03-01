@@ -3,7 +3,6 @@ import {
   DocumentNode,
   execute,
   ExecutionArgs,
-  ExecutionResult,
   GraphQLError,
   GraphQLFieldResolver,
   GraphQLSchema,
@@ -86,7 +85,7 @@ export function configureServer(serverOptions: { plugins: Plugin[]; initialSchem
     return result;
   };
 
-  const customValidate: typeof validate = (...args) => {
+  const customValidate: typeof validate = (schema, documentAST, rules, typeInfo, options) => {
     let validateFn = validate;
     let result: readonly GraphQLError[] = null;
 
@@ -95,7 +94,13 @@ export function configureServer(serverOptions: { plugins: Plugin[]; initialSchem
       const afterFn =
         plugin.onValidate &&
         plugin.onValidate({
-          params: args,
+          params: {
+            schema,
+            documentAST,
+            rules,
+            typeInfo,
+            options,
+          },
           validateFn,
           setValidationFn: newFn => {
             validateFn = newFn;
@@ -109,7 +114,7 @@ export function configureServer(serverOptions: { plugins: Plugin[]; initialSchem
     }
 
     if (result === null) {
-      result = validateFn(...args);
+      result = validateFn(schema, documentAST, rules, typeInfo, options);
     }
 
     const valid = result.length === 0;
