@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@opentelemetry/api": "0.18.0",
-    "@opentelemetry/tracing": "0.17.0"
+    "@opentelemetry/tracing": "0.18.0"
   },
   "devDependencies": {
     "bob-the-bundler": "1.1.0",
