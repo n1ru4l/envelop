@@ -3171,10 +3171,10 @@ graphql-helix@1.2.3:
   resolved "https://registry.npmjs.org/graphql-helix/-/graphql-helix-1.2.3.tgz#eaad4db338e2cdf6f5799478d1b05125ff19cd04"
   integrity sha512-psBs23Md/Nt0qsNOv5K+MqqsJ09lTyYtoujGAlFuE1+twUBQiKyanOYk3cqs9BtnJ7JsS+JlsS2/0ceE+20RCA==
 
-graphql-modules@1.3.0-alpha-fd84923.0:
-  version "1.3.0-alpha-fd84923.0"
-  resolved "https://registry.npmjs.org/graphql-modules/-/graphql-modules-1.3.0-alpha-fd84923.0.tgz#c3d5bcbcfb7c9bc963e7f24dcb1a2d8a6fce36e3"
-  integrity sha512-jJ/Wds50vIWUPJEPOOXPBjO6v5v4fgAWw8D+IYZFm5nT4JNUt80esDSD1oiRIukCa7/NV16YQkWggX7PxzXNTg==
+graphql-modules@1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/graphql-modules/-/graphql-modules-1.4.1.tgz#1c986373d80f97e91343c544d18bbfd39d4fc963"
+  integrity sha512-3emxD0VMqU3b5kj97joOhDLcrC4xSRMv2uFqhTjfKQfcqu/+NzQCtpKsp1bpJORwtASPTyPpggVfwSqhugkrmg==
   dependencies:
     "@graphql-tools/schema" "^7.0.0"
     "@graphql-tools/wrap" "^7.0.0"
