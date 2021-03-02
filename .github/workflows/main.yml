@@ -48,7 +48,11 @@ jobs:
       - name: Lint
         run: yarn lint
       - name: Test
-        run: yarn test --logHeapUsage
+        run: yarn test:ci --logHeapUsage
         env:
           CI: true
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 

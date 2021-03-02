@@ -12,6 +12,7 @@
     "prebuild": "rimraf packages/*/dist",
     "build": "tsc --project tsconfig.json && bob build",
     "test": "jest",
+    "test:ci": "jest --coverage",
     "prerelease": "yarn build",
     "release": "changeset publish",
     "release:canary": "(node scripts/canary-release.js && yarn build && yarn changeset publish --tag alpha) || echo Skipping Canary...",
