@@ -820,55 +820,41 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
-"@opentelemetry/api@0.18.0":
+"@opentelemetry/api@0.18.0", "@opentelemetry/api@^0.18.0":
   version "0.18.0"
   resolved "https://registry.yarnpkg.com/@opentelemetry/api/-/api-0.18.0.tgz#4641879f16de9784bb00023ab0de5ca219ced765"
   integrity sha512-KczG0mtyH2UQLeFDYC+atGXfS/MfttynmHblJUsOnIgfI0Ohn0nJOgNjKwJlHk6/9Q61CBTxzSs/268TDaopVw==
 
-"@opentelemetry/api@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.npmjs.org/@opentelemetry/api/-/api-0.17.0.tgz#c90e24acad7c67a26d2b8c86bed5b56785787a98"
-  integrity sha512-Rr5NklomjXd7BqfGRs8lD78MvDM+tPeUdHNXilyRIgsUu3gKEKpl3ZgJMiI7gx5r94OqvNc5MukkwKK6xjWYfA==
+"@opentelemetry/core@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/core/-/core-0.18.0.tgz#51f1cea441c163e53eee2a454134ee0bc6451177"
+  integrity sha512-Kg+LBIAPK70tEtpIAdZomkUmbABK+EwfnjFfvJ1rVZ8e0NApDx14Sq92RbGDIf67TK5mBgIvvY27W+ic354UZQ==
   dependencies:
-    "@opentelemetry/context-base" "^0.17.0"
-
-"@opentelemetry/context-base@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.npmjs.org/@opentelemetry/context-base/-/context-base-0.17.0.tgz#03b72c54b5be5f40d6d88806de01d88e8ab196c4"
-  integrity sha512-q4Jy9JqTQh7/SE33YgKqcG5X2/JP9TbTpTmGoCBUYDKePK9E2uO40Rn4MjACqgnxu5sC61seG0P6xilvkpr9CQ==
-
-"@opentelemetry/core@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.npmjs.org/@opentelemetry/core/-/core-0.17.0.tgz#3e57a3bfd45fe8634ede81a90266ff415f39e24e"
-  integrity sha512-jRM0Ydcb98a1ejrShqJIhnc2qqPJI2SJfHDRsFeWCj/q6LIlPo7yRl9msIndUQjRTHHvLdIKBGclNvqoXRyXTA==
-  dependencies:
-    "@opentelemetry/api" "^0.17.0"
-    "@opentelemetry/context-base" "^0.17.0"
+    "@opentelemetry/api" "^0.18.0"
     semver "^7.1.3"
 
-"@opentelemetry/resources@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.npmjs.org/@opentelemetry/resources/-/resources-0.17.0.tgz#1087d12178c69fb13125767b363a313dc4e31621"
-  integrity sha512-0f+RryxBh+m+8zrZ1x36CihK21KME/1pIFcPCH9095hDx9yHiAv1h3AGrR/knWpgA5j84Icr5ymlALarmpWSbg==
+"@opentelemetry/resources@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/resources/-/resources-0.18.0.tgz#fa6caad38efbac1ace424145f276e57ca12228fe"
+  integrity sha512-Mko4HpoI5cCYplhSyiCuMFi0QEG1Nw/YwHFyAK+A67r+sgmo1wVpM6Pengb+XlxJrrO8WgmLsDS3RHqoMWhWNQ==
   dependencies:
-    "@opentelemetry/api" "^0.17.0"
-    "@opentelemetry/core" "^0.17.0"
+    "@opentelemetry/api" "^0.18.0"
+    "@opentelemetry/core" "^0.18.0"
 
-"@opentelemetry/semantic-conventions@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.npmjs.org/@opentelemetry/semantic-conventions/-/semantic-conventions-0.17.0.tgz#f4c0d5121c89a9638266b5f34790a60cb90e0152"
-  integrity sha512-WtFcpOv1IHaI0kT2BaZcA6/+fkx6pWyJspUKBljA3HeNDIQgYGB2n6nL/6eaZzWNDvDBHzFEzOKULDJdIwGRlQ==
+"@opentelemetry/semantic-conventions@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/semantic-conventions/-/semantic-conventions-0.18.0.tgz#169d05965dfbe75636bde2ea888cf9be2a404e36"
+  integrity sha512-02Wi/zFq+RWfY4llRicMashGhyZvUtMfXu9UlfXMJiDbGOgkdua4AeOCv9lDqv1GIz11xr5qS4tFjLp7WnlU+Q==
 
-"@opentelemetry/tracing@0.17.0":
-  version "0.17.0"
-  resolved "https://registry.npmjs.org/@opentelemetry/tracing/-/tracing-0.17.0.tgz#124934e9ef62ee624e69a44b22681b1c03a080d6"
-  integrity sha512-fnhG6PsDyxpssNGvxx90UNHlsBtPJM0Ouegq7xqQidC33JsQRCFGL0XFMoRltXbuOjT+uKnOti/0o+AxwLnuJA==
+"@opentelemetry/tracing@0.18.0":
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/tracing/-/tracing-0.18.0.tgz#2cef96dfcdd02a3763cccfab75ffde094db48fac"
+  integrity sha512-k7UAebuHBLPafS8rnkpZqNuM8nfwOg6OCmppekCMxdQzkuZS1attgelqyEIlX6NYh46DndyZ7BxBkiXF4S0Xwg==
   dependencies:
-    "@opentelemetry/api" "^0.17.0"
-    "@opentelemetry/context-base" "^0.17.0"
-    "@opentelemetry/core" "^0.17.0"
-    "@opentelemetry/resources" "^0.17.0"
-    "@opentelemetry/semantic-conventions" "^0.17.0"
+    "@opentelemetry/api" "^0.18.0"
+    "@opentelemetry/core" "^0.18.0"
+    "@opentelemetry/resources" "^0.18.0"
+    "@opentelemetry/semantic-conventions" "^0.18.0"
     lodash.merge "^4.6.2"
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
