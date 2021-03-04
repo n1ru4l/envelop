@@ -11,14 +11,17 @@ import {
   isObjectType,
   parse,
   validate,
+  specifiedRules,
+  ValidationRule,
+  ExecutionResult,
 } from 'graphql';
-import { AfterCallback, GraphQLServerOptions, OnResolverCalledHooks, Plugin } from '@envelop/types';
+import { AfterCallback, Envelop, OnResolverCalledHooks, Plugin } from '@envelop/types';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
 const trackedSchemaSymbol = Symbol('TRACKED_SCHEMA');
 const resolversHooksSymbol = Symbol('RESOLVERS_HOOKS');
 
-export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: GraphQLSchema }): GraphQLServerOptions {
+export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: GraphQLSchema }): Envelop {
   let schema: GraphQLSchema | undefined | null = serverOptions.initialSchema;
   let initDone = false;
 
@@ -86,6 +89,7 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
   };
 
   const customValidate: typeof validate = (schema, documentAST, rules, typeInfo, options) => {
+    let actualRules: undefined | ValidationRule[] = rules ? [...rules] : undefined;
     let validateFn = validate;
     let result: readonly GraphQLError[] = null;
 
@@ -97,11 +101,18 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
           params: {
             schema,
             documentAST,
-            rules,
+            rules: actualRules,
             typeInfo,
             options,
           },
           validateFn,
+          addValidationRule: rule => {
+            if (!actualRules) {
+              actualRules = [...specifiedRules];
+            }
+
+            actualRules.push(rule);
+          },
           setValidationFn: newFn => {
             validateFn = newFn;
           },
@@ -114,7 +125,7 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
     }
 
     if (result === null) {
-      result = validateFn(schema, documentAST, rules, typeInfo, options);
+      result = validateFn(schema, documentAST, actualRules, typeInfo, options);
     }
 
     const valid = result.length === 0;
@@ -185,7 +196,7 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
     const onResolversHandlers: OnResolverCalledHooks[] = [];
     let executeFn: typeof execute = execute;
 
-    const afterCalls: ((options: { result: unknown }) => void)[] = [];
+    const afterCalls: ((options: { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void }) => void)[] = [];
     let context = args.contextValue;
 
     for (const plugin of serverOptions.plugins) {
@@ -224,13 +235,18 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
       context[resolversHooksSymbol] = onResolversHandlers;
     }
 
-    const result = await executeFn({
+    let result = await executeFn({
       ...args,
       contextValue: context,
     });
 
     for (const afterCb of afterCalls) {
-      afterCb({ result });
+      afterCb({
+        result,
+        setResult: newResult => {
+          result = newResult;
+        },
+      });
     }
 
     return result;
@@ -288,22 +304,10 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
 
   initDone = true;
 
-  return requestContext => {
-    const afterCalls: AfterCallback<'onRequest'>[] = [];
-
-    for (const plugin of serverOptions.plugins) {
-      const afterFn = plugin.onRequest && plugin.onRequest({ requestContext });
-      afterFn && afterCalls.push(afterFn);
-    }
-
+  return () => {
     prepareSchema();
 
     return {
-      dispose: () => {
-        for (const afterCb of afterCalls) {
-          afterCb({});
-        }
-      },
       parse: customParse,
       validate: customValidate,
       contextFactory: customContextFactory,

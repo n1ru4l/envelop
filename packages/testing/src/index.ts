@@ -75,7 +75,7 @@ export function createTestkit(
           query: typeof operation === 'string' ? operation : print(operation),
         },
       };
-      const proxy = initRequest({ request });
+      const proxy = initRequest();
       const { operationName, query, variables } = getGraphQLParameters(request);
 
       const r = await processRequest({

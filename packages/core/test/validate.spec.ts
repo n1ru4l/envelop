@@ -1,5 +1,5 @@
 import { createSpiedPlugin, createTestkit } from '@envelop/testing';
-import { GraphQLError, validate } from 'graphql';
+import { GraphQLError, validate, ValidationContext } from 'graphql';
 import { schema, query } from './common';
 
 describe('validate', () => {
@@ -16,6 +16,7 @@ describe('validate', () => {
         rules: undefined,
         typeInfo: undefined,
       },
+      addValidationRule: expect.any(Function),
       setResult: expect.any(Function),
       setValidationFn: expect.any(Function),
       validateFn: validate,
@@ -83,5 +84,26 @@ describe('validate', () => {
     await teskit.execute(query);
     expect(after).toHaveBeenCalledTimes(1);
     expect(after).toHaveBeenCalledWith({ valid: false, result: [e] });
+  });
+
+  it('Should allow to add validation rules', async () => {
+    const teskit = createTestkit(
+      [
+        {
+          onValidate: ({ addValidationRule }) => {
+            addValidationRule(() => {
+              throw new GraphQLError('Invalid!');
+            });
+          },
+        },
+      ],
+      schema
+    );
+
+    const r = await teskit.execute(query);
+    console.log(r);
+    expect(r.errors).toBeDefined();
+    expect(r.errors.length).toBe(1);
+    expect(r.errors[0].message).toBe('Invalid!');
   });
 });
