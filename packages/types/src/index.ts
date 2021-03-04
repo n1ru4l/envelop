@@ -74,6 +74,7 @@ export interface Plugin<PluginContext = DefaultContext> {
         typeInfo?: TypeInfo;
         options?: { maxErrors?: number };
       };
+      addValidationRule: (rule: ValidationRule) => void;
       validateFn: typeof validate;
       setValidationFn: (newValidate: typeof validate) => void;
       setResult: (errors: readonly GraphQLError[]) => void;
@@ -95,6 +96,7 @@ export interface Plugin<PluginContext = DefaultContext> {
   >;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type AfterCallback<T extends keyof Plugin> = Plugin[T] extends BeforeAfterHook<infer B, infer A, infer Async> ? (afterOptions: A) => void : never;
 
 export type GraphQLServerOptions<RequestContext = unknown> = (

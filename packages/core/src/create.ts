@@ -11,6 +11,8 @@ import {
   isObjectType,
   parse,
   validate,
+  specifiedRules,
+  ValidationRule,
 } from 'graphql';
 import { AfterCallback, GraphQLServerOptions, OnResolverCalledHooks, Plugin } from '@envelop/types';
 import { Maybe } from 'graphql/jsutils/Maybe';
@@ -86,6 +88,7 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
   };
 
   const customValidate: typeof validate = (schema, documentAST, rules, typeInfo, options) => {
+    let actualRules: undefined | ValidationRule[] = rules ? [...rules] : undefined;
     let validateFn = validate;
     let result: readonly GraphQLError[] = null;
 
@@ -97,11 +100,18 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
           params: {
             schema,
             documentAST,
-            rules,
+            rules: actualRules,
             typeInfo,
             options,
           },
           validateFn,
+          addValidationRule: rule => {
+            if (!actualRules) {
+              actualRules = [...specifiedRules];
+            }
+
+            actualRules.push(rule);
+          },
           setValidationFn: newFn => {
             validateFn = newFn;
           },
@@ -114,7 +124,7 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
     }
 
     if (result === null) {
-      result = validateFn(schema, documentAST, rules, typeInfo, options);
+      result = validateFn(schema, documentAST, actualRules, typeInfo, options);
     }
 
     const valid = result.length === 0;
