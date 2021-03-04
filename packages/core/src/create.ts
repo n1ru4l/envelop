@@ -169,6 +169,8 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
     return context;
   };
 
+  const beforeExecuteCalls = serverOptions.plugins.filter(p => p.onExecute);
+
   const customExecute = async (
     argsOrSchema: ExecutionArgs | GraphQLSchema,
     document?: DocumentNode,
@@ -199,39 +201,36 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
     const afterCalls: ((options: { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void }) => void)[] = [];
     let context = args.contextValue;
 
-    for (const plugin of serverOptions.plugins) {
-      const after =
-        plugin.onExecute &&
-        (await plugin.onExecute({
-          executeFn,
-          setExecuteFn: newExecuteFn => {
-            executeFn = newExecuteFn;
-          },
-          extendContext: extension => {
-            if (typeof extension === 'object') {
-              context = {
-                ...(context || {}),
-                ...extension,
-              };
-            } else {
-              throw new Error(`Invalid context extension provided! Expected "object", got: "${JSON.stringify(extension)}" (${typeof extension})`);
-            }
-          },
-          args,
-        }));
+    for (const plugin of beforeExecuteCalls) {
+      const after = plugin.onExecute({
+        executeFn,
+        setExecuteFn: newExecuteFn => {
+          executeFn = newExecuteFn;
+        },
+        extendContext: extension => {
+          if (typeof extension === 'object') {
+            context = {
+              ...(context || {}),
+              ...extension,
+            };
+          } else {
+            throw new Error(`Invalid context extension provided! Expected "object", got: "${JSON.stringify(extension)}" (${typeof extension})`);
+          }
+        },
+        args,
+      });
 
       if (after) {
         if (after.onExecuteDone) {
           afterCalls.push(after.onExecuteDone);
         }
-
         if (after.onResolverCalled) {
           onResolversHandlers.push(after.onResolverCalled);
         }
       }
     }
 
-    if (!context[resolversHooksSymbol] && onResolversHandlers.length > 0) {
+    if (onResolversHandlers.length) {
       context[resolversHooksSymbol] = onResolversHandlers;
     }
 

@@ -1,5 +1,5 @@
 {
-  "name": "@envelop/server",
+  "name": "@envelop/core",
   "version": "0.0.0",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
