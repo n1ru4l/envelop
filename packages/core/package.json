@@ -23,7 +23,7 @@
     "bob-the-bundler": "1.2.0",
     "graphql-helix": "1.2.3",
     "graphql": "15.5.0",
-    "typescript": "4.2.2"
+    "typescript": "4.2.3"
   },
   "peerDependencies": {
     "graphql-helix": "^1.2.0",
