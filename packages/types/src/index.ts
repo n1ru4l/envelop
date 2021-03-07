@@ -40,18 +40,12 @@ export type DefaultContext = Record<string, unknown>;
 export interface Plugin<PluginContext = DefaultContext> {
   onSchemaChange?: (options: { schema: GraphQLSchema }) => void;
   onPluginInit?: (options: { setSchema: (newSchema: GraphQLSchema) => void }) => void;
-  onRequest?: BeforeAfterHook<
-    {
-      requestContext: unknown;
-    },
-    {}
-  >;
   onExecute?: (options: {
     executeFn: typeof execute;
     args: ExecutionArgs;
     setExecuteFn: (newExecute: typeof execute) => void;
     extendContext: (contextExtension: Partial<PluginContext>) => void;
-  }) => void | Promise<void> | OnExecuteHookResult | Promise<OnExecuteHookResult>;
+  }) => void | OnExecuteHookResult;
   onParse?: BeforeAfterHook<
     {
       params: { source: string | Source; options?: ParseOptions };

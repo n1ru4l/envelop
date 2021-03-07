@@ -93,15 +93,26 @@ export const useSentry = (options: SentryPluginOptions): Plugin => {
                   scope.setExtra('variables', args.variableValues);
                 }
 
-                if (err.path) {
+                const errorPath = (err.path || []).join(' > ');
+
+                if (errorPath) {
                   scope.addBreadcrumb({
                     category: 'execution-path',
-                    message: err.path.join(' > '),
+                    message: errorPath,
                     level: Sentry.Severity.Debug,
                   });
                 }
 
-                Sentry.captureException(err);
+                Sentry.captureException(err, {
+                  fingerprint: ['graphql', errorPath, opName, operationType],
+                  contexts: {
+                    GraphQL: {
+                      operationName: opName,
+                      operationType: operationType,
+                      variables: args.variableValues,
+                    },
+                  },
+                });
               });
             }
           }
