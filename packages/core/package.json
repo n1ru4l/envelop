@@ -1,6 +1,6 @@
 {
   "name": "@envelop/core",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -15,7 +15,7 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "@envelop/types": "0.0.0"
+    "@envelop/types": "0.0.1"
   },
   "devDependencies": {
     "@graphql-tools/utils": "7.5.0",
