@@ -4,7 +4,8 @@
   "license": "MIT",
   "workspaces": [
     "./packages/*",
-    "./packages/plugins/*"
+    "./packages/plugins/*",
+    "./examples/*"
   ],
   "scripts": {
     "benchmark": "NODE_ENV=production ts-node --project tsconfig.benchmark.json benchmark/execute.case.ts",

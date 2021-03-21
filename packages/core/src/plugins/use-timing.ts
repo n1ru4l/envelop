@@ -19,7 +19,7 @@ const DEFAULT_OPTIONS: TimingPluginOptions = {
   onExecutionMeasurement: (args, timing) => console.log(`Operation execution "${args.operationName}" done in ${timing.ms}ms`),
   onParsingMeasurement: (source: Source | string, timing: ResultTiming) => console.log(`Parsing "${source}" done in ${timing.ms}ms`),
   onValidationMeasurement: (document: DocumentNode, timing: ResultTiming) =>
-    console.log(`Validation "${getOperationAST(document).name?.value}" done in ${timing.ms}ms`),
+    console.log(`Validation "${getOperationAST(document)?.name?.value || '-'}" done in ${timing.ms}ms`),
   onResolverMeasurement: (info: GraphQLResolveInfo, timing: ResultTiming) =>
     console.log(`\tResolver of "${info.parentType.toString()}.${info.fieldName}" done in ${timing.ms}ms`),
   onContextBuildingMeasurement: (timing: ResultTiming) => console.log(`Context building done in ${timing.ms}ms`),
@@ -62,7 +62,7 @@ export const useTiming = (rawOptions?: TimingPluginOptions): Plugin => {
       const validateStartTime = process.hrtime();
 
       return () => {
-        options.onValidationMeasurement(params[1], deltaFrom(validateStartTime));
+        options.onValidationMeasurement(params.documentAST, deltaFrom(validateStartTime));
       };
     },
     onExecute({ args }) {
