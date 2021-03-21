@@ -97,9 +97,26 @@ Here's a list of integrations and examples:
 
 ## Available Plugins
 
-We provide a few built-in plugins within the `@envelop/core`:
+We provide a few built-in plugins within the `@envelop/core`, and many more plugins as standalone packages.
 
-And much more as standalone packages:
+| Name                | Package                     | Description                                                                    | Documentation |
+| ------------------- | --------------------------- | ------------------------------------------------------------------------------ | ------------- |
+| useSchema           | `@envelop/core`             | Simplest plugin to provide your GraphQL schema.                                |               |
+| useErrorHandler     | `@envelop/core`             | Get notified when any execution error occurs.                                  |               |
+| useExtendContext    | `@envelop/core`             | Extend execution context based on your needs.                                  |               |
+| useLogger           | `@envelop/core`             | Simple, yet powerful logging for GraphQL execution.                            |               |
+| usePayloadFormatter | `@envelop/core`             | Format, clean and customize execution result.                                  |               |
+| useTiming           | `@envelop/core`             | Simple timing/tracing mechanism for your execution.                            |               |
+| useGraphQLJit       | `@envelop/graphql-jit`      | Custom executor based on GraphQL-JIT.                                          |               |
+| useParserCache      | `@envelop/parser-cache`     | Simple LRU for caching `parse` results.                                        |               |
+| useValidationCache  | `@envelop/validation-cache` | Simple LRU for caching `validate` results.                                     |               |
+| useDepthLimit       | `@envelop/depth-limit`      | Limits the depth of your GraphQL selection sets.                               |               |
+| useDataLoader       | `@envelop/dataloader`       | Simply injects a DataLoader instance into your context.                        |               |
+| useApolloTracing    | `@envelop/apollo-tracing`   | Integrates timing with Apollo-Tracing format (for GraphQL Playground)          |               |
+| useSentry           | `@envelop/sentry`           | Tracks performance, timing and errors and reports it to Sentry.                |               |
+| useOpenTelemetry    | `@envelop/opentelemetry`    | Tracks performance, timing and errors and reports in OpenTelemetry structure.  |               |
+| useAuth0            | `@envelop/auth0`            | Validates Auth0 JWT tokens and injects the authenticated user to your context. |               |
+| useGraphQLModules   | `@envelop/graphql-modules`  | Integrates the execution lifecycle of GraphQL-Modules.                         |               |
 
 ## Execution Lifecycle
 
