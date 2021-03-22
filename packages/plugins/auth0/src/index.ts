@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable dot-notation */
 import { Plugin } from '@envelop/types';
-import createClient, { ClientOptions } from 'jwks-rsa';
+import * as JwksRsa from 'jwks-rsa';
 import { decode, verify, VerifyOptions, DecodeOptions } from 'jsonwebtoken';
 
 export type Auth0PluginOptions = {
@@ -9,10 +9,10 @@ export type Auth0PluginOptions = {
   audience: string;
 
   preventUnauthenticatedAccess?: boolean;
-  failSilently?: boolean;
+  onError?: (error: Error) => void;
 
   extractTokenFn?: (context: unknown) => Promise<string> | string;
-  jwksClientOptions?: ClientOptions;
+  jwksClientOptions?: JwksRsa.Options;
   jwtVerifyOptions?: VerifyOptions;
   jwtDecodeOptions?: DecodeOptions;
   extendContextField?: string;
@@ -23,7 +23,7 @@ export type Auth0PluginOptions = {
 export class UnauthenticatedError extends Error {}
 
 export const useAuth0 = (options: Auth0PluginOptions): Plugin => {
-  const jkwsClient = createClient({
+  const jkwsClient = new JwksRsa.JwksClient({
     cache: true,
     rateLimit: true,
     jwksRequestsPerMinute: 5,
@@ -71,7 +71,7 @@ export const useAuth0 = (options: Auth0PluginOptions): Plugin => {
     const decodedToken = (decode(token, { complete: true, ...(options.jwtDecodeOptions || {}) }) as Record<string, { kid?: string }>) || {};
 
     if (decodedToken && decodedToken.header && decodedToken.header.kid) {
-      const secret = await jkwsClient.getSigningKeyAsync(decodedToken.header.kid);
+      const secret = await jkwsClient.getSigningKey(decodedToken.header.kid);
       const signingKey = secret.getPublicKey();
       const decoded = verify(token, signingKey, {
         algorithms: ['RS256'],
@@ -103,10 +103,10 @@ export const useAuth0 = (options: Auth0PluginOptions): Plugin => {
           }
         }
       } catch (e) {
-        if (!options.failSilently) {
-          throw e;
+        if (options.onError) {
+          options.onError(e);
         } else {
-          console.error(`Failed to validate auth0 token:`, e);
+          throw e;
         }
       }
     },

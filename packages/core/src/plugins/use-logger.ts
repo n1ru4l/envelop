@@ -25,5 +25,14 @@ export const useLogger = (rawOptions: LoggerPluginOptions = DEFAULT_OPTIONS): Pl
         },
       };
     },
+    onSubscribe({ args }) {
+      options.logFn('subscribe-start', { args });
+
+      return {
+        onSubscribeResult: ({ result }) => {
+          options.logFn('subscribe-end', { args, result });
+        },
+      };
+    },
   };
 };

@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { Plugin } from '@envelop/types';
-import { DocumentNode, ExecutionArgs, getOperationAST, GraphQLResolveInfo, Source } from 'graphql';
+import { DocumentNode, ExecutionArgs, getOperationAST, GraphQLResolveInfo, Source, SubscriptionArgs } from 'graphql';
 
 const HR_TO_NS = 1e9;
 const NS_TO_MS = 1e6;
@@ -10,6 +10,7 @@ export type ResultTiming = { ms: number; ns: number };
 export type TimingPluginOptions = {
   onContextBuildingMeasurement?: (timing: ResultTiming) => void;
   onExecutionMeasurement?: (args: ExecutionArgs, timing: ResultTiming) => void;
+  onSubscriptionMeasurement?: (args: SubscriptionArgs, timing: ResultTiming) => void;
   onParsingMeasurement?: (source: Source | string, timing: ResultTiming) => void;
   onValidationMeasurement?: (document: DocumentNode, timing: ResultTiming) => void;
   onResolverMeasurement?: (info: GraphQLResolveInfo, timing: ResultTiming) => void;
@@ -17,6 +18,7 @@ export type TimingPluginOptions = {
 
 const DEFAULT_OPTIONS: TimingPluginOptions = {
   onExecutionMeasurement: (args, timing) => console.log(`Operation execution "${args.operationName}" done in ${timing.ms}ms`),
+  onSubscriptionMeasurement: (args, timing) => console.log(`Operation subsctiption "${args.operationName}" done in ${timing.ms}ms`),
   onParsingMeasurement: (source: Source | string, timing: ResultTiming) => console.log(`Parsing "${source}" done in ${timing.ms}ms`),
   onValidationMeasurement: (document: DocumentNode, timing: ResultTiming) =>
     console.log(`Validation "${getOperationAST(document)?.name?.value || '-'}" done in ${timing.ms}ms`),
@@ -71,6 +73,22 @@ export const useTiming = (rawOptions?: TimingPluginOptions): Plugin => {
       return {
         onExecuteDone: () => {
           options.onExecutionMeasurement(args, deltaFrom(executeStartTime));
+        },
+        onResolverCalled: ({ info }) => {
+          const resolverStartTime = process.hrtime();
+
+          return () => {
+            options.onResolverMeasurement(info, deltaFrom(resolverStartTime));
+          };
+        },
+      };
+    },
+    onSubscribe({ args }) {
+      const subscribeStartTime = process.hrtime();
+
+      return {
+        onSubscribeResult: () => {
+          options.onSubscriptionMeasurement(args, deltaFrom(subscribeStartTime));
         },
         onResolverCalled: ({ info }) => {
           const resolverStartTime = process.hrtime();
