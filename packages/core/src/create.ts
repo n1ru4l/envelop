@@ -311,7 +311,9 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
       validate: customValidate,
       contextFactory: customContextFactory,
       execute: customExecute,
-      schema,
+      get schema() {
+        return schema;
+      },
     };
   };
 }
