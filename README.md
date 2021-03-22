@@ -199,14 +199,16 @@ Here's a small exmple for sharing envelops:
 
 ```ts
 // Somewhere where you wish to create the basics of what you wish to share
+// This defined the base plugins you wish to use as base.
 const myBaseEnvelop = envelop({
   plugins: [useOrgAuth(), useOrgTracing(), useOrgLogsCollector()],
 });
 
-// Later, when you create your own Envelop, you can extend that and add custom plugins:
+// Later, when you create your own Envelop, you can extend that and add custom plugins.
+// You can also specify the schema only at this point
 const myEnvelop = envelop({
   extends: [myBaseEnvelop],
-  plugins: [useMyCustomPlugin()],
+  plugins: [useSchema(myServerSchema), useMyCustomPlugin()],
 });
 ```
 
