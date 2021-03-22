@@ -109,11 +109,14 @@ export interface Plugin<PluginContext = DefaultContext> {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type AfterCallback<T extends keyof Plugin> = Plugin[T] extends BeforeAfterHook<infer B, infer A, infer Async> ? (afterOptions: A) => void : never;
 
-export type Envelop<RequestContext = unknown> = () => {
-  execute: typeof execute;
-  validate: typeof validate;
-  subscribe: typeof subscribe;
-  parse: typeof parse;
-  contextFactory: (requestContext: RequestContext) => unknown | Promise<unknown>;
-  schema: GraphQLSchema;
+export type Envelop<RequestContext = unknown> = {
+  (): {
+    execute: typeof execute;
+    validate: typeof validate;
+    subscribe: typeof subscribe;
+    parse: typeof parse;
+    contextFactory: (requestContext: RequestContext) => unknown | Promise<unknown>;
+    schema: GraphQLSchema;
+  };
+  _plugins: Plugin[];
 };

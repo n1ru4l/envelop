@@ -23,37 +23,39 @@ import { Maybe } from 'graphql/jsutils/Maybe';
 const trackedSchemaSymbol = Symbol('TRACKED_SCHEMA');
 const resolversHooksSymbol = Symbol('RESOLVERS_HOOKS');
 
-export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: GraphQLSchema }): Envelop {
-  let schema: GraphQLSchema | undefined | null = serverOptions.initialSchema;
+export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initialSchema?: GraphQLSchema }): Envelop {
+  let schema: GraphQLSchema | undefined | null = options.initialSchema;
   let initDone = false;
+  const childPlugins = (options.extends || []).reduce((prev, child) => [...prev, ...child._plugins], []);
+  const plugins = [...childPlugins, ...options.plugins];
 
   const replaceSchema = (newSchema: GraphQLSchema) => {
     schema = newSchema;
 
     if (initDone) {
-      for (const plugin of serverOptions.plugins) {
+      for (const plugin of plugins) {
         plugin.onSchemaChange && plugin.onSchemaChange({ schema });
       }
     }
   };
 
-  for (const plugin of serverOptions.plugins) {
+  for (const plugin of plugins) {
     plugin.onPluginInit &&
       plugin.onPluginInit({
         setSchema: replaceSchema,
       });
   }
 
-  const customParse: typeof parse = (source, options) => {
+  const customParse: typeof parse = (source, parseOptions) => {
     let result: DocumentNode | Error = null;
     let parseFn: typeof parse = parse;
 
     const afterCalls: AfterCallback<'onParse'>[] = [];
-    for (const plugin of serverOptions.plugins) {
+    for (const plugin of plugins) {
       const afterFn =
         plugin.onParse &&
         plugin.onParse({
-          params: { source, options },
+          params: { source, options: parseOptions },
           parseFn,
           setParseFn: newFn => {
             parseFn = newFn;
@@ -68,7 +70,7 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
 
     if (result === null) {
       try {
-        result = parseFn(source, options);
+        result = parseFn(source, parseOptions);
       } catch (e) {
         result = e;
       }
@@ -90,13 +92,13 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
     return result;
   };
 
-  const customValidate: typeof validate = (schema, documentAST, rules, typeInfo, options) => {
+  const customValidate: typeof validate = (schema, documentAST, rules, typeInfo, validationOptions) => {
     let actualRules: undefined | ValidationRule[] = rules ? [...rules] : undefined;
     let validateFn = validate;
     let result: readonly GraphQLError[] = null;
 
     const afterCalls: AfterCallback<'onValidate'>[] = [];
-    for (const plugin of serverOptions.plugins) {
+    for (const plugin of plugins) {
       const afterFn =
         plugin.onValidate &&
         plugin.onValidate({
@@ -105,7 +107,7 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
             documentAST,
             rules: actualRules,
             typeInfo,
-            options,
+            options: validationOptions,
           },
           validateFn,
           addValidationRule: rule => {
@@ -127,7 +129,7 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
     }
 
     if (result === null) {
-      result = validateFn(schema, documentAST, actualRules, typeInfo, options);
+      result = validateFn(schema, documentAST, actualRules, typeInfo, validationOptions);
     }
 
     const valid = result.length === 0;
@@ -144,7 +146,7 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
 
     const afterCalls: AfterCallback<'onContextBuilding'>[] = [];
 
-    for (const plugin of serverOptions.plugins) {
+    for (const plugin of plugins) {
       const afterFn =
         plugin.onContextBuilding &&
         (await plugin.onContextBuilding({
@@ -171,8 +173,8 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
     return context;
   };
 
-  const beforeExecuteCalls = serverOptions.plugins.filter(p => p.onExecute);
-  const beforeSubscribeCalls = serverOptions.plugins.filter(p => p.onSubscribe);
+  const beforeExecuteCalls = plugins.filter(p => p.onExecute);
+  const beforeSubscribeCalls = plugins.filter(p => p.onSubscribe);
 
   const customSubscribe = async (
     argsOrSchema: SubscriptionArgs | GraphQLSchema,
@@ -389,7 +391,7 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
 
   initDone = true;
 
-  return () => {
+  const envelop = () => {
     prepareSchema();
 
     return {
@@ -403,4 +405,8 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
       },
     };
   };
+
+  envelop._plugins = plugins;
+
+  return envelop;
 }

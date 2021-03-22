@@ -1,7 +1,7 @@
 import { DocumentNode, ExecutionResult, GraphQLSchema, print } from 'graphql';
 import { getGraphQLParameters, processRequest } from 'graphql-helix';
 import { envelop } from '@envelop/core';
-import { Plugin } from '@envelop/types';
+import { Envelop, Plugin } from '@envelop/types';
 
 export function createSpiedPlugin() {
   const afterResolver = jest.fn();
@@ -43,7 +43,7 @@ export function createSpiedPlugin() {
 }
 
 export function createTestkit(
-  plugins: Plugin[],
+  pluginsOrEnvelop: Envelop | Plugin[],
   schema?: GraphQLSchema
 ): {
   execute: (operation: DocumentNode | string, initialContext?: any) => Promise<ExecutionResult<any>>;
@@ -58,10 +58,12 @@ export function createTestkit(
     },
   };
 
-  const initRequest = envelop({
-    plugins: [replaceSchemaPlugin, ...plugins],
-    initialSchema: schema,
-  });
+  const initRequest = Array.isArray(pluginsOrEnvelop)
+    ? envelop({
+        plugins: [replaceSchemaPlugin, ...pluginsOrEnvelop],
+        initialSchema: schema,
+      })
+    : pluginsOrEnvelop;
 
   return {
     wait: ms => new Promise(resolve => setTimeout(resolve, ms)),

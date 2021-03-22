@@ -193,6 +193,23 @@ const getEnveloped = envelop({
 
 ## Sharing `envelop`s
 
+After an `envelop` has been created, you can share it with others as a complete layer of plugins. This is useful if you wish to create a predefined layer of plugins, and share it with others. You can use the as a shell and as a base for writing sharable pieces of servers.
+
+Here's a small exmple for sharing envelops:
+
+```ts
+// Somewhere where you wish to create the basics of what you wish to share
+const myBaseEnvelop = envelop({
+  plugins: [useOrgAuth(), useOrgTracing(), useOrgLogsCollector()],
+});
+
+// Later, when you create your own Envelop, you can extend that and add custom plugins:
+const myEnvelop = envelop({
+  extends: [myBaseEnvelop],
+  plugins: [useMyCustomPlugin()],
+});
+```
+
 ## License
 
 MIT
