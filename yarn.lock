@@ -3794,10 +3794,10 @@ graphql-jit@^0.5.0:
     lodash.merge "4.6.2"
     lodash.mergewith "4.6.2"
 
-graphql-modules@1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/graphql-modules/-/graphql-modules-1.4.1.tgz#1c986373d80f97e91343c544d18bbfd39d4fc963"
-  integrity sha512-3emxD0VMqU3b5kj97joOhDLcrC4xSRMv2uFqhTjfKQfcqu/+NzQCtpKsp1bpJORwtASPTyPpggVfwSqhugkrmg==
+graphql-modules@1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/graphql-modules/-/graphql-modules-1.4.2.tgz#18b1102a1e9b305bd330098330d3408663ef66d2"
+  integrity sha512-sw0jPou+DGv2BscbkTcd2VjfXNq45ALIFVEfgjKVhpMPraUDgddqG3RxQdGC16SbNJgpGovLKQd96zft6pVuaA==
   dependencies:
     "@graphql-tools/schema" "^7.0.0"
     "@graphql-tools/wrap" "^7.0.0"
