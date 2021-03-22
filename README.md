@@ -212,6 +212,8 @@ const myEnvelop = envelop({
 });
 ```
 
+This approach allow developers to create a base Envelop and share it across the organization: you can define your monitoring setup, logging, authentication, etc, only once in a common package, and share it with others without losing the ability to extend it.
+
 ## License
 
 MIT
