@@ -121,7 +121,77 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 
 ## Execution Lifecycle
 
+By extending the GraphQL execution pipeline, we allow developers to write reusable plugins, that can be shared with others easily, as NPM packages. So instead of delivering a bloated GraphQL server with tons of features, we allow you to choose the HTTP server you prefer, the request pipeline you prefer, and the feautures you prefer.
+
+We wrap the execution pipeline of GraphQL operation, and allow Envelop plugins to do the following:
+
+- `parse`
+  - Hook into the before/after of this phase
+  - Overide the parse function
+  - Access to the parsed result
+  - Modify the parsed result
+- `validate`
+  - Hook into the before/after of this phase
+  - Overide the validation function
+  - Access to the validation error results
+  - Modify the validation results
+  - Add custom validation rules
+- `contextFactory`
+  - Hook into the before/after of this phase
+  - Access to the initial HTTP request context
+  - Extend the context with custom data
+  - Replace the context object
+- `execute`
+  - Hook into the before/after of this phase
+  - Extend the execution context
+  - Access to all execution parameters
+  - Replace the execute function
+  - Access to the results / error of the execution
+  - Access to before / after resolvers calls
+  - Extend resolvers behaviour
+  - Access resolvers parameters
+  - Replace / modify the execution result
+- `subscribe`
+  - Hook into the before/after of this phase
+  - Extend the execution context
+  - Access to all execution parameters
+  - Replace the execute function
+  - Access to the results / error of the execution
+  - Access to before / after resolvers calls
+  - Extend resolvers behaviour
+  - Access resolvers parameters
+  - Replace / modify the subscription result
+
+We also allow you to change the GraphQL schema during execution - so if your server has a schema that could change dynamically, you can always update it. As a result, we trigger `schemaChange` event that allow plugins respond accordingly.
+
 ## Write your own plugin!
+
+Envelop plugins are just object with functions, that provides contextual implementation for before/after of each phase, with a flexible API.
+
+Here's a simple example that allow you print the execution params:
+
+```ts
+const myPlugin = {
+  onExecute({ args }) {
+    console.log('Execution started!', { args });
+
+    return {
+      onExecuteDone: ({ result }) => {
+        console.log('Execution done!', { result });
+      },
+    };
+  },
+};
+
+const getEnveloped = envelop({
+  plugins: [
+    /// ... other plugins ...,
+    myPlugin,
+  ],
+});
+```
+
+## Sharing `envelop`s
 
 ## License
 
