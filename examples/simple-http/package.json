@@ -1,5 +1,6 @@
 {
   "name": "@envelop-examples/simple-http",
+  "private": true,
   "version": "1.0.0",
   "main": "index.js",
   "author": "Dotan Simha",
