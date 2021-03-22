@@ -12,6 +12,8 @@ import {
   ExecutionResult,
   ValidationRule,
   TypeInfo,
+  subscribe,
+  SubscriptionArgs,
 } from 'graphql';
 
 type AfterFnOrVoid<Result> = void | ((afterOptions: Result) => void);
@@ -36,6 +38,14 @@ export type OnExecuteHookResult = {
   onResolverCalled?: OnResolverCalledHooks;
 };
 
+export type OnSubscribeHookResult = {
+  onSubscribeResult?: (options: {
+    result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
+    setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
+  }) => void;
+  onResolverCalled?: OnResolverCalledHooks;
+};
+
 export type DefaultContext = Record<string, unknown>;
 export interface Plugin<PluginContext = DefaultContext> {
   onSchemaChange?: (options: { schema: GraphQLSchema }) => void;
@@ -46,6 +56,12 @@ export interface Plugin<PluginContext = DefaultContext> {
     setExecuteFn: (newExecute: typeof execute) => void;
     extendContext: (contextExtension: Partial<PluginContext>) => void;
   }) => void | OnExecuteHookResult;
+  onSubscribe?: (options: {
+    subscribeFn: typeof subscribe;
+    args: SubscriptionArgs;
+    setSubscribeFn: (newSubscribe: typeof subscribe) => void;
+    extendContext: (contextExtension: Partial<PluginContext>) => void;
+  }) => void | OnSubscribeHookResult;
   onParse?: BeforeAfterHook<
     {
       params: { source: string | Source; options?: ParseOptions };
@@ -95,10 +111,9 @@ export type AfterCallback<T extends keyof Plugin> = Plugin[T] extends BeforeAfte
 
 export type Envelop<RequestContext = unknown> = () => {
   execute: typeof execute;
-  // subscribe: typeof subscribe;
   validate: typeof validate;
+  subscribe: typeof subscribe;
   parse: typeof parse;
   contextFactory: (requestContext: RequestContext) => unknown | Promise<unknown>;
-  // rootValueFactory: (executionParams: ExecutionParams) => RootValue | Promise<RootValue>;
   schema: GraphQLSchema;
 };

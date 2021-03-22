@@ -2,6 +2,7 @@ import {
   defaultFieldResolver,
   DocumentNode,
   execute,
+  subscribe,
   ExecutionArgs,
   GraphQLError,
   GraphQLFieldResolver,
@@ -14,6 +15,7 @@ import {
   specifiedRules,
   ValidationRule,
   ExecutionResult,
+  SubscriptionArgs,
 } from 'graphql';
 import { AfterCallback, Envelop, OnResolverCalledHooks, Plugin } from '@envelop/types';
 import { Maybe } from 'graphql/jsutils/Maybe';
@@ -170,6 +172,90 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
   };
 
   const beforeExecuteCalls = serverOptions.plugins.filter(p => p.onExecute);
+  const beforeSubscribeCalls = serverOptions.plugins.filter(p => p.onSubscribe);
+
+  const customSubscribe = async (
+    argsOrSchema: SubscriptionArgs | GraphQLSchema,
+    document?: DocumentNode,
+    rootValue?: any,
+    contextValue?: any,
+    variableValues?: Maybe<{ [key: string]: any }>,
+    operationName?: Maybe<string>,
+    fieldResolver?: Maybe<GraphQLFieldResolver<any, any>>,
+    subscribeFieldResolver?: Maybe<GraphQLFieldResolver<any, any>>
+  ) => {
+    const args: SubscriptionArgs =
+      argsOrSchema instanceof GraphQLSchema
+        ? {
+            schema: argsOrSchema,
+            document,
+            rootValue,
+            contextValue,
+            variableValues,
+            operationName,
+            fieldResolver,
+            subscribeFieldResolver,
+          }
+        : argsOrSchema;
+
+    const onResolversHandlers: OnResolverCalledHooks[] = [];
+    let subscribeFn: typeof subscribe = subscribe;
+
+    const afterCalls: ((options: {
+      result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
+      setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
+    }) => void)[] = [];
+    let context = args.contextValue;
+
+    for (const plugin of beforeSubscribeCalls) {
+      const after = plugin.onSubscribe({
+        subscribeFn,
+        setSubscribeFn: newSubscribeFn => {
+          subscribeFn = newSubscribeFn;
+        },
+        extendContext: extension => {
+          if (typeof extension === 'object') {
+            context = {
+              ...(context || {}),
+              ...extension,
+            };
+          } else {
+            throw new Error(`Invalid context extension provided! Expected "object", got: "${JSON.stringify(extension)}" (${typeof extension})`);
+          }
+        },
+        args,
+      });
+
+      if (after) {
+        if (after.onSubscribeResult) {
+          afterCalls.push(after.onSubscribeResult);
+        }
+        if (after.onResolverCalled) {
+          onResolversHandlers.push(after.onResolverCalled);
+        }
+      }
+    }
+
+    if (onResolversHandlers.length) {
+      context[resolversHooksSymbol] = onResolversHandlers;
+    }
+
+    let result = await subscribeFn({
+      ...args,
+      contextValue: context,
+    });
+
+    for (const afterCb of afterCalls) {
+      afterCb({
+        result,
+        setResult: newResult => {
+          result = newResult;
+        },
+      });
+    }
+
+    return result;
+  };
 
   const customExecute = async (
     argsOrSchema: ExecutionArgs | GraphQLSchema,
@@ -311,6 +397,7 @@ export function envelop(serverOptions: { plugins: Plugin[]; initialSchema?: Grap
       validate: customValidate,
       contextFactory: customContextFactory,
       execute: customExecute,
+      subscribe: customSubscribe,
       get schema() {
         return schema;
       },
