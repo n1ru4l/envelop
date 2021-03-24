@@ -1,4 +1,4 @@
-import { Plugin } from '@envelop/types';
+import { Plugin, OnExecuteHookResult } from '@envelop/types';
 import { SpanAttributes, SpanKind } from '@opentelemetry/api';
 import * as opentelemetry from '@opentelemetry/api';
 import { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/tracing';
@@ -20,7 +20,6 @@ export enum AttributeName {
 const tracingSpanSymbol = Symbol('OPEN_TELEMETRY_GRAPHQL');
 
 export type TracingOptions = {
-  execution: boolean;
   resolvers: boolean;
   variables: boolean;
   result: boolean;
@@ -53,12 +52,29 @@ export const useOpenTelemetry = (
         },
       });
 
-      extendContext({
-        [tracingSpanSymbol]: executionSpan,
-      });
+      const resultCbs: OnExecuteHookResult = {
+        onExecuteDone({ result }) {
+          if (result.data && options.result) {
+            executionSpan.setAttribute(AttributeName.EXECUTION_RESULT, JSON.stringify(result));
+          }
 
-      return {
-        onResolverCalled({ info, context }) {
+          if (result.errors && result.errors.length > 0) {
+            executionSpan.recordException({
+              name: AttributeName.EXECUTION_ERROR,
+              message: JSON.stringify(result.errors),
+            });
+          }
+
+          executionSpan.end();
+        },
+      };
+
+      if (options.resolvers) {
+        extendContext({
+          [tracingSpanSymbol]: executionSpan,
+        });
+
+        resultCbs.onResolverCalled = ({ info, context }) => {
           if (context && context[tracingSpanSymbol]) {
             tracer.getActiveSpanProcessor();
             const ctx = opentelemetry.setSpan(opentelemetry.context.active(), context[tracingSpanSymbol]);
@@ -90,22 +106,10 @@ export const useOpenTelemetry = (
           }
 
           return () => {};
-        },
-        onExecuteDone({ result }) {
-          if (result.data) {
-            executionSpan.setAttribute(AttributeName.EXECUTION_RESULT, JSON.stringify(result));
-          }
+        };
+      }
 
-          if (result.errors && result.errors.length > 0) {
-            executionSpan.recordException({
-              name: AttributeName.EXECUTION_ERROR,
-              message: JSON.stringify(result.errors),
-            });
-          }
-
-          executionSpan.end();
-        },
-      };
+      return {};
     },
   };
 };
