@@ -2,6 +2,8 @@
 
 Envelop is a lightweight JavaScript library for wrapping GraphQL execution layer and flow, allowing developers to develop, share and collaborate on GraphQL-related plugins, while filling the missing pieces in GraphQL implementations.
 
+> Envelop is created and maintained by [The Guild](https://the-guild.dev/), and used in production by our clients.
+
 ### In depth
 
 Our goal is to allow developers keep the original GraphQL interfaces, while adding plugins to enrich the feature set of you application quickly, while sharing ideas, code and plugins with other developers.
@@ -80,9 +82,11 @@ const getEnveloped = envelop({
 
 > Envelop `plugins` are based on a simple event-based contact, that allow you easily to add more logic to your app. You can easily share and collaborate on plugins that you find generic.
 
-## Integrations
+## Integrations / Examples
 
 Envelop provides a low-level API at consumpion of the output, but a rich API while using it with plugins. Based on that, it's possible to integrate Envelop with many tools.
+
+We recommend on using [`graphql-helix`](https://github.com/contrawork/graphql-helix) as request pipeline manager, as it allow the maximal flexibility and your can easily override every part of the pipeline with Envelop.
 
 Here's a list of integrations and examples:
 
@@ -100,12 +104,12 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 
 | Name                | Package                                                            | Description                                                                    |
 | ------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| useSchema           | `@envelop/core`                                                    | Simplest plugin to provide your GraphQL schema.                                |
-| useErrorHandler     | `@envelop/core`                                                    | Get notified when any execution error occurs.                                  |
-| useExtendContext    | `@envelop/core`                                                    | Extend execution context based on your needs.                                  |
-| useLogger           | `@envelop/core`                                                    | Simple, yet powerful logging for GraphQL execution.                            |
-| usePayloadFormatter | `@envelop/core`                                                    | Format, clean and customize execution result.                                  |
-| useTiming           | `@envelop/core`                                                    | Simple timing/tracing mechanism for your execution.                            |
+| useSchema           | [`@envelop/core`](./packages/core#useschema)                       | Simplest plugin to provide your GraphQL schema.                                |
+| useErrorHandler     | [`@envelop/core`](./packages/core#useerrorhandler)                 | Get notified when any execution error occurs.                                  |
+| useExtendContext    | [`@envelop/core`](./packages/core#useextendcontext)                | Extend execution context based on your needs.                                  |
+| useLogger           | [`@envelop/core`](./packages/core#uselogger)                       | Simple, yet powerful logging for GraphQL execution.                            |
+| usePayloadFormatter | [`@envelop/core`](./packages/core#usepayloadformatter)             | Format, clean and customize execution result.                                  |
+| useTiming           | [`@envelop/core`](./packages/core#usetiming)                       | Simple timing/tracing mechanism for your execution.                            |
 | useGraphQLJit       | [`@envelop/graphql-jit`](./packages/plugins/graphql-jit)           | Custom executor based on GraphQL-JIT.                                          |
 | useParserCache      | [`@envelop/parser-cache`](./packages/plugins/parser-cache)         | Simple LRU for caching `parse` results.                                        |
 | useValidationCache  | [`@envelop/validation-cache`](./packages/plugins/validation-cache) | Simple LRU for caching `validate` results.                                     |
