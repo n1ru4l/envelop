@@ -1,7 +1,5 @@
 ## Envelop
 
-### TL;DR:
-
 Envelop is a lightweight JavaScript library for wrapping GraphQL execution layer and flow, allowing developers to develop, share and collaborate on GraphQL-related plugins, while filling the missing pieces in GraphQL implementations.
 
 ### In depth
