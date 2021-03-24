@@ -1,6 +1,6 @@
 {
   "name": "@envelop/depth-limit",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
