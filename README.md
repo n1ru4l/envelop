@@ -92,7 +92,7 @@ const getEnveloped = envelop({
 
 Envelop provides a low-level API at consumpion of the output, but a rich API while using it with plugins. Based on that, it's possible to integrate Envelop with many tools.
 
-We recommend on using [`graphql-helix`](https://github.com/contrawork/graphql-helix) as request pipeline manager, as it allow the maximal flexibility and your can easily override every part of the pipeline with Envelop.
+We recommend on using [`graphql-helix`](https://github.com/contrawork/graphql-helix) as request pipeline orchestrator, as it allows the maximum flexibility and you can easily override/manage every part of the pipeline with Envelop.
 
 Here's a list of integrations and examples:
 

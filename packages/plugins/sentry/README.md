@@ -11,8 +11,8 @@ This is how it looks like in Sentry for error tracking:
 
 And for performance tracking:
 
-![Example](./error1.png)
-![Example](./error2.png)
+![Example](./perf1.png)
+![Example](./perf2.png)
 
 > You can get information about each resolver (including field and type names), it's execution time and arguments. Also, in case of an error, the performance log and info are attached automatically to the reported Sentry error.
 
