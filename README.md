@@ -2,6 +2,12 @@
 
 Envelop is a lightweight JavaScript library for wrapping GraphQL execution layer and flow, allowing developers to develop, share and collaborate on GraphQL-related plugins, while filling the missing pieces in GraphQL implementations.
 
+<p align="left">
+  <img height="150" src="./logo.png">
+</p>
+
+`@envelop/core`: [![npm version](https://badge.fury.io/js/%40envelop%2Fcore.svg)](https://badge.fury.io/js/%40envelop%2Fcore)
+
 > Envelop is created and maintained by [The Guild](https://the-guild.dev/), and used in production by our clients.
 
 ### In depth
