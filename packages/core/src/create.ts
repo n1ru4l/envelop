@@ -27,22 +27,30 @@ export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initi
   let schema: GraphQLSchema | undefined | null = options.initialSchema;
   let initDone = false;
   const childPlugins = (options.extends || []).reduce((prev, child) => [...prev, ...child._plugins], []);
-  const plugins = [...childPlugins, ...options.plugins];
+  const plugins: Plugin[] = [...childPlugins, ...options.plugins];
 
-  const replaceSchema = (newSchema: GraphQLSchema) => {
+  const replaceSchema = (newSchema: GraphQLSchema, ignorePluginIndex = -1) => {
     schema = newSchema;
 
     if (initDone) {
-      for (const plugin of plugins) {
-        plugin.onSchemaChange && plugin.onSchemaChange({ schema });
+      for (const [i, plugin] of plugins.entries()) {
+        if (i !== ignorePluginIndex) {
+          plugin.onSchemaChange &&
+            plugin.onSchemaChange({
+              schema,
+              replaceSchema: schemaToSet => {
+                replaceSchema(schemaToSet, i);
+              },
+            });
+        }
       }
     }
   };
 
-  for (const plugin of plugins) {
+  for (const [i, plugin] of plugins.entries()) {
     plugin.onPluginInit &&
       plugin.onPluginInit({
-        setSchema: replaceSchema,
+        setSchema: modifiedSchema => replaceSchema(modifiedSchema, i),
       });
   }
 
@@ -390,6 +398,18 @@ export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initi
   }
 
   initDone = true;
+
+  // This is done in order to trigger the first schema available, to allow plugins that needs the schema
+  // eagerly to have it.
+  if (schema) {
+    for (const [i, plugin] of plugins.entries()) {
+      plugin.onSchemaChange &&
+        plugin.onSchemaChange({
+          schema,
+          replaceSchema: modifiedSchema => replaceSchema(modifiedSchema, i),
+        });
+    }
+  }
 
   const envelop = () => {
     prepareSchema();

@@ -48,7 +48,7 @@ export type OnSubscribeHookResult = {
 
 export type DefaultContext = Record<string, unknown>;
 export interface Plugin<PluginContext = DefaultContext> {
-  onSchemaChange?: (options: { schema: GraphQLSchema }) => void;
+  onSchemaChange?: (options: { schema: GraphQLSchema; replaceSchema: (newSchema: GraphQLSchema) => void }) => void;
   onPluginInit?: (options: { setSchema: (newSchema: GraphQLSchema) => void }) => void;
   onExecute?: (options: {
     executeFn: typeof execute;
