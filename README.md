@@ -127,7 +127,63 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 | useAuth0            | [`@envelop/auth0`](./packages/plugins/auth0)                       | Validates Auth0 JWT tokens and injects the authenticated user to your context. |
 | useGraphQLModules   | [`@envelop/graphql-modules`](./packages/plugins/graphql-modules)   | Integrates the execution lifecycle of GraphQL-Modules.                         |
 
-## Execution Lifecycle
+## Sharing `envelop`s
+
+After an `envelop` has been created, you can share it with others as a complete layer of plugins. This is useful if you wish to create a predefined layer of plugins, and share it with others. You can use the as a shell and as a base for writing sharable pieces of servers.
+
+Here's a small exmple for sharing envelops:
+
+```ts
+// Somewhere where you wish to create the basics of what you wish to share
+// This defined the base plugins you wish to use as base.
+const myBaseEnvelop = envelop({
+  plugins: [useOrgAuth(), useOrgTracing(), useOrgLogsCollector()],
+});
+
+// Later, when you create your own Envelop, you can extend that and add custom plugins.
+// You can also specify the schema only at this point
+const myEnvelop = envelop({
+  extends: [myBaseEnvelop],
+  plugins: [useSchema(myServerSchema), useMyCustomPlugin()],
+});
+```
+
+This approach allow developers to create a base Envelop and share it across the organization: you can define your monitoring setup, logging, authentication, etc, only once in a common package, and share it with others without losing the ability to extend it.
+
+## Write your own plugin!
+
+Envelop plugins are just object with functions, that provides contextual implementation for before/after of each phase, with a flexible API.
+
+Here's a simple example that allow you print the execution params:
+
+```ts
+const myPlugin = {
+  onExecute({ args }) {
+    console.log('Execution started!', { args });
+
+    return {
+      onExecuteDone: ({ result }) => {
+        console.log('Execution done!', { result });
+      },
+    };
+  },
+};
+
+const getEnveloped = envelop({
+  plugins: [
+    /// ... other plugins ...,
+    myPlugin,
+  ],
+});
+```
+
+> Feel free to share you plugin with us, or with the community. Sharing = Caring!
+
+#### The plugin interface
+
+You can find it here: https://github.com/dotansimha/envelop/blob/main/packages/types/src/index.ts#L50
+
+#### Execution Lifecycle
 
 By extending the GraphQL execution pipeline, we allow developers to write reusable plugins, that can be shared with others easily, as NPM packages. So instead of delivering a bloated GraphQL server with tons of features, we allow you to choose the HTTP server you prefer, the request pipeline you prefer, and the feautures you prefer.
 
@@ -172,58 +228,20 @@ We wrap the execution pipeline of GraphQL operation, and allow Envelop plugins t
 
 We also allow you to change the GraphQL schema during execution - so if your server has a schema that could change dynamically, you can always update it. As a result, we trigger `schemaChange` event that allow plugins respond accordingly.
 
-## Write your own plugin!
+### Contributing
 
-Envelop plugins are just object with functions, that provides contextual implementation for before/after of each phase, with a flexible API.
+If this is your first time contributing to this project, please do read our [Contributor Workflow Guide](https://github.com/the-guild-org/Stack/blob/master/CONTRIBUTING.md) before you get started off.
 
-Here's a simple example that allow you print the execution params:
+Feel free to open issues and pull requests. We're always welcome support from the community.
 
-```ts
-const myPlugin = {
-  onExecute({ args }) {
-    console.log('Execution started!', { args });
+For a contribution guide specific to this project, please refer to: http://graphql-code-generator.com/docs/custom-codegen/contributing
 
-    return {
-      onExecuteDone: ({ result }) => {
-        console.log('Execution done!', { result });
-      },
-    };
-  },
-};
+### Code of Conduct
 
-const getEnveloped = envelop({
-  plugins: [
-    /// ... other plugins ...,
-    myPlugin,
-  ],
-});
-```
+Help us keep GraphQL Codegenerator open and inclusive. Please read and follow our [Code of Conduct](https://github.com/the-guild-org/Stack/blob/master/CODE_OF_CONDUCT.md) as adopted from [Contributor Covenant](https://www.contributor-covenant.org/)
 
-> Feel free to share you plugin with us, or with the community. Sharing = Caring!
+### License
 
-## Sharing `envelop`s
-
-After an `envelop` has been created, you can share it with others as a complete layer of plugins. This is useful if you wish to create a predefined layer of plugins, and share it with others. You can use the as a shell and as a base for writing sharable pieces of servers.
-
-Here's a small exmple for sharing envelops:
-
-```ts
-// Somewhere where you wish to create the basics of what you wish to share
-// This defined the base plugins you wish to use as base.
-const myBaseEnvelop = envelop({
-  plugins: [useOrgAuth(), useOrgTracing(), useOrgLogsCollector()],
-});
-
-// Later, when you create your own Envelop, you can extend that and add custom plugins.
-// You can also specify the schema only at this point
-const myEnvelop = envelop({
-  extends: [myBaseEnvelop],
-  plugins: [useSchema(myServerSchema), useMyCustomPlugin()],
-});
-```
-
-This approach allow developers to create a base Envelop and share it across the organization: you can define your monitoring setup, logging, authentication, etc, only once in a common package, and share it with others without losing the ability to extend it.
-
-## License
+[![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg?maxAge=2592000)](https://raw.githubusercontent.com/apollostack/apollo-ios/master/LICENSE)
 
 MIT
