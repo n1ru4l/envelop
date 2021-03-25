@@ -7,6 +7,7 @@ export function createSpiedPlugin() {
   const afterResolver = jest.fn();
 
   const baseSpies = {
+    onSchemaChange: jest.fn(),
     afterParse: jest.fn(),
     afterValidate: jest.fn(),
     afterContextBuilding: jest.fn(),
@@ -34,6 +35,7 @@ export function createSpiedPlugin() {
     },
     spies,
     plugin: <Plugin>{
+      onSchemaChange: spies.onSchemaChange,
       onParse: spies.beforeParse,
       onValidate: spies.beforeValidate,
       onExecute: spies.beforeExecute,
