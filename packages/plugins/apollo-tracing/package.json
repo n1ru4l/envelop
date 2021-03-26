@@ -20,7 +20,7 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "apollo-tracing": "^0.12.2"
+    "apollo-tracing": "^0.13.0"
   },
   "devDependencies": {
     "@graphql-tools/schema": "7.1.3",
