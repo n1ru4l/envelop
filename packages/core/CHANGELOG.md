@@ -1,5 +1,14 @@
 # @envelop/core
 
+## 0.1.1
+
+### Patch Changes
+
+- 925a1ea: Extend `onSchemaChange` and allow to override schema. Make sure to avoid infinite loops.
+- 3b92779: Fix missing exports for built-in plugins
+- Updated dependencies [925a1ea]
+  - @envelop/types@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes
