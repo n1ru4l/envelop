@@ -104,7 +104,7 @@ export const useGenericAuth = <UserType extends {}, ContextType extends DefaultC
       onExecute() {
         return {
           async onResolverCalled({ context, info }) {
-            const shouldAuth = hasDirective(info, 'auth');
+            const shouldAuth = hasDirective(info, options.authDirectiveName || 'auth');
 
             if (shouldAuth) {
               await (context as { validateUser: typeof options['validateUser'] }).validateUser(
