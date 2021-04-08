@@ -1,6 +1,6 @@
 {
   "trailingComma": "es5",
-  "printWidth": 160,
+  "printWidth": 130,
   "singleQuote": true,
   "arrowParens": "avoid",
   "overrides": [

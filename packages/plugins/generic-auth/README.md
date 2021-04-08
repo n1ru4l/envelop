@@ -175,6 +175,8 @@ const getEnveloped = envelop({
 });
 ```
 
+> By defualt, we assume that you have the GraphQL directive defition as part of your GraphQL schema (`directive @auth on FIELD_DEFINITION`), if you wish this plugin to extend the schema with the directive, please specify `addDirectiveToSchema: true`.
+
 Then, in your GraphQL schema SDL, you can add `@auth` directive to your fields, and the `validateUser` will get called only while resolving that specific field:
 
 ```graphql
@@ -185,4 +187,4 @@ type Query {
 }
 ```
 
-> You can apply that directive to any GraphQL `field` definition.
+> You can apply that directive to any GraphQL `field` definition, not only to root fields.
