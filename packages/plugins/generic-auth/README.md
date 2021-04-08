@@ -68,7 +68,7 @@ const validateUser: ValidateUserFn<UserType> = async (user, context) => {
 
 Now, configure your plugin based on the mode you with to use:
 
-#### **Option #1 - `authenticate-all` **
+#### Option #1 - `authenticate-all`
 
 This mode offers complete protection for the entire API. It protects your entire GraphQL schema, by validating the user before executing the request.
 
@@ -100,7 +100,7 @@ const getEnveloped = envelop({
 });
 ```
 
-#### **Option #2 - Fine-grain Protection**
+#### Option #2 - `just-extract`
 
 This mode uses the plugin to inject to authenticated user into the `context`, and later you can verify it in your resolvers.
 
@@ -145,7 +145,7 @@ const resolvers = {
 };
 ```
 
-#### **Option #3 - Fine-grain Protection with Directives**
+#### Option #3 - `auth-directive`
 
 This mode is similar to option #2, but it uses `@auth` SDL directive to automatically protect specific GraphQL fields.
 
