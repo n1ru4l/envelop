@@ -1,8 +1,8 @@
 ## `@envelop/generic-auth`
 
-This plugin allow you to implement custom authentication flow, by providing a custom user extraction based on the original HTTP request. The extract user is being injected into the GraphQL execution `context` and you can use it in your resolvers to fetch the current user.
+This plugin allows you to implement custom authentication flow, by providing a custom user extraction based on the original HTTP request. The extracted user is being injected into the GraphQL execution `context` and you can use it in your resolvers to fetch the current user.
 
-> The plugin also comes with an optional `@auth` directive that can be added to your GraphQL schema and helps you to protect your GraphQL schema in a declerative way.
+> The plugin also comes with an optional `@auth` directive that can be added to your GraphQL schema and helps you to protect your GraphQL schema in a declarative way.
 
 There are several possible flows for using this plugin (see below for setup examples):
 
