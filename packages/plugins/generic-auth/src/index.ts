@@ -50,11 +50,6 @@ export type GenericAuthPluginOptions<UserType, ContextType> = {
        */
       mode: 'auth-directive';
       /**
-       * Extends the schema with the directive definition.
-       * @default false
-       */
-      addDirectiveToSchema?: boolean;
-      /**
        * Overrides the default directive name
        * @default auth
        */
@@ -62,16 +57,23 @@ export type GenericAuthPluginOptions<UserType, ContextType> = {
     }
 );
 
+export function defaultValidateFn<UserType, ContextType>(user: UserType, contextType: ContextType): void {
+  if (!user) {
+    throw new UnauthenticatedError('Unauthenticated!');
+  }
+}
+
 export const useGenericAuth = <UserType extends {}, ContextType extends DefaultContext = DefaultContext>(
   options: GenericAuthPluginOptions<UserType, ContextType>
 ): Plugin<ContextType> => {
   const fieldName = options.contextFieldName || 'currentUser';
+  const validateUser = options.validateUser || defaultValidateFn;
 
   if (options.mode === 'authenticate-all') {
     return {
       async onContextBuilding({ context, extendContext }) {
         const user = await options.extractUserFn(context);
-        await options.validateUser(user, context as ContextType);
+        await validateUser(user, context as ContextType);
 
         extendContext(({
           [fieldName]: user,
@@ -82,11 +84,10 @@ export const useGenericAuth = <UserType extends {}, ContextType extends DefaultC
     return {
       async onContextBuilding({ context, extendContext }) {
         const user = await options.extractUserFn(context);
-        const validateUser = () => options.validateUser(user, context as ContextType);
 
         extendContext(({
           [fieldName]: user,
-          validateUser,
+          validateUser: () => validateUser(user, context as ContextType),
         } as unknown) as ContextType);
       },
     };
@@ -94,11 +95,10 @@ export const useGenericAuth = <UserType extends {}, ContextType extends DefaultC
     return {
       async onContextBuilding({ context, extendContext }) {
         const user = await options.extractUserFn(context);
-        const validateUser = () => options.validateUser(user, context as ContextType);
 
         extendContext(({
           [fieldName]: user,
-          validateUser,
+          validateUser: () => validateUser(user, context as ContextType),
         } as unknown) as ContextType);
       },
       onExecute() {
