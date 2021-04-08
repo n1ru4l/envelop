@@ -1,10 +1,15 @@
 import { DefaultContext, Plugin } from '@envelop/types';
+import { GraphQLResolveInfo } from 'graphql';
 import { hasDirective } from './utils';
 
 export class UnauthenticatedError extends Error {}
 
 export type ExtractUserFn<UserType, ContextType = unknown> = (context: ContextType) => null | UserType | Promise<UserType>;
-export type ValidateUserFn<UserType, ContextType = unknown> = (user: UserType, context: ContextType) => void | Promise<void>;
+export type ValidateUserFn<UserType, ContextType = unknown> = (
+  user: UserType,
+  context: ContextType,
+  info?: GraphQLResolveInfo
+) => void | Promise<void>;
 
 export const DIRECTIVE_SDL = /* GraphQL */ `
   directive @auth on FIELD_DEFINITION
@@ -109,7 +114,8 @@ export const useGenericAuth = <UserType extends {}, ContextType extends DefaultC
             if (shouldAuth) {
               await (context as { validateUser: typeof options['validateUser'] }).validateUser(
                 context[fieldName],
-                context as ContextType
+                context as ContextType,
+                info
               );
             }
           },

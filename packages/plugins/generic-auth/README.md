@@ -60,6 +60,9 @@ const validateUser: ValidateUserFn<UserType> = async (user, context) => {
   // Here you can implement any custom to check if the user is valid and have access to the server.
   // This method is being triggered in different flows, besed on the mode you chose to implement.
 
+  // If you are using `auth-directive` mode, you'll also get a third parameter for the GraphQLResolveInfo
+  // of the resolvers being resolved at the moment.
+
   if (!user) {
     throw new Error(`Unauthenticated!`);
   }
@@ -188,3 +191,5 @@ type Query {
 ```
 
 > You can apply that directive to any GraphQL `field` definition, not only to root fields.
+
+> If you are using a different directive for authentication, you can pass `authDirectiveName` configuration to customize it.

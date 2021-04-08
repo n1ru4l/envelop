@@ -124,6 +124,7 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 | useApolloTracing     | [`@envelop/apollo-tracing`](./packages/plugins/apollo-tracing)         | Integrates timing with Apollo-Tracing format (for GraphQL Playground)          |
 | useSentry            | [`@envelop/sentry`](./packages/plugins/sentry)                         | Tracks performance, timing and errors and reports it to Sentry.                |
 | useOpenTelemetry     | [`@envelop/opentelemetry`](./packages/plugins/opentelemetry)           | Tracks performance, timing and errors and reports in OpenTelemetry structure.  |
+| useGenericAuth       | [`@envelop/generic-auth`](./packages/plugins/generic-auth)             | Super flexible authentication, also supports `@auth` directive .               |
 | useAuth0             | [`@envelop/auth0`](./packages/plugins/auth0)                           | Validates Auth0 JWT tokens and injects the authenticated user to your context. |
 | useGraphQLModules    | [`@envelop/graphql-modules`](./packages/plugins/graphql-modules)       | Integrates the execution lifecycle of GraphQL-Modules.                         |
 | useGraphQLMiddleware | [`@envelop/graphql-middleware`](./packages/plugins/graphql-middleware) | Integrates middlewares written for `graphql-middleware`                        |
