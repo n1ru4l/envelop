@@ -1,4 +1,5 @@
-import { Plugin } from '@envelop/types';
+import { DefaultContext, Plugin } from '@envelop/types';
+import { hasDirective } from './utils';
 
 export class UnauthenticatedError extends Error {}
 
@@ -26,7 +27,7 @@ export type GenericAuthPluginOptions<UserType, ContextType> = {
    * Overrides the default field name for injecting the user into the execution `context`.
    * @default currentUser
    */
-  contextFieldName?: string;
+  contextFieldName?: 'currentUser' | string;
 } & (
   | {
       /**
@@ -53,11 +54,69 @@ export type GenericAuthPluginOptions<UserType, ContextType> = {
        * @default false
        */
       addDirectiveToSchema?: boolean;
+      /**
+       * Overrides the default directive name
+       * @default auth
+       */
+      authDirectiveName?: 'auth' | string;
     }
 );
 
-export const useGenericAuth = <UserType extends {}, ContextType = unknown>(
+export const useGenericAuth = <UserType extends {}, ContextType extends DefaultContext = DefaultContext>(
   options: GenericAuthPluginOptions<UserType, ContextType>
-): Plugin => {
+): Plugin<ContextType> => {
+  const fieldName = options.contextFieldName || 'currentUser';
+
+  if (options.mode === 'authenticate-all') {
+    return {
+      async onContextBuilding({ context, extendContext }) {
+        const user = await options.extractUserFn(context);
+        await options.validateUser(user, context as ContextType);
+
+        extendContext(({
+          [fieldName]: user,
+        } as unknown) as ContextType);
+      },
+    };
+  } else if (options.mode === 'just-extract') {
+    return {
+      async onContextBuilding({ context, extendContext }) {
+        const user = await options.extractUserFn(context);
+        const validateUser = () => options.validateUser(user, context as ContextType);
+
+        extendContext(({
+          [fieldName]: user,
+          validateUser,
+        } as unknown) as ContextType);
+      },
+    };
+  } else if (options.mode === 'auth-directive') {
+    return {
+      async onContextBuilding({ context, extendContext }) {
+        const user = await options.extractUserFn(context);
+        const validateUser = () => options.validateUser(user, context as ContextType);
+
+        extendContext(({
+          [fieldName]: user,
+          validateUser,
+        } as unknown) as ContextType);
+      },
+      onExecute() {
+        return {
+          async onResolverCalled({ context, info }) {
+            const shouldAuth = hasDirective(info, 'auth');
+
+            if (shouldAuth) {
+              await (context as { validateUser: typeof options['validateUser'] }).validateUser(
+                context[fieldName],
+                context as ContextType
+              );
+            }
+          },
+        };
+      },
+    };
+  }
+
   return {};
 };
