@@ -1,5 +1,5 @@
 import { DefaultContext, Plugin } from '@envelop/types';
-import { DirectiveNode, EnumValueNode, GraphQLResolveInfo } from 'graphql';
+import { DirectiveNode, GraphQLResolveInfo } from 'graphql';
 import { getDirective } from './utils';
 export * from './utils';
 
