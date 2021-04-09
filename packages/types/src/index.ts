@@ -25,7 +25,7 @@ export type BeforeAfterHook<BeforePayload, AfterPayload = unknown, Async = false
 export type OnResolverCalledHooks = BeforeAfterHook<
   {
     root: unknown;
-    args: unknown;
+    args: Record<string, unknown>;
     context: unknown;
     info: GraphQLResolveInfo;
   },
@@ -107,7 +107,9 @@ export interface Plugin<PluginContext = DefaultContext> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export type AfterCallback<T extends keyof Plugin> = Plugin[T] extends BeforeAfterHook<infer B, infer A, infer Async> ? (afterOptions: A) => void : never;
+export type AfterCallback<T extends keyof Plugin> = Plugin[T] extends BeforeAfterHook<infer B, infer A, infer Async>
+  ? (afterOptions: A) => void
+  : never;
 
 export type Envelop<RequestContext = unknown> = {
   (): {

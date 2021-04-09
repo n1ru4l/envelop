@@ -1,6 +1,6 @@
-import { GraphQLObjectType, GraphQLResolveInfo } from 'graphql';
+import { DirectiveNode, GraphQLObjectType, GraphQLResolveInfo } from 'graphql';
 
-export function hasDirective(info: GraphQLResolveInfo, name: string): boolean {
+export function getDirective(info: GraphQLResolveInfo, name: string): null | DirectiveNode {
   const { parentType, fieldName, schema } = info;
   const schemaType = schema.getType(parentType.name) as GraphQLObjectType;
   const field = schemaType.getFields()[fieldName];
@@ -8,5 +8,5 @@ export function hasDirective(info: GraphQLResolveInfo, name: string): boolean {
   const directives = astNode.directives;
   const authDirective = directives.find(d => d.name.value === name);
 
-  return !!authDirective;
+  return authDirective || null;
 }

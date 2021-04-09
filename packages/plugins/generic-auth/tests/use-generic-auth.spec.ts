@@ -1,6 +1,6 @@
 import { createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { DIRECTIVE_SDL, ExtractUserFn, useGenericAuth } from '../src';
+import { DIRECTIVE_SDL, ResolveUserFn, useGenericAuth } from '../src';
 
 type UserType = {
   id: number;
@@ -17,24 +17,24 @@ describe('useGenericAuth', () => {
     },
   });
 
-  const validExtractUserFn: ExtractUserFn<UserType> = async context => {
+  const validresolveUserFn: ResolveUserFn<UserType> = async context => {
     return {
       id: 1,
       name: 'Dotan',
     };
   };
 
-  const invalidExtractUserFn: ExtractUserFn<UserType> = async context => {
+  const invalidresolveUserFn: ResolveUserFn<UserType> = async context => {
     return null;
   };
 
-  describe('authenticate-all', () => {
+  describe('protect-all', () => {
     it('Should allow execution when user is authenticated correctly', async () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'authenticate-all',
-            extractUserFn: validExtractUserFn,
+            mode: 'protect-all',
+            resolveUserFn: validresolveUserFn,
           }),
         ],
         schema
@@ -49,8 +49,8 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'authenticate-all',
-            extractUserFn: invalidExtractUserFn,
+            mode: 'protect-all',
+            resolveUserFn: invalidresolveUserFn,
           }),
         ],
         schema
@@ -67,8 +67,8 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'just-extract',
-            extractUserFn: validExtractUserFn,
+            mode: 'resolve-only',
+            resolveUserFn: validresolveUserFn,
           }),
           {
             onExecute: spyFn,
@@ -94,13 +94,13 @@ describe('useGenericAuth', () => {
     });
   });
 
-  describe('just-extract', () => {
+  describe('resolve-only', () => {
     it('Should passthrough execution when user is authenticated correctly', async () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'just-extract',
-            extractUserFn: validExtractUserFn,
+            mode: 'resolve-only',
+            resolveUserFn: validresolveUserFn,
           }),
         ],
         schema
@@ -115,8 +115,8 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'just-extract',
-            extractUserFn: invalidExtractUserFn,
+            mode: 'resolve-only',
+            resolveUserFn: invalidresolveUserFn,
           }),
         ],
         schema
@@ -132,8 +132,8 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'just-extract',
-            extractUserFn: validExtractUserFn,
+            mode: 'resolve-only',
+            resolveUserFn: validresolveUserFn,
           }),
           {
             onExecute: spyFn,
@@ -163,8 +163,8 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'just-extract',
-            extractUserFn: invalidExtractUserFn,
+            mode: 'resolve-only',
+            resolveUserFn: invalidresolveUserFn,
           }),
           {
             onExecute: spyFn,
@@ -191,8 +191,8 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'just-extract',
-            extractUserFn: validExtractUserFn,
+            mode: 'resolve-only',
+            resolveUserFn: validresolveUserFn,
           }),
           {
             onExecute: spyFn,
@@ -237,8 +237,8 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'auth-directive',
-            extractUserFn: validExtractUserFn,
+            mode: 'protect-auth-directive',
+            resolveUserFn: validresolveUserFn,
           }),
         ],
         schemaWithDirective
@@ -253,8 +253,8 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'auth-directive',
-            extractUserFn: validExtractUserFn,
+            mode: 'protect-auth-directive',
+            resolveUserFn: validresolveUserFn,
           }),
         ],
         schemaWithDirective
@@ -269,8 +269,8 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'auth-directive',
-            extractUserFn: invalidExtractUserFn,
+            mode: 'protect-auth-directive',
+            resolveUserFn: invalidresolveUserFn,
           }),
         ],
         schemaWithDirective
@@ -285,8 +285,8 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'auth-directive',
-            extractUserFn: invalidExtractUserFn,
+            mode: 'protect-auth-directive',
+            resolveUserFn: invalidresolveUserFn,
           }),
         ],
         schemaWithDirective
