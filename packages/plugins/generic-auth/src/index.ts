@@ -5,7 +5,7 @@ export * from './utils';
 
 export class UnauthenticatedError extends Error {}
 
-export type ResolveUserFn<UserType, ContextType = unknown> = (context: ContextType) => null | UserType | Promise<UserType>;
+export type ResolveUserFn<UserType, ContextType = unknown> = (context: ContextType) => null | UserType | Promise<UserType | null>;
 export type ValidateUserFn<UserType, ContextType = unknown> = (
   user: UserType,
   context: ContextType,
