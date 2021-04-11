@@ -1,5 +1,11 @@
 # @envelop/types
 
+## 0.1.2
+
+### Patch Changes
+
+- f5177eb: Added `setResult` to the result of onResolverCalled
+
 ## 0.1.1
 
 ### Patch Changes
