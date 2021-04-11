@@ -17,7 +17,7 @@ import {
   ExecutionResult,
   SubscriptionArgs,
 } from 'graphql';
-import { AfterCallback, Envelop, OnResolverCalledHooks, Plugin } from '@envelop/types';
+import { AfterCallback, AfterResolverPayload, DefaultContext, Envelop, OnResolverCalledHooks, Plugin } from '@envelop/types';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
 const trackedSchemaSymbol = Symbol('TRACKED_SCHEMA');
@@ -166,7 +166,9 @@ export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initi
                 ...extension,
               };
             } else {
-              throw new Error(`Invalid context extension provided! Expected "object", got: "${JSON.stringify(extension)}" (${typeof extension})`);
+              throw new Error(
+                `Invalid context extension provided! Expected "object", got: "${JSON.stringify(extension)}" (${typeof extension})`
+              );
             }
           },
         }));
@@ -230,7 +232,9 @@ export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initi
               ...extension,
             };
           } else {
-            throw new Error(`Invalid context extension provided! Expected "object", got: "${JSON.stringify(extension)}" (${typeof extension})`);
+            throw new Error(
+              `Invalid context extension provided! Expected "object", got: "${JSON.stringify(extension)}" (${typeof extension})`
+            );
           }
         },
         args,
@@ -310,7 +314,9 @@ export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initi
               ...extension,
             };
           } else {
-            throw new Error(`Invalid context extension provided! Expected "object", got: "${JSON.stringify(extension)}" (${typeof extension})`);
+            throw new Error(
+              `Invalid context extension provided! Expected "object", got: "${JSON.stringify(extension)}" (${typeof extension})`
+            );
           }
         },
         args,
@@ -366,7 +372,7 @@ export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initi
           field.resolve = async (root, args, context, info) => {
             if (context && context[resolversHooksSymbol]) {
               const hooks: OnResolverCalledHooks[] = context[resolversHooksSymbol];
-              const afterCalls: (({ result }) => void)[] = [];
+              const afterCalls: Array<(p: AfterResolverPayload) => void> = [];
 
               for (const hook of hooks) {
                 const afterFn = await hook({ root, args, context, info });
@@ -374,19 +380,31 @@ export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initi
               }
 
               try {
-                const result = await originalFn(root, args, context, info);
+                let result = await originalFn(root, args, context, info);
 
                 for (const afterFn of afterCalls) {
-                  afterFn({ result });
+                  afterFn({
+                    result,
+                    setResult: newResult => {
+                      result = newResult;
+                    },
+                  });
                 }
 
                 return result;
               } catch (e) {
+                let resultErr = e;
+
                 for (const afterFn of afterCalls) {
-                  afterFn({ result: e });
+                  afterFn({
+                    result: resultErr,
+                    setResult: newResult => {
+                      resultErr = newResult;
+                    },
+                  });
                 }
 
-                throw e;
+                throw resultErr;
               }
             } else {
               return originalFn(root, args, context, info);

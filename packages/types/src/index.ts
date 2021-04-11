@@ -22,6 +22,8 @@ export type BeforeAfterHook<BeforePayload, AfterPayload = unknown, Async = false
   beforeOptions: BeforePayload
 ) => Async extends true ? Promise<AfterFnOrVoid<AfterPayload>> | AfterFnOrVoid<AfterPayload> : AfterFnOrVoid<AfterPayload>;
 
+export type AfterResolverPayload = { result: unknown | Error; setResult: (newResult: unknown) => void };
+
 export type OnResolverCalledHooks = BeforeAfterHook<
   {
     root: unknown;
@@ -29,7 +31,7 @@ export type OnResolverCalledHooks = BeforeAfterHook<
     context: unknown;
     info: GraphQLResolveInfo;
   },
-  { result: unknown | Error },
+  AfterResolverPayload,
   true
 >;
 

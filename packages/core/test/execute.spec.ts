@@ -120,12 +120,15 @@ describe('execute', () => {
     expect(afterResolver).toHaveBeenCalledTimes(3);
     expect(afterResolver).toHaveBeenCalledWith({
       result: { _id: 1, firstName: 'Dotan', lastName: 'Simha' },
+      setResult: expect.any(Function),
     });
     expect(afterResolver).toHaveBeenCalledWith({
       result: 1,
+      setResult: expect.any(Function),
     });
     expect(afterResolver).toHaveBeenCalledWith({
       result: 'Dotan Simha',
+      setResult: expect.any(Function),
     });
   });
 });
