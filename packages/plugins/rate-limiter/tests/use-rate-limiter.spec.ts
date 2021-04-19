@@ -4,9 +4,9 @@ import { DIRECTIVE_SDL, useRateLimiter } from '../src';
 
 describe('useRateLimiter', () => {
   const delay = (ms: number) => {
-      return new Promise( resolve => setTimeout(resolve, ms) );
-    }
-  const identifyFn = ({}) => '0.0.0.0'
+    return new Promise(resolve => setTimeout(resolve, ms));
+  };
+  const identifyFn = ({}) => '0.0.0.0';
 
   const schemaWithDirective = makeExecutableSchema({
     typeDefs: `
@@ -15,7 +15,7 @@ describe('useRateLimiter', () => {
     type Query {
       limited: String @rateLimit(
         max: 1,
-        window: "100m",
+        window: "0.1s",
         message: "too many calls"
       ),
       unlimited: String
@@ -40,8 +40,7 @@ describe('useRateLimiter', () => {
     );
 
     testInstance.execute(`query { unlimited }`);
-    testInstance.execute(`query { unlimited }`);
-    testInstance.execute(`query { unlimited }`);
+    await testInstance.execute(`query { unlimited }`);
     const result = await testInstance.execute(`query { unlimited }`);
     expect(result.errors).toBeUndefined();
     expect(result.data.unlimited).toBe('unlimited');
@@ -57,8 +56,8 @@ describe('useRateLimiter', () => {
       schemaWithDirective
     );
 
-    testInstance.execute(`query { limited }`);
-    await delay(500);
+    await testInstance.execute(`query { limited }`);
+    await delay(300);
     const result = await testInstance.execute(`query { limited }`);
     expect(result.errors).toBeUndefined();
     expect(result.data.limited).toBe('limited');
@@ -73,7 +72,7 @@ describe('useRateLimiter', () => {
       ],
       schemaWithDirective
     );
-    testInstance.execute(`query { limited }`);
+    await testInstance.execute(`query { limited }`);
     const result = await testInstance.execute(`query { limited }`);
     expect(result.errors.length).toBe(1);
     expect(result.errors[0].message).toBe('too many calls');
