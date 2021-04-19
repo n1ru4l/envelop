@@ -1,12 +1,12 @@
 import { createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { DIRECTIVE_SDL, useRateLimiter } from '../src';
+import { DIRECTIVE_SDL, IdentifyFn, useRateLimiter } from '../src';
 
 describe('useRateLimiter', () => {
   const delay = (ms: number) => {
     return new Promise(resolve => setTimeout(resolve, ms));
   };
-  const identifyFn = ({}) => '0.0.0.0';
+  const identifyFn: IdentifyFn = () => '0.0.0.0';
 
   const schemaWithDirective = makeExecutableSchema({
     typeDefs: `
@@ -33,7 +33,7 @@ describe('useRateLimiter', () => {
     const testInstance = createTestkit(
       [
         useRateLimiter({
-          identifyFn: identifyFn,
+          identifyFn,
         }),
       ],
       schemaWithDirective
@@ -50,7 +50,7 @@ describe('useRateLimiter', () => {
     const testInstance = createTestkit(
       [
         useRateLimiter({
-          identifyFn: identifyFn,
+          identifyFn,
         }),
       ],
       schemaWithDirective
@@ -67,7 +67,7 @@ describe('useRateLimiter', () => {
     const testInstance = createTestkit(
       [
         useRateLimiter({
-          identifyFn: identifyFn,
+          identifyFn,
         }),
       ],
       schemaWithDirective
