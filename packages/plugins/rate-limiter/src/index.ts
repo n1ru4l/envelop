@@ -17,15 +17,18 @@ export type RateLimiterPluginOptions = {
   rateLimitDirectiveName?: 'rateLimit' | string;
 };
 
-export const useRateLimiter = <ContextType extends DefaultContext = DefaultContext>(
+export const useRateLimiter = (
   options: RateLimiterPluginOptions
-): Plugin<ContextType> => {
+): Plugin<{
+  rateLimiterFn: ReturnType<typeof getGraphQLRateLimiter>;
+}> => {
   const rateLimiterFn = getGraphQLRateLimiter({ identifyContext: options.identifyFn });
+
   return {
     async onContextBuilding({ context, extendContext }) {
-      extendContext(({
+      extendContext({
         rateLimiterFn,
-      } as unknown) as ContextType);
+      });
     },
     onExecute() {
       return {
@@ -40,10 +43,7 @@ export const useRateLimiter = <ContextType extends DefaultContext = DefaultConte
             const messageNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'message').value as IntValueNode;
             const message = messageNode.value;
 
-            const errorMessage = await (context as { rateLimiterFn: typeof rateLimiterFn }).rateLimiterFn(
-              { parent: root, args, context, info },
-              { max, window, message }
-            );
+            const errorMessage = await context.rateLimiterFn({ parent: root, args, context, info }, { max, window, message });
             if (errorMessage) throw new Error(errorMessage);
           }
         },
