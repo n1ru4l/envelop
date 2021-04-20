@@ -25,13 +25,17 @@ export type TracingOptions = {
   result: boolean;
 };
 
+type PluginContext = {
+  [tracingSpanSymbol]: opentelemetry.Span;
+};
+
 export const useOpenTelemetry = (
   options: TracingOptions,
   tracingProvider?: BasicTracerProvider,
   spanKind: SpanKind = SpanKind.SERVER,
   spanAdditionalAttributes: SpanAttributes = {},
   serviceName = 'graphql'
-): Plugin => {
+): Plugin<PluginContext> => {
   if (!tracingProvider) {
     tracingProvider = new BasicTracerProvider();
     tracingProvider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
@@ -52,7 +56,7 @@ export const useOpenTelemetry = (
         },
       });
 
-      const resultCbs: OnExecuteHookResult = {
+      const resultCbs: OnExecuteHookResult<PluginContext> = {
         onExecuteDone({ result }) {
           if (result.data && options.result) {
             executionSpan.setAttribute(AttributeName.EXECUTION_RESULT, JSON.stringify(result));
