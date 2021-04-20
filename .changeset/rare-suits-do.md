@@ -1,5 +1,5 @@
 ---
-'@envelop/rate-limiter': major
+'@envelop/rate-limiter': patch
 ---
 
 Create @envelope/rate-limiter plugin
