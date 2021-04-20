@@ -1,5 +1,11 @@
 # @envelop/opentelemetry
 
+## 0.1.1
+
+### Patch Changes
+
+- 5fc65a4: Improved type-safety for internal context
+
 ## 0.1.0
 
 ### Minor Changes

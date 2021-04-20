@@ -1,5 +1,13 @@
 # @envelop/core
 
+## 0.1.3
+
+### Patch Changes
+
+- 5fc65a4: Improve type safety for plugins context
+- Updated dependencies [5fc65a4]
+  - @envelop/types@0.1.3
+
 ## 0.1.2
 
 ### Patch Changes

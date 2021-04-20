@@ -1,5 +1,11 @@
 # @envelop/types
 
+## 0.1.3
+
+### Patch Changes
+
+- 5fc65a4: Improve type safety for plugins context
+
 ## 0.1.2
 
 ### Patch Changes
