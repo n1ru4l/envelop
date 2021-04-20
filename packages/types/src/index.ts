@@ -18,37 +18,39 @@ import {
 
 type AfterFnOrVoid<Result> = void | ((afterOptions: Result) => void);
 
+export type DefaultContext = Record<string, unknown>;
+export type DefaultArgs = Record<string, unknown>;
+
 export type BeforeAfterHook<BeforePayload, AfterPayload = unknown, Async = false> = (
   beforeOptions: BeforePayload
 ) => Async extends true ? Promise<AfterFnOrVoid<AfterPayload>> | AfterFnOrVoid<AfterPayload> : AfterFnOrVoid<AfterPayload>;
 
 export type AfterResolverPayload = { result: unknown | Error; setResult: (newResult: unknown) => void };
 
-export type OnResolverCalledHooks = BeforeAfterHook<
+export type OnResolverCalledHooks<ContextType = DefaultContext, ArgsType = DefaultArgs> = BeforeAfterHook<
   {
     root: unknown;
-    args: Record<string, unknown>;
-    context: unknown;
+    args: ArgsType;
+    context: ContextType;
     info: GraphQLResolveInfo;
   },
   AfterResolverPayload,
   true
 >;
 
-export type OnExecuteHookResult = {
+export type OnExecuteHookResult<ContextType = DefaultContext> = {
   onExecuteDone?: (options: { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void }) => void;
-  onResolverCalled?: OnResolverCalledHooks;
+  onResolverCalled?: OnResolverCalledHooks<ContextType>;
 };
 
-export type OnSubscribeHookResult = {
+export type OnSubscribeHookResult<ContextType = DefaultContext> = {
   onSubscribeResult?: (options: {
     result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
     setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
   }) => void;
-  onResolverCalled?: OnResolverCalledHooks;
+  onResolverCalled?: OnResolverCalledHooks<ContextType>;
 };
 
-export type DefaultContext = Record<string, unknown>;
 export interface Plugin<PluginContext = DefaultContext> {
   onSchemaChange?: (options: { schema: GraphQLSchema; replaceSchema: (newSchema: GraphQLSchema) => void }) => void;
   onPluginInit?: (options: { setSchema: (newSchema: GraphQLSchema) => void }) => void;
@@ -57,13 +59,13 @@ export interface Plugin<PluginContext = DefaultContext> {
     args: ExecutionArgs;
     setExecuteFn: (newExecute: typeof execute) => void;
     extendContext: (contextExtension: Partial<PluginContext>) => void;
-  }) => void | OnExecuteHookResult;
+  }) => void | OnExecuteHookResult<PluginContext>;
   onSubscribe?: (options: {
     subscribeFn: typeof subscribe;
     args: SubscriptionArgs;
     setSubscribeFn: (newSubscribe: typeof subscribe) => void;
     extendContext: (contextExtension: Partial<PluginContext>) => void;
-  }) => void | OnSubscribeHookResult;
+  }) => void | OnSubscribeHookResult<PluginContext>;
   onParse?: BeforeAfterHook<
     {
       params: { source: string | Source; options?: ParseOptions };
@@ -113,13 +115,13 @@ export type AfterCallback<T extends keyof Plugin> = Plugin[T] extends BeforeAfte
   ? (afterOptions: A) => void
   : never;
 
-export type Envelop<RequestContext = unknown> = {
+export type Envelop<RequestContext = unknown, ExecutionContext = DefaultContext> = {
   (): {
     execute: typeof execute;
     validate: typeof validate;
     subscribe: typeof subscribe;
     parse: typeof parse;
-    contextFactory: (requestContext: RequestContext) => unknown | Promise<unknown>;
+    contextFactory: (requestContext: RequestContext) => ExecutionContext | Promise<ExecutionContext>;
     schema: GraphQLSchema;
   };
   _plugins: Plugin[];

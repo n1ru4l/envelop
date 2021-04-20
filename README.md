@@ -128,6 +128,7 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 | useAuth0             | [`@envelop/auth0`](./packages/plugins/auth0)                           | Validates Auth0 JWT tokens and injects the authenticated user to your context. |
 | useGraphQLModules    | [`@envelop/graphql-modules`](./packages/plugins/graphql-modules)       | Integrates the execution lifecycle of GraphQL-Modules.                         |
 | useGraphQLMiddleware | [`@envelop/graphql-middleware`](./packages/plugins/graphql-middleware) | Integrates middlewares written for `graphql-middleware`                        |
+| useRateLimiter | [`@envelop/rate-limiter`](./packages/plugins/rate-limiter) | Loimoit request rate via `@rateLimit` diractive                        |
 
 ## Sharing `envelop`s
 

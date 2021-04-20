@@ -5,8 +5,11 @@ export * from './utils';
 
 export class UnauthenticatedError extends Error {}
 
-export type ResolveUserFn<UserType, ContextType = unknown> = (context: ContextType) => null | UserType | Promise<UserType | null>;
-export type ValidateUserFn<UserType, ContextType = unknown> = (
+export type ResolveUserFn<UserType, ContextType = DefaultContext> = (
+  context: ContextType
+) => null | UserType | Promise<UserType | null>;
+
+export type ValidateUserFn<UserType, ContextType = DefaultContext> = (
   user: UserType,
   context: ContextType,
   resolverInfo?: { root: unknown; args: Record<string, unknown>; context: ContextType; info: GraphQLResolveInfo },
@@ -17,7 +20,7 @@ export const DIRECTIVE_SDL = /* GraphQL */ `
   directive @auth on FIELD_DEFINITION
 `;
 
-export type GenericAuthPluginOptions<UserType, ContextType> = {
+export type GenericAuthPluginOptions<UserType extends {} = {}, ContextType extends DefaultContext = DefaultContext> = {
   /**
    * Here you can implement any custom sync/async code, and use the context built so far in Envelop and the HTTP request
    * to find the current user.
@@ -70,17 +73,19 @@ export function defaultValidateFn<UserType, ContextType>(user: UserType, context
   }
 }
 
-export const useGenericAuth = <UserType extends {}, ContextType extends DefaultContext = DefaultContext>(
+export const useGenericAuth = <UserType extends {} = {}, ContextType extends DefaultContext = DefaultContext>(
   options: GenericAuthPluginOptions<UserType, ContextType>
-): Plugin<ContextType> => {
+): Plugin<{
+  validateUser: ValidateUserFn<UserType, ContextType>;
+}> => {
   const fieldName = options.contextFieldName || 'currentUser';
   const validateUser = options.validateUser || defaultValidateFn;
 
   if (options.mode === 'protect-all') {
     return {
       async onContextBuilding({ context, extendContext }) {
-        const user = await options.resolveUserFn(context);
-        await validateUser(user, context as ContextType);
+        const user = await options.resolveUserFn((context as unknown) as ContextType);
+        await validateUser(user, (context as unknown) as ContextType);
 
         extendContext(({
           [fieldName]: user,
@@ -90,22 +95,22 @@ export const useGenericAuth = <UserType extends {}, ContextType extends DefaultC
   } else if (options.mode === 'resolve-only') {
     return {
       async onContextBuilding({ context, extendContext }) {
-        const user = await options.resolveUserFn(context);
+        const user = await options.resolveUserFn((context as unknown) as ContextType);
 
         extendContext(({
           [fieldName]: user,
-          validateUser: () => validateUser(user, context as ContextType),
+          validateUser: () => validateUser(user, (context as unknown) as ContextType),
         } as unknown) as ContextType);
       },
     };
   } else if (options.mode === 'protect-auth-directive') {
     return {
       async onContextBuilding({ context, extendContext }) {
-        const user = await options.resolveUserFn(context);
+        const user = await options.resolveUserFn((context as unknown) as ContextType);
 
         extendContext(({
           [fieldName]: user,
-          validateUser: () => validateUser(user, context as ContextType),
+          validateUser: () => validateUser(user, (context as unknown) as ContextType),
         } as unknown) as ContextType);
       },
       onExecute() {
@@ -114,12 +119,12 @@ export const useGenericAuth = <UserType extends {}, ContextType extends DefaultC
             const authDirectiveNode = getDirective(info, options.authDirectiveName || 'auth');
 
             if (authDirectiveNode) {
-              await (context as { validateUser: typeof options['validateUser'] }).validateUser(
+              await context.validateUser(
                 context[fieldName],
-                context as ContextType,
+                (context as unknown) as ContextType,
                 {
                   info,
-                  context: context as ContextType,
+                  context: (context as unknown) as ContextType,
                   args,
                   root,
                 },

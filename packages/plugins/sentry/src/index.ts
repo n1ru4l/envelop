@@ -14,7 +14,11 @@ export type SentryPluginOptions = {
   appendTags?: (args: ExecutionArgs) => Record<string, unknown>;
 };
 
-export const useSentry = (options: SentryPluginOptions): Plugin => {
+export const useSentry = (
+  options: SentryPluginOptions
+): Plugin<{
+  [tracingSpanSymbol]: ReturnType<typeof Sentry.startTransaction>;
+}> => {
   return {
     onExecute({ args, extendContext }) {
       const rootOperation = args.document.definitions.find(o => o.kind === Kind.OPERATION_DEFINITION) as OperationDefinitionNode;
