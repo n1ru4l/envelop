@@ -17,10 +17,13 @@ const schema = makeExecutableSchema({
       hello: () => 'Hello World!',
     },
     Subscription: {
-      greetings: function* sayHiIn5Languages() {
-        for (const hi of ['Hi', 'Bonjour', 'Hola', 'Ciao', 'Zdravo']) {
-          yield { greetings: hi };
-        }
+      greetings: {
+        subscribe: async function* sayHiIn5Languages() {
+          for (const hi of ['Hi', 'Bonjour', 'Hola', 'Ciao', 'Zdravo']) {
+            yield { greetings: hi };
+            await new Promise(resolve => setTimeout(resolve, 1000)); // wait 1 second
+          }
+        },
       },
     },
   },
