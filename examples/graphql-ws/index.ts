@@ -36,7 +36,7 @@ useServer(
   {
     execute,
     subscribe,
-    onSubscribe: (ctx, msg) => {
+    onSubscribe: async (ctx, msg) => {
       const { schema } = getEnveloped();
 
       const args = {
@@ -44,7 +44,7 @@ useServer(
         operationName: msg.payload.operationName,
         document: parse(msg.payload.query),
         variableValues: msg.payload.variables,
-        contextValue: contextFactory({
+        contextValue: await contextFactory({
           connectionParams: ctx.connectionParams,
           socket: ctx.extra.socket,
           request: ctx.extra.request,
