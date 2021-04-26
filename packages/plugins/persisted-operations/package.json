@@ -1,0 +1,41 @@
+{
+  "name": "@envelop/persisted-operations",
+  "version": "0.1.0",
+  "author": "Dotan Simha <dotansimha@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dotansimha/envelop.git",
+    "directory": "packages/plugins/persisted-operations"
+  },
+  "sideEffects": false,
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "scripts": {
+    "test": "jest",
+    "prepack": "bob prepack"
+  },
+  "dependencies": {
+    "apollo-tracing": "^0.13.0"
+  },
+  "devDependencies": {
+    "@graphql-tools/schema": "7.1.3",
+    "bob-the-bundler": "1.2.0",
+    "graphql": "15.5.0",
+    "typescript": "4.2.4"
+  },
+  "peerDependencies": {
+    "graphql": "^14.0.0 || ^15.0.0"
+  },
+  "buildOptions": {
+    "input": "./src/index.ts"
+  },
+  "publishConfig": {
+    "directory": "dist",
+    "access": "public"
+  }
+}
