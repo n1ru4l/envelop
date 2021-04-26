@@ -18,7 +18,7 @@ Envelop is agnostic to the HTTP server you use, so it's not a traditional server
 
 The core of Envelop is zero-dependency, and will only apply changes to your GraphQL execution based on the plugins you wish to use. It can be integrated with any GraphQL server that follows [the execution phase, as defined in the GraphQL spec](https://spec.graphql.org/June2018/#sec-Executing-Requests) and let you provide your own lifecycle methods.
 
-Separating the execution workflow and the logic that it runs in each phase allow you to write reusable piece of code, like logging, metric collection, error handling, custom validations, resolvers tracing (and integration with any external), authentication, authorization and much more, without the needs to write it explictly every time, or in any project or microservice. With Envelop, you can easily create a wrapper around your common logics, and share it with others.
+Separating the execution workflow and the logic that it runs in each phase allow you to write reusable piece of code, like logging, metric collection, error handling, custom validations, resolvers tracing (and integration with any external), authentication, authorization and much more, without the needs to write it explicitly every time, or in any project or microservice. With Envelop, you can easily create a wrapper around your common logics, and share it with others.
 
 ## Getting Started
 
@@ -42,7 +42,7 @@ const getEnveloped = envelop({
 });
 ```
 
-The result of `envelop` is a function, that allow you to get everything you need for the GraphQL execution: `parse`, `validate`, `contextBuilder` and `execute`. Use that to run the client's GraphQL queries. Here's a psuedo-code of how it should looks like:
+The result of `envelop` is a function, that allow you to get everything you need for the GraphQL execution: `parse`, `validate`, `contextBuilder` and `execute`. Use that to run the client's GraphQL queries. Here's a pseudo-code of how it should looks like:
 
 ```ts
 const httpServer = createServer();
@@ -90,7 +90,7 @@ const getEnveloped = envelop({
 
 ## Integrations / Examples
 
-Envelop provides a low-level API at consumpion of the output, but a rich API while using it with plugins. Based on that, it's possible to integrate Envelop with many tools.
+Envelop provides a low-level API at consumption of the output, but a rich API while using it with plugins. Based on that, it's possible to integrate Envelop with many tools.
 
 We recommend on using [`graphql-helix`](https://github.com/contrawork/graphql-helix) as request pipeline orchestrator, as it allows the maximum flexibility and you can easily override/manage every part of the pipeline with Envelop.
 
@@ -128,7 +128,7 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 | useAuth0             | [`@envelop/auth0`](./packages/plugins/auth0)                           | Validates Auth0 JWT tokens and injects the authenticated user to your context. |
 | useGraphQLModules    | [`@envelop/graphql-modules`](./packages/plugins/graphql-modules)       | Integrates the execution lifecycle of GraphQL-Modules.                         |
 | useGraphQLMiddleware | [`@envelop/graphql-middleware`](./packages/plugins/graphql-middleware) | Integrates middlewares written for `graphql-middleware`                        |
-| useRateLimiter | [`@envelop/rate-limiter`](./packages/plugins/rate-limiter) | Loimoit request rate via `@rateLimit` diractive                        |
+| useRateLimiter       | [`@envelop/rate-limiter`](./packages/plugins/rate-limiter)             | Limit request rate via `@rateLimit` directive                                  |
 
 ## Sharing `envelop`s
 
@@ -188,18 +188,18 @@ You can find it here: https://github.com/dotansimha/envelop/blob/main/packages/t
 
 #### Execution Lifecycle
 
-By extending the GraphQL execution pipeline, we allow developers to write reusable plugins, that can be shared with others easily, as NPM packages. So instead of delivering a bloated GraphQL server with tons of features, we allow you to choose the HTTP server you prefer, the request pipeline you prefer, and the feautures you prefer.
+By extending the GraphQL execution pipeline, we allow developers to write reusable plugins, that can be shared with others easily, as NPM packages. So instead of delivering a bloated GraphQL server with tons of features, we allow you to choose the HTTP server you prefer, the request pipeline you prefer, and the features you prefer.
 
 We wrap the execution pipeline of GraphQL operation, and allow Envelop plugins to do the following:
 
 - `parse`
   - Hook into the before/after of this phase
-  - Overide the parse function
+  - Override the parse function
   - Access to the parsed result
   - Modify the parsed result
 - `validate`
   - Hook into the before/after of this phase
-  - Overide the validation function
+  - Override the validation function
   - Access to the validation error results
   - Modify the validation results
   - Add custom validation rules
@@ -215,7 +215,7 @@ We wrap the execution pipeline of GraphQL operation, and allow Envelop plugins t
   - Replace the execute function
   - Access to the results / error of the execution
   - Access to before / after resolvers calls
-  - Extend resolvers behaviour
+  - Extend resolvers behavior
   - Access resolvers parameters
   - Replace / modify the execution result
 - `subscribe`
@@ -225,7 +225,7 @@ We wrap the execution pipeline of GraphQL operation, and allow Envelop plugins t
   - Replace the execute function
   - Access to the results / error of the execution
   - Access to before / after resolvers calls
-  - Extend resolvers behaviour
+  - Extend resolvers behavior
   - Access resolvers parameters
   - Replace / modify the subscription result
 

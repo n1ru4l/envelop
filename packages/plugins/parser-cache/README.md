@@ -1,6 +1,6 @@
 ## `@envelop/parser-cache`
 
-This plugins adds simple LRU caching to your `parse`, to execurion improve performance by caching the parsed result.
+This plugins adds simple LRU caching to your `parse`, to improve performance by caching the parsed result.
 
 ## Getting Started
 

@@ -58,7 +58,7 @@ import { ValidateUserFn } from '@envelop/generic-auth';
 
 const validateUser: ValidateUserFn<UserType> = async (user, context) => {
   // Here you can implement any custom to check if the user is valid and have access to the server.
-  // This method is being triggered in different flows, besed on the mode you chose to implement.
+  // This method is being triggered in different flows, based on the mode you chose to implement.
 
   // If you are using the `protect-auth-directive` mode, you'll also get 2 additional parameters: the resolver parameters as object and the DirectiveNode of the auth directive.
 

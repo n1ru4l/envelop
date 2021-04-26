@@ -100,11 +100,11 @@ If you wish to customize the token extraction from your HTTP request, override t
 
 #### `headerName` + `tokenType`
 
-If `extractTokenFn` is not set, the default behaviour of this plugin is to look for `req` and `request` in the context, then look for `headers` and look for `authentication` header (you can customize it with `headerName`). Then, it validates that the token is of type `Bearer` (you can customize it with `tokenType` option).
+If `extractTokenFn` is not set, the default behavior of this plugin is to look for `req` and `request` in the context, then look for `headers` and look for `authentication` header (you can customize it with `headerName`). Then, it validates that the token is of type `Bearer` (you can customize it with `tokenType` option).
 
 #### `extendContextField`
 
-The name of the field to inject to your `context`. When the user is valid, the decoded and verified payload of the JWT is injected. In mose cases, the field that you need is `sub` (which refers to the internal Auth0 user identifier).
+The name of the field to inject to your `context`. When the user is valid, the decoded and verified payload of the JWT is injected. In most cases, the field that you need is `sub` (which refers to the internal Auth0 user identifier).
 
 You can read more about the token structure here: https://auth0.com/docs/tokens/json-web-tokens/json-web-token-structure
 
