@@ -1,6 +1,6 @@
 ## `@envelop/validation-cache`
 
-This plugins adds simple LRU caching to your `validate`, to execurion improve performance by caching the validation result.
+This plugins adds simple LRU caching to your `validate`, to improve performance by caching the validation result.
 
 ## Getting Started
 

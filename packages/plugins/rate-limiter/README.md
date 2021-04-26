@@ -15,14 +15,14 @@ import { envelop } from '@envelop/core';
 import { useRateLimiter, IdentifyFn } from '@envelop/generic-auth';
 
 const identifyFn: IdentifyFn = async context => {
-  return context.request.ip
+  return context.request.ip;
 };
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useRateLimiter({
-      identifyFn
+      identifyFn,
     }),
   ],
 });
@@ -36,7 +36,7 @@ Then, in your GraphQL schema SDL, you can add `@rateLimit` directive to your fie
 type Query {
   posts: [Post]! @rateLimit(
     window: "5s", // time interval window for request limit quota
-    max: 10,  // maximum requests alowed in time window
+    max: 10,  // maximum requests allowed in time window
     message: "Too many calls!"  // quota reached error message
   )
   # unlimitedField: String

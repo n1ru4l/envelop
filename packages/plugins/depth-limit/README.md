@@ -1,6 +1,6 @@
 ## `@envelop/depth-limit`
 
-This plugins uses [`graphql-depth-limit`](https://www.npmjs.com/package/graphql-depth-limit) in order to limit the deptch of executed selection sets (by injecting a new GraphQL validation rule into your exection).
+This plugins uses [`graphql-depth-limit`](https://www.npmjs.com/package/graphql-depth-limit) in order to limit the depth of executed selection sets (by injecting a new GraphQL validation rule into your execution).
 
 ## Getting Started
 
