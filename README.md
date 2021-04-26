@@ -101,6 +101,7 @@ Here's a list of integrations and examples:
 | Node's `http`    | V                | [`basic-http`](./examples/simple-http)      |
 | GraphQL-Helix    | V                | [`graphql-helix`](./examples/graphql-helix) |
 | Apollo-Server    | Almost           | [`apollo-server`](./examples/apollo-server) |
+| GraphQL-WS       | V                | [`graphql-ws`](./examples/graphql-ws)       |
 
 > Since Envelop is not a HTTP server, and just a wrapper around GraphQL request pipeline - it's possible to integrate it with any server/framework, if it's flexible enough and allow you to specify the pipeline methods\*.
 
