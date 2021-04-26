@@ -1,6 +1,6 @@
-## Envelop example using WebSockets
+## Envelop example with GraphQL-WS
 
-This example demonstrate how to implement the GraphQL flow with Envelop and the [`graphql-ws`](https://github.com/enisdenjo/graphql-ws) WebSocket library.
+This example demonstrates how to implement the GraphQL flow with Envelop and the [`graphql-ws`](https://github.com/enisdenjo/graphql-ws) WebSocket library.
 
 ## Running this example
 
