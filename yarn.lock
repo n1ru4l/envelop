@@ -1369,10 +1369,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.35.tgz#42c953a4e2b18ab931f72477e7012172f4ffa313"
   integrity sha512-Lt+wj8NVPx0zUmUwumiVXapmaLUcAk3yPuHCFVXras9k5VT9TdhJqKqGVUQCD60OTMCl0qxJ57OiTL0Mic3Iag==
 
-"@types/node@14.14.42":
-  version "14.14.42"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.42.tgz#20271ce899f35eb6cd525f500bfa8f4c9e27ecd6"
-  integrity sha512-88QoObqn9WYIUMRzOx92GmSHmU3JCyukC2ulEv8tFjUG9VeV2FQ/cA7VQ1gi+rB/+gBMVvzVFcTnz8RdMDVIWw==
+"@types/node@14.14.43":
+  version "14.14.43"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.43.tgz#26bcbb0595b305400e8ceaf9a127a7f905ae49c8"
+  integrity sha512-3pwDJjp1PWacPTpH0LcfhgjvurQvrZFBrC6xxjaUEZ7ifUtT32jtjPxEMMblpqd2Mvx+k8haqQJLQxolyGN/cQ==
 
 "@types/node@^10.1.0":
   version "10.17.54"
@@ -4021,10 +4021,10 @@ graphql-modules@1.4.2:
     "@graphql-typed-document-node/core" "^3.1.0"
     ramda "^0.27.1"
 
-graphql-rate-limit@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/graphql-rate-limit/-/graphql-rate-limit-2.1.0.tgz#5185a528a8064943b980f6049e6059558d86278b"
-  integrity sha512-52kODMcGS8hnPxKz7Hs3H53BxczaH+vaXGd5DVwjLQbbeuMg1gXNmyKoSmdU/DCekhbMnvSpEEmseyq2Wk1L/w==
+graphql-rate-limit@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/graphql-rate-limit/-/graphql-rate-limit-2.2.0.tgz#0e386e4f2e52fe2300e1ff45065a91f0098c07ae"
+  integrity sha512-mh/2imTvtXuAhlkgveRLX0lM6uoGfFQgeJav5LApczc4hUZYegTCq2OkbU0Wk++IzYPPqMSDQAs4s/mgWxYgww==
   dependencies:
     "@graphql-tools/schema" "^7.1.3"
     "@graphql-tools/utils" "^7.6.0"
