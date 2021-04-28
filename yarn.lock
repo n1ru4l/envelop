@@ -610,6 +610,19 @@
     is-promise "4.0.0"
     tslib "~2.2.0"
 
+"@graphql-tools/delegate@^7.1.3":
+  version "7.1.3"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/delegate/-/delegate-7.1.3.tgz#b275b47a097ebb32049eadbb8627b5e6431a1f89"
+  integrity sha512-+XacxWzHrIwu/urYA+15tSocTQ2i+9ClDDOj1LKtxU0SGNmaldM5fAjFBuj1BDUSHex2U4RwgEWuN55I7LaLfA==
+  dependencies:
+    "@ardatan/aggregate-error" "0.0.6"
+    "@graphql-tools/batch-execute" "^7.1.0"
+    "@graphql-tools/schema" "^7.0.0"
+    "@graphql-tools/utils" "^7.7.1"
+    dataloader "2.0.0"
+    is-promise "4.0.0"
+    tslib "~2.2.0"
+
 "@graphql-tools/schema@7.1.3", "@graphql-tools/schema@^7.0.0", "@graphql-tools/schema@^7.1.2", "@graphql-tools/schema@^7.1.3":
   version "7.1.3"
   resolved "https://registry.npmjs.org/@graphql-tools/schema/-/schema-7.1.3.tgz#d816400da51fbac1f0086e35540ab63b5e30e858"
@@ -1447,6 +1460,13 @@
   version "2.0.0"
   resolved "https://registry.npmjs.org/@types/stack-utils/-/stack-utils-2.0.0.tgz#7036640b4e21cc2f259ae826ce843d277dad8cff"
   integrity sha512-RJJrrySY7A8havqpGObOB4W92QXKJo63/jFLLgpvOtsGUqbQZ9Sbgl35KMm1DjC6j7AvmmU2bIno+3IyEaemaw==
+
+"@types/ws@7.4.1":
+  version "7.4.1"
+  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-7.4.1.tgz#49eacb15a0534663d53a36fbf5b4d98f5ae9a73a"
+  integrity sha512-ISCK1iFnR+jYv7+jLNX0wDqesZ/5RAeY3wUx6QaphmocphU61h+b+PHjS18TF4WIPTu/MMzxIq2PHr32o2TS5Q==
+  dependencies:
+    "@types/node" "*"
 
 "@types/ws@^7.0.0":
   version "7.4.0"
@@ -4003,7 +4023,15 @@ graphql-jit@^0.5.0:
     lodash.merge "4.6.2"
     lodash.mergewith "4.6.2"
 
-graphql-middleware@6.0.7, graphql-middleware@^6.0.4:
+graphql-middleware@6.0.8:
+  version "6.0.8"
+  resolved "https://registry.yarnpkg.com/graphql-middleware/-/graphql-middleware-6.0.8.tgz#100168d9921d9487475944225a424abb2922524f"
+  integrity sha512-iVk6ngT0EIudQgbZMBdloLwIAC/eaX2Ax38v0bgquQs0uvFB5QZbniUmtjYqNHayYQLwL4BmQHG0JYNGvRiQpg==
+  dependencies:
+    "@graphql-tools/delegate" "^7.1.3"
+    "@graphql-tools/schema" "^7.1.3"
+
+graphql-middleware@^6.0.4:
   version "6.0.7"
   resolved "https://registry.yarnpkg.com/graphql-middleware/-/graphql-middleware-6.0.7.tgz#cf858b3ffc403d57aa5671d2e3442f21627012a5"
   integrity sha512-b1XbUGqNNNxQYmo6jOt8y26uz1glOhd3YGgOBnrlq7ojFJzXIoVsNyvcuT/4xZJR++Jm48nVlLMCR6mSudN9lw==
@@ -7893,6 +7921,11 @@ write-pkg@^4.0.0:
     sort-keys "^2.0.0"
     type-fest "^0.4.1"
     write-json-file "^3.2.0"
+
+ws@7.4.5:
+  version "7.4.5"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.5.tgz#a484dd851e9beb6fdb420027e3885e8ce48986c1"
+  integrity sha512-xzyu3hFvomRfXKH8vOFMU3OguG6oOvhXMo3xsGy3xWExqaM2dxBbVxuD99O7m3ZUFMvvscsZDqxfgMaRr/Nr1g==
 
 ws@^5.2.0:
   version "5.2.2"
