@@ -375,7 +375,7 @@
     "@manypkg/get-packages" "^1.0.1"
     semver "^5.4.1"
 
-"@changesets/cli@2.16.0":
+"@changesets/cli@2.16.0", "@changesets/cli@^2.16.0":
   version "2.16.0"
   resolved "https://registry.yarnpkg.com/@changesets/cli/-/cli-2.16.0.tgz#9f794005d0503efba5e348b929821a1732fd0f0d"
   integrity sha512-VFkXSyyk/WRjjUoBI7g7cDy09qBjPbBQOloPMEshTzMo/NY9muWHl2yB/FSSkV/6PxGimPtJ7aEJPYfk8HCfXw==
@@ -630,6 +630,15 @@
   dependencies:
     "@graphql-tools/utils" "^7.1.2"
     tslib "~2.1.0"
+
+"@graphql-tools/schema@7.1.4":
+  version "7.1.4"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/schema/-/schema-7.1.4.tgz#34ea86af336c7ff9fb294d25317cb5952cf1f86a"
+  integrity sha512-kkDLbCIMwGRUZAPdeRcnUFXu6wSaMWXNmDigWsIsepzhVx0nLQ2k58Ec7pBylKaut5xWi0344GctQ3qDhBUHDA==
+  dependencies:
+    "@graphql-tools/utils" "^7.1.2"
+    tslib "~2.2.0"
+    value-or-promise "~1.0.5"
 
 "@graphql-tools/utils@7.8.0":
   version "7.8.0"
@@ -7746,6 +7755,13 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
+
+value-or-promise@~1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/value-or-promise/-/value-or-promise-1.0.5.tgz#6c9c5496288df3be9c71c60def01262e95d30adf"
+  integrity sha512-9ZmqlFSp5ihOF8jh8zykx3wGJG83jz1jiXmSxm0onPIlt9Vak4FTyHrvTVaL5Ykj3UpSPvbCbnuYxnzUQyLBHA==
+  dependencies:
+    "@changesets/cli" "^2.16.0"
 
 vary@^1, vary@~1.1.2:
   version "1.1.2"
