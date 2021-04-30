@@ -21,7 +21,7 @@
     "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\""
   },
   "devDependencies": {
-    "apollo-server": "2.23.0",
+    "apollo-server": "2.24.0",
     "@graphql-tools/schema": "7.1.4",
     "@types/benchmark": "2.1.0",
     "benchmark": "2.1.4",
