@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "apollo-server": "2.24.0",
-    "@graphql-tools/schema": "7.1.4",
+    "@graphql-tools/schema": "7.1.5",
     "@types/benchmark": "2.1.0",
     "benchmark": "2.1.4",
     "ts-node": "9.1.1",
