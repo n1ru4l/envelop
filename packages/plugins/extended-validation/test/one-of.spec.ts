@@ -2,7 +2,7 @@ import { buildSchema } from 'graphql';
 import { createTestkit } from '@envelop/testing';
 import { useExtendedValidation, ONE_OF_DIRECTIVE_SDL, OneOfInputObjectsRule } from '../src';
 
-describe('useExtendedValidation', () => {
+describe('oneOf', () => {
   const testSchema = buildSchema(/* GraphQL */ `
     ${ONE_OF_DIRECTIVE_SDL}
 
