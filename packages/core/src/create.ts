@@ -297,15 +297,22 @@ export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initi
 
     const onResolversHandlers: OnResolverCalledHooks[] = [];
     let executeFn: typeof execute = execute;
+    let result: ExecutionResult;
 
     const afterCalls: ((options: { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void }) => void)[] = [];
     let context = args.contextValue;
 
     for (const plugin of beforeExecuteCalls) {
+      let stopCalled = false;
+
       const after = plugin.onExecute({
         executeFn,
         setExecuteFn: newExecuteFn => {
           executeFn = newExecuteFn;
+        },
+        setResultAndStopExecution: stopResult => {
+          stopCalled = true;
+          result = stopResult;
         },
         extendContext: extension => {
           if (typeof extension === 'object') {
@@ -322,6 +329,10 @@ export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initi
         args,
       });
 
+      if (stopCalled) {
+        return result;
+      }
+
       if (after) {
         if (after.onExecuteDone) {
           afterCalls.push(after.onExecuteDone);
@@ -336,7 +347,7 @@ export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initi
       context[resolversHooksSymbol] = onResolversHandlers;
     }
 
-    let result = await executeFn({
+    result = await executeFn({
       ...args,
       contextValue: context,
     });

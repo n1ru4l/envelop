@@ -58,6 +58,7 @@ export interface Plugin<PluginContext = DefaultContext> {
     executeFn: typeof execute;
     args: ExecutionArgs;
     setExecuteFn: (newExecute: typeof execute) => void;
+    setResultAndStopExecution: (newResult: ExecutionResult) => void;
     extendContext: (contextExtension: Partial<PluginContext>) => void;
   }) => void | OnExecuteHookResult<PluginContext>;
   onSubscribe?: (options: {
