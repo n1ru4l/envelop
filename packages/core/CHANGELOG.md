@@ -1,5 +1,13 @@
 # @envelop/core
 
+## 0.1.4
+
+### Patch Changes
+
+- ced704e: Allow plugins to stop execution and return errors
+- Updated dependencies [ced704e]
+  - @envelop/types@0.1.4
+
 ## 0.1.3
 
 ### Patch Changes
