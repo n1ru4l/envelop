@@ -6,13 +6,14 @@ describe('execute', () => {
   it('Should wrap and trigger events correctly', async () => {
     const spiedPlugin = createSpiedPlugin();
     const teskit = createTestkit([spiedPlugin.plugin], schema);
-    await teskit.execute(query, { test: 1 });
+    await teskit.execute(query, {}, { test: 1 });
     expect(spiedPlugin.spies.beforeExecute).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.beforeResolver).toHaveBeenCalledTimes(3);
     expect(spiedPlugin.spies.beforeExecute).toHaveBeenCalledWith({
       executeFn: expect.any(Function),
       setExecuteFn: expect.any(Function),
       extendContext: expect.any(Function),
+      setResultAndStopExecution: expect.any(Function),
       args: {
         contextValue: expect.objectContaining({ test: 1 }),
         rootValue: {},
@@ -20,7 +21,7 @@ describe('execute', () => {
         operationName: undefined,
         fieldResolver: undefined,
         typeResolver: undefined,
-        variableValues: undefined,
+        variableValues: {},
         document: expect.objectContaining({
           definitions: expect.any(Array),
         }),
@@ -58,7 +59,7 @@ describe('execute', () => {
     expect(altExecute).toHaveBeenCalledTimes(1);
   });
 
-  it.skip('Should allow to write async functions for before execute', async () => {
+  it('Should allow to write async functions for before execute', async () => {
     const altExecute = jest.fn(execute);
     const teskit = createTestkit(
       [
