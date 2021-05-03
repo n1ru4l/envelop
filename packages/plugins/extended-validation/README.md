@@ -52,11 +52,28 @@ export const MyRule: ExtendedValidationRule = (validationContext, executionArgs)
 
 This directive provides validation for input types and implements the concept of union inputs. You can find the [complete spec RFC here](https://github.com/graphql/graphql-spec/pull/825).
 
-To use that validation rule, make sure to include the following directive in your schema:
+You can use union inputs either via a the SDL flow, by annotating types and fields with `@oneOf` or via the `extensions` field.
+
+First, make sure to add that rule to your plugin usage:
+
+````ts
+import { useExtendedValidation, OneOfInputObjectsRule } from '@envelop/extended-validation';
+
+const getEnveloped = evelop({
+  plugins: [
+    useExtendedValidation({
+      rules: [OneOfInputObjectsRule],
+    }),
+  ],
+});
+
+#### Schema Directive Flow
+
+Make sure to include the following directive in your schema:
 
 ```graphql
 directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
-```
+````
 
 Then, apply it to field definitions, or to a complete `input` type:
 
@@ -64,7 +81,7 @@ Then, apply it to field definitions, or to a complete `input` type:
 ## Apply to entire input type
 input FindUserInput @oneOf {
   id: ID
-  organizationAndRegistrationNumber: OrganizationAndRegistrationNumberInput
+  organizationAndRegistrationNumber: GraphQLInt
 }
 
 ## Or, apply to a set of input arguments
@@ -74,16 +91,44 @@ type Query {
 }
 ```
 
-Then, make sure to add that rule to your plugin usage:
+#### Programmatic extensions flow
 
-```ts
-import { useExtendedValidation, OneOfInputObjectsRule } from '@envelop/extended-validation';
+```tsx
+const GraphQLFindUserInput = new GraphQLInputObjectType({
+  name: 'FindUserInput',
+  fields: {
+    id: {
+      type: GraphQLID,
+    },
+    organizationAndRegistrationNumber: {
+      type: GraphQLInt,
+    },
+  },
+  extensions: {
+    oneOf: true,
+  },
+});
 
-const getEnveloped = evelop({
-  plugins: [
-    useExtendedValidation({
-      rules: [OneOfInputObjectsRule],
-    }),
-  ],
+const Query = new GraphQLObjectType({
+  name: 'Query',
+  fields: {
+    foo: {
+      type: GraphQLString,
+      args: {
+        id: {
+          type: GraphQLID,
+        },
+        str1: {
+          type: GraphQLString,
+        },
+        str2: {
+          type: GraphQLString,
+        },
+      },
+      extensions: {
+        oneOf: true,
+      },
+    },
+  },
 });
 ```
