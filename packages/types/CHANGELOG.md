@@ -1,5 +1,11 @@
 # @envelop/types
 
+## 0.1.4
+
+### Patch Changes
+
+- ced704e: Allow plugins to stop execution and return errors
+
 ## 0.1.3
 
 ### Patch Changes
