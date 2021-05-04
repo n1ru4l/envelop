@@ -12,7 +12,7 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
       if (node.arguments?.length) {
         const fieldType = validationContext.getFieldDef();
 
-        if (!fieldType || !fieldType.astNode) {
+        if (!fieldType) {
           return;
         }
 
