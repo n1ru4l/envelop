@@ -1,6 +1,6 @@
 import { DocumentNode, ExecutionResult, GraphQLSchema, print } from 'graphql';
 import { getGraphQLParameters, processRequest } from 'graphql-helix';
-import { envelop } from '@envelop/core';
+import { envelop, useSchema } from '@envelop/core';
 import { Envelop, Plugin } from '@envelop/types';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -67,8 +67,7 @@ export function createTestkit(
 
   const initRequest = Array.isArray(pluginsOrEnvelop)
     ? envelop({
-        plugins: [replaceSchemaPlugin, ...pluginsOrEnvelop],
-        initialSchema: schema,
+        plugins: [useSchema(schema!), replaceSchemaPlugin, ...pluginsOrEnvelop],
       })
     : pluginsOrEnvelop;
 

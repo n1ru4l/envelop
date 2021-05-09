@@ -24,22 +24,8 @@ const trackedSchemaSymbol = Symbol('TRACKED_SCHEMA');
 const resolversHooksSymbol = Symbol('RESOLVERS_HOOKS');
 
 export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
-  let schema: GraphQLSchema | undefined | null;
+  let schema: GraphQLSchema | undefined | null = null;
   let initDone = false;
-
-  const onContextBuildingCbs: NonNullable<Plugin['onContextBuilding']>[] = [];
-  const onExecuteCbs: NonNullable<Plugin['onExecute']>[] = [];
-  const onParseCbs: NonNullable<Plugin['onParse']>[] = [];
-  const onSubscribeCbs: NonNullable<Plugin['onSubscribe']>[] = [];
-  const onValidateCbs: NonNullable<Plugin['onValidate']>[] = [];
-
-  for (const { onContextBuilding, onExecute, onParse, onSubscribe, onValidate } of plugins) {
-    onContextBuilding && onContextBuildingCbs.push(onContextBuilding);
-    onExecute && onExecuteCbs.push(onExecute);
-    onParse && onParseCbs.push(onParse);
-    onSubscribe && onSubscribeCbs.push(onSubscribe);
-    onValidate && onValidateCbs.push(onValidate);
-  }
 
   const replaceSchema = (newSchema: GraphQLSchema, ignorePluginIndex = -1) => {
     schema = newSchema;
@@ -70,12 +56,27 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
       });
   }
 
+  const onContextBuildingCbs: NonNullable<Plugin['onContextBuilding']>[] = [];
+  const onExecuteCbs: NonNullable<Plugin['onExecute']>[] = [];
+  const onParseCbs: NonNullable<Plugin['onParse']>[] = [];
+  const onSubscribeCbs: NonNullable<Plugin['onSubscribe']>[] = [];
+  const onValidateCbs: NonNullable<Plugin['onValidate']>[] = [];
+
+  for (const { onContextBuilding, onExecute, onParse, onSubscribe, onValidate } of plugins) {
+    onContextBuilding && onContextBuildingCbs.push(onContextBuilding);
+    onExecute && onExecuteCbs.push(onExecute);
+    onParse && onParseCbs.push(onParse);
+    onSubscribe && onSubscribeCbs.push(onSubscribe);
+    onValidate && onValidateCbs.push(onValidate);
+  }
+
   const customParse: typeof parse = onParseCbs.length
     ? (source, parseOptions) => {
-        let result: DocumentNode | Error = null;
+        let result: DocumentNode | Error | null = null;
         let parseFn: typeof parse = parse;
 
         const afterCalls: AfterCallback<'onParse'>[] = [];
+
         for (const onParse of onParseCbs) {
           const afterFn = onParse({
             params: { source, options: parseOptions },
@@ -108,6 +109,10 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
           });
         }
 
+        if (result === null) {
+          throw new Error(`Failed to parse document.`);
+        }
+
         if (result instanceof Error) {
           throw result;
         }
@@ -120,7 +125,7 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
     ? (schema, documentAST, rules, typeInfo, validationOptions) => {
         let actualRules: undefined | ValidationRule[] = rules ? [...rules] : undefined;
         let validateFn = validate;
-        let result: readonly GraphQLError[] = null;
+        let result: null | readonly GraphQLError[] = null;
 
         const afterCalls: AfterCallback<'onValidate'>[] = [];
         for (const onValidate of onValidateCbs) {
@@ -151,7 +156,7 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
           afterFn && afterCalls.push(afterFn);
         }
 
-        if (result === null) {
+        if (!result) {
           result = validateFn(schema, documentAST, actualRules, typeInfo, validationOptions);
         }
 
@@ -166,7 +171,7 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
     : validate;
 
   const customContextFactory = onContextBuildingCbs.length
-    ? async initialContext => {
+    ? async (initialContext: any) => {
         let context = initialContext;
 
         const afterCalls: AfterCallback<'onContextBuilding'>[] = [];
@@ -199,7 +204,7 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
 
         return context;
       }
-    : ctx => ctx;
+    : (ctx: any) => ctx;
 
   const customSubscribe = async (
     argsOrSchema: SubscriptionArgs | GraphQLSchema,
@@ -215,7 +220,7 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
       argsOrSchema instanceof GraphQLSchema
         ? {
             schema: argsOrSchema,
-            document,
+            document: document!,
             rootValue,
             contextValue,
             variableValues,
@@ -286,101 +291,108 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
     return result;
   };
 
-  const customExecute = async (
-    argsOrSchema: ExecutionArgs | GraphQLSchema,
-    document?: DocumentNode,
-    rootValue?: any,
-    contextValue?: any,
-    variableValues?: Maybe<{ [key: string]: any }>,
-    operationName?: Maybe<string>,
-    fieldResolver?: Maybe<GraphQLFieldResolver<any, any>>,
-    typeResolver?: Maybe<GraphQLTypeResolver<any, any>>
-  ) => {
-    const args: ExecutionArgs =
-      argsOrSchema instanceof GraphQLSchema
-        ? {
-            schema: argsOrSchema,
-            document,
-            rootValue,
-            contextValue,
-            variableValues,
-            operationName,
-            fieldResolver,
-            typeResolver,
+  const customExecute = onExecuteCbs.length
+    ? async (
+        argsOrSchema: ExecutionArgs | GraphQLSchema,
+        document?: DocumentNode,
+        rootValue?: any,
+        contextValue?: any,
+        variableValues?: Maybe<{ [key: string]: any }>,
+        operationName?: Maybe<string>,
+        fieldResolver?: Maybe<GraphQLFieldResolver<any, any>>,
+        typeResolver?: Maybe<GraphQLTypeResolver<any, any>>
+      ) => {
+        const args: ExecutionArgs =
+          argsOrSchema instanceof GraphQLSchema
+            ? {
+                schema: argsOrSchema,
+                document: document!,
+                rootValue,
+                contextValue,
+                variableValues,
+                operationName,
+                fieldResolver,
+                typeResolver,
+              }
+            : argsOrSchema;
+
+        const onResolversHandlers: OnResolverCalledHooks[] = [];
+        let executeFn: typeof execute = execute;
+        let result: ExecutionResult;
+
+        const afterCalls: ((options: {
+          result: ExecutionResult;
+          setResult: (newResult: ExecutionResult) => void;
+        }) => void)[] = [];
+        let context = args.contextValue;
+
+        for (const onExecute of onExecuteCbs) {
+          let stopCalled = false;
+
+          const after = onExecute({
+            executeFn,
+            setExecuteFn: newExecuteFn => {
+              executeFn = newExecuteFn;
+            },
+            setResultAndStopExecution: stopResult => {
+              stopCalled = true;
+              result = stopResult;
+            },
+            extendContext: extension => {
+              if (typeof extension === 'object') {
+                context = {
+                  ...(context || {}),
+                  ...extension,
+                };
+              } else {
+                throw new Error(
+                  `Invalid context extension provided! Expected "object", got: "${JSON.stringify(
+                    extension
+                  )}" (${typeof extension})`
+                );
+              }
+            },
+            args,
+          });
+
+          if (stopCalled) {
+            return result!;
           }
-        : argsOrSchema;
 
-    const onResolversHandlers: OnResolverCalledHooks[] = [];
-    let executeFn: typeof execute = execute;
-    let result: ExecutionResult;
-
-    const afterCalls: ((options: { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void }) => void)[] = [];
-    let context = args.contextValue;
-
-    for (const onExecute of onExecuteCbs) {
-      let stopCalled = false;
-
-      const after = onExecute({
-        executeFn,
-        setExecuteFn: newExecuteFn => {
-          executeFn = newExecuteFn;
-        },
-        setResultAndStopExecution: stopResult => {
-          stopCalled = true;
-          result = stopResult;
-        },
-        extendContext: extension => {
-          if (typeof extension === 'object') {
-            context = {
-              ...(context || {}),
-              ...extension,
-            };
-          } else {
-            throw new Error(
-              `Invalid context extension provided! Expected "object", got: "${JSON.stringify(extension)}" (${typeof extension})`
-            );
+          if (after) {
+            if (after.onExecuteDone) {
+              afterCalls.push(after.onExecuteDone);
+            }
+            if (after.onResolverCalled) {
+              onResolversHandlers.push(after.onResolverCalled);
+            }
           }
-        },
-        args,
-      });
+        }
 
-      if (stopCalled) {
+        if (onResolversHandlers.length) {
+          context[resolversHooksSymbol] = onResolversHandlers;
+        }
+
+        result = await executeFn({
+          ...args,
+          contextValue: context,
+        });
+
+        for (const afterCb of afterCalls) {
+          afterCb({
+            result,
+            setResult: newResult => {
+              result = newResult;
+            },
+          });
+        }
+
         return result;
       }
-
-      if (after) {
-        if (after.onExecuteDone) {
-          afterCalls.push(after.onExecuteDone);
-        }
-        if (after.onResolverCalled) {
-          onResolversHandlers.push(after.onResolverCalled);
-        }
-      }
-    }
-
-    if (onResolversHandlers.length) {
-      context[resolversHooksSymbol] = onResolversHandlers;
-    }
-
-    result = await executeFn({
-      ...args,
-      contextValue: context,
-    });
-
-    for (const afterCb of afterCalls) {
-      afterCb({
-        result,
-        setResult: newResult => {
-          result = newResult;
-        },
-      });
-    }
-
-    return result;
-  };
+    : execute;
 
   function prepareSchema() {
-    if (schema[trackedSchemaSymbol]) {
+    if (!schema || schema[trackedSchemaSymbol]) {
       return;
     }
 
@@ -465,7 +477,7 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
       execute: customExecute,
       subscribe: customSubscribe,
       get schema() {
-        return schema;
+        return schema!;
       },
     };
   };

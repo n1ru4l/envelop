@@ -39,7 +39,7 @@ export const useParserCache = (pluginOptions: ParserCacheOptions = {}): Plugin =
       return ({ result }) => {
         if (result instanceof Error) {
           errorCache.set(key, result);
-        } else {
+        } else if (result !== null) {
           documentCache.set(key, result);
         }
       };

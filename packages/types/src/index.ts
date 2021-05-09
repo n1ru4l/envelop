@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   DocumentNode,
   GraphQLSchema,
@@ -79,7 +80,7 @@ export interface Plugin<PluginContext = DefaultContext> {
       setParsedDocument: (doc: DocumentNode) => void;
     },
     {
-      result: DocumentNode | Error;
+      result: DocumentNode | Error | null;
       replaceParseResult: (newResult: DocumentNode | Error) => void;
     },
     false
@@ -115,8 +116,11 @@ export interface Plugin<PluginContext = DefaultContext> {
   >;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export type AfterCallback<T extends keyof Plugin> = Plugin[T] extends BeforeAfterHook<infer B, infer A, infer Async>
+export type AfterCallback<T extends keyof Plugin<any>> = NonNullable<Plugin[T]> extends BeforeAfterHook<
+  infer B,
+  infer A,
+  infer Async
+>
   ? (afterOptions: A) => void
   : never;
 
