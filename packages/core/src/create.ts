@@ -29,6 +29,20 @@ export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initi
   const childPlugins = (options.extends || []).reduce((prev, child) => [...prev, ...child._plugins], []);
   const plugins: Plugin[] = [...childPlugins, ...options.plugins];
 
+  const onContextBuildingCbs: NonNullable<Plugin['onContextBuilding']>[] = [];
+  const onExecuteCbs: NonNullable<Plugin['onExecute']>[] = [];
+  const onParseCbs: NonNullable<Plugin['onParse']>[] = [];
+  const onSubscribeCbs: NonNullable<Plugin['onSubscribe']>[] = [];
+  const onValidateCbs: NonNullable<Plugin['onValidate']>[] = [];
+
+  for (const { onContextBuilding, onExecute, onParse, onSubscribe, onValidate } of plugins) {
+    onContextBuilding && onContextBuildingCbs.push(onContextBuilding);
+    onExecute && onExecuteCbs.push(onExecute);
+    onParse && onParseCbs.push(onParse);
+    onSubscribe && onSubscribeCbs.push(onSubscribe);
+    onValidate && onValidateCbs.push(onValidate);
+  }
+
   const replaceSchema = (newSchema: GraphQLSchema, ignorePluginIndex = -1) => {
     schema = newSchema;
 
@@ -54,137 +68,136 @@ export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initi
       });
   }
 
-  const customParse: typeof parse = (source, parseOptions) => {
-    let result: DocumentNode | Error = null;
-    let parseFn: typeof parse = parse;
+  const customParse: typeof parse = onParseCbs.length
+    ? (source, parseOptions) => {
+        let result: DocumentNode | Error = null;
+        let parseFn: typeof parse = parse;
 
-    const afterCalls: AfterCallback<'onParse'>[] = [];
-    for (const plugin of plugins) {
-      const afterFn =
-        plugin.onParse &&
-        plugin.onParse({
-          params: { source, options: parseOptions },
-          parseFn,
-          setParseFn: newFn => {
-            parseFn = newFn;
-          },
-          setParsedDocument: newDoc => {
-            result = newDoc;
-          },
-        });
+        const afterCalls: AfterCallback<'onParse'>[] = [];
+        for (const onParse of onParseCbs) {
+          const afterFn = onParse({
+            params: { source, options: parseOptions },
+            parseFn,
+            setParseFn: newFn => {
+              parseFn = newFn;
+            },
+            setParsedDocument: newDoc => {
+              result = newDoc;
+            },
+          });
 
-      afterFn && afterCalls.push(afterFn);
-    }
+          afterFn && afterCalls.push(afterFn);
+        }
 
-    if (result === null) {
-      try {
-        result = parseFn(source, parseOptions);
-      } catch (e) {
-        result = e;
+        if (result === null) {
+          try {
+            result = parseFn(source, parseOptions);
+          } catch (e) {
+            result = e;
+          }
+        }
+
+        for (const afterCb of afterCalls) {
+          afterCb({
+            replaceParseResult: newResult => {
+              result = newResult;
+            },
+            result,
+          });
+        }
+
+        if (result instanceof Error) {
+          throw result;
+        }
+
+        return result;
       }
-    }
+    : parse;
 
-    for (const afterCb of afterCalls) {
-      afterCb({
-        replaceParseResult: newResult => {
-          result = newResult;
-        },
-        result,
-      });
-    }
+  const customValidate: typeof validate = onValidateCbs.length
+    ? (schema, documentAST, rules, typeInfo, validationOptions) => {
+        let actualRules: undefined | ValidationRule[] = rules ? [...rules] : undefined;
+        let validateFn = validate;
+        let result: readonly GraphQLError[] = null;
 
-    if (result instanceof Error) {
-      throw result;
-    }
+        const afterCalls: AfterCallback<'onValidate'>[] = [];
+        for (const onValidate of onValidateCbs) {
+          const afterFn = onValidate({
+            params: {
+              schema,
+              documentAST,
+              rules: actualRules,
+              typeInfo,
+              options: validationOptions,
+            },
+            validateFn,
+            addValidationRule: rule => {
+              if (!actualRules) {
+                actualRules = [...specifiedRules];
+              }
 
-    return result;
-  };
+              actualRules.push(rule);
+            },
+            setValidationFn: newFn => {
+              validateFn = newFn;
+            },
+            setResult: newResults => {
+              result = newResults;
+            },
+          });
 
-  const customValidate: typeof validate = (schema, documentAST, rules, typeInfo, validationOptions) => {
-    let actualRules: undefined | ValidationRule[] = rules ? [...rules] : undefined;
-    let validateFn = validate;
-    let result: readonly GraphQLError[] = null;
+          afterFn && afterCalls.push(afterFn);
+        }
 
-    const afterCalls: AfterCallback<'onValidate'>[] = [];
-    for (const plugin of plugins) {
-      const afterFn =
-        plugin.onValidate &&
-        plugin.onValidate({
-          params: {
-            schema,
-            documentAST,
-            rules: actualRules,
-            typeInfo,
-            options: validationOptions,
-          },
-          validateFn,
-          addValidationRule: rule => {
-            if (!actualRules) {
-              actualRules = [...specifiedRules];
-            }
+        if (result === null) {
+          result = validateFn(schema, documentAST, actualRules, typeInfo, validationOptions);
+        }
 
-            actualRules.push(rule);
-          },
-          setValidationFn: newFn => {
-            validateFn = newFn;
-          },
-          setResult: newResults => {
-            result = newResults;
-          },
-        });
+        const valid = result.length === 0;
 
-      afterFn && afterCalls.push(afterFn);
-    }
+        for (const afterCb of afterCalls) {
+          afterCb({ valid, result });
+        }
 
-    if (result === null) {
-      result = validateFn(schema, documentAST, actualRules, typeInfo, validationOptions);
-    }
+        return result;
+      }
+    : validate;
 
-    const valid = result.length === 0;
+  const customContextFactory = onContextBuildingCbs.length
+    ? async initialContext => {
+        let context = initialContext;
 
-    for (const afterCb of afterCalls) {
-      afterCb({ valid, result });
-    }
+        const afterCalls: AfterCallback<'onContextBuilding'>[] = [];
 
-    return result;
-  };
+        for (const onContext of onContextBuildingCbs) {
+          const afterFn = await onContext({
+            context,
+            extendContext: extension => {
+              if (typeof extension === 'object') {
+                context = {
+                  ...(context || {}),
+                  ...extension,
+                };
+              } else {
+                throw new Error(
+                  `Invalid context extension provided! Expected "object", got: "${JSON.stringify(
+                    extension
+                  )}" (${typeof extension})`
+                );
+              }
+            },
+          });
 
-  const customContextFactory = async initialContext => {
-    let context = initialContext;
+          afterFn && afterCalls.push(afterFn);
+        }
 
-    const afterCalls: AfterCallback<'onContextBuilding'>[] = [];
+        for (const afterCb of afterCalls) {
+          afterCb({ context });
+        }
 
-    for (const plugin of plugins) {
-      const afterFn =
-        plugin.onContextBuilding &&
-        (await plugin.onContextBuilding({
-          context,
-          extendContext: extension => {
-            if (typeof extension === 'object') {
-              context = {
-                ...(context || {}),
-                ...extension,
-              };
-            } else {
-              throw new Error(
-                `Invalid context extension provided! Expected "object", got: "${JSON.stringify(extension)}" (${typeof extension})`
-              );
-            }
-          },
-        }));
-
-      afterFn && afterCalls.push(afterFn);
-    }
-
-    for (const afterCb of afterCalls) {
-      afterCb({ context });
-    }
-
-    return context;
-  };
-
-  const beforeExecuteCalls = plugins.filter(p => p.onExecute);
-  const beforeSubscribeCalls = plugins.filter(p => p.onSubscribe);
+        return context;
+      }
+    : ctx => ctx;
 
   const customSubscribe = async (
     argsOrSchema: SubscriptionArgs | GraphQLSchema,
@@ -219,8 +232,8 @@ export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initi
     }) => void)[] = [];
     let context = args.contextValue;
 
-    for (const plugin of beforeSubscribeCalls) {
-      const after = plugin.onSubscribe({
+    for (const onSubscribe of onSubscribeCbs) {
+      const after = onSubscribe({
         subscribeFn,
         setSubscribeFn: newSubscribeFn => {
           subscribeFn = newSubscribeFn;
@@ -302,10 +315,10 @@ export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initi
     const afterCalls: ((options: { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void }) => void)[] = [];
     let context = args.contextValue;
 
-    for (const plugin of beforeExecuteCalls) {
+    for (const onExecute of onExecuteCbs) {
       let stopCalled = false;
 
-      const after = plugin.onExecute({
+      const after = onExecute({
         executeFn,
         setExecuteFn: newExecuteFn => {
           executeFn = newExecuteFn;
