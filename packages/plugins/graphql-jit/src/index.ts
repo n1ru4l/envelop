@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { Plugin } from '@envelop/types';
-import { GraphQLError, DocumentNode, ExecutionResult, Source } from 'graphql';
-import { compileQuery, isCompiledQuery, CompilerOptions, CompiledQuery } from 'graphql-jit';
+import { GraphQLError, DocumentNode, Source } from 'graphql';
+import { compileQuery, isCompiledQuery, CompilerOptions } from 'graphql-jit';
 import lru from 'tiny-lru';
 
 const DEFAULT_MAX = 1000;
@@ -31,17 +31,7 @@ export const useGraphQlJit = (
 
   const DocumentSourceMap = new WeakMap<DocumentNode, string>();
 
-  const jitCache = lru<
-    | CompiledQuery
-    | ExecutionResult<
-        {
-          [key: string]: any;
-        },
-        {
-          [key: string]: any;
-        }
-      >
-  >(max, ttl);
+  const jitCache = lru<ReturnType<typeof compileQuery>>(max, ttl);
 
   return {
     onParse({ params: { source } }) {
@@ -55,17 +45,7 @@ export const useGraphQlJit = (
     },
     onExecute({ args, setExecuteFn }) {
       setExecuteFn(function jitExecutor() {
-        let compiledQuery:
-          | CompiledQuery
-          | ExecutionResult<
-              {
-                [key: string]: any;
-              },
-              {
-                [key: string]: any;
-              }
-            >
-          | undefined;
+        let compiledQuery: ReturnType<typeof compileQuery> | undefined;
 
         const documentSource = DocumentSourceMap.get(args.document);
 
