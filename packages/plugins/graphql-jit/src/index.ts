@@ -7,30 +7,26 @@ import lru from 'tiny-lru';
 const DEFAULT_MAX = 1000;
 const DEFAULT_TTL = 3600000;
 
-export type JitCacheOptions = {
-  /**
-   * Maximum size of LRU Cache
-   * @default 1000
-   */
-  max?: number;
-  /**
-   * TTL in milliseconds
-   * @default 3600000
-   */
-  ttl?: number;
-};
-
 export const useGraphQlJit = (
   compilerOptions: Partial<CompilerOptions> = {},
   pluginOptions: {
     onError?: (r: ReturnType<typeof compileQuery>) => void;
-  } & JitCacheOptions = {}
+    /**
+     * Maximum size of LRU Cache
+     * @default 1000
+     */
+    max?: number;
+    /**
+     * TTL in milliseconds
+     * @default 3600000
+     */
+    ttl?: number;
+  } = {}
 ): Plugin => {
   const max = typeof pluginOptions.max === 'number' ? pluginOptions.max : DEFAULT_MAX;
   const ttl = typeof pluginOptions.ttl === 'number' ? pluginOptions.ttl : DEFAULT_TTL;
 
-  const DocumentSourceMap = new WeakMap<DocumentNode, string>();
-
+  const documentSourceMap = new WeakMap<DocumentNode, string>();
   const jitCache = lru<ReturnType<typeof compileQuery>>(max, ttl);
 
   return {
@@ -40,14 +36,14 @@ export const useGraphQlJit = (
       return ({ result }) => {
         if (!result || result instanceof Error) return;
 
-        DocumentSourceMap.set(result, key);
+        documentSourceMap.set(result, key);
       };
     },
     onExecute({ args, setExecuteFn }) {
       setExecuteFn(function jitExecutor() {
         let compiledQuery: ReturnType<typeof compileQuery> | undefined;
 
-        const documentSource = DocumentSourceMap.get(args.document);
+        const documentSource = documentSourceMap.get(args.document);
 
         if (documentSource) compiledQuery = jitCache.get(documentSource);
 
