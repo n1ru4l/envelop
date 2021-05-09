@@ -20,7 +20,8 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "graphql-jit": "^0.5.0"
+    "graphql-jit": "^0.5.0",
+    "tiny-lru": "7.0.6"
   },
   "devDependencies": {
     "graphql-jit": "0.5.0",
