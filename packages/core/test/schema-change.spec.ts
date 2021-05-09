@@ -1,6 +1,6 @@
 import { createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { Plugin } from '@envelop/types';
-import { buildSchema } from 'graphql';
+import { buildSchema, GraphQLSchema } from 'graphql';
 import { schema, query } from './common';
 
 describe('schemaChange', () => {
@@ -20,7 +20,7 @@ describe('schemaChange', () => {
     const pluginA = { onSchemaChange: jest.fn() };
     const pluginB = { onSchemaChange: jest.fn() };
 
-    let setSchemaFn;
+    let setSchemaFn = (newSchema: GraphQLSchema) => {};
 
     const pluginTrigger: Plugin = {
       onSchemaChange: jest.fn(),

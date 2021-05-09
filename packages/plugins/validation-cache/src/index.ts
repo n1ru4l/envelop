@@ -24,7 +24,10 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
 
       if (resultCache.get(key)) {
         const errors = resultCache.get(key);
-        setResult(errors);
+
+        if (errors) {
+          setResult(errors);
+        }
       }
 
       return ({ result }) => {

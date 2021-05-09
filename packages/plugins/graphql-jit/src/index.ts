@@ -12,7 +12,7 @@ export const useGraphQlJit = (
   return {
     onExecute({ args, setExecuteFn }) {
       setExecuteFn(function jitExecutor() {
-        const compiledQuery = compileQuery(args.schema, args.document, args.operationName, compilerOptions);
+        const compiledQuery = compileQuery(args.schema, args.document, args.operationName ?? undefined, compilerOptions);
 
         if (!isCompiledQuery(compiledQuery)) {
           if (pluginOptions?.onError) {

@@ -134,7 +134,7 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 | useFilterAllowedOperations | [`@envelop/filter-operation-type`](./packages/plugins/filter-operation-type) | Only allow execution of specific operation types                                                                                                  |
 | useExtendedValidation      | [`@envelop/extended-validation`](./packages/plugins/extended-validation)     | Adds custom validations to the execution pipeline, with access to variables. Comes with an implementation for `@oneOf` directibe for input union. |
 
-## Sharing `envelop`s
+## Sharing / Composing `envelop`s
 
 After an `envelop` has been created, you can share it with others as a complete layer of plugins. This is useful if you wish to create a predefined layer of plugins, and share it with others. You can use the as a shell and as a base for writing sharable pieces of servers.
 
@@ -150,8 +150,7 @@ const myBaseEnvelop = envelop({
 // Later, when you create your own Envelop, you can extend that and add custom plugins.
 // You can also specify the schema only at this point
 const myEnvelop = envelop({
-  extends: [myBaseEnvelop],
-  plugins: [useSchema(myServerSchema), useMyCustomPlugin()],
+  plugins: [useEnvelop(myBaseEnvelop), useSchema(myServerSchema), useMyCustomPlugin()],
 });
 ```
 

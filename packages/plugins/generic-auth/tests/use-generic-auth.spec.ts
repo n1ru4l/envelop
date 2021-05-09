@@ -57,9 +57,9 @@ describe('useGenericAuth', () => {
       );
 
       const result = await testInstance.execute(`query { test }`);
-      expect(result.errors.length).toBe(1);
-      expect(result.errors[0].message).toBe('Unauthenticated!');
-      expect(result.errors[0].path).toBeUndefined();
+      expect(result.errors!.length).toBe(1);
+      expect(result.errors![0].message).toBe('Unauthenticated!');
+      expect(result.errors![0].path).toBeUndefined();
     });
 
     it('Should inject currentUser into the context when the user is valid', async () => {
@@ -293,9 +293,9 @@ describe('useGenericAuth', () => {
       );
 
       const result = await testInstance.execute(`query { protected }`);
-      expect(result.errors.length).toBe(1);
-      expect(result.errors[0].message).toBe('Unauthenticated!');
-      expect(result.errors[0].path).toEqual(['protected']);
+      expect(result.errors!.length).toBe(1);
+      expect(result.errors![0].message).toBe('Unauthenticated!');
+      expect(result.errors![0].path).toEqual(['protected']);
     });
   });
 });

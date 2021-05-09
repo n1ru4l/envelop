@@ -1,6 +1,6 @@
 import { DocumentNode, ExecutionResult, GraphQLSchema, print } from 'graphql';
 import { getGraphQLParameters, processRequest } from 'graphql-helix';
-import { envelop } from '@envelop/core';
+import { envelop, useSchema } from '@envelop/core';
 import { Envelop, Plugin } from '@envelop/types';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -46,7 +46,7 @@ export function createSpiedPlugin() {
 }
 
 export function createTestkit(
-  pluginsOrEnvelop: Envelop | Plugin[],
+  pluginsOrEnvelop: Envelop | Plugin<any>[],
   schema?: GraphQLSchema
 ): {
   execute: (
@@ -57,7 +57,7 @@ export function createTestkit(
   replaceSchema: (schema: GraphQLSchema) => void;
   wait: (ms: number) => Promise<void>;
 } {
-  let replaceSchema: (s: GraphQLSchema) => void;
+  let replaceSchema: (s: GraphQLSchema) => void = () => {};
 
   const replaceSchemaPlugin: Plugin = {
     onPluginInit({ setSchema }) {
@@ -67,8 +67,7 @@ export function createTestkit(
 
   const initRequest = Array.isArray(pluginsOrEnvelop)
     ? envelop({
-        plugins: [replaceSchemaPlugin, ...pluginsOrEnvelop],
-        initialSchema: schema,
+        plugins: [useSchema(schema!), replaceSchemaPlugin, ...pluginsOrEnvelop],
       })
     : pluginsOrEnvelop;
 

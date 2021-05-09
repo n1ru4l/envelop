@@ -102,7 +102,7 @@ describe('validate', () => {
 
     const r = await teskit.execute(query);
     expect(r.errors).toBeDefined();
-    expect(r.errors.length).toBe(1);
-    expect(r.errors[0].message).toBe('Invalid!');
+    expect(r.errors!.length).toBe(1);
+    expect(r.errors![0].message).toBe('Invalid!');
   });
 });

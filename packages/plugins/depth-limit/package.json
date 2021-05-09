@@ -23,6 +23,7 @@
     "graphql-depth-limit": "^1.1.0"
   },
   "devDependencies": {
+    "@types/graphql-depth-limit": "1.1.2",
     "bob-the-bundler": "1.2.0",
     "graphql": "15.5.0",
     "typescript": "4.2.4"

@@ -5,8 +5,7 @@ export function getDirective(info: GraphQLResolveInfo, name: string): null | Dir
   const schemaType = schema.getType(parentType.name) as GraphQLObjectType;
   const field = schemaType.getFields()[fieldName];
   const astNode = field.astNode;
-  const directives = astNode.directives;
-  const authDirective = directives.find(d => d.name.value === name);
+  const authDirective = astNode?.directives?.find(d => d.name.value === name);
 
   return authDirective || null;
 }

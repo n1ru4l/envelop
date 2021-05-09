@@ -85,7 +85,7 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
     return {
       async onContextBuilding({ context, extendContext }) {
         const user = await options.resolveUserFn((context as unknown) as ContextType);
-        await validateUser(user, (context as unknown) as ContextType);
+        await validateUser(user!, (context as unknown) as ContextType);
 
         extendContext(({
           [fieldName]: user,
@@ -99,7 +99,7 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
 
         extendContext(({
           [fieldName]: user,
-          validateUser: () => validateUser(user, (context as unknown) as ContextType),
+          validateUser: () => validateUser(user!, (context as unknown) as ContextType),
         } as unknown) as ContextType);
       },
     };
@@ -110,7 +110,7 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
 
         extendContext(({
           [fieldName]: user,
-          validateUser: () => validateUser(user, (context as unknown) as ContextType),
+          validateUser: () => validateUser(user!, (context as unknown) as ContextType),
         } as unknown) as ContextType);
       },
       onExecute() {

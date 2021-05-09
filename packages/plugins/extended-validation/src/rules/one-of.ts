@@ -11,6 +11,11 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
     Field: node => {
       if (node.arguments?.length) {
         const fieldType = validationContext.getFieldDef();
+
+        if (!fieldType || !fieldType.astNode) {
+          return;
+        }
+
         const values = getArgumentValues(fieldType, node, executionArgs.variableValues);
 
         if (fieldType) {
@@ -33,6 +38,11 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
 
           if (argType) {
             const inputType = unwrapType(argType.type);
+
+            if (!inputType || !inputType.astNode) {
+              continue;
+            }
+
             const inputTypeDirective = getDirectiveFromAstNode(inputType.astNode, 'oneOf');
 
             if (inputTypeDirective) {
