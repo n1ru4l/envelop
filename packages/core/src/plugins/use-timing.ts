@@ -18,8 +18,10 @@ export type TimingPluginOptions = {
 
 const DEFAULT_OPTIONS: TimingPluginOptions = {
   onExecutionMeasurement: (args, timing) => console.log(`Operation execution "${args.operationName}" done in ${timing.ms}ms`),
-  onSubscriptionMeasurement: (args, timing) => console.log(`Operation subsctiption "${args.operationName}" done in ${timing.ms}ms`),
-  onParsingMeasurement: (source: Source | string, timing: ResultTiming) => console.log(`Parsing "${source}" done in ${timing.ms}ms`),
+  onSubscriptionMeasurement: (args, timing) =>
+    console.log(`Operation subsctiption "${args.operationName}" done in ${timing.ms}ms`),
+  onParsingMeasurement: (source: Source | string, timing: ResultTiming) =>
+    console.log(`Parsing "${source}" done in ${timing.ms}ms`),
   onValidationMeasurement: (document: DocumentNode, timing: ResultTiming) =>
     console.log(`Validation "${getOperationAST(document)?.name?.value || '-'}" done in ${timing.ms}ms`),
   onResolverMeasurement: (info: GraphQLResolveInfo, timing: ResultTiming) =>
@@ -45,59 +47,99 @@ export const useTiming = (rawOptions?: TimingPluginOptions): Plugin => {
     ...(rawOptions || {}),
   };
 
-  return {
-    onContextBuilding() {
+  const result: Plugin = {};
+
+  if (options.onContextBuildingMeasurement) {
+    result.onContextBuilding = () => {
       const contextStartTime = process.hrtime();
 
       return () => {
-        options.onContextBuildingMeasurement(deltaFrom(contextStartTime));
+        options.onContextBuildingMeasurement!(deltaFrom(contextStartTime));
       };
-    },
-    onParse({ params }) {
+    };
+  }
+
+  if (options.onParsingMeasurement) {
+    result.onParse = ({ params }) => {
       const parseStartTime = process.hrtime();
 
       return () => {
-        options.onParsingMeasurement(params.source, deltaFrom(parseStartTime));
+        options.onParsingMeasurement!(params.source, deltaFrom(parseStartTime));
       };
-    },
-    onValidate({ params }) {
+    };
+  }
+
+  if (options.onValidationMeasurement) {
+    result.onValidate = ({ params }) => {
       const validateStartTime = process.hrtime();
 
       return () => {
-        options.onValidationMeasurement(params.documentAST, deltaFrom(validateStartTime));
+        options.onValidationMeasurement!(params.documentAST, deltaFrom(validateStartTime));
       };
-    },
-    onExecute({ args }) {
-      const executeStartTime = process.hrtime();
+    };
+  }
 
-      return {
-        onExecuteDone: () => {
-          options.onExecutionMeasurement(args, deltaFrom(executeStartTime));
-        },
-        onResolverCalled: ({ info }) => {
-          const resolverStartTime = process.hrtime();
+  if (options.onExecutionMeasurement) {
+    if (options.onResolverMeasurement) {
+      result.onExecute = ({ args }) => {
+        const executeStartTime = process.hrtime();
 
-          return () => {
-            options.onResolverMeasurement(info, deltaFrom(resolverStartTime));
-          };
-        },
+        return {
+          onExecuteDone: () => {
+            options.onExecutionMeasurement!(args, deltaFrom(executeStartTime));
+          },
+          onResolverCalled: ({ info }) => {
+            const resolverStartTime = process.hrtime();
+
+            return () => {
+              options.onResolverMeasurement!(info, deltaFrom(resolverStartTime));
+            };
+          },
+        };
       };
-    },
-    onSubscribe({ args }) {
-      const subscribeStartTime = process.hrtime();
+    } else {
+      result.onExecute = ({ args }) => {
+        const executeStartTime = process.hrtime();
 
-      return {
-        onSubscribeResult: () => {
-          options.onSubscriptionMeasurement(args, deltaFrom(subscribeStartTime));
-        },
-        onResolverCalled: ({ info }) => {
-          const resolverStartTime = process.hrtime();
-
-          return () => {
-            options.onResolverMeasurement(info, deltaFrom(resolverStartTime));
-          };
-        },
+        return {
+          onExecuteDone: () => {
+            options.onExecutionMeasurement!(args, deltaFrom(executeStartTime));
+          },
+        };
       };
-    },
-  };
+    }
+  }
+
+  if (options.onSubscriptionMeasurement) {
+    if (options.onResolverMeasurement) {
+      result.onSubscribe = ({ args }) => {
+        const subscribeStartTime = process.hrtime();
+
+        return {
+          onSubscribeResult: () => {
+            options.onSubscriptionMeasurement && options.onSubscriptionMeasurement(args, deltaFrom(subscribeStartTime));
+          },
+          onResolverCalled: ({ info }) => {
+            const resolverStartTime = process.hrtime();
+
+            return () => {
+              options.onResolverMeasurement && options.onResolverMeasurement(info, deltaFrom(resolverStartTime));
+            };
+          },
+        };
+      };
+    } else {
+      result.onSubscribe = ({ args }) => {
+        const subscribeStartTime = process.hrtime();
+
+        return {
+          onSubscribeResult: () => {
+            options.onSubscriptionMeasurement && options.onSubscriptionMeasurement(args, deltaFrom(subscribeStartTime));
+          },
+        };
+      };
+    }
+  }
+
+  return result;
 };

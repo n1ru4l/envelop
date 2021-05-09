@@ -148,8 +148,8 @@ describe('oneOf', () => {
 
       if (expectedError) {
         expect(result.errors).toBeDefined();
-        expect(result.errors.length).toBe(1);
-        expect(result.errors[0].message).toBe(expectedError);
+        expect(result.errors!.length).toBe(1);
+        expect(result.errors![0].message).toBe(expectedError);
       } else {
         expect(result.errors).toBeUndefined();
       }
@@ -245,8 +245,8 @@ describe('oneOf', () => {
 
       if (expectedError) {
         expect(result.errors).toBeDefined();
-        expect(result.errors.length).toBe(1);
-        expect(result.errors[0].message).toBe(expectedError);
+        expect(result.errors!.length).toBe(1);
+        expect(result.errors![0].message).toBe(expectedError);
       } else {
         expect(result.errors).toBeUndefined();
       }

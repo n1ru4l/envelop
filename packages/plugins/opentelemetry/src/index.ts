@@ -50,9 +50,9 @@ export const useOpenTelemetry = (
         kind: spanKind,
         attributes: {
           ...spanAdditionalAttributes,
-          [AttributeName.EXECUTION_OPERATION_NAME]: args.operationName,
+          [AttributeName.EXECUTION_OPERATION_NAME]: args.operationName ?? undefined,
           [AttributeName.EXECUTION_OPERATION_DOCUMENT]: print(args.document),
-          ...(options.variables ? { [AttributeName.EXECUTION_VARIABLES]: JSON.stringify(args.variableValues || {}) } : {}),
+          ...(options.variables ? { [AttributeName.EXECUTION_VARIABLES]: JSON.stringify(args.variableValues ?? {}) } : {}),
         },
       });
 

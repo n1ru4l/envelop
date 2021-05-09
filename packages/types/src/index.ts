@@ -53,7 +53,11 @@ export type OnSubscribeHookResult<ContextType = DefaultContext> = {
 
 export interface Plugin<PluginContext = DefaultContext> {
   onSchemaChange?: (options: { schema: GraphQLSchema; replaceSchema: (newSchema: GraphQLSchema) => void }) => void;
-  onPluginInit?: (options: { setSchema: (newSchema: GraphQLSchema) => void }) => void;
+  onPluginInit?: (options: {
+    addPlugin: (newPlugin: Plugin<any>) => void;
+    plugins: Plugin[];
+    setSchema: (newSchema: GraphQLSchema) => void;
+  }) => void;
   onExecute?: (options: {
     executeFn: typeof execute;
     args: ExecutionArgs;

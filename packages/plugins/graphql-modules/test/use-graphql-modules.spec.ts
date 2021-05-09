@@ -27,7 +27,7 @@ describe('useGraphQLModules', () => {
           providers: [TestProvider],
           resolvers: {
             Query: {
-              foo: (root, args, { injector }) => injector.get(TestProvider).getFoo(),
+              foo: (root: never, args: never, { injector }: GraphQLModules.Context) => injector.get(TestProvider).getFoo(),
             },
           },
         }),

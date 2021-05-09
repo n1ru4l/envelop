@@ -46,7 +46,7 @@ export function createSpiedPlugin() {
 }
 
 export function createTestkit(
-  pluginsOrEnvelop: Envelop | Plugin[],
+  pluginsOrEnvelop: Envelop | Plugin<any>[],
   schema?: GraphQLSchema
 ): {
   execute: (
@@ -57,7 +57,7 @@ export function createTestkit(
   replaceSchema: (schema: GraphQLSchema) => void;
   wait: (ms: number) => Promise<void>;
 } {
-  let replaceSchema: (s: GraphQLSchema) => void;
+  let replaceSchema: (s: GraphQLSchema) => void = () => {};
 
   const replaceSchemaPlugin: Plugin = {
     onPluginInit({ setSchema }) {

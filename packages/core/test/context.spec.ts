@@ -82,8 +82,8 @@ describe('contextFactory', () => {
     );
 
     const r = await teskit.execute(query, {});
-    expect(r.errors.length).toBe(1);
-    expect(r.errors[0].message).toBe(`Invalid context extension provided! Expected "object", got: ""test"" (string)`);
+    expect(r.errors!.length).toBe(1);
+    expect(r.errors![0].message).toBe(`Invalid context extension provided! Expected "object", got: ""test"" (string)`);
   });
 
   it('Should allow to provide async function for context extension', async () => {

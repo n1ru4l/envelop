@@ -17,17 +17,15 @@ import {
   ExecutionResult,
   SubscriptionArgs,
 } from 'graphql';
-import { AfterCallback, AfterResolverPayload, DefaultContext, Envelop, OnResolverCalledHooks, Plugin } from '@envelop/types';
+import { AfterCallback, AfterResolverPayload, Envelop, OnResolverCalledHooks, Plugin } from '@envelop/types';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
 const trackedSchemaSymbol = Symbol('TRACKED_SCHEMA');
 const resolversHooksSymbol = Symbol('RESOLVERS_HOOKS');
 
-export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initialSchema?: GraphQLSchema }): Envelop {
-  let schema: GraphQLSchema | undefined | null = options.initialSchema;
+export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
+  let schema: GraphQLSchema | undefined | null;
   let initDone = false;
-  const childPlugins = (options.extends || []).reduce((prev, child) => [...prev, ...child._plugins], []);
-  const plugins: Plugin[] = [...childPlugins, ...options.plugins];
 
   const onContextBuildingCbs: NonNullable<Plugin['onContextBuilding']>[] = [];
   const onExecuteCbs: NonNullable<Plugin['onExecute']>[] = [];
@@ -64,6 +62,10 @@ export function envelop(options: { plugins: Plugin[]; extends?: Envelop[]; initi
   for (const [i, plugin] of plugins.entries()) {
     plugin.onPluginInit &&
       plugin.onPluginInit({
+        plugins,
+        addPlugin: newPlugin => {
+          plugins.push(newPlugin);
+        },
         setSchema: modifiedSchema => replaceSchema(modifiedSchema, i),
       });
   }

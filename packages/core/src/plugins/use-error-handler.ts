@@ -5,7 +5,7 @@ export const useErrorHandler = (errorHandler: (errors: readonly GraphQLError[]) 
   onExecute() {
     return {
       onExecuteDone: ({ result }) => {
-        if (result.errors?.length > 0) {
+        if (result.errors?.length) {
           errorHandler(result.errors);
         }
       },

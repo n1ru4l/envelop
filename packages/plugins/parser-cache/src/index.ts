@@ -30,7 +30,10 @@ export const useParserCache = (pluginOptions: ParserCacheOptions = {}): Plugin =
 
       if (documentCache.get(key)) {
         const document = documentCache.get(key);
-        setParsedDocument(document);
+
+        if (document) {
+          setParsedDocument(document);
+        }
       }
 
       return ({ result }) => {

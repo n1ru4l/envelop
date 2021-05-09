@@ -74,8 +74,8 @@ describe('useRateLimiter', () => {
     );
     await testInstance.execute(`query { limited }`);
     const result = await testInstance.execute(`query { limited }`);
-    expect(result.errors.length).toBe(1);
-    expect(result.errors[0].message).toBe('too many calls');
-    expect(result.errors[0].path).toEqual(['limited']);
+    expect(result.errors!.length).toBe(1);
+    expect(result.errors![0].message).toBe('too many calls');
+    expect(result.errors![0].path).toEqual(['limited']);
   });
 });

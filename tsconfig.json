@@ -17,6 +17,7 @@
     "sourceMap": true,
     "declaration": true,
     "noImplicitThis": true,
+    "strict": true,
     "alwaysStrict": true,
     "noImplicitReturns": true,
     "noUnusedLocals": false,

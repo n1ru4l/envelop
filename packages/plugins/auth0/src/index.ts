@@ -37,7 +37,7 @@ export const useAuth0 = (options: Auth0PluginOptions): Plugin => {
 
   const extractFn =
     options.extractTokenFn ||
-    ((ctx = {}): string | null => {
+    ((ctx: Record<string, any> = {}): string | null => {
       const req = ctx['req'] || ctx['request'] || {};
       const headers = req.headers || ctx['headers'] || null;
 
@@ -68,7 +68,8 @@ export const useAuth0 = (options: Auth0PluginOptions): Plugin => {
     });
 
   const verifyToken = async (token: string): Promise<any> => {
-    const decodedToken = (decode(token, { complete: true, ...(options.jwtDecodeOptions || {}) }) as Record<string, { kid?: string }>) || {};
+    const decodedToken =
+      (decode(token, { complete: true, ...(options.jwtDecodeOptions || {}) }) as Record<string, { kid?: string }>) || {};
 
     if (decodedToken && decodedToken.header && decodedToken.header.kid) {
       const secret = await jkwsClient.getSigningKey(decodedToken.header.kid);
