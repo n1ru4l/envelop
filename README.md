@@ -12,7 +12,7 @@ Envelop is a lightweight JavaScript library for wrapping GraphQL execution layer
 
 ### In depth
 
-Our goal is to allow developers keep the original GraphQL interfaces, while adding plugins to enrich the feature set of you application quickly, while sharing ideas, code and plugins with other developers.
+Our goal is to allow developers to keep the original GraphQL interfaces, while adding plugins to enrich the feature set of your application quickly, while sharing ideas, code and plugins with other developers.
 
 Envelop is agnostic to the HTTP server you use, so it's not a traditional server. We do not aim to provide a complete server, you can use Envelop with any environment (NodeJS or browser) and any type of GraphQL workflow (client / server, client-side execute, or server to server). So any piece of code that uses GraphQL's `execute` can benfit from that layer.
 
@@ -42,7 +42,7 @@ const getEnveloped = envelop({
 });
 ```
 
-The result of `envelop` is a function, that allow you to get everything you need for the GraphQL execution: `parse`, `validate`, `contextBuilder` and `execute`. Use that to run the client's GraphQL queries. Here's a pseudo-code of how it should looks like:
+The result of `envelop` is a function that allows you to get everything you need for the GraphQL execution: `parse`, `validate`, `contextBuilder` and `execute`. Use that to run the client's GraphQL queries. Here's a pseudo-code example of how it should look like:
 
 ```ts
 const httpServer = createServer();
@@ -76,7 +76,7 @@ httpServer.on('request', (req, res) => {
 httpServer.listen(3000);
 ```
 
-Behind the scenes, this simple workflow allow you to use **Envelop plugins** and hook into the entire request handling flow.
+Behind the scenes, this simple workflow allows you to use **Envelop plugins** and hook into the entire request handling flow.
 
 Here's a simple example for collecting metrics and log all incoming requests, using the built-in plugins:
 
@@ -92,7 +92,7 @@ const getEnveloped = envelop({
 
 Envelop provides a low-level API at consumption of the output, but a rich API while using it with plugins. Based on that, it's possible to integrate Envelop with many tools.
 
-We recommend on using [`graphql-helix`](https://github.com/contrawork/graphql-helix) as request pipeline orchestrator, as it allows the maximum flexibility and you can easily override/manage every part of the pipeline with Envelop.
+We recommend using [`graphql-helix`](https://github.com/contrawork/graphql-helix) as the request pipeline orchestrator, as it allows the maximum flexibility and you can easily override/manage every part of the pipeline with Envelop.
 
 Here's a list of integrations and examples:
 
@@ -103,7 +103,7 @@ Here's a list of integrations and examples:
 | Apollo-Server    | Almost           | [`apollo-server`](./examples/apollo-server) |
 | GraphQL-WS       | V                | [`graphql-ws`](./examples/graphql-ws)       |
 
-> Since Envelop is not a HTTP server, and just a wrapper around GraphQL request pipeline - it's possible to integrate it with any server/framework, if it's flexible enough and allow you to specify the pipeline methods\*.
+> Since Envelop is not a HTTP server, and just a wrapper around GraphQL request pipeline - it's possible to integrate it with any server/framework, if it's flexible enough and allows you to specify the pipeline methods\*.
 
 ## Available Plugins
 
@@ -136,7 +136,7 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 
 ## Sharing / Composing `envelop`s
 
-After an `envelop` has been created, you can share it with others as a complete layer of plugins. This is useful if you wish to create a predefined layer of plugins, and share it with others. You can use the as a shell and as a base for writing sharable pieces of servers.
+After an `envelop` has been created, you can share it with others as a complete layer of plugins. This is useful if you wish to create a predefined layer of plugins, and share it with others. You can use it as a shell and as a base for writing sharable pieces of servers.
 
 Here's a small exmple for sharing envelops:
 
@@ -154,13 +154,13 @@ const myEnvelop = envelop({
 });
 ```
 
-This approach allow developers to create a base Envelop and share it across the organization: you can define your monitoring setup, logging, authentication, etc, only once in a common package, and share it with others without losing the ability to extend it.
+This approach allows developers to create a base Envelop and share it across the organization: you can define your monitoring setup, logging, authentication, etc, only once in a common package, and share it with others without losing the ability to extend it.
 
 ## Write your own plugin!
 
-Envelop plugins are just object with functions, that provides contextual implementation for before/after of each phase, with a flexible API.
+Envelop plugins are just objects with functions, that provide contextual implementation for before/after of each phase, with a flexible API.
 
-Here's a simple example that allow you print the execution params:
+Here's a simple example that allows you to print the execution params:
 
 ```ts
 const myPlugin = {
