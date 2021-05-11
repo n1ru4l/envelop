@@ -12,7 +12,7 @@ Envelop is a lightweight JavaScript library for wrapping GraphQL execution layer
 
 ### In depth
 
-Our goal is to allow developers keep the original GraphQL interfaces, while adding plugins to enrich the feature set of you application quickly, while sharing ideas, code and plugins with other developers.
+Our goal is to allow developers to keep the original GraphQL interfaces, while adding plugins to enrich the feature set of your application quickly, while sharing ideas, code and plugins with other developers.
 
 Envelop is agnostic to the HTTP server you use, so it's not a traditional server. We do not aim to provide a complete server, you can use Envelop with any environment (NodeJS or browser) and any type of GraphQL workflow (client / server, client-side execute, or server to server). So any piece of code that uses GraphQL's `execute` can benfit from that layer.
 
