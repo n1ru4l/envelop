@@ -1,4 +1,5 @@
-import { GraphQLError } from 'graphql';
+import { GraphQLError, GraphQLInputObjectType, GraphQLInputType } from 'graphql';
+import get from "lodash.get"
 import { getArgumentValues } from 'graphql/execution/values';
 import { ExtendedValidationRule, getDirectiveFromAstNode, unwrapType } from '../common';
 
@@ -38,19 +39,30 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
           const argType = fieldType.args.find(typeArg => typeArg.name === arg.name.value);
 
           if (argType) {
-            const inputType = unwrapType(argType.type);
-            const isOneOfInputType =
+            const traverseVariables = (graphqlType: GraphQLInputType, path: Array<string | number>) => {
+              const inputType = unwrapType(graphqlType);
+
+              const isOneOfInputType =
               inputType.extensions?.oneOf || (inputType.astNode && getDirectiveFromAstNode(inputType.astNode, 'oneOf'));
 
-            if (isOneOfInputType) {
-              const argValue = values[arg.name.value] || {};
+              if (isOneOfInputType) {
+                const argValue = get(values, path) || {};
+  
+                if (Object.keys(argValue).length !== 1) {
+                  validationContext.reportError(
+                    new GraphQLError(`Exactly one key must be specified for input type "${inputType.name}"`, [arg])
+                  );
+                }
+              }
 
-              if (Object.keys(argValue).length !== 1) {
-                validationContext.reportError(
-                  new GraphQLError(`Exactly one key must be specified for input type "${inputType.name}"`, [arg])
-                );
+              if (inputType instanceof GraphQLInputObjectType) {
+                for (const [name, fieldConfig] of Object.entries(inputType.getFields())) {
+                  traverseVariables(fieldConfig.type, [...path, name])
+                }
               }
             }
+
+            traverseVariables(argType.type, [arg.name.value])
           }
         }
       }

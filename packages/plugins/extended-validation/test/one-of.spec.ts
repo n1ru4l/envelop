@@ -7,6 +7,7 @@ import {
   GraphQLInt,
   GraphQLNonNull,
   GraphQLSchema,
+  GraphQLBoolean,
 } from 'graphql';
 import { createTestkit } from '@envelop/testing';
 import { useExtendedValidation, ONE_OF_DIRECTIVE_SDL, OneOfInputObjectsRule } from '../src';
@@ -15,9 +16,14 @@ describe('oneOf', () => {
   const astSchema = buildSchema(/* GraphQL */ `
     ${ONE_OF_DIRECTIVE_SDL}
 
+    input NestedOneOfFieldInput {
+      field: UserUniqueCondition!
+    }
+
     type Query {
       user(input: UserUniqueCondition): User
       findUser(byID: ID, byUsername: String, byEmail: String, byRegistrationNumber: Int): User @oneOf
+      nestedOneOf(input: NestedOneOfFieldInput!): Boolean
     }
 
     type User {
@@ -52,6 +58,14 @@ describe('oneOf', () => {
       oneOf: true,
     },
   });
+  const NestedOneOfFieldInput = new GraphQLInputObjectType({
+    name: "NestedOneOfFieldInput",
+    fields: {
+      field: {
+        type: GraphQLNonNull(GraphQLUserUniqueCondition)
+      }
+    }
+  })
   const GraphQLQuery = new GraphQLObjectType({
     name: 'Query',
     fields: {
@@ -83,6 +97,14 @@ describe('oneOf', () => {
           oneOf: true,
         },
       },
+      nestedOneOf: {
+        type: GraphQLBoolean,
+        args: {
+          input: {
+            type: GraphQLNonNull(NestedOneOfFieldInput)
+          }
+        }
+      }
     },
   });
   const programmaticSchema = new GraphQLSchema({ query: GraphQLQuery });
@@ -135,6 +157,20 @@ describe('oneOf', () => {
             document: `query user($id: ID, $username: String) { user(input: { id: $id, username: $username }) { id }}`,
             variables: {
               id: 1,
+            },
+            expectedError: null,
+          },
+        ],
+        [
+          'Valid: Nested oneOf on input field',
+          {
+            document: `query user($input: NestedOneOfFieldInput!) { nestedOneOf(input: $input) }`,
+            variables: {
+              input: {
+                field: {
+                  id: 1
+                }
+              }
             },
             expectedError: null,
           },
@@ -200,6 +236,21 @@ describe('oneOf', () => {
                 id: 1,
                 username: 'test',
               },
+            },
+            expectedError: 'Exactly one key must be specified for input type "UserUniqueCondition"',
+          },
+        ],
+        [
+          'Invalid: More than one value is specific for nested field',
+          {
+            document: `query user($input: NestedOneOfFieldInput!) { nestedOneOf(input: $input) }`,
+            variables: {
+              input: {
+                field: {
+                  id: 1,
+                  username: 'test',
+                }
+              }
             },
             expectedError: 'Exactly one key must be specified for input type "UserUniqueCondition"',
           },
