@@ -1,6 +1,6 @@
 import { GraphQLError, GraphQLInputObjectType, GraphQLInputType, isListType } from 'graphql';
 import { getArgumentValues } from 'graphql/execution/values';
-import { ExtendedValidationRule, getDirectiveFromAstNode, unwrapType } from '../common';
+import { ExtendedValidationRule, getDirectiveFromAstNode, unwrapType, assertArray, assertObject } from '../common';
 
 export const ONE_OF_DIRECTIVE_SDL = /* GraphQL */ `
   directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
@@ -39,36 +39,39 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
 
           if (argType) {
             const traverseVariables = (graphqlType: GraphQLInputType, path: Array<string | number>, currentValue: unknown) => {
-              const inputType = unwrapType(graphqlType);
+              // if the current value is empty we don't need to traverse deeper
+              if (currentValue == null) {
+                return;
+              }
 
               if (isListType(graphqlType)) {
                 // if it is a list type currentValue MUST be an array
-                const argValue = currentValue as Array<unknown>;
-                argValue.forEach((value, index) => {
+                assertArray(currentValue);
+                currentValue.forEach((value, index) => {
                   traverseVariables(graphqlType.ofType, [...path, index], value);
                 });
                 return;
               }
+
+              const inputType = unwrapType(graphqlType);
 
               const isOneOfInputType =
                 inputType.extensions?.oneOf || (inputType.astNode && getDirectiveFromAstNode(inputType.astNode, 'oneOf'));
 
               if (isOneOfInputType) {
                 // if it is an oneOf input type currentValue MUST be an object
-                const argValue = (currentValue as Record<string, unknown>) ?? {};
-
-                if (Object.keys(argValue).length !== 1) {
+                assertObject(currentValue);
+                if (Object.keys(currentValue).length !== 1) {
                   validationContext.reportError(
                     new GraphQLError(`Exactly one key must be specified for input type "${inputType.name}"`, [arg])
                   );
                 }
               }
-
               if (inputType instanceof GraphQLInputObjectType) {
                 // if it is an input type the argValue MUST be an object
-                const argValue = currentValue as Record<string, unknown>;
+                assertObject(currentValue);
                 for (const [name, fieldConfig] of Object.entries(inputType.getFields())) {
-                  traverseVariables(fieldConfig.type, [...path, name], argValue?.[name]);
+                  traverseVariables(fieldConfig.type, [...path, name], currentValue[name]);
                 }
               }
             };

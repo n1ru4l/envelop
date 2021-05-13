@@ -29,3 +29,15 @@ export function unwrapType(type: GraphQLType): GraphQLNamedType {
 
   return type;
 }
+
+export function assertArray(input: unknown): asserts input is Array<unknown> {
+  if (!Array.isArray(input)) {
+    throw new Error('Expected array.');
+  }
+}
+
+export function assertObject(input: unknown): asserts input is object {
+  if (typeof input !== 'object' || input == null) {
+    throw new Error('Expected object.');
+  }
+}

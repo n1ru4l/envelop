@@ -137,7 +137,7 @@ describe('oneOf', () => {
         type: GraphQLBoolean,
         args: {
           input: {
-            type: GraphQLNonNull(GraphQLDeeplyNestedOneOfFieldInput),
+            type: GraphQLDeeplyNestedOneOfFieldInput,
           },
         },
       },
@@ -210,6 +210,22 @@ describe('oneOf', () => {
             variables: {
               id: 1,
             },
+            expectedError: null,
+          },
+        ],
+        [
+          'Valid: nullable input field without any variable value provided',
+          {
+            document: `query user($input: UserUniqueCondition) { user(input: $input) { id } }`,
+            variables: {},
+            expectedError: null,
+          },
+        ],
+        [
+          'Valid: nested nullable input field without any variable value provided',
+          {
+            document: `query user($input: DeeplyNestedOneOfFieldInput) { deeplyNestedOneOf(input: $input) }`,
+            variables: {},
             expectedError: null,
           },
         ],
@@ -329,7 +345,7 @@ describe('oneOf', () => {
           {
             document: DOCUMENT_WITH_WHOLE_INPUT,
             variables: {},
-            expectedError: 'Exactly one key must be specified for input type "UserUniqueCondition"',
+            expectedError: 'Variable "$input" of required type "UserUniqueCondition!" was not provided.',
           },
         ],
         [
