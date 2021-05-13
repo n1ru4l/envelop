@@ -12,16 +12,17 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
       if (node.arguments?.length) {
         const fieldType = validationContext.getFieldDef();
 
-        if (!fieldType || !fieldType.astNode) {
+        if (!fieldType) {
           return;
         }
 
         const values = getArgumentValues(fieldType, node, executionArgs.variableValues);
 
         if (fieldType) {
-          const fieldTypeDirective = getDirectiveFromAstNode(fieldType.astNode, 'oneOf');
+          const isOneOfFieldType =
+            fieldType.extensions?.oneOf || (fieldType.astNode && getDirectiveFromAstNode(fieldType.astNode, 'oneOf'));
 
-          if (fieldTypeDirective) {
+          if (isOneOfFieldType) {
             if (Object.keys(values).length !== 1) {
               validationContext.reportError(
                 new GraphQLError(
@@ -38,14 +39,10 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
 
           if (argType) {
             const inputType = unwrapType(argType.type);
+            const isOneOfInputType =
+              inputType.extensions?.oneOf || (inputType.astNode && getDirectiveFromAstNode(inputType.astNode, 'oneOf'));
 
-            if (!inputType || !inputType.astNode) {
-              continue;
-            }
-
-            const inputTypeDirective = getDirectiveFromAstNode(inputType.astNode, 'oneOf');
-
-            if (inputTypeDirective) {
+            if (isOneOfInputType) {
               const argValue = values[arg.name.value] || {};
 
               if (Object.keys(argValue).length !== 1) {
