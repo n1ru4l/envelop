@@ -20,10 +20,15 @@ describe('oneOf', () => {
       field: UserUniqueCondition!
     }
 
+    input DeeplyNestedOneOfFieldInput {
+      field: NestedOneOfFieldInput!
+    }
+
     type Query {
       user(input: UserUniqueCondition): User
       findUser(byID: ID, byUsername: String, byEmail: String, byRegistrationNumber: Int): User @oneOf
       nestedOneOf(input: NestedOneOfFieldInput!): Boolean
+      deeplyNestedOneOf(input: DeeplyNestedOneOfFieldInput): Boolean
     }
 
     type User {
@@ -59,13 +64,21 @@ describe('oneOf', () => {
     },
   });
   const NestedOneOfFieldInput = new GraphQLInputObjectType({
-    name: "NestedOneOfFieldInput",
+    name: 'NestedOneOfFieldInput',
     fields: {
       field: {
-        type: GraphQLNonNull(GraphQLUserUniqueCondition)
-      }
-    }
-  })
+        type: GraphQLNonNull(GraphQLUserUniqueCondition),
+      },
+    },
+  });
+  const DeeplyNestedOneOfFieldInput = new GraphQLInputObjectType({
+    name: 'DeeplyNestedOneOfFieldInput',
+    fields: {
+      field: {
+        type: GraphQLNonNull(NestedOneOfFieldInput),
+      },
+    },
+  });
   const GraphQLQuery = new GraphQLObjectType({
     name: 'Query',
     fields: {
@@ -101,10 +114,18 @@ describe('oneOf', () => {
         type: GraphQLBoolean,
         args: {
           input: {
-            type: GraphQLNonNull(NestedOneOfFieldInput)
-          }
-        }
-      }
+            type: GraphQLNonNull(NestedOneOfFieldInput),
+          },
+        },
+      },
+      deeplyNestedOneOf: {
+        type: GraphQLBoolean,
+        args: {
+          input: {
+            type: GraphQLNonNull(DeeplyNestedOneOfFieldInput),
+          },
+        },
+      },
     },
   });
   const programmaticSchema = new GraphQLSchema({ query: GraphQLQuery });
@@ -168,9 +189,25 @@ describe('oneOf', () => {
             variables: {
               input: {
                 field: {
-                  id: 1
-                }
-              }
+                  id: 1,
+                },
+              },
+            },
+            expectedError: null,
+          },
+        ],
+        [
+          'Valid: Deeply nested oneOf on input field',
+          {
+            document: `query user($input: DeeplyNestedOneOfFieldInput!) { deeplyNestedOneOf(input: $input) }`,
+            variables: {
+              input: {
+                field: {
+                  field: {
+                    id: 1,
+                  },
+                },
+              },
             },
             expectedError: null,
           },
@@ -241,7 +278,7 @@ describe('oneOf', () => {
           },
         ],
         [
-          'Invalid: More than one value is specific for nested field',
+          'Invalid: More than one value is specific for deeply nested oneOf input type',
           {
             document: `query user($input: NestedOneOfFieldInput!) { nestedOneOf(input: $input) }`,
             variables: {
@@ -249,13 +286,30 @@ describe('oneOf', () => {
                 field: {
                   id: 1,
                   username: 'test',
-                }
-              }
+                },
+              },
             },
             expectedError: 'Exactly one key must be specified for input type "UserUniqueCondition"',
           },
         ],
-      ])('%s', async (title, { document, variables, expectedError }) => {
+        [
+          'Invalid:  More than one value is specific for deeply nested oneOf input type',
+          {
+            document: `query user($input: DeeplyNestedOneOfFieldInput!) { deeplyNestedOneOf(input: $input) }`,
+            variables: {
+              input: {
+                field: {
+                  field: {
+                    id: 1,
+                    username: 'test',
+                  },
+                },
+              },
+            },
+            expectedError: 'Exactly one key must be specified for input type "UserUniqueCondition"',
+          },
+        ],
+      ])('%s', async (_title, { document, variables, expectedError }) => {
         const testInstance = createTestkit(
           [
             useExtendedValidation({
