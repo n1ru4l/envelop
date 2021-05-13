@@ -8,6 +8,7 @@ import {
   GraphQLNonNull,
   GraphQLSchema,
   GraphQLBoolean,
+  GraphQLList,
 } from 'graphql';
 import { createTestkit } from '@envelop/testing';
 import { useExtendedValidation, ONE_OF_DIRECTIVE_SDL, OneOfInputObjectsRule } from '../src';
@@ -24,11 +25,17 @@ describe('oneOf', () => {
       field: NestedOneOfFieldInput!
     }
 
+    input ListOneOfInput {
+      items: [UserUniqueCondition!]
+    }
+
     type Query {
       user(input: UserUniqueCondition): User
       findUser(byID: ID, byUsername: String, byEmail: String, byRegistrationNumber: Int): User @oneOf
       nestedOneOf(input: NestedOneOfFieldInput!): Boolean
       deeplyNestedOneOf(input: DeeplyNestedOneOfFieldInput): Boolean
+      listOneOf(input: [UserUniqueCondition!]): Boolean
+      inputFieldOneOfList(input: ListOneOfInput): Boolean
     }
 
     type User {
@@ -63,7 +70,7 @@ describe('oneOf', () => {
       oneOf: true,
     },
   });
-  const NestedOneOfFieldInput = new GraphQLInputObjectType({
+  const GraphQLNestedOneOfFieldInput = new GraphQLInputObjectType({
     name: 'NestedOneOfFieldInput',
     fields: {
       field: {
@@ -71,11 +78,19 @@ describe('oneOf', () => {
       },
     },
   });
-  const DeeplyNestedOneOfFieldInput = new GraphQLInputObjectType({
+  const GraphQLDeeplyNestedOneOfFieldInput = new GraphQLInputObjectType({
     name: 'DeeplyNestedOneOfFieldInput',
     fields: {
       field: {
-        type: GraphQLNonNull(NestedOneOfFieldInput),
+        type: GraphQLNonNull(GraphQLNestedOneOfFieldInput),
+      },
+    },
+  });
+  const GraphQLListOneOfInput = new GraphQLInputObjectType({
+    name: 'ListOneOfInput',
+    fields: {
+      items: {
+        type: GraphQLList(GraphQLNonNull(GraphQLUserUniqueCondition)),
       },
     },
   });
@@ -114,7 +129,7 @@ describe('oneOf', () => {
         type: GraphQLBoolean,
         args: {
           input: {
-            type: GraphQLNonNull(NestedOneOfFieldInput),
+            type: GraphQLNonNull(GraphQLNestedOneOfFieldInput),
           },
         },
       },
@@ -122,7 +137,23 @@ describe('oneOf', () => {
         type: GraphQLBoolean,
         args: {
           input: {
-            type: GraphQLNonNull(DeeplyNestedOneOfFieldInput),
+            type: GraphQLNonNull(GraphQLDeeplyNestedOneOfFieldInput),
+          },
+        },
+      },
+      listOneOf: {
+        type: GraphQLBoolean,
+        args: {
+          input: {
+            type: GraphQLList(GraphQLNonNull(GraphQLUserUniqueCondition)),
+          },
+        },
+      },
+      inputFieldOneOfList: {
+        type: GraphQLBoolean,
+        args: {
+          input: {
+            type: GraphQLListOneOfInput,
           },
         },
       },
@@ -213,6 +244,53 @@ describe('oneOf', () => {
           },
         ],
         [
+          'Valid: oneOf input list',
+          {
+            document: `query user($input: [UserUniqueCondition!]) { listOneOf(input: $input) }`,
+            variables: {
+              input: [
+                {
+                  id: 1,
+                },
+              ],
+            },
+            expectedError: null,
+          },
+        ],
+        [
+          'Valid: oneOf input list (multiple items)',
+          {
+            document: `query user($input: [UserUniqueCondition!]) { listOneOf(input: $input) }`,
+            variables: {
+              input: [
+                {
+                  id: 1,
+                },
+                {
+                  id: 2,
+                },
+              ],
+            },
+            expectedError: null,
+          },
+        ],
+        [
+          'Valid: oneOf input list field on input type',
+          {
+            document: `query user($input: ListOneOfInput!) { inputFieldOneOfList(input: $input) }`,
+            variables: {
+              input: {
+                items: [
+                  {
+                    id: 1,
+                  },
+                ],
+              },
+            },
+            expectedError: null,
+          },
+        ],
+        [
           'Invalid: Mixed variables leading to multiple values',
           {
             document: `query user($username: String) { user(input: { id: 1, username: $username }) { id }}`,
@@ -293,7 +371,7 @@ describe('oneOf', () => {
           },
         ],
         [
-          'Invalid:  More than one value is specific for deeply nested oneOf input type',
+          'Invalid: More than one value is specific for deeply nested oneOf input type',
           {
             document: `query user($input: DeeplyNestedOneOfFieldInput!) { deeplyNestedOneOf(input: $input) }`,
             variables: {
@@ -305,6 +383,21 @@ describe('oneOf', () => {
                   },
                 },
               },
+            },
+            expectedError: 'Exactly one key must be specified for input type "UserUniqueCondition"',
+          },
+        ],
+        [
+          'Invalid: oneOf input list with more than one value specified on the oneOf type',
+          {
+            document: `query user($input: [UserUniqueCondition!]) { listOneOf(input: $input) }`,
+            variables: {
+              input: [
+                {
+                  id: 1,
+                  username: 'test',
+                },
+              ],
             },
             expectedError: 'Exactly one key must be specified for input type "UserUniqueCondition"',
           },
@@ -406,7 +499,7 @@ describe('oneOf', () => {
             expectedError: 'Exactly one key must be specified for input for field "User.findUser"',
           },
         ],
-      ])('%s', async (title, { document, variables, expectedError }) => {
+      ])('%s', async (_title, { document, variables, expectedError }) => {
         const testInstance = createTestkit(
           [
             useExtendedValidation({

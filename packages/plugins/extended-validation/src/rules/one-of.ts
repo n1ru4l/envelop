@@ -1,4 +1,4 @@
-import { GraphQLError, GraphQLInputObjectType, GraphQLInputType } from 'graphql';
+import { GraphQLError, GraphQLInputObjectType, GraphQLInputType, isListType } from 'graphql';
 import { getArgumentValues } from 'graphql/execution/values';
 import { ExtendedValidationRule, getDirectiveFromAstNode, unwrapType } from '../common';
 
@@ -40,6 +40,15 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
           if (argType) {
             const traverseVariables = (graphqlType: GraphQLInputType, path: Array<string | number>, currentValue: unknown) => {
               const inputType = unwrapType(graphqlType);
+
+              if (isListType(graphqlType)) {
+                // if it is a list type currentValue MUST be an array
+                const argValue = currentValue as Array<unknown>;
+                argValue.forEach((value, index) => {
+                  traverseVariables(graphqlType.ofType, [...path, index], value);
+                });
+                return;
+              }
 
               const isOneOfInputType =
                 inputType.extensions?.oneOf || (inputType.astNode && getDirectiveFromAstNode(inputType.astNode, 'oneOf'));
