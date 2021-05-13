@@ -1,5 +1,4 @@
 import { GraphQLError, GraphQLInputObjectType, GraphQLInputType } from 'graphql';
-import get from "lodash.get"
 import { getArgumentValues } from 'graphql/execution/values';
 import { ExtendedValidationRule, getDirectiveFromAstNode, unwrapType } from '../common';
 
@@ -39,15 +38,16 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
           const argType = fieldType.args.find(typeArg => typeArg.name === arg.name.value);
 
           if (argType) {
-            const traverseVariables = (graphqlType: GraphQLInputType, path: Array<string | number>) => {
+            const traverseVariables = (graphqlType: GraphQLInputType, path: Array<string | number>, currentValue: unknown) => {
               const inputType = unwrapType(graphqlType);
 
               const isOneOfInputType =
-              inputType.extensions?.oneOf || (inputType.astNode && getDirectiveFromAstNode(inputType.astNode, 'oneOf'));
+                inputType.extensions?.oneOf || (inputType.astNode && getDirectiveFromAstNode(inputType.astNode, 'oneOf'));
 
               if (isOneOfInputType) {
-                const argValue = get(values, path) || {};
-  
+                // if it is an oneOf input type currentValue MUST be an object
+                const argValue = (currentValue as Record<string, unknown>) ?? {};
+
                 if (Object.keys(argValue).length !== 1) {
                   validationContext.reportError(
                     new GraphQLError(`Exactly one key must be specified for input type "${inputType.name}"`, [arg])
@@ -56,13 +56,15 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
               }
 
               if (inputType instanceof GraphQLInputObjectType) {
+                // if it is an input type the argValue MUST be an object
+                const argValue = currentValue as Record<string, unknown>;
                 for (const [name, fieldConfig] of Object.entries(inputType.getFields())) {
-                  traverseVariables(fieldConfig.type, [...path, name])
+                  traverseVariables(fieldConfig.type, [...path, name], argValue?.[name]);
                 }
               }
-            }
+            };
 
-            traverseVariables(argType.type, [arg.name.value])
+            traverseVariables(argType.type, [arg.name.value], values[arg.name.value]);
           }
         }
       }
