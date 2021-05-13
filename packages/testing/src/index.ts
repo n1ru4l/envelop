@@ -1,5 +1,5 @@
 import { DocumentNode, ExecutionResult, GraphQLSchema, print } from 'graphql';
-import { getGraphQLParameters, processRequest } from 'graphql-helix';
+import { getGraphQLParameters, processRequest, Push } from 'graphql-helix';
 import { envelop, useSchema } from '@envelop/core';
 import { Envelop, Plugin } from '@envelop/types';
 
@@ -54,6 +54,7 @@ export function createTestkit(
     variables?: Record<string, any>,
     initialContext?: any
   ) => Promise<ExecutionResult<any>>;
+  subscribe: (operation: DocumentNode | string, variables?: Record<string, any>, initialContext?: any) => Promise<Push<any, any>>;
   replaceSchema: (schema: GraphQLSchema) => void;
   wait: (ms: number) => Promise<void>;
 } {
@@ -101,5 +102,39 @@ export function createTestkit(
 
       return (r as any).payload as ExecutionResult;
     },
+    subscribe: async (operation, rawVariables = {}, initialContext = null) => {
+      const request = {
+        headers: {},
+        method: 'POST',
+        query: '',
+        body: {
+          query: typeof operation === 'string' ? operation : print(operation),
+          variables: rawVariables,
+        },
+      };
+      const proxy = initRequest();
+      const { operationName, query, variables } = getGraphQLParameters(request);
+
+      const r = await processRequest({
+        operationName,
+        query,
+        variables,
+        request,
+        execute: proxy.execute,
+        subscribe: proxy.subscribe,
+        parse: proxy.parse,
+        validate: proxy.validate,
+        contextFactory: initialContext ? () => proxy.contextFactory(initialContext) : proxy.contextFactory,
+        schema: proxy.schema,
+      });
+
+      if (r.type !== 'PUSH') {
+        throw new Error('Did not receive subscription operation.');
+      }
+
+      return r;
+    },
   };
 }
+
+export type SubscriptionInterface = Push<any, any>;
