@@ -38,7 +38,7 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
           const argType = fieldType.args.find(typeArg => typeArg.name === arg.name.value);
 
           if (argType) {
-            traverseVariables(validationContext, arg, argType.type, [arg.name.value], values[arg.name.value]);
+            traverseVariables(validationContext, arg, argType.type, values[arg.name.value]);
           }
         }
       }
@@ -50,7 +50,6 @@ function traverseVariables(
   validationContext: ValidationContext,
   arg: ArgumentNode,
   graphqlType: GraphQLInputType,
-  path: Array<string | number>,
   currentValue: unknown
 ) {
   // if the current value is empty we don't need to traverse deeper
@@ -63,7 +62,7 @@ function traverseVariables(
     // if it is a list type currentValue MUST be an array
     assertArray(currentValue);
     currentValue.forEach((value, index) => {
-      traverseVariables(validationContext, arg, graphqlType.ofType, [...path, index], value);
+      traverseVariables(validationContext, arg, graphqlType.ofType, value);
     });
     return;
   }
@@ -86,7 +85,7 @@ function traverseVariables(
     // if it is an input type the argValue MUST be an object
     assertObject(currentValue);
     for (const [name, fieldConfig] of Object.entries(inputType.getFields())) {
-      traverseVariables(validationContext, arg, fieldConfig.type, [...path, name], currentValue[name]);
+      traverseVariables(validationContext, arg, fieldConfig.type, currentValue[name]);
     }
   }
 }
