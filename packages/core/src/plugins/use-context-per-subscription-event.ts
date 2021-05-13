@@ -84,7 +84,7 @@ const createSubscribe = (
       document,
       rootValue,
       contextValue,
-      variableValues,
+      variableValues ?? undefined,
       operationName,
       subscribeFieldResolver
     );
