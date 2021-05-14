@@ -1,17 +1,13 @@
-import { ExecutionResult, execute as defaultExecute, createSourceEventStream } from 'graphql';
+import { execute as defaultExecute, createSourceEventStream } from 'graphql';
 import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
 import mapAsyncIterator from 'graphql/subscription/mapAsyncIterator';
-import { PolymorphicSubscribeArguments } from '@envelop/types';
-import { getSubscribeArgs } from './util';
+import { makeSubscribe } from './util';
 
 /**
  * This is a almost identical port from graphql-js subscribe.
  * The only difference is that a custom `execute` function can be injected as an additional argument.
  */
-export async function subscribe(
-  ...polyArgs: PolymorphicSubscribeArguments
-): Promise<AsyncIterableIterator<ExecutionResult> | ExecutionResult> {
-  const args = getSubscribeArgs(polyArgs);
+export const subscribe = makeSubscribe(async args => {
   const {
     schema,
     document,
@@ -57,4 +53,4 @@ export async function subscribe(
 
   // Map every source value to a ExecutionResult value as described above.
   return mapAsyncIterator(resultOrStream, mapSourceToResponse);
-}
+});
