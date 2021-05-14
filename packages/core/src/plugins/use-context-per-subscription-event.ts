@@ -17,7 +17,7 @@ type ContextFactoryType<TContextValue = unknown> = (
   options: ContextFactoryOptions
 ) => PromiseOrValue<ContextFactoryHook<TContextValue> | void>;
 
-export const useContextPerSubscriptionValue = <TContextValue = unknown>(
+export const useCreateContextPerSubscriptionEvent = <TContextValue = unknown>(
   createContext: ContextFactoryType<TContextValue>
 ): Plugin => {
   return {

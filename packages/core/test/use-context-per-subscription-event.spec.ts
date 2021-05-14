@@ -1,5 +1,5 @@
 import { createSpiedPlugin, createTestkit, SubscriptionInterface } from '@envelop/testing';
-import { useContextPerSubscriptionValue } from '../src';
+import { useCreateContextPerSubscriptionEvent } from '../src';
 import { schema, query, subscription, pubSub } from './common';
 
 let result: SubscriptionInterface | null = null;
@@ -15,7 +15,7 @@ it('it can be used for injecting a context that is different from the subscripti
 
   const testInstance = createTestkit(
     [
-      useContextPerSubscriptionValue(() => ({
+      useCreateContextPerSubscriptionEvent(() => ({
         contextValue: `=== ${counter}`,
       })),
     ],
@@ -45,7 +45,7 @@ it('invokes cleanup function after value is published', async done => {
   let onEnd = jest.fn();
   const testInstance = createTestkit(
     [
-      useContextPerSubscriptionValue(() => ({
+      useCreateContextPerSubscriptionEvent(() => ({
         contextValue: `hi`,
         onEnd,
       })),
