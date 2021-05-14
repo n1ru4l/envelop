@@ -2,12 +2,9 @@ import {
   defaultFieldResolver,
   DocumentNode,
   execute,
-  subscribe,
-  ExecutionArgs,
   GraphQLError,
   GraphQLFieldResolver,
   GraphQLSchema,
-  GraphQLTypeResolver,
   isIntrospectionType,
   isObjectType,
   parse,
@@ -15,10 +12,19 @@ import {
   specifiedRules,
   ValidationRule,
   ExecutionResult,
-  SubscriptionArgs,
 } from 'graphql';
-import { AfterCallback, AfterResolverPayload, Envelop, OnResolverCalledHooks, Plugin } from '@envelop/types';
-import { Maybe } from 'graphql/jsutils/Maybe';
+import {
+  AfterCallback,
+  AfterResolverPayload,
+  Envelop,
+  ExecuteFunction,
+  OnExecuteSubscriptionEventHandler,
+  OnResolverCalledHooks,
+  Plugin,
+  SubscribeFunction,
+} from '@envelop/types';
+import { subscribe } from './subscribe';
+import { makeSubscribe, makeExecute } from './util';
 
 const trackedSchemaSymbol = Symbol('TRACKED_SCHEMA');
 const resolversHooksSymbol = Symbol('RESOLVERS_HOOKS');
@@ -206,37 +212,15 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
       }
     : (ctx: any) => ctx;
 
-  const customSubscribe = async (
-    argsOrSchema: SubscriptionArgs | GraphQLSchema,
-    document?: DocumentNode,
-    rootValue?: any,
-    contextValue?: any,
-    variableValues?: Maybe<{ [key: string]: any }>,
-    operationName?: Maybe<string>,
-    fieldResolver?: Maybe<GraphQLFieldResolver<any, any>>,
-    subscribeFieldResolver?: Maybe<GraphQLFieldResolver<any, any>>
-  ) => {
-    const args: SubscriptionArgs =
-      argsOrSchema instanceof GraphQLSchema
-        ? {
-            schema: argsOrSchema,
-            document: document!,
-            rootValue,
-            contextValue,
-            variableValues,
-            operationName,
-            fieldResolver,
-            subscribeFieldResolver,
-          }
-        : argsOrSchema;
-
+  const customSubscribe: SubscribeFunction = makeSubscribe(async args => {
     const onResolversHandlers: OnResolverCalledHooks[] = [];
-    let subscribeFn: typeof subscribe = subscribe;
+    let subscribeFn = subscribe as SubscribeFunction;
 
     const afterCalls: ((options: {
       result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
       setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
     }) => void)[] = [];
+    const beforeExecuteSubscriptionHandlers: OnExecuteSubscriptionEventHandler[] = [];
     let context = args.contextValue;
 
     for (const onSubscribe of onSubscribeCbs) {
@@ -267,6 +251,9 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
         if (after.onResolverCalled) {
           onResolversHandlers.push(after.onResolverCalled);
         }
+        if (after.onExecuteSubscriptionEvent) {
+          beforeExecuteSubscriptionHandlers.push(after.onExecuteSubscriptionEvent);
+        }
       }
     }
 
@@ -274,9 +261,87 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
       context[resolversHooksSymbol] = onResolversHandlers;
     }
 
+    const subscribeExecute = (beforeExecuteSubscriptionHandlers.length
+      ? makeExecute(async args => {
+          const onResolversHandlers: OnResolverCalledHooks[] = [];
+          let executeFn: ExecuteFunction = execute as ExecuteFunction;
+          let result: ExecutionResult;
+
+          const afterCalls: ((options: {
+            result: ExecutionResult;
+            setResult: (newResult: ExecutionResult) => void;
+          }) => void)[] = [];
+          let context = args.contextValue;
+
+          for (const onExecute of beforeExecuteSubscriptionHandlers) {
+            let stopCalled = false;
+
+            const after = onExecute({
+              executeFn,
+              setExecuteFn: newExecuteFn => {
+                executeFn = newExecuteFn;
+              },
+              setResultAndStopExecution: stopResult => {
+                stopCalled = true;
+                result = stopResult;
+              },
+              extendContext: extension => {
+                if (typeof extension === 'object') {
+                  context = {
+                    ...(context || {}),
+                    ...extension,
+                  };
+                } else {
+                  throw new Error(
+                    `Invalid context extension provided! Expected "object", got: "${JSON.stringify(
+                      extension
+                    )}" (${typeof extension})`
+                  );
+                }
+              },
+              args,
+            });
+
+            if (stopCalled) {
+              return result!;
+            }
+
+            if (after) {
+              if (after.onExecuteDone) {
+                afterCalls.push(after.onExecuteDone);
+              }
+              if (after.onResolverCalled) {
+                onResolversHandlers.push(after.onResolverCalled);
+              }
+            }
+          }
+
+          if (onResolversHandlers.length) {
+            context[resolversHooksSymbol] = onResolversHandlers;
+          }
+
+          result = await executeFn({
+            ...args,
+            contextValue: context,
+          });
+
+          for (const afterCb of afterCalls) {
+            afterCb({
+              result,
+              setResult: newResult => {
+                result = newResult;
+              },
+            });
+          }
+
+          return result;
+        })
+      : args.execute ?? execute) as SubscribeFunction;
+
     let result = await subscribeFn({
       ...args,
       contextValue: context,
+      execute: subscribeExecute as ExecuteFunction,
     });
 
     for (const afterCb of afterCalls) {
@@ -289,35 +354,12 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
     }
 
     return result;
-  };
+  });
 
-  const customExecute = onExecuteCbs.length
-    ? async (
-        argsOrSchema: ExecutionArgs | GraphQLSchema,
-        document?: DocumentNode,
-        rootValue?: any,
-        contextValue?: any,
-        variableValues?: Maybe<{ [key: string]: any }>,
-        operationName?: Maybe<string>,
-        fieldResolver?: Maybe<GraphQLFieldResolver<any, any>>,
-        typeResolver?: Maybe<GraphQLTypeResolver<any, any>>
-      ) => {
-        const args: ExecutionArgs =
-          argsOrSchema instanceof GraphQLSchema
-            ? {
-                schema: argsOrSchema,
-                document: document!,
-                rootValue,
-                contextValue,
-                variableValues,
-                operationName,
-                fieldResolver,
-                typeResolver,
-              }
-            : argsOrSchema;
-
+  const customExecute = (onExecuteCbs.length
+    ? makeExecute(async args => {
         const onResolversHandlers: OnResolverCalledHooks[] = [];
-        let executeFn: typeof execute = execute;
+        let executeFn: ExecuteFunction = execute as ExecuteFunction;
         let result: ExecutionResult;
 
         const afterCalls: ((options: {
@@ -388,8 +430,8 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
         }
 
         return result;
-      }
-    : execute;
+      })
+    : execute) as ExecuteFunction;
 
   function prepareSchema() {
     if (!schema || schema[trackedSchemaSymbol]) {

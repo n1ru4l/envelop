@@ -5,7 +5,6 @@ import {
   Source,
   ParseOptions,
   GraphQLError,
-  execute,
   parse,
   validate,
   GraphQLResolveInfo,
@@ -13,9 +12,49 @@ import {
   ExecutionResult,
   ValidationRule,
   TypeInfo,
-  subscribe,
-  SubscriptionArgs,
+  SubscriptionArgs as OriginalSubscriptionArgs,
+  GraphQLFieldResolver,
+  GraphQLTypeResolver,
 } from 'graphql';
+import { Maybe } from 'graphql/jsutils/Maybe';
+import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
+
+export type PolymorphicExecuteArguments =
+  | [ExecutionArgs]
+  | [
+      GraphQLSchema,
+      DocumentNode,
+      any,
+      any,
+      Maybe<{ [key: string]: any }>,
+      Maybe<string>,
+      Maybe<GraphQLFieldResolver<any, any>>,
+      Maybe<GraphQLTypeResolver<any, any>>
+    ];
+
+export type ExecuteFunction = (...args: PolymorphicExecuteArguments) => PromiseOrValue<ExecutionResult>;
+
+export type SubscriptionArgs = OriginalSubscriptionArgs & {
+  execute?: ExecuteFunction;
+};
+
+export type PolymorphicSubscribeArguments =
+  | [SubscriptionArgs]
+  | [
+      GraphQLSchema,
+      DocumentNode,
+      any?,
+      any?,
+      Maybe<{ [key: string]: any }>?,
+      Maybe<string>?,
+      Maybe<GraphQLFieldResolver<any, any>>?,
+      Maybe<GraphQLFieldResolver<any, any>>?,
+      ExecuteFunction?
+    ];
+
+export type SubscribeFunction = (
+  ...args: PolymorphicSubscribeArguments
+) => PromiseOrValue<AsyncIterableIterator<ExecutionResult> | ExecutionResult>;
 
 type AfterFnOrVoid<Result> = void | ((afterOptions: Result) => void);
 
@@ -44,12 +83,21 @@ export type OnExecuteHookResult<ContextType = DefaultContext> = {
   onResolverCalled?: OnResolverCalledHooks<ContextType>;
 };
 
+export type OnExecuteSubscriptionEventHandler<ContextType = DefaultContext> = (options: {
+  executeFn: ExecuteFunction;
+  args: ExecutionArgs;
+  setExecuteFn: (newExecute: ExecuteFunction) => void;
+  setResultAndStopExecution: (newResult: ExecutionResult) => void;
+  extendContext: (contextExtension: Partial<ContextType>) => void;
+}) => OnExecuteHookResult<ContextType> | void;
+
 export type OnSubscribeHookResult<ContextType = DefaultContext> = {
   onSubscribeResult?: (options: {
     result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
     setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
   }) => void;
   onResolverCalled?: OnResolverCalledHooks<ContextType>;
+  onExecuteSubscriptionEvent?: OnExecuteSubscriptionEventHandler<ContextType>;
 };
 
 export interface Plugin<PluginContext = DefaultContext> {
@@ -60,16 +108,16 @@ export interface Plugin<PluginContext = DefaultContext> {
     setSchema: (newSchema: GraphQLSchema) => void;
   }) => void;
   onExecute?: (options: {
-    executeFn: typeof execute;
+    executeFn: ExecuteFunction;
     args: ExecutionArgs;
-    setExecuteFn: (newExecute: typeof execute) => void;
+    setExecuteFn: (newExecute: ExecuteFunction) => void;
     setResultAndStopExecution: (newResult: ExecutionResult) => void;
     extendContext: (contextExtension: Partial<PluginContext>) => void;
   }) => void | OnExecuteHookResult<PluginContext>;
   onSubscribe?: (options: {
-    subscribeFn: typeof subscribe;
+    subscribeFn: SubscribeFunction;
     args: SubscriptionArgs;
-    setSubscribeFn: (newSubscribe: typeof subscribe) => void;
+    setSubscribeFn: (newSubscribe: SubscribeFunction) => void;
     extendContext: (contextExtension: Partial<PluginContext>) => void;
   }) => void | OnSubscribeHookResult<PluginContext>;
   onParse?: BeforeAfterHook<
@@ -126,9 +174,9 @@ export type AfterCallback<T extends keyof Plugin<any>> = NonNullable<Plugin[T]> 
 
 export type Envelop<RequestContext = unknown, ExecutionContext = DefaultContext> = {
   (): {
-    execute: typeof execute;
+    execute: ExecuteFunction;
     validate: typeof validate;
-    subscribe: typeof subscribe;
+    subscribe: SubscribeFunction;
     parse: typeof parse;
     contextFactory: (requestContext: RequestContext) => ExecutionContext | Promise<ExecutionContext>;
     schema: GraphQLSchema;
