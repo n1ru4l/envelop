@@ -423,7 +423,7 @@ describe('oneOf', () => {
           {
             document: DOCUMENT_WITH_WHOLE_INPUT,
             variables: {
-              input: 1
+              input: 1,
             },
             expectedError: `Variable "$input" got invalid value 1; Expected type "UserUniqueCondition" to be an object.`,
           },
@@ -433,17 +433,17 @@ describe('oneOf', () => {
           {
             document: `query user($input: [UserUniqueCondition!]) { listOneOf(input: $input) }`,
             variables: {
-              input: 1
+              input: 1,
             },
             expectedError: `Variable "$input" got invalid value 1; Expected type "UserUniqueCondition" to be an object.`,
           },
         ],
         [
-          'Invalid: oneOf input list with incorrect list value (variant with weird behavior)',
+          'Invalid: oneOf input list with incorrect list value (variant with input coercion)',
           {
             document: `query user($input: [UserUniqueCondition!]) { listOneOf(input: $input) }`,
             variables: {
-              input: { a: 1 }
+              input: { a: 1 },
             },
             expectedError: `Variable "$input" got invalid value { a: 1 }; Field "a" is not defined by type "UserUniqueCondition".`,
           },
