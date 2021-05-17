@@ -46,11 +46,13 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
   };
 };
 
+type VariableValue = null | undefined | string | number | VariableValue[] | { [key: string]: VariableValue };
+
 function traverseVariables(
   validationContext: ValidationContext,
   arg: ArgumentNode,
   graphqlType: GraphQLInputType,
-  currentValue: unknown
+  currentValue: VariableValue
 ) {
   // if the current value is empty we don't need to traverse deeper
   // if it shouldn't be empty, the "original" validation phase should complain.
@@ -60,23 +62,23 @@ function traverseVariables(
 
   if (isListType(graphqlType)) {
     if (!Array.isArray(currentValue)) {
-      // in case the value is not an array, the "original" validation phase should complain.
-      return
+      // because of graphql type coercion a single object should be treated as an array of one object
+      currentValue = [currentValue];
     }
-    currentValue.forEach((value) => {
+    currentValue.forEach(value => {
       traverseVariables(validationContext, arg, graphqlType.ofType, value);
     });
     return;
   }
 
-  if (typeof currentValue !== "object" || currentValue == null) {
+  if (typeof currentValue !== 'object' || currentValue == null) {
     // in case the value is not an object, the "original" validation phase should complain.
-    return
+    return;
   }
 
   const inputType = unwrapType(graphqlType);
   const isOneOfInputType =
-  inputType.extensions?.oneOf || (inputType.astNode && getDirectiveFromAstNode(inputType.astNode, 'oneOf'));
+    inputType.extensions?.oneOf || (inputType.astNode && getDirectiveFromAstNode(inputType.astNode, 'oneOf'));
 
   if (isOneOfInputType) {
     if (Object.keys(currentValue).length !== 1) {
