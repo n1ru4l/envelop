@@ -418,6 +418,36 @@ describe('oneOf', () => {
             expectedError: 'Exactly one key must be specified for input type "UserUniqueCondition"',
           },
         ],
+        [
+          'Invalid: oneOf object field with incorrect object value',
+          {
+            document: DOCUMENT_WITH_WHOLE_INPUT,
+            variables: {
+              input: 1
+            },
+            expectedError: `Variable "$input" got invalid value 1; Expected type "UserUniqueCondition" to be an object.`,
+          },
+        ],
+        [
+          'Invalid: oneOf input list with incorrect list value',
+          {
+            document: `query user($input: [UserUniqueCondition!]) { listOneOf(input: $input) }`,
+            variables: {
+              input: 1
+            },
+            expectedError: `Variable "$input" got invalid value 1; Expected type "UserUniqueCondition" to be an object.`,
+          },
+        ],
+        [
+          'Invalid: oneOf input list with incorrect list value (variant with weird behavior)',
+          {
+            document: `query user($input: [UserUniqueCondition!]) { listOneOf(input: $input) }`,
+            variables: {
+              input: { a: 1 }
+            },
+            expectedError: `Variable "$input" got invalid value { a: 1 }; Field "a" is not defined by type "UserUniqueCondition".`,
+          },
+        ],
       ])('%s', async (_title, { document, variables, expectedError }) => {
         const testInstance = createTestkit(
           [

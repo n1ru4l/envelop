@@ -1,6 +1,6 @@
 import { ArgumentNode, GraphQLError, GraphQLInputObjectType, GraphQLInputType, isListType, ValidationContext } from 'graphql';
 import { getArgumentValues } from 'graphql/execution/values';
-import { ExtendedValidationRule, getDirectiveFromAstNode, unwrapType, assertArray, assertObject } from '../common';
+import { ExtendedValidationRule, getDirectiveFromAstNode, unwrapType } from '../common';
 
 export const ONE_OF_DIRECTIVE_SDL = /* GraphQL */ `
   directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
@@ -59,31 +59,34 @@ function traverseVariables(
   }
 
   if (isListType(graphqlType)) {
-    // if it is a list type currentValue MUST be an array
-    assertArray(currentValue);
-    currentValue.forEach((value, index) => {
+    if (!Array.isArray(currentValue)) {
+      // in case the value is not an array, the "original" validation phase should complain.
+      return
+    }
+    currentValue.forEach((value) => {
       traverseVariables(validationContext, arg, graphqlType.ofType, value);
     });
     return;
   }
 
-  const inputType = unwrapType(graphqlType);
+  if (typeof currentValue !== "object" || currentValue == null) {
+    // in case the value is not an object, the "original" validation phase should complain.
+    return
+  }
 
+  const inputType = unwrapType(graphqlType);
   const isOneOfInputType =
-    inputType.extensions?.oneOf || (inputType.astNode && getDirectiveFromAstNode(inputType.astNode, 'oneOf'));
+  inputType.extensions?.oneOf || (inputType.astNode && getDirectiveFromAstNode(inputType.astNode, 'oneOf'));
 
   if (isOneOfInputType) {
-    // if it is an oneOf input type currentValue MUST be an object
-    assertObject(currentValue);
     if (Object.keys(currentValue).length !== 1) {
       validationContext.reportError(
         new GraphQLError(`Exactly one key must be specified for input type "${inputType.name}"`, [arg])
       );
     }
   }
+
   if (inputType instanceof GraphQLInputObjectType) {
-    // if it is an input type the argValue MUST be an object
-    assertObject(currentValue);
     for (const [name, fieldConfig] of Object.entries(inputType.getFields())) {
       traverseVariables(validationContext, arg, fieldConfig.type, currentValue[name]);
     }
