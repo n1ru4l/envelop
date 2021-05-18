@@ -261,7 +261,7 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
       context[resolversHooksSymbol] = onResolversHandlers;
     }
 
-    const subscribeExecute = (beforeExecuteSubscriptionHandlers.length
+    const subscribeExecute = beforeExecuteSubscriptionHandlers.length
       ? makeExecute(async args => {
           const onResolversHandlers: OnResolverCalledHooks[] = [];
           let executeFn: ExecuteFunction = execute as ExecuteFunction;
@@ -336,12 +336,12 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
 
           return result;
         })
-      : args.execute ?? execute) as SubscribeFunction;
+      : ((args.execute ?? execute) as ExecuteFunction);
 
     let result = await subscribeFn({
       ...args,
       contextValue: context,
-      execute: subscribeExecute as ExecuteFunction,
+      execute: subscribeExecute,
     });
 
     for (const afterCb of afterCalls) {
