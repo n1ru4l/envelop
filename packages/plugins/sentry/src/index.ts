@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-console */
 /* eslint-disable dot-notation */
-import { Plugin } from '@envelop/types';
+import { Plugin, OnExecuteHookResult } from '@envelop/types';
 import * as Sentry from '@sentry/node';
 import { Span } from '@sentry/types';
 import { ExecutionArgs, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
@@ -11,6 +11,7 @@ const tracingSpanSymbol = Symbol('SENTRY_GRAPHQL');
 export type SentryPluginOptions = {
   startTransaction?: boolean;
   renameTransaction?: boolean;
+  trackResolvers?: boolean;
   includeRawResult?: boolean;
   includeResolverArgs?: boolean;
   includeExecuteVariables?: boolean;
@@ -19,13 +20,16 @@ export type SentryPluginOptions = {
   operationName?: (args: ExecutionArgs) => string;
 };
 
+interface PluginContext {
+  [tracingSpanSymbol]: Span;
+}
+
 export const useSentry = (
   options: SentryPluginOptions = {
     startTransaction: true,
+    trackResolvers: true,
   }
-): Plugin<{
-  [tracingSpanSymbol]: Span;
-}> => {
+): Plugin<PluginContext> => {
   return {
     onExecute({ args, extendContext }) {
       const rootOperation = args.document.definitions.find(o => o.kind === Kind.OPERATION_DEFINITION) as OperationDefinitionNode;
@@ -82,45 +86,49 @@ export const useSentry = (
         [tracingSpanSymbol]: rootSpan,
       });
 
-      return {
-        onResolverCalled({ args: resolversArgs, info, context }) {
-          if (context && context[tracingSpanSymbol]) {
-            const { fieldName, returnType, parentType } = info;
-            const parent: typeof rootSpan = context[tracingSpanSymbol];
-            const tags: Record<string, string> = {
-              fieldName,
-              parentType: parentType.toString(),
-              returnType: returnType.toString(),
-            };
+      const onResolverCalled: OnExecuteHookResult<PluginContext>['onResolverCalled'] = options.trackResolvers
+        ? ({ args: resolversArgs, info, context }) => {
+            if (context && context[tracingSpanSymbol]) {
+              const { fieldName, returnType, parentType } = info;
+              const parent: typeof rootSpan = context[tracingSpanSymbol];
+              const tags: Record<string, string> = {
+                fieldName,
+                parentType: parentType.toString(),
+                returnType: returnType.toString(),
+              };
 
-            if (options.includeResolverArgs) {
-              tags.args = options.includeResolverArgs ? JSON.stringify(resolversArgs || {}) : '';
+              if (options.includeResolverArgs) {
+                tags.args = options.includeResolverArgs ? JSON.stringify(resolversArgs || {}) : '';
+              }
+
+              const childSpan = parent.startChild({
+                op: `${parentType.name}.${fieldName}`,
+                tags,
+              });
+
+              return ({ result }) => {
+                if (options.includeRawResult) {
+                  childSpan.setData('result', result);
+                }
+
+                if (result instanceof Error) {
+                  const errorPath = responsePathAsArray(info.path).join(' > ');
+
+                  Sentry.captureException(result, {
+                    fingerprint: ['graphql', errorPath, opName, operationType],
+                  });
+                }
+
+                childSpan.finish();
+              };
             }
 
-            const childSpan = parent.startChild({
-              op: `${parentType.name}.${fieldName}`,
-              tags,
-            });
-
-            return ({ result }) => {
-              if (options.includeRawResult) {
-                childSpan.setData('result', result);
-              }
-
-              if (result instanceof Error) {
-                const errorPath = responsePathAsArray(info.path).join(' > ');
-
-                Sentry.captureException(result, {
-                  fingerprint: ['graphql', errorPath, opName, operationType],
-                });
-              }
-
-              childSpan.finish();
-            };
+            return () => {};
           }
+        : undefined;
 
-          return () => {};
-        },
+      return {
+        onResolverCalled,
         onExecuteDone({ result }) {
           if (options.includeRawResult) {
             rootSpan.setData('result', result);
