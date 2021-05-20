@@ -113,6 +113,7 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 | -------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | useSchema                  | [`@envelop/core`](./packages/core#useschema)                                 | Simplest plugin to provide your GraphQL schema.                                                                                                   |
 | useErrorHandler            | [`@envelop/core`](./packages/core#useerrorhandler)                           | Get notified when any execution error occurs.                                                                                                     |
+| useMaskedErrors            | [`@envelop/core`](./packages/core#usemaskederrors)                           | Hide sensitive/unexpected errors from your clients.                                                                                               |
 | useExtendContext           | [`@envelop/core`](./packages/core#useextendcontext)                          | Extend execution context based on your needs.                                                                                                     |
 | useLogger                  | [`@envelop/core`](./packages/core#uselogger)                                 | Simple, yet powerful logging for GraphQL execution.                                                                                               |
 | usePayloadFormatter        | [`@envelop/core`](./packages/core#usepayloadformatter)                       | Format, clean and customize execution result.                                                                                                     |
@@ -133,7 +134,6 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 | useDisableIntrospection    | [`@envelop/disable-introspection`](./packages/plugins/disable-introspection) | Disables introspection by adding a validation rule                                                                                                |
 | useFilterAllowedOperations | [`@envelop/filter-operation-type`](./packages/plugins/filter-operation-type) | Only allow execution of specific operation types                                                                                                  |
 | useExtendedValidation      | [`@envelop/extended-validation`](./packages/plugins/extended-validation)     | Adds custom validations to the execution pipeline, with access to variables. Comes with an implementation for `@oneOf` directibe for input union. |
-| useMaskedErrors            | [`@envelop/masked-error`](./packages/plugins/masked-error)                   | Mask unexpected errors to your clients.                                                                                                           |
 
 ## Sharing / Composing `envelop`s
 

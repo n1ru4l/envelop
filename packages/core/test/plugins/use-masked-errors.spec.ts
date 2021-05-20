@@ -1,6 +1,6 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { createTestkit } from '@envelop/testing';
-import { EnvelopError, useMaskedErrors } from '../src';
+import { EnvelopError, useMaskedErrors } from '../../src/plugins/use-masked-errors';
 
 describe('useMaskedErrors', () => {
   const schema = makeExecutableSchema({
