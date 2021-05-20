@@ -1,4 +1,4 @@
-## `@envelop/preload-asset`
+## `@envelop/preload-assets`
 
 Inject a function for registering assets that should be preloaded on the client.
 The registered assets will be added under the `extensions.preloadAssets` key on the execution result.
@@ -8,12 +8,12 @@ On your client network layer you can register a handler for preloading the given
 ## Getting Started
 
 ```
-yarn add @envelop/preload-asset
+yarn add @envelop/preload-assets
 ```
 
 ```ts
 import { envelop } from '@envelop/core';
-import { usePreloadAsset } from '@envelop/preload-asset';
+import { usePreloadAssets } from '@envelop/preload-asset';
 import { makeExecutableSchema } from 'graphql';
 
 const schema = makeExecutableSchema({
@@ -34,7 +34,7 @@ const schema = makeExecutableSchema({
 });
 
 const getEnveloped = envelop({
-  plugins: [usePreloadAsset()],
+  plugins: [usePreloadAssets()],
 });
 ```
 
@@ -60,11 +60,11 @@ const preloadAsset = (url) => {
   request.responseType = 'blob';
   request.onload = () => {
     if  (request.status !== 200 ) {
-      console.error((new Error(`Image prefetch failed; error code '${request.statusText}'.`));
+      console.error((new Error(`Image preload failed; error code '${request.statusText}'.`));
     }
   };
   request.onerror = () => {
-    console.error(new Error(`There was a network error while prefetching '${url}'.`));
+    console.error(new Error(`There was a network error while preloading '${url}'.`));
   };
   request.send();
 }

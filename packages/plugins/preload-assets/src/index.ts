@@ -1,6 +1,6 @@
 import { Plugin } from '@envelop/types';
 
-export const usePreloadAsset = (): Plugin => ({
+export const usePreloadAssets = (): Plugin => ({
   onExecute: ({ extendContext }) => {
     const assets = new Set<string>();
     extendContext({

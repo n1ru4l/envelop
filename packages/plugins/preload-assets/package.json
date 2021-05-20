@@ -1,5 +1,5 @@
 {
-  "name": "@envelop/preload-asset",
+  "name": "@envelop/preload-assets",
   "version": "0.0.1",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
@@ -7,7 +7,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/dotansimha/envelop.git",
-    "directory": "packages/plugins/preload-asset"
+    "directory": "packages/plugins/preload-assets"
   },
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
