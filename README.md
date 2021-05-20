@@ -133,6 +133,7 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 | useDisableIntrospection    | [`@envelop/disable-introspection`](./packages/plugins/disable-introspection) | Disables introspection by adding a validation rule                                                                                                |
 | useFilterAllowedOperations | [`@envelop/filter-operation-type`](./packages/plugins/filter-operation-type) | Only allow execution of specific operation types                                                                                                  |
 | useExtendedValidation      | [`@envelop/extended-validation`](./packages/plugins/extended-validation)     | Adds custom validations to the execution pipeline, with access to variables. Comes with an implementation for `@oneOf` directibe for input union. |
+| usePreloadAsset            | [`@envelop/preload-asset`](./packages/plugins/preload-asset)                 | Register asset that should be prefetched on the client via an extensions field.                                                                   |
 
 ## Sharing / Composing `envelop`s
 
