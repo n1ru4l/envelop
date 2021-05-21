@@ -4108,10 +4108,10 @@ graphql-helix@1.2.3:
   resolved "https://registry.npmjs.org/graphql-helix/-/graphql-helix-1.2.3.tgz#eaad4db338e2cdf6f5799478d1b05125ff19cd04"
   integrity sha512-psBs23Md/Nt0qsNOv5K+MqqsJ09lTyYtoujGAlFuE1+twUBQiKyanOYk3cqs9BtnJ7JsS+JlsS2/0ceE+20RCA==
 
-graphql-helix@1.6.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/graphql-helix/-/graphql-helix-1.6.0.tgz#cd9353afac12dc283e65473121283ae2b2077a12"
-  integrity sha512-/u9W3hTwMA95gM1yWNLlB2kOp/4y3yvAaA12G9rRUv4Y21d/D1Q6SCVJVEyvA2vJU/6JK1DFOewMap+rqFEQZg==
+graphql-helix@1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/graphql-helix/-/graphql-helix-1.6.1.tgz#f504b8ceb8661c5884a6ae5edfcbd66891342710"
+  integrity sha512-fdh9+uHnH0hz4ooGJkfPBh02ieblnH9G0OkbYS4vMMTJnq0Ea4R/QsIwzb2vLMDQlKhODkMbKlc1uXwghnvJrw==
 
 graphql-jit@^0.5.0:
   version "0.5.0"
