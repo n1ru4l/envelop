@@ -1,6 +1,7 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { createTestkit } from '@envelop/testing';
 import { usePreloadAssets } from '../src';
+import { useExtendContext } from '@envelop/core';
 
 describe('usePreloadAssets', () => {
   const imageUrl = 'https://localhost/some-asset.png';
@@ -29,6 +30,19 @@ describe('usePreloadAssets', () => {
   it('Should not include the preload extension if no asset should be preloaded', async () => {
     const testInstance = createTestkit([usePreloadAssets()], schema);
     const result = await testInstance.execute(`query { noAsset }`);
+    expect(result.errors).toBeUndefined();
+    expect(result.extensions).toBeUndefined();
+  });
+
+  it('Should not include preload extension if asset preloading is disabled via shouldPreloadAssets', async () => {
+    const testInstance = createTestkit(
+      [
+        useExtendContext(() => ({ shouldPreloadAssets: false })),
+        usePreloadAssets({ shouldPreloadAssets: context => (context as any).shouldPreloadAssets }),
+      ],
+      schema
+    );
+    const result = await testInstance.execute(`query { imageUrl }`);
     expect(result.errors).toBeUndefined();
     expect(result.extensions).toBeUndefined();
   });
