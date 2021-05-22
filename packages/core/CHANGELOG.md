@@ -1,5 +1,18 @@
 # @envelop/core
 
+## 0.2.0
+
+### Minor Changes
+
+- d4c8f90: Allow plugins to manage and load other plugins
+- d4c8f90: Improve execution times by simplifying some parts of `envelop` code
+- d4c8f90: Remove `extends` and replaces with `useEnvelop` plugin
+
+### Patch Changes
+
+- d4c8f90: useTiming: improve plugin creation based on config
+- d4c8f90: Introduce TS strict mode
+
 ## 0.1.4
 
 ### Patch Changes
