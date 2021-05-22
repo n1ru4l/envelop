@@ -8,6 +8,7 @@
     "./examples/*"
   ],
   "scripts": {
+    "prepare": "husky install",
     "benchmark": "NODE_ENV=production ts-node --project tsconfig.benchmark.json benchmark/execute.case.ts",
     "postinstall": "patch-package",
     "lint": "eslint --config .eslintrc.json --ext .ts .",
@@ -45,10 +46,13 @@
     "ts-jest": "26.5.6",
     "rimraf": "3.0.2",
     "typescript": "4.2.4",
-    "jest": "26.6.3"
+    "jest": "26.6.3",
+    "prettier": "2.3.0",
+    "pretty-quick": "3.1.0"
   },
   "resolutions": {
-    "@changesets/git": "1.1.1"
+    "@changesets/git": "1.1.1",
+    "prettier": "2.3.0"
   },
   "lint-staged": {
     "packages/**/src/**/*.{ts,tsx}": [
