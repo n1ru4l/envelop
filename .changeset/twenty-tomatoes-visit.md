@@ -1,5 +1,5 @@
 ---
-'@envelop/preload-asset': patch
+'@envelop/preload-assets': patch
 ---
 
-Add @envelop/preload-asset package
+Add @envelop/preload-assets package
