@@ -1,5 +1,11 @@
 # @envelop/opentelemetry
 
+## 0.1.2
+
+### Patch Changes
+
+- 732a9d2: Update OT dependencies to latest
+
 ## 0.1.1
 
 ### Patch Changes

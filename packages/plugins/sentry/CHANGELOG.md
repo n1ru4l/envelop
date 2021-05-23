@@ -1,5 +1,12 @@
 # @envelop/sentry
 
+## 0.2.0
+
+### Minor Changes
+
+- e55c50a: Add trackResolvers
+- e55c50a: Allow to reuse existing transaction
+
 ## 0.1.1
 
 ### Patch Changes
