@@ -4,6 +4,7 @@ import * as opentelemetry from '@opentelemetry/api';
 import { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/tracing';
 import { print } from 'graphql';
 
+
 export enum AttributeName {
   EXECUTION_ERROR = 'graphql.execute.error',
   EXECUTION_RESULT = 'graphql.execute.result',
@@ -81,7 +82,7 @@ export const useOpenTelemetry = (
         resultCbs.onResolverCalled = ({ info, context }) => {
           if (context && context[tracingSpanSymbol]) {
             tracer.getActiveSpanProcessor();
-            const ctx = opentelemetry.setSpan(opentelemetry.context.active(), context[tracingSpanSymbol]);
+            const ctx = opentelemetry.trace.setSpan(opentelemetry.context.active(), context[tracingSpanSymbol]);
             const { fieldName, returnType, parentType } = info;
 
             const resolverSpan = tracer.startSpan(
