@@ -132,8 +132,7 @@ const getEnveloped = envelop({
 Prevent unexpected error messages from leaking to the GraphQL clients.
 
 ```ts
-import { envelop, useSchema } from '@envelop/core';
-import { useMaskedErrors, EnvelopError } from '@envelop/masked-errors';
+import { envelop, useSchema, useMaskedErrors, EnvelopError } from '@envelop/core';
 import { makeExecutableSchema } from 'graphql';
 
 const schema = makeExecutableSchema({
