@@ -8,6 +8,7 @@
     "./examples/*"
   ],
   "scripts": {
+    "prepare": "husky install",
     "benchmark": "NODE_ENV=production ts-node --project tsconfig.benchmark.json benchmark/execute.case.ts",
     "postinstall": "patch-package",
     "lint": "eslint --config .eslintrc.json --ext .ts .",
@@ -21,6 +22,8 @@
     "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\""
   },
   "devDependencies": {
+    "prettier": "2.3.0",
+    "pretty-quick": "3.1.0",
     "apollo-server": "2.24.1",
     "@graphql-tools/schema": "7.1.5",
     "@types/benchmark": "2.1.0",
@@ -48,7 +51,8 @@
     "jest": "26.6.3"
   },
   "resolutions": {
-    "@changesets/git": "1.1.1"
+    "@changesets/git": "1.1.1",
+    "prettier": "2.3.0"
   },
   "lint-staged": {
     "packages/**/src/**/*.{ts,tsx}": [
