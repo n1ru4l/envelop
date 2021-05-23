@@ -1,5 +1,11 @@
 # @envelop/core
 
+## 0.2.1
+
+### Patch Changes
+
+- 8fa4ae2: Add useMaskedErrors plugin.
+
 ## 0.2.0
 
 ### Minor Changes
