@@ -1,5 +1,5 @@
 import { Plugin } from '@envelop/types';
-import { DocumentNode, parse } from 'graphql';
+import { DocumentNode, GraphQLError, parse } from 'graphql';
 
 export class NonPersistedOperationError extends Error {}
 
@@ -10,23 +10,43 @@ export interface PersistedOperationsStore {
    */
   canHandle(idOrSdl: string): boolean;
   /**
-   * Transfroms a hash/id into a DocumentNode or SDL string. Returns `null` in case of a store miss.
+   * Transfroms a hash/id into a DocumentNode or SDL string.
+   * Prefer returning `DocumentNode` if available to avoid additional parsing phase.
+   * Return `null` in case of a store miss.
    * @param id
    */
   get(id: string): string | DocumentNode | null;
 }
 
-export const usePersistedOperations = (options: { store: PersistedOperationsStore }): Plugin => {
+export type UsePersistedOperationsOptions = {
+  /**
+   * Set to `false` to allow running operations that are not available in the store.
+   * Set to `true` to allow running only persisted operations.
+   */
+  onlyPersistedOperations: boolean;
+  /**
+   * The store to use. You can implement any custom store that loads the data from any source.
+   */
+  store: PersistedOperationsStore;
+};
+
+export const usePersistedOperations = (options: UsePersistedOperationsOptions): Plugin => {
   return {
     onParse({ params, setParsedDocument }) {
-      if (typeof params.source === 'string' && options.store.canHandle(params.source)) {
-        const rawResult = options.store.get(params.source);
+      if (typeof params.source === 'string') {
+        if (options.store.canHandle(params.source)) {
+          const rawResult = options.store.get(params.source);
 
-        if (rawResult) {
-          const result = typeof rawResult === 'string' ? parse(rawResult) : rawResult;
-          setParsedDocument(result);
+          if (rawResult) {
+            const result = typeof rawResult === 'string' ? parse(rawResult) : rawResult;
+            setParsedDocument(result);
+          } else {
+            throw new NonPersistedOperationError(`The operation hash "${params.source}" is not valid`);
+          }
         } else {
-          throw new NonPersistedOperationError(`The operation hash "${params.source}" is not valid`);
+          if (options.onlyPersistedOperations) {
+            throw new GraphQLError(`Failed to handle GraphQL persisted operation.`);
+          }
         }
       }
     },
