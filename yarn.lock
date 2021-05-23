@@ -948,10 +948,10 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
-"@opentelemetry/api@^0.18.0":
-  version "0.18.0"
-  resolved "https://registry.yarnpkg.com/@opentelemetry/api/-/api-0.18.0.tgz#4641879f16de9784bb00023ab0de5ca219ced765"
-  integrity sha512-KczG0mtyH2UQLeFDYC+atGXfS/MfttynmHblJUsOnIgfI0Ohn0nJOgNjKwJlHk6/9Q61CBTxzSs/268TDaopVw==
+"@opentelemetry/api@^0.19.0":
+  version "0.19.0"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/api/-/api-0.19.0.tgz#d2997338c106ad8b00d4c9105fcbcadf1dac4ed5"
+  integrity sha512-v+6ZPQZMKKRVCwLMdjfkrUhBNIQMPrbyMo2R07LdLpCKmq3KlEeyua2LsI19WgTWIj9R9QgqfD8EcUgyxUiw+A==
 
 "@opentelemetry/core@0.19.0":
   version "0.19.0"
