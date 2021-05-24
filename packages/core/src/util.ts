@@ -1,5 +1,5 @@
-import { PolymorphicExecuteArguments, PolymorphicSubscribeArguments, SubscriptionArgs } from '@envelop/types';
-import { ExecutionArgs, ExecutionResult } from 'graphql';
+import { PolymorphicExecuteArguments, PolymorphicSubscribeArguments } from '@envelop/types';
+import { ExecutionArgs, ExecutionResult, SubscriptionArgs } from 'graphql';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 
 export function getExecuteArgs(args: PolymorphicExecuteArguments): ExecutionArgs {
@@ -20,9 +20,10 @@ export function getExecuteArgs(args: PolymorphicExecuteArguments): ExecutionArgs
 /**
  * Utility function for making a execute function that handles polymorphic arguments.
  */
-export const makeExecute = (subscribeFn: (args: ExecutionArgs) => PromiseOrValue<ExecutionResult>) => (
-  ...polyArgs: PolymorphicExecuteArguments
-): PromiseOrValue<ExecutionResult> => subscribeFn(getExecuteArgs(polyArgs));
+export const makeExecute =
+  (executeFn: (args: ExecutionArgs) => PromiseOrValue<ExecutionResult>) =>
+  (...polyArgs: PolymorphicExecuteArguments): PromiseOrValue<ExecutionResult> =>
+    executeFn(getExecuteArgs(polyArgs));
 
 export function getSubscribeArgs(args: PolymorphicSubscribeArguments): SubscriptionArgs {
   return args.length === 1
@@ -36,14 +37,13 @@ export function getSubscribeArgs(args: PolymorphicSubscribeArguments): Subscript
         operationName: args[5],
         fieldResolver: args[6],
         subscribeFieldResolver: args[7],
-        execute: args[8],
       };
 }
 
 /**
  * Utility function for making a subscribe function that handles polymorphic arguments.
  */
-export const makeSubscribe = (
-  subscribeFn: (args: SubscriptionArgs) => PromiseOrValue<AsyncIterableIterator<ExecutionResult> | ExecutionResult>
-) => (...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<ExecutionResult> | ExecutionResult> =>
-  subscribeFn(getSubscribeArgs(polyArgs));
+export const makeSubscribe =
+  (subscribeFn: (args: SubscriptionArgs) => PromiseOrValue<AsyncIterableIterator<ExecutionResult> | ExecutionResult>) =>
+  (...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<ExecutionResult> | ExecutionResult> =>
+    subscribeFn(getSubscribeArgs(polyArgs));

@@ -12,7 +12,7 @@ import {
   ExecutionResult,
   ValidationRule,
   TypeInfo,
-  SubscriptionArgs as OriginalSubscriptionArgs,
+  SubscriptionArgs,
   GraphQLFieldResolver,
   GraphQLTypeResolver,
 } from 'graphql';
@@ -33,10 +33,6 @@ export type PolymorphicExecuteArguments =
     ];
 
 export type ExecuteFunction = (...args: PolymorphicExecuteArguments) => PromiseOrValue<ExecutionResult>;
-
-export type SubscriptionArgs = OriginalSubscriptionArgs & {
-  execute?: ExecuteFunction;
-};
 
 export type PolymorphicSubscribeArguments =
   | [SubscriptionArgs]
@@ -83,21 +79,12 @@ export type OnExecuteHookResult<ContextType = DefaultContext> = {
   onResolverCalled?: OnResolverCalledHooks<ContextType>;
 };
 
-export type OnExecuteSubscriptionEventHandler<ContextType = DefaultContext> = (options: {
-  executeFn: ExecuteFunction;
-  args: ExecutionArgs;
-  setExecuteFn: (newExecute: ExecuteFunction) => void;
-  setResultAndStopExecution: (newResult: ExecutionResult) => void;
-  extendContext: (contextExtension: Partial<ContextType>) => void;
-}) => OnExecuteHookResult<ContextType> | void;
-
 export type OnSubscribeHookResult<ContextType = DefaultContext> = {
   onSubscribeResult?: (options: {
     result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
     setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
   }) => void;
   onResolverCalled?: OnResolverCalledHooks<ContextType>;
-  onExecuteSubscriptionEvent?: OnExecuteSubscriptionEventHandler<ContextType>;
 };
 
 export interface Plugin<PluginContext = DefaultContext> {

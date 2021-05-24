@@ -2,6 +2,7 @@ import {
   defaultFieldResolver,
   DocumentNode,
   execute,
+  subscribe,
   GraphQLError,
   GraphQLFieldResolver,
   GraphQLSchema,
@@ -18,16 +19,14 @@ import {
   AfterResolverPayload,
   Envelop,
   ExecuteFunction,
-  OnExecuteSubscriptionEventHandler,
   OnResolverCalledHooks,
   Plugin,
   SubscribeFunction,
 } from '@envelop/types';
-import { subscribe } from './subscribe';
 import { makeSubscribe, makeExecute } from './util';
 
 const trackedSchemaSymbol = Symbol('TRACKED_SCHEMA');
-const resolversHooksSymbol = Symbol('RESOLVERS_HOOKS');
+export const resolversHooksSymbol = Symbol('RESOLVERS_HOOKS');
 
 export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
   let schema: GraphQLSchema | undefined | null = null;
@@ -220,7 +219,6 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
       result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
       setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
     }) => void)[] = [];
-    const beforeExecuteSubscriptionHandlers: OnExecuteSubscriptionEventHandler[] = [];
     let context = args.contextValue;
 
     for (const onSubscribe of onSubscribeCbs) {
@@ -251,9 +249,6 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
         if (after.onResolverCalled) {
           onResolversHandlers.push(after.onResolverCalled);
         }
-        if (after.onExecuteSubscriptionEvent) {
-          beforeExecuteSubscriptionHandlers.push(after.onExecuteSubscriptionEvent);
-        }
       }
     }
 
@@ -261,19 +256,35 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
       context[resolversHooksSymbol] = onResolversHandlers;
     }
 
-    const subscribeExecute = beforeExecuteSubscriptionHandlers.length
+    let result = await subscribeFn({
+      ...args,
+      contextValue: context,
+    });
+
+    for (const afterCb of afterCalls) {
+      afterCb({
+        result,
+        setResult: newResult => {
+          result = newResult;
+        },
+      });
+    }
+
+    return result;
+  });
+
+  const customExecute = (
+    onExecuteCbs.length
       ? makeExecute(async args => {
           const onResolversHandlers: OnResolverCalledHooks[] = [];
           let executeFn: ExecuteFunction = execute as ExecuteFunction;
           let result: ExecutionResult;
 
-          const afterCalls: ((options: {
-            result: ExecutionResult;
-            setResult: (newResult: ExecutionResult) => void;
-          }) => void)[] = [];
+          const afterCalls: ((options: { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void }) => void)[] =
+            [];
           let context = args.contextValue;
 
-          for (const onExecute of beforeExecuteSubscriptionHandlers) {
+          for (const onExecute of onExecuteCbs) {
             let stopCalled = false;
 
             const after = onExecute({
@@ -336,102 +347,8 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
 
           return result;
         })
-      : ((args.execute ?? execute) as ExecuteFunction);
-
-    let result = await subscribeFn({
-      ...args,
-      contextValue: context,
-      execute: subscribeExecute,
-    });
-
-    for (const afterCb of afterCalls) {
-      afterCb({
-        result,
-        setResult: newResult => {
-          result = newResult;
-        },
-      });
-    }
-
-    return result;
-  });
-
-  const customExecute = (onExecuteCbs.length
-    ? makeExecute(async args => {
-        const onResolversHandlers: OnResolverCalledHooks[] = [];
-        let executeFn: ExecuteFunction = execute as ExecuteFunction;
-        let result: ExecutionResult;
-
-        const afterCalls: ((options: {
-          result: ExecutionResult;
-          setResult: (newResult: ExecutionResult) => void;
-        }) => void)[] = [];
-        let context = args.contextValue;
-
-        for (const onExecute of onExecuteCbs) {
-          let stopCalled = false;
-
-          const after = onExecute({
-            executeFn,
-            setExecuteFn: newExecuteFn => {
-              executeFn = newExecuteFn;
-            },
-            setResultAndStopExecution: stopResult => {
-              stopCalled = true;
-              result = stopResult;
-            },
-            extendContext: extension => {
-              if (typeof extension === 'object') {
-                context = {
-                  ...(context || {}),
-                  ...extension,
-                };
-              } else {
-                throw new Error(
-                  `Invalid context extension provided! Expected "object", got: "${JSON.stringify(
-                    extension
-                  )}" (${typeof extension})`
-                );
-              }
-            },
-            args,
-          });
-
-          if (stopCalled) {
-            return result!;
-          }
-
-          if (after) {
-            if (after.onExecuteDone) {
-              afterCalls.push(after.onExecuteDone);
-            }
-            if (after.onResolverCalled) {
-              onResolversHandlers.push(after.onResolverCalled);
-            }
-          }
-        }
-
-        if (onResolversHandlers.length) {
-          context[resolversHooksSymbol] = onResolversHandlers;
-        }
-
-        result = await executeFn({
-          ...args,
-          contextValue: context,
-        });
-
-        for (const afterCb of afterCalls) {
-          afterCb({
-            result,
-            setResult: newResult => {
-              result = newResult;
-            },
-          });
-        }
-
-        return result;
-      })
-    : execute) as ExecuteFunction;
+      : execute
+  ) as ExecuteFunction;
 
   function prepareSchema() {
     if (!schema || schema[trackedSchemaSymbol]) {
