@@ -18,12 +18,17 @@ import {
   AfterCallback,
   AfterResolverPayload,
   Envelop,
+  ExecuteDoneOptions,
   ExecuteFunction,
+  OnExecuteHookResult,
+  OnExecutionDoneHookResult,
   OnResolverCalledHooks,
+  OnSubscribeHookResult,
   Plugin,
   SubscribeFunction,
 } from '@envelop/types';
-import { makeSubscribe, makeExecute } from './util';
+import { makeSubscribe, makeExecute, mapAsyncIterator, finalAsyncIterator } from './util';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
 
 const trackedSchemaSymbol = Symbol('TRACKED_SCHEMA');
 export const resolversHooksSymbol = Symbol('RESOLVERS_HOOKS');
@@ -215,10 +220,7 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
     const onResolversHandlers: OnResolverCalledHooks[] = [];
     let subscribeFn = subscribe as SubscribeFunction;
 
-    const afterCalls: ((options: {
-      result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
-      setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
-    }) => void)[] = [];
+    const afterCalls: Exclude<OnSubscribeHookResult['onSubscribeResult'], void>[] = [];
     let context = args.contextValue;
 
     for (const onSubscribe of onSubscribeCbs) {
@@ -261,13 +263,44 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
       contextValue: context,
     });
 
+    const onNextHandler: Exclude<OnExecutionDoneHookResult['onNext'], void>[] = [];
+    const onEndHandler: Exclude<OnExecutionDoneHookResult['onEnd'], void>[] = [];
+
     for (const afterCb of afterCalls) {
-      afterCb({
+      const streamHandler = afterCb({
         result,
         setResult: newResult => {
           result = newResult;
         },
-      });
+        isStream: isAsyncIterable(result),
+      } as ExecuteDoneOptions);
+
+      if (streamHandler) {
+        if (streamHandler.onNext) {
+          onNextHandler.push(streamHandler.onNext);
+        }
+        if (streamHandler.onEnd) {
+          onEndHandler.push(streamHandler.onEnd);
+        }
+      }
+    }
+
+    if (isAsyncIterable(result)) {
+      if (onNextHandler.length) {
+        result = mapAsyncIterator(result, result => {
+          for (const onNext of onNextHandler) {
+            onNext({ result, setResult: newResult => (result = newResult) });
+          }
+          return result;
+        });
+      }
+      if (onEndHandler.length) {
+        result = finalAsyncIterator(result, () => {
+          for (const onEnd of onEndHandler) {
+            onEnd();
+          }
+        });
+      }
     }
 
     return result;
@@ -278,10 +311,9 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
       ? makeExecute(async args => {
           const onResolversHandlers: OnResolverCalledHooks[] = [];
           let executeFn: ExecuteFunction = execute as ExecuteFunction;
-          let result: ExecutionResult;
+          let result: ExecutionResult | AsyncIterableIterator<ExecutionResult>;
 
-          const afterCalls: ((options: { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void }) => void)[] =
-            [];
+          const afterCalls: Exclude<OnExecuteHookResult['onExecuteDone'], void>[] = [];
           let context = args.contextValue;
 
           for (const onExecute of onExecuteCbs) {
@@ -336,13 +368,44 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
             contextValue: context,
           });
 
+          const onNextHandler: Exclude<OnExecutionDoneHookResult['onNext'], void>[] = [];
+          const onEndHandler: Exclude<OnExecutionDoneHookResult['onEnd'], void>[] = [];
+
           for (const afterCb of afterCalls) {
-            afterCb({
+            const streamHandler = afterCb({
               result,
               setResult: newResult => {
                 result = newResult;
               },
-            });
+              isStream: isAsyncIterable(result),
+            } as ExecuteDoneOptions);
+
+            if (streamHandler) {
+              if (streamHandler.onNext) {
+                onNextHandler.push(streamHandler.onNext);
+              }
+              if (streamHandler.onEnd) {
+                onEndHandler.push(streamHandler.onEnd);
+              }
+            }
+          }
+
+          if (isAsyncIterable(result)) {
+            if (onNextHandler.length) {
+              result = mapAsyncIterator(result, result => {
+                for (const onNext of onNextHandler) {
+                  onNext({ result, setResult: newResult => (result = newResult) });
+                }
+                return result;
+              });
+            }
+            if (onEndHandler.length) {
+              result = finalAsyncIterator(result, () => {
+                for (const onEnd of onEndHandler) {
+                  onEnd();
+                }
+              });
+            }
           }
 
           return result;

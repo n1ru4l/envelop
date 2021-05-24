@@ -21,8 +21,8 @@ export function getExecuteArgs(args: PolymorphicExecuteArguments): ExecutionArgs
  * Utility function for making a execute function that handles polymorphic arguments.
  */
 export const makeExecute =
-  (executeFn: (args: ExecutionArgs) => PromiseOrValue<ExecutionResult>) =>
-  (...polyArgs: PolymorphicExecuteArguments): PromiseOrValue<ExecutionResult> =>
+  (executeFn: (args: ExecutionArgs) => PromiseOrValue<ExecutionResult | AsyncIterableIterator<ExecutionResult>>) =>
+  (...polyArgs: PolymorphicExecuteArguments): PromiseOrValue<ExecutionResult | AsyncIterableIterator<ExecutionResult>> =>
     executeFn(getExecuteArgs(polyArgs));
 
 export function getSubscribeArgs(args: PolymorphicSubscribeArguments): SubscriptionArgs {
@@ -47,3 +47,23 @@ export const makeSubscribe =
   (subscribeFn: (args: SubscriptionArgs) => PromiseOrValue<AsyncIterableIterator<ExecutionResult> | ExecutionResult>) =>
   (...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<ExecutionResult> | ExecutionResult> =>
     subscribeFn(getSubscribeArgs(polyArgs));
+
+export async function* mapAsyncIterator<TInput, TOutput = TInput>(
+  asyncIterable: AsyncIterableIterator<TInput>,
+  map: (input: TInput) => Promise<TOutput> | TOutput
+): AsyncIterableIterator<TOutput> {
+  for await (const value of asyncIterable) {
+    yield map(value);
+  }
+}
+
+export async function* finalAsyncIterator<TInput>(
+  asyncIterable: AsyncIterableIterator<TInput>,
+  onFinal: () => void
+): AsyncIterableIterator<TInput> {
+  try {
+    yield* asyncIterable;
+  } finally {
+    onFinal();
+  }
+}

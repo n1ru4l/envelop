@@ -32,7 +32,9 @@ export type PolymorphicExecuteArguments =
       Maybe<GraphQLTypeResolver<any, any>>
     ];
 
-export type ExecuteFunction = (...args: PolymorphicExecuteArguments) => PromiseOrValue<ExecutionResult>;
+export type ExecuteFunction = (
+  ...args: PolymorphicExecuteArguments
+) => PromiseOrValue<ExecutionResult | AsyncIterableIterator<ExecutionResult>>;
 
 export type PolymorphicSubscribeArguments =
   | [SubscriptionArgs]
@@ -74,16 +76,34 @@ export type OnResolverCalledHooks<ContextType = DefaultContext, ArgsType = Defau
   true
 >;
 
+export type OnExecutionDoneHookResult = {
+  onNext?: (options: { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void }) => void;
+  onEnd?: () => void;
+};
+
+export type onSubscriptionDoneResult = OnExecutionDoneHookResult;
+
+type ExecuteDoneNonStreamOptions = {
+  result: ExecutionResult;
+  setResult: (newResult: ExecutionResult | AsyncIterableIterator<ExecutionResult>) => void;
+  isStream: false;
+};
+
+type ExecuteDoneStreamOptions = {
+  result: AsyncIterableIterator<ExecutionResult>;
+  setResult: (newResult: ExecutionResult | AsyncIterableIterator<ExecutionResult>) => void;
+  isStream: true;
+};
+
+export type ExecuteDoneOptions = ExecuteDoneNonStreamOptions | ExecuteDoneStreamOptions;
+
 export type OnExecuteHookResult<ContextType = DefaultContext> = {
-  onExecuteDone?: (options: { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void }) => void;
+  onExecuteDone?: (options: ExecuteDoneOptions) => OnExecutionDoneHookResult | void;
   onResolverCalled?: OnResolverCalledHooks<ContextType>;
 };
 
 export type OnSubscribeHookResult<ContextType = DefaultContext> = {
-  onSubscribeResult?: (options: {
-    result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
-    setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
-  }) => void;
+  onSubscribeResult?: (options: ExecuteDoneOptions) => void | onSubscriptionDoneResult;
   onResolverCalled?: OnResolverCalledHooks<ContextType>;
 };
 
