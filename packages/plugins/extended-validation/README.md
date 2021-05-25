@@ -56,7 +56,7 @@ You can use union inputs either via a the SDL flow, by annotating types and fiel
 
 First, make sure to add that rule to your plugin usage:
 
-````ts
+```ts
 import { useExtendedValidation, OneOfInputObjectsRule } from '@envelop/extended-validation';
 
 const getEnveloped = evelop({
@@ -66,6 +66,7 @@ const getEnveloped = evelop({
     }),
   ],
 });
+```
 
 #### Schema Directive Flow
 
@@ -73,7 +74,7 @@ Make sure to include the following directive in your schema:
 
 ```graphql
 directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
-````
+```
 
 Then, apply it to field definitions, or to a complete `input` type:
 
