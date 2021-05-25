@@ -1,5 +1,11 @@
 # @envelop/sentry
 
+## 0.2.1
+
+### Patch Changes
+
+- f4924c7: Fix defaults
+
 ## 0.2.0
 
 ### Minor Changes
