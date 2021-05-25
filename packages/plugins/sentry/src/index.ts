@@ -6,8 +6,6 @@ import * as Sentry from '@sentry/node';
 import { Span } from '@sentry/types';
 import { ExecutionArgs, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
 
-const tracingSpanSymbol = Symbol('SENTRY_GRAPHQL');
-
 export type SentryPluginOptions = {
   startTransaction?: boolean;
   renameTransaction?: boolean;
@@ -20,18 +18,20 @@ export type SentryPluginOptions = {
   operationName?: (args: ExecutionArgs) => string;
 };
 
-interface PluginContext {
-  [tracingSpanSymbol]: Span;
-}
-
-export const useSentry = (
-  options: SentryPluginOptions = {
-    startTransaction: true,
-    trackResolvers: true,
+export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
+  function pick<K extends keyof SentryPluginOptions>(key: K, defaultValue?: SentryPluginOptions[K]): SentryPluginOptions[K] {
+    return prioritize(options[key], defaultValue);
   }
-): Plugin<PluginContext> => {
+
+  const startTransaction = pick('startTransaction', true);
+  const trackResolvers = pick('trackResolvers', true);
+  const includeResolverArgs = pick('includeResolverArgs', false);
+  const includeRawResult = pick('includeRawResult', false);
+  const includeExecuteVariables = pick('includeExecuteVariables', false);
+  const renameTransaction = pick('renameTransaction', false);
+
   return {
-    onExecute({ args, extendContext }) {
+    onExecute({ args }) {
       const rootOperation = args.document.definitions.find(o => o.kind === Kind.OPERATION_DEFINITION) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
       const document = print(args.document);
@@ -48,7 +48,7 @@ export const useSentry = (
 
       let rootSpan: Span;
 
-      if (options.startTransaction) {
+      if (startTransaction) {
         rootSpan = Sentry.startTransaction({
           name: transactionName,
           op,
@@ -75,30 +75,26 @@ export const useSentry = (
 
         rootSpan = span;
 
-        if (options.renameTransaction) {
+        if (renameTransaction) {
           scope!.setTransactionName(transactionName);
         }
       }
 
       rootSpan.setData('document', document);
 
-      extendContext({
-        [tracingSpanSymbol]: rootSpan,
-      });
-
-      const onResolverCalled: OnExecuteHookResult<PluginContext>['onResolverCalled'] = options.trackResolvers
-        ? ({ args: resolversArgs, info, context }) => {
-            if (context && context[tracingSpanSymbol]) {
+      const onResolverCalled: OnExecuteHookResult['onResolverCalled'] = trackResolvers
+        ? ({ args: resolversArgs, info }) => {
+            if (rootSpan) {
               const { fieldName, returnType, parentType } = info;
-              const parent: typeof rootSpan = context[tracingSpanSymbol];
+              const parent = rootSpan;
               const tags: Record<string, string> = {
                 fieldName,
                 parentType: parentType.toString(),
                 returnType: returnType.toString(),
               };
 
-              if (options.includeResolverArgs) {
-                tags.args = options.includeResolverArgs ? JSON.stringify(resolversArgs || {}) : '';
+              if (includeResolverArgs) {
+                tags.args = JSON.stringify(resolversArgs || {});
               }
 
               const childSpan = parent.startChild({
@@ -107,7 +103,7 @@ export const useSentry = (
               });
 
               return ({ result }) => {
-                if (options.includeRawResult) {
+                if (includeRawResult) {
                   childSpan.setData('result', result);
                 }
 
@@ -130,7 +126,7 @@ export const useSentry = (
       return {
         onResolverCalled,
         onExecuteDone({ result }) {
-          if (options.includeRawResult) {
+          if (includeRawResult) {
             rootSpan.setData('result', result);
           }
 
@@ -144,11 +140,11 @@ export const useSentry = (
 
                 scope.setTags(addedTags || {});
 
-                if (options.includeRawResult) {
+                if (includeRawResult) {
                   scope.setExtra('result', result);
                 }
 
-                if (options.includeExecuteVariables) {
+                if (includeExecuteVariables) {
                   scope.setExtra('variables', args.variableValues);
                 }
 
@@ -182,3 +178,16 @@ export const useSentry = (
     },
   };
 };
+
+/**
+ * Sets a priority for provided values from left (highest) to right (lowest)
+ */
+function prioritize<T>(...values: T[]): T {
+  const picked = values.find(val => typeof val !== 'undefined');
+
+  if (typeof picked === 'undefined') {
+    return values[values.length - 1];
+  }
+
+  return picked;
+}
