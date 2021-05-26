@@ -1,5 +1,5 @@
 import { Plugin } from '@envelop/types';
-import { DocumentNode, GraphQLError, parse } from 'graphql';
+import { DocumentNode, ExecutionArgs, GraphQLError, parse } from 'graphql';
 
 export class NonPersistedOperationError extends Error {}
 
@@ -28,9 +28,42 @@ export type UsePersistedOperationsOptions = {
    * The store to use. You can implement any custom store that loads the data from any source.
    */
   store: PersistedOperationsStore;
+  /**
+   * Writes operation id to the context (enabled by default)
+   */
+  writeToContext?: boolean;
 };
 
-export const usePersistedOperations = (options: UsePersistedOperationsOptions): Plugin => {
+const symbolInDocument = Symbol('operationId');
+const symbolInContext = Symbol('operationId');
+
+export interface PluginContext {
+  [symbolInContext]?: string;
+}
+
+export function readOperationId(context: PluginContext) {
+  return context[symbolInContext];
+}
+
+export const usePersistedOperations = (options: UsePersistedOperationsOptions): Plugin<PluginContext> => {
+  const writeToContext = options.writeToContext !== false;
+
+  function updateContext({
+    args,
+    extendContext,
+  }: {
+    args: ExecutionArgs;
+    extendContext: (contextExtension: Partial<PluginContext>) => void;
+  }) {
+    const operationId = args.document[symbolInDocument];
+
+    if (writeToContext && operationId) {
+      extendContext({
+        [symbolInContext]: operationId,
+      });
+    }
+  }
+
   return {
     onParse({ params, setParsedDocument }) {
       if (typeof params.source === 'string') {
@@ -39,6 +72,16 @@ export const usePersistedOperations = (options: UsePersistedOperationsOptions): 
 
           if (rawResult) {
             const result = typeof rawResult === 'string' ? parse(rawResult) : rawResult;
+
+            if (writeToContext) {
+              Object.defineProperty(result, symbolInDocument, {
+                value: params.source,
+                enumerable: false,
+                configurable: false,
+                writable: false,
+              });
+            }
+
             setParsedDocument(result);
           } else {
             throw new NonPersistedOperationError(`The operation hash "${params.source}" is not valid`);
@@ -50,5 +93,7 @@ export const usePersistedOperations = (options: UsePersistedOperationsOptions): 
         }
       }
     },
+    onExecute: updateContext,
+    onSubscribe: updateContext,
   };
 };
