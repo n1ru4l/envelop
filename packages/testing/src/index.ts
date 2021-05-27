@@ -1,7 +1,7 @@
-import { DocumentNode, ExecutionResult, GraphQLSchema, print } from 'graphql';
+import { DocumentNode, ExecutionArgs, ExecutionResult, GraphQLSchema, print } from 'graphql';
 import { getGraphQLParameters, processRequest, Push } from 'graphql-helix';
-import { envelop, useSchema } from '@envelop/core';
-import { Envelop, Plugin } from '@envelop/types';
+import { envelop, makeExecute, useSchema } from '@envelop/core';
+import { Envelop, ExecuteFunction, Plugin } from '@envelop/types';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function createSpiedPlugin() {
@@ -57,6 +57,7 @@ export function createTestkit(
   subscribe: (operation: DocumentNode | string, variables?: Record<string, any>, initialContext?: any) => Promise<Push<any, any>>;
   replaceSchema: (schema: GraphQLSchema) => void;
   wait: (ms: number) => Promise<void>;
+  executeRaw: ExecuteFunction;
 } {
   let replaceSchema: (s: GraphQLSchema) => void = () => {};
 
@@ -99,7 +100,6 @@ export function createTestkit(
         contextFactory: initialContext ? () => proxy.contextFactory(initialContext) : proxy.contextFactory,
         schema: proxy.schema,
       });
-
       return (r as any).payload as ExecutionResult;
     },
     subscribe: async (operation, rawVariables = {}, initialContext = null) => {
@@ -134,6 +134,13 @@ export function createTestkit(
 
       return r;
     },
+    executeRaw: makeExecute(async (args: ExecutionArgs) => {
+      const proxy = initRequest();
+      return await proxy.execute({
+        ...args,
+        contextValue: await proxy.contextFactory(args.contextValue),
+      });
+    }),
   };
 }
 

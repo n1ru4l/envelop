@@ -1,6 +1,7 @@
 import { createSpiedPlugin, createTestkit } from '@envelop/testing';
-import { execute, GraphQLSchema } from 'graphql';
-import { schema, query } from './common';
+import { execute, ExecutionResult } from 'graphql';
+import { ExecuteFunction } from 'packages/types/src';
+import { schema, query, assertAsyncIterator, collectAsyncIteratorValues } from './common';
 
 describe('execute', () => {
   it('Should wrap and trigger events correctly', async () => {
@@ -132,5 +133,121 @@ describe('execute', () => {
       result: 'Dotan Simha',
       setResult: expect.any(Function),
     });
+  });
+
+  it('Should be able to manipulate streams', async () => {
+    const streamExecuteFn = async function* () {
+      for (const value of ['a', 'b', 'c', 'd']) {
+        yield { data: { alphabet: value } };
+      }
+    };
+
+    const teskit = createTestkit(
+      [
+        {
+          onExecute({ setExecuteFn }) {
+            setExecuteFn(streamExecuteFn);
+
+            return {
+              onExecuteDone: () => {
+                return {
+                  onNext: ({ setResult }) => {
+                    setResult({ data: { alphabet: 'x' } });
+                  },
+                };
+              },
+            };
+          },
+        },
+      ],
+      schema
+    );
+
+    const result: ReturnType<ExecuteFunction> = await teskit.executeRaw({} as any);
+    assertAsyncIterator(result);
+    const values = await collectAsyncIteratorValues(result);
+    expect(values).toEqual([
+      { data: { alphabet: 'x' } },
+      { data: { alphabet: 'x' } },
+      { data: { alphabet: 'x' } },
+      { data: { alphabet: 'x' } },
+    ]);
+  });
+
+  it('Should be able to invoke something after the stream has ended.', async () => {
+    expect.assertions(1);
+    const streamExecuteFn = async function* () {
+      for (const value of ['a', 'b', 'c', 'd']) {
+        yield { data: { alphabet: value } };
+      }
+    };
+
+    const teskit = createTestkit(
+      [
+        {
+          onExecute({ setExecuteFn }) {
+            setExecuteFn(streamExecuteFn);
+
+            return {
+              onExecuteDone: () => {
+                let latestResult: ExecutionResult;
+                return {
+                  onNext: ({ result }) => {
+                    latestResult = result;
+                  },
+                  onEnd: () => {
+                    expect(latestResult).toEqual({ data: { alphabet: 'd' } });
+                  },
+                };
+              },
+            };
+          },
+        },
+      ],
+      schema
+    );
+
+    const result: ReturnType<ExecuteFunction> = await teskit.executeRaw({} as any);
+    assertAsyncIterator(result);
+    // run AsyncGenerator
+    await collectAsyncIteratorValues(result);
+  });
+
+  it.skip('Should be able to invoke something after the stream has ended (manual return).', async () => {
+    expect.assertions(1);
+    const streamExecuteFn = async function* () {
+      for (const value of ['a', 'b', 'c', 'd']) {
+        yield { data: { alphabet: value } };
+      }
+    };
+
+    const teskit = createTestkit(
+      [
+        {
+          onExecute({ setExecuteFn }) {
+            setExecuteFn(streamExecuteFn);
+
+            return {
+              onExecuteDone: () => {
+                let latestResult: ExecutionResult;
+                return {
+                  onNext: ({ result }) => {
+                    latestResult = result;
+                  },
+                  onEnd: () => {
+                    expect(latestResult).toEqual(undefined);
+                  },
+                };
+              },
+            };
+          },
+        },
+      ],
+      schema
+    );
+
+    const result: ReturnType<ExecuteFunction> = await teskit.executeRaw({} as any);
+    assertAsyncIterator(result);
+    result[Symbol.asyncIterator]().return!();
   });
 });

@@ -1,12 +1,13 @@
 import { EventEmitter, on } from 'events';
 import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLSchema, GraphQLString } from 'graphql';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
 
 const createPubSub = <TTopicPayload extends { [key: string]: unknown }>(emitter: EventEmitter) => {
   return {
     publish: <TTopic extends Extract<keyof TTopicPayload, string>>(topic: TTopic, payload: TTopicPayload[TTopic]) => {
       emitter.emit(topic as string, payload);
     },
-    subscribe: async function*<TTopic extends Extract<keyof TTopicPayload, string>>(
+    subscribe: async function* <TTopic extends Extract<keyof TTopicPayload, string>>(
       topic: TTopic
     ): AsyncIterableIterator<TTopicPayload[TTopic]> {
       const asyncIterator = on(emitter, topic);
@@ -52,7 +53,7 @@ const GraphQLSubscription = new GraphQLObjectType({
   fields: {
     ping: {
       type: GraphQLString,
-      subscribe: async function*() {
+      subscribe: async function* () {
         const stream = pubSub.subscribe('ping');
         return yield* stream;
       },
@@ -79,3 +80,17 @@ export const subscription = /* GraphQL */ `
     ping
   }
 `;
+
+export const collectAsyncIteratorValues = async <TType>(asyncIterable: AsyncIterableIterator<TType>): Promise<Array<TType>> => {
+  const values: Array<TType> = [];
+  for await (const value of asyncIterable) {
+    values.push(value);
+  }
+  return values;
+};
+
+export function assertAsyncIterator(input: unknown): asserts input is AsyncIterableIterator<unknown> {
+  if (!isAsyncIterable(input)) {
+    throw new Error('Expected AsyncIterable iterator.');
+  }
+}
