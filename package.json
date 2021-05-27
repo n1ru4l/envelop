@@ -5,7 +5,10 @@
   "workspaces": [
     "./packages/*",
     "./packages/plugins/*",
-    "./examples/*"
+    "./examples/apollo-server",
+    "./examples/graphql-ws",
+    "./examples/simple-http",
+    "./examples/graphql-helix"
   ],
   "scripts": {
     "prepare": "husky install",
