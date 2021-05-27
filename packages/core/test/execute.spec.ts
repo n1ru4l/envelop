@@ -213,7 +213,7 @@ describe('execute', () => {
     await collectAsyncIteratorValues(result);
   });
 
-  it.skip('Should be able to invoke something after the stream has ended (manual return).', async () => {
+  it('Should be able to invoke something after the stream has ended (manual return).', async () => {
     expect.assertions(1);
     const streamExecuteFn = async function* () {
       for (const value of ['a', 'b', 'c', 'd']) {
@@ -235,7 +235,7 @@ describe('execute', () => {
                     latestResult = result;
                   },
                   onEnd: () => {
-                    expect(latestResult).toEqual(undefined);
+                    expect(latestResult).toEqual({ data: { alphabet: 'a' } });
                   },
                 };
               },
@@ -248,6 +248,8 @@ describe('execute', () => {
 
     const result: ReturnType<ExecuteFunction> = await teskit.executeRaw({} as any);
     assertAsyncIterator(result);
-    result[Symbol.asyncIterator]().return!();
+    const instance = result[Symbol.asyncIterator]();
+    await instance.next();
+    await instance.return!();
   });
 });
