@@ -446,10 +446,10 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.6.tgz#ff040b2b0853b23c3d31027523706f1885d76bee"
   integrity sha512-nTnJ528pbqxYanhpDYsi4Rd8MAeaBA67+RZ10CM1m3bTAVFEDcd5AuA4a6W5YkGZ1iNXHzZz8T6TBKLeBuNriQ==
 
-graphql-rate-limit@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/graphql-rate-limit/-/graphql-rate-limit-3.0.0.tgz#d3e23951fc2e6767d4b696680ffb72cf2491a8ce"
-  integrity sha512-jrXdIr1sUCn9+UZHrKu5t/tg4cZNaIfTrgbaIkFYamDQn45hWzHoMZTC1SADqt0UAZnchDZcZF4SUzl+c5AeCA==
+graphql-rate-limit@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/graphql-rate-limit/-/graphql-rate-limit-3.1.0.tgz#df8f164cfda38604104b58647ea8a6821dd78b40"
+  integrity sha512-cT/WGsZye0e6EQPKPh01CcRrx/kstBe1Pxv8dae5LHtCSb0sCKQIdQMyBhJsFAkKERBiQVegLaDvhI+V9H7pJA==
   dependencies:
     "@graphql-tools/utils" "^7.6.0"
     graphql-shield "^7.5.0"
