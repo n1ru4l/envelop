@@ -1,75 +1,71 @@
 {
   "private": true,
-  "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
-  "workspaces": [
-    "./packages/*",
-    "./packages/plugins/*",
-    "./examples/apollo-server",
-    "./examples/graphql-ws",
-    "./examples/simple-http",
-    "./examples/graphql-helix",
-    "./examples/lambda-aws",
-    "./examples/azure-functions",
-    "./examples/google-cloud-functions",
-    "./examples/cloudflare-workers"
-  ],
+  "author": "Dotan Simha <dotansimha@gmail.com>",
   "scripts": {
-    "prepare": "husky install",
     "benchmark": "NODE_ENV=production ts-node --project tsconfig.benchmark.json benchmark/execute.case.ts",
+    "build": "rimraf packages/*/dist packages/plugins/*/dist && bob-esbuild tsc && pnpm prepack -r --no-sort",
+    "ci:release": "pnpm -r publish --access public --no-git-checks",
+    "ci:version": "changeset version && pnpm i --no-frozen-lockfile --lockfile-only --ignore-scripts",
     "postinstall": "patch-package",
     "lint": "eslint --config .eslintrc.json --ext .ts .",
-    "prebuild": "rimraf packages/*/dist",
-    "build": "tsc --project tsconfig.json && bob build",
+    "prepare": "husky install",
+    "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\"",
+    "release:canary": "(node scripts/canary-release.js && pnpm build && pnpm changeset publish --tag alpha) || echo Skipping Canary...",
     "test": "jest",
-    "test:ci": "jest --coverage",
-    "prerelease": "yarn build",
-    "release": "changeset publish",
-    "release:canary": "(node scripts/canary-release.js && yarn build && yarn changeset publish --tag alpha) || echo Skipping Canary...",
-    "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\""
-  },
-  "devDependencies": {
-    "prettier": "2.3.1",
-    "pretty-quick": "3.1.0",
-    "apollo-server": "2.25.0",
-    "@graphql-tools/schema": "7.1.5",
-    "@types/benchmark": "2.1.0",
-    "benchmark": "2.1.4",
-    "ts-node": "10.0.0",
-    "patch-package": "6.4.7",
-    "@changesets/cli": "2.16.0",
-    "@typescript-eslint/eslint-plugin": "4.26.1",
-    "@typescript-eslint/parser": "4.26.1",
-    "eslint": "7.28.0",
-    "husky": "6.0.0",
-    "lint-staged": "11.0.0",
-    "@types/node": "15.6.1",
-    "bob-the-bundler": "1.2.1",
-    "eslint-config-standard": "16.0.3",
-    "eslint-plugin-import": "2.23.4",
-    "eslint-plugin-node": "11.1.0",
-    "eslint-plugin-promise": "5.1.0",
-    "eslint-plugin-standard": "5.0.0",
-    "eslint-config-prettier": "8.3.0",
-    "@types/jest": "26.0.23",
-    "ts-jest": "27.0.3",
-    "rimraf": "3.0.2",
-    "typescript": "4.3.2",
-    "jest": "27.0.4"
-  },
-  "resolutions": {
-    "@changesets/git": "1.1.1",
-    "prettier": "2.3.1"
+    "test:ci": "jest --coverage"
   },
   "lint-staged": {
-    "packages/**/src/**/*.{ts,tsx}": [
-      "eslint --fix"
+    "**/*.json": [
+      "prettier --write"
     ],
     "**/*.{ts,tsx,graphql,yml}": [
       "prettier --write"
     ],
-    "**/*.json": [
-      "prettier --write"
+    "packages/**/src/**/*.{ts,tsx}": [
+      "eslint --fix"
     ]
+  },
+  "devDependencies": {
+    "@changesets/apply-release-plan": "^5.0.0",
+    "@changesets/cli": "2.16.0",
+    "@graphql-tools/schema": "7.1.5",
+    "@types/benchmark": "2.1.0",
+    "@types/jest": "26.0.23",
+    "@types/node": "15.12.1",
+    "@typescript-eslint/eslint-plugin": "4.26.1",
+    "@typescript-eslint/parser": "4.26.1",
+    "apollo-server": "2.25.0",
+    "benchmark": "2.1.4",
+    "bob-esbuild": "^0.1.24",
+    "bob-esbuild-cli": "^0.1.24",
+    "bob-the-bundler": "1.2.1",
+    "eslint": "7.28.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-config-standard": "16.0.3",
+    "eslint-plugin-import": "2.23.4",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-promise": "5.1.0",
+    "husky": "6.0.0",
+    "jest": "27.0.4",
+    "lint-staged": "11.0.0",
+    "patch-package": "6.4.7",
+    "prettier": "2.3.1",
+    "pretty-quick": "3.1.0",
+    "rimraf": "3.0.2",
+    "ts-jest": "27.0.3",
+    "ts-node": "10.0.0",
+    "tslib": "^2.2.0",
+    "typescript": "4.3.2"
+  },
+  "engines": {
+    "pnpm": ">=6.7.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "@changesets/git": "1.1.1",
+      "prettier": "2.3.1",
+      "graphql": "15.5.0"
+    }
   }
 }
