@@ -11,7 +11,8 @@
     "./examples/graphql-helix",
     "./examples/lambda-aws",
     "./examples/azure-functions",
-    "./examples/google-cloud-functions"
+    "./examples/google-cloud-functions",
+    "./examples/cloudflare-workers"
   ],
   "scripts": {
     "prepare": "husky install",

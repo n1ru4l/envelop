@@ -1,0 +1,23 @@
+{
+  "name": "@envelop-examples/cloudflare-workers",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Dotan Simha",
+  "license": "MIT",
+  "dependencies": {
+    "graphql-helix": "1.6.1",
+    "@envelop/core": "*",
+    "@graphql-tools/schema": "7.1.5",
+    "worktop": "0.7.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "2.2.2",
+    "@types/node": "15.6.1",
+    "ts-node": "10.0.0",
+    "typescript": "4.3.2"
+  },
+  "scripts": {
+    "compile": "tsc"
+  }
+}
