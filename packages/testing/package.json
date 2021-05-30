@@ -22,7 +22,6 @@
     "typescript": "4.3.2"
   },
   "peerDependencies": {
-    "graphql-helix": "^1.2.0",
     "graphql": "^14.0.0 || ^15.0.0"
   },
   "buildOptions": {

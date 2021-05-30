@@ -8,7 +8,10 @@
     "./examples/apollo-server",
     "./examples/graphql-ws",
     "./examples/simple-http",
-    "./examples/graphql-helix"
+    "./examples/graphql-helix",
+    "./examples/lambda-aws",
+    "./examples/azure-functions",
+    "./examples/google-cloud-functions"
   ],
   "scripts": {
     "prepare": "husky install",
@@ -39,7 +42,7 @@
     "eslint": "7.27.0",
     "husky": "6.0.0",
     "lint-staged": "11.0.0",
-    "@types/node": "14.17.1",
+    "@types/node": "15.6.1",
     "bob-the-bundler": "1.2.0",
     "eslint-config-standard": "16.0.3",
     "eslint-plugin-import": "2.23.4",
