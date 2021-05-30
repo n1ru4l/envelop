@@ -6,14 +6,14 @@
   "author": "Denis Badurina",
   "license": "MIT",
   "dependencies": {
-    "@envelop/core": "*",
+    "@envelop/core": "workspace:*",
     "@graphql-tools/schema": "7.1.5",
-    "graphql-ws": "^4.4.2",
-    "ws": "7.4.5"
+    "graphql-ws": "^4.8.0",
+    "ws": "7.4.6"
   },
   "devDependencies": {
-    "@types/node": "15.6.1",
-    "@types/ws": "7.4.1",
+    "@types/node": "15.12.0",
+    "@types/ws": "7.4.4",
     "ts-node": "10.0.0",
     "typescript": "4.3.2"
   },
