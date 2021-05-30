@@ -1,23 +1,23 @@
 {
-  "name": "@envelop-examples/graphql-helix-defer-stream",
+  "name": "@envelop-examples/lambda-aws",
   "private": true,
   "version": "1.0.0",
   "main": "index.js",
   "author": "Dotan Simha",
   "license": "MIT",
   "dependencies": {
-    "fastify": "3.14.0",
-    "@envelop/core": "0.2.1",
     "graphql-helix": "1.6.1",
+    "@envelop/core": "*",
     "@graphql-tools/schema": "7.1.5",
-    "graphql": "experimental-stream-defer"
+    "aws-sdk": "2.918.0"
   },
   "devDependencies": {
+    "@types/aws-lambda": "8.10.76",
     "@types/node": "15.6.1",
     "ts-node": "10.0.0",
     "typescript": "4.3.2"
   },
   "scripts": {
-    "start": "ts-node index.ts"
+    "compile": "tsc"
   }
 }

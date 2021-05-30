@@ -38,12 +38,6 @@ app.route({
       res.type('text/html');
       res.send(renderGraphiQL({}));
     } else {
-      const request = {
-        body: req.body,
-        headers: req.headers,
-        method: req.method,
-        query: req.query,
-      };
       const { operationName, query, variables } = getGraphQLParameters(request);
       const result = await processRequest({
         operationName,
