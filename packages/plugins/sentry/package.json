@@ -21,8 +21,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@sentry/node": "6.5.0",
-    "@sentry/tracing": "6.5.0",
+    "@sentry/node": "6.5.1",
+    "@sentry/tracing": "6.5.1",
     "bob-the-bundler": "1.2.0",
     "graphql": "15.5.0",
     "typescript": "4.3.2"
