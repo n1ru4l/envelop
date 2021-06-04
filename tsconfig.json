@@ -24,9 +24,10 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "paths": {
-      "@envelop/*": ["packages/*/src/index.ts", "packages/plugins/*/src/index.ts"]
+      "@envelop/*": ["packages/*/src/index.ts", "packages/plugins/*/src/index.ts"],
+      "envelop-bench": ["benchmarks/bench/src/schema.ts"]
     }
   },
-  "include": ["packages"],
+  "include": ["packages", "benchmarks"],
   "exclude": ["**/dist", "**/temp", "**/lib"]
 }

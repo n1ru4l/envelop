@@ -1,0 +1,23 @@
+{
+  "name": "mercurius-api",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "author": "PabloSz <pablosaez1995@gmail.com>",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsup src/index.ts --minify --watch --silent --onSuccess \"cross-env PORT=3000 node dist/index.js\"",
+    "start": "tsup src/index.ts --minify --silent --onSuccess \"cross-env NODE_ENV=production node dist/index.js\""
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "envelop-bench": "workspace:1.0.0",
+    "fastify": "^3.15.1",
+    "graphql": "^15.5.0",
+    "mercurius": "^7.6.1",
+    "mercurius-codegen": "^1.5.0",
+    "require-env-variable": "^3.1.2",
+    "tsup": "^4.10.1",
+    "typescript": "^4.2.4"
+  }
+}

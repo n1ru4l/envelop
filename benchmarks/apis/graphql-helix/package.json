@@ -1,0 +1,25 @@
+{
+  "name": "graphql-helix-fastify",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "author": "PabloSz <pablosaez1995@gmail.com>",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsup src/index.ts --minify --watch --silent --onSuccess \"cross-env PORT=3000 node dist/index.js\"",
+    "prepare": "tsup src/index.ts",
+    "start": "tsup src/index.ts --minify --silent --onSuccess \"cross-env NODE_ENV=production node dist/index.js\""
+  },
+  "dependencies": {
+    "envelop-bench": "workspace:1.0.0",
+    "fastify": "^3.15.1",
+    "graphql": "^15.5.0",
+    "graphql-helix": "^1.4.1",
+    "require-env-variable": "^3.1.2",
+    "tsup": "^4.10.1",
+    "typescript": "^4.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^15.0.2"
+  }
+}
