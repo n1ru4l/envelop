@@ -29,7 +29,7 @@
     "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\""
   },
   "devDependencies": {
-    "prettier": "2.3.0",
+    "prettier": "2.3.1",
     "pretty-quick": "3.1.0",
     "apollo-server": "2.25.0",
     "@graphql-tools/schema": "7.1.5",
@@ -59,7 +59,7 @@
   },
   "resolutions": {
     "@changesets/git": "1.1.1",
-    "prettier": "2.3.0"
+    "prettier": "2.3.1"
   },
   "lint-staged": {
     "packages/**/src/**/*.{ts,tsx}": [
