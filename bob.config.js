@@ -1,3 +1,3 @@
 module.exports = {
-  ignore: ['@envelop/testing'],
+  ignore: ['@envelop/testing', '@envelop/app'],
 };

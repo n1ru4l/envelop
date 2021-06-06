@@ -1,0 +1,27 @@
+{
+  "name": "example-app-koa",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "dev": "yarn dev:mjs",
+    "dev:cjs": "tsup-node src/index.ts --format cjs --sourcemap --no-splitting --watch src --onSuccess \"node dist/index.js\"",
+    "dev:mjs": "tsup-node src/index.ts --format esm --sourcemap --no-splitting --watch src --onSuccess \"node dist/index.mjs\"",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@envelop/app": "workspace:^0.0.1",
+    "@graphql-typed-document-node/core": "^3.1.0",
+    "@koa/router": "^10.0.0",
+    "koa": "^2.13.1",
+    "koa-bodyparser": "^4.3.0"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.13.1",
+    "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa__router": "^8.0.4",
+    "@types/node": "^15.6.1",
+    "tsup": "^4.11.1",
+    "typescript": "^4.2.4"
+  }
+}

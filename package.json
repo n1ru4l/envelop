@@ -65,7 +65,7 @@
     "overrides": {
       "@changesets/git": "1.1.1",
       "prettier": "2.3.1",
-      "graphql": "15.5.0"
+      "graphql": "15.4.0-experimental-stream-defer.1"
     }
   }
 }

@@ -24,6 +24,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "paths": {
+      "@envelop/app/*": ["packages/app/src/*.ts"],
       "@envelop/*": ["packages/*/src/index.ts", "packages/plugins/*/src/index.ts"]
     }
   },

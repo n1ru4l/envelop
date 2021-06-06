@@ -3,3 +3,4 @@ packages:
   - 'packages/plugins/*'
   - 'examples/*'
   - '!examples/graphql-helix-defer-stream'
+  - 'examples/app/*'

@@ -1,0 +1,5 @@
+---
+'@envelop/app': minor
+---
+
+release

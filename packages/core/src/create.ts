@@ -320,10 +320,8 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
         let executeFn: typeof execute = execute;
         let result: ExecutionResult;
 
-        const afterCalls: ((options: {
-          result: ExecutionResult;
-          setResult: (newResult: ExecutionResult) => void;
-        }) => void)[] = [];
+        const afterCalls: ((options: { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void }) => void)[] =
+          [];
         let context = args.contextValue;
 
         for (const onExecute of onExecuteCbs) {
@@ -373,6 +371,7 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
           context[resolversHooksSymbol] = onResolversHandlers;
         }
 
+        // @ts-expect-error Type-Error with experimental version of GraphQL
         result = await executeFn({
           ...args,
           contextValue: context,

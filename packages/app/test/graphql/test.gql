@@ -1,0 +1,21 @@
+query Hello {
+  hello
+}
+
+query Users {
+  users {
+    id
+  }
+}
+
+query GetContext {
+  getContext
+}
+
+mutation uploadFile($file: Upload!) {
+  uploadFileToBase64(file: $file)
+}
+
+subscription pingSubscription {
+  ping
+}

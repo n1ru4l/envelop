@@ -1,0 +1,31 @@
+{
+  "name": "example-app-fastify",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "main": "index.js",
+  "tsup": {
+    "splitting": false,
+    "sourcemap": true,
+    "entryPoints": [
+      "src/index.ts"
+    ]
+  },
+  "scripts": {
+    "dev": "yarn dev:mjs",
+    "dev:cjs": "tsup-node --format cjs --watch src --onSuccess \"node dist/index.js\"",
+    "dev:mjs": "tsup-node --format esm --watch src --onSuccess \"node dist/index.mjs\"",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@envelop/app": "workspace:^0.0.1",
+    "@graphql-typed-document-node/core": "^3.1.0",
+    "fastify": "^3.15.1",
+    "graphql": "^15.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^15.6.1",
+    "tsup": "^4.11.1",
+    "typescript": "^4.2.4"
+  }
+}
