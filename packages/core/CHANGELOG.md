@@ -1,5 +1,11 @@
 # @envelop/core
 
+## 0.2.2
+
+### Patch Changes
+
+- fd76b26: add missing useEnvelop plugin export
+
 ## 0.2.1
 
 ### Patch Changes
