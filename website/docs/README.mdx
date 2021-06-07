@@ -1,0 +1,47 @@
+---
+title: What is Envelop?
+---
+
+# What is Envelop?
+
+<Text textAlign="justify">
+  Envelop is a lightweight JavaScript library for wrapping GraphQL execution layer and flow, allowing developers to develop, share
+  and collaborate on GraphQL-related plugins while filling the missing pieces in GraphQL implementations.
+</Text>
+
+### In depth
+
+<Text marginTop="0.5em" textAlign="justify">
+  Our goal is to allow developers to keep the original GraphQL interfaces while adding plugins to enrich the feature set of your
+  application quickly while sharing ideas, code, and plugins with other developers.
+</Text>
+
+<Text marginTop="0.5em" textAlign="justify">
+  Envelop is agnostic to the HTTP server you use, so it's not a traditional server. We do not aim to provide a complete server you
+  can use Envelop with any environment (NodeJS or browser) and any GraphQL workflow (client/server, client-side execute, or server
+  to server). So any piece of code that uses GraphQL's `execute` can benefit from that layer.
+</Text>
+
+<Text marginTop="0.5em" textAlign="justify">
+  The core of Envelop is zero-dependency and will only apply changes to your GraphQL execution based on the plugins you wish to
+  use. It can be integrated with any GraphQL server that follows [the execution phase, as defined in the GraphQL
+  spec](https://spec.graphql.org/June2018/#sec-Executing-Requests) and let you provide your own lifecycle methods.
+</Text>
+
+<Text marginTop="0.5em" textAlign="justify">
+  Separating the execution workflow and the logic that it runs in each phase allow you to write a reusable piece of code, like:
+</Text>
+
+- `logging`
+- `metric collection`
+- `error handling`
+- `custom validations`
+- `resolvers tracing` (and integration with any external service)
+- `authentication`
+- `authorization`
+
+And <Text as="span" fontWeight="bold">much more</Text>, without the need to write it explicitly every time in every project or microservice.
+
+<Text as="span" marginTop="10px" fontSize="1.5em" fontWeight="semibold">
+  With Envelop, you can easily create a wrapper around your common logic, and share it with others.
+</Text>
