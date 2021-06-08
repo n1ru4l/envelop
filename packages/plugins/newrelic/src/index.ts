@@ -3,7 +3,7 @@ import { Plugin, OnExecuteHookResult } from '@envelop/types';
 import { print, FieldNode } from 'graphql';
 import { Path } from 'graphql/jsutils/Path';
 
-export enum AttributeName {
+enum AttributeName {
   COMPONENT_NAME = 'Envelop_NewRelic_Plugin',
   ANONYMOUS_OPERATION = '<anonymous>',
   EXECUTION_RESULT = 'graphql.execute.result',
@@ -145,8 +145,8 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
 
 function flattenPath(fieldPath: Path, delimiter = '/') {
   const pathArray = [];
-
   let thisPath: Path | undefined = fieldPath;
+
   while (thisPath) {
     if (typeof thisPath.key !== 'number') {
       pathArray.push(thisPath.key);
