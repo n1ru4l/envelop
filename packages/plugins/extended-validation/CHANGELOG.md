@@ -1,5 +1,11 @@
 # @envelop/extended-validation
 
+## 0.1.2
+
+### Patch Changes
+
+- 25bfb47: fix issue with inlining graphql.js code in published bundle
+
 ## 0.1.1
 
 ### Patch Changes
