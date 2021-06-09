@@ -1,53 +1,72 @@
 import Head from 'next/head';
-import { CardsColorful, MarketplaceSearch } from '@guild-docs/tgc';
+import { useFetch } from 'use-http';
+import { MarketplaceSearch } from '@theguild/components';
+import { Spinner, Center } from '@chakra-ui/react';
+import type { PluginWithStats } from '../pages/api/plugins';
+import React from 'react';
+import { IMarketplaceItemProps } from '@theguild/components/dist/types/components';
+import { RemoteGHMarkdown } from '../components/RemoteGhMarkdown';
+import { PackageInstall } from '../components/packageInstall';
 
 export default function Marketplace() {
-  const marketplaceItems = [];
-  const marketplaceItem = {
-    title: 'Marketplace Item',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    update: '2021-05-07T10:14:55.884Z',
-    stars: 10394,
-    image: {
-      src: '/assets/marketplace-placeholder.svg',
-      alt: 'Logo',
-    },
-    link: {
-      href: 'https://github.com',
-      target: '_blank',
-      rel: 'noopener noreferrer',
-      title: 'Learn more about Item',
-    },
-    modal: {
-      header: {
-        image: {
-          src: '/assets/marketplace-placeholder.svg',
-          alt: 'Logo',
-        },
-        description: {
-          children: 'Apr 20, 2021 - Latest Update',
-          href: 'https://github.com',
-          target: '_blank',
-          rel: 'noopener noreferrer',
-          title: 'External Title',
-        },
-      },
-      content: 'Modal Content goes here.',
-    },
-  };
+  const { loading, data = [] } = useFetch<PluginWithStats[]>('/api/plugins', {}, []);
 
-  for (let i = 1; i <= 0; i++) {
-    const item = { ...marketplaceItem };
-    item.title = `${item.title} ${i}`;
-    marketplaceItems.push(item);
-  }
+  const marketplaceItems = React.useMemo(() => {
+    if (data && data.length > 0) {
+      return data.map<IMarketplaceItemProps>(rawPlugin => ({
+        title: rawPlugin.title,
+        description: rawPlugin.stats.collected.metadata.description,
+        modal: {
+          header: {
+            image: {
+              src: rawPlugin.iconUrl!,
+              alt: rawPlugin.title,
+            },
+            description: {
+              href: `https://www.npmjs.com/package/${rawPlugin.npmPackage}`,
+              children: `${rawPlugin.npmPackage} on npm`,
+              title: `${rawPlugin.npmPackage} on NPM`,
+              target: '_blank',
+              rel: 'noopener noreferrer',
+            },
+          },
+          content: (
+            <>
+              <PackageInstall packageName={rawPlugin.npmPackage} />
+              <RemoteGHMarkdown
+                directory={rawPlugin.stats.collected.metadata.repository.directory}
+                repo={rawPlugin.stats.collected.metadata.links.repository}
+              >
+                {rawPlugin.stats.collected.metadata.readme || ''}
+              </RemoteGHMarkdown>
+            </>
+          ),
+        },
+        update: rawPlugin.stats.collected.metadata.date,
+        image: {
+          height: 60,
+          width: 60,
+          src: rawPlugin.iconUrl!,
+          alt: rawPlugin.title,
+        },
+      }));
+    }
+
+    return [];
+  }, [data]);
 
   return (
     <>
       <Head>
         <title>Plugins Hub</title>
       </Head>
-      <CardsColorful
+      {loading ? (
+        <Center h="300px">
+          <Spinner size={'xl'} />
+        </Center>
+      ) : (
+        <>
+          {/* <CardsColorful
         cards={[
           {
             title: 'GraphQL Modules',
@@ -74,29 +93,32 @@ export default function Marketplace() {
             color: '#0B0D11',
           },
         ]}
-      />
-      <MarketplaceSearch
-        title="Explore Marketplace"
-        placeholder="Search..."
-        primaryList={{
-          title: 'Trending & Last Update',
-          items: marketplaceItems.slice(0, 8),
-          placeholder: 'No products available...',
-          pagination: 5,
-        }}
-        secondaryList={{
-          title: 'New Release',
-          items: marketplaceItems.slice(8, 12),
-          placeholder: 'No products available...',
-          pagination: 5,
-        }}
-        queryList={{
-          title: 'Query Results',
-          items: marketplaceItems,
-          placeholder: 'No results for {query}',
-          pagination: 8,
-        }}
-      />
+      /> */}
+
+          <MarketplaceSearch
+            title="Explore Plugins Hub"
+            placeholder="Search..."
+            primaryList={{
+              title: 'Trending',
+              items: marketplaceItems,
+              placeholder: '0 results',
+              pagination: 10,
+            }}
+            secondaryList={{
+              title: 'Recently Added',
+              items: marketplaceItems,
+              placeholder: '0 results',
+              pagination: 10,
+            }}
+            queryList={{
+              title: 'Search Results',
+              items: marketplaceItems,
+              placeholder: 'No results for {query}',
+              pagination: 10,
+            }}
+          />
+        </>
+      )}
     </>
   );
 }

@@ -10,6 +10,12 @@
     "start": "next start"
   },
   "dependencies": {
+    "react-markdown": "6.0.2",
+    "@theguild/components": "1.2.4",
+    "npms.io": "2.0.6",
+    "use-http": "1.0.21",
+    "undici": "3.3.6",
+    "tiny-lru": "7.0.6",
     "@chakra-ui/icons": "^1.0.13",
     "@chakra-ui/react": "^1.6.3",
     "@chakra-ui/system": "^1.6.7",
@@ -18,7 +24,6 @@
     "@emotion/styled": "^11.3.0",
     "@guild-docs/client": "^0.2.6",
     "@guild-docs/server": "^0.2.5",
-    "@guild-docs/tgc": "^0.2.7",
     "@mdx-js/react": "^1.6.22",
     "esbuild": "^0.12.6",
     "framer-motion": "^4.1.17",

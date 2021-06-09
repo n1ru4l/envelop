@@ -39,7 +39,7 @@ import {
   MDXNavigation,
   NextNProgress,
 } from '@guild-docs/client';
-import { Footer, GlobalStyles, Header, Subheader, ThemeProvider as ComponentsThemeProvider } from '@guild-docs/tgc';
+import { Footer, GlobalStyles, Header, Subheader, ThemeProvider as ComponentsThemeProvider } from '@theguild/components';
 
 import { handleRoute } from '../../next-helpers';
 import { PackageInstall } from '../components/packageInstall';
@@ -84,6 +84,7 @@ ExtendComponents({
       },
     },
   }),
+  pre: props => <Code fontSize="0.875em" colorScheme={'gray'} {...props} />,
   inlineCode: props => <Code margin="1px" colorScheme="blackAlpha" fontWeight="semibold" fontSize="0.875em" {...props} />,
   Text,
   Tooltip: props => <Tooltip {...props} />,
@@ -160,16 +161,16 @@ function AppContent({ color, appProps }: { color: string; appProps: AppProps }) 
             onClick: e => handleRoute('/', e, router),
           },
           {
+            children: 'Docs & API',
+            href: '/docs',
+            title: 'Read more about Envelop',
+            onClick: e => handleRoute('/docs', e, router),
+          },
+          {
             children: 'Plugins Hub',
             href: '/plugins',
             title: 'Browse the plugins hub',
             onClick: e => handleRoute('/plugins', e, router),
-          },
-          {
-            children: 'API & Docs',
-            href: '/docs',
-            title: 'Read more about Envelop',
-            onClick: e => handleRoute('/docs', e, router),
           },
           {
             children: 'GitHub',

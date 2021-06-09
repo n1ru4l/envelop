@@ -26,6 +26,8 @@ const myPlugin = {
 
 ## Plugins API
 
+You can find the [complete signature for plugins API here](https://github.com/dotansimha/envelop/blob/d4c8f90f9fbccf3032b3b3b05f359b691076d25b/packages/types/src/index.ts#L55).
+
 ### `onPluginInit(api)`
 
 This method is called only once when the plugin is being initialized.
@@ -107,4 +109,53 @@ Triggered when the execution of the operation is done.
 
 Triggered when a resolver is called during the execution of the operation. 
 
-* 
+* `params` - an object with `{ root, args, context, info }` that was originally passed to the resolver.
+
+You can also return a function to run after the resolver is done, with the following API:
+
+* `result` - the resolver return value.
+* `setResult` - replaces the resolver return value.
+
+
+### `onSubscribe(api)`
+
+Called every time a `subscription` operation is being executed. The return value of this function is extended, and allow you to hooks into resolver calls if needed.
+
+**`before` API**:
+
+* `args` - arguments passes to `subscribe` (contains the document, variables and everything else that needed for executing the GraphQL operation)
+* `subscribeFn` - the `subscribe` function to use, by default it's the one from `graphql` package.
+* `setSubscribeFn` - replaces the `subscribe` function.
+* `extendContext` - allow you to extend the context before executin the operation. 
+
+You can return an `object` from that function, with the following fields:
+
+**`onSubscribeResult` API**:
+
+Triggered when subscription result is being emitted from a `subscription` execution.
+
+* `result` - the subscription result.
+* `setResult` - replaces the result. can either be with data or errors.
+
+**`onResolverCalled` API**:
+
+Triggered when a resolver is called during the execution of the operation. 
+
+* `params` - an object with `{ root, args, context, info }` that was originally passed to the resolver.
+
+You can also return a function to run after the resolver is done, with the following API:
+
+* `result` - the resolver return value.
+* `setResult` - replaces the resolver return value.
+
+
+### `onSchemaChange(api)`
+
+`envelop` allow you to manage a reference to a schema, that you can later access and use within your server.
+
+Some plugins (like gateway implementations) could potentially change the schema while running, so `envelop` will trigger that event in case of a schema change *after all plugins have initialized*.
+
+**API**:
+
+* `schema` - the `GraphQLSchema`
+* `replaceSchema` - replaces the schema. Calling this will trigger `onSchemaChange` for all other plugins (except for the one that initiated the change);

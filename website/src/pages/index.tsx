@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { FeatureList, HeroGradient, HeroIllustration, HeroMarketplace, HeroVideo, InfoList } from '@guild-docs/tgc';
-
+import { FeatureList, HeroGradient, HeroIllustration, HeroMarketplace, InfoList } from '@theguild/components';
 import { handleRoute } from '../../next-helpers';
 
 export default function Index() {
@@ -87,7 +86,7 @@ export default function Index() {
         link={{
           href: '/plugins',
           children: 'Explore plugins',
-          title: 'Learn more about the Marketplace',
+          title: 'Learn more about the Plugins Hub',
           onClick: e => handleRoute('/plugins', e, router),
         }}
       />

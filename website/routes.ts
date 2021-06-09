@@ -5,11 +5,11 @@ export function getRoutes(): IRoutes {
     _: {
       docs: {
         $name: 'Docs',
-        $routes: ['README', 'getting-started', 'integrations', 'core'],
+        $routes: ['README', 'getting-started', 'integrations', 'core', 'composing-envelop'],
         _: {
           plugins: {
             $name: 'Plugins',
-            $routes: ['README', 'lifecycle', 'custom-plugin', 'sharing-plugins'],
+            $routes: ['README', 'custom-plugin', 'lifecycle'],
           },
         },
       },

@@ -40,7 +40,7 @@ const useCurrentInstaller = create<{
   )
 );
 
-export function PackageInstall({ packageName, ...props }: { packageName: string } & TabsProps) {
+export function PackageInstall({ packageName, ...props }: { packageName: string } & Omit<TabsProps, 'children'>) {
   const { current, setNPM, setPNPM, setYarn } = useCurrentInstaller();
 
   const [index, setIndex] = useState(0);
@@ -61,45 +61,42 @@ export function PackageInstall({ packageName, ...props }: { packageName: string 
   }, [current]);
 
   return (
-    <>
-      <br />
-      <Tabs
-        width="100%"
-        position="relative"
-        shadow="md"
-        borderWidth="1px"
-        borderRadius="5px"
-        index={index}
-        onChange={index => {
-          switch (index) {
-            case PackageManagerType.PNPM:
-              return setPNPM();
-            case PackageManagerType.YARN:
-              return setYarn();
-            case PackageManagerType.NPM:
-              return setNPM();
-          }
-        }}
-        {...props}
-      >
-        <TabList>
-          <Tab>yarn</Tab>
-          <Tab>pnpm</Tab>
-          <Tab>npm</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel backgroundColor="gray.100">
-            <Code>yarn add {packageName}</Code>
-          </TabPanel>
-          <TabPanel backgroundColor="gray.100">
-            <Code>pnpm add {packageName}</Code>
-          </TabPanel>
-          <TabPanel backgroundColor="gray.100">
-            <Code>npm install {packageName}</Code>
-          </TabPanel>
-        </TabPanels>
-        <CopyToClipboard value={currentContent} />
-      </Tabs>
-    </>
+    <Tabs
+      width="100%"
+      position="relative"
+      shadow="md"
+      borderWidth="1px"
+      borderRadius="5px"
+      index={index}
+      onChange={index => {
+        switch (index) {
+          case PackageManagerType.PNPM:
+            return setPNPM();
+          case PackageManagerType.YARN:
+            return setYarn();
+          case PackageManagerType.NPM:
+            return setNPM();
+        }
+      }}
+      {...props}
+    >
+      <TabList>
+        <Tab>yarn</Tab>
+        <Tab>pnpm</Tab>
+        <Tab>npm</Tab>
+      </TabList>
+      <TabPanels>
+        <TabPanel backgroundColor="gray.100">
+          <Code>yarn add {packageName}</Code>
+        </TabPanel>
+        <TabPanel backgroundColor="gray.100">
+          <Code>pnpm add {packageName}</Code>
+        </TabPanel>
+        <TabPanel backgroundColor="gray.100">
+          <Code>npm install {packageName}</Code>
+        </TabPanel>
+      </TabPanels>
+      <CopyToClipboard value={currentContent} />
+    </Tabs>
   );
 }
