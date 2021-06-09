@@ -1,0 +1,110 @@
+---
+title: Plugins Lifecycle
+sidebar_label: Lifecycle & API
+---
+
+## Plugins Lifecylce
+
+Plugins are executed in order of their usage, and inject functionality serially.
+
+The `before` functions are called in order, and then the `after` function of each hook will be called in the same order, when the phase has done.
+
+The basic API allow you to keep the JS clousure between `before` and `after`, for example:
+
+```ts
+const myPlugin = {
+  onParse({ params }) {
+    // This is the before function
+
+    return ({ result }) => {
+      // The is the after function, 
+      // JS Closure allow me to access the params here as well
+    }
+  }
+}
+```
+
+## Plugins API
+
+### `onPluginInit(api)`
+
+This method is called only once when the plugin is being initialized.
+
+**API**:
+
+* `setSchema` - sets the initial schema to be used.
+* `plugins` - list of all other loaded plugins.
+* `addPlugin` - adds a plugin to the list of plugins.
+
+### `onParse(api)`
+
+Called every time an operation is being executed.
+
+**`before` API**:
+
+* `params` - the original parameters passes to `parse` function.
+* `parseFn` - the current `parse` function. By defualt, it's the one from `graphql` package.
+* `setParseFn` - Replaces the `parse` function with a custom function.
+* `setParsedDocument` - sets the parse result. Setting this will skip calling `parse` for the executed operation.
+
+**`after` API**:
+
+* `result` - the result `DocumentNode` of the parsing function.
+* `replaceParseResult` - replaces the parsed result.
+
+### `onValidate(api)`
+
+Called every time an operation is being executed.
+
+**`before` API**:
+
+* `params` - the original parameters passes to `validate` function.
+* `validateFn` - the current `validate` function. By defualt, it's the one from `graphql` package.
+* `setValidationFn` - Replaces the `validate` function with a custom function.
+* `addValidationRule` - Adds a validation rule to the list of default validation rules (as defined in `graphql` package).
+* `setResult` - sets the validation result. Setting this will skip calling `validate` for the executed operation.
+
+**`after` API**:
+
+* `valid` - A boolean indicates if the validation passed.
+* `result` - `null` in case of valid document, otherwise an array of valiation errors.
+
+### `onContext(api)`
+
+Called every time an operation is being executed. Used for building the GraphQL context incrementally.
+
+**`before` API**:
+
+* `context` - the context object built so far by other plugins.
+* `extendContext` - extends the context object with additional fields.
+
+**`after` API**:
+
+* `context` - the eventual built context, by all plugins.
+
+### `onExecute(api)`
+
+Called every time an operation is being executed. The return value of this function is extended, and allow you to hooks into resolver calls if needed.
+
+**`before` API**:
+
+* `args` - arguments passes to `execute` (contains the document, variables and everything else that needed for executing the GraphQL operation)
+* `executeFn` - the `execute` function to use, by default it's the one from `graphql` package.
+* `setExecuteFn` - replaces the `execute` function.
+* `setResultAndStopExecution` - sets the result of the execution immediately. Calling this function will stop execution.
+* `extendContext` - allow you to extend the context before executin the operation. 
+
+You can return an `object` from that function, with the following fields:
+
+**`onExecuteDone` API**:
+
+Triggered when the execution of the operation is done.
+
+* `result` - the execution result.
+* `setResult` - replaces the result. can either be with data or errors.
+
+**`onResolverCalled` API**:
+
+Triggered when a resolver is called during the execution of the operation. 
+
+* 

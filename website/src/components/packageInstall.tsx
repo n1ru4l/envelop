@@ -1,11 +1,17 @@
-import { Tab, Tabs, TabList, TabPanels, TabPanel, TabsProps } from '@chakra-ui/react';
+import { Tab, Tabs, TabList, TabPanels, TabPanel, TabsProps, Code } from '@chakra-ui/react';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { CopyToClipboard } from './CopyToClipboard';
 import { useMemo, useState, useEffect } from 'react';
 
+enum PackageManagerType {
+  PNPM = 0,
+  YARN = 1,
+  NPM = 2,
+}
+
 const useCurrentInstaller = create<{
-  current: 0 | 1 | 2;
+  current: PackageManagerType;
   setPNPM: () => void;
   setYarn: () => void;
   setNPM: () => void;
@@ -13,18 +19,18 @@ const useCurrentInstaller = create<{
   persist(
     set => {
       return {
-        current: 0,
+        current: PackageManagerType.YARN,
         setPNPM: () =>
           set({
-            current: 0,
+            current: PackageManagerType.PNPM,
           }),
         setYarn: () =>
           set({
-            current: 1,
+            current: PackageManagerType.YARN,
           }),
         setNPM: () =>
           set({
-            current: 2,
+            current: PackageManagerType.NPM,
           }),
       };
     },
@@ -45,45 +51,52 @@ export function PackageInstall({ packageName, ...props }: { packageName: string 
 
   const currentContent = useMemo(() => {
     switch (current) {
-      case 0:
+      case PackageManagerType.PNPM:
         return `pnpm add ${packageName}`;
-      case 1:
+      case PackageManagerType.YARN:
         return `yarn add ${packageName}`;
-      case 2:
+      case PackageManagerType.NPM:
         return `npm install ${packageName}`;
     }
   }, [current]);
+
   return (
     <>
       <br />
       <Tabs
+        width="100%"
         position="relative"
         shadow="md"
         borderWidth="1px"
         borderRadius="5px"
-        width="fit-content"
         index={index}
         onChange={index => {
           switch (index) {
-            case 0:
+            case PackageManagerType.PNPM:
               return setPNPM();
-            case 1:
+            case PackageManagerType.YARN:
               return setYarn();
-            case 2:
+            case PackageManagerType.NPM:
               return setNPM();
           }
         }}
         {...props}
       >
         <TabList>
-          <Tab>pnpm</Tab>
           <Tab>yarn</Tab>
+          <Tab>pnpm</Tab>
           <Tab>npm</Tab>
         </TabList>
         <TabPanels>
-          <TabPanel>pnpm add {packageName}</TabPanel>
-          <TabPanel>yarn add {packageName}</TabPanel>
-          <TabPanel>npm install {packageName}</TabPanel>
+          <TabPanel backgroundColor="gray.100">
+            <Code>yarn add {packageName}</Code>
+          </TabPanel>
+          <TabPanel backgroundColor="gray.100">
+            <Code>pnpm add {packageName}</Code>
+          </TabPanel>
+          <TabPanel backgroundColor="gray.100">
+            <Code>npm install {packageName}</Code>
+          </TabPanel>
         </TabPanels>
         <CopyToClipboard value={currentContent} />
       </Tabs>

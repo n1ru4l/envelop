@@ -5,88 +5,18 @@ sidebar_label: Introduction
 
 # Plugins
 
-Envelop `plugins` are based on a simple event-based contact that allows you to add more logic to your app. You can easily share and collaborate on plugins that you find generic.
+`envelop` plugins are based on a simple event-based contact that allows you to add more logic to your app. 
+
+You can easily share and collaborate on plugins that you find generic.
+
+This section will explain how `envelop` plugins works, and how you can write your own plugin. 
 
 ## Available Plugins
 
-We provide a few built-in plugins within the `@envelop/core` and many more plugins as standalone packages.
-
-| Name                       | Package                                                                                                                    | Description                                                                                                                                       |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| useSchema                  | [`@envelop/core`](https://github.com/dotansimha/envelop/tree/main/packages/core#useschema)                                 | Simplest plugin to provide your GraphQL schema.                                                                                                   |
-| useErrorHandler            | [`@envelop/core`](https://github.com/dotansimha/envelop/tree/main/packages/core#useerrorhandler)                           | Get notified when any execution error occurs.                                                                                                     |
-| useMaskedErrors            | [`@envelop/core`](https://github.com/dotansimha/envelop/tree/main/packages/core#usemaskederrors)                           | Hide sensitive/unexpected errors from your clients.                                                                                               |
-| useExtendContext           | [`@envelop/core`](https://github.com/dotansimha/envelop/tree/main/packages/core#useextendcontext)                          | Extend execution context based on your needs.                                                                                                     |
-| useLogger                  | [`@envelop/core`](https://github.com/dotansimha/envelop/tree/main/packages/core#uselogger)                                 | Simple, yet powerful logging for GraphQL execution.                                                                                               |
-| usePayloadFormatter        | [`@envelop/core`](https://github.com/dotansimha/envelop/tree/main/packages/core#usepayloadformatter)                       | Format, clean and customize execution result.                                                                                                     |
-| useTiming                  | [`@envelop/core`](https://github.com/dotansimha/envelop/tree/main/packages/core#usetiming)                                 | Simple timing/tracing mechanism for your execution.                                                                                               |
-| useGraphQLJit              | [`@envelop/graphql-jit`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/graphql-jit)                     | Custom executor based on GraphQL-JIT.                                                                                                             |
-| useParserCache             | [`@envelop/parser-cache`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/parser-cache)                   | Simple LRU for caching `parse` results.                                                                                                           |
-| useValidationCache         | [`@envelop/validation-cache`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/validation-cache)           | Simple LRU for caching `validate` results.                                                                                                        |
-| useDepthLimit              | [`@envelop/depth-limit`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/depth-limit)                     | Limits the depth of your GraphQL selection sets.                                                                                                  |
-| useDataLoader              | [`@envelop/dataloader`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/dataloader)                       | Simply injects a DataLoader instance into your context.                                                                                           |
-| useApolloTracing           | [`@envelop/apollo-tracing`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/apollo-tracing)               | Integrates timing with Apollo-Tracing format (for GraphQL Playground)                                                                             |
-| useSentry                  | [`@envelop/sentry`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/sentry)                               | Tracks performance, timing and errors and reports it to Sentry.                                                                                   |
-| useOpenTelemetry           | [`@envelop/opentelemetry`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/opentelemetry)                 | Tracks performance, timing and errors and reports in OpenTelemetry structure.                                                                     |
-| useGenericAuth             | [`@envelop/generic-auth`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/generic-auth)                   | Super flexible authentication, also supports `@auth` directive .                                                                                  |
-| useAuth0                   | [`@envelop/auth0`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/auth0)                                 | Validates Auth0 JWT tokens and injects the authenticated user to your context.                                                                    |
-| useGraphQLModules          | [`@envelop/graphql-modules`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/graphql-modules)             | Integrates the execution lifecycle of GraphQL-Modules.                                                                                            |
-| useGraphQLMiddleware       | [`@envelop/graphql-middleware`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/graphql-middleware)       | Integrates middlewares written for `graphql-middleware`                                                                                           |
-| useRateLimiter             | [`@envelop/rate-limiter`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/rate-limiter)                   | Limit request rate via `@rateLimit` directive                                                                                                     |
-| useDisableIntrospection    | [`@envelop/disable-introspection`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/disable-introspection) | Disables introspection by adding a validation rule                                                                                                |
-| useFilterAllowedOperations | [`@envelop/filter-operation-type`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/filter-operation-type) | Only allow execution of specific operation types                                                                                                  |
-| useExtendedValidation      | [`@envelop/extended-validation`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/extended-validation)     | Adds custom validations to the execution pipeline, with access to variables. Comes with an implementation for `@oneOf` directive for input union. |
-| usePreloadAssets           | [`@envelop/preload-assets`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/preload-assets)               | Register asset that should be prefetched on the client via an extensions field.                                                                   |
-| usePersistedOperations     | [`@envelop/persisted-operations`](https://github.com/dotansimha/envelop/tree/main/packages/plugins/persisted-operations)   | Simple implementation of persisted operations/queries, based on custom store.                                                                     |
-
-## Sharing / Composing `envelop`s
-
-After an `envelop` has been created, you can share it with others as a complete plugins layer. This is useful if you wish to create a predefined layer of plugins and share it with others. In addition, you can use it as a shell and as a base for writing sharable pieces of servers.
-
-Here's a small exmple for sharing envelops:
-
-```ts
-// Somewhere where you wish to create the basics of what you wish to share
-// This defined the base plugins you wish to use as base.
-const myBaseEnvelop = envelop({
-  plugins: [useOrgAuth(), useOrgTracing(), useOrgLogsCollector()],
-});
-
-// Later, when you create your own Envelop, you can extend that and add custom plugins.
-// You can also specify the schema only at this point
-const myEnvelop = envelop({
-  plugins: [useEnvelop(myBaseEnvelop), useSchema(myServerSchema), useMyCustomPlugin()],
-});
-```
-
-This approach allows developers to create a base Envelop and share it across the organization: you can define your monitoring setup, logging, authentication, etc., only once in a shared package and share it with others without losing the ability to extend it.
+You can find a list of all plugins, their documentation and installation instructions in our [Plugins Hub](/plugins)!
 
 ## Write your own plugin!
 
-Envelop plugins are just objects with functions that provide a contextual implementation for before/after each phase, with a flexible API.
-
-Here's a simple example that allows you to print the execution params:
-
-```ts
-const myPlugin = {
-  onExecute({ args }) {
-    console.log('Execution started!', { args });
-
-    return {
-      onExecuteDone: ({ result }) => {
-        console.log('Execution done!', { result });
-      },
-    };
-  },
-};
-
-const getEnveloped = envelop({
-  plugins: [
-    /// ... other plugins ...,
-    myPlugin,
-  ],
-});
-```
 
 > Feel free to share your plugin with the community or with us. Sharing = Caring!
 

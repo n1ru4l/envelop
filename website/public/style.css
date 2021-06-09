@@ -16,3 +16,7 @@ article {
   width: 100%;
   overflow-x: auto;
 }
+
+.remark-highlight {
+  font-size: 0.8rem;
+}

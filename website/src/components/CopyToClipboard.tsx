@@ -6,9 +6,7 @@ import { TiTickOutline } from 'react-icons/ti';
 
 export const CopyToClipboard = memo(({ value }: { value: string }) => {
   const [, copy] = useCopyToClipboard();
-
   const [copied, setCopied] = useState<string | undefined>();
-
   const toast = useToast();
 
   return (
@@ -18,18 +16,16 @@ export const CopyToClipboard = memo(({ value }: { value: string }) => {
       top="0"
       right="0"
       icon={copied ? <TiTickOutline /> : <MdContentCopy />}
-      colorScheme="cyan"
-      borderRadius="15px"
       title="Copy to clipboard"
       onClick={() => {
         copy(value);
 
         setCopied(value);
         toast({
-          status: 'success',
-          title: `"${value}" copied to clipboard!`,
-          position: 'bottom-right',
-          duration: 1500,
+          status: 'info',
+          title: `Copied to clipboard!`,
+          position: 'bottom',
+          duration: 1000,
         });
 
         setTimeout(() => {

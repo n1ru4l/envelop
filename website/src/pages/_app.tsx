@@ -8,6 +8,7 @@ import { Dispatch, ReactNode, SetStateAction, useMemo } from 'react';
 
 import { HamburgerIcon } from '@chakra-ui/icons';
 import {
+  Tooltip,
   chakra,
   ChakraProvider,
   Code,
@@ -83,8 +84,9 @@ ExtendComponents({
       },
     },
   }),
-  inlineCode: props => <Code margin="1px" colorScheme="cyan" fontWeight="semibold" fontSize="1em" {...props} />,
+  inlineCode: props => <Code margin="1px" colorScheme="blackAlpha" fontWeight="semibold" fontSize="0.875em" {...props} />,
   Text,
+  Tooltip: props => <Tooltip {...props} />,
   PackageInstall,
   ul: UnorderedList,
 });
@@ -98,21 +100,6 @@ const styles: typeof chakraTheme['styles'] = {
 };
 
 const theme = extendTheme({
-  colors: {
-    gray: {
-      50: '#fafafa',
-      100: '#f5f5f5',
-      200: '#e5e5e5',
-      300: '#d4d4d4',
-      400: '#a3a3a3',
-      500: '#737373',
-      600: '#525252',
-      700: '#404040',
-      800: '#262626',
-      850: '#1b1b1b',
-      900: '#171717',
-    },
-  },
   fonts: {
     heading: '"Poppins", sans-serif',
     body: '"Poppins", sans-serif',
@@ -147,9 +134,7 @@ function AppContent({ color, appProps }: { color: string; appProps: AppProps }) 
   }, [mdxRoutes]);
 
   const drawerBgContent = useColorModeValue('white', 'gray.850');
-
   const drawerBgButton = useColorModeValue('gray.200', 'gray.700');
-
   const drawerColorButton = useColorModeValue('gray.500', 'gray.100');
 
   return (

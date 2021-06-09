@@ -6,6 +6,12 @@ export function getRoutes(): IRoutes {
       docs: {
         $name: 'Docs',
         $routes: ['README', 'getting-started', 'integrations', 'core'],
+        _: {
+          plugins: {
+            $name: 'Plugins',
+            $routes: ['README', 'lifecycle', 'custom-plugin', 'sharing-plugins'],
+          },
+        },
       },
     },
   };
