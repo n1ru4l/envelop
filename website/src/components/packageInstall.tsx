@@ -1,4 +1,4 @@
-import { Tab, Tabs, TabList, TabPanels, TabPanel, TabsProps, Code } from '@chakra-ui/react';
+import { Tab, Tabs, TabList, TabPanels, TabPanel, TabsProps, Code, useColorModeValue } from '@chakra-ui/react';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { CopyToClipboard } from './CopyToClipboard';
@@ -60,6 +60,8 @@ export function PackageInstall({ packageName, ...props }: { packageName: string 
     }
   }, [current]);
 
+  const panelBgColor = useColorModeValue('gray.100', undefined);
+
   return (
     <Tabs
       width="100%"
@@ -86,13 +88,13 @@ export function PackageInstall({ packageName, ...props }: { packageName: string 
         <Tab>npm</Tab>
       </TabList>
       <TabPanels>
-        <TabPanel backgroundColor="gray.100">
+        <TabPanel backgroundColor={panelBgColor}>
           <Code>yarn add {packageName}</Code>
         </TabPanel>
-        <TabPanel backgroundColor="gray.100">
+        <TabPanel backgroundColor={panelBgColor}>
           <Code>pnpm add {packageName}</Code>
         </TabPanel>
-        <TabPanel backgroundColor="gray.100">
+        <TabPanel backgroundColor={panelBgColor}>
           <Code>npm install {packageName}</Code>
         </TabPanel>
       </TabPanels>

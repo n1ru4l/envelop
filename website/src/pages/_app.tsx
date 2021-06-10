@@ -84,8 +84,12 @@ ExtendComponents({
       },
     },
   }),
-  pre: props => <Code fontSize="0.875em" colorScheme={'gray'} {...props} />,
-  inlineCode: props => <Code margin="1px" colorScheme="blackAlpha" fontWeight="semibold" fontSize="0.875em" {...props} />,
+  pre: props => <Code fontSize="0.875em" colorScheme="gray" {...props} />,
+  inlineCode: props => {
+    const colorScheme = useColorModeValue('blackAlpha', undefined);
+
+    return <Code margin="1px" colorScheme={colorScheme} fontWeight="semibold" fontSize="0.875em" {...props} />;
+  },
   Text,
   Tooltip: props => <Tooltip {...props} />,
   PackageInstall,
@@ -101,6 +105,21 @@ const styles: typeof chakraTheme['styles'] = {
 };
 
 const theme = extendTheme({
+  colors: {
+    gray: {
+      50: '#fafafa',
+      100: '#f5f5f5',
+      200: '#e5e5e5',
+      300: '#d4d4d4',
+      400: '#a3a3a3',
+      500: '#737373',
+      600: '#525252',
+      700: '#404040',
+      800: '#262626',
+      850: '#1b1b1b',
+      900: '#171717',
+    },
+  },
   fonts: {
     heading: '"Poppins", sans-serif',
     body: '"Poppins", sans-serif',
