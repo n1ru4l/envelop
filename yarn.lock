@@ -2259,10 +2259,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@theguild/components@1.2.4":
-  version "1.2.4"
-  resolved "https://registry.npmjs.org/@theguild/components/-/components-1.2.4.tgz#08a604fc38a94d62a2e4c8ff8605f6346e46f28c"
-  integrity sha512-0nxytVpdXB2aey7Mn8hHSlyP/9jSgpAwlxjkzajVwjawkV13+h0VaQl19d6DT8mmbi4uB50uF4o0g4HgKl0FWQ==
+"@theguild/components@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.npmjs.org/@theguild/components/-/components-1.3.0.tgz#c250834fc1a10d2664a319e0badfc66450436fba"
+  integrity sha512-AVaAiKtsBqMc/j2+S+rgUeR7qeqSmXFSfMmxuF4BqJnyhH79lEtA5OdzfAHEUt3XEtDNSu4v7j7Bux4BzaXtxg==
   dependencies:
     "@emotion/react" "^11.4.0"
     "@emotion/styled" "^11.3.0"

@@ -10,6 +10,7 @@ export const RemoteGHMarkdown: React.FC<{ children: string; repo?: string; direc
   return (
     <ReactMarkdown
       components={components}
+      linkTarget="_blank"
       transformImageUri={src => {
         const initial = uriTransformer(src);
 

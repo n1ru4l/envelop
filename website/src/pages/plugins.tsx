@@ -7,6 +7,7 @@ import React from 'react';
 import { IMarketplaceItemProps } from '@theguild/components/dist/types/components';
 import { RemoteGHMarkdown } from '../components/RemoteGhMarkdown';
 import { PackageInstall } from '../components/packageInstall';
+import { Markdown } from '../components/Markdown';
 
 export default function Marketplace() {
   const { loading, data = [] } = useFetch<PluginWithStats[]>('/api/plugins', {}, []);
@@ -15,11 +16,11 @@ export default function Marketplace() {
     if (data && data.length > 0) {
       return data.map<IMarketplaceItemProps>(rawPlugin => ({
         title: rawPlugin.title,
-        description: rawPlugin.stats.collected.metadata.description,
+        description: <Markdown>{rawPlugin.stats.collected.metadata.description}</Markdown>,
         modal: {
           header: {
             image: {
-              src: rawPlugin.iconUrl!,
+              src: rawPlugin.iconUrl,
               alt: rawPlugin.title,
             },
             description: {
@@ -34,10 +35,10 @@ export default function Marketplace() {
             <>
               <PackageInstall packageName={rawPlugin.npmPackage} />
               <RemoteGHMarkdown
-                directory={rawPlugin.stats.collected.metadata.repository.directory}
+                directory={rawPlugin.stats.collected.metadata.repository?.directory}
                 repo={rawPlugin.stats.collected.metadata.links.repository}
               >
-                {rawPlugin.stats.collected.metadata.readme || ''}
+                {rawPlugin.readme || rawPlugin.stats.collected.metadata.readme || ''}
               </RemoteGHMarkdown>
             </>
           ),
