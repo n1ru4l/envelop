@@ -3,6 +3,7 @@
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "workspaces": [
+    "./website",
     "./packages/*",
     "./packages/plugins/*",
     "./examples/apollo-server",

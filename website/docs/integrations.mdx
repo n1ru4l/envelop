@@ -1,0 +1,27 @@
+---
+title: Integrations and Examples
+---
+
+## Integrations and Examples
+
+Envelop provides a low-level API at consumption of the output, but a rich API while using it with plugins. Based on that, it's possible to integrate Envelop with many tools.
+
+We recommend using [`graphql-helix`](https://github.com/contrawork/graphql-helix) as the request pipeline orchestrator, as it allows the maximum flexibility and you can easily override/manage every part of the pipeline with Envelop.
+
+### Compatiblity Table
+
+Here's a list of integrations and examples:
+
+| Server/Framework       | Fully supported? | Example                                                                                                     |
+| ---------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------- |
+| *GraphQL-Helix*        | Yes              | [`graphql-helix`](https://github.com/dotansimha/envelop/tree/main/examples/graphql-helix)                   |
+| Node.js HTTP           | Yes              | [`basic-http`](https://github.com/dotansimha/envelop/tree/main/examples/simple-http)                        |
+| GraphQL-Helix (with `@defer` and `@stream`)          | Yes              | [`graphql-helix`](https://github.com/dotansimha/envelop/tree/main/examples/graphql-helix-defer-stream)                   |
+| Apollo-Server          | <Tooltip label="Apollo-Server v2 doesn't allow to customize `parse` function.">Almost</Tooltip>           | [`apollo-server`](https://github.com/dotansimha/envelop/tree/main/examples/apollo-server)                   |
+| GraphQL-WS             | Yes              | [`graphql-ws`](https://github.com/dotansimha/envelop/tree/main/examples/graphql-ws)                         |
+| Azure Functions        | Yes              | [`azure-functions`](https://github.com/dotansimha/envelop/tree/main/examples/azure-functions)               |
+| Cloudflare Workers     | Yes              | [`cloudflare-workers`](https://github.com/dotansimha/envelop/tree/main/examples/cloudflare-workers)         |
+| Google Cloud Functions | Yes              | [`google-cloud-functions`](https://github.com/dotansimha/envelop/tree/main/examples/google-cloud-functions) |
+| Lambda AWS             | Yes              | [`lambda-aws`](https://github.com/dotansimha/envelop/tree/main/examples/lambda-aws)                         |
+
+> Since Envelop is not a HTTP server, and just a wrapper around GraphQL request pipeline - it's possible to integrate it with any server/framework, if it's flexible enough and allows you to specify the pipeline methods.

@@ -1,0 +1,70 @@
+---
+title: Custom Plugins
+sidebar_label: Custom Plugins
+---
+
+`envelop` plugins are just objects with functions that provide a contextual implementation for before/after each phase, with a flexible API.
+
+If you are using TypeScript and with to leverage the type-system, you can import the `Plugin` interface from `@envelop/types` package, and implement it.
+
+## Simple Plugin
+
+Here's a simple example that allows you to print the execution and parsing params:
+
+```ts
+import { Plugin } from '@envelop/types';
+
+const myPlugin: Plugin = {
+  onParse({ params }) {
+    console.log('Parse started!', { args });
+
+    return (result) => {
+      console.log('Parse done!', { result });
+    };
+  },
+  onExecute({ args }) {
+    console.log('Execution started!', { args });
+
+    return {
+      onExecuteDone: ({ result }) => {
+        console.log('Execution done!', { result });
+      },
+    };
+  },
+};
+
+const getEnveloped = envelop({
+  plugins: [
+    /// ... other plugins ...,
+    myPlugin,
+  ],
+});
+```
+
+## Configureable Plugin
+
+If your plugin requires additional configuration you with to pass to it, you can create your plugins as a function, and accept the configuration there:
+
+```ts
+const myPlugin = (printResult): Plugin {
+  onExecute({ args }) {
+    console.log('Execution started!', { args });
+
+    return {
+      onExecuteDone: ({ result }) => {
+        if (printResult) {
+          console.log('Execution done!', { result });
+        }
+      },
+    };
+  },
+};
+
+const getEnveloped = envelop({
+  plugins: [
+    /// ... other plugins ...,
+    myPlugin(true),
+  ],
+});
+```
+

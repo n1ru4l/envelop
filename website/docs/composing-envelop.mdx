@@ -1,0 +1,29 @@
+---
+title: Sharing Envelops
+sidebar_label: Sharing Envelops
+---
+
+## Sharing / Composing `envelop`s
+
+After an `envelop` has been created, you can share it with others as a complete plugins layer. This is useful if you wish to create a predefined layer of plugins and share it with others. In addition, you can use it as a shell and as a base for writing sharable pieces of servers.
+
+Here's a small exmple for sharing envelops:
+
+```ts
+import { envelop, useEnvelop, useSchema } from '@envelop/core';
+
+// Somewhere where you wish to create the basics of what you wish to share
+// This defined the base plugins you wish to use as base.
+const myBaseEnvelop = envelop({
+  plugins: [useOrgAuth(), useOrgTracing(), useOrgLogsCollector()],
+});
+
+// Later, when you create your own Envelop, you can extend that and add custom plugins.
+// You can also specify the schema only at this point
+const myEnvelop = envelop({
+  plugins: [useEnvelop(myBaseEnvelop), useSchema(myServerSchema), useMyCustomPlugin()],
+});
+```
+
+This approach allows developers to create a base Envelop and share it across the organization: you can define your monitoring setup, logging, authentication, etc., only once in a shared package and share it with others without losing the ability to extend it.
+

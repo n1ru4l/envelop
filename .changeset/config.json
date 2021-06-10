@@ -9,6 +9,7 @@
   "ignore": [
     "@envelop-examples/*",
     "@envelop/testing",
+    "@envelop/website",
     "@envelop-examples/graphql-ws",
     "@envelop-examples/apollo-server",
     "@envelop-examples/graphql-helix",

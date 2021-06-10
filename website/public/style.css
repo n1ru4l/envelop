@@ -1,0 +1,22 @@
+code[class*='language-'],
+pre[class*='language-'] {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+}
+
+code {
+  font-family: 'Source Code Pro', monospace !important;
+}
+
+code * {
+  font-family: 'Source Code Pro', monospace !important;
+}
+
+article {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.remark-highlight {
+  font-size: 0.8rem;
+}
