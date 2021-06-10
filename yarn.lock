@@ -1875,7 +1875,7 @@
 
 "@mdx-js/react@1.6.22", "@mdx-js/react@^1.6.22":
   version "1.6.22"
-  resolved "https://registry.npmjs.org/@mdx-js/react/-/react-1.6.22.tgz#ae09b4744fddc74714ee9f9d6f17a66e77c43573"
+  resolved "https://registry.yarnpkg.com/@mdx-js/react/-/react-1.6.22.tgz#ae09b4744fddc74714ee9f9d6f17a66e77c43573"
   integrity sha512-TDoPum4SHdfPiGSAaRBw7ECyI8VaHpK8GJugbJIJuqyh6kzw9ZLJZW3HGL3NNrJGxcAixUvqROm+YuQOo5eXtg==
 
 "@mdx-js/util@1.6.22":
@@ -2630,10 +2630,10 @@
   resolved "https://registry.npmjs.org/@types/range-parser/-/range-parser-1.2.3.tgz#7ee330ba7caafb98090bece86a5ee44115904c2c"
   integrity sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
 
-"@types/react-dom@17.0.6":
-  version "17.0.6"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.6.tgz#c158325cf91b196270bc0f4af73463f149e7eafe"
-  integrity sha512-MGTI+TudxAnGTj8aco8mogaPSJGK2Whje7OZh1CxNLRyhJpTZg/pGQpIbCT0eCVFQyH7UFpdvCqQEThHIp/gsA==
+"@types/react-dom@17.0.7":
+  version "17.0.7"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.7.tgz#b8ee15ead9e5d6c2c858b44949fdf2ebe5212232"
+  integrity sha512-Wd5xvZRlccOrCTej8jZkoFZuZRKHzanDDv1xglI33oBNFMWrqOSzrvWFw7ngSiZjrpJAzPKFtX7JvuXpkNmQHA==
   dependencies:
     "@types/react" "*"
 
@@ -3065,10 +3065,10 @@ apollo-server-caching@^0.7.0:
   dependencies:
     lru-cache "^6.0.0"
 
-apollo-server-core@^2.25.0, apollo-server-core@^2.25.1:
-  version "2.25.1"
-  resolved "https://registry.yarnpkg.com/apollo-server-core/-/apollo-server-core-2.25.1.tgz#593ef925ae31e0259d9b247fafad196a328d380b"
-  integrity sha512-10gVjvGv3uPfy7gUFQhgNhb66RorD1qX6yF4bTawm4S6JstkGrWYFJN5/48o7Mte+tATpXzAGiWu0l4wsYA/mA==
+apollo-server-core@^2.25.0:
+  version "2.25.0"
+  resolved "https://registry.yarnpkg.com/apollo-server-core/-/apollo-server-core-2.25.0.tgz#a0841e57c3605d638809f541dfc87370386b7372"
+  integrity sha512-LqDmY+R5dcb6zj/RgM7P8NnURV2XdQFIF4rY7g80hD9mc2WSCKHF6eH+lHG0sFPW7f8iBr+lJ4LyETuWEVF0hg==
   dependencies:
     "@apollographql/apollo-tools" "^0.5.0"
     "@apollographql/graphql-playground-html" "1.6.27"
@@ -3093,8 +3093,9 @@ apollo-server-core@^2.25.0, apollo-server-core@^2.25.1:
     loglevel "^1.6.7"
     lru-cache "^6.0.0"
     sha.js "^2.4.11"
-    subscriptions-transport-ws "^0.9.19"
+    subscriptions-transport-ws "^0.9.11"
     uuid "^8.0.0"
+    ws "^6.0.0"
 
 apollo-server-env@^3.1.0:
   version "3.1.0"
@@ -3109,10 +3110,10 @@ apollo-server-errors@^2.5.0:
   resolved "https://registry.yarnpkg.com/apollo-server-errors/-/apollo-server-errors-2.5.0.tgz#5d1024117c7496a2979e3e34908b5685fe112b68"
   integrity sha512-lO5oTjgiC3vlVg2RKr3RiXIIQ5pGXBFxYGGUkKDhTud3jMIhs+gel8L8zsEjKaKxkjHhCQAA/bcEfYiKkGQIvA==
 
-apollo-server-express@^2.25.0, apollo-server-express@^2.25.1:
-  version "2.25.1"
-  resolved "https://registry.yarnpkg.com/apollo-server-express/-/apollo-server-express-2.25.1.tgz#d02914cb348819b08c7a476cd012b6731c3fb5d2"
-  integrity sha512-9idHkV3umcIDdq/NIQEC2D6zZ0QtaMRVCbeRcDgm9uWWiX3ulK5ICdHbNBu5UHXkDmKjfZiGaCWBZti0MsRQAg==
+apollo-server-express@^2.25.0:
+  version "2.25.0"
+  resolved "https://registry.yarnpkg.com/apollo-server-express/-/apollo-server-express-2.25.0.tgz#0551a23cf47509349ee438cef6bd10d9856ba9f8"
+  integrity sha512-FCTisD+VB1LCcTjjhKvQZ/dkly83KVlioFMgcPjW1X/kzCznRT3aQoVn9bQHlzQr7NnpwFseb4Rhd2KKD4wKEA==
   dependencies:
     "@apollographql/graphql-playground-html" "1.6.27"
     "@types/accepts" "^1.3.5"
@@ -3121,7 +3122,7 @@ apollo-server-express@^2.25.0, apollo-server-express@^2.25.1:
     "@types/express" "4.17.11"
     "@types/express-serve-static-core" "4.17.19"
     accepts "^1.3.5"
-    apollo-server-core "^2.25.1"
+    apollo-server-core "^2.25.0"
     apollo-server-types "^0.9.0"
     body-parser "^1.18.3"
     cors "^2.8.5"
@@ -3129,7 +3130,7 @@ apollo-server-express@^2.25.0, apollo-server-express@^2.25.1:
     graphql-subscriptions "^1.0.0"
     graphql-tools "^4.0.8"
     parseurl "^1.3.2"
-    subscriptions-transport-ws "^0.9.19"
+    subscriptions-transport-ws "^0.9.16"
     type-is "^1.6.16"
 
 apollo-server-plugin-base@^0.13.0:
@@ -3155,18 +3156,6 @@ apollo-server@2.25.0:
   dependencies:
     apollo-server-core "^2.25.0"
     apollo-server-express "^2.25.0"
-    express "^4.0.0"
-    graphql-subscriptions "^1.0.0"
-    graphql-tools "^4.0.8"
-    stoppable "^1.1.0"
-
-apollo-server@2.25.1:
-  version "2.25.1"
-  resolved "https://registry.yarnpkg.com/apollo-server/-/apollo-server-2.25.1.tgz#5a449645b9126a4459c3610dfe2431ebd359dc62"
-  integrity sha512-4MU/WGb1f0Zbxn7/ZgWYRTcEwgyok80FsYEqPMbWswq42SuXpwECm13ceOlU1GU+moQyxRa+FevbpX1H2UFnkg==
-  dependencies:
-    apollo-server-core "^2.25.1"
-    apollo-server-express "^2.25.1"
     express "^4.0.0"
     graphql-subscriptions "^1.0.0"
     graphql-tools "^4.0.8"
@@ -3296,6 +3285,11 @@ astral-regex@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/astral-regex/-/astral-regex-2.0.0.tgz#483143c567aeed4785759c0865786dc77d7d2e31"
   integrity sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==
+
+async-limiter@~1.0.0:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/async-limiter/-/async-limiter-1.0.1.tgz#dd379e94f0db8310b08291f9d64c3209766617fd"
+  integrity sha512-csOlWGAcRFJaI6m+F2WKdnMKr4HhdhFVBk0H/QbJFMCr+uO2kwohwXQPxw/9OCxp05r5ghVBFSyioixx3gfkNQ==
 
 async-retry@^1.2.1, async-retry@^1.3.1:
   version "1.3.1"
@@ -4851,10 +4845,10 @@ esbuild-register@2.5.0:
     esbuild "^0.11.5"
     jsonc-parser "^3.0.0"
 
-esbuild@0.12.7:
-  version "0.12.7"
-  resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.12.7.tgz#0243ff94b241d9c815720083633731bc5b601b24"
-  integrity sha512-vxENKWBo928ErLiT/uUv8Sl2EoC5cF3cZzCTc8hDEh9ZAZ75xblJCr72NeJo74lxWaGopIePZPIWq1qDpLUHQQ==
+esbuild@0.12.8:
+  version "0.12.8"
+  resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.12.8.tgz#ac90da77cb3bfbf49ab815200bcef7ffe1a3348f"
+  integrity sha512-sx/LwlP/SWTGsd9G4RlOPrXnIihAJ2xwBUmzoqe2nWwbXORMQWtAGNJNYLBJJqa3e9PWvVzxdrtyFZJcr7D87g==
 
 esbuild@^0.11.12, esbuild@^0.11.5:
   version "0.11.23"
@@ -10520,16 +10514,16 @@ stylis@^4.0.3, stylis@^4.0.6:
   resolved "https://registry.npmjs.org/stylis/-/stylis-4.0.10.tgz#446512d1097197ab3f02fb3c258358c3f7a14240"
   integrity sha512-m3k+dk7QeJw660eIKRRn3xPF6uuvHs/FFzjX3HQ5ove0qYsiygoAhwn5a3IYKaZPo5LrYD0rfVmtv1gNY1uYwg==
 
-subscriptions-transport-ws@^0.9.19:
-  version "0.9.19"
-  resolved "https://registry.yarnpkg.com/subscriptions-transport-ws/-/subscriptions-transport-ws-0.9.19.tgz#10ca32f7e291d5ee8eb728b9c02e43c52606cdcf"
-  integrity sha512-dxdemxFFB0ppCLg10FTtRqH/31FNRL1y1BQv8209MK5I4CwALb7iihQg+7p65lFcIl8MHatINWBLOqpgU4Kyyw==
+subscriptions-transport-ws@^0.9.11, subscriptions-transport-ws@^0.9.16:
+  version "0.9.18"
+  resolved "https://registry.npmjs.org/subscriptions-transport-ws/-/subscriptions-transport-ws-0.9.18.tgz#bcf02320c911fbadb054f7f928e51c6041a37b97"
+  integrity sha512-tztzcBTNoEbuErsVQpTN2xUNN/efAZXyCyL5m3x4t6SKrEiTL2N8SaKWBFWM4u56pL79ULif3zjyeq+oV+nOaA==
   dependencies:
     backo2 "^1.0.2"
     eventemitter3 "^3.1.0"
     iterall "^1.2.1"
     symbol-observable "^1.0.4"
-    ws "^5.2.0 || ^6.0.0 || ^7.0.0"
+    ws "^5.2.0"
 
 sucrase@^3.18.1:
   version "3.18.2"
@@ -11650,10 +11644,24 @@ write-pkg@^4.0.0:
     type-fest "^0.4.1"
     write-json-file "^3.2.0"
 
-ws@7.4.5, "ws@^5.2.0 || ^6.0.0 || ^7.0.0", ws@^7.4.5:
+ws@7.4.5, ws@^7.4.5:
   version "7.4.5"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.5.tgz#a484dd851e9beb6fdb420027e3885e8ce48986c1"
   integrity sha512-xzyu3hFvomRfXKH8vOFMU3OguG6oOvhXMo3xsGy3xWExqaM2dxBbVxuD99O7m3ZUFMvvscsZDqxfgMaRr/Nr1g==
+
+ws@^5.2.0:
+  version "5.2.2"
+  resolved "https://registry.npmjs.org/ws/-/ws-5.2.2.tgz#dffef14866b8e8dc9133582514d1befaf96e980f"
+  integrity sha512-jaHFD6PFv6UgoIVda6qZllptQsMlDEJkTQcybzzXDYM1XO9Y8em691FGMPmM46WGyLU4z9KMgQN+qrux/nhlHA==
+  dependencies:
+    async-limiter "~1.0.0"
+
+ws@^6.0.0:
+  version "6.2.1"
+  resolved "https://registry.npmjs.org/ws/-/ws-6.2.1.tgz#442fdf0a47ed64f59b6a5d8ff130f4748ed524fb"
+  integrity sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
+  dependencies:
+    async-limiter "~1.0.0"
 
 xdg-basedir@^4.0.0:
   version "4.0.0"
