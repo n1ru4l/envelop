@@ -1,4 +1,4 @@
-import { DocumentNode, ExecutionResult, GraphQLSchema, print } from 'graphql';
+import { DocumentNode, ExecutionArgs, ExecutionResult, GraphQLSchema, print } from 'graphql';
 import { getGraphQLParameters, processRequest } from 'graphql-helix';
 import { envelop, useSchema } from '@envelop/core';
 import { Envelop, Plugin } from '@envelop/types';
@@ -45,6 +45,9 @@ export function createSpiedPlugin() {
   };
 }
 
+type MaybePromise<T> = T | Promise<T>;
+type MaybeAsyncIterableIterator<T> = T | AsyncIterableIterator<T>;
+
 export function createTestkit(
   pluginsOrEnvelop: Envelop | Plugin<any>[],
   schema?: GraphQLSchema
@@ -56,6 +59,7 @@ export function createTestkit(
   ) => Promise<ExecutionResult<any>>;
   replaceSchema: (schema: GraphQLSchema) => void;
   wait: (ms: number) => Promise<void>;
+  executeRaw: (args: ExecutionArgs) => MaybePromise<MaybeAsyncIterableIterator<ExecutionResult>>;
 } {
   let replaceSchema: (s: GraphQLSchema) => void = () => {};
 
@@ -100,6 +104,13 @@ export function createTestkit(
       });
 
       return (r as any).payload as ExecutionResult;
+    },
+    executeRaw: async (args: ExecutionArgs) => {
+      const proxy = initRequest(args.contextValue);
+      return await proxy.execute({
+        ...args,
+        contextValue: await proxy.contextFactory(),
+      });
     },
   };
 }
