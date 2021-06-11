@@ -1,11 +1,8 @@
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import { FeatureList, HeroGradient, HeroIllustration, HeroMarketplace, InfoList } from '@theguild/components';
-import { handleRoute } from '../../next-helpers';
+import { handlePushRoute } from '@guild-docs/client';
 
 export default function Index() {
-  const router = useRouter();
-
   return (
     <>
       <Head>
@@ -18,7 +15,7 @@ export default function Index() {
           href: '/docs',
           children: 'Get Started',
           title: 'Learn more about GraphQL Envelop',
-          onClick: e => handleRoute('/docs', e, router),
+          onClick: e => handlePushRoute('/docs', e),
         }}
         version="1.0.7"
         colors={['#FF34AE', '#1CC8EE']}
@@ -87,7 +84,7 @@ export default function Index() {
           href: '/plugins',
           children: 'Explore plugins',
           title: 'Learn more about the Plugins Hub',
-          onClick: e => handleRoute('/plugins', e, router),
+          onClick: e => handlePushRoute('/plugins', e),
         }}
       />
       <InfoList
@@ -100,7 +97,7 @@ export default function Index() {
               href: '/docs',
               children: 'Documentation',
               title: 'Read the documentation',
-              onClick: e => handleRoute('/docs', e, router),
+              onClick: e => handlePushRoute('/docs', e),
             },
           },
           // {

@@ -4,76 +4,24 @@ import '../../public/style.css';
 import '../../public/admonitions.css';
 
 import { appWithTranslation } from 'next-i18next';
-import { Dispatch, ReactNode, SetStateAction, useMemo } from 'react';
 
-import { HamburgerIcon } from '@chakra-ui/icons';
 import {
-  Tooltip,
   chakra,
-  ChakraProvider,
   Code,
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerOverlay,
   extendTheme,
-  IconButton,
   Text,
   theme as chakraTheme,
+  Tooltip,
   UnorderedList,
-  useColorMode,
   useColorModeValue,
-  useDisclosure,
 } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
-import {
-  DocsContainer,
-  DocsNavigation,
-  DocsNavigationDesktop,
-  DocsNavigationMobile,
-  DocsTitle,
-  ExtendComponents,
-  iterateRoutes,
-  MdxInternalProps,
-  MDXNavigation,
-  NextNProgress,
-} from '@guild-docs/client';
-import { Footer, GlobalStyles, Header, Subheader, ThemeProvider as ComponentsThemeProvider } from '@theguild/components';
+import { CombinedThemeProvider, DocsPage, ExtendComponents, handlePushRoute } from '@guild-docs/client';
+import { Footer, Header, Subheader } from '@theguild/components';
 
-import { handleRoute } from '../../next-helpers';
 import { PackageInstall } from '../components/packageInstall';
 
 import type { AppProps } from 'next/app';
-
-export function ChakraThemeProvider({ children }: { children: ReactNode }) {
-  return (
-    <ChakraProvider theme={theme}>
-      <TGCThemeProvider>{children}</TGCThemeProvider>
-    </ChakraProvider>
-  );
-}
-
-export function TGCThemeProvider({ children }: { children: ReactNode }) {
-  const { colorMode, setColorMode } = useColorMode();
-  const darkThemeProps = useMemo<{
-    isDarkTheme: boolean;
-    setDarkTheme: Dispatch<SetStateAction<boolean>>;
-  }>(() => {
-    return {
-      isDarkTheme: colorMode === 'dark',
-      setDarkTheme: arg => {
-        if (typeof arg === 'function') {
-          setColorMode(arg(colorMode === 'dark') ? 'dark' : 'light');
-        } else {
-          setColorMode(arg ? 'dark' : 'light');
-        }
-      },
-    };
-  }, [colorMode, setColorMode]);
-
-  return <ComponentsThemeProvider {...darkThemeProps}>{children}</ComponentsThemeProvider>;
-}
 
 ExtendComponents({
   a: chakra('a', {
@@ -84,11 +32,13 @@ ExtendComponents({
       },
     },
   }),
-  pre: props => <div {...props} />,
-  code: props => <Code fontSize="0.875em" {...props} />,
-  inlineCode: props => <Code margin="1px" colorScheme="blackAlpha" fontWeight="semibold" fontSize="0.875em" {...props} />,
+  pre: props => <Code fontSize="0.875em" colorScheme="gray" {...props} />,
+  inlineCode: props => {
+    const colorScheme = useColorModeValue('blackAlpha', undefined);
+
+    return <Code margin="1px" colorScheme={colorScheme} fontWeight="semibold" fontSize="0.875em" {...props} />;
+  },
   Text,
-  Tooltip: props => <Tooltip {...props} />,
   PackageInstall,
   ul: UnorderedList,
 });
@@ -102,6 +52,21 @@ const styles: typeof chakraTheme['styles'] = {
 };
 
 const theme = extendTheme({
+  colors: {
+    gray: {
+      50: '#fafafa',
+      100: '#f5f5f5',
+      200: '#e5e5e5',
+      300: '#d4d4d4',
+      400: '#a3a3a3',
+      500: '#737373',
+      600: '#525252',
+      700: '#404040',
+      800: '#262626',
+      850: '#1b1b1b',
+      900: '#171717',
+    },
+  },
   fonts: {
     heading: '"Poppins", sans-serif',
     body: '"Poppins", sans-serif',
@@ -113,36 +78,19 @@ const theme = extendTheme({
   styles,
 });
 
-const serializedMdx = process.env.SERIALIZED_MDX_ROUTES;
-let mdxRoutesData = serializedMdx && JSON.parse(serializedMdx);
-
 const accentColor = '#1CC8EE';
 
-function AppContent({ color, appProps }: { color: string; appProps: AppProps }) {
+const serializedMdx = process.env.SERIALIZED_MDX_ROUTES;
+const mdxRoutes = { data: serializedMdx && JSON.parse(serializedMdx) };
+
+function AppContent(appProps: AppProps) {
   const { Component, pageProps, router } = appProps;
 
-  const isDocs = router.asPath.includes('docs');
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const mdxRoutes: MdxInternalProps['mdxRoutes'] | undefined = pageProps.mdxRoutes;
-  const Navigation = useMemo(() => {
-    const paths = mdxRoutes === 1 ? mdxRoutesData : (mdxRoutesData = mdxRoutes || mdxRoutesData);
-    return (
-      <DocsNavigation>
-        <DocsTitle>Documentation</DocsTitle>
-        <MDXNavigation paths={iterateRoutes(paths)} accentColor={color} handleLinkClick={onClose} defaultOpenDepth={4} />
-      </DocsNavigation>
-    );
-  }, [mdxRoutes]);
-
-  const drawerBgContent = useColorModeValue('white', 'gray.850');
-  const drawerBgButton = useColorModeValue('gray.200', 'gray.700');
-  const drawerColorButton = useColorModeValue('gray.500', 'gray.100');
+  const isDocs = router.asPath.startsWith('/docs');
 
   return (
-    <TGCThemeProvider>
-      <GlobalStyles />
-      <Header accentColor={color} activeLink="/open-source" themeSwitch />
+    <>
+      <Header accentColor={accentColor} activeLink="/open-source" themeSwitch />
       <Subheader
         activeLink={router.asPath}
         product={{
@@ -152,26 +100,26 @@ function AppContent({ color, appProps }: { color: string; appProps: AppProps }) 
             src: 'https://the-guild.dev/static/shared-logos/products/envelop.svg',
             alt: 'Envelop Logo',
           },
-          onClick: e => handleRoute('/', e, router),
+          onClick: e => handlePushRoute('/', e),
         }}
         links={[
           {
             children: 'Home',
             title: 'The Guild Envelop',
             href: '/',
-            onClick: e => handleRoute('/', e, router),
+            onClick: e => handlePushRoute('/', e),
           },
           {
             children: 'Docs & API',
             href: '/docs',
             title: 'Read more about Envelop',
-            onClick: e => handleRoute('/docs', e, router),
+            onClick: e => handlePushRoute('/docs', e),
           },
           {
             children: 'Plugins Hub',
             href: '/plugins',
             title: 'Browse the plugins hub',
-            onClick: e => handleRoute('/plugins', e, router),
+            onClick: e => handlePushRoute('/plugins', e),
           },
           {
             children: 'GitHub',
@@ -185,65 +133,23 @@ function AppContent({ color, appProps }: { color: string; appProps: AppProps }) 
           children: 'Get Started',
           href: '/docs',
           title: 'Start using Envelop',
-          onClick: e => handleRoute('/docs', e, router),
+          onClick: e => handlePushRoute('/docs', e),
         }}
       />
-      {!isDocs ? (
-        <Component {...pageProps} />
-      ) : (
-        <DocsContainer>
-          <DocsNavigationDesktop>{Navigation}</DocsNavigationDesktop>
-          <DocsNavigationMobile>
-            <IconButton
-              onClick={onOpen}
-              icon={<HamburgerIcon />}
-              aria-label="Open navigation"
-              size="sm"
-              position="fixed"
-              right="1.5rem"
-              bottom="1.5rem"
-              zIndex="1"
-              backgroundColor={color}
-              color="#fff"
-            />
-            <Drawer size="2xl" isOpen={isOpen} onClose={onClose} placement="left">
-              <DrawerOverlay />
-              <DrawerContent backgroundColor={drawerBgContent}>
-                <DrawerCloseButton
-                  backgroundColor={drawerBgButton}
-                  color={drawerColorButton}
-                  height="2.375rem"
-                  width="2.375rem"
-                  top="1.5rem"
-                  right="1.5rem"
-                  fontSize="0.85rem"
-                  borderRadius="0.5rem"
-                  border="2px solid transparent"
-                  _hover={{
-                    borderColor: 'gray.500',
-                  }}
-                />
-                <DrawerBody>{Navigation}</DrawerBody>
-              </DrawerContent>
-            </Drawer>
-          </DocsNavigationMobile>
-          <Component {...pageProps} />
-        </DocsContainer>
-      )}
+      {isDocs ? <DocsPage accentColor={accentColor} appProps={appProps} mdxRoutes={mdxRoutes} /> : <Component {...pageProps} />}
       <Footer />
-    </TGCThemeProvider>
+    </>
   );
 }
 
 const AppContentWrapper = appWithTranslation(function TranslatedApp(appProps) {
-  return <AppContent appProps={appProps} color={accentColor} />;
+  return <AppContent {...appProps} />;
 });
 
 export default function App(appProps: AppProps) {
   return (
-    <ChakraThemeProvider>
-      <NextNProgress color={accentColor} />
+    <CombinedThemeProvider theme={theme} accentColor={accentColor}>
       <AppContentWrapper {...appProps} />
-    </ChakraThemeProvider>
+    </CombinedThemeProvider>
   );
 }
