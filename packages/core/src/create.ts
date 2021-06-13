@@ -17,7 +17,15 @@ import {
   ExecutionResult,
   SubscriptionArgs,
 } from 'graphql';
-import { AfterCallback, AfterResolverPayload, Envelop, OnResolverCalledHooks, Plugin } from '@envelop/types';
+import {
+  AfterCallback,
+  AfterResolverPayload,
+  DefaultContext,
+  Envelop,
+  EnvelopContextFnWrapper,
+  OnResolverCalledHooks,
+  Plugin,
+} from '@envelop/types';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
 const trackedSchemaSymbol = Symbol('TRACKED_SCHEMA');
@@ -70,15 +78,19 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
     onValidate && onValidateCbs.push(onValidate);
   }
 
-  const customParse: typeof parse = onParseCbs.length
-    ? (source, parseOptions) => {
+  const customParse: EnvelopContextFnWrapper<typeof parse, any> = onParseCbs.length
+    ? sharedObj => (source, parseOptions) => {
         let result: DocumentNode | Error | null = null;
         let parseFn: typeof parse = parse;
-
+        const context = sharedObj;
         const afterCalls: AfterCallback<'onParse'>[] = [];
 
         for (const onParse of onParseCbs) {
           const afterFn = onParse({
+            context,
+            extendContext: extension => {
+              Object.assign(context, extension);
+            },
             params: { source, options: parseOptions },
             parseFn,
             setParseFn: newFn => {
@@ -102,6 +114,10 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
 
         for (const afterCb of afterCalls) {
           afterCb({
+            context,
+            extendContext: extension => {
+              Object.assign(context, extension);
+            },
             replaceParseResult: newResult => {
               result = newResult;
             },
@@ -119,17 +135,22 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
 
         return result;
       }
-    : parse;
+    : () => parse;
 
-  const customValidate: typeof validate = onValidateCbs.length
-    ? (schema, documentAST, rules, typeInfo, validationOptions) => {
+  const customValidate: EnvelopContextFnWrapper<typeof validate, any> = onValidateCbs.length
+    ? initialContext => (schema, documentAST, rules, typeInfo, validationOptions) => {
         let actualRules: undefined | ValidationRule[] = rules ? [...rules] : undefined;
         let validateFn = validate;
         let result: null | readonly GraphQLError[] = null;
+        const context = initialContext;
 
         const afterCalls: AfterCallback<'onValidate'>[] = [];
         for (const onValidate of onValidateCbs) {
           const afterFn = onValidate({
+            context,
+            extendContext: extension => {
+              Object.assign(context, extension);
+            },
             params: {
               schema,
               documentAST,
@@ -163,35 +184,30 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
         const valid = result.length === 0;
 
         for (const afterCb of afterCalls) {
-          afterCb({ valid, result });
+          afterCb({
+            valid,
+            result,
+            context,
+            extendContext: extension => {
+              Object.assign(context, extension);
+            },
+          });
         }
 
         return result;
       }
-    : validate;
+    : () => validate;
 
-  const customContextFactory = onContextBuildingCbs.length
-    ? async (initialContext: any) => {
-        let context = initialContext;
-
+  const customContextFactory: EnvelopContextFnWrapper<() => any, any> = onContextBuildingCbs.length
+    ? initialContext => async () => {
         const afterCalls: AfterCallback<'onContextBuilding'>[] = [];
+        let context = initialContext;
 
         for (const onContext of onContextBuildingCbs) {
           const afterFn = await onContext({
             context,
             extendContext: extension => {
-              if (typeof extension === 'object') {
-                context = {
-                  ...(context || {}),
-                  ...extension,
-                };
-              } else {
-                throw new Error(
-                  `Invalid context extension provided! Expected "object", got: "${JSON.stringify(
-                    extension
-                  )}" (${typeof extension})`
-                );
-              }
+              context = { ...context, ...extension };
             },
           });
 
@@ -199,12 +215,17 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
         }
 
         for (const afterCb of afterCalls) {
-          afterCb({ context });
+          afterCb({
+            context,
+            extendContext: extension => {
+              context = { ...context, ...extension };
+            },
+          });
         }
 
         return context;
       }
-    : (ctx: any) => ctx;
+    : ctx => () => ctx;
 
   const customSubscribe = async (
     argsOrSchema: SubscriptionArgs | GraphQLSchema,
@@ -237,7 +258,7 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
       result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
       setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
     }) => void)[] = [];
-    let context = args.contextValue;
+    let context = args.contextValue || {};
 
     for (const onSubscribe of onSubscribeCbs) {
       const after = onSubscribe({
@@ -246,16 +267,7 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
           subscribeFn = newSubscribeFn;
         },
         extendContext: extension => {
-          if (typeof extension === 'object') {
-            context = {
-              ...(context || {}),
-              ...extension,
-            };
-          } else {
-            throw new Error(
-              `Invalid context extension provided! Expected "object", got: "${JSON.stringify(extension)}" (${typeof extension})`
-            );
-          }
+          context = { ...context, ...extension };
         },
         args,
       });
@@ -320,11 +332,9 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
         let executeFn: typeof execute = execute;
         let result: ExecutionResult;
 
-        const afterCalls: ((options: {
-          result: ExecutionResult;
-          setResult: (newResult: ExecutionResult) => void;
-        }) => void)[] = [];
-        let context = args.contextValue;
+        const afterCalls: ((options: { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void }) => void)[] =
+          [];
+        let context = args.contextValue || {};
 
         for (const onExecute of onExecuteCbs) {
           let stopCalled = false;
@@ -467,13 +477,13 @@ export function envelop({ plugins }: { plugins: Plugin[] }): Envelop {
     }
   }
 
-  const envelop = () => {
+  const envelop = (initialContext: DefaultContext = {}) => {
     prepareSchema();
 
     return {
-      parse: customParse,
-      validate: customValidate,
-      contextFactory: customContextFactory,
+      parse: customParse(initialContext),
+      validate: customValidate(initialContext),
+      contextFactory: customContextFactory(initialContext),
       execute: customExecute,
       subscribe: customSubscribe,
       get schema() {

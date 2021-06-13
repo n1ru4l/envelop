@@ -17,6 +17,8 @@ import {
   SubscriptionArgs,
 } from 'graphql';
 
+export type EnvelopContextFnWrapper<TFunction, ContextType = unknown> = (context: ContextType) => TFunction;
+
 type AfterFnOrVoid<Result> = void | ((afterOptions: Result) => void);
 
 export type DefaultContext = Record<string, unknown>;
@@ -74,12 +76,16 @@ export interface Plugin<PluginContext = DefaultContext> {
   }) => void | OnSubscribeHookResult<PluginContext>;
   onParse?: BeforeAfterHook<
     {
+      context: Readonly<PluginContext>;
+      extendContext: (contextExtension: Partial<PluginContext>) => void;
       params: { source: string | Source; options?: ParseOptions };
       parseFn: typeof parse;
       setParseFn: (newFn: typeof parse) => void;
       setParsedDocument: (doc: DocumentNode) => void;
     },
     {
+      context: Readonly<PluginContext>;
+      extendContext: (contextExtension: Partial<PluginContext>) => void;
       result: DocumentNode | Error | null;
       replaceParseResult: (newResult: DocumentNode | Error) => void;
     },
@@ -87,6 +93,8 @@ export interface Plugin<PluginContext = DefaultContext> {
   >;
   onValidate?: BeforeAfterHook<
     {
+      context: Readonly<PluginContext>;
+      extendContext: (contextExtension: Partial<PluginContext>) => void;
       params: {
         schema: GraphQLSchema;
         documentAST: DocumentNode;
@@ -100,6 +108,8 @@ export interface Plugin<PluginContext = DefaultContext> {
       setResult: (errors: readonly GraphQLError[]) => void;
     },
     {
+      context: Readonly<PluginContext>;
+      extendContext: (contextExtension: Partial<PluginContext>) => void;
       valid: boolean;
       result: readonly GraphQLError[];
     }
@@ -110,6 +120,7 @@ export interface Plugin<PluginContext = DefaultContext> {
       extendContext: (contextExtension: Partial<PluginContext>) => void;
     },
     {
+      extendContext: (contextExtension: Partial<PluginContext>) => void;
       context: PluginContext;
     },
     true
@@ -124,13 +135,13 @@ export type AfterCallback<T extends keyof Plugin<any>> = NonNullable<Plugin[T]> 
   ? (afterOptions: A) => void
   : never;
 
-export type Envelop<RequestContext = unknown, ExecutionContext = DefaultContext> = {
-  (): {
+export type Envelop<RequestContext = unknown, GraphQLContext = DefaultContext> = {
+  (initialContext: Partial<RequestContext>): {
     execute: typeof execute;
     validate: typeof validate;
     subscribe: typeof subscribe;
     parse: typeof parse;
-    contextFactory: (requestContext: RequestContext) => ExecutionContext | Promise<ExecutionContext>;
+    contextFactory: () => GraphQLContext | Promise<GraphQLContext>;
     schema: GraphQLSchema;
   };
   _plugins: Plugin[];

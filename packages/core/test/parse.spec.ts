@@ -9,6 +9,8 @@ describe('parse', () => {
     await teskit.execute(query);
     expect(spiedPlugin.spies.beforeParse).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.beforeParse).toHaveBeenCalledWith({
+      context: expect.any(Object),
+      extendContext: expect.any(Function),
       params: {
         options: undefined,
         source: query,
@@ -20,6 +22,8 @@ describe('parse', () => {
 
     expect(spiedPlugin.spies.afterParse).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.afterParse).toHaveBeenCalledWith({
+      context: expect.any(Object),
+      extendContext: expect.any(Function),
       result: expect.any(Object),
       replaceParseResult: expect.any(Function),
     });
@@ -63,6 +67,8 @@ describe('parse', () => {
     expect(replacementFn).toHaveBeenCalledTimes(0);
     expect(afterFn).toHaveBeenCalledTimes(1);
     expect(afterFn).toHaveBeenCalledWith({
+      context: expect.any(Object),
+      extendContext: expect.any(Function),
       result: fakeRes,
       replaceParseResult: expect.any(Function),
     });

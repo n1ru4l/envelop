@@ -20,7 +20,7 @@ const getEnveloped = envelop({
 });
 
 const server = createServer((req, res) => {
-  const { parse, validate, contextFactory, execute, schema } = getEnveloped();
+  const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req });
   let payload = '';
 
   req.on('data', chunk => {
@@ -42,7 +42,7 @@ const server = createServer((req, res) => {
       return;
     }
 
-    const context = await contextFactory(req);
+    const context = await contextFactory();
     const result = await execute({
       document,
       schema,

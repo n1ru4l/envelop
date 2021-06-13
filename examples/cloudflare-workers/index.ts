@@ -24,7 +24,7 @@ const getEnveloped = envelop({
 });
 
 router.add('POST', '/graphql', async (req, res) => {
-  const { parse, validate, contextFactory, execute, schema } = getEnveloped();
+  const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req });
   const request = {
     body: req.body,
     headers: req.headers,

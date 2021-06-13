@@ -9,6 +9,8 @@ describe('validate', () => {
     await teskit.execute(query);
     expect(spiedPlugin.spies.beforeValidate).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.beforeValidate).toHaveBeenCalledWith({
+      context: expect.any(Object),
+      extendContext: expect.any(Function),
       params: {
         schema,
         documentAST: expect.any(Object),
@@ -24,6 +26,8 @@ describe('validate', () => {
 
     expect(spiedPlugin.spies.afterValidate).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.afterValidate).toHaveBeenCalledWith({
+      context: expect.any(Object),
+      extendContext: expect.any(Function),
       result: [],
       valid: true,
     });
@@ -83,7 +87,12 @@ describe('validate', () => {
     );
     await teskit.execute(query);
     expect(after).toHaveBeenCalledTimes(1);
-    expect(after).toHaveBeenCalledWith({ valid: false, result: [e] });
+    expect(after).toHaveBeenCalledWith({
+      valid: false,
+      result: [e],
+      context: expect.any(Object),
+      extendContext: expect.any(Function),
+    });
   });
 
   it('Should allow to add validation rules', async () => {

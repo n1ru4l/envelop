@@ -13,9 +13,10 @@ describe('useApolloTracing', () => {
     },
   });
 
-  it('should measure execution times and return it as extension', async () => {
+  it.only('should measure execution times and return it as extension', async () => {
     const testInstance = createTestkit([useApolloTracing()], schema);
     const result = await testInstance.execute(`query { foo }`);
+    expect(result.errors).toBeUndefined();
     expect(result.data).toBeDefined();
     expect(result.extensions?.tracing).toBeDefined();
     expect(result.extensions?.tracing.duration).toBeGreaterThan(1000000000);
