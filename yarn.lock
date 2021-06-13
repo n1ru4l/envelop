@@ -1020,7 +1020,7 @@
   dependencies:
     "@chakra-ui/utils" "1.8.0"
 
-"@chakra-ui/utils@1.8.0", "@chakra-ui/utils@^1.7.0", "@chakra-ui/utils@^1.8.0":
+"@chakra-ui/utils@1.8.0", "@chakra-ui/utils@^1.7.0":
   version "1.8.0"
   resolved "https://registry.npmjs.org/@chakra-ui/utils/-/utils-1.8.0.tgz#f7aad8175cc5a26a1d2795dc78691bbc21fd539e"
   integrity sha512-BWIhKcXnLbOIwCTKeNcOStNwk9RyYVA9xRRFPGK6Kp3EhrxP0rDwAbu4D3o3qAc+yhIDhGmPaIj1jRXHB5DTfg==
@@ -1593,12 +1593,7 @@
     next-mdx-remote "^3.0.2"
     remark-slug "^6.0.0"
 
-"@guild-docs/types@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.npmjs.org/@guild-docs/types/-/types-0.2.1.tgz#f28927ce84c15741ac00ce41c15a387f117702e6"
-  integrity sha512-XrFJtVVH4OdY+Od7cAISQt/Ai3D+j0k0Fs4OwlxXoff7b1qdNA/+m2BUGZCmEba5wK6EGi9KG4Vo1FvivzKhWQ==
-
-"@guild-docs/types@^0.2.8":
+"@guild-docs/types@^0.2.1", "@guild-docs/types@^0.2.8":
   version "0.2.8"
   resolved "https://registry.yarnpkg.com/@guild-docs/types/-/types-0.2.8.tgz#cbfad77229d3244252bde749b79ab2722dd0c323"
   integrity sha512-O3gEURvCwEspjQxNGVH4GcEZsGvJCPuAeLiDWt7qA3/EgNROSoGCb4Jq7po5Kz6WrmbjLjC6qgpkp/79LpAa9w==
@@ -2641,16 +2636,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^17.0.0":
-  version "17.0.9"
-  resolved "https://registry.npmjs.org/@types/react/-/react-17.0.9.tgz#1147fb520024a62c9b3841f5cb4db89b73ddb87f"
-  integrity sha512-2Cw7FvevpJxQrCb+k5t6GH1KIvmadj5uBbjPaLlJB/nZWUj56e1ZqcD6zsoMFB47MsJUTFl9RJ132A7hb3QFJA==
-  dependencies:
-    "@types/prop-types" "*"
-    "@types/scheduler" "*"
-    csstype "^3.0.2"
-
-"@types/react@17.0.11":
+"@types/react@*", "@types/react@17.0.11", "@types/react@^17.0.0":
   version "17.0.11"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.11.tgz#67fcd0ddbf5a0b083a0f94e926c7d63f3b836451"
   integrity sha512-yFRQbD+whVonItSk7ZzP/L+gPTJVBkL/7shLEF+i9GC/1cV3JmUxEQz6+9ylhUpWSDuqo1N9qEvqS6vTj4USUA==
