@@ -17,7 +17,11 @@ export default function Index() {
           title: 'Learn more about GraphQL Envelop',
           onClick: e => handlePushRoute('/docs', e),
         }}
-        version="1.0.7"
+        version={
+          <a href="https://www.npmjs.com/package/@envelop/core" target="_blank">
+            <img src="https://badge.fury.io/js/%40envelop%2Fcore.svg" alt="npm version" height="18" />
+          </a>
+        }
         colors={['#FF34AE', '#1CC8EE']}
         image={{
           src: '/assets/home-claw.png',
@@ -88,11 +92,11 @@ export default function Index() {
         }}
       />
       <InfoList
-        title="Get Started"
+        title="Learn More"
         items={[
           {
             title: 'The envelop approach',
-            description: '',
+            description: 'Learn more about Envelop core and how it works',
             link: {
               href: '/docs',
               children: 'Documentation',
@@ -100,24 +104,33 @@ export default function Index() {
               onClick: e => handlePushRoute('/docs', e),
             },
           },
+          {
+            title: 'Integrations',
+            description: 'Integrate envelop with your existing setup quickly, based on usage examples.',
+            link: {
+              href: '/docs/integrations',
+              children: 'Integrations & Examples',
+              title: 'Read the documentation',
+              onClick: e => handlePushRoute('/docs/integrations', e),
+            },
+          },
+          {
+            title: 'Custom Plugins',
+            description: 'Learn how to plan, build and share envelop plugins.',
+            link: {
+              href: '/docs/plugins',
+              children: 'API Reference',
+              title: 'Read the documentation',
+              onClick: e => handlePushRoute('/docs/plugins', e),
+            },
+          },
           // {
-          //   title: 'Github integration',
-          //   description: '',
+          //   title: 'Envelop tutorial',
+          //   description: 'Learn how to create a NodeJS (optionally TypeScript) server from scratch, based on Envelop.',
           //   link: {
-          //     href: 'https://github.com/dotansimha/envelop/',
-          //     children: 'Github',
-          //     target: '_blank',
-          //     rel: 'noopener noreferrer',
-          //     title: 'View the code',
-          //   },
-          // },
-          // {
-          //   title: "Let's work together",
-          //   description: 'We want to hear from you, our community of fellow engineers.',
-          //   link: {
-          //     href: 'mailto:envelop@theguild.dev',
-          //     children: 'envelop@theguild.dev',
-          //     title: 'Reach us out',
+          //     href: '/docs/plugins',
+          //     children: 'Start with the tutorial',
+          //     title: 'Start with the tutorial',
           //   },
           // },
         ]}

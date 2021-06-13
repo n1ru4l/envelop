@@ -4,21 +4,11 @@ import '../../public/style.css';
 import '../../public/admonitions.css';
 
 import { appWithTranslation } from 'next-i18next';
-
-import {
-  chakra,
-  Code,
-  extendTheme,
-  Text,
-  theme as chakraTheme,
-  Tooltip,
-  UnorderedList,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { chakra, Code, Box, extendTheme, Text, theme as chakraTheme, UnorderedList, useColorModeValue } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 import { CombinedThemeProvider, DocsPage, ExtendComponents, handlePushRoute } from '@guild-docs/client';
 import { Footer, Header, Subheader } from '@theguild/components';
-
+import { CopyToClipboard } from '../components/CopyToClipboard';
 import { PackageInstall } from '../components/packageInstall';
 
 import type { AppProps } from 'next/app';
@@ -32,7 +22,19 @@ ExtendComponents({
       },
     },
   }),
-  pre: props => <Code fontSize="0.875em" colorScheme="gray" {...props} />,
+  pre: props => <div {...props} />,
+  code: props => {
+    return (
+      <Code
+        fontSize="0.9rem"
+        colorScheme={'blackAlpha'}
+        {...props}
+        padding={'20px !important'}
+        width={'100%'}
+        borderRadius={'sm'}
+      />
+    );
+  },
   inlineCode: props => {
     const colorScheme = useColorModeValue('blackAlpha', undefined);
 

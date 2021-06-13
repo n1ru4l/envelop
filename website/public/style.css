@@ -4,19 +4,11 @@ pre[class*='language-'] {
   word-break: break-word !important;
 }
 
-code {
-  font-family: 'Source Code Pro', monospace !important;
-}
-
-code * {
-  font-family: 'Source Code Pro', monospace !important;
+code, code * {
+  overflow-x: auto; font-family: "SF Mono", Menlo, monospace;
 }
 
 article {
   width: 100%;
   overflow-x: auto;
-}
-
-.remark-highlight {
-  font-size: 0.8rem;
 }

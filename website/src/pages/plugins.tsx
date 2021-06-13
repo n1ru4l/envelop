@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { useFetch } from 'use-http';
-import { MarketplaceSearch } from '@theguild/components';
+import { CardsColorful, MarketplaceSearch } from '@theguild/components';
 import { Spinner, Center } from '@chakra-ui/react';
 import type { PluginWithStats } from '../pages/api/plugins';
 import React from 'react';
@@ -8,15 +8,19 @@ import { IMarketplaceItemProps } from '@theguild/components/dist/types/component
 import { RemoteGHMarkdown } from '../components/RemoteGhMarkdown';
 import { PackageInstall } from '../components/packageInstall';
 import { Markdown } from '../components/Markdown';
+import compareDesc from 'date-fns/compareDesc';
 
 export default function Marketplace() {
   const { loading, data = [] } = useFetch<PluginWithStats[]>('/api/plugins', {}, []);
 
-  const marketplaceItems = React.useMemo(() => {
+  const marketplaceItems: Array<IMarketplaceItemProps & { raw: PluginWithStats }> = React.useMemo(() => {
     if (data && data.length > 0) {
-      return data.map<IMarketplaceItemProps>(rawPlugin => ({
+      return data.map<IMarketplaceItemProps & { raw: PluginWithStats }>(rawPlugin => ({
+        raw: rawPlugin,
         title: rawPlugin.title,
-        description: <Markdown>{rawPlugin.stats.collected.metadata.description}</Markdown>,
+        description: (
+          <Markdown>{`${rawPlugin.stats.collected.metadata.version}\n\n${rawPlugin.stats.collected.metadata.description}`}</Markdown>
+        ),
         modal: {
           header: {
             image: {
@@ -56,6 +60,38 @@ export default function Marketplace() {
     return [];
   }, [data]);
 
+  const recentlyUpdatedItems = React.useMemo(() => {
+    if (marketplaceItems && marketplaceItems.length > 0) {
+      return marketplaceItems.sort((a, b) => compareDesc(new Date(a.update), new Date(b.update)));
+    }
+
+    return [];
+  }, [marketplaceItems]);
+
+  const trendingItems = React.useMemo(() => {
+    if (marketplaceItems && marketplaceItems.length > 0) {
+      return marketplaceItems.sort((a, b) => {
+        const aMonthlyDownloads = a.raw.stats.collected.npm.downloads[2].count;
+        const bMonthlyDownloads = b.raw.stats.collected.npm.downloads[2].count;
+
+        return bMonthlyDownloads - aMonthlyDownloads;
+      });
+    }
+
+    return [];
+  }, [marketplaceItems]);
+
+  const randomThirdParty = React.useMemo(() => {
+    if (marketplaceItems && marketplaceItems.length > 0) {
+      return marketplaceItems
+        .filter(item => item.raw.npmPackage !== '@envelop/core')
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 3);
+    }
+
+    return [];
+  }, [marketplaceItems]);
+
   return (
     <>
       <Head>
@@ -68,46 +104,31 @@ export default function Marketplace() {
       ) : (
         <>
           {/* <CardsColorful
-        cards={[
-          {
-            title: 'GraphQL Modules',
-            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            category: 'New release by the guild',
-            link: {
-              href: 'https://www.graphql-modules.com/',
-              target: '_blank',
-              rel: 'noopener norefereer',
-              title: 'Learn more',
-            },
-            color: '#3547E5',
-          },
-          {
-            title: 'The best way to REST!',
-            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            category: 'Pro tip',
-            link: {
-              href: 'https://medium.com/the-guild/sofa-the-best-way-to-rest-is-graphql-d9da6e8e7693',
-              target: '_blank',
-              rel: 'noopener norefereer',
-              title: 'Learn more',
-            },
-            color: '#0B0D11',
-          },
-        ]}
-      /> */}
-
+            cards={randomThirdParty.map(item => ({
+              title: item.title,
+              description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              category: 'Discover new Envelop plugins!',
+              link: {
+                href: `https://www.npmjs.com/package/${item.raw.npmPackage}`,
+                target: '_blank',
+                rel: 'noopener norefereer',
+                title: 'Learn more',
+              },
+              color: '#3547E5',
+            }))}
+          /> */}
           <MarketplaceSearch
             title="Explore Plugins Hub"
             placeholder="Search..."
             primaryList={{
               title: 'Trending',
-              items: marketplaceItems,
+              items: trendingItems,
               placeholder: '0 results',
               pagination: 10,
             }}
             secondaryList={{
-              title: 'Recently Added',
-              items: marketplaceItems,
+              title: 'Recently Updated',
+              items: recentlyUpdatedItems,
               placeholder: '0 results',
               pagination: 10,
             }}
