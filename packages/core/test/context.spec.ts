@@ -16,6 +16,7 @@ describe('contextFactory', () => {
     expect(spiedPlugin.spies.afterContextBuilding).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.afterContextBuilding).toHaveBeenCalledWith({
       context: expect.any(Object),
+      extendContext: expect.any(Function),
     });
   });
 
@@ -57,6 +58,7 @@ describe('contextFactory', () => {
       context: {
         test: true,
       },
+      extendContext: expect.any(Function),
     });
     expect(onExecuteSpy).toHaveBeenCalledWith(
       expect.objectContaining({
