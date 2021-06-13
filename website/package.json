@@ -45,6 +45,11 @@
     "valtio": "1.0.6",
     "zustand": "3.5.2"
   },
+  "babelMacros": {
+    "twin": {
+      "preset": "emotion"
+    }
+  },
   "devDependencies": {
     "@types/concurrently": "6.2.0",
     "@types/fs-extra": "9.0.11",

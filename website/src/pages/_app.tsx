@@ -4,14 +4,24 @@ import '../../public/style.css';
 import '../../public/admonitions.css';
 
 import { appWithTranslation } from 'next-i18next';
-import { chakra, Code, Box, extendTheme, Text, theme as chakraTheme, UnorderedList, useColorModeValue } from '@chakra-ui/react';
+import {
+  chakra,
+  Code,
+  extendTheme,
+  Text,
+  theme as chakraTheme,
+  UnorderedList,
+  useColorModeValue,
+  Center,
+  Spinner,
+} from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 import { CombinedThemeProvider, DocsPage, ExtendComponents, handlePushRoute } from '@guild-docs/client';
 import { Footer, Header, Subheader } from '@theguild/components';
-import { CopyToClipboard } from '../components/CopyToClipboard';
 import { PackageInstall } from '../components/packageInstall';
 
 import type { AppProps } from 'next/app';
+import { useRouter } from 'next/router';
 
 ExtendComponents({
   a: chakra('a', {
@@ -22,19 +32,16 @@ ExtendComponents({
       },
     },
   }),
-  pre: props => <div {...props} />,
-  code: props => {
-    return (
-      <Code
-        fontSize="0.9rem"
-        colorScheme={'blackAlpha'}
-        {...props}
-        padding={'20px !important'}
-        width={'100%'}
-        borderRadius={'sm'}
-      />
-    );
-  },
+  pre: props => (
+    <Code
+      fontSize="0.9rem"
+      colorScheme={'blackAlpha'}
+      {...props}
+      padding={'20px !important'}
+      width={'100%'}
+      borderRadius={'sm'}
+    />
+  ),
   inlineCode: props => {
     const colorScheme = useColorModeValue('blackAlpha', undefined);
 
@@ -87,7 +94,6 @@ const mdxRoutes = { data: serializedMdx && JSON.parse(serializedMdx) };
 
 function AppContent(appProps: AppProps) {
   const { Component, pageProps, router } = appProps;
-
   const isDocs = router.asPath.startsWith('/docs');
 
   return (
@@ -149,6 +155,16 @@ const AppContentWrapper = appWithTranslation(function TranslatedApp(appProps) {
 });
 
 export default function App(appProps: AppProps) {
+  const { isReady } = useRouter();
+
+  if (!isReady) {
+    return (
+      <Center h="300px">
+        <Spinner size={'xl'} />
+      </Center>
+    );
+  }
+
   return (
     <CombinedThemeProvider theme={theme} accentColor={accentColor}>
       <AppContentWrapper {...appProps} />

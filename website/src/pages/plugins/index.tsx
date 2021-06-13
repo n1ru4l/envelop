@@ -2,13 +2,13 @@ import Head from 'next/head';
 import { useFetch } from 'use-http';
 import { CardsColorful, MarketplaceSearch } from '@theguild/components';
 import { Spinner, Center } from '@chakra-ui/react';
-import type { PluginWithStats } from '../pages/api/plugins';
+import type { PluginWithStats } from '../../pages/api/plugins';
 import React from 'react';
 import { IMarketplaceItemProps } from '@theguild/components/dist/types/components';
-import { RemoteGHMarkdown } from '../components/RemoteGhMarkdown';
-import { PackageInstall } from '../components/packageInstall';
-import { Markdown } from '../components/Markdown';
-import compareDesc from 'date-fns/compareDesc';
+import { RemoteGHMarkdown } from '../../components/RemoteGhMarkdown';
+import { PackageInstall } from '../../components/packageInstall';
+import { Markdown } from '../../components/Markdown';
+import { compareDesc } from 'date-fns';
 
 export default function Marketplace() {
   const { loading, data = [] } = useFetch<PluginWithStats[]>('/api/plugins', {}, []);
@@ -18,6 +18,10 @@ export default function Marketplace() {
       return data.map<IMarketplaceItemProps & { raw: PluginWithStats }>(rawPlugin => ({
         raw: rawPlugin,
         title: rawPlugin.title,
+        link: {
+          href: `/plugins/${rawPlugin.identifier}`,
+          title: `${rawPlugin.title} plugin details`,
+        },
         description: (
           <Markdown>{`${rawPlugin.stats.collected.metadata.version}\n\n${rawPlugin.stats.collected.metadata.description}`}</Markdown>
         ),
@@ -62,7 +66,9 @@ export default function Marketplace() {
 
   const recentlyUpdatedItems = React.useMemo(() => {
     if (marketplaceItems && marketplaceItems.length > 0) {
-      return marketplaceItems.sort((a, b) => compareDesc(new Date(a.update), new Date(b.update)));
+      return [...marketplaceItems].sort((a, b) => {
+        return compareDesc(new Date(a.update), new Date(b.update));
+      });
     }
 
     return [];
@@ -70,7 +76,7 @@ export default function Marketplace() {
 
   const trendingItems = React.useMemo(() => {
     if (marketplaceItems && marketplaceItems.length > 0) {
-      return marketplaceItems.sort((a, b) => {
+      return [...marketplaceItems].sort((a, b) => {
         const aMonthlyDownloads = a.raw.stats.collected.npm.downloads[2].count;
         const bMonthlyDownloads = b.raw.stats.collected.npm.downloads[2].count;
 
@@ -81,16 +87,16 @@ export default function Marketplace() {
     return [];
   }, [marketplaceItems]);
 
-  const randomThirdParty = React.useMemo(() => {
-    if (marketplaceItems && marketplaceItems.length > 0) {
-      return marketplaceItems
-        .filter(item => item.raw.npmPackage !== '@envelop/core')
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 3);
-    }
+  // const randomThirdParty = React.useMemo(() => {
+  //   if (marketplaceItems && marketplaceItems.length > 0) {
+  //     return [...marketplaceItems]
+  //       .filter(item => item.raw.npmPackage !== '@envelop/core')
+  //       .sort(() => 0.5 - Math.random())
+  //       .slice(0, 3);
+  //   }
 
-    return [];
-  }, [marketplaceItems]);
+  //   return [];
+  // }, [marketplaceItems]);
 
   return (
     <>
@@ -119,17 +125,17 @@ export default function Marketplace() {
           /> */}
           <MarketplaceSearch
             title="Explore Plugins Hub"
-            placeholder="Search..."
+            placeholder="Find plugins..."
             primaryList={{
               title: 'Trending',
               items: trendingItems,
-              placeholder: '0 results',
+              placeholder: '0 items',
               pagination: 10,
             }}
             secondaryList={{
               title: 'Recently Updated',
               items: recentlyUpdatedItems,
-              placeholder: '0 results',
+              placeholder: '0 items',
               pagination: 10,
             }}
             queryList={{

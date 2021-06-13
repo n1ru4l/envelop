@@ -80,7 +80,7 @@ export function PackageInstall({ packageName, ...props }: { packageName: string 
             return setNPM();
         }
       }}
-      {...props}
+      {...(props as any)}
     >
       <TabList>
         <Tab>yarn</Tab>

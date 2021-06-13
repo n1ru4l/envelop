@@ -19,8 +19,22 @@ async function getPackageStats(name: string): Promise<PackageInfo | null> {
 }
 
 async function plugins(req: NextApiRequest, res: NextApiResponse) {
+  const idSpecific = req.query.id as string | null;
+  let plugins = pluginsArr;
+
+  if (idSpecific) {
+    const rawPlugin = pluginsArr.find(t => t.identifier === idSpecific);
+
+    if (!rawPlugin) {
+      res.json([]);
+      return;
+    }
+
+    plugins = [rawPlugin];
+  }
+
   const allPlugins = await Promise.all(
-    pluginsArr.map(async rawPlugin => {
+    plugins.map(async rawPlugin => {
       const stats = cache.get(rawPlugin.title) || (await getPackageStats(rawPlugin.npmPackage));
 
       if (rawPlugin && !cache.has(rawPlugin.title)) {
