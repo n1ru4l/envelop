@@ -1569,17 +1569,21 @@
     protobufjs "^6.10.0"
     yargs "^16.1.1"
 
-"@guild-docs/client@0.2.10":
-  version "0.2.10"
-  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-0.2.10.tgz#5247c15f9015b428e1e8efa2705b3c81424a491a"
-  integrity sha512-gy0tSmXD7E04bfL6uALVaKDuuLbz58Tq06QVdLgJPiqburKLtb83KgiF5le2BgA6QPsAwKzmLAdBuzQPDJm/bg==
+"@guild-docs/client@0.2.11":
+  version "0.2.11"
+  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-0.2.11.tgz#6759805ff7fab6cf519c41461917187ecf97e127"
+  integrity sha512-YEXWxDJhYagH9V+29B2068O+QdsX/1xOSjf2+0n6HU1xdrSJGcWKOisPkyfCT2nrWwLqz8BUFyYDApjGyMUTEQ==
   dependencies:
     "@guild-docs/types" "^0.2.8"
     immer "^9.0.3"
     next-mdx-remote "^3.0.2"
+    next-seo "^4.24.0"
     nprogress "^0.2.0"
+    react-icons "^4.2.0"
     react-intersection-observer "^8.32.0"
+    react-use "^17.2.4"
     use-immer "^0.5.2"
+    zustand "^3.5.2"
 
 "@guild-docs/server@0.2.12":
   version "0.2.12"
@@ -8211,6 +8215,11 @@ next-remote-watch@1.0.0:
     commander "^5.0.0"
     express "^4.17.1"
 
+next-seo@^4.24.0:
+  version "4.24.0"
+  resolved "https://registry.yarnpkg.com/next-seo/-/next-seo-4.24.0.tgz#7c0447da00b8574dcda5c6979771a7f6efd24f55"
+  integrity sha512-9VQXfXAelhE+hAWzJ4azigQaW3FPX0kU0eYKFQXKsQjgY7AWtukjRGXls0oSIk8khhDJwmCt46EwsO9n5DDW6Q==
+
 next@10.2.3:
   version "10.2.3"
   resolved "https://registry.yarnpkg.com/next/-/next-10.2.3.tgz#5aa058a63626338cea91c198fda8f2715c058394"
@@ -9321,7 +9330,7 @@ react-i18next@^11.8.13:
     "@babel/runtime" "^7.14.0"
     html-parse-stringify "^3.0.1"
 
-react-icons@4.2.0:
+react-icons@4.2.0, react-icons@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.2.0.tgz#6dda80c8a8f338ff96a1851424d63083282630d0"
   integrity sha512-rmzEDFt+AVXRzD7zDE21gcxyBizD/3NqjbX6cmViAgdqfJ2UiLer8927/QhhrXQV7dEj/1EGuOTPp7JnLYVJKQ==
@@ -9438,7 +9447,7 @@ react-universal-interface@^0.6.2:
   resolved "https://registry.npmjs.org/react-universal-interface/-/react-universal-interface-0.6.2.tgz#5e8d438a01729a4dbbcbeeceb0b86be146fe2b3b"
   integrity sha512-dg8yXdcQmvgR13RIlZbTRQOoUrDciFVoSBZILwjE2LFISxZZ8loVJKAkuzswl5js8BHda79bIb2b84ehU8IjXw==
 
-react-use@17.2.4:
+react-use@17.2.4, react-use@^17.2.4:
   version "17.2.4"
   resolved "https://registry.yarnpkg.com/react-use/-/react-use-17.2.4.tgz#1f89be3db0a8237c79253db0a15e12bbe3cfeff1"
   integrity sha512-vQGpsAM0F5UIlshw5UI8ULGPS4yn5rm7/qvn3T1Gnkrz7YRMEEMh+ynKcmRloOyiIeLvKWiQjMiwRGtdbgs5qQ==
@@ -11812,7 +11821,7 @@ zen-observable@^0.8.0:
   resolved "https://registry.npmjs.org/zen-observable/-/zen-observable-0.8.15.tgz#96415c512d8e3ffd920afd3889604e30b9eaac15"
   integrity sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==
 
-zustand@3.5.2:
+zustand@3.5.2, zustand@^3.5.2:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.5.2.tgz#cf162a8bd1d86475bf308bc856c4d02ff13fd53c"
   integrity sha512-HUCQI9O77/D/zvoWPNv4dwLriiiY2xtEqnQ0TVY8uaPjmOHls04Okd0w3sWUE9Ex2LaYlSk11DbPPIOZ6shEWg==
