@@ -16,12 +16,11 @@ import {
   Spinner,
 } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
-import { CombinedThemeProvider, DocsPage, ExtendComponents, handlePushRoute } from '@guild-docs/client';
+import { AppSeoProps, CombinedThemeProvider, DocsPage, ExtendComponents, handlePushRoute } from '@guild-docs/client';
 import { Footer, Header, Subheader } from '@theguild/components';
 import { PackageInstall } from '../components/packageInstall';
 
 import type { AppProps } from 'next/app';
-import { useRouter } from 'next/router';
 
 ExtendComponents({
   a: chakra('a', {
@@ -154,19 +153,17 @@ const AppContentWrapper = appWithTranslation(function TranslatedApp(appProps) {
   return <AppContent {...appProps} />;
 });
 
+const defaultSeo: AppSeoProps = {
+  title: 'Envelop',
+  description: 'A GraphQL plugin system for improved developer experience.',
+  logo: {
+    url: 'https://www.envelop.dev/logo.png',
+  },
+};
+
 export default function App(appProps: AppProps) {
-  const { isReady } = useRouter();
-
-  if (!isReady) {
-    return (
-      <Center h="300px">
-        <Spinner size={'xl'} />
-      </Center>
-    );
-  }
-
   return (
-    <CombinedThemeProvider theme={theme} accentColor={accentColor}>
+    <CombinedThemeProvider theme={theme} accentColor={accentColor} defaultSeo={defaultSeo}>
       <AppContentWrapper {...appProps} />
     </CombinedThemeProvider>
   );
