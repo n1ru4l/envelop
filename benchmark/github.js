@@ -47,7 +47,7 @@ export function githubComment(data, options) {
     }
   }
 
-  const prNumber = getPullRequestNumber();
+  const prNumber = options.pr || getPullRequestNumber();
 
   if (!prNumber) {
     console.log('Not a Pull Request. Skipping comment');

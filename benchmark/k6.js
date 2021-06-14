@@ -34,6 +34,7 @@ export function handleSummary(data) {
   githubComment(data, {
     token: __ENV.GITHUB_TOKEN,
     commit: __ENV.GITHUB_SHA,
+    pr: __ENV.GITHUB_PR,
     org: 'dotansimha',
     repo: 'envelop',
     renderTitle() {
