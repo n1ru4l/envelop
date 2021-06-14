@@ -28,7 +28,7 @@ This plugin expects the Node.js agent, [newrelic npm package](https://www.npmjs.
 yarn add newrelic @envelop/newrelic
 ```
 
-## Usage Example
+## Basic usage Example
 
 ```ts
 import { envelop } from '@envelop/core';
@@ -38,10 +38,10 @@ const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useNewRelic({
-      includeExecuteVariables: false, // default `false`. When set to `true`, includes the operation variables values
+      includeExecuteVariables: false, // default `false`. When set to `true`, includes all the operation variables with their values
       includeRawResult: false, // default: `false`. When set to `true`, includes the execution result
       trackResolvers: true, // default `false`. When set to `true`, track resolvers as segments to monitor their performance
-      includeResolverArgs: false, // default `false`. When set to `true`, include the args passed to resolvers
+      includeResolverArgs: false, // default `false`. When set to `true`, includes all the arguments passed to resolvers with their values
       rootFieldsNaming: true, // default `false`. When set to `true` append the names of operation root fields to the transaction name
       operationNameProperty: 'hash', // default empty. When passed will check for the property name passed, within the operation object. Will eventually use its value as operation name. Useful for custom operation properties (e.g. queryId/hash)
     }),
@@ -51,6 +51,24 @@ const getEnveloped = envelop({
 
 > Note: Transaction and segment/span timings may be affected by other plugins used. In order to get more accurate tracking, it is recommended to add the New Relic plugin last.
 
+## Advanced usage
+The plugin allows you to keep control over the variables and arguments that are tracked in New Relic.  
+In addition to the basic `true/false` boolean value, `includeExecuteVariables` and `includeResolverArgs` also accept a RegEx pattern. This allows you to implement white and black listing of properties to be tracked in New Relic.  
+
+This is particularly useful if you have properties coming through variables and arguments that are useful for debugging, but you don't want to leak users' data (such as PII).  
+Below is a quick example of how you can use RegEx to set up white/black listing functionalities.  
+
+```ts
+useNewRelic({
+  includeExecuteVariables: /^(client.*|application.*)$.*$/i, // whitelist, track only variables whose name starts with client or application (e.g. clientName, applicationId)
+  trackResolvers: true, // track resolvers, since we also want to track resolvers' arguments
+  includeResolverArgs: /^(?!(name|email|password)$).*$/, // blacklist, track all arguments whose name does not match 'name', 'email' nor 'password'
+}),
+```
+
+Obviously, the ones above are just a couple of examples, but clearly you have endless options to use any RegEx pattern to filter the variables and arguments in the way that best work for you.  
+
+> Be aware that the only way to filter variables and arguments is to loop through them, so there is an O(_n_) cost when filtering, where _n_ is the number of variables sent to the operation (when tracking execute variables), or the number of arguments passed to resolvers (when tracking resolvers arguments).
 ## Agent Configuration
 
 For full details about New Relic Agent configuration, we recommend reading [New Relic's official Node.js agent configuration documentation](https://docs.newrelic.com/docs/agents/nodejs-agent/installation-configuration/nodejs-agent-configuration/).

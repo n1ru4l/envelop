@@ -19,13 +19,18 @@ enum AttributeName {
 }
 
 export type UseNewRelicOptions = {
-  includeExecuteVariables?: boolean;
+  includeExecuteVariables?: boolean | RegExp;
   includeRawResult?: boolean;
   trackResolvers?: boolean;
-  includeResolverArgs?: boolean;
+  includeResolverArgs?: boolean | RegExp;
   rootFieldsNaming?: boolean;
   operationNameProperty?: string;
 };
+
+interface InternalOptions extends UseNewRelicOptions {
+  isExecuteVariablesRegex?: boolean;
+  isResolverArgsRegex?: boolean;
+}
 
 const DEFAULT_OPTIONS: UseNewRelicOptions = {
   includeExecuteVariables: false,
@@ -37,10 +42,12 @@ const DEFAULT_OPTIONS: UseNewRelicOptions = {
 };
 
 export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
-  const options = {
+  const options: InternalOptions = {
     ...DEFAULT_OPTIONS,
     ...(rawOptions || {}),
   };
+  options.isExecuteVariablesRegex = options.includeExecuteVariables instanceof RegExp;
+  options.isResolverArgsRegex = options.includeResolverArgs instanceof RegExp;
   const logger = instrumentationApi.logger.child({ component: AttributeName.COMPONENT_NAME });
   logger.info(`${AttributeName.COMPONENT_NAME} registered`);
 
@@ -70,8 +77,15 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
       spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_NAME, operationName);
       spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_TYPE, operationType);
       spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_DOCUMENT, document);
-      options.includeExecuteVariables &&
-        spanContext.addCustomAttribute(AttributeName.EXECUTION_VARIABLES, JSON.stringify(args.variableValues || {}));
+
+      if (options.includeExecuteVariables) {
+        const rawVariables = args.variableValues || {};
+        const executeVariablesToTrack = options.isExecuteVariablesRegex
+          ? filterPropertiesByRegex(rawVariables, options.includeExecuteVariables as RegExp)
+          : rawVariables;
+
+        spanContext.addCustomAttribute(AttributeName.EXECUTION_VARIABLES, JSON.stringify(executeVariablesToTrack));
+      }
 
       const operationSegment = instrumentationApi.getActiveSegment();
 
@@ -102,8 +116,15 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
             resolverSegment.addAttribute(AttributeName.RESOLVER_FIELD_PATH, formattedPath);
             resolverSegment.addAttribute(AttributeName.RESOLVER_TYPE_NAME, parentType.toString());
             resolverSegment.addAttribute(AttributeName.RESOLVER_RESULT_TYPE, returnType.toString());
-            options.includeResolverArgs &&
-              resolverSegment.addAttribute(AttributeName.RESOLVER_ARGS, JSON.stringify(resolversArgs || {}));
+
+            if (options.includeResolverArgs) {
+              const rawArgs = resolversArgs || {};
+              const resolverArgsToTrack = options.isResolverArgsRegex
+                ? filterPropertiesByRegex(rawArgs, options.includeResolverArgs as RegExp)
+                : rawArgs;
+
+              resolverSegment.addAttribute(AttributeName.RESOLVER_ARGS, JSON.stringify(resolverArgsToTrack));
+            }
 
             return ({ result }) => {
               if (options.includeRawResult) {
@@ -132,7 +153,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
             const transaction = instrumentationApi.tracer.getTransaction();
 
             for (const error of result.errors) {
-              agent.errors.add(transaction, error);
+              agent.errors.add(transaction, JSON.stringify(error));
             }
           }
 
@@ -155,4 +176,14 @@ function flattenPath(fieldPath: Path, delimiter = '/') {
   }
 
   return pathArray.reverse().join(delimiter);
+}
+
+function filterPropertiesByRegex(initialObject: { [key: string]: any }, pattern: RegExp) {
+  const filteredObject = {};
+
+  for (const property of Object.keys(initialObject)) {
+    if (pattern.test(property)) filteredObject[property] = initialObject[property];
+  }
+
+  return filteredObject;
 }
