@@ -10,7 +10,7 @@ export default function Index() {
       </Head>
       <HeroGradient
         title="A GraphQL plugin system for improved developer experience"
-        description="Use any NodeJS server framework and any GraphQL schema, with a simple, sharable plugins system ."
+        description="Use any NodeJS server framework and any GraphQL schema, with a simple, shareable plugins system ."
         link={{
           href: '/docs',
           children: 'Get Started',
