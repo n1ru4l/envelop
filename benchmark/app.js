@@ -35,7 +35,9 @@ const getEnveloped = envelop({
     useGraphQlJit(),
     useParserCache(),
     useValidationCache(),
-    useExtendContext(() => {
+    useExtendContext(async () => {
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       return {
         customContext: 'test',
       };
