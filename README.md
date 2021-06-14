@@ -133,7 +133,7 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 
 ## Sharing / Composing `envelop`s
 
-After an `envelop` has been created, you can share it with others as a complete layer of plugins. This is useful if you wish to create a predefined layer of plugins, and share it with others. You can use it as a shell and as a base for writing sharable pieces of servers.
+After an `envelop` has been created, you can share it with others as a complete layer of plugins. This is useful if you wish to create a predefined layer of plugins, and share it with others. You can use it as a shell and as a base for writing shareable pieces of servers.
 
 You can read more about [Sharing and Composing Envelops here](https://www.envelop.dev/docs/composing-envelop).
 
