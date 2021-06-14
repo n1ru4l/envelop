@@ -39,4 +39,4 @@ jobs:
       - name: Run Benchmark
         run: |
           yarn loadtest:start-server &
-          k6 -e GITHUB_PR=${{ github.event.number }} -e GITHUB_SHA=${{ steps.vars.outputs.sha_short }} -e GITHUB_TOKEN=${{secrets.GH_API_TOKEN}} -e GRAPHQL_HOSTNAME=0.0.0.0 run ./benchmark/k6.js
+          k6 -e GITHUB_PR=${{ github.event.number }} -e GITHUB_SHA=${{ github.sha }} -e GITHUB_TOKEN=${{secrets.GH_API_TOKEN}} -e GRAPHQL_HOSTNAME=0.0.0.0 run ./benchmark/k6.js
