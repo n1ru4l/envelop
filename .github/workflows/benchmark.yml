@@ -33,10 +33,13 @@ jobs:
         run: yarn install
       - name: Build
         run: yarn build
-      - name: Start Test Server
-        run: yarn loadtest:start-server &
-      - name: Run k6 test
-        uses: k6io/action@v0.1
-        with:
-          filename: ./benchmark/k6.js
-          flags: --quiet -e GITHUB_SHA=${{ github.sha }} -e GITHUB_TOKEN=${{secrets.GH_API_TOKEN}} -e GRAPHQL_HOSTNAME=0.0.0.0 
+      - name: Setup K6
+        run: |
+          sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install k6
+      - name: Run Benchmark
+        run: |
+          yarn loadtest:start-server &
+          k6 -e GITHUB_SHA=${{ github.sha }} -e GITHUB_TOKEN=${{secrets.GH_API_TOKEN}} -e GRAPHQL_HOSTNAME=0.0.0.0 run ./benchmark/k6.js
