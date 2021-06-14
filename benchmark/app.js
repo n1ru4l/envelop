@@ -1,22 +1,11 @@
 /// @ts-check
 const { makeExecutableSchema } = require('@graphql-tools/schema');
-const { envelop, useSchema, useExtendContext } = require('../packages/core/dist');
-const { useParserCache } = require('../packages/plugins/parser-cache/dist');
-const { useValidationCache } = require('../packages/plugins/validation-cache/dist');
+const { envelop, useSchema, useExtendContext } = require('../packages/core');
+const { useParserCache } = require('../packages/plugins/parser-cache');
+const { useGraphQlJit } = require('../packages/plugins/graphql-jit');
+const { useValidationCache } = require('../packages/plugins/validation-cache');
 const { fastify } = require('fastify');
 const { getGraphQLParameters, processRequest } = require('graphql-helix');
-
-const HR_TO_NS = 1e9;
-const NS_TO_MS = 1e6;
-
-const deltaFrom = hrtime => {
-  const delta = process.hrtime(hrtime);
-  const ns = delta[0] * HR_TO_NS + delta[1];
-
-  return ns / NS_TO_MS;
-};
-
-let count = 0;
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `
@@ -43,56 +32,16 @@ const schema = makeExecutableSchema({
 const getEnveloped = envelop({
   plugins: [
     useSchema(schema),
-    {
-      onParse() {
-        const hrtime = process.hrtime();
-
-        return ({ extendContext }) => {
-          const time = deltaFrom(hrtime);
-
-          extendContext({
-            k6_parse: time,
-          });
-        };
-      },
-      onValidate() {
-        const hrtime = process.hrtime();
-
-        return ({ extendContext }) => {
-          const time = deltaFrom(hrtime);
-
-          extendContext({
-            k6_validate: time,
-          });
-        };
-      },
-      onContextBuilding() {
-        const hrtime = process.hrtime();
-
-        return ({ extendContext }) => {
-          const time = deltaFrom(hrtime);
-
-          extendContext({
-            k6_context: time,
-          });
-        };
-      },
-      onExecute({ args }) {
-        const hrtime = process.hrtime();
-
-        return {
-          onExecuteDone: ({ result }) => {
-            result.extensions = {
-              k6_execute: deltaFrom(hrtime),
-              ...(args.contextValue || {}),
-            };
-          },
-        };
-      },
-    },
+    useGraphQlJit(),
     useParserCache(),
     useValidationCache(),
+    useExtendContext(() => {
+      return {
+        customContext: 'test',
+      };
+    }),
   ],
+  enableInternalTracing: true,
 });
 const app = fastify();
 
@@ -100,8 +49,7 @@ app.route({
   method: ['GET', 'POST'],
   url: '/graphql',
   async handler(req, res) {
-    const sharedObj = {};
-    const { parse, validate, contextFactory, execute, schema } = getEnveloped(sharedObj);
+    const proxy = getEnveloped({ req });
     const request = {
       body: req.body,
       headers: req.headers,
@@ -116,10 +64,10 @@ app.route({
       variables,
       request,
       schema,
-      parse,
-      validate,
-      execute,
-      contextFactory,
+      parse: proxy.parse,
+      validate: proxy.validate,
+      execute: proxy.execute,
+      contextFactory: proxy.contextFactory,
     });
 
     if (result.type === 'RESPONSE') {

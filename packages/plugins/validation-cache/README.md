@@ -2,6 +2,8 @@
 
 This plugins adds simple LRU caching to your `validate`, to improve performance by caching the validation result.
 
+This plugins improves performance of validating by ~50% (based on benchmarks).
+
 ## Getting Started
 
 ```
