@@ -18,7 +18,7 @@ export const options = {
   thresholds: {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: ['p(95)<=25'],
+    http_req_duration: __ENV.CI ? ['p(95)<=40'] : ['p(95)<=25'],
     graphql_execute: ['p(95)<=1'],
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
@@ -41,7 +41,7 @@ export function handleSummary(data) {
 
       if (thresholds.failures) {
         result.push(
-          `**Performance regression detected**: it seems like your Pull Request adds some extra latency to the GraphQL requests.'`
+          `**Performance regression detected**: it seems like your Pull Request adds some extra latency to the GraphQL requests, or to envelop runtime.`
         );
       }
 
