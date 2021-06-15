@@ -1,15 +1,18 @@
-import { useLiveQuery } from '../src';
+import { useLiveQuery, GraphQLLiveDirectiveSDL } from '../src';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { createTestkit } from '@envelop/testing';
 import { parse } from 'graphql';
 
 const schema = makeExecutableSchema({
-  typeDefs: /* GraphQL */ `
-    type Query {
-      greetings: [String!]
-    }
-  `,
+  typeDefs: [
+    /* GraphQL */ `
+      type Query {
+        greetings: [String!]
+      }
+    `,
+    GraphQLLiveDirectiveSDL,
+  ],
   resolvers: {
     Query: {
       greetings: (_: unknown, __: unknown, context) => context.greetings,

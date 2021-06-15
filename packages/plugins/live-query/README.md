@@ -16,11 +16,14 @@ import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const schema = makeExecutableSchema({
-  typeDefs: /* GraphQL */ `
-    type Query {
-      greetings: [String!]
-    }
-  `,
+  typeDefs: [
+    /* GraphQL */ `
+      type Query {
+        greetings: [String!]
+      }
+    `,
+    GraphQLLiveDirectiveSDL,
+  ],
   resolvers: {
     Query: {
       greetings: (_, __, context) => context.greetings,
@@ -47,5 +50,20 @@ const getEnveloped = envelop({
   ],
 });
 ```
+
+## Usage with `graphql.js` `GraphQLSchema`
+
+You need to pass the `GraphQLLiveDirective` to the list of directives:
+
+```tsx
+import { GraphQLSchema } from 'graphql';
+import { GraphQLLiveDirective } from '@envelop/live-query';
+
+const schema = new GraphQLSchema({
+  directives: [...specifiedDirectives, GraphQLLiveDirective],
+});
+```
+
+## Further information
 
 For more detail check out https://github.com/n1ru4l/graphql-live-query
