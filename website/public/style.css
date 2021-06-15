@@ -4,8 +4,9 @@ pre[class*='language-'] {
   word-break: break-word !important;
 }
 
-code, code * {
-  overflow-x: auto; font-family: "SF Mono", Menlo, monospace;
+code,
+code * {
+  font-family: 'SF Mono', 'Source Code Pro', Menlo, monospace;
 }
 
 article {
