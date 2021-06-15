@@ -1,5 +1,11 @@
 # @envelop/sentry
 
+## 0.3.0
+
+### Minor Changes
+
+- eb6f53b: ESM Support for all plugins and envelop core
+
 ## 0.2.1
 
 ### Patch Changes

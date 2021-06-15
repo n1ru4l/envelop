@@ -1,5 +1,19 @@
 # @envelop/core
 
+## 0.3.0
+
+### Minor Changes
+
+- a5bee94: \* Allow access to context in all phases
+  - Improve usage of `getEnveloped` function and allow to pass initial context there
+- eb6f53b: ESM Support for all plugins and envelop core
+
+### Patch Changes
+
+- Updated dependencies [a5bee94]
+- Updated dependencies [eb6f53b]
+  - @envelop/types@0.2.0
+
 ## 0.2.2
 
 ### Patch Changes
