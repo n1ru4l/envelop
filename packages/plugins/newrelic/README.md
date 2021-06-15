@@ -38,6 +38,7 @@ const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useNewRelic({
+      includeOperationDocument: true, // default `false`. When set to `true`, includes the GraphQL document defining the operations and fragments
       includeExecuteVariables: false, // default `false`. When set to `true`, includes all the operation variables with their values
       includeRawResult: false, // default: `false`. When set to `true`, includes the execution result
       trackResolvers: true, // default `false`. When set to `true`, track resolvers as segments to monitor their performance

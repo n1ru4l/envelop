@@ -19,6 +19,7 @@ enum AttributeName {
 }
 
 export type UseNewRelicOptions = {
+  includeOperationDocument?: boolean,
   includeExecuteVariables?: boolean | RegExp;
   includeRawResult?: boolean;
   trackResolvers?: boolean;
@@ -33,6 +34,7 @@ interface InternalOptions extends UseNewRelicOptions {
 }
 
 const DEFAULT_OPTIONS: UseNewRelicOptions = {
+  includeOperationDocument: false,
   includeExecuteVariables: false,
   includeRawResult: false,
   trackResolvers: false,
@@ -76,7 +78,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
 
       spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_NAME, operationName);
       spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_TYPE, operationType);
-      spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_DOCUMENT, document);
+      options.includeOperationDocument && spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_DOCUMENT, document);
 
       if (options.includeExecuteVariables) {
         const rawVariables = args.variableValues || {};
