@@ -13,6 +13,8 @@
     "@envelop-examples/graphql-ws",
     "@envelop-examples/apollo-server",
     "@envelop-examples/graphql-helix",
-    "@envelop-examples/simple-http"
+    "@envelop-examples/graphql-socket.io",
+    "@envelop-examples/simple-http",
+    "@envelop-examples/with-esm"
   ]
 }
