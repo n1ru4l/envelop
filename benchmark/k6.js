@@ -13,8 +13,8 @@ const trace = {
 };
 
 export const options = {
-  vus: 100,
-  duration: '30s',
+  vus: 10,
+  duration: '60s',
   thresholds: {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
