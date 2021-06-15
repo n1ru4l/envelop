@@ -19,7 +19,7 @@ enum AttributeName {
 }
 
 export type UseNewRelicOptions = {
-  includeOperationDocument?: boolean,
+  includeOperationDocument?: boolean;
   includeExecuteVariables?: boolean | RegExp;
   includeRawResult?: boolean;
   trackResolvers?: boolean;
