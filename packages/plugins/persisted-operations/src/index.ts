@@ -28,17 +28,40 @@ export type UsePersistedOperationsOptions = {
    * The store to use. You can implement any custom store that loads the data from any source.
    */
   store: PersistedOperationsStore;
+  /**
+   * Writes operation id to the context (enabled by default)
+   */
+  writeToContext?: boolean;
 };
 
-export const usePersistedOperations = (options: UsePersistedOperationsOptions): Plugin => {
+const symbolInContext = Symbol('operationId');
+
+export interface PluginContext {
+  [symbolInContext]?: string;
+}
+
+export function readOperationId(context: PluginContext) {
+  return context[symbolInContext];
+}
+
+export const usePersistedOperations = (options: UsePersistedOperationsOptions): Plugin<PluginContext> => {
+  const writeToContext = options.writeToContext !== false;
+
   return {
-    onParse({ params, setParsedDocument }) {
+    onParse({ params, setParsedDocument, extendContext }) {
       if (typeof params.source === 'string') {
         if (options.store.canHandle(params.source)) {
           const rawResult = options.store.get(params.source);
 
           if (rawResult) {
             const result = typeof rawResult === 'string' ? parse(rawResult) : rawResult;
+
+            if (writeToContext) {
+              extendContext({
+                [symbolInContext]: params.source,
+              });
+            }
+
             setParsedDocument(result);
           } else {
             throw new NonPersistedOperationError(`The operation hash "${params.source}" is not valid`);
