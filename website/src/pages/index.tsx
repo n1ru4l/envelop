@@ -9,8 +9,8 @@ export default function Index() {
         <title>Envelop</title>
       </Head>
       <HeroGradient
-        title="A GraphQL plugin system for improved developer experience"
-        description="Use any NodeJS server framework and any GraphQL schema, with a simple, shareable plugins system ."
+        title="Envelop: The missing GraphQL plugin system"
+        description={`With envelop it's easier to develop, collaborate and share GraphQL feautures with any server, and across GraphQL schemas.`}
         link={{
           href: '/docs',
           children: 'Get Started',
