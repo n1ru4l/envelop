@@ -8,6 +8,7 @@
     "./packages/plugins/*",
     "./examples/apollo-server",
     "./examples/graphql-ws",
+    "./examples/graphql-socket.io",
     "./examples/simple-http",
     "./examples/graphql-helix",
     "./examples/lambda-aws",
