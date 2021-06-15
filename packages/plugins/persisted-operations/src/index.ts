@@ -34,7 +34,6 @@ export type UsePersistedOperationsOptions = {
   writeToContext?: boolean;
 };
 
-const symbolInDocument = Symbol('operationId');
 const symbolInContext = Symbol('operationId');
 
 export interface PluginContext {
@@ -48,24 +47,8 @@ export function readOperationId(context: PluginContext) {
 export const usePersistedOperations = (options: UsePersistedOperationsOptions): Plugin<PluginContext> => {
   const writeToContext = options.writeToContext !== false;
 
-  function updateContext({
-    args,
-    extendContext,
-  }: {
-    args: ExecutionArgs;
-    extendContext: (contextExtension: Partial<PluginContext>) => void;
-  }) {
-    const operationId = args.document[symbolInDocument];
-
-    if (writeToContext && operationId) {
-      extendContext({
-        [symbolInContext]: operationId,
-      });
-    }
-  }
-
   return {
-    onParse({ params, setParsedDocument }) {
+    onParse({ params, setParsedDocument, extendContext }) {
       if (typeof params.source === 'string') {
         if (options.store.canHandle(params.source)) {
           const rawResult = options.store.get(params.source);
@@ -74,11 +57,8 @@ export const usePersistedOperations = (options: UsePersistedOperationsOptions): 
             const result = typeof rawResult === 'string' ? parse(rawResult) : rawResult;
 
             if (writeToContext) {
-              Object.defineProperty(result, symbolInDocument, {
-                value: params.source,
-                enumerable: false,
-                configurable: false,
-                writable: false,
+              extendContext({
+                [symbolInContext]: params.source,
               });
             }
 
@@ -93,7 +73,5 @@ export const usePersistedOperations = (options: UsePersistedOperationsOptions): 
         }
       }
     },
-    onExecute: updateContext,
-    onSubscribe: updateContext,
   };
 };
