@@ -44,7 +44,7 @@ ExtendComponents({
   inlineCode: props => {
     const colorScheme = useColorModeValue('blackAlpha', undefined);
 
-    return <Code margin="1px" colorScheme={colorScheme} fontWeight="semibold" fontSize="0.875em" {...props} />;
+    return <Code display={'inline'} margin="1px" colorScheme={colorScheme} fontWeight="semibold" fontSize="0.875em" {...props} />;
   },
   Text,
   PackageInstall,

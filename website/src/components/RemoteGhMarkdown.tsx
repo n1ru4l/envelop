@@ -10,7 +10,15 @@ const MD_COMPONENTS = {
     const colorScheme = useColorModeValue('blackAlpha', undefined);
 
     return inline ? (
-      <Code {...props} margin="1px" colorScheme={colorScheme} fontWeight="semibold" fontSize="0.9em" borderRadius={'sm'} />
+      <Code
+        {...props}
+        display={'inline'}
+        margin="1px"
+        colorScheme={colorScheme}
+        fontWeight="semibold"
+        fontSize="0.9em"
+        borderRadius={'sm'}
+      />
     ) : (
       <Code
         fontSize="0.9rem"

@@ -190,4 +190,11 @@ export const pluginsArr: RawPlugin[] = [
     iconUrl: 'https://the-guild.dev/static/shared-logos/products/hive.svg',
     tags: ['tracing', 'metrics', 'dev-tools'],
   },
+  {
+    identifier: 'use-newrelic',
+    title: 'useNewRelic',
+    npmPackage: '@envelop/newrelic',
+    iconUrl: '/assets/logos/newrelic.png',
+    tags: ['tracing', 'metrics', 'error-handling'],
+  },
 ];

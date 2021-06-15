@@ -131,6 +131,7 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 | useExtendedValidation      | [`@envelop/extended-validation`](./packages/plugins/extended-validation)     | Adds custom validations to the execution pipeline, with access to variables. Comes with an implementation for `@oneOf` directive for input union. |
 | usePreloadAssets           | [`@envelop/preload-assets`](./packages/plugins/preload-assets)               | Register asset that should be prefetched on the client via an extensions field.                                                                   |
 | usePersistedOperations     | [`@envelop/persisted-operations`](./packages/plugins/persisted-operations)   | Simple implementation of persisted operations/queries, based on custom store.                                                                     |
+| useNewRelic     | [`@envelop/newrelic`](./packages/plugins/newrelic)   | Instrument your GraphQL application with New Relic reporting.                                                                       |
 
 ## Sharing / Composing `envelop`s
 

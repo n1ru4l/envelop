@@ -7,6 +7,7 @@ const MD_COMPONENTS = {
   ...components,
   a: chakra('a', {
     baseStyle: {
+      display: 'inline',
       color: '#2f77c9',
       _hover: {
         textDecoration: 'underline',

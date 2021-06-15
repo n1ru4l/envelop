@@ -85,12 +85,14 @@ If you choose to configure the New Relic Agent through environment variables, th
 The variables are the same you can set in newrelic.js file, you just need to know that they need to start with `NEW_RELIC_`, obviously, the variables name must be fully uppercase.
 
 The two variables that are always required are:  
+
 | Description | newrelic.js | Environment variable |
 | ----------- | ----------- | -------------------- |
 | Application name | `app_name: ['MyAppName']` | `NEW_RELIC_APP_NAME=MyAppName` |
 | License key | `license_key: '40HexadecimalCharacters'` | `NEW_RELIC_LICENSE_KEY=40HexadecimalCharacters` |
 
 Other variables that are popularly used are:  
+
 | Description | newrelic.js | Environment variable |
 | ----------- | ----------- | -------------------- |
 | Enable distributed tracing | `distributed_tracing: { enabled: true }` | `NEW_RELIC_DISTRIBUTED_TRACING_ENABLED=true` |
