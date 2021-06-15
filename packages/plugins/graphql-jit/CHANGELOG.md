@@ -1,5 +1,11 @@
 # @envelop/graphql-jit
 
+## 0.2.0
+
+### Minor Changes
+
+- eb6f53b: ESM Support for all plugins and envelop core
+
 ## 0.1.1
 
 ### Patch Changes
