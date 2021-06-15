@@ -18,7 +18,7 @@ export const options = {
   thresholds: {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: __ENV.CI ? ['p(95)<=40'] : ['p(95)<=25'],
+    http_req_duration: __ENV.CI ? ['p(95)<=45'] : ['p(95)<=25'],
     graphql_execute: ['p(95)<=1'],
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
