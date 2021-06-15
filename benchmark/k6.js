@@ -13,41 +13,47 @@ const trace = {
 };
 
 export const options = {
-  vus: 10,
-  duration: '20s',
+  vus: 100,
+  duration: '30s',
   thresholds: {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
     http_req_duration: ['p(95)<=25'],
-    graphql_execute: ['p(95)<=5'],
-    graphql_context: ['p(95)<=5'],
-    graphql_validate: ['p(95)<=5'],
-    graphql_parse: ['p(95)<=5'],
+    graphql_execute: ['p(95)<=1'],
+    graphql_context: ['p(95)<=1'],
+    graphql_validate: ['p(95)<=1'],
+    graphql_parse: ['p(95)<=1'],
   },
 };
 
 export function handleSummary(data) {
-  if (!__ENV.GITHUB_TOKEN) {
-    return;
-  }
-
   githubComment(data, {
     token: __ENV.GITHUB_TOKEN,
     commit: __ENV.GITHUB_SHA,
     pr: __ENV.GITHUB_PR,
     org: 'dotansimha',
     repo: 'envelop',
-    renderTitle() {
-      return 'Benchmark Failed';
+    renderTitle({ passes }) {
+      return passes ? '✅ Benchmark Results' : '❌ Benchmark Failed';
     },
-    renderMessage({ checks, thresholds }) {
-      return [
-        thresholds.failures
-          ? '**Performance regression detected**: it seems like your Pull Request adds some extra latency to the GraphQL requests.'
-          : '',
-        checks.failures ? '**Failed assertions detected**: some GraphQL operations included in the loadtest are failing.' : '',
-        `> If the performance regression is expected, please increase the failing threshold.`,
-      ].join('\n');
+    renderMessage({ passes, checks, thresholds }) {
+      const result = [];
+
+      if (thresholds.failures) {
+        result.push(
+          `**Performance regression detected**: it seems like your Pull Request adds some extra latency to the GraphQL requests.'`
+        );
+      }
+
+      if (checks.failures) {
+        result.push('**Failed assertions detected**: some GraphQL operations included in the loadtest are failing.');
+      }
+
+      if (!passes) {
+        result.push(`> If the performance regression is expected, please increase the failing threshold.`);
+      }
+
+      return result.join('\n');
     },
   });
 
@@ -59,18 +65,24 @@ export function handleSummary(data) {
 export default function () {
   const res = graphql({
     query: /* GraphQL */ `
-      query me {
-        me {
+      query authors {
+        authors {
           id
+          name
+          company
+          books {
+            id
+            name
+            numPages
+          }
         }
       }
     `,
     variables: {},
-    operationName: 'me',
+    operationName: 'authors',
   });
 
-  const tracingData = res.json().extensions.envelopTracing;
-
+  const tracingData = (res.json().extensions || {}).envelopTracing || {};
   tracingData.parse && trace.parse.add(tracingData.parse);
   tracingData.validate && trace.validate.add(tracingData.validate);
   tracingData.contextFactory && trace.context.add(tracingData.contextFactory);
@@ -79,6 +91,6 @@ export default function () {
 
   check(res, {
     no_errors: checkNoErrors,
-    expected_result: resp => 'id' in resp.json().data.me,
+    expected_result: resp => 'id' in resp.json().data.authors[0],
   });
 }

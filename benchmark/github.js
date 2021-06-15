@@ -55,18 +55,11 @@ export function githubComment(data, options) {
   }
 
   const existingComment = getExistingComment(prNumber);
-
   const passes = checkFailures === 0 && thresholdFailures === 0;
-
-  if (passes && existingComment) {
-    console.log('Delete comment');
-    deleteComment(existingComment.id);
-    return;
-  }
-
   const summary = textSummary(data, { indent: ' ', enableColors: false });
 
   const status = {
+    passes,
     thresholds: {
       failures: thresholdFailures,
       passes: thresholdCount - thresholdFailures,

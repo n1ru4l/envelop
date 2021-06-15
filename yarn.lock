@@ -5269,6 +5269,11 @@ external-editor@^3.1.0:
     iconv-lite "^0.4.24"
     tmp "^0.0.33"
 
+faker@5.5.3:
+  version "5.5.3"
+  resolved "https://registry.npmjs.org/faker/-/faker-5.5.3.tgz#c57974ee484431b25205c2c8dc09fda861e51e0e"
+  integrity sha512-wLTv2a28wjUyWkbnX7u/ABZBkUkIF2fCd73V6P2oFqEGEktDfzWx4UxrSqtPRw0xPRAcjeAOIiJWqZm3pP4u3g==
+
 fast-decode-uri-component@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/fast-decode-uri-component/-/fast-decode-uri-component-1.0.1.tgz#46f8b6c22b30ff7a81357d4f59abfae938202543"

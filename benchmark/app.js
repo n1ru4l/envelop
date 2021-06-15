@@ -5,26 +5,59 @@ const { useParserCache } = require('../packages/plugins/parser-cache');
 const { useGraphQlJit } = require('../packages/plugins/graphql-jit');
 const { useValidationCache } = require('../packages/plugins/validation-cache');
 const { fastify } = require('fastify');
-const { getGraphQLParameters, processRequest } = require('graphql-helix');
+const faker = require('faker');
+
+faker.seed(4321);
+
+function generateData() {
+  const authors = [];
+  for (let i = 0; i < 20; i++) {
+    const books = [];
+
+    for (let k = 0; k < 3; k++) {
+      books.push({
+        id: faker.datatype.uuid(),
+        name: faker.internet.domainName(),
+        numPages: faker.datatype.number(),
+      });
+    }
+
+    authors.push({
+      id: faker.datatype.uuid(),
+      name: faker.name.findName(),
+      company: faker.company.bs(),
+      books,
+    });
+  }
+
+  return authors;
+}
+
+const data = generateData();
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `
-    type Query {
-      me: User!
+    type Author {
+      id: ID!
+      name: String!
+      company: String!
+      books: [Book!]!
     }
 
-    type User {
+    type Book {
       id: ID!
+      name: String!
+      numPages: Int!
+    }
+
+    type Query {
+      authors: [Author!]!
     }
   `,
   resolvers: {
+    Author: {},
     Query: {
-      me: () => ({
-        _id: '1',
-      }),
-    },
-    User: {
-      id: obj => obj._id,
+      authors: () => data,
     },
   },
 });
@@ -49,42 +82,31 @@ const getEnveloped = envelop({
 const app = fastify();
 
 app.route({
-  method: ['GET', 'POST'],
+  method: 'POST',
   url: '/graphql',
   async handler(req, res) {
     const proxy = getEnveloped({ req });
-    const request = {
-      body: req.body,
-      headers: req.headers,
-      method: req.method,
-      query: req.query,
-    };
+    const document = proxy.parse(req.body.query);
+    const errors = proxy.validate(proxy.schema, document);
 
-    const { operationName, query, variables } = getGraphQLParameters(request);
-    const result = await processRequest({
-      operationName,
-      query,
-      variables,
-      request,
-      schema,
-      parse: proxy.parse,
-      validate: proxy.validate,
-      execute: proxy.execute,
-      contextFactory: proxy.contextFactory,
-    });
-
-    if (result.type === 'RESPONSE') {
-      res.status(result.status);
-      res.send(result.payload);
-    } else {
-      // You can find a complete example with GraphQL Subscriptions and stream/defer here:
-      // https://github.com/contrawork/graphql-helix/blob/master/examples/fastify/server.ts
-      res.send({ errors: [{ message: 'Not Supported in this demo' }] });
+    if (errors.length) {
+      res.send({ errors });
+      return;
     }
+
+    res.send(
+      await proxy.execute({
+        schema: proxy.schema,
+        operationName: req.body.operationName,
+        document,
+        variableValues: req.body.variable,
+        contextValue: await proxy.contextFactory(),
+      })
+    );
   },
 });
 
 app.listen(5000, () => {
   // eslint-disable-next-line no-console
-  console.log(`GraphQL server is running.`);
+  console.log(`GraphQL Test Server is running... Ready for K6!`);
 });
