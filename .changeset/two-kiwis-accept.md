@@ -22,4 +22,4 @@
 '@envelop/types': minor
 ---
 
-esm support
+ESM Support for all plugins and envelop core 
