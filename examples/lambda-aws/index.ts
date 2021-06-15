@@ -21,7 +21,7 @@ const getEnveloped = envelop({
 });
 
 export const lambdaHandler: APIGatewayProxyHandler = async event => {
-  const { parse, validate, contextFactory, execute, schema } = getEnveloped();
+  const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req: event });
   const request = {
     body: event.body,
     headers: event.headers,

@@ -13,6 +13,20 @@ export const Title = styled.h2(() => [tw`mt-0 mb-4 font-bold text-xl md:text-2xl
 
 export default function PluginPage() {
   const router = useRouter();
+
+  if (!router.isReady) {
+    return (
+      <Center h="300px">
+        <Spinner size={'xl'} />
+      </Center>
+    );
+  }
+
+  return <PluginPageContent />;
+}
+
+export function PluginPageContent() {
+  const router = useRouter();
   const queryKey = 'name';
   const pluginId = router.query[queryKey] || router.asPath.match(new RegExp(`[&?]${queryKey}=(.*)(&|$)`));
   const { loading, data = [] } = useFetch<PluginWithStats[]>(`/api/plugins?id=${pluginId}`, {}, [pluginId]);

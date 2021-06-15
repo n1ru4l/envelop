@@ -3,6 +3,27 @@ import ReactMarkdown, { uriTransformer } from 'react-markdown';
 import { components } from '@guild-docs/client';
 import { Code, useColorModeValue } from '@chakra-ui/react';
 
+const MD_COMPONENTS = {
+  ...components,
+  pre: (props: any) => <div {...props} />,
+  code: ({ inline, ...props }: any) => {
+    const colorScheme = useColorModeValue('blackAlpha', undefined);
+
+    return inline ? (
+      <Code {...props} margin="1px" colorScheme={colorScheme} fontWeight="semibold" fontSize="0.9em" borderRadius={'sm'} />
+    ) : (
+      <Code
+        fontSize="0.9rem"
+        {...props}
+        colorScheme={colorScheme}
+        padding={'20px !important'}
+        width={'100%'}
+        borderRadius={'sm'}
+      />
+    );
+  },
+};
+
 export const RemoteGHMarkdown: React.FC<{ children: string; repo?: string; directory?: string }> = ({
   children,
   repo,
@@ -10,26 +31,7 @@ export const RemoteGHMarkdown: React.FC<{ children: string; repo?: string; direc
 }) => {
   return (
     <ReactMarkdown
-      components={{
-        ...components,
-        pre: props => <div {...props} />,
-        code: ({ inline, ...props }) => {
-          const colorScheme = useColorModeValue('blackAlpha', undefined);
-
-          return inline ? (
-            <Code {...props} margin="1px" colorScheme={colorScheme} fontWeight="semibold" fontSize="0.9em" borderRadius={'sm'} />
-          ) : (
-            <Code
-              fontSize="0.9rem"
-              {...props}
-              colorScheme={colorScheme}
-              padding={'20px !important'}
-              width={'100%'}
-              borderRadius={'sm'}
-            />
-          );
-        },
-      }}
+      components={MD_COMPONENTS}
       linkTarget="_blank"
       transformImageUri={src => {
         const initial = uriTransformer(src);

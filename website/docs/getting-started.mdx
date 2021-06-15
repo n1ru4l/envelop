@@ -37,7 +37,10 @@ const httpServer = createServer();
 
 httpServer.on('request', async (req, res) => {
   // Here you get the alternative methods that are bundled with your plugins
-  const { parse, validate, contextFactory, execute, schema } = getEnveloped();
+  // You can pass anything from your incoming request to make it available
+  // for Envelop plugins, and to make it available as part of your
+  // GQL execution context
+  const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req });
 
   // Parse the initial request and validate it
   const { query, variables } = JSON.parse(req.payload);

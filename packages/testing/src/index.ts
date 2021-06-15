@@ -84,7 +84,7 @@ export function createTestkit(
           variables: rawVariables,
         },
       };
-      const proxy = initRequest();
+      const proxy = initRequest(initialContext);
       const { operationName, query, variables } = getGraphQLParameters(request);
 
       const r = await processRequest({
@@ -95,7 +95,7 @@ export function createTestkit(
         execute: proxy.execute,
         parse: proxy.parse,
         validate: proxy.validate,
-        contextFactory: initialContext ? () => proxy.contextFactory(initialContext) : proxy.contextFactory,
+        contextFactory: proxy.contextFactory,
         schema: proxy.schema,
       });
 

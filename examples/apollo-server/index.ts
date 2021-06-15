@@ -20,19 +20,18 @@ const getEnveloped = envelop({
   plugins: [useSchema(schema), useTiming()],
 });
 
-const { schema: envelopedSchema, execute, contextFactory } = getEnveloped();
-
 const server = new ApolloServer({
-  context: contextFactory,
-  schema: envelopedSchema,
-  executor: requestContext =>
-    execute({
-      schema: requestContext.schema,
+  executor: async requestContext => {
+    const { schema, execute, contextFactory } = getEnveloped({ req: requestContext.request.http });
+
+    return execute({
+      schema: schema,
       document: requestContext.document,
-      contextValue: requestContext.context,
+      contextValue: await contextFactory(),
       variableValues: requestContext.request.variables,
       operationName: requestContext.operationName,
-    }),
+    });
+  },
 });
 
 server.listen(3000);

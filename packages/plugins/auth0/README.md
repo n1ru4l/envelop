@@ -39,7 +39,7 @@ const getEnveloped = envelop({
 
 ```ts
 myHttpServer.on('request', async req => {
-  const { contextFactory } = getEnveloped();
+  const { contextFactory } = getEnveloped({ req });
   const contextValue = await contextFactory({ req }); // Make sure to pass it here
 });
 ```

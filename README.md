@@ -54,7 +54,8 @@ const httpServer = createServer();
 
 httpServer.on('request', (req, res) => {
   // Here you get the alternative methods that are bundled with your plugins
-  const { parse, validate, contextFactory, execute, schema } = getEnveloped();
+  // You can also pass the "req" to make it available for your plugins or GraphQL context.
+  const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req });
 
   // Parse the initial request and validate it
   const { query, variables } = JSON.parse(req.payload);

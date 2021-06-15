@@ -21,7 +21,7 @@ const getEnveloped = envelop({
 });
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-  const { parse, validate, contextFactory, execute, schema } = getEnveloped();
+  const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req });
   const request = {
     body: req.body,
     headers: req.headers,

@@ -2499,6 +2499,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/k6@0.32.0":
+  version "0.32.0"
+  resolved "https://registry.npmjs.org/@types/k6/-/k6-0.32.0.tgz#9539438dc49068c38a748ef1dfac873d30f9e9fe"
+  integrity sha512-6/PcFVvJe8stn56j/CulPpFTiPC2h7dvw9Mz1gnk2mGTSm4553nKzf52zHw7c/FMVp7f0TRkjyY/59vSImFYgg==
+
 "@types/keygrip@*":
   version "1.0.2"
   resolved "https://registry.npmjs.org/@types/keygrip/-/keygrip-1.0.2.tgz#513abfd256d7ad0bf1ee1873606317b33b1b2a72"
@@ -5263,6 +5268,11 @@ external-editor@^3.1.0:
     chardet "^0.7.0"
     iconv-lite "^0.4.24"
     tmp "^0.0.33"
+
+faker@5.5.3:
+  version "5.5.3"
+  resolved "https://registry.npmjs.org/faker/-/faker-5.5.3.tgz#c57974ee484431b25205c2c8dc09fda861e51e0e"
+  integrity sha512-wLTv2a28wjUyWkbnX7u/ABZBkUkIF2fCd73V6P2oFqEGEktDfzWx4UxrSqtPRw0xPRAcjeAOIiJWqZm3pP4u3g==
 
 fast-decode-uri-component@^1.0.1:
   version "1.0.1"

@@ -5,7 +5,7 @@ sidebar_label: Lifecycle & API
 
 ## Plugins Lifecylce
 
-Plugins are executed in order of their usage, and inject functionality serially.
+Plugins are executed in order of their usage, and inject functionality serially, so aim to keep your plugins simple and standalone as much as possible.
 
 The `before` functions are called in order, and then the `after` function of each hook will be called in the same order, when the phase has done.
 
@@ -22,6 +22,46 @@ const myPlugin = {
     }
   }
 }
+```
+
+> All plugins lifecycle methods are executed in LIFO order (Last-in, First-out) to make timing more consistent.
+
+### The improved `context`
+
+While in regular GraphQL executions, the `context` is built right before `execute` happens, in `envelop` we allow plugin developers to take part it that context from all phases. 
+
+While calling `getEnveloped` function (the result of `envelop({ plugins: [ ... ]}))`, you can pass any custom object that will be the base for your GraphQL execution `context`.
+
+In most cases, you'll pass the incoming HTTP request (or, just the relevant parts of it) to make it available for the plugins you use: 
+
+```ts
+import { envelop } from '@envelop/core';
+
+const getEnveloped = envelop({
+  plugins: [ /* ... plugins ... */ ],
+});
+
+myHttpServer.on('request', async req => {
+  const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req });
+  // ...
+});
+```
+
+Plugins might also use this `context` to keep a contextual reference for objects they might need across stages.
+
+So for example, if you wish to make some data from `parse` stage available for you in `execute` phase, you can extend the context while running `onParse` and then access that data in `onExecute`: 
+
+```ts
+const myPlugin = {
+  onParse({ extendContext }) => {
+    extendContext({
+      myVar: 'test'
+    });
+  },
+  onExecute({ args }) => {
+   const myVar = args.contextValue.myVar;
+  },
+};
 ```
 
 ## Plugins API
@@ -48,11 +88,15 @@ Called every time an operation is being executed.
 * `parseFn` - the current `parse` function. By defualt, it's the one from `graphql` package.
 * `setParseFn` - Replaces the `parse` function with a custom function.
 * `setParsedDocument` - sets the parse result. Setting this will skip calling `parse` for the executed operation.
+* `context` - the context object built so far by other plugins.
+* `extendContext` - extends the context object with additional fields.
 
 **`after` API**:
 
 * `result` - the result `DocumentNode` of the parsing function.
 * `replaceParseResult` - replaces the parsed result.
+* `context` - the context object built so far by other plugins.
+* `extendContext` - extends the context object with additional fields.
 
 ### `onValidate(api)`
 
@@ -65,11 +109,15 @@ Called every time an operation is being executed.
 * `setValidationFn` - Replaces the `validate` function with a custom function.
 * `addValidationRule` - Adds a validation rule to the list of default validation rules (as defined in `graphql` package).
 * `setResult` - sets the validation result. Setting this will skip calling `validate` for the executed operation.
+* `context` - the context object built so far by other plugins.
+* `extendContext` - extends the context object with additional fields.
 
 **`after` API**:
 
 * `valid` - A boolean indicates if the validation passed.
 * `result` - `null` in case of valid document, otherwise an array of valiation errors.
+* `context` - the context object built so far by other plugins.
+* `extendContext` - extends the context object with additional fields.
 
 ### `onContext(api)`
 
@@ -83,6 +131,7 @@ Called every time an operation is being executed. Used for building the GraphQL 
 **`after` API**:
 
 * `context` - the eventual built context, by all plugins.
+* `extendContext` - extends the context object with additional fields.
 
 ### `onExecute(api)`
 
