@@ -18,7 +18,6 @@
 '@envelop/rate-limiter': minor
 '@envelop/sentry': minor
 '@envelop/validation-cache': minor
-'@envelop/testing': minor
 '@envelop/types': minor
 ---
 

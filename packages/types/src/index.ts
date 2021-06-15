@@ -136,7 +136,7 @@ export type AfterCallback<T extends keyof Plugin<any>> = NonNullable<Plugin[T]> 
   : never;
 
 export type Envelop<RequestContext = unknown, GraphQLContext = DefaultContext> = {
-  (initialContext: Partial<RequestContext>): {
+  (initialContext?: Partial<RequestContext>): {
     execute: typeof execute;
     validate: typeof validate;
     subscribe: typeof subscribe;
