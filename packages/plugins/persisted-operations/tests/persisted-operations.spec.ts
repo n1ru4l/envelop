@@ -37,7 +37,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute(`persisted_1`);
+    const result = await testInstance.execute(`persisted_1`, {}, {});
     expect(result.errors).toBeUndefined();
     expect(result.data.foo).toBe('test');
   });
@@ -57,7 +57,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute(`persisted_1`);
+    const result = await testInstance.execute(`persisted_1`, {}, {});
     expect(result.errors).toBeUndefined();
     expect(result.data.foo).toBe('test');
   });
