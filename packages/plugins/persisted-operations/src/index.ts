@@ -1,5 +1,5 @@
 import { Plugin } from '@envelop/types';
-import { DocumentNode, ExecutionArgs, GraphQLError, parse } from 'graphql';
+import { DocumentNode, GraphQLError, parse } from 'graphql';
 
 export class NonPersistedOperationError extends Error {}
 
