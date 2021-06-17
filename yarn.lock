@@ -1577,15 +1577,15 @@
     protobufjs "^6.10.0"
     yargs "^16.1.1"
 
-"@guild-docs/client@0.2.12":
-  version "0.2.12"
-  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-0.2.12.tgz#432684d94cb53301d9f5743bada9ad0ddde07c58"
-  integrity sha512-M/2e60tTGdVFwPotxFMzCwJgt7kFhPB4Dr0ss9/yCkK9636DI/ar88mImqqg9EI5J4/yiYgzhFWxNLY+5EXKvA==
+"@guild-docs/client@0.2.13":
+  version "0.2.13"
+  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-0.2.13.tgz#d4094d8709121d6ba80e66974b552167c24d6e6c"
+  integrity sha512-gx1RFMXFG1a+5PJfJZwt+UWLAVxqm9PhVeADnqWgmECTlTHmpHnVYYf6IcVbWsx0dbGxPDqPufK8NIxIXC3YLQ==
   dependencies:
     "@guild-docs/types" "^0.2.8"
     immer "^9.0.3"
     next-mdx-remote "^3.0.2"
-    next-seo "^4.24.0"
+    next-seo "^4.25.1"
     nprogress "^0.2.0"
     react-icons "^4.2.0"
     react-intersection-observer "^8.32.0"
@@ -8416,10 +8416,10 @@ next-remote-watch@1.0.0:
     commander "^5.0.0"
     express "^4.17.1"
 
-next-seo@^4.24.0:
-  version "4.24.0"
-  resolved "https://registry.yarnpkg.com/next-seo/-/next-seo-4.24.0.tgz#7c0447da00b8574dcda5c6979771a7f6efd24f55"
-  integrity sha512-9VQXfXAelhE+hAWzJ4azigQaW3FPX0kU0eYKFQXKsQjgY7AWtukjRGXls0oSIk8khhDJwmCt46EwsO9n5DDW6Q==
+next-seo@^4.25.1:
+  version "4.25.1"
+  resolved "https://registry.yarnpkg.com/next-seo/-/next-seo-4.25.1.tgz#c1f6ab7203d9729254007670e0136383947fcba8"
+  integrity sha512-McZxm24OWrq/7dFqE1PUrvb5+FR2l4vT8hEdjO5XmnhFqYi0GDvWG2bIOczif5afSVU4aYPmUli/cOYR36Q1dw==
 
 next@10.2.3:
   version "10.2.3"
