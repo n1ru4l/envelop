@@ -1593,14 +1593,14 @@
     use-immer "^0.5.2"
     zustand "^3.5.2"
 
-"@guild-docs/server@0.2.12":
-  version "0.2.12"
-  resolved "https://registry.yarnpkg.com/@guild-docs/server/-/server-0.2.12.tgz#697f309a739a00aae81aecdb40ea0224c0a7e1dc"
-  integrity sha512-Vk77ykfIuktsO/6qNyP25v0vgxdmC1yZUPg4tcvoHfhnlQRyn1f725CEFaYuoihX/qHIZKGWjkYmhiLdFjKWOA==
+"@guild-docs/server@0.2.13":
+  version "0.2.13"
+  resolved "https://registry.yarnpkg.com/@guild-docs/server/-/server-0.2.13.tgz#a1c6c4e89aa9ca5e1326cf1bdb77f899a918c95d"
+  integrity sha512-ZZ8ODutnRTAm9W7K9/TYXCgcI7BLh/zm3hi5qVzShlGvzcuyyAVLvSUh9UHmdK4DLwPaF1OVKjtaO6I9PHnUlQ==
   dependencies:
     "@guild-docs/types" "^0.2.8"
     github-slugger "^1.3.0"
-    globby "^11.0.3"
+    globby "^11.0.4"
     gray-matter "^4.0.3"
     next-mdx-remote "^3.0.2"
     remark-emoji "^2.2.0"
@@ -6032,7 +6032,7 @@ globby@11.0.0:
     merge2 "^1.3.0"
     slash "^3.0.0"
 
-globby@11.0.4, globby@^11.0.0, globby@^11.0.3:
+globby@11.0.4, globby@^11.0.0, globby@^11.0.3, globby@^11.0.4:
   version "11.0.4"
   resolved "https://registry.yarnpkg.com/globby/-/globby-11.0.4.tgz#2cbaff77c2f2a62e71e9b2813a67b97a3a3001a5"
   integrity sha512-9O4MVG9ioZJ08ffbcyVYyLOJLk5JQ688pJ4eMGLpdWLHq/Wr1D9BlriLQyL0E+jbkuePVZXYFj47QM/v093wHg==
