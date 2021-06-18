@@ -13,8 +13,8 @@
   "dependencies": {
     "date-fns": "2.22.1",
     "@chakra-ui/icons": "1.0.13",
-    "@chakra-ui/react": "1.6.3",
-    "@chakra-ui/system": "1.6.7",
+    "@chakra-ui/react": "1.6.4",
+    "@chakra-ui/system": "1.7.0",
     "@chakra-ui/theme-tools": "1.1.7",
     "@chakra-ui/utils": "1.8.0",
     "@emotion/react": "11.4.0",
