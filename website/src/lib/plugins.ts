@@ -197,4 +197,11 @@ export const pluginsArr: RawPlugin[] = [
     iconUrl: '/assets/logos/newrelic.png',
     tags: ['tracing', 'metrics', 'error-handling'],
   },
+  {
+    identifier: 'use-live-query',
+    title: 'useLiveQuery',
+    npmPackage: '@envelop/live-query',
+    iconUrl: '/assets/logos/graphql.png',
+    tags: ['utilities'],
+  },
 ];

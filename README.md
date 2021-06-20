@@ -132,6 +132,7 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 | usePreloadAssets           | [`@envelop/preload-assets`](./packages/plugins/preload-assets)               | Register asset that should be prefetched on the client via an extensions field.                                                                   |
 | usePersistedOperations     | [`@envelop/persisted-operations`](./packages/plugins/persisted-operations)   | Simple implementation of persisted operations/queries, based on custom store.                                                                     |
 | useNewRelic     | [`@envelop/newrelic`](./packages/plugins/newrelic)   | Instrument your GraphQL application with New Relic reporting.                                                                       |
+| useLiveQuery     | [`@envelop/live-query`](./packages/plugins/live-query)   | The easiest way of adding live queries to your GraphQL server!                                                                       |
 
 ## Sharing / Composing `envelop`s
 
