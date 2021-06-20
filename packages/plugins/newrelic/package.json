@@ -33,7 +33,7 @@
   "devDependencies": {
     "@types/newrelic": "7.0.1",
     "bob-the-bundler": "1.4.1",
-    "graphql": "15.5.0",
+    "graphql": "15.5.1",
     "newrelic": "7.5.0",
     "typescript": "4.3.4"
   },
