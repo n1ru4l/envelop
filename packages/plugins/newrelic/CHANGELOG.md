@@ -1,6 +1,15 @@
 # @envelop/newrelic
 
+## 0.0.2
+
+### Patch Changes
+
+- 5c69373: Fixed retrieval of root operation from Envelop context
+
+  NOTE: There is a breaking behaviour. When using the `operationNameProperty` option, this will be checked against the `document` object rather than the `operation` object as in initial version.
+
 ## 0.0.1
+
 ### Patch Changes
 
 - 12c16bd: Initial New Relic plugin implementation
