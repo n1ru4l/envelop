@@ -123,11 +123,11 @@ export function traceOrchestrator(orchestrator: EnvelopOrchestrator): EnvelopOrc
     contextFactory: (ctx = {}) => {
       const actualFn = orchestrator.contextFactory(ctx);
 
-      return async () => {
+      return async childCtx => {
         const done = createTracer('contextFactory', ctx);
 
         try {
-          return await actualFn();
+          return await actualFn(childCtx);
         } finally {
           done();
         }

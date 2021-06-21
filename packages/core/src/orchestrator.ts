@@ -23,7 +23,7 @@ export type EnvelopOrchestrator = {
   validate: EnvelopContextFnWrapper<typeof validate, any>;
   execute: typeof execute;
   subscribe: typeof subscribe;
-  contextFactory: EnvelopContextFnWrapper<() => any, any>;
+  contextFactory: EnvelopContextFnWrapper<(context?: any) => any, any>;
   schema: Maybe<GraphQLSchema>;
   prepareSchema: () => void;
 };
@@ -202,10 +202,10 @@ export function createEnvelopOrchestrator(plugins: Plugin[]): EnvelopOrchestrato
       }
     : () => validate;
 
-  const customContextFactory: EnvelopContextFnWrapper<() => any, any> = beforeCallbacks.context.length
-    ? initialContext => async () => {
+  const customContextFactory: EnvelopContextFnWrapper<(orchestratorCtx?: any) => any, any> = beforeCallbacks.context.length
+    ? initialContext => async orchestratorCtx => {
         const afterCalls: AfterCallback<'onContextBuilding'>[] = [];
-        let context = initialContext;
+        let context = orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
 
         for (const onContext of beforeCallbacks.context) {
           const afterFn = await onContext({
