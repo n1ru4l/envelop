@@ -1,6 +1,6 @@
 import { shim as instrumentationApi } from 'newrelic';
 import { Plugin, OnExecuteHookResult } from '@envelop/types';
-import { print, FieldNode } from 'graphql';
+import { print, FieldNode, Kind, OperationDefinitionNode, SelectionNode } from 'graphql';
 import { Path } from 'graphql/jsutils/Path';
 
 enum AttributeName {
@@ -62,18 +62,30 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
       const transactionNameState = instrumentationApi.agent.tracer.getTransaction().nameState;
       const spanContext = instrumentationApi.agent.tracer.getSpanContext();
       const delimiter = transactionNameState.delimiter;
-      const rootOperation = args.contextValue.operation;
+      const rootOperation = args.document.definitions.find(
+        definitionNode => definitionNode.kind === Kind.OPERATION_DEFINITION
+      ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
       const document = print(args.contextValue.document);
       const operationName =
-        rootOperation[options.operationNameProperty as string] || rootOperation.name?.value || AttributeName.ANONYMOUS_OPERATION;
-      const rootFields = rootOperation.selectionSet.selections.map((selection: FieldNode) => selection.name.value);
+        args.document[options.operationNameProperty as string] ||
+        args.operationName ||
+        rootOperation.name?.value ||
+        AttributeName.ANONYMOUS_OPERATION;
+      let rootFields: string[] | null = null;
+
+      if (options.rootFieldsNaming) {
+        const fieldNodes = rootOperation.selectionSet.selections.filter(
+          selectionNode => selectionNode.kind === Kind.FIELD
+        ) as FieldNode[];
+        rootFields = fieldNodes.map(fieldNode => fieldNode.name.value);
+      }
 
       transactionNameState.setName(
         transactionNameState.prefix,
         transactionNameState.verb,
         delimiter,
-        operationType + delimiter + operationName + (options.rootFieldsNaming ? delimiter + rootFields.join('&') : '')
+        operationType + delimiter + operationName + (rootFields ? delimiter + rootFields.join('&') : '')
       );
 
       spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_NAME, operationName);
