@@ -1,5 +1,13 @@
 # @envelop/core
 
+## 0.3.1
+
+### Patch Changes
+
+- 7f4901d: Fix issues with contextFactory and missing context coming from GraphQL pipeline orchestrator
+- Updated dependencies [7f4901d]
+  - @envelop/types@0.2.1
+
 ## 0.3.0
 
 ### Minor Changes
