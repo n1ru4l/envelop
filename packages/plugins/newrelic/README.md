@@ -44,7 +44,7 @@ const getEnveloped = envelop({
       trackResolvers: true, // default `false`. When set to `true`, track resolvers as segments to monitor their performance
       includeResolverArgs: false, // default `false`. When set to `true`, includes all the arguments passed to resolvers with their values
       rootFieldsNaming: true, // default `false`. When set to `true` append the names of operation root fields to the transaction name
-      operationNameProperty: 'hash', // default empty. When passed will check for the property name passed, within the operation object. Will eventually use its value as operation name. Useful for custom operation properties (e.g. queryId/hash)
+      operationNameProperty: 'id', // default empty. When passed will check for the property name passed, within the document object. Will eventually use its value as operation name. Useful for custom document properties (e.g. queryId/hash)
     }),
   ],
 });
