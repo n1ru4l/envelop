@@ -60,10 +60,10 @@ export function PluginPageContent() {
           <Box>
             <PackageInstall packageName={pluginData.npmPackage} />
             <RemoteGHMarkdown
-              directory={pluginData.stats.collected.metadata.repository?.directory}
-              repo={pluginData.stats.collected.metadata.links.repository}
+              directory={pluginData.stats?.collected?.metadata?.repository?.directory}
+              repo={pluginData.stats?.collected?.metadata?.links?.repository}
             >
-              {pluginData.readme || pluginData.stats.collected.metadata.readme || ''}
+              {pluginData.readme || pluginData.stats?.collected?.metadata?.readme || ''}
             </RemoteGHMarkdown>
           </Box>
           <Box>
@@ -73,19 +73,31 @@ export function PluginPageContent() {
               <div>
                 <Code>{pluginData.npmPackage}</Code>
               </div>
-              <div>License</div>
-              <div>
-                <Code>{pluginData.stats.collected.metadata.license}</Code>
-              </div>
-              <div>Version</div>
-              <div>
-                <Code>{pluginData.stats.collected.metadata.version}</Code>
-              </div>
-              <div>Updated</div>
-              <div>
-                <Code>{format(new Date(pluginData.stats.collected.metadata.date), 'MMM do, yyyy')}</Code>
-              </div>
-              {pluginData.stats.collected.github?.starsCount ? (
+              {pluginData.stats?.collected?.metadata?.license ? (
+                <>
+                  <div>License</div>
+                  <div>
+                    <Code>{pluginData.stats.collected.metadata.license}</Code>
+                  </div>
+                </>
+              ) : null}
+              {pluginData.stats?.collected?.metadata?.version ? (
+                <>
+                  <div>Version</div>
+                  <div>
+                    <Code>{pluginData.stats.collected.metadata.version}</Code>
+                  </div>
+                </>
+              ) : null}
+              {pluginData.stats?.collected?.metadata?.date ? (
+                <>
+                  <div>Updated</div>
+                  <div>
+                    <Code>{format(new Date(pluginData.stats.collected.metadata.date), 'MMM do, yyyy')}</Code>
+                  </div>
+                </>
+              ) : null}
+              {pluginData.stats?.collected?.github?.starsCount ? (
                 <>
                   <div>Stars</div>
                   <div>

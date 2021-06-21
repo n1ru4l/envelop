@@ -23,7 +23,9 @@ export default function Marketplace() {
           title: `${rawPlugin.title} plugin details`,
         },
         description: (
-          <Markdown>{`${rawPlugin.stats.collected.metadata.version}\n\n${rawPlugin.stats.collected.metadata.description}`}</Markdown>
+          <Markdown>{`${rawPlugin.stats?.collected?.metadata?.version || ''}\n\n${
+            rawPlugin.stats?.collected?.metadata?.description || ''
+          }`}</Markdown>
         ),
         modal: {
           header: {
@@ -43,15 +45,15 @@ export default function Marketplace() {
             <>
               <PackageInstall packageName={rawPlugin.npmPackage} />
               <RemoteGHMarkdown
-                directory={rawPlugin.stats.collected.metadata.repository?.directory}
-                repo={rawPlugin.stats.collected.metadata.links.repository}
+                directory={rawPlugin.stats?.collected?.metadata?.repository?.directory}
+                repo={rawPlugin.stats?.collected?.metadata?.links?.repository}
               >
-                {rawPlugin.readme || rawPlugin.stats.collected.metadata.readme || ''}
+                {rawPlugin.readme || rawPlugin.stats?.collected?.metadata?.readme || ''}
               </RemoteGHMarkdown>
             </>
           ),
         },
-        update: rawPlugin.stats.collected.metadata.date,
+        update: rawPlugin.stats?.collected?.metadata?.date || new Date().toISOString(),
         image: {
           height: 60,
           width: 60,
@@ -76,12 +78,14 @@ export default function Marketplace() {
 
   const trendingItems = React.useMemo(() => {
     if (marketplaceItems && marketplaceItems.length > 0) {
-      return [...marketplaceItems].sort((a, b) => {
-        const aMonthlyDownloads = a.raw.stats.collected.npm.downloads[2].count;
-        const bMonthlyDownloads = b.raw.stats.collected.npm.downloads[2].count;
+      return [...marketplaceItems]
+        .filter(i => i.raw.stats?.collected?.npm.downloads)
+        .sort((a, b) => {
+          const aMonthlyDownloads = a.raw.stats.collected.npm.downloads[2].count;
+          const bMonthlyDownloads = b.raw.stats.collected.npm.downloads[2].count;
 
-        return bMonthlyDownloads - aMonthlyDownloads;
-      });
+          return bMonthlyDownloads - aMonthlyDownloads;
+        });
     }
 
     return [];
