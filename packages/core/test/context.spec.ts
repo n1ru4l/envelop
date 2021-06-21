@@ -55,38 +55,21 @@ describe('contextFactory', () => {
 
     await teskit.execute(query, {}, {});
     expect(afterContextSpy).toHaveBeenCalledWith({
-      context: {
+      context: expect.objectContaining({
         test: true,
-      },
+      }),
       extendContext: expect.any(Function),
     });
+
     expect(onExecuteSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         args: expect.objectContaining({
-          contextValue: {
+          contextValue: expect.objectContaining({
             test: true,
-          },
+          }),
         }),
       })
     );
-  });
-
-  // DOTAN: Removed becuase this might be an overkill check. context should be set.
-  it.skip('Should throw an error in case of invalid context extension', async () => {
-    const teskit = createTestkit(
-      [
-        {
-          onContextBuilding({ extendContext }) {
-            extendContext('test' as any);
-          },
-        },
-      ],
-      schema
-    );
-
-    const r = await teskit.execute(query, {});
-    expect(r.errors!.length).toBe(1);
-    expect(r.errors![0].message).toBe(`Invalid context extension provided! Expected "object", got: ""test"" (string)`);
   });
 
   it('Should allow to provide async function for context extension', async () => {
@@ -112,17 +95,17 @@ describe('contextFactory', () => {
     await teskit.execute(query, {}, {});
     expect(afterContextSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        context: {
+        context: expect.objectContaining({
           test: true,
-        },
+        }),
       })
     );
     expect(onExecuteSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         args: expect.objectContaining({
-          contextValue: {
+          contextValue: expect.objectContaining({
             test: true,
-          },
+          }),
         }),
       })
     );

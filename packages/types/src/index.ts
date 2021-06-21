@@ -141,7 +141,7 @@ export type Envelop<RequestContext = unknown, GraphQLContext = DefaultContext> =
     validate: typeof validate;
     subscribe: typeof subscribe;
     parse: typeof parse;
-    contextFactory: () => GraphQLContext | Promise<GraphQLContext>;
+    contextFactory: (orchestratorContext?: Partial<RequestContext>) => GraphQLContext | Promise<GraphQLContext>;
     schema: GraphQLSchema;
   };
   _plugins: Plugin[];
