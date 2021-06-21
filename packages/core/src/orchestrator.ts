@@ -229,7 +229,7 @@ export function createEnvelopOrchestrator(plugins: Plugin[]): EnvelopOrchestrato
 
         return context;
       }
-    : ctx => () => ctx;
+    : initialContext => orchestratorCtx => orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
 
   const customSubscribe = async (
     argsOrSchema: SubscriptionArgs | GraphQLSchema,
