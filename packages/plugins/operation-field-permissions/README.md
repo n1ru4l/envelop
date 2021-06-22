@@ -1,6 +1,8 @@
 ## `@envelop/operation-field-permissions`
 
-Disallow executing operations that select certain fields. Useful if you want to restrict the scope of certain public API users to a subset of the public GraphQL schema.
+Disallow executing operations that select certain fields. Useful if you want to restrict the scope of certain public API users to a subset of the public GraphQL schema, without triggering execution (e.g. how [graphql-shield](https://github.com/maticzav/graphql-shield) works).
+
+**Note:** This plugin and authorization on a resolver level (or via middleware) are complementary. You should still verify whether a viewer is allowed to access certain data within your resolvers.
 
 ## Installation
 
