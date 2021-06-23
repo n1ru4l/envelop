@@ -1577,21 +1577,21 @@
     protobufjs "^6.10.0"
     yargs "^16.1.1"
 
-"@guild-docs/client@0.2.13":
-  version "0.2.13"
-  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-0.2.13.tgz#d4094d8709121d6ba80e66974b552167c24d6e6c"
-  integrity sha512-gx1RFMXFG1a+5PJfJZwt+UWLAVxqm9PhVeADnqWgmECTlTHmpHnVYYf6IcVbWsx0dbGxPDqPufK8NIxIXC3YLQ==
+"@guild-docs/client@0.2.14":
+  version "0.2.14"
+  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-0.2.14.tgz#33778469aef6d082779afe6147e8875fbffd875b"
+  integrity sha512-iFBOiqyHv6TTkt6nZyf9nCzlGflyXQ3bS+HYFjfU50bSciMTSWJOyzSjsXPWNDWQh67jWOYkvYQSIAgCyUoM7w==
   dependencies:
-    "@guild-docs/types" "^0.2.8"
+    "@guild-docs/types" "^0.2.14"
     immer "^9.0.3"
     next-mdx-remote "^3.0.2"
-    next-seo "^4.25.1"
+    next-seo "^4.26.0"
     nprogress "^0.2.0"
     react-icons "^4.2.0"
     react-intersection-observer "^8.32.0"
     react-use "^17.2.4"
     use-immer "^0.5.2"
-    zustand "^3.5.2"
+    zustand "^3.5.4"
 
 "@guild-docs/server@0.2.13":
   version "0.2.13"
@@ -1606,10 +1606,10 @@
     remark-emoji "^2.2.0"
     remark-slug "^6.0.0"
 
-"@guild-docs/types@^0.2.8":
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/@guild-docs/types/-/types-0.2.8.tgz#cbfad77229d3244252bde749b79ab2722dd0c323"
-  integrity sha512-O3gEURvCwEspjQxNGVH4GcEZsGvJCPuAeLiDWt7qA3/EgNROSoGCb4Jq7po5Kz6WrmbjLjC6qgpkp/79LpAa9w==
+"@guild-docs/types@^0.2.14", "@guild-docs/types@^0.2.8":
+  version "0.2.14"
+  resolved "https://registry.yarnpkg.com/@guild-docs/types/-/types-0.2.14.tgz#04c19fc23ed4d3913028f4ab35ed0df312a3e17c"
+  integrity sha512-a2NEhhUKV63Yvies590PZxOu+M2sQAzaZiQecctN2rgWhmaVkpHA2XzUnf2reaxsajy1olp5dUqZDQFStyrq/g==
 
 "@hapi/accept@5.0.2":
   version "5.0.2"
@@ -8430,10 +8430,10 @@ next-remote-watch@1.0.0:
     commander "^5.0.0"
     express "^4.17.1"
 
-next-seo@^4.25.1:
-  version "4.25.1"
-  resolved "https://registry.yarnpkg.com/next-seo/-/next-seo-4.25.1.tgz#c1f6ab7203d9729254007670e0136383947fcba8"
-  integrity sha512-McZxm24OWrq/7dFqE1PUrvb5+FR2l4vT8hEdjO5XmnhFqYi0GDvWG2bIOczif5afSVU4aYPmUli/cOYR36Q1dw==
+next-seo@^4.26.0:
+  version "4.26.0"
+  resolved "https://registry.yarnpkg.com/next-seo/-/next-seo-4.26.0.tgz#4218cfae5651fdc2e330dcdf1cc1b34ce199d41c"
+  integrity sha512-5TqywQ3XAwqdmEU1AyNZjR7WdDKFTkDD8aBtgQelPvzBUEy8i0mTjtiw+09jhiHFNik6FqS8uPKCaYcY6jRgSQ==
 
 next@10.2.3:
   version "10.2.3"
@@ -12108,7 +12108,7 @@ zen-observable@^0.8.0:
   resolved "https://registry.npmjs.org/zen-observable/-/zen-observable-0.8.15.tgz#96415c512d8e3ffd920afd3889604e30b9eaac15"
   integrity sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==
 
-zustand@3.5.4, zustand@^3.5.2:
+zustand@3.5.4, zustand@^3.5.4:
   version "3.5.4"
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.5.4.tgz#9050a15042ced663b10588327b9210df91f0e13e"
   integrity sha512-EtS3D83il8eiydRS+xUcpczffT0MpD9ePIqAT10ns2tfzPvq85nmMmYJl9mOLOJjPLaXAMK8lgk0iCz2h7CxGg==
