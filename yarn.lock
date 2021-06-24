@@ -1593,12 +1593,12 @@
     use-immer "^0.5.2"
     zustand "^3.5.4"
 
-"@guild-docs/server@0.2.13":
-  version "0.2.13"
-  resolved "https://registry.yarnpkg.com/@guild-docs/server/-/server-0.2.13.tgz#a1c6c4e89aa9ca5e1326cf1bdb77f899a918c95d"
-  integrity sha512-ZZ8ODutnRTAm9W7K9/TYXCgcI7BLh/zm3hi5qVzShlGvzcuyyAVLvSUh9UHmdK4DLwPaF1OVKjtaO6I9PHnUlQ==
+"@guild-docs/server@0.2.15":
+  version "0.2.15"
+  resolved "https://registry.yarnpkg.com/@guild-docs/server/-/server-0.2.15.tgz#b6afd28ef8403b199993d4aba9e105692de8a5b2"
+  integrity sha512-WL7apzGgm6VByu4j/d/+LUN4YfQbCEO5ocvzh9ue/RN1cQbGn+nP1ci1pRe+oL7FbtQ74sS8vwhK/2uIRHx6fQ==
   dependencies:
-    "@guild-docs/types" "^0.2.8"
+    "@guild-docs/types" "^0.2.14"
     github-slugger "^1.3.0"
     globby "^11.0.4"
     gray-matter "^4.0.3"
@@ -1606,7 +1606,7 @@
     remark-emoji "^2.2.0"
     remark-slug "^6.0.0"
 
-"@guild-docs/types@^0.2.14", "@guild-docs/types@^0.2.8":
+"@guild-docs/types@^0.2.14":
   version "0.2.14"
   resolved "https://registry.yarnpkg.com/@guild-docs/types/-/types-0.2.14.tgz#04c19fc23ed4d3913028f4ab35ed0df312a3e17c"
   integrity sha512-a2NEhhUKV63Yvies590PZxOu+M2sQAzaZiQecctN2rgWhmaVkpHA2XzUnf2reaxsajy1olp5dUqZDQFStyrq/g==
