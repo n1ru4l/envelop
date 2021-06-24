@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
 import { Plugin } from '@envelop/types';
-import LRU from 'tiny-lru';
+import LRU from 'lru-cache';
 import { createHash } from 'crypto';
 import { DocumentNode, OperationDefinitionNode, FieldNode, SelectionNode, visit, parse, print } from 'graphql';
 
 type Listener = (typename: string, id?: string | number) => void;
 
 interface Controller {
-  purge(typename: string, id?: string | number): void;
+  purge(typename: string, id?: string | number, session?: string): void;
   ɵregister(listener: Listener): void;
 }
 
@@ -18,7 +18,7 @@ interface Options {
 }
 
 export function createController(): Controller {
-  let listener: (typename: string, id?: string | number) => void = () => {};
+  let listener: Listener = () => {};
 
   return {
     purge(typename, id) {
@@ -30,37 +30,50 @@ export function createController(): Controller {
   };
 }
 
-export const useResponseCache = ({ max = 1000, ttl = undefined, controller }: Options = {}): Plugin => {
+export function useResponseCache({ max = 1000, ttl = Infinity, controller }: Options = {}): Plugin {
   if (controller) {
     controller.ɵregister((typename, id) => {
-      purge(typeof id !== 'undefined' ? makeId(typename, id) : typename);
+      purgeEntity(typeof id !== 'undefined' ? makeId(typename, id) : typename);
     });
   }
 
-  const cachedResponses = LRU<any>(max, ttl);
+  const cachedResponses = new LRU<string, any>({
+    max: max,
+    maxAge: ttl,
+    stale: false,
+    noDisposeOnSet: true,
+    dispose(responseId) {
+      purgeResponse(responseId, false);
+    },
+  });
 
-  // TODO: when TTL or max size is reached, we need to clean the maps below
-  // TODO: Let's maybe use a different LRU cache (with a callback on delete action)
   const entityToResponse = new Map<string, Set<string>>();
   const responseToEnity = new Map<string, Set<string>>();
 
-  function purge(entity: string) {
+  function purgeResponse(responseId: string, shouldRemove = true) {
+    // get entities related to the response
+    if (responseToEnity.has(responseId)) {
+      responseToEnity.get(responseId)!.forEach(entityId => {
+        // remove the response mapping from the entity
+        entityToResponse.get(entityId)?.delete(responseId);
+      });
+      // remove all the entity mappings from the response
+      responseToEnity.delete(responseId);
+    }
+
+    if (shouldRemove) {
+      // remove the response from the cache
+      cachedResponses.del(responseId);
+    }
+  }
+
+  function purgeEntity(entity: string) {
     if (entityToResponse.has(entity)) {
       const responsesToRemove = entityToResponse.get(entity);
 
       if (responsesToRemove) {
         responsesToRemove.forEach(responseId => {
-          // get entities related to the response
-          if (responseToEnity.has(responseId)) {
-            responseToEnity.get(responseId)!.forEach(entityId => {
-              // remove the response mapping from the entity
-              entityToResponse.get(entityId)?.delete(responseId);
-            });
-            // remove all the entity mappings from the response
-            responseToEnity.delete(responseId);
-          }
-          // remove the response from the cache
-          cachedResponses.delete(responseId);
+          purgeResponse(responseId);
         });
       }
     }
@@ -82,11 +95,13 @@ export const useResponseCache = ({ max = 1000, ttl = undefined, controller }: Op
               }
             });
 
-            entitiesToRemove.forEach(purge);
+            entitiesToRemove.forEach(purgeEntity);
           },
         };
       } else {
-        const operationId = createHash('md5').update(print(ctx.args.document)).digest('hex');
+        const operationId = createHash('md5')
+          .update(print(ctx.args.document) + JSON.stringify(ctx.args.variableValues || {}))
+          .digest('hex');
 
         if (cachedResponses.has(operationId)) {
           ctx.setResultAndStopExecution(cachedResponses.get(operationId));
@@ -126,7 +141,7 @@ export const useResponseCache = ({ max = 1000, ttl = undefined, controller }: Op
       }
     },
   };
-};
+}
 
 function isOperationDefinition(node: any): node is OperationDefinitionNode {
   return node?.kind === 'OperationDefinition';

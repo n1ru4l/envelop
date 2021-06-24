@@ -3,7 +3,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useResponseCache, createController } from '../src';
 
 describe('useResponseCache', () => {
-  it('should reuse cache', async () => {
+  test('should reuse cache', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -47,7 +47,7 @@ describe('useResponseCache', () => {
 
     const testInstance = createTestkit([useResponseCache({})], schema);
 
-    await testInstance.execute(/* GraphQL */ `
+    const query = /* GraphQL */ `
       query test {
         users {
           id
@@ -58,27 +58,13 @@ describe('useResponseCache', () => {
           }
         }
       }
-    `);
-
-    expect(spy).toHaveBeenCalledTimes(1);
-
-    await testInstance.execute(/* GraphQL */ `
-      query test {
-        users {
-          id
-          name
-          comments {
-            id
-            text
-          }
-        }
-      }
-    `);
-
+    `;
+    await testInstance.execute(query);
+    await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
-  it('should purge cache on mutation', async () => {
+  test('should purge cache on mutation', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -139,7 +125,7 @@ describe('useResponseCache', () => {
 
     const testInstance = createTestkit([useResponseCache({})], schema);
 
-    await testInstance.execute(/* GraphQL */ `
+    const query = /* GraphQL */ `
       query test {
         users {
           id
@@ -150,23 +136,10 @@ describe('useResponseCache', () => {
           }
         }
       }
-    `);
+    `;
 
-    expect(spy).toHaveBeenCalledTimes(1);
-
-    await testInstance.execute(/* GraphQL */ `
-      query test {
-        users {
-          id
-          name
-          comments {
-            id
-            text
-          }
-        }
-      }
-    `);
-
+    await testInstance.execute(query);
+    await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
 
     await testInstance.execute(
@@ -182,23 +155,11 @@ describe('useResponseCache', () => {
       }
     );
 
-    await testInstance.execute(/* GraphQL */ `
-      query test {
-        users {
-          id
-          name
-          comments {
-            id
-            text
-          }
-        }
-      }
-    `);
-
+    await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it('should purge cache on demand', async () => {
+  test('should purge cache on demand', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -260,7 +221,7 @@ describe('useResponseCache', () => {
     const controller = createController();
     const testInstance = createTestkit([useResponseCache({ controller })], schema);
 
-    await testInstance.execute(/* GraphQL */ `
+    const query = /* GraphQL */ `
       query test {
         users {
           id
@@ -271,28 +232,151 @@ describe('useResponseCache', () => {
           }
         }
       }
-    `);
+    `;
 
-    expect(spy).toHaveBeenCalledTimes(1);
-
-    await testInstance.execute(/* GraphQL */ `
-      query test {
-        users {
-          id
-          name
-          comments {
-            id
-            text
-          }
-        }
-      }
-    `);
-
+    await testInstance.execute(query);
+    await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
 
     controller.purge('Comment', 2);
 
-    await testInstance.execute(/* GraphQL */ `
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  test('should consider variables when saving response', async () => {
+    const spy = jest.fn((_, { limit }: { limit: number }) =>
+      [
+        {
+          id: 1,
+          name: 'User 1',
+          comments: [
+            {
+              id: 1,
+              text: 'Comment 1 of User 1',
+            },
+          ],
+        },
+        {
+          id: 2,
+          name: 'User 2',
+          comments: [
+            {
+              id: 2,
+              text: 'Comment 2 of User 2',
+            },
+          ],
+        },
+      ].slice(0, limit)
+    );
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users(limit: Int!): [User!]!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+      },
+    });
+
+    const testInstance = createTestkit([useResponseCache({})], schema);
+
+    const query = /* GraphQL */ `
+      query test($limit: Int!) {
+        users(limit: $limit) {
+          id
+          name
+          comments {
+            id
+            text
+          }
+        }
+      }
+    `;
+
+    await testInstance.execute(query, { limit: 2 });
+    expect(spy).toHaveBeenCalledTimes(1);
+    await testInstance.execute(query, { limit: 2 });
+    expect(spy).toHaveBeenCalledTimes(1);
+    await testInstance.execute(query, { limit: 1 });
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  test('should purge response after it expired', async () => {
+    const spy = jest.fn(() => [
+      {
+        id: 1,
+        name: 'User 1',
+        comments: [
+          {
+            id: 1,
+            text: 'Comment 1 of User 1',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'User 2',
+        comments: [
+          {
+            id: 2,
+            text: 'Comment 2 of User 2',
+          },
+        ],
+      },
+    ]);
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+      },
+    });
+
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          ttl: 100,
+        }),
+      ],
+      schema
+    );
+
+    const query = /* GraphQL */ `
       query test {
         users {
           id
@@ -303,8 +387,15 @@ describe('useResponseCache', () => {
           }
         }
       }
-    `);
+    `;
 
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    await new Promise(resolve => setTimeout(resolve, 150));
+
+    await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(2);
   });
 });

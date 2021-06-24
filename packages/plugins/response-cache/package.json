@@ -30,12 +30,13 @@
     "prepack": "bob prepack"
   },
   "devDependencies": {
+    "@types/lru-cache": "5.1.0",
     "bob-the-bundler": "1.4.1",
     "graphql": "15.5.1",
     "typescript": "4.3.4"
   },
   "dependencies": {
-    "tiny-lru": "^7.0.6"
+    "lru-cache": "^6.0.0"
   },
   "peerDependencies": {
     "graphql": "^14.0.0 || ^15.0.0"
