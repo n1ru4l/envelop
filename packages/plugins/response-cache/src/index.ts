@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { Plugin } from '@envelop/types';
 import LRU from 'lru-cache';
 import { createHash } from 'crypto';
@@ -25,7 +24,7 @@ interface Options<C = any> {
    */
   controller?: Controller;
   /**
-   * Allows to cache responses based on the resolved session id. 
+   * Allows to cache responses based on the resolved session id.
    * Return a unique value for each session.
    * Return `null` or `undefined` to mark the session as public/global.
    * Creates a global session by default.
@@ -116,13 +115,15 @@ export function useResponseCache({ max = Infinity, ttl = Infinity, controller, s
           },
         };
       } else {
-        const operationId = createHash('md5')
+        const operationId = createHash('sha1')
           .update(
             [print(ctx.args.document), JSON.stringify(ctx.args.variableValues || {}), session(ctx.args.contextValue) ?? ''].join(
               '|'
             )
           )
-          .digest('hex');
+          .digest('base64');
+
+        console.log(operationId);
 
         if (cachedResponses.has(operationId)) {
           ctx.setResultAndStopExecution(cachedResponses.get(operationId));
