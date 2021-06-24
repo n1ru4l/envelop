@@ -1577,10 +1577,10 @@
     protobufjs "^6.10.0"
     yargs "^16.1.1"
 
-"@guild-docs/client@0.2.14":
-  version "0.2.14"
-  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-0.2.14.tgz#33778469aef6d082779afe6147e8875fbffd875b"
-  integrity sha512-iFBOiqyHv6TTkt6nZyf9nCzlGflyXQ3bS+HYFjfU50bSciMTSWJOyzSjsXPWNDWQh67jWOYkvYQSIAgCyUoM7w==
+"@guild-docs/client@0.2.15":
+  version "0.2.15"
+  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-0.2.15.tgz#cdb205541f2be3996a3c95703c5477b71b0e028a"
+  integrity sha512-PUz11nJIKcBwPjRi+oVFqboObGrh8YaeTw+novTQob9IynrskkPY6vQ/n11aBj1z9rYwp7GusfXKjsy/k/Qncw==
   dependencies:
     "@guild-docs/types" "^0.2.14"
     immer "^9.0.3"
@@ -1590,7 +1590,7 @@
     react-icons "^4.2.0"
     react-intersection-observer "^8.32.0"
     react-use "^17.2.4"
-    use-immer "^0.5.2"
+    use-immer "^0.6.0"
     zustand "^3.5.4"
 
 "@guild-docs/server@0.2.15":
@@ -11546,10 +11546,10 @@ use-http@1.0.21:
     use-ssr "^1.0.24"
     utility-types "^3.10.0"
 
-use-immer@^0.5.2:
-  version "0.5.2"
-  resolved "https://registry.npmjs.org/use-immer/-/use-immer-0.5.2.tgz#5f61d5662eb0df192663bb78e200521858e92499"
-  integrity sha512-aHnLa85kftWo05lqJVOy3GLXrydqu6kl0MXvo5k5OW8IoLJixa9NY/48Xdy0LlcqdakBTFLbSDZaYVPMVhYy8Q==
+use-immer@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/use-immer/-/use-immer-0.6.0.tgz#ca6aa5ade93018e2c65cf128d19ada54fc23f70d"
+  integrity sha512-dFGRfvWCqPDTOt/S431ETYTg6+uxbpb7A1pptufwXVzGJY3RlXr38+3wyLNpc6SbbmAKjWl6+EP6uW74fkEsXQ==
 
 use-sidecar@^1.0.1:
   version "1.0.5"
