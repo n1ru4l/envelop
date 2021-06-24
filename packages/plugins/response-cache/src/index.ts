@@ -123,8 +123,6 @@ export function useResponseCache({ max = Infinity, ttl = Infinity, controller, s
           )
           .digest('base64');
 
-        console.log(operationId);
-
         if (cachedResponses.has(operationId)) {
           ctx.setResultAndStopExecution(cachedResponses.get(operationId));
           return;
