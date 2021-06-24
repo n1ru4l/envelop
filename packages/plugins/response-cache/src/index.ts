@@ -31,6 +31,10 @@ interface Options<C = any> {
    * @param context GraphQL Context
    */
   session?(context: C): string | undefined | null;
+  /**
+   * Skip caching of following the types.
+   */
+  ignoredTypes?: string[];
 }
 
 export function createController(): Controller {
@@ -46,7 +50,13 @@ export function createController(): Controller {
   };
 }
 
-export function useResponseCache({ max = Infinity, ttl = Infinity, controller, session = () => null }: Options = {}): Plugin {
+export function useResponseCache({
+  max = Infinity,
+  ttl = Infinity,
+  controller,
+  session = () => null,
+  ignoredTypes = [],
+}: Options = {}): Plugin {
   if (controller) {
     controller.ɵregister((typename, id) => {
       purgeEntity(typeof id !== 'undefined' ? makeId(typename, id) : typename);
@@ -65,6 +75,7 @@ export function useResponseCache({ max = Infinity, ttl = Infinity, controller, s
 
   const entityToResponse = new Map<string, Set<string>>();
   const responseToEnity = new Map<string, Set<string>>();
+  const ignoredTypesMap = new Set<string>(ignoredTypes);
 
   function purgeResponse(responseId: string, shouldRemove = true) {
     // get entities related to the response
@@ -130,10 +141,25 @@ export function useResponseCache({ max = Infinity, ttl = Infinity, controller, s
 
         return {
           onExecuteDone({ result }) {
+            let skip = false;
+            const collectedEntities: [string, string | undefined][] = [];
+
+            collectEntity(result.data, (typename, id) => {
+              skip = skip || ignoredTypesMap.has(typename);
+
+              if (!skip) {
+                collectedEntities.push([typename, id]);
+              }
+            });
+
+            if (skip) {
+              return;
+            }
+
             cachedResponses.set(operationId, result);
             responseToEnity.set(operationId, new Set());
 
-            collectEntity(result.data, (typename, id) => {
+            for (const [typename, id] of collectedEntities) {
               if (!entityToResponse.has(typename)) {
                 entityToResponse.set(typename, new Set());
               }
@@ -155,7 +181,7 @@ export function useResponseCache({ max = Infinity, ttl = Infinity, controller, s
                 // operation => typename:id
                 responseToEnity.get(operationId)!.add(eid);
               }
-            });
+            }
           },
         };
       }
