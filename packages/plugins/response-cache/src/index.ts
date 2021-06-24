@@ -7,14 +7,31 @@ import { DocumentNode, OperationDefinitionNode, FieldNode, SelectionNode, visit,
 type Listener = (typename: string, id?: string | number) => void;
 
 interface Controller {
-  purge(typename: string, id?: string | number, session?: string): void;
+  purge(typename: string, id?: string | number): void;
   ɵregister(listener: Listener): void;
 }
 
-interface Options {
+interface Options<C = any> {
+  /**
+   * Maximum size of the cache. Defaults to `Infinity`.
+   */
   max?: number;
+  /**
+   * Maximum age in ms. Defaults to `Infinity`.
+   */
   ttl?: number;
+  /**
+   * Allows to manually control the cache. Use `createController` to create a controller and pass it here.
+   */
   controller?: Controller;
+  /**
+   * Allows to cache responses based on the resolved session id. 
+   * Return a unique value for each session.
+   * Return `null` or `undefined` to mark the session as public/global.
+   * Creates a global session by default.
+   * @param context GraphQL Context
+   */
+  session?(context: C): string | undefined | null;
 }
 
 export function createController(): Controller {
@@ -30,7 +47,7 @@ export function createController(): Controller {
   };
 }
 
-export function useResponseCache({ max = 1000, ttl = Infinity, controller }: Options = {}): Plugin {
+export function useResponseCache({ max = Infinity, ttl = Infinity, controller, session = () => null }: Options = {}): Plugin {
   if (controller) {
     controller.ɵregister((typename, id) => {
       purgeEntity(typeof id !== 'undefined' ? makeId(typename, id) : typename);
@@ -100,7 +117,11 @@ export function useResponseCache({ max = 1000, ttl = Infinity, controller }: Opt
         };
       } else {
         const operationId = createHash('md5')
-          .update(print(ctx.args.document) + JSON.stringify(ctx.args.variableValues || {}))
+          .update(
+            [print(ctx.args.document), JSON.stringify(ctx.args.variableValues || {}), session(ctx.args.contextValue) ?? ''].join(
+              '|'
+            )
+          )
           .digest('hex');
 
         if (cachedResponses.has(operationId)) {

@@ -159,7 +159,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('should purge cache on demand', async () => {
+  test('should purge cache on demand (typename+id)', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -239,6 +239,91 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(1);
 
     controller.purge('Comment', 2);
+
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  test('should purge cache on demand (typename)', async () => {
+    const spy = jest.fn(() => [
+      {
+        id: 1,
+        name: 'User 1',
+        comments: [
+          {
+            id: 1,
+            text: 'Comment 1 of User 1',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'User 2',
+        comments: [
+          {
+            id: 2,
+            text: 'Comment 2 of User 2',
+          },
+        ],
+      },
+    ]);
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type Mutation {
+          updateUser(id: ID!): User!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+        Mutation: {
+          updateUser(_, { id }) {
+            return {
+              id,
+            };
+          },
+        },
+      },
+    });
+
+    const controller = createController();
+    const testInstance = createTestkit([useResponseCache({ controller })], schema);
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+          comments {
+            id
+            text
+          }
+        }
+      }
+    `;
+
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    controller.purge('Comment');
 
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(2);
@@ -396,6 +481,105 @@ describe('useResponseCache', () => {
     await new Promise(resolve => setTimeout(resolve, 150));
 
     await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  test('should cache responses based on session', async () => {
+    const spy = jest.fn(() => [
+      {
+        id: 1,
+        name: 'User 1',
+        comments: [
+          {
+            id: 1,
+            text: 'Comment 1 of User 1',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'User 2',
+        comments: [
+          {
+            id: 2,
+            text: 'Comment 2 of User 2',
+          },
+        ],
+      },
+    ]);
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+      },
+    });
+
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          session(ctx: { sessionId: number }) {
+            return ctx.sessionId + '';
+          },
+        }),
+      ],
+      schema
+    );
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+          comments {
+            id
+            text
+          }
+        }
+      }
+    `;
+
+    await testInstance.execute(
+      query,
+      {},
+      {
+        sessionId: 1,
+      }
+    );
+    expect(spy).toHaveBeenCalledTimes(1);
+    await testInstance.execute(
+      query,
+      {},
+      {
+        sessionId: 1,
+      }
+    );
+    expect(spy).toHaveBeenCalledTimes(1);
+    await testInstance.execute(
+      query,
+      {},
+      {
+        sessionId: 2,
+      }
+    );
     expect(spy).toHaveBeenCalledTimes(2);
   });
 });
