@@ -2576,10 +2576,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/k6@0.32.0":
-  version "0.32.0"
-  resolved "https://registry.npmjs.org/@types/k6/-/k6-0.32.0.tgz#9539438dc49068c38a748ef1dfac873d30f9e9fe"
-  integrity sha512-6/PcFVvJe8stn56j/CulPpFTiPC2h7dvw9Mz1gnk2mGTSm4553nKzf52zHw7c/FMVp7f0TRkjyY/59vSImFYgg==
+"@types/k6@0.32.1":
+  version "0.32.1"
+  resolved "https://registry.yarnpkg.com/@types/k6/-/k6-0.32.1.tgz#91286ece4cd4bdef398c826f67c86def560f2c97"
+  integrity sha512-G69VjOOkHdJvdRSvCS7Ei+WQKqPfCTrcLEItmRt/7j7yMVJfN4hLs6KDj/VtfQCs4cMmA6Nfnl6Ot1vi3znb/Q==
 
 "@types/keygrip@*":
   version "1.0.2"
