@@ -78,7 +78,7 @@ export function createTestkit(
   return {
     wait: ms => new Promise(resolve => setTimeout(resolve, ms)),
     replaceSchema,
-    execute: async (operation, rawVariables = {}, initialContext = null) => {
+    execute: async (operation, rawVariables = {}, initialContext = {}) => {
       const request = {
         headers: {},
         method: 'POST',
