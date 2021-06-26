@@ -5027,7 +5027,7 @@ esbuild-register@2.5.0:
     esbuild "^0.11.5"
     jsonc-parser "^3.0.0"
 
-esbuild@0.12.9:
+esbuild@0.12.9, esbuild@^0.12.9:
   version "0.12.9"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.12.9.tgz#bed4e7087c286cd81d975631f77d47feb1660070"
   integrity sha512-MWRhAbMOJ9RJygCrt778rz/qNYgA4ZVj6aXnNPxFjs7PmIpb0fuB9Gmg5uWrr6n++XKwwm/RmSz6RR5JL2Ocsw==
@@ -11228,6 +11228,25 @@ tsup@4.11.2:
     chokidar "^3.5.1"
     debug "^4.3.1"
     esbuild "^0.11.12"
+    execa "^5.0.0"
+    globby "^11.0.3"
+    joycon "^3.0.1"
+    postcss-load-config "^3.0.1"
+    resolve-from "^5.0.0"
+    rollup "^2.45.2"
+    sucrase "^3.18.1"
+    tree-kill "^1.2.2"
+
+tsup@4.12.0:
+  version "4.12.0"
+  resolved "https://registry.yarnpkg.com/tsup/-/tsup-4.12.0.tgz#ad1d2814c2ce04cc8f74d5e9785347660b4bbbc5"
+  integrity sha512-TjODlDrJYcMHW8nRVbhf2PBelo2ew3s7zfSdp/17dXlPkMbnYs80ZmITPgR1KRa6cagSqU+9lYZZe/xbRqhWAQ==
+  dependencies:
+    cac "^6.7.2"
+    chalk "^4.1.0"
+    chokidar "^3.5.1"
+    debug "^4.3.1"
+    esbuild "^0.12.9"
     execa "^5.0.0"
     globby "^11.0.3"
     joycon "^3.0.1"
