@@ -5027,10 +5027,10 @@ esbuild-register@2.5.0:
     esbuild "^0.11.5"
     jsonc-parser "^3.0.0"
 
-esbuild@0.12.9, esbuild@^0.12.9:
-  version "0.12.9"
-  resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.12.9.tgz#bed4e7087c286cd81d975631f77d47feb1660070"
-  integrity sha512-MWRhAbMOJ9RJygCrt778rz/qNYgA4ZVj6aXnNPxFjs7PmIpb0fuB9Gmg5uWrr6n++XKwwm/RmSz6RR5JL2Ocsw==
+esbuild@0.12.10, esbuild@^0.12.9:
+  version "0.12.10"
+  resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.12.10.tgz#bd65c229862a3330128ea06836894dfa6f7471bf"
+  integrity sha512-KTZ84HqvKL1V76cVwv5W2/es+Bhdv8O9DYRKhJ0wHf1d2iLH6WEGX0zh7W+UzniWnZbUZg2c7GsdH2aWeFsfzQ==
 
 esbuild@^0.11.12, esbuild@^0.11.5:
   version "0.11.23"
