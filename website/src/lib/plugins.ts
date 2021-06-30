@@ -218,4 +218,11 @@ export const pluginsArr: RawPlugin[] = [
     iconUrl: '/assets/logos/apollo.png',
     tags: ['utilities', 'error-handling'],
   },
+  {
+    identifier: 'use-operation-field-permissions',
+    title: 'useOperationFieldPermissions',
+    npmPackage: '@envelop/operation-field-permissions',
+    iconUrl: '/assets/logos/graphql.png',
+    tags: ['security', 'authorization'],
+  },
 ];
