@@ -14,7 +14,13 @@ export function migrateEnum(rawRules: MigrateEnumRule | MigrateEnumRule[]): Oper
       const typeInfoVisitor = visitWithTypeInfo(typeInfo, {
         leave: {
           EnumValue: node => {
-            const type = getNamedType(typeInfo.getArgument().type);
+            const arg = typeInfo.getArgument();
+
+            if (!arg) {
+              return;
+            }
+
+            const type = getNamedType(arg.type);
 
             if (isEnumType(type)) {
               for (const rule of rules) {
@@ -65,7 +71,7 @@ export function migrateEnum(rawRules: MigrateEnumRule | MigrateEnumRule[]): Oper
         Object.keys(rulesByType).reduce((prev, typeName) => {
           return {
             ...prev,
-            [typeName]: value => {
+            [typeName]: (value: any) => {
               for (const rule of rules) {
                 if (rule.toName === value) {
                   return rule.fromName;

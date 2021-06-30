@@ -72,6 +72,7 @@ export interface Plugin<PluginContext = DefaultContext> {
   onSubscribe?: (options: {
     subscribeFn: typeof subscribe;
     args: SubscriptionArgs;
+    setVariables: (newVariables: ExecutionArgs['variableValues']) => void;
     setSubscribeFn: (newSubscribe: typeof subscribe) => void;
     extendContext: (contextExtension: Partial<PluginContext>) => void;
   }) => void | OnSubscribeHookResult<PluginContext>;

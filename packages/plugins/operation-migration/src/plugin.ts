@@ -9,6 +9,9 @@ export type OperationMigrationOptions = {
 export const useOperationMigration = (pluginOptions: OperationMigrationOptions): Plugin => {
   let currentSchema: GraphQLSchema;
   let typeInfo: TypeInfo;
+  const migrateAstFns = pluginOptions.migrations.filter(p => p.migrateAst);
+  const migrateVariablesFns = pluginOptions.migrations.filter(p => p.migrateVariables);
+  const migrateResultFns = pluginOptions.migrations.filter(p => p.migrateResult);
 
   return {
     onSchemaChange({ schema }) {
@@ -23,19 +26,25 @@ export const useOperationMigration = (pluginOptions: OperationMigrationOptions):
 
         let document = result;
 
-        for (const migration of pluginOptions.migrations.filter(p => p.migrateAst)) {
-          const out = migration.migrateAst(document, currentSchema, typeInfo);
-          document = out.document;
-        }
+        if (document) {
+          for (const migration of migrateAstFns) {
+            const out = migration.migrateAst!(document, currentSchema, typeInfo);
+            document = out.document;
+          }
 
-        setParsedDocument(document);
+          setParsedDocument(document);
+        }
       };
     },
     onExecute({ args, setVariables }) {
       let variables = args.variableValues;
 
-      for (const migration of pluginOptions.migrations.filter(p => p.migrateVariables)) {
-        const out = migration.migrateVariables(args.document, variables, args.schema, typeInfo);
+      if (!variables) {
+        return;
+      }
+
+      for (const migration of migrateVariablesFns) {
+        const out = migration.migrateVariables!(args.document, variables, args.schema, typeInfo);
         variables = out.variablesValue;
       }
 
@@ -45,8 +54,8 @@ export const useOperationMigration = (pluginOptions: OperationMigrationOptions):
         onExecuteDone: ({ result, setResult }) => {
           let modifiedResult = result;
 
-          for (const migration of pluginOptions.migrations.filter(p => p.migrateResult)) {
-            const out = migration.migrateResult(args.document, modifiedResult, args.schema, typeInfo);
+          for (const migration of migrateResultFns) {
+            const out = migration.migrateResult!(args.document, modifiedResult, args.schema, typeInfo);
             modifiedResult = out.result;
           }
 

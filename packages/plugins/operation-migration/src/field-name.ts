@@ -14,7 +14,13 @@ export function migrateFieldName(rawRules: MigrateFieldNameRile | MigrateFieldNa
       const typeInfoVisitor = visitWithTypeInfo(typeInfo, {
         leave: {
           Field: node => {
-            const type = getNamedType(typeInfo.getParentType());
+            const parentType = typeInfo.getParentType();
+
+            if (!parentType) {
+              return;
+            }
+
+            const type = getNamedType(parentType);
 
             if (isObjectType(type) || isInterfaceType(type)) {
               for (const rule of rules) {
@@ -50,7 +56,7 @@ export function migrateFieldName(rawRules: MigrateFieldNameRile | MigrateFieldNa
           return {
             ...prev,
             [typeName]: {
-              __leave: value => {
+              __leave: (value: any) => {
                 if (value && typeof value === 'object') {
                   for (const rule of rules) {
                     if (rule.toName in value) {

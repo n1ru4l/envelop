@@ -57,10 +57,6 @@ describe('migrateTypeName', () => {
     );
 
     const result = await testInstance.execute(`query { testValue { __typename ... on OldFoo { f }} }`);
-    const executeDocument = (spiedPlugin.spies.beforeExecute.mock.calls[0] as any)[0]['args']['document'];
-    console.log(print(executeDocument));
-
-    console.log(result.errors[0].stack);
     expect(result.errors).toBeUndefined();
     expect(result.data.testValue.__typename).toBe(oldName);
   });

@@ -1,8 +1,8 @@
-import { DocumentNode, GraphQLSchema, TypeInfo } from 'graphql';
+import { DocumentNode, ExecutionResult, GraphQLSchema, TypeInfo } from 'graphql';
 
 export type OutFunction<TOriginalResult, TModifiedResult> = (originalResult: TOriginalResult) => TModifiedResult;
 
-export type OperationMigration<TOriginalResult = unknown, TModifiedResult = TOriginalResult> = {
+export type OperationMigration<TOriginalResult = ExecutionResult, TModifiedResult = TOriginalResult> = {
   migrateAst?(
     document: DocumentNode,
     schema: GraphQLSchema,

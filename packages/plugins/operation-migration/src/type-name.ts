@@ -1,4 +1,4 @@
-import { Kind, visit } from 'graphql';
+import { Kind, visit, visitWithTypeInfo } from 'graphql';
 import { OperationMigration } from './types';
 import { visitResult } from '@graphql-tools/utils';
 import { buildRuleMap } from './utils';
@@ -8,11 +8,10 @@ export type MigrateTypeNameRile = { fromName: string; toName: string };
 export function migrateTypeName(rawRules: MigrateTypeNameRile | MigrateTypeNameRile[]): OperationMigration {
   const rules = Array.isArray(rawRules) ? rawRules : [rawRules];
   const rulesByType = buildRuleMap(rules, 'toName');
-  console.log(rulesByType);
 
   return {
-    migrateAst: document => {
-      const visitor = {
+    migrateAst: (document, schema, typeInfo) => {
+      const visitor = visitWithTypeInfo(typeInfo, {
         leave: {
           NamedType: node => {
             for (const rule of rules) {
@@ -29,7 +28,7 @@ export function migrateTypeName(rawRules: MigrateTypeNameRile | MigrateTypeNameR
             }
           },
         },
-      };
+      });
 
       const modifiedDocument = visit(document, visitor);
 
@@ -46,22 +45,22 @@ export function migrateTypeName(rawRules: MigrateTypeNameRile | MigrateTypeNameR
         Object.keys(rulesByType).reduce((prev, typeName) => {
           return {
             ...prev,
-            // [typeName]: {
-            //   __leave: value => {
-            //     if (value && typeof value === 'object') {
-            //       for (const rule of rules) {
-            //         if ('__typename' in value && value.__typename === rule.toName) {
-            //           return {
-            //             ...value,
-            //             __typename: rule.fromName,
-            //           };
-            //         }
-            //       }
-            //     }
+            [typeName]: {
+              __leave: (value: any) => {
+                if (value && typeof value === 'object') {
+                  for (const rule of rules) {
+                    if ('__typename' in value && value.__typename === rule.toName) {
+                      return {
+                        ...value,
+                        __typename: rule.fromName,
+                      };
+                    }
+                  }
+                }
 
-            //     return value;
-            //   },
-            // },
+                return value;
+              },
+            },
           };
         }, {})
       );
