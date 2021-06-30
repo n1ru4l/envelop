@@ -1,4 +1,4 @@
-import { envelop, Plugin, useEnvelop, useExtendContext } from '@envelop/core';
+import { Plugin, useExtendContext } from '@envelop/core';
 import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
 import { GraphQLType, GraphQLList, GraphQLNonNull, GraphQLError } from 'graphql';
 
@@ -76,17 +76,20 @@ type OperationScopeOptions<TContext> = {
 
 const defaultFormatError = (schemaCoordinate: string) => `Insufficient permissions for selecting '${schemaCoordinate}'.`;
 
-export const useOperationPermissions = <TContext>(opts: OperationScopeOptions<TContext>): Plugin =>
-  useEnvelop(
-    envelop({
-      plugins: [
+export const useOperationPermissions = <TContext>(opts: OperationScopeOptions<TContext>): Plugin => {
+  return {
+    onPluginInit({ addPlugin }) {
+      addPlugin(
         useExtendedValidation({
           rules: [
             OperationScopeRule({
               formatError: opts.formatError ?? defaultFormatError,
             }),
           ],
-        }),
+        })
+      );
+
+      addPlugin(
         useExtendContext(async context => {
           const permissions = await opts.getPermissions(context as TContext);
 
@@ -102,7 +105,8 @@ export const useOperationPermissions = <TContext>(opts: OperationScopeOptions<TC
           return {
             [OPERATION_PERMISSIONS_SYMBOL]: scopeContext,
           };
-        }),
-      ],
-    })
-  );
+        })
+      );
+    },
+  };
+};
