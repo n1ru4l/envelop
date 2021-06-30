@@ -204,4 +204,11 @@ export const pluginsArr: RawPlugin[] = [
     iconUrl: '/assets/logos/graphql.png',
     tags: ['utilities'],
   },
+  {
+    identifier: 'use-fragment-arguments',
+    title: 'useFragmentArguments',
+    npmPackage: '@envelop/fragment-arguments',
+    iconUrl: '/assets/logos/graphql.png',
+    tags: ['utilities'],
+  },
 ];

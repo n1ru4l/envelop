@@ -66,7 +66,7 @@ describe('useFragmentArguments', () => {
     }
   `);
   test('can inline fragment with argument', () => {
-    const { parse } = envelop({ plugins: [useFragmentArguments(), useSchema(schema)] })();
+    const { parse } = envelop({ plugins: [useFragmentArguments(), useSchema(schema)] })({});
     const result = parse(/* GraphQL */ `
       fragment TestFragment($c: String) on Query {
         a(b: $c)
