@@ -135,6 +135,7 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 | useLiveQuery     | [`@envelop/live-query`](./packages/plugins/live-query)   | The easiest way of adding live queries to your GraphQL server!                                                                       |
 | useFragmentArguments     | [`@envelop/fragment-arguments`](./packages/plugins/fragment-arguments)   | Adds support for using arguments on fragments                                                                      |
 | useApolloServerErrors     | [`@envelop/apollo-server-errors`](./packages/plugins/apollo-server-errors)   | Exposes execution error in the same structure as Apollo-Server                                                                      |
+| useOperationFieldPermissions     | [`@envelop/operation-field-permissions`](./packages/plugins/operation-field-permissions)   | Extended validation rule for creating user-aware permissions, based on types and fields                                                                      |
 
 ## Sharing / Composing `envelop`s
 
