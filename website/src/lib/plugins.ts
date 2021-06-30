@@ -211,4 +211,11 @@ export const pluginsArr: RawPlugin[] = [
     iconUrl: '/assets/logos/graphql.png',
     tags: ['utilities'],
   },
+  {
+    identifier: 'use-apollo-server-errors',
+    title: 'useApolloServerErrors',
+    npmPackage: '@envelop/apollo-server-errors',
+    iconUrl: '/assets/logos/apollo.png',
+    tags: ['utilities', 'error-handling'],
+  },
 ];

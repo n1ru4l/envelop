@@ -134,6 +134,7 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 | useNewRelic     | [`@envelop/newrelic`](./packages/plugins/newrelic)   | Instrument your GraphQL application with New Relic reporting.                                                                       |
 | useLiveQuery     | [`@envelop/live-query`](./packages/plugins/live-query)   | The easiest way of adding live queries to your GraphQL server!                                                                       |
 | useFragmentArguments     | [`@envelop/fragment-arguments`](./packages/plugins/fragment-arguments)   | Adds support for using arguments on fragments                                                                      |
+| useApolloServerErrors     | [`@envelop/apollo-server-errors`](./packages/plugins/apollo-server-errors)   | Exposes execution error in the same structure as Apollo-Server                                                                      |
 
 ## Sharing / Composing `envelop`s
 
