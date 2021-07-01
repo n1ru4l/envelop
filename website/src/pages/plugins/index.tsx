@@ -1,18 +1,33 @@
-import Head from 'next/head';
-import { useFetch } from 'use-http';
-import { CardsColorful, MarketplaceSearch } from '@theguild/components';
-import { Spinner, Center } from '@chakra-ui/react';
-import type { PluginWithStats } from '../../pages/api/plugins';
-import React from 'react';
-import { IMarketplaceItemProps } from '@theguild/components/dist/types/components';
-import { RemoteGHMarkdown } from '../../components/RemoteGhMarkdown';
-import { PackageInstall } from '../../components/packageInstall';
-import { Markdown } from '../../components/Markdown';
 import { compareDesc } from 'date-fns';
+import Head from 'next/head';
+import React from 'react';
 
-export default function Marketplace() {
-  const { loading, data = [] } = useFetch<PluginWithStats[]>('/api/plugins', {}, []);
+import { MarketplaceSearch } from '@theguild/components';
+import { IMarketplaceItemProps } from '@theguild/components/dist/types/components';
 
+import { Markdown } from '../../components/Markdown';
+import { PackageInstall } from '../../components/packageInstall';
+import { RemoteGHMarkdown } from '../../components/RemoteGhMarkdown';
+import { getPluginsData } from '../../lib/pluginsData';
+
+import type { PluginWithStats } from '../../lib/pluginsData';
+import type { GetStaticProps } from 'next';
+
+interface MarketplaceProps {
+  data: PluginWithStats[];
+}
+
+export const getStaticProps: GetStaticProps<MarketplaceProps> = async () => {
+  return {
+    props: {
+      data: await getPluginsData(),
+    },
+    // Revalidate at most once every 1 hour
+    revalidate: 60 * 60,
+  };
+};
+
+export default function Marketplace({ data }: MarketplaceProps) {
   const marketplaceItems: Array<IMarketplaceItemProps & { raw: PluginWithStats }> = React.useMemo(() => {
     if (data && data.length > 0) {
       return data.map<IMarketplaceItemProps & { raw: PluginWithStats }>(rawPlugin => ({
@@ -107,13 +122,8 @@ export default function Marketplace() {
       <Head>
         <title>Plugin Hub</title>
       </Head>
-      {loading ? (
-        <Center h="300px">
-          <Spinner size={'xl'} />
-        </Center>
-      ) : (
-        <>
-          {/* <CardsColorful
+
+      {/* <CardsColorful
             cards={randomThirdParty.map(item => ({
               title: item.title,
               description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -127,30 +137,28 @@ export default function Marketplace() {
               color: '#3547E5',
             }))}
           /> */}
-          <MarketplaceSearch
-            title="Explore Plugin Hub"
-            placeholder="Find plugins..."
-            primaryList={{
-              title: 'Trending',
-              items: trendingItems,
-              placeholder: '0 items',
-              pagination: 10,
-            }}
-            secondaryList={{
-              title: 'Recently Updated',
-              items: recentlyUpdatedItems,
-              placeholder: '0 items',
-              pagination: 10,
-            }}
-            queryList={{
-              title: 'Search Results',
-              items: marketplaceItems,
-              placeholder: 'No results for {query}',
-              pagination: 10,
-            }}
-          />
-        </>
-      )}
+      <MarketplaceSearch
+        title="Explore Plugin Hub"
+        placeholder="Find plugins..."
+        primaryList={{
+          title: 'Trending',
+          items: trendingItems,
+          placeholder: '0 items',
+          pagination: 10,
+        }}
+        secondaryList={{
+          title: 'Recently Updated',
+          items: recentlyUpdatedItems,
+          placeholder: '0 items',
+          pagination: 10,
+        }}
+        queryList={{
+          title: 'Search Results',
+          items: marketplaceItems,
+          placeholder: 'No results for {query}',
+          pagination: 10,
+        }}
+      />
     </>
   );
 }
