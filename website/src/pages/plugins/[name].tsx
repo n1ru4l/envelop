@@ -4,6 +4,7 @@ import React from 'react';
 import tw, { styled } from 'twin.macro';
 
 import { Box, Center, Code, Container, Grid, SimpleGrid } from '@chakra-ui/react';
+import { buildMDX, CompiledMDX } from '@guild-docs/server';
 
 import { PackageInstall } from '../../components/packageInstall';
 import { RemoteGHMarkdown } from '../../components/RemoteGhMarkdown';
@@ -13,7 +14,7 @@ export const SubTitle = styled.h2(() => [tw`mt-0 mb-4 font-bold text-lg md:text-
 export const Title = styled.h2(() => [tw`mt-0 mb-4 font-bold text-xl md:text-2xl`]);
 
 interface PluginPageProps {
-  data: PluginWithStats[];
+  data: (PluginWithStats & { mdx: CompiledMDX })[];
 }
 
 type PluginPageParams = {
@@ -22,14 +23,26 @@ type PluginPageParams = {
 
 export const getStaticProps: GetStaticProps<PluginPageProps, PluginPageParams> = async ctx => {
   const pluginName = ctx.params?.name;
+
+  const pluginsData =
+    typeof pluginName === 'string'
+      ? await getPluginsData({
+          idSpecific: pluginName,
+        })
+      : [];
+
+  const data = await Promise.all(
+    pluginsData.map(async plugin => {
+      return {
+        ...plugin,
+        mdx: await buildMDX(plugin.readme || plugin.stats?.collected?.metadata?.readme || ''),
+      };
+    })
+  );
+
   return {
     props: {
-      data:
-        typeof pluginName === 'string'
-          ? await getPluginsData({
-              idSpecific: pluginName,
-            })
-          : [],
+      data,
     },
     // Revalidate at most once every 1 hour
     revalidate: 60 * 60,
@@ -75,9 +88,8 @@ export default function PluginPageContent({ data }: PluginPageProps) {
             <RemoteGHMarkdown
               directory={pluginData.stats?.collected?.metadata?.repository?.directory}
               repo={pluginData.stats?.collected?.metadata?.links?.repository}
-            >
-              {pluginData.readme || pluginData.stats?.collected?.metadata?.readme || ''}
-            </RemoteGHMarkdown>
+              content={pluginData.mdx}
+            />
           </Box>
           <Box>
             <SubTitle>Plugin Details</SubTitle>

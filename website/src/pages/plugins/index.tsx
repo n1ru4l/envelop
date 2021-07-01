@@ -2,6 +2,7 @@ import { compareDesc } from 'date-fns';
 import Head from 'next/head';
 import React from 'react';
 
+import { buildMultipleMDX, CompiledMDX } from '@guild-docs/server';
 import { MarketplaceSearch } from '@theguild/components';
 import { IMarketplaceItemProps } from '@theguild/components/dist/types/components';
 
@@ -14,13 +15,29 @@ import type { PluginWithStats } from '../../lib/pluginsData';
 import type { GetStaticProps } from 'next';
 
 interface MarketplaceProps {
-  data: PluginWithStats[];
+  data: (PluginWithStats & { description: CompiledMDX; content: CompiledMDX })[];
 }
 
 export const getStaticProps: GetStaticProps<MarketplaceProps> = async () => {
+  const pluginsData = await getPluginsData();
+
+  const data = await Promise.all(
+    pluginsData.map(async plugin => {
+      const [description, content] = await buildMultipleMDX([
+        `${plugin.stats?.collected?.metadata?.version || ''}\n\n${plugin.stats?.collected?.metadata?.description || ''}`,
+        plugin.readme || plugin.stats?.collected?.metadata?.readme || '',
+      ]);
+      return {
+        ...plugin,
+        description,
+        content,
+      };
+    })
+  );
+
   return {
     props: {
-      data: await getPluginsData(),
+      data,
     },
     // Revalidate at most once every 1 hour
     revalidate: 60 * 60,
@@ -37,11 +54,7 @@ export default function Marketplace({ data }: MarketplaceProps) {
           href: `/plugins/${rawPlugin.identifier}`,
           title: `${rawPlugin.title} plugin details`,
         },
-        description: (
-          <Markdown>{`${rawPlugin.stats?.collected?.metadata?.version || ''}\n\n${
-            rawPlugin.stats?.collected?.metadata?.description || ''
-          }`}</Markdown>
-        ),
+        description: <Markdown content={rawPlugin.description} />,
         modal: {
           header: {
             image: {
@@ -62,9 +75,8 @@ export default function Marketplace({ data }: MarketplaceProps) {
               <RemoteGHMarkdown
                 directory={rawPlugin.stats?.collected?.metadata?.repository?.directory}
                 repo={rawPlugin.stats?.collected?.metadata?.links?.repository}
-              >
-                {rawPlugin.readme || rawPlugin.stats?.collected?.metadata?.readme || ''}
-              </RemoteGHMarkdown>
+                content={rawPlugin.content}
+              />
             </>
           ),
         },
@@ -96,8 +108,8 @@ export default function Marketplace({ data }: MarketplaceProps) {
       return [...marketplaceItems]
         .filter(i => i.raw.stats?.collected?.npm.downloads)
         .sort((a, b) => {
-          const aMonthlyDownloads = a.raw.stats.collected.npm.downloads[2].count;
-          const bMonthlyDownloads = b.raw.stats.collected.npm.downloads[2].count;
+          const aMonthlyDownloads = a.raw.stats?.collected.npm.downloads[2].count || 0;
+          const bMonthlyDownloads = b.raw.stats?.collected.npm.downloads[2].count || 0;
 
           return bMonthlyDownloads - aMonthlyDownloads;
         });
