@@ -34,7 +34,7 @@
     "jwks-rsa": "^2.0.1"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "8.5.2",
+    "@types/jsonwebtoken": "8.5.3",
     "bob-the-bundler": "1.4.1",
     "graphql": "15.5.1",
     "typescript": "4.3.5"
