@@ -1577,12 +1577,12 @@
     protobufjs "^6.10.0"
     yargs "^16.1.1"
 
-"@guild-docs/client@0.2.15":
-  version "0.2.15"
-  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-0.2.15.tgz#cdb205541f2be3996a3c95703c5477b71b0e028a"
-  integrity sha512-PUz11nJIKcBwPjRi+oVFqboObGrh8YaeTw+novTQob9IynrskkPY6vQ/n11aBj1z9rYwp7GusfXKjsy/k/Qncw==
+"@guild-docs/client@0.2.16":
+  version "0.2.16"
+  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-0.2.16.tgz#b957e7378d439b500b9ccf76ab170de8d3c7dfd0"
+  integrity sha512-INhtyF0FtATYKS3YqHCt568MZmZehOLeFUIWT+egkKNH15LGJHVjLrltOgM/0bKkUDs8w6kycXjbc5WoXl1SYA==
   dependencies:
-    "@guild-docs/types" "^0.2.14"
+    "@guild-docs/types" "^0.2.16"
     immer "^9.0.3"
     next-mdx-remote "^3.0.2"
     next-seo "^4.26.0"
@@ -1591,14 +1591,14 @@
     react-intersection-observer "^8.32.0"
     react-use "^17.2.4"
     use-immer "^0.6.0"
-    zustand "^3.5.4"
+    zustand "^3.5.5"
 
-"@guild-docs/server@0.2.15":
-  version "0.2.15"
-  resolved "https://registry.yarnpkg.com/@guild-docs/server/-/server-0.2.15.tgz#b6afd28ef8403b199993d4aba9e105692de8a5b2"
-  integrity sha512-WL7apzGgm6VByu4j/d/+LUN4YfQbCEO5ocvzh9ue/RN1cQbGn+nP1ci1pRe+oL7FbtQ74sS8vwhK/2uIRHx6fQ==
+"@guild-docs/server@0.2.16":
+  version "0.2.16"
+  resolved "https://registry.yarnpkg.com/@guild-docs/server/-/server-0.2.16.tgz#72275204e345c271800dbf070187dbd2e6a4d30b"
+  integrity sha512-GKKLRnhUDNd0xLsP85GO8iWxq9tghWFX7k2nY3EiEBMXa6zIK7bOM+UaShT3ycrN1OqAIuk1+56pVDSC/Tz6/g==
   dependencies:
-    "@guild-docs/types" "^0.2.14"
+    "@guild-docs/types" "^0.2.16"
     github-slugger "^1.3.0"
     globby "^11.0.4"
     gray-matter "^4.0.3"
@@ -1606,10 +1606,10 @@
     remark-emoji "^2.2.0"
     remark-slug "^6.0.0"
 
-"@guild-docs/types@^0.2.14":
-  version "0.2.14"
-  resolved "https://registry.yarnpkg.com/@guild-docs/types/-/types-0.2.14.tgz#04c19fc23ed4d3913028f4ab35ed0df312a3e17c"
-  integrity sha512-a2NEhhUKV63Yvies590PZxOu+M2sQAzaZiQecctN2rgWhmaVkpHA2XzUnf2reaxsajy1olp5dUqZDQFStyrq/g==
+"@guild-docs/types@^0.2.16":
+  version "0.2.16"
+  resolved "https://registry.yarnpkg.com/@guild-docs/types/-/types-0.2.16.tgz#3993da8cd7f8f2a3009e8e82fddf73f4948ece3a"
+  integrity sha512-0O9/wiwlQuyZAtZusgbitQE3Usnig+iPQRCN+A26Di7ppkJesB/XOCPUZO/K+sICvjOPwJXE8IAbHqQv7c3PZA==
 
 "@hapi/accept@5.0.2":
   version "5.0.2"
@@ -12146,7 +12146,7 @@ zen-observable@^0.8.0:
   resolved "https://registry.npmjs.org/zen-observable/-/zen-observable-0.8.15.tgz#96415c512d8e3ffd920afd3889604e30b9eaac15"
   integrity sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==
 
-zustand@3.5.5, zustand@^3.5.4:
+zustand@3.5.5, zustand@^3.5.5:
   version "3.5.5"
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.5.5.tgz#628458ad70621ddc2a17dbee49be963e5c0dccb5"
   integrity sha512-iTiJoxzYFtiD7DhscgwK2P4Kft1JcZEI2U7mG8IxiOFM4KpBAiJZfFop3r/3wbCuyltXI6ph1Fx90e4j/S43XA==

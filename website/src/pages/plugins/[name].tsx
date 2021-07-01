@@ -1,45 +1,71 @@
-import { Center, Spinner, Container, Grid, SimpleGrid, Box, Code } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
-import { useFetch } from 'use-http';
-import { PluginWithStats } from '../api/plugins';
-import tw, { styled } from 'twin.macro';
+import { format } from 'date-fns';
+import { GetStaticPaths, GetStaticProps } from 'next';
 import React from 'react';
+import tw, { styled } from 'twin.macro';
+
+import { Box, Center, Code, Container, Grid, SimpleGrid } from '@chakra-ui/react';
+import { buildMDX, CompiledMDX } from '@guild-docs/server';
+
 import { PackageInstall } from '../../components/packageInstall';
 import { RemoteGHMarkdown } from '../../components/RemoteGhMarkdown';
-import { format } from 'date-fns';
+import { getPluginsData, PluginWithStats } from '../../lib/pluginsData';
 
 export const SubTitle = styled.h2(() => [tw`mt-0 mb-4 font-bold text-lg md:text-xl`]);
 export const Title = styled.h2(() => [tw`mt-0 mb-4 font-bold text-xl md:text-2xl`]);
 
-export default function PluginPage() {
-  const router = useRouter();
-
-  if (!router.isReady) {
-    return (
-      <Center h="300px">
-        <Spinner size={'xl'} />
-      </Center>
-    );
-  }
-
-  return <PluginPageContent />;
+interface PluginPageProps {
+  data: (PluginWithStats & { mdx: CompiledMDX })[];
 }
 
-export function PluginPageContent() {
-  const router = useRouter();
-  const queryKey = 'name';
-  const pluginId = router.query[queryKey] || router.asPath.match(new RegExp(`[&?]${queryKey}=(.*)(&|$)`));
-  const { loading, data = [] } = useFetch<PluginWithStats[]>(`/api/plugins?id=${pluginId}`, {}, [pluginId]);
+type PluginPageParams = {
+  name: string;
+};
 
-  if (loading) {
-    return (
-      <Center h="300px">
-        <Spinner size={'xl'} />
-      </Center>
-    );
-  }
+export const getStaticProps: GetStaticProps<PluginPageProps, PluginPageParams> = async ctx => {
+  const pluginName = ctx.params?.name;
 
-  if (!data || data.length === 0) {
+  const pluginsData =
+    typeof pluginName === 'string'
+      ? await getPluginsData({
+          idSpecific: pluginName,
+        })
+      : [];
+
+  const data = await Promise.all(
+    pluginsData.map(async plugin => {
+      return {
+        ...plugin,
+        mdx: await buildMDX(plugin.readme || plugin.stats?.collected?.metadata?.readme || ''),
+      };
+    })
+  );
+
+  return {
+    props: {
+      data,
+    },
+    // Revalidate at most once every 1 hour
+    revalidate: 60 * 60,
+  };
+};
+
+export const getStaticPaths: GetStaticPaths<PluginPageParams> = async () => {
+  const plugins = await getPluginsData();
+
+  return {
+    fallback: 'blocking',
+    paths: plugins.map(({ identifier }) => {
+      return {
+        params: {
+          name: identifier,
+        },
+      };
+    }),
+  };
+};
+
+export default function PluginPageContent({ data }: PluginPageProps) {
+  if (!data.length) {
     return (
       <Center h="300px" flexDir={'column'}>
         <SubTitle>404</SubTitle>
@@ -62,9 +88,8 @@ export function PluginPageContent() {
             <RemoteGHMarkdown
               directory={pluginData.stats?.collected?.metadata?.repository?.directory}
               repo={pluginData.stats?.collected?.metadata?.links?.repository}
-            >
-              {pluginData.readme || pluginData.stats?.collected?.metadata?.readme || ''}
-            </RemoteGHMarkdown>
+              content={pluginData.mdx}
+            />
           </Box>
           <Box>
             <SubTitle>Plugin Details</SubTitle>
