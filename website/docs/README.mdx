@@ -4,10 +4,10 @@ title: What is Envelop?
 
 ## What is Envelop?
 
-`envelop` is a lightweight JavaScript (/TypeScript) library for wrapping GraphQL execution layer and flow, allowing developers to develop, share
+`envelop` is a lightweight JavaScript (/TypeScript) library for customizing the GraphQL execution layer and flow, allowing developers to build, share
 and collaborate on GraphQL-related plugins while filling the missing pieces in GraphQL implementations.
 
-`envelop` aims to extend the GraphQL execution flow by adding plugins that enrichs the feature set of your application.
+`envelop` aims to extend the GraphQL execution flow by adding plugins that enrich the feature set of your application.
 
 ## Key Concepts
 
@@ -27,31 +27,32 @@ The `envelop` plugins are hooking into specific phases within the GraphQL execut
 
 The core of `envelop` has zero dependencies and will only alter your GraphQL execution based on the plugins you wish to use.
 
-It can be integrated with any GraphQL server that follows [the execution phase, as defined in the GraphQL spec](https://spec.graphql.org/June2018/#sec-Executing-Requests) and let you provide your own lifecycle methods.
+It can be integrated with any GraphQL server that follows [the execution phase, as defined in the GraphQL specification](https://spec.graphql.org/June2018/#sec-Executing-Requests) and lets you provide your own lifecycle methods.
 
 #### Wrap the entire pipeline
 
 `envelop` wraps the entire pipeline of the GraphQL operation execution, so developers can hook into all the phases - `parse`, `validate`, context building, `execute` and more.
 
-By offering hooks for the entire pipeline, we allow develoeprs to create plugins that add complete features to your GraphQL pipeline, without creating spaghetti code, or code that's specific your your application.
+By offering hooks for the entire pipeline, we allow developers to create plugins that add complete features to your GraphQL pipeline, without creating spaghetti code, or code that is specific your your application.
 
-Here's a breakdown of a few `envelop` plugins, and an explanation of how it contributes to the execution pipeline:
+Here is a breakdown of a few `envelop` plugins, and an explanation of how each of them contribute to the execution pipeline:
 
-- `useLogger` - hooks into the “before” of all phases, and just does `console.log`.
-- `useTiming` - hooks into “before” and “after” of all phases, measures times, and then prints it.
-- `useParserCache` - hooks into before and after the `parse` phase and implements caching based on the operation string.
+- `useLogger` - hooks into “before” of all phases, and prints the execution parameters to the console using `console.log`.
+- `useTiming` - hooks into “before” and “after” of all phases, measures times, and then prints them.
+- `useParserCache` - hooks into “before“ and “after“ of the `parse` phase and implements caching based on the operation string.
 - `useGraphQLJit` - hooks into `execute` phase and replaces the `execute` function with GraphQL-Jit’s executor.
 - `usePersistedOperations` - hooks into `parse` and replaces the `parse` function with a function that maps a hash into a DocumentNode.
-- `useGenericAuth` - hooks into context building and resolves the current user from the GraphQL request, then hooks into the `execute` phase to verify the user authentication.
+- `useGenericAuth` - hooks into context building and resolves the current user from the GraphQL request, then hooks into the `execute` phase to verify the users identity.
 - `useOpenTelemetry` - hooks into all phases, execution and resolvers, and creates Spans for OpenTelemetry tracing.
 
 #### No vendor-locking
 
-We do not aim to provide a complete, vendor-locking suite, since we believe that the developer should be able to adjust any part of their application, at any time, without major implications or refactoring.
+We do not aim to provide a complete, vendor lock-in suite, since we believe that developers should be able to adjust and replace any part of their application, at any time, without major implications or refactoring.
 
-The core implementation of `envelop` is agnostic to the HTTP server you use, and agnostic to the way your define your GraphQL Schema, so it's not a traditional "server" framework (you can create plugins that integrate with your HTTP server - or with your schema framework, if needed)
+The core implementation of `envelop` is agnostic to the HTTP server you use, and agnostic to the way your define your GraphQL Schema, so it is not a traditional "server" framework. Envelop plugins should be developed framework agnostic.
+However, you can still create plugins that include specific logic for your HTTP server - or your schema framework, if necessary.
 
-You can use Envelop with any environment (Node.js or browser) and any GraphQL workflow (client/server, client-side execute, or server-to-server).
+Envelop can be used with any environment (Node.js or browser) and any GraphQL workflow (client/server, client-side, or server-to-server).
 
 #### Features are just plugins
 
@@ -66,9 +67,8 @@ By using plugins that extends your GraphQL execution, you can very easily add fe
 - Resolvers tracing
 - Authentication
 - Authorization
-- ... and much more ...
 
-And <Text as="span" fontWeight="bold">much more</Text>, without the need to write it explicitly every time in every project or microservice.
+And <Text as="span" fontWeight="bold">much more</Text>, without having to write it explicitly every time for every project or microservice.
 
 #### Sharing Envelops
 
