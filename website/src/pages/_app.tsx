@@ -123,9 +123,9 @@ function AppContent(appProps: AppProps) {
             onClick: e => handlePushRoute('/docs', e),
           },
           {
-            children: 'Plugins Hub',
+            children: 'Plugin Hub',
             href: '/plugins',
-            title: 'Browse the plugins hub',
+            title: 'Browse the plugin hub',
             onClick: e => handlePushRoute('/plugins', e),
           },
           {

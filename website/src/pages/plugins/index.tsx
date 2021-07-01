@@ -105,7 +105,7 @@ export default function Marketplace() {
   return (
     <>
       <Head>
-        <title>Plugins Hub</title>
+        <title>Plugin Hub</title>
       </Head>
       {loading ? (
         <Center h="300px">
@@ -128,7 +128,7 @@ export default function Marketplace() {
             }))}
           /> */}
           <MarketplaceSearch
-            title="Explore Plugins Hub"
+            title="Explore Plugin Hub"
             placeholder="Find plugins..."
             primaryList={{
               title: 'Trending',
