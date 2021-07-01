@@ -10,7 +10,7 @@ export default function Index() {
       </Head>
       <HeroGradient
         title="Envelop: The missing GraphQL plugin system"
-        description={`Develop and share plugins that are usable with any server framework or GraphQL schema.`}
+        description={`Develop and share plugins that are usable with any GraphQL server framework or schema.`}
         link={{
           href: '/docs',
           children: 'Get Started',
