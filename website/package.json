@@ -23,7 +23,7 @@
     "@guild-docs/server": "0.2.16",
     "@mdx-js/react": "1.6.22",
     "@theguild/components": "1.4.2",
-    "esbuild": "0.12.13",
+    "esbuild": "0.12.14",
     "framer-motion": "4.1.17",
     "fs-extra": "10.0.0",
     "globby": "11.0.4",
