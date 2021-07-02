@@ -2770,10 +2770,10 @@
   resolved "https://registry.npmjs.org/@types/unist/-/unist-2.0.3.tgz#9c088679876f374eb5983f150d4787aa6fb32d7e"
   integrity sha512-FvUupuM3rlRsRtCN+fDudtmytGO6iHJuuRKS1Ss0pG5z8oX0diNEw94UEL7hgDbpN94rgaK5R7sWm6RrSkZuAQ==
 
-"@types/wait-on@5.3.0":
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/@types/wait-on/-/wait-on-5.3.0.tgz#2d98fba6513fb2e82bb642e7fb3cb109a796d8fa"
-  integrity sha512-shduy6IRDu8ccaILJ2N7qj/43FsOpzQslIaaG0Pa4WVdIoUpnTxxViJgbEAW4xAOsHbsu9IBOF2DzLNkmYM0MQ==
+"@types/wait-on@5.3.1":
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/@types/wait-on/-/wait-on-5.3.1.tgz#bc5520d1d8b90b9caab1bef23315685ded73320d"
+  integrity sha512-2FFOKCF/YydrMUaqg+fkk49qf0e5rDgwt6aQsMzFQzbS419h2gNOXyiwp/o2yYy27bi/C1z+HgfncryjGzlvgQ==
   dependencies:
     "@types/node" "*"
 
