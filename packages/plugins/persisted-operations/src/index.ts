@@ -1,4 +1,4 @@
-import { Plugin } from '@envelop/types';
+import { ComposeContext, Plugin } from '@envelop/types';
 import { DocumentNode, GraphQLError, parse } from 'graphql';
 
 export class NonPersistedOperationError extends Error {}

@@ -1,8 +1,12 @@
 import { Plugin } from '@envelop/types';
 
-export type ContextFactoryFn = (currentContext: unknown) => unknown;
+export type ContextFactoryFn<TResult = unknown> = (currentContext: unknown) => TResult;
 
-export const useExtendContext = (contextFactory: ContextFactoryFn): Plugin => ({
+type UnwrapAsync<T> = T extends Promise<infer U> ? U : T;
+
+export const useExtendContext = <TContextFactory extends ContextFactoryFn>(
+  contextFactory: TContextFactory
+): Plugin<UnwrapAsync<ReturnType<TContextFactory>>> => ({
   async onContextBuilding({ context, extendContext }) {
     extendContext((await contextFactory(context)) as any);
   },

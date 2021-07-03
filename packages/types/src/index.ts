@@ -16,6 +16,7 @@ import {
   subscribe,
   SubscriptionArgs,
 } from 'graphql';
+import { Spread } from './utils';
 
 export type EnvelopContextFnWrapper<TFunction, ContextType = unknown> = (context: ContextType) => TFunction;
 
@@ -54,11 +55,11 @@ export type OnSubscribeHookResult<ContextType = DefaultContext> = {
   onResolverCalled?: OnResolverCalledHooks<ContextType>;
 };
 
-export interface Plugin<PluginContext = DefaultContext> {
+export interface Plugin<PluginContext = void> {
   onSchemaChange?: (options: { schema: GraphQLSchema; replaceSchema: (newSchema: GraphQLSchema) => void }) => void;
   onPluginInit?: (options: {
     addPlugin: (newPlugin: Plugin<any>) => void;
-    plugins: Plugin[];
+    plugins: Plugin<any>[];
     setSchema: (newSchema: GraphQLSchema) => void;
   }) => void;
   onExecute?: (options: {
@@ -127,15 +128,23 @@ export interface Plugin<PluginContext = DefaultContext> {
   >;
 }
 
-export type AfterCallback<T extends keyof Plugin<any>> = NonNullable<Plugin[T]> extends BeforeAfterHook<
-  infer B,
-  infer A,
-  infer Async
->
+type ExtratContextType<TPlugin extends Plugin> = TPlugin extends Plugin<infer ContextType> ? ContextType : {};
+
+type ComposeContextArray<V extends unknown> = V extends []
+  ? []
+  : V extends [Plugin]
+  ? [ExtratContextType<V[0]>]
+  : V extends [Plugin, ...infer R]
+  ? [ExtratContextType<V[0]>, ...ComposeContextArray<R>]
+  : [];
+
+export type ComposeContext<V extends unknown> = Spread<ComposeContextArray<V>>;
+
+export type AfterCallback<T extends keyof Plugin> = NonNullable<Plugin[T]> extends BeforeAfterHook<infer B, infer A, infer Async>
   ? (afterOptions: A) => void
   : never;
 
-export type Envelop<RequestContext = unknown, GraphQLContext = DefaultContext> = {
+export type Envelop<RequestContext = unknown, GraphQLContext = any> = {
   (initialContext?: Partial<RequestContext>): {
     execute: typeof execute;
     validate: typeof validate;

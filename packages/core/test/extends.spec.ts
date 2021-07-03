@@ -1,11 +1,15 @@
 import { createSpiedPlugin, createTestkit } from '@envelop/testing';
-import { envelop, useLogger, useSchema } from '../src';
+import { envelop, useExtendContext, useLogger, useSchema } from '../src';
 import { useEnvelop } from '../src/plugins/use-envelop';
 import { schema, query } from './common';
 
 describe('extending envelops', () => {
   it('should allow to extend envelops', async () => {
     const spiedPlugin = createSpiedPlugin();
+
+    const baseEnvelop2 = envelop({
+      plugins: [useExtendContext(() => ({ test: true }))],
+    });
 
     const baseEnvelop = envelop({
       plugins: [useLogger(), spiedPlugin.plugin],

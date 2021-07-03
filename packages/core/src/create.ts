@@ -1,8 +1,11 @@
-import { DefaultContext, Envelop, Plugin } from '@envelop/types';
+import { DefaultContext, Envelop, ComposeContext, Plugin } from '@envelop/types';
 import { createEnvelopOrchestrator } from './orchestrator';
 import { traceOrchestrator } from './traced-orchestrator';
 
-export function envelop(options: { plugins: Plugin[]; enableInternalTracing?: boolean }): Envelop {
+export function envelop<PluginsType extends Plugin<any>[]>(options: {
+  plugins: PluginsType;
+  enableInternalTracing?: boolean;
+}): Envelop<any, ComposeContext<PluginsType>> {
   let orchestrator = createEnvelopOrchestrator(options.plugins);
 
   if (options.enableInternalTracing) {
