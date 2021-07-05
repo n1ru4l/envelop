@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import React from 'react';
 import tw, { styled } from 'twin.macro';
+import Link from 'next/link';
 
 import { Box, Center, Code, Container, Grid, SimpleGrid } from '@chakra-ui/react';
 import { buildMDX, CompiledMDX } from '@guild-docs/server';
@@ -80,9 +81,12 @@ export default function PluginPageContent({ data }: PluginPageProps) {
     <section>
       <Container p={'1.5rem'} maxWidth={1200}>
         <Title>
-          <a href="/plugins">Plugin Hub</a> {'>'} {pluginData.title}
+          <Link href="/plugins" passHref>
+            <a>Plugin Hub</a>
+          </Link>
+          {'>'} {pluginData.title}
         </Title>
-        <Grid templateColumns="1fr 350px" gap={4}>
+        <Grid templateColumns={['1fr', '1fr', '1fr 350px']} gap={4}>
           <Box>
             <PackageInstall packageName={pluginData.npmPackage} />
             <RemoteGHMarkdown
@@ -91,7 +95,7 @@ export default function PluginPageContent({ data }: PluginPageProps) {
               content={pluginData.mdx}
             />
           </Box>
-          <Box>
+          <Box gridRow={['1', '1', 'auto']}>
             <SubTitle>Plugin Details</SubTitle>
             <SimpleGrid columns={2}>
               <div>Identifier</div>
