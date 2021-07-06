@@ -32,7 +32,7 @@
     "@envelop/types": "0.2.1"
   },
   "devDependencies": {
-    "@types/common-tags": "1.8.0",
+    "@types/common-tags": "1.8.1",
     "@graphql-tools/utils": "7.10.0",
     "@graphql-tools/schema": "7.1.5",
     "bob-the-bundler": "1.4.1",
