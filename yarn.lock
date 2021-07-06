@@ -1577,13 +1577,13 @@
     protobufjs "^6.10.0"
     yargs "^16.1.1"
 
-"@guild-docs/client@0.2.18":
-  version "0.2.18"
-  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-0.2.18.tgz#44f53bf5217ed949176203a6c817849d288938a7"
-  integrity sha512-O+Q3GKVhSCYRMO3CCkHb21vSJTW8HPH2yEXONZHiwPTr/zhOilTYq/MP2P66JjY5I17eIka7JYLLO3meYXkBlQ==
+"@guild-docs/client@0.2.19":
+  version "0.2.19"
+  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-0.2.19.tgz#ccf6fac5dd5841bc371f3922b42d200551887e02"
+  integrity sha512-qwWlxwF5UNjYoZqHD0eWbHGsJ8ino+kjtKdKFDytpoMF96k+YESzNY0n5QtCVVtcJHYF3dEE3kwAoRv1UCuqwQ==
   dependencies:
     "@guild-docs/types" "^0.2.17"
-    immer "^9.0.3"
+    immer "^9.0.5"
     next-mdx-remote "^3.0.2"
     next-seo "^4.26.0"
     nprogress "^0.2.0"
@@ -6599,10 +6599,10 @@ image-size@1.0.0:
   dependencies:
     queue "6.0.2"
 
-immer@^9.0.3:
-  version "9.0.3"
-  resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.3.tgz#146e2ba8b84d4b1b15378143c2345559915097f4"
-  integrity sha512-mONgeNSMuyjIe0lkQPa9YhdmTv8P19IeHV0biYhcXhbd5dhdB9HSK93zBpyKjp6wersSUgT5QyU0skmejUVP2A==
+immer@^9.0.5:
+  version "9.0.5"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.5.tgz#a7154f34fe7064f15f00554cc94c66cc0bf453ec"
+  integrity sha512-2WuIehr2y4lmYz9gaQzetPR2ECniCifk4ORaQbU3g5EalLt+0IVTosEPJ5BoYl/75ky2mivzdRzV8wWgQGOSYQ==
 
 import-cwd@^3.0.0:
   version "3.0.0"
