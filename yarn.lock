@@ -11278,10 +11278,10 @@ tsup@4.11.2:
     sucrase "^3.18.1"
     tree-kill "^1.2.2"
 
-tsup@4.12.2:
-  version "4.12.2"
-  resolved "https://registry.yarnpkg.com/tsup/-/tsup-4.12.2.tgz#016aed2e23a6982ddce30a66070bbec6d89d6362"
-  integrity sha512-iVj6fJrWta7bilb5QGGgwv5uLGTlYkOnksVB86sP6NA6lsxmpSTf3sSFP9x0No/Thdw7JgNQIUI0yGbjB0t6Mg==
+tsup@4.12.4:
+  version "4.12.4"
+  resolved "https://registry.yarnpkg.com/tsup/-/tsup-4.12.4.tgz#e8a57a17de5e5804d3f59ff0caab5d1fe1e93fdf"
+  integrity sha512-4fs0ijdZ2o/lrg3OAitFYySvND/mEiEbHADNfBlrwd22Vz4iNB1p7y5BX8vkPrZJXeZ4cGAwYlkruy5oRwIy9g==
   dependencies:
     cac "^6.7.2"
     chalk "^4.1.0"
