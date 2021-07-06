@@ -1,4 +1,11 @@
-import { AfterCallback, EnvelopContextFnWrapper, OnResolverCalledHooks, Plugin } from '@envelop/types';
+import {
+  AfterCallback,
+  ArbitraryObject,
+  EnvelopContextFnWrapper,
+  GetEnvelopedFn,
+  OnResolverCalledHooks,
+  Plugin,
+} from '@envelop/types';
 import {
   DocumentNode,
   execute,
@@ -18,17 +25,19 @@ import {
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema';
 
-export type EnvelopOrchestrator = {
-  parse: EnvelopContextFnWrapper<typeof parse, any>;
-  validate: EnvelopContextFnWrapper<typeof validate, any>;
-  execute: typeof execute;
-  subscribe: typeof subscribe;
-  contextFactory: EnvelopContextFnWrapper<(context?: any) => any, any>;
+export type EnvelopOrchestrator<
+  InitialContext extends ArbitraryObject = ArbitraryObject,
+  PluginsContext extends ArbitraryObject = ArbitraryObject
+> = {
+  parse: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['parse'], InitialContext>;
+  validate: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['validate'], InitialContext>;
+  execute: ReturnType<GetEnvelopedFn<PluginsContext>>['execute'];
+  subscribe: ReturnType<GetEnvelopedFn<PluginsContext>>['subscribe'];
+  contextFactory: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['contextFactory'], PluginsContext>;
   schema: Maybe<GraphQLSchema>;
-  prepareSchema: () => void;
 };
 
-export function createEnvelopOrchestrator(plugins: Plugin[]): EnvelopOrchestrator {
+export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[]): EnvelopOrchestrator<any, PluginsContext> {
   let schema: GraphQLSchema | undefined | null = null;
   let initDone = false;
 
@@ -36,6 +45,7 @@ export function createEnvelopOrchestrator(plugins: Plugin[]): EnvelopOrchestrato
   // to allow setting the schema from the onPluginInit callback. We also need to make sure
   // here not to call the same plugin that initiated the schema switch.
   const replaceSchema = (newSchema: GraphQLSchema, ignorePluginIndex = -1) => {
+    prepareTracedSchema(newSchema);
     schema = newSchema;
 
     if (initDone) {
@@ -423,7 +433,6 @@ export function createEnvelopOrchestrator(plugins: Plugin[]): EnvelopOrchestrato
     get schema() {
       return schema;
     },
-    prepareSchema: () => prepareTracedSchema(schema),
     parse: customParse,
     validate: customValidate,
     execute: customExecute,

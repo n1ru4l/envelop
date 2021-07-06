@@ -7,10 +7,6 @@ describe('extending envelops', () => {
   it('should allow to extend envelops', async () => {
     const spiedPlugin = createSpiedPlugin();
 
-    const baseEnvelop2 = envelop({
-      plugins: [useExtendContext(() => ({ test: true }))],
-    });
-
     const baseEnvelop = envelop({
       plugins: [useLogger(), spiedPlugin.plugin],
     });

@@ -16,9 +16,11 @@ import {
   subscribe,
   SubscriptionArgs,
 } from 'graphql';
-import { Spread } from './utils';
+import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
+import { ArbitraryObject, Spread, TuplifyUnion, Unarray } from './utils';
+export { ArbitraryObject } from './utils';
 
-export type EnvelopContextFnWrapper<TFunction, ContextType = unknown> = (context: ContextType) => TFunction;
+export type EnvelopContextFnWrapper<TFunction extends Function, ContextType = unknown> = (context: ContextType) => TFunction;
 
 type AfterFnOrVoid<Result> = void | ((afterOptions: Result) => void);
 
@@ -55,7 +57,7 @@ export type OnSubscribeHookResult<ContextType = DefaultContext> = {
   onResolverCalled?: OnResolverCalledHooks<ContextType>;
 };
 
-export interface Plugin<PluginContext = void> {
+export interface Plugin<PluginContext extends Record<string, any> = {}> {
   onSchemaChange?: (options: { schema: GraphQLSchema; replaceSchema: (newSchema: GraphQLSchema) => void }) => void;
   onPluginInit?: (options: {
     addPlugin: (newPlugin: Plugin<any>) => void;
@@ -128,29 +130,29 @@ export interface Plugin<PluginContext = void> {
   >;
 }
 
-type ExtratContextType<TPlugin extends Plugin> = TPlugin extends Plugin<infer ContextType> ? ContextType : {};
-
 type ComposeContextArray<V extends unknown> = V extends []
   ? []
-  : V extends [Plugin]
-  ? [ExtratContextType<V[0]>]
-  : V extends [Plugin, ...infer R]
-  ? [ExtratContextType<V[0]>, ...ComposeContextArray<R>]
-  : [];
+  : V extends [Plugin<infer Ctx>]
+  ? [Ctx]
+  : V extends [Plugin<infer Ctx>, ...infer R]
+  ? [Ctx, ...ComposeContextArray<R>]
+  : [{ error: 'no-match'; value: V }];
 
-export type ComposeContext<V extends unknown> = Spread<ComposeContextArray<V>>;
+export type ComposeContext<V extends Plugin[]> = Spread<ComposeContextArray<TuplifyUnion<Unarray<V>>>>;
 
 export type AfterCallback<T extends keyof Plugin> = NonNullable<Plugin[T]> extends BeforeAfterHook<infer B, infer A, infer Async>
   ? (afterOptions: A) => void
   : never;
 
-export type Envelop<RequestContext = unknown, GraphQLContext = any> = {
-  (initialContext?: Partial<RequestContext>): {
+export type GetEnvelopedFn<PluginsContext> = {
+  <InitialContext extends ArbitraryObject>(initialContext?: InitialContext): {
     execute: typeof execute;
     validate: typeof validate;
     subscribe: typeof subscribe;
     parse: typeof parse;
-    contextFactory: (orchestratorContext?: Partial<RequestContext>) => GraphQLContext | Promise<GraphQLContext>;
+    contextFactory: <ContextExtension>(
+      contextExtension?: ContextExtension
+    ) => PromiseOrValue<Spread<[InitialContext, PluginsContext, ContextExtension]>>;
     schema: GraphQLSchema;
   };
   _plugins: Plugin[];
