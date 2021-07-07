@@ -1,9 +1,16 @@
 import {
   AfterCallback,
+  AfterParseHook,
+  AfterValidateHook,
   ArbitraryObject,
   EnvelopContextFnWrapper,
   GetEnvelopedFn,
+  OnContextBuildingHook,
+  OnExecuteHook,
+  OnParseHook,
   OnResolverCalledHooks,
+  OnSubscribeHook,
+  OnValidateHook,
   Plugin,
 } from '@envelop/types';
 import {
@@ -77,11 +84,11 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
 
   // A set of before callbacks defined here in order to allow it to be used later
   const beforeCallbacks = {
-    parse: [] as NonNullable<Plugin['onParse']>[],
-    validate: [] as NonNullable<Plugin['onValidate']>[],
-    subscribe: [] as NonNullable<Plugin['onSubscribe']>[],
-    execute: [] as NonNullable<Plugin['onExecute']>[],
-    context: [] as NonNullable<Plugin['onContextBuilding']>[],
+    parse: [] as OnParseHook<any>[],
+    validate: [] as OnValidateHook<any>[],
+    subscribe: [] as OnSubscribeHook<any>[],
+    execute: [] as OnExecuteHook<any>[],
+    context: [] as OnContextBuildingHook<any>[],
   };
 
   for (const { onContextBuilding, onExecute, onParse, onSubscribe, onValidate } of plugins) {
@@ -93,11 +100,11 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
   }
 
   const customParse: EnvelopContextFnWrapper<typeof parse, any> = beforeCallbacks.parse.length
-    ? sharedObj => (source, parseOptions) => {
+    ? initialContext => (source, parseOptions) => {
         let result: DocumentNode | Error | null = null;
         let parseFn: typeof parse = parse;
-        const context = sharedObj;
-        const afterCalls: AfterCallback<'onParse'>[] = [];
+        const context = initialContext;
+        const afterCalls: AfterParseHook<any>[] = [];
 
         for (const onParse of beforeCallbacks.parse) {
           const afterFn = onParse({
@@ -158,7 +165,8 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
         let result: null | readonly GraphQLError[] = null;
         const context = initialContext;
 
-        const afterCalls: AfterCallback<'onValidate'>[] = [];
+        const afterCalls: AfterValidateHook<any>[] = [];
+
         for (const onValidate of beforeCallbacks.validate) {
           const afterFn = onValidate({
             context,

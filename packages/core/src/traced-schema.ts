@@ -1,5 +1,5 @@
 import { defaultFieldResolver, GraphQLFieldResolver, GraphQLSchema, isIntrospectionType, isObjectType } from 'graphql';
-import { AfterResolverPayload, OnResolverCalledHooks } from 'packages/types/src';
+import { AfterResolverPayload, OnResolverCalledHooks } from 'packages/types/src/get-enveloped';
 
 export const trackedSchemaSymbol = Symbol('TRACKED_SCHEMA');
 export const resolversHooksSymbol = Symbol('RESOLVERS_HOOKS');
