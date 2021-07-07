@@ -19,7 +19,7 @@
     "noImplicitThis": true,
     "strict": true,
     "alwaysStrict": true,
-    "noImplicitReturns": true,
+    "noImplicitReturns": false,
     "noUnusedLocals": false,
     "resolveJsonModule": true,
     "skipLibCheck": true,

@@ -1,4 +1,4 @@
-import { createSpiedPlugin, createTestkit } from '@envelop/testing';
+import { createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { execute } from 'graphql';
 import { useGraphQlJit } from '../src';

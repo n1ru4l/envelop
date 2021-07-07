@@ -64,6 +64,7 @@ export interface Plugin<PluginContext = DefaultContext> {
   onExecute?: (options: {
     executeFn: typeof execute;
     args: ExecutionArgs;
+    setVariables: (newVariables: ExecutionArgs['variableValues']) => void;
     setExecuteFn: (newExecute: typeof execute) => void;
     setResultAndStopExecution: (newResult: ExecutionResult) => void;
     extendContext: (contextExtension: Partial<PluginContext>) => void;
@@ -71,6 +72,7 @@ export interface Plugin<PluginContext = DefaultContext> {
   onSubscribe?: (options: {
     subscribeFn: typeof subscribe;
     args: SubscriptionArgs;
+    setVariables: (newVariables: ExecutionArgs['variableValues']) => void;
     setSubscribeFn: (newSubscribe: typeof subscribe) => void;
     extendContext: (contextExtension: Partial<PluginContext>) => void;
   }) => void | OnSubscribeHookResult<PluginContext>;

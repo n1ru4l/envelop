@@ -263,12 +263,18 @@ export function createEnvelopOrchestrator(plugins: Plugin[]): EnvelopOrchestrato
       setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
     }) => void)[] = [];
     let context = args.contextValue || {};
+    let variables = args.variableValues || {};
 
     for (const onSubscribe of beforeCallbacks.subscribe) {
       const after = onSubscribe({
         subscribeFn,
         setSubscribeFn: newSubscribeFn => {
           subscribeFn = newSubscribeFn;
+        },
+        setVariables: newVariables => {
+          if (newVariables) {
+            variables = newVariables;
+          }
         },
         extendContext: extension => {
           context = { ...context, ...extension };
@@ -293,6 +299,7 @@ export function createEnvelopOrchestrator(plugins: Plugin[]): EnvelopOrchestrato
     let result = await subscribeFn({
       ...args,
       contextValue: context,
+      variableValues: variables,
     });
 
     for (const afterCb of afterCalls) {
@@ -339,6 +346,7 @@ export function createEnvelopOrchestrator(plugins: Plugin[]): EnvelopOrchestrato
         const afterCalls: ((options: { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void }) => void)[] =
           [];
         let context = args.contextValue || {};
+        let variables = args.variableValues || {};
 
         for (const onExecute of beforeCallbacks.execute) {
           let stopCalled = false;
@@ -347,6 +355,11 @@ export function createEnvelopOrchestrator(plugins: Plugin[]): EnvelopOrchestrato
             executeFn,
             setExecuteFn: newExecuteFn => {
               executeFn = newExecuteFn;
+            },
+            setVariables: newVariables => {
+              if (newVariables) {
+                variables = newVariables;
+              }
             },
             setResultAndStopExecution: stopResult => {
               stopCalled = true;
@@ -390,6 +403,7 @@ export function createEnvelopOrchestrator(plugins: Plugin[]): EnvelopOrchestrato
         result = await executeFn({
           ...args,
           contextValue: context,
+          variableValues: variables,
         });
 
         for (const afterCb of afterCalls) {
