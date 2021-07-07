@@ -1,17 +1,18 @@
 import {
-  AfterCallback,
   AfterParseHook,
   AfterValidateHook,
   ArbitraryObject,
   EnvelopContextFnWrapper,
   GetEnvelopedFn,
   OnContextBuildingHook,
+  OnExecuteDoneHook,
   OnExecuteHook,
   OnParseHook,
-  OnResolverCalledHooks,
+  OnResolverCalledHook,
   OnSubscribeHook,
   OnValidateHook,
   Plugin,
+  SubscribeResultHook,
 } from '@envelop/types';
 import {
   DocumentNode,
@@ -222,7 +223,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
 
   const customContextFactory: EnvelopContextFnWrapper<(orchestratorCtx?: any) => any, any> = beforeCallbacks.context.length
     ? initialContext => async orchestratorCtx => {
-        const afterCalls: AfterCallback<'onContextBuilding'>[] = [];
+        const afterCalls: OnContextBuildingHook<any>[] = [];
         let context = orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
 
         for (const onContext of beforeCallbacks.context) {
@@ -273,17 +274,14 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
           }
         : argsOrSchema;
 
-    const onResolversHandlers: OnResolverCalledHooks[] = [];
+    const onResolversHandlers: OnResolverCalledHook[] = [];
     let subscribeFn: typeof subscribe = subscribe;
 
-    const afterCalls: ((options: {
-      result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
-      setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
-    }) => void)[] = [];
+    const afterCalls: SubscribeResultHook[] = [];
     let context = args.contextValue || {};
 
     for (const onSubscribe of beforeCallbacks.subscribe) {
-      const after = onSubscribe({
+      const after = await onSubscribe({
         subscribeFn,
         setSubscribeFn: newSubscribeFn => {
           subscribeFn = newSubscribeFn;
@@ -350,18 +348,17 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
               }
             : argsOrSchema;
 
-        const onResolversHandlers: OnResolverCalledHooks[] = [];
+        const onResolversHandlers: OnResolverCalledHook[] = [];
         let executeFn: typeof execute = execute;
         let result: ExecutionResult;
 
-        const afterCalls: ((options: { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void }) => void)[] =
-          [];
+        const afterCalls: OnExecuteDoneHook[] = [];
         let context = args.contextValue || {};
 
         for (const onExecute of beforeCallbacks.execute) {
           let stopCalled = false;
 
-          const after = onExecute({
+          const after = await onExecute({
             executeFn,
             setExecuteFn: newExecuteFn => {
               executeFn = newExecuteFn;

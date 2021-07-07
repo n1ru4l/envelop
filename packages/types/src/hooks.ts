@@ -111,13 +111,14 @@ export type OnBeforeResolverCalledEventPayload<ParentType = unknown, ArgsType = 
 };
 export type AfterResolverEventPayload = { result: unknown | Error; setResult: (newResult: unknown) => void };
 export type AfterResolverHook = (options: AfterResolverEventPayload) => void;
-export type OnResolverCalledHooks<ParentType = unknown, ArgsType = DefaultArgs, ContextType = unknown> = (
+export type OnResolverCalledHook<ParentType = unknown, ArgsType = DefaultArgs, ContextType = unknown> = (
   options: OnBeforeResolverCalledEventPayload<ParentType, ArgsType, ContextType>
 ) => PromiseOrValue<void | AfterResolverHook>;
 export type OnExecuteDoneEventPayload = { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void };
+export type OnExecuteDoneHook = (options: OnExecuteDoneEventPayload) => void;
 export type OnExecuteHookResult<ContextType> = {
-  onExecuteDone?: (options: OnExecuteDoneEventPayload) => void;
-  onResolverCalled?: OnResolverCalledHooks<ContextType>;
+  onExecuteDone?: OnExecuteDoneHook;
+  onResolverCalled?: OnResolverCalledHook<ContextType>;
 };
 export type OnExecuteHook<ContextType> = (
   options: OnExecuteEventPayload<ContextType>
@@ -138,7 +139,7 @@ export type OnSubscribeResultEventPayload = {
 export type SubscribeResultHook = (options: OnSubscribeResultEventPayload) => void;
 export type OnSubscribeHookResult<ContextType> = {
   onSubscribeResult?: SubscribeResultHook;
-  onResolverCalled?: OnResolverCalledHooks<ContextType>;
+  onResolverCalled?: OnResolverCalledHook<ContextType>;
 };
 export type OnSubscribeHook<ContextType> = (
   options: OnSubscribeEventPayload<ContextType>

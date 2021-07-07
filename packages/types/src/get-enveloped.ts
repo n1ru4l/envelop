@@ -1,3 +1,4 @@
+import { Plugin } from './plugin';
 import { GraphQLSchema } from 'graphql';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { OriginalExecuteFn, OriginalParseFn, OriginalSubscribeFn, OriginalValidateFn } from './hooks';
