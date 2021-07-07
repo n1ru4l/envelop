@@ -2662,10 +2662,10 @@
   resolved "https://registry.npmjs.org/@types/minimist/-/minimist-1.2.1.tgz#283f669ff76d7b8260df8ab7a4262cc83d988256"
   integrity sha512-fZQQafSREFyuZcdWFAExYjBiCL7AUCdgsk80iO0q4yihYYdcIiH28CcuPTGFgLOCC8RlW49GSQxdHwZP+I7CNg==
 
-"@types/newrelic@7.0.1":
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/@types/newrelic/-/newrelic-7.0.1.tgz#8b366fa85120dd1ab3f68e4e33a992b437bf0386"
-  integrity sha512-pkzmAFSzM+NpXAUgp+nBKsZr7Hxux3StHfUdaluAnpDKnmUaBdmEaWE25jIoqxBFfuSFqx8ZtNUGHNxmkynVBg==
+"@types/newrelic@7.0.2":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@types/newrelic/-/newrelic-7.0.2.tgz#232746fdaba0033e5b246727d5d836c64d5da9ad"
+  integrity sha512-+PPoS4y66YypF2tvTdJD2aXSGPpOWaDsJ5vPs/e3ejfrOB4bKSCrpH6nnxIeV12pv1upRsKfuXNFtaH1pGQ0MA==
 
 "@types/node-fetch@^2.5.10":
   version "2.5.10"
