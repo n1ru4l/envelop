@@ -13,3 +13,7 @@ article {
   width: 100%;
   overflow-x: auto;
 }
+
+#__next {
+  font-family: TGCFont, sans-serif;
+}
