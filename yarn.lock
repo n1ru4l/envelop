@@ -2585,10 +2585,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/k6@0.32.1":
-  version "0.32.1"
-  resolved "https://registry.yarnpkg.com/@types/k6/-/k6-0.32.1.tgz#91286ece4cd4bdef398c826f67c86def560f2c97"
-  integrity sha512-G69VjOOkHdJvdRSvCS7Ei+WQKqPfCTrcLEItmRt/7j7yMVJfN4hLs6KDj/VtfQCs4cMmA6Nfnl6Ot1vi3znb/Q==
+"@types/k6@0.32.2":
+  version "0.32.2"
+  resolved "https://registry.yarnpkg.com/@types/k6/-/k6-0.32.2.tgz#9a087d9162b892e67a5c1b61967b5db708339eed"
+  integrity sha512-DUHGrqAaQgwQ3h+XYtUx//SfL26UXetdMjxvT1q9Kb2OM2eOYA2Aa9jqcwp7B1Tbf97CWFx0t2Ma9ONqMsDmaw==
 
 "@types/keygrip@*":
   version "1.0.2"
