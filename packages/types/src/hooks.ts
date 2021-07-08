@@ -16,6 +16,7 @@ import {
   ValidationRule,
 } from 'graphql';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
+import { DefaultContext } from 'packages/core/src';
 import { Plugin } from './plugin';
 
 export type DefaultArgs = Record<string, unknown>;
@@ -111,14 +112,14 @@ export type OnBeforeResolverCalledEventPayload<ParentType = unknown, ArgsType = 
 };
 export type AfterResolverEventPayload = { result: unknown | Error; setResult: (newResult: unknown) => void };
 export type AfterResolverHook = (options: AfterResolverEventPayload) => void;
-export type OnResolverCalledHook<ParentType = unknown, ArgsType = DefaultArgs, ContextType = unknown> = (
+export type OnResolverCalledHook<ParentType = unknown, ArgsType = DefaultArgs, ContextType = DefaultContext> = (
   options: OnBeforeResolverCalledEventPayload<ParentType, ArgsType, ContextType>
 ) => PromiseOrValue<void | AfterResolverHook>;
 export type OnExecuteDoneEventPayload = { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void };
 export type OnExecuteDoneHook = (options: OnExecuteDoneEventPayload) => void;
 export type OnExecuteHookResult<ContextType> = {
   onExecuteDone?: OnExecuteDoneHook;
-  onResolverCalled?: OnResolverCalledHook<ContextType>;
+  onResolverCalled?: OnResolverCalledHook<any, DefaultArgs, ContextType>;
 };
 export type OnExecuteHook<ContextType> = (
   options: OnExecuteEventPayload<ContextType>
