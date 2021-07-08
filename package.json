@@ -28,7 +28,7 @@
     "test:ci": "jest --coverage",
     "prerelease": "yarn build",
     "release": "changeset publish",
-    "loadtest:start-server": "node ./benchmark/app.js",
+    "loadtest:start-server": "NODE_ENV=production node ./benchmark/app.js",
     "release:canary": "(node scripts/canary-release.js && yarn build && yarn changeset publish --tag alpha) || echo Skipping Canary...",
     "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\""
   },
