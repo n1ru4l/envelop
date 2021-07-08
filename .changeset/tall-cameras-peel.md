@@ -8,7 +8,6 @@
 '@envelop/persisted-operations': patch
 '@envelop/sentry': patch
 '@envelop/validation-cache': patch
-'@envelop/testing': patch
 '@envelop/types': patch
 '@envelop/apollo-server-errors': patch
 '@envelop/apollo-tracing': patch
