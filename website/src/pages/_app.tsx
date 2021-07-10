@@ -76,8 +76,8 @@ const theme = extendTheme({
     },
   },
   fonts: {
-    heading: '"Poppins", sans-serif',
-    body: '"Poppins", sans-serif',
+    heading: 'TGCFont, sans-serif',
+    body: 'TGCFont, sans-serif',
   },
   config: {
     initialColorMode: 'light',
