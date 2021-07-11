@@ -1,5 +1,15 @@
 # @envelop/types
 
+## 0.3.0
+
+### Minor Changes
+
+- 2113527: Extend Envelop plugin API with the ability to access and replace resolver function
+
+### Patch Changes
+
+- 28ad742: Improve TypeScript types
+
 ## 0.2.1
 
 ### Patch Changes

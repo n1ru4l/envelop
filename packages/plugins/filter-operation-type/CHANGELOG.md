@@ -1,5 +1,11 @@
 # @envelop/filter-operation-type
 
+## 0.1.1
+
+### Patch Changes
+
+- 28ad742: Improve TypeScript types
+
 ## 0.1.0
 
 ### Minor Changes

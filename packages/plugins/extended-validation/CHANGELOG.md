@@ -1,5 +1,11 @@
 # @envelop/extended-validation
 
+## 0.2.2
+
+### Patch Changes
+
+- 28ad742: Improve TypeScript types
+
 ## 0.2.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @envelop/apollo-tracing
 
+## 0.2.1
+
+### Patch Changes
+
+- 28ad742: Improve TypeScript types
+
 ## 0.2.0
 
 ### Minor Changes

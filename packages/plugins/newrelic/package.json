@@ -1,6 +1,6 @@
 {
   "name": "@envelop/newrelic",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Santino Puleio <santinopuleio@gmail.com>",
   "license": "MIT",
   "sideEffects": false,

@@ -1,5 +1,12 @@
 # @envelop/graphql-jit
 
+## 0.2.1
+
+### Patch Changes
+
+- d82e2d0: Adjustments for new TypeScript beta version
+- 28ad742: Improve TypeScript types
+
 ## 0.2.0
 
 ### Minor Changes
