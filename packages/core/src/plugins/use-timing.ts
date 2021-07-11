@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 import { Plugin } from '@envelop/types';
 import { DocumentNode, ExecutionArgs, getOperationAST, GraphQLResolveInfo, Source, SubscriptionArgs } from 'graphql';
+import { envelopIsIntrospectionSymbol } from '..';
+import { isIntrospectionOperationString } from '../utils';
 
 const HR_TO_NS = 1e9;
 const NS_TO_MS = 1e6;
@@ -8,6 +10,7 @@ const NS_TO_MS = 1e6;
 export type ResultTiming = { ms: number; ns: number };
 
 export type TimingPluginOptions = {
+  skipIntrospection?: boolean;
   onContextBuildingMeasurement?: (timing: ResultTiming) => void;
   onExecutionMeasurement?: (args: ExecutionArgs, timing: ResultTiming) => void;
   onSubscriptionMeasurement?: (args: SubscriptionArgs, timing: ResultTiming) => void;
@@ -41,16 +44,24 @@ const deltaFrom = (hrtime: [number, number]): { ms: number; ns: number } => {
   };
 };
 
-export const useTiming = (rawOptions?: TimingPluginOptions): Plugin => {
+type InternalPluginContext = {
+  [envelopIsIntrospectionSymbol]?: true;
+};
+
+export const useTiming = (rawOptions?: TimingPluginOptions): Plugin<InternalPluginContext> => {
   const options = {
     ...DEFAULT_OPTIONS,
     ...(rawOptions || {}),
   };
 
-  const result: Plugin = {};
+  const result: Plugin<InternalPluginContext> = {};
 
   if (options.onContextBuildingMeasurement) {
-    result.onContextBuilding = () => {
+    result.onContextBuilding = ({ context }) => {
+      if (context[envelopIsIntrospectionSymbol]) {
+        return;
+      }
+
       const contextStartTime = process.hrtime();
 
       return () => {
@@ -60,7 +71,14 @@ export const useTiming = (rawOptions?: TimingPluginOptions): Plugin => {
   }
 
   if (options.onParsingMeasurement) {
-    result.onParse = ({ params }) => {
+    result.onParse = ({ params, extendContext }) => {
+      if (options.skipIntrospection && isIntrospectionOperationString(params.source)) {
+        extendContext({
+          [envelopIsIntrospectionSymbol]: true,
+        });
+
+        return;
+      }
       const parseStartTime = process.hrtime();
 
       return () => {
@@ -70,7 +88,11 @@ export const useTiming = (rawOptions?: TimingPluginOptions): Plugin => {
   }
 
   if (options.onValidationMeasurement) {
-    result.onValidate = ({ params }) => {
+    result.onValidate = ({ params, context }) => {
+      if (context[envelopIsIntrospectionSymbol]) {
+        return;
+      }
+
       const validateStartTime = process.hrtime();
 
       return () => {
@@ -82,6 +104,10 @@ export const useTiming = (rawOptions?: TimingPluginOptions): Plugin => {
   if (options.onExecutionMeasurement) {
     if (options.onResolverMeasurement) {
       result.onExecute = ({ args }) => {
+        if (args.contextValue[envelopIsIntrospectionSymbol]) {
+          return;
+        }
+
         const executeStartTime = process.hrtime();
 
         return {
@@ -99,6 +125,10 @@ export const useTiming = (rawOptions?: TimingPluginOptions): Plugin => {
       };
     } else {
       result.onExecute = ({ args }) => {
+        if (args.contextValue[envelopIsIntrospectionSymbol]) {
+          return;
+        }
+
         const executeStartTime = process.hrtime();
 
         return {
@@ -113,6 +143,10 @@ export const useTiming = (rawOptions?: TimingPluginOptions): Plugin => {
   if (options.onSubscriptionMeasurement) {
     if (options.onResolverMeasurement) {
       result.onSubscribe = ({ args }) => {
+        if (args.contextValue[envelopIsIntrospectionSymbol]) {
+          return;
+        }
+
         const subscribeStartTime = process.hrtime();
 
         return {
@@ -130,6 +164,10 @@ export const useTiming = (rawOptions?: TimingPluginOptions): Plugin => {
       };
     } else {
       result.onSubscribe = ({ args }) => {
+        if (args.contextValue[envelopIsIntrospectionSymbol]) {
+          return;
+        }
+
         const subscribeStartTime = process.hrtime();
 
         return {

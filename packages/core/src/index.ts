@@ -1,5 +1,6 @@
 export * from '@envelop/types';
 export * from './create';
+export * from './utils';
 export * from './plugins/use-envelop';
 export * from './plugins/use-logger';
 export * from './plugins/use-timing';

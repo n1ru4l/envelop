@@ -1,22 +1,39 @@
 /* eslint-disable no-console */
 import { Plugin } from '@envelop/types';
+import { envelopIsIntrospectionSymbol, isIntrospectionOperationString } from '..';
 
 type LoggerPluginOptions = {
   logFn: typeof console.log;
+  skipIntrospection?: boolean;
 };
 
 const DEFAULT_OPTIONS: LoggerPluginOptions = {
   logFn: console.log,
 };
 
-export const useLogger = (rawOptions: LoggerPluginOptions = DEFAULT_OPTIONS): Plugin => {
+type InternalPluginContext = {
+  [envelopIsIntrospectionSymbol]?: true;
+};
+
+export const useLogger = (rawOptions: LoggerPluginOptions = DEFAULT_OPTIONS): Plugin<InternalPluginContext> => {
   const options = {
     DEFAULT_OPTIONS,
     ...rawOptions,
   };
 
   return {
+    onParse({ extendContext, params }) {
+      if (options.skipIntrospection && isIntrospectionOperationString(params.source)) {
+        extendContext({
+          [envelopIsIntrospectionSymbol]: true,
+        });
+      }
+    },
     onExecute({ args }) {
+      if (args.contextValue[envelopIsIntrospectionSymbol]) {
+        return;
+      }
+
       options.logFn('execute-start', { args });
 
       return {
@@ -26,6 +43,10 @@ export const useLogger = (rawOptions: LoggerPluginOptions = DEFAULT_OPTIONS): Pl
       };
     },
     onSubscribe({ args }) {
+      if (args.contextValue[envelopIsIntrospectionSymbol]) {
+        return;
+      }
+
       options.logFn('subscribe-start', { args });
 
       return {
