@@ -100,6 +100,8 @@ describe('execute', () => {
       info: expect.objectContaining({
         fieldName: 'me',
       }),
+      resolverFn: expect.any(Function),
+      replaceResolverFn: expect.any(Function),
     });
     expect(onResolverCalled).toHaveBeenCalledWith({
       root: { _id: 1, firstName: 'Dotan', lastName: 'Simha' },
@@ -108,6 +110,8 @@ describe('execute', () => {
       info: expect.objectContaining({
         fieldName: 'id',
       }),
+      resolverFn: expect.any(Function),
+      replaceResolverFn: expect.any(Function),
     });
     expect(onResolverCalled).toHaveBeenCalledWith({
       root: { _id: 1, firstName: 'Dotan', lastName: 'Simha' },
@@ -116,6 +120,8 @@ describe('execute', () => {
       info: expect.objectContaining({
         fieldName: 'name',
       }),
+      resolverFn: expect.any(Function),
+      replaceResolverFn: expect.any(Function),
     });
 
     expect(afterResolver).toHaveBeenCalledTimes(3);
