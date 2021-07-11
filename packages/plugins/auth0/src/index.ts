@@ -114,7 +114,7 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
         }
       } catch (e) {
         if (options.onError) {
-          options.onError(e);
+          options.onError(e as Error);
         } else {
           throw e;
         }

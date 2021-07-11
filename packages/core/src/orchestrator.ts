@@ -130,7 +130,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
           try {
             result = parseFn(source, parseOptions);
           } catch (e) {
-            result = e;
+            result = e as Error;
           }
         }
 

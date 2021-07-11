@@ -59,7 +59,7 @@ export const useGraphQlJit = (
               pluginOptions.onError(compiledQuery);
             } catch (e) {
               return {
-                errors: [e],
+                errors: [e as GraphQLError],
               };
             }
           } else {
