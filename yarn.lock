@@ -11446,10 +11446,10 @@ typescript@4.3.5:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.5.tgz#4d1c37cc16e893973c45a06886b7113234f119f4"
   integrity sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
 
-typescript@4.4.0-beta:
-  version "4.4.0-beta"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.4.0-beta.tgz#a5b8a3a0d260fa5ce84daa3ab58f7102ad19a655"
-  integrity sha512-qMxA8NzN3igwX8Mii7MXGNW+YeFAkUKyKg+x4F1CCFsO36LqISf1EXXSOLDuRIdGjdVvV53grRxfHjOW65YfMA==
+typescript@4.4.0-dev.20210711:
+  version "4.4.0-dev.20210711"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.4.0-dev.20210711.tgz#9678849820b91b59ccddd3c0e1fd900ac26c9cf9"
+  integrity sha512-QCPsZ5O+q40c5BkAhFu1By7zDndDDkdUZPEq7zHwBG2rLLYZloZpppighyrpd1IbdRzitY9WDHMjJ8ft+Au8Yw==
 
 undici@4.1.0:
   version "4.1.0"
