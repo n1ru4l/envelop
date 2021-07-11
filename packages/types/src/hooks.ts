@@ -95,6 +95,37 @@ export type OnContextBuildingHook<ContextType> = (
   options: OnContextBuildingEventPayload<ContextType>
 ) => PromiseOrValue<void | AfterContextBuildingHook<ContextType>>;
 
+/** onResolverCalled */
+export type ResolverFn<ParentType = unknown, ArgsType = DefaultArgs, ContextType = unknown, ResultType = unknown> = (
+  root: ParentType,
+  args: ArgsType,
+  context: ContextType,
+  info: GraphQLResolveInfo
+) => PromiseOrValue<ResultType>;
+export type OnBeforeResolverCalledEventPayload<
+  ParentType = unknown,
+  ArgsType = DefaultArgs,
+  ContextType = unknown,
+  ResultType = unknown
+> = {
+  root: ParentType;
+  args: ArgsType;
+  context: ContextType;
+  info: GraphQLResolveInfo;
+  resolverFn: ResolverFn<ParentType, ArgsType, ContextType, ResultType>;
+  replaceResolverFn: (newResolver: ResolverFn<ParentType, ArgsType, ContextType, ResultType>) => void;
+};
+export type AfterResolverEventPayload = { result: unknown | Error; setResult: (newResult: unknown) => void };
+export type AfterResolverHook = (options: AfterResolverEventPayload) => void;
+export type OnResolverCalledHook<
+  ParentType = unknown,
+  ArgsType = DefaultArgs,
+  ContextType = DefaultContext,
+  ResultType = unknown
+> = (
+  options: OnBeforeResolverCalledEventPayload<ParentType, ArgsType, ContextType, ResultType>
+) => PromiseOrValue<void | AfterResolverHook>;
+
 /** onExecute */
 export type OriginalExecuteFn = typeof execute;
 export type OnExecuteEventPayload<ContextType> = {
@@ -104,17 +135,6 @@ export type OnExecuteEventPayload<ContextType> = {
   setResultAndStopExecution: (newResult: ExecutionResult) => void;
   extendContext: (contextExtension: Partial<ContextType>) => void;
 };
-export type OnBeforeResolverCalledEventPayload<ParentType = unknown, ArgsType = DefaultArgs, ContextType = unknown> = {
-  root: ParentType;
-  args: ArgsType;
-  context: ContextType;
-  info: GraphQLResolveInfo;
-};
-export type AfterResolverEventPayload = { result: unknown | Error; setResult: (newResult: unknown) => void };
-export type AfterResolverHook = (options: AfterResolverEventPayload) => void;
-export type OnResolverCalledHook<ParentType = unknown, ArgsType = DefaultArgs, ContextType = DefaultContext> = (
-  options: OnBeforeResolverCalledEventPayload<ParentType, ArgsType, ContextType>
-) => PromiseOrValue<void | AfterResolverHook>;
 export type OnExecuteDoneEventPayload = { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void };
 export type OnExecuteDoneHook = (options: OnExecuteDoneEventPayload) => void;
 export type OnExecuteHookResult<ContextType> = {

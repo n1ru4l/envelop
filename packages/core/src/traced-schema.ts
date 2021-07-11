@@ -1,5 +1,5 @@
-import { defaultFieldResolver, GraphQLFieldResolver, GraphQLSchema, isIntrospectionType, isObjectType } from 'graphql';
-import { AfterResolverHook, OnResolverCalledHook } from '@envelop/types';
+import { defaultFieldResolver, GraphQLSchema, isIntrospectionType, isObjectType } from 'graphql';
+import { AfterResolverHook, OnResolverCalledHook, ResolverFn } from '@envelop/types';
 
 export const trackedSchemaSymbol = Symbol('TRACKED_SCHEMA');
 export const resolversHooksSymbol = Symbol('RESOLVERS_HOOKS');
@@ -17,7 +17,7 @@ export function prepareTracedSchema(schema: GraphQLSchema | null | undefined): v
       const fields = Object.values(type.getFields());
 
       for (const field of fields) {
-        const originalFn: GraphQLFieldResolver<any, any> = field.resolve || defaultFieldResolver;
+        let resolverFn: ResolverFn = (field.resolve || defaultFieldResolver) as ResolverFn;
 
         field.resolve = async (root, args, context, info) => {
           if (context && context[resolversHooksSymbol]) {
@@ -25,12 +25,21 @@ export function prepareTracedSchema(schema: GraphQLSchema | null | undefined): v
             const afterCalls: AfterResolverHook[] = [];
 
             for (const hook of hooks) {
-              const afterFn = await hook({ root, args, context, info });
+              const afterFn = await hook({
+                root,
+                args,
+                context,
+                info,
+                resolverFn,
+                replaceResolverFn: newFn => {
+                  resolverFn = newFn as ResolverFn;
+                },
+              });
               afterFn && afterCalls.push(afterFn);
             }
 
             try {
-              let result = await originalFn(root, args, context, info);
+              let result = await resolverFn(root, args, context, info);
 
               for (const afterFn of afterCalls) {
                 afterFn({
@@ -57,7 +66,7 @@ export function prepareTracedSchema(schema: GraphQLSchema | null | undefined): v
               throw resultErr;
             }
           } else {
-            return originalFn(root, args, context, info);
+            return resolverFn(root, args, context, info);
           }
         };
       }
