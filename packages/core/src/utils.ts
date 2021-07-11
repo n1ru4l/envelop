@@ -1,5 +1,7 @@
 import { ASTNode, DocumentNode, Kind, OperationDefinitionNode, visit, BREAK, Source } from 'graphql';
 
+export const envelopIsIntrospectionSymbol = Symbol('ENVELOP_IS_INTROSPECTION');
+
 export function isOperationDefinition(def: ASTNode): def is OperationDefinitionNode {
   return def.kind === Kind.OPERATION_DEFINITION;
 }
