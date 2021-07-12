@@ -1,16 +1,19 @@
-export type Tags =
-  | 'tracing'
-  | 'metrics'
-  | 'core'
-  | 'error-handling'
-  | 'security'
-  | 'utilities'
-  | 'performance'
-  | 'caching'
-  | 'dev-tools'
-  | 'authentication'
-  | 'authorization'
-  | 'schema';
+export const ALL_TAGS = [
+  'tracing',
+  'metrics',
+  'core',
+  'errors',
+  'security',
+  'utilities',
+  'performance',
+  'caching',
+  'devtool',
+  'authentication',
+  'authorization',
+  'schema',
+] as const;
+
+export type Tags = typeof ALL_TAGS[number];
 
 export type RawPlugin = {
   identifier: string;
@@ -27,7 +30,7 @@ export const pluginsArr: RawPlugin[] = [
     title: 'useSentry',
     npmPackage: '@envelop/sentry',
     iconUrl: '/assets/logos/sentry.png',
-    tags: ['tracing', 'metrics', 'error-handling'],
+    tags: ['tracing', 'metrics', 'errors'],
   },
   {
     identifier: 'use-schema',
@@ -41,14 +44,14 @@ export const pluginsArr: RawPlugin[] = [
     title: 'useErrorHandler',
     npmPackage: '@envelop/core',
     iconUrl: '/logo.png',
-    tags: ['core', 'error-handling'],
+    tags: ['core', 'errors'],
   },
   {
     identifier: 'use-masked-errors',
     title: 'useMaskedErrors',
     npmPackage: '@envelop/core',
     iconUrl: '/logo.png',
-    tags: ['core', 'error-handling', 'security'],
+    tags: ['core', 'errors', 'security'],
   },
   {
     identifier: 'use-extend-context',
@@ -118,14 +121,14 @@ export const pluginsArr: RawPlugin[] = [
     title: 'useApolloTracing',
     npmPackage: '@envelop/apollo-tracing',
     iconUrl: '/assets/logos/apollo.png',
-    tags: ['dev-tools'],
+    tags: ['devtool'],
   },
   {
     identifier: 'use-open-telemetry',
     title: 'useOpenTelemetry',
     npmPackage: '@envelop/opentelemetry',
     iconUrl: '/assets/logos/opentelemetry.png',
-    tags: ['tracing', 'metrics', 'error-handling'],
+    tags: ['tracing', 'metrics', 'errors'],
   },
   {
     identifier: 'use-generic-auth',
@@ -146,7 +149,7 @@ export const pluginsArr: RawPlugin[] = [
     title: 'useGraphQLModules',
     npmPackage: '@envelop/graphql-modules',
     iconUrl: 'https://www.graphql-modules.com/img/just-logo.svg',
-    tags: ['schema', 'utilities', 'dev-tools'],
+    tags: ['schema', 'utilities', 'devtool'],
   },
   {
     identifier: 'use-rate-limiter',
@@ -188,14 +191,14 @@ export const pluginsArr: RawPlugin[] = [
     title: 'useHive',
     npmPackage: '@graphql-hive/client',
     iconUrl: 'https://the-guild.dev/static/shared-logos/products/hive.svg',
-    tags: ['tracing', 'metrics', 'dev-tools'],
+    tags: ['tracing', 'metrics', 'devtool'],
   },
   {
     identifier: 'use-newrelic',
     title: 'useNewRelic',
     npmPackage: '@envelop/newrelic',
     iconUrl: '/assets/logos/newrelic.png',
-    tags: ['tracing', 'metrics', 'error-handling'],
+    tags: ['tracing', 'metrics', 'errors'],
   },
   {
     identifier: 'use-live-query',
@@ -216,7 +219,7 @@ export const pluginsArr: RawPlugin[] = [
     title: 'useApolloServerErrors',
     npmPackage: '@envelop/apollo-server-errors',
     iconUrl: '/assets/logos/apollo.png',
-    tags: ['utilities', 'error-handling'],
+    tags: ['utilities', 'errors'],
   },
   {
     identifier: 'use-operation-field-permissions',

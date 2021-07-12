@@ -14,6 +14,7 @@ import { getPluginsData } from '../../lib/pluginsData';
 
 import type { PluginWithStats } from '../../lib/pluginsData';
 import type { GetStaticProps } from 'next';
+import { ALL_TAGS } from '../../lib/plugins';
 
 interface MarketplaceProps {
   data: (PluginWithStats & { description: CompiledMDX; content: CompiledMDX })[];
@@ -52,6 +53,7 @@ export default function Marketplace({ data }: MarketplaceProps) {
         const linkHref = `/plugins/${rawPlugin.identifier}`;
         return {
           raw: rawPlugin,
+          tags: rawPlugin.tags,
           title: rawPlugin.title,
           link: {
             href: linkHref,
@@ -160,6 +162,7 @@ export default function Marketplace({ data }: MarketplaceProps) {
           /> */}
       <MarketplaceSearch
         title="Explore Plugin Hub"
+        tagsFilter={ALL_TAGS as any as string[]}
         placeholder="Find plugins..."
         primaryList={{
           title: 'Trending',
