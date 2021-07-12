@@ -13,6 +13,7 @@ export function envelop<PluginsType extends Plugin<any>[]>(options: {
   }
 
   const getEnveloped = <TInitialContext extends ArbitraryObject>(initialContext: TInitialContext = {} as TInitialContext) => {
+    orchestrator.init(initialContext);
     const typedOrchestrator = orchestrator as EnvelopOrchestrator<TInitialContext, ComposeContext<PluginsType>>;
 
     return {
