@@ -1,3 +1,4 @@
+import { OnEnvelopedHook } from 'packages/core/src';
 import {
   OnContextBuildingHook,
   OnExecuteHook,
@@ -9,6 +10,7 @@ import {
 } from './hooks';
 
 export interface Plugin<PluginContext extends Record<string, any> = {}> {
+  onEnveloped?: OnEnvelopedHook<PluginContext>;
   onSchemaChange?: OnSchemaChangeHook;
   onPluginInit?: OnPluginInitHook;
   onExecute?: OnExecuteHook<PluginContext>;

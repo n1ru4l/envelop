@@ -34,6 +34,14 @@ export type OnPluginInitEventPayload = {
 };
 export type OnPluginInitHook = (options: OnPluginInitEventPayload) => void;
 
+/** onPluginInit */
+export type OnEnvelopedHookEventPayload<ContextType> = {
+  setSchema: SetSchemaFn;
+  context: Readonly<ContextType>;
+  extendContext: (contextExtension: Partial<ContextType>) => void;
+};
+export type OnEnvelopedHook<ContextType> = (options: OnEnvelopedHookEventPayload<ContextType>) => void;
+
 /** onParse */
 export type OriginalParseFn = typeof parse;
 export type OnParseEventPayload<ContextType> = {

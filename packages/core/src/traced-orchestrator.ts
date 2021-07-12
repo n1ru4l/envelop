@@ -27,6 +27,16 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
 
   return {
     ...orchestrator,
+    init: (ctx = {} as any) => {
+      ctx._envelopTracing = ctx._envelopTracing || {};
+      const done = createTracer('init', ctx || {});
+
+      try {
+        return orchestrator.init(ctx);
+      } finally {
+        done();
+      }
+    },
     parse: (ctx = {} as any) => {
       ctx._envelopTracing = ctx._envelopTracing || {};
       const actualFn = orchestrator.parse(ctx);

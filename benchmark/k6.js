@@ -6,10 +6,12 @@ import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';
 import { githubComment } from './github.js';
 
 const trace = {
+  init: new Trend('envelop_init', true),
   parse: new Trend('graphql_parse', true),
   validate: new Trend('graphql_validate', true),
   context: new Trend('graphql_context', true),
   execute: new Trend('graphql_execute', true),
+  total: new Trend('envelop_total', true),
 };
 
 export const options = {
@@ -23,6 +25,8 @@ export const options = {
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
     graphql_parse: ['p(95)<=1'],
+    envelop_init: ['p(95)<=1'],
+    envelop_total: ['p(95)<=1'],
   },
 };
 
@@ -88,6 +92,20 @@ export default function () {
   tracingData.contextFactory && trace.context.add(tracingData.contextFactory);
   tracingData.execute && trace.execute.add(tracingData.execute);
   tracingData.subscribe && trace.subscribe.add(tracingData.subscribe);
+  tracingData.init && trace.init.add(tracingData.init);
+
+  const total = [
+    tracingData.parse,
+    tracingData.validate,
+    tracingData.contextFactory,
+    tracingData.execute,
+    tracingData.subscribe,
+    tracingData.init,
+  ]
+    .filter(Boolean)
+    .reduce((a, b) => a + b, 0);
+
+  trace.total.add(total);
 
   check(res, {
     no_errors: checkNoErrors,

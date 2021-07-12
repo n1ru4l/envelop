@@ -17,28 +17,30 @@ const myPlugin = {
     // This is the before function
 
     return ({ result }) => {
-      // The is the after function, 
+      // The is the after function,
       // JS Closure allow me to access the params here as well
-    }
-  }
-}
+    };
+  },
+};
 ```
 
 > All plugins lifecycle methods are executed in LIFO order (Last-in, First-out) to make timing more consistent.
 
 ### The improved `context`
 
-While in regular GraphQL executions, the `context` is built right before `execute` happens, in `envelop` we allow plugin developers to take part it that context from all phases. 
+While in regular GraphQL executions, the `context` is built right before `execute` happens, in `envelop` we allow plugin developers to take part it that context from all phases.
 
 While calling `getEnveloped` function (the result of `envelop({ plugins: [ ... ]}))`, you can pass any custom object that will be the base for your GraphQL execution `context`.
 
-In most cases, you'll pass the incoming HTTP request (or, just the relevant parts of it) to make it available for the plugins you use: 
+In most cases, you'll pass the incoming HTTP request (or, just the relevant parts of it) to make it available for the plugins you use:
 
 ```ts
 import { envelop } from '@envelop/core';
 
 const getEnveloped = envelop({
-  plugins: [ /* ... plugins ... */ ],
+  plugins: [
+    /* ... plugins ... */
+  ],
 });
 
 myHttpServer.on('request', async req => {
@@ -49,7 +51,7 @@ myHttpServer.on('request', async req => {
 
 Plugins might also use this `context` to keep a contextual reference for objects they might need across stages.
 
-So for example, if you wish to make some data from `parse` stage available for you in `execute` phase, you can extend the context while running `onParse` and then access that data in `onExecute`: 
+So for example, if you wish to make some data from `parse` stage available for you in `execute` phase, you can extend the context while running `onParse` and then access that data in `onExecute`:
 
 ```ts
 const myPlugin = {
@@ -70,13 +72,23 @@ You can find the [complete signature for plugins API here](https://github.com/do
 
 ### `onPluginInit(api)`
 
-This method is called only once when the plugin is being initialized.
+This method is called only once when the plugin is being initialized. This hook is triggered only once, and is useful for setting up the plugin.
 
 **API**:
 
-* `setSchema` - sets the initial schema to be used.
-* `plugins` - list of all other loaded plugins.
-* `addPlugin` - adds a plugin to the list of plugins.
+- `setSchema` - sets the initial schema to be used.
+- `plugins` - list of all other loaded plugins.
+- `addPlugin` - adds a plugin to the list of plugins.
+
+### `onEnveloped(api)`
+
+This method is called every time `getEnveloped` is called, and per request. This is useful if you need to do some setup right before an incoming execution flow.
+
+**API**:
+
+- `setSchema` - sets the initial schema to be used.
+- `context` - the initial context object passed to `getEnveloped`, including the context built by plugins that ran before.
+- `extendContext` - extends the initial context object with additional fields.
 
 ### `onParse(api)`
 
@@ -84,19 +96,19 @@ Called every time an operation is being executed.
 
 **`before` API**:
 
-* `params` - the original parameters passes to `parse` function.
-* `parseFn` - the current `parse` function. By defualt, it's the one from `graphql` package.
-* `setParseFn` - Replaces the `parse` function with a custom function.
-* `setParsedDocument` - sets the parse result. Setting this will skip calling `parse` for the executed operation.
-* `context` - the context object built so far by other plugins.
-* `extendContext` - extends the context object with additional fields.
+- `params` - the original parameters passes to `parse` function.
+- `parseFn` - the current `parse` function. By defualt, it's the one from `graphql` package.
+- `setParseFn` - Replaces the `parse` function with a custom function.
+- `setParsedDocument` - sets the parse result. Setting this will skip calling `parse` for the executed operation.
+- `context` - the context object built so far by other plugins.
+- `extendContext` - extends the context object with additional fields.
 
 **`after` API**:
 
-* `result` - the result `DocumentNode` of the parsing function.
-* `replaceParseResult` - replaces the parsed result.
-* `context` - the context object built so far by other plugins.
-* `extendContext` - extends the context object with additional fields.
+- `result` - the result `DocumentNode` of the parsing function.
+- `replaceParseResult` - replaces the parsed result.
+- `context` - the context object built so far by other plugins.
+- `extendContext` - extends the context object with additional fields.
 
 ### `onValidate(api)`
 
@@ -104,20 +116,20 @@ Called every time an operation is being executed.
 
 **`before` API**:
 
-* `params` - the original parameters passes to `validate` function.
-* `validateFn` - the current `validate` function. By defualt, it's the one from `graphql` package.
-* `setValidationFn` - Replaces the `validate` function with a custom function.
-* `addValidationRule` - Adds a validation rule to the list of default validation rules (as defined in `graphql` package).
-* `setResult` - sets the validation result. Setting this will skip calling `validate` for the executed operation.
-* `context` - the context object built so far by other plugins.
-* `extendContext` - extends the context object with additional fields.
+- `params` - the original parameters passes to `validate` function.
+- `validateFn` - the current `validate` function. By defualt, it's the one from `graphql` package.
+- `setValidationFn` - Replaces the `validate` function with a custom function.
+- `addValidationRule` - Adds a validation rule to the list of default validation rules (as defined in `graphql` package).
+- `setResult` - sets the validation result. Setting this will skip calling `validate` for the executed operation.
+- `context` - the context object built so far by other plugins.
+- `extendContext` - extends the context object with additional fields.
 
 **`after` API**:
 
-* `valid` - A boolean indicates if the validation passed.
-* `result` - `null` in case of valid document, otherwise an array of valiation errors.
-* `context` - the context object built so far by other plugins.
-* `extendContext` - extends the context object with additional fields.
+- `valid` - A boolean indicates if the validation passed.
+- `result` - `null` in case of valid document, otherwise an array of valiation errors.
+- `context` - the context object built so far by other plugins.
+- `extendContext` - extends the context object with additional fields.
 
 ### `onContext(api)`
 
@@ -125,13 +137,13 @@ Called every time an operation is being executed. Used for building the GraphQL 
 
 **`before` API**:
 
-* `context` - the context object built so far by other plugins.
-* `extendContext` - extends the context object with additional fields.
+- `context` - the context object built so far by other plugins.
+- `extendContext` - extends the context object with additional fields.
 
 **`after` API**:
 
-* `context` - the eventual built context, by all plugins.
-* `extendContext` - extends the context object with additional fields.
+- `context` - the eventual built context, by all plugins.
+- `extendContext` - extends the context object with additional fields.
 
 ### `onExecute(api)`
 
@@ -139,11 +151,11 @@ Called every time an operation is being executed. The return value of this funct
 
 **`before` API**:
 
-* `args` - arguments passes to `execute` (contains the document, variables and everything else that needed for executing the GraphQL operation)
-* `executeFn` - the `execute` function to use, by default it's the one from `graphql` package.
-* `setExecuteFn` - replaces the `execute` function.
-* `setResultAndStopExecution` - sets the result of the execution immediately. Calling this function will stop execution.
-* `extendContext` - allow you to extend the context before executin the operation. 
+- `args` - arguments passes to `execute` (contains the document, variables and everything else that needed for executing the GraphQL operation)
+- `executeFn` - the `execute` function to use, by default it's the one from `graphql` package.
+- `setExecuteFn` - replaces the `execute` function.
+- `setResultAndStopExecution` - sets the result of the execution immediately. Calling this function will stop execution.
+- `extendContext` - allow you to extend the context before executin the operation.
 
 You can return an `object` from that function, with the following fields:
 
@@ -151,20 +163,19 @@ You can return an `object` from that function, with the following fields:
 
 Triggered when the execution of the operation is done.
 
-* `result` - the execution result.
-* `setResult` - replaces the result. can either be with data or errors.
+- `result` - the execution result.
+- `setResult` - replaces the result. can either be with data or errors.
 
 **`onResolverCalled` API**:
 
-Triggered when a resolver is called during the execution of the operation. 
+Triggered when a resolver is called during the execution of the operation.
 
-* `params` - an object with `{ root, args, context, info }` that was originally passed to the resolver.
+- `params` - an object with `{ root, args, context, info }` that was originally passed to the resolver.
 
 You can also return a function to run after the resolver is done, with the following API:
 
-* `result` - the resolver return value.
-* `setResult` - replaces the resolver return value.
-
+- `result` - the resolver return value.
+- `setResult` - replaces the resolver return value.
 
 ### `onSubscribe(api)`
 
@@ -172,10 +183,10 @@ Called every time a `subscription` operation is being executed. The return value
 
 **`before` API**:
 
-* `args` - arguments passes to `subscribe` (contains the document, variables and everything else that needed for executing the GraphQL operation)
-* `subscribeFn` - the `subscribe` function to use, by default it's the one from `graphql` package.
-* `setSubscribeFn` - replaces the `subscribe` function.
-* `extendContext` - allow you to extend the context before executin the operation. 
+- `args` - arguments passes to `subscribe` (contains the document, variables and everything else that needed for executing the GraphQL operation)
+- `subscribeFn` - the `subscribe` function to use, by default it's the one from `graphql` package.
+- `setSubscribeFn` - replaces the `subscribe` function.
+- `extendContext` - allow you to extend the context before executin the operation.
 
 You can return an `object` from that function, with the following fields:
 
@@ -183,28 +194,27 @@ You can return an `object` from that function, with the following fields:
 
 Triggered when subscription result is being emitted from a `subscription` execution.
 
-* `result` - the subscription result.
-* `setResult` - replaces the result. can either be with data or errors.
+- `result` - the subscription result.
+- `setResult` - replaces the result. can either be with data or errors.
 
 **`onResolverCalled` API**:
 
-Triggered when a resolver is called during the execution of the operation. 
+Triggered when a resolver is called during the execution of the operation.
 
-* `params` - an object with `{ root, args, context, info }` that was originally passed to the resolver.
+- `params` - an object with `{ root, args, context, info }` that was originally passed to the resolver.
 
 You can also return a function to run after the resolver is done, with the following API:
 
-* `result` - the resolver return value.
-* `setResult` - replaces the resolver return value.
-
+- `result` - the resolver return value.
+- `setResult` - replaces the resolver return value.
 
 ### `onSchemaChange(api)`
 
 `envelop` allow you to manage a reference to a schema, that you can later access and use within your server.
 
-Some plugins (like gateway implementations) could potentially change the schema while running, so `envelop` will trigger that event in case of a schema change *after all plugins have initialized*.
+Some plugins (like gateway implementations) could potentially change the schema while running, so `envelop` will trigger that event in case of a schema change _after all plugins have initialized_.
 
 **API**:
 
-* `schema` - the `GraphQLSchema`
-* `replaceSchema` - replaces the schema. Calling this will trigger `onSchemaChange` for all other plugins (except for the one that initiated the change);
+- `schema` - the `GraphQLSchema`
+- `replaceSchema` - replaces the schema. Calling this will trigger `onSchemaChange` for all other plugins (except for the one that initiated the change);

@@ -5,6 +5,7 @@ import {
   EnvelopContextFnWrapper,
   GetEnvelopedFn,
   OnContextBuildingHook,
+  OnEnvelopedHook,
   OnExecuteDoneHook,
   OnExecuteHook,
   OnParseHook,
@@ -37,6 +38,7 @@ export type EnvelopOrchestrator<
   InitialContext extends ArbitraryObject = ArbitraryObject,
   PluginsContext extends ArbitraryObject = ArbitraryObject
 > = {
+  init: (initialContext: InitialContext) => void;
   parse: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['parse'], InitialContext>;
   validate: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['validate'], InitialContext>;
   execute: ReturnType<GetEnvelopedFn<PluginsContext>>['execute'];
@@ -85,6 +87,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
 
   // A set of before callbacks defined here in order to allow it to be used later
   const beforeCallbacks = {
+    init: [] as OnEnvelopedHook<any>[],
     parse: [] as OnParseHook<any>[],
     validate: [] as OnValidateHook<any>[],
     subscribe: [] as OnSubscribeHook<any>[],
@@ -92,13 +95,26 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
     context: [] as OnContextBuildingHook<any>[],
   };
 
-  for (const { onContextBuilding, onExecute, onParse, onSubscribe, onValidate } of plugins) {
+  for (const { onContextBuilding, onExecute, onParse, onSubscribe, onValidate, onEnveloped } of plugins) {
+    onEnveloped && beforeCallbacks.init.push(onEnveloped);
     onContextBuilding && beforeCallbacks.context.push(onContextBuilding);
     onExecute && beforeCallbacks.execute.push(onExecute);
     onParse && beforeCallbacks.parse.push(onParse);
     onSubscribe && beforeCallbacks.subscribe.push(onSubscribe);
     onValidate && beforeCallbacks.validate.push(onValidate);
   }
+
+  const init: EnvelopOrchestrator['init'] = initialContext => {
+    for (const [i, onEnveloped] of beforeCallbacks.init.entries()) {
+      onEnveloped({
+        context: initialContext,
+        extendContext: extension => {
+          Object.assign(initialContext, extension);
+        },
+        setSchema: modifiedSchema => replaceSchema(modifiedSchema, i),
+      });
+    }
+  };
 
   const customParse: EnvelopContextFnWrapper<typeof parse, any> = beforeCallbacks.parse.length
     ? initialContext => (source, parseOptions) => {
@@ -438,6 +454,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
     get schema() {
       return schema;
     },
+    init,
     parse: customParse,
     validate: customValidate,
     execute: customExecute,
