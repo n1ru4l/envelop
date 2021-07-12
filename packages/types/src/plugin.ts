@@ -1,4 +1,4 @@
-import { OnEnvelopedHook } from 'packages/core/src';
+import { OnEnvelopedHook } from '@envelop/core';
 import {
   OnContextBuildingHook,
   OnExecuteHook,
