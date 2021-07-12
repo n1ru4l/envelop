@@ -30,8 +30,8 @@ const getEnveloped = envelop({
 ```
 
 > NOTE: Where possible, prefer using plain strings for targeting fields.  
-Matching by a plain string is more performant since it requires just as a direct lookup, with an O(1) cost.  
-Matching with a Regular Expression requires testing all the patterns you define, on each resolver hit by your operation; hence you probably want to make sure your patterns are as simple as possible.
+> Matching by a plain string is more performant since it requires just as a direct lookup, with an O(1) cost.  
+> Matching with a Regular Expression requires testing all the patterns you define, on each resolver hit by your operation; hence you probably want to make sure your patterns are as simple as possible.
 
 ## Advanced usage
 
@@ -44,5 +44,7 @@ Matching with a Regular Expression requires testing all the patterns you define,
 ```
 
 Describe the following:
+
 - `shouldOverride` to define logic for when to activate the override; default implementaiton is "always active"
 - `overrideFn` to set the replacement function for the the targeted fields; default implementation is to return `null` value
+- having multiple instances of the plugin to implement different behaviours for different kind of fields
