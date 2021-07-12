@@ -1,5 +1,23 @@
 # @envelop/core
 
+## 0.4.0
+
+### Minor Changes
+
+- d82e2d0: Added utils: isOperationDefinition, isIntrospectionOperation, isIntrospectionDocument, isIntrospectionOperationString
+- 2113527: Extend Envelop plugin API with the ability to access and replace resolver function
+- d82e2d0: Added config flag `skipIntrospection` for useLogger plugin
+
+### Patch Changes
+
+- 28ad742: Cleanup for some traces related to the tracedOrchestrator
+- d82e2d0: useTiming: Allow to specify skipIntrospection configuration
+- 28ad742: Improve TypeScript types
+- 28ad742: Improve runtime performance by reducing calls to prepareSchema
+- Updated dependencies [28ad742]
+- Updated dependencies [2113527]
+  - @envelop/types@0.3.0
+
 ## 0.3.1
 
 ### Patch Changes

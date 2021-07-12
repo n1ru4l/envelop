@@ -1,5 +1,11 @@
 # @envelop/newrelic
 
+## 0.0.3
+
+### Patch Changes
+
+- 28ad742: Improve TypeScript types
+
 ## 0.0.2
 
 ### Patch Changes
