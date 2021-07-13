@@ -8511,10 +8511,10 @@ newrelic@7.5.2:
   optionalDependencies:
     "@newrelic/native-metrics" "^6.0.0"
 
-next-i18next@8.5.4:
-  version "8.5.4"
-  resolved "https://registry.yarnpkg.com/next-i18next/-/next-i18next-8.5.4.tgz#e43222050569422f7089f37cee3cbc99c3f27589"
-  integrity sha512-YfJGzkyKnuDjM4jOvV3pathOcDtqd0ON5jsGoaIBBOCBDCPgdUbj71+4veBMPt0qsiDlAW2ngSG7j5Ykt+HGhg==
+next-i18next@8.5.5:
+  version "8.5.5"
+  resolved "https://registry.yarnpkg.com/next-i18next/-/next-i18next-8.5.5.tgz#d1a7476929236050986965eb59d6f44d7631d11a"
+  integrity sha512-zYXYToVB5W2qmDbWmuT/7j+PC/CqCysZsvMY2nmIyqpgaIBhMDKHYSi8+0nJ7SG1q7i9D+wQdJNd8KLdpe4/ng==
   dependencies:
     "@babel/runtime" "^7.13.17"
     "@types/hoist-non-react-statics" "^3.3.1"
