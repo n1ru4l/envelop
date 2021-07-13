@@ -68,6 +68,7 @@ export type PrometheusTracingPluginConfig = {
   execute?: boolean | ReturnType<typeof createHistogram>;
   errors?: ReturnType<typeof createCounter>;
   resolvers?: ReturnType<typeof createHistogram>;
+  resolversWhitelist?: string[];
   deprecatedFields?: ReturnType<typeof createCounter>;
 };
 
