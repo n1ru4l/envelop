@@ -34,14 +34,15 @@ export const useOverrideFields = (rawOptions: UseOverrideFieldsOptions): Plugin 
 
       const onResolverCalled: OnResolverCalledHook | undefined = shouldOverride
         ? ({ replaceResolverFn, info }) => {
-            const flattenedPath = flattenPath(info.path);
+            const flattenedFieldPath = flattenPath(info.path);
+            const typedFieldName = `${info.parentType}.${info.fieldName}`;
 
-            if (plainFieldRules.has(flattenedPath)) {
+            if (plainFieldRules.has(typedFieldName) || plainFieldRules.has(flattenedFieldPath)) {
               return replaceResolverFn(options.overrideFn!);
             }
 
             for (const patternRule of patternFieldRules) {
-              if (patternRule.test(flattenedPath)) {
+              if (patternRule.test(typedFieldName) || patternRule.test(flattenedFieldPath)) {
                 return replaceResolverFn(options.overrideFn!);
               }
             }
@@ -58,6 +59,7 @@ export const useOverrideFields = (rawOptions: UseOverrideFieldsOptions): Plugin 
 };
 
 function flattenPath(fieldPath: Path, delimiter = '.') {
+  let rootType = '';
   const pathArray = [];
   let thisPath: Path | undefined = fieldPath;
 
@@ -65,8 +67,9 @@ function flattenPath(fieldPath: Path, delimiter = '.') {
     if (typeof thisPath.key !== 'number') {
       pathArray.push(thisPath.key);
     }
+    rootType = thisPath.typename || '';
     thisPath = thisPath.prev;
   }
 
-  return pathArray.reverse().join(delimiter);
+  return `${rootType}.${pathArray.reverse().join(delimiter)}`;
 }
