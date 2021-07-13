@@ -259,8 +259,18 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin<Plu
               : {};
             executeHistogram.histogram.observe(labels, totalTime);
 
-            if (result.errors && result.errors.length > 0) {
-              errorsCounter?.counter.labels(labels).inc(result.errors.length);
+            if (errorsCounter && result.errors && result.errors.length > 0) {
+              for (const error of result.errors) {
+                const errorLabels = errorsCounter.fillLabelsFn
+                  ? errorsCounter.fillLabelsFn({
+                      ...args.contextValue[promPluginContext],
+                      errorPhase: 'execute',
+                      errorPath: error.path?.join('.'),
+                    })
+                  : {};
+
+                errorsCounter.counter.labels(errorLabels).inc();
+              }
             }
           },
         };
