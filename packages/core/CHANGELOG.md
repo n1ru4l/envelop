@@ -1,5 +1,13 @@
 # @envelop/core
 
+## 0.5.1
+
+### Patch Changes
+
+- 932f6a8: Better type-safety for hooks
+- Updated dependencies [932f6a8]
+  - @envelop/types@0.4.1
+
 ## 0.5.0
 
 ### Minor Changes

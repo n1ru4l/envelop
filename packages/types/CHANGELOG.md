@@ -1,5 +1,11 @@
 # @envelop/types
 
+## 0.4.1
+
+### Patch Changes
+
+- 932f6a8: Added better type-safety for contextValue in OnExecute hook
+
 ## 0.4.0
 
 ### Minor Changes
