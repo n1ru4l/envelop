@@ -15,6 +15,7 @@ import {
   validate,
   ValidationRule,
 } from 'graphql';
+import { Maybe } from 'graphql/jsutils/Maybe';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { DefaultContext } from 'packages/core/src';
 import { Plugin } from './plugin';
@@ -37,7 +38,7 @@ export type OnPluginInitHook = (options: OnPluginInitEventPayload) => void;
 /** onPluginInit */
 export type OnEnvelopedHookEventPayload<ContextType> = {
   setSchema: SetSchemaFn;
-  context: Readonly<ContextType>;
+  context: Readonly<Maybe<ContextType>>;
   extendContext: (contextExtension: Partial<ContextType>) => void;
 };
 export type OnEnvelopedHook<ContextType> = (options: OnEnvelopedHookEventPayload<ContextType>) => void;
