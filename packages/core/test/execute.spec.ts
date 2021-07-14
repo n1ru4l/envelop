@@ -17,7 +17,7 @@ describe('execute', () => {
       args: {
         contextValue: expect.objectContaining({ test: 1 }),
         rootValue: {},
-        schema,
+        schema: expect.any(GraphQLSchema),
         operationName: undefined,
         fieldResolver: undefined,
         typeResolver: undefined,

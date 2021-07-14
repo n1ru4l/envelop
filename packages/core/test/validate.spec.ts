@@ -1,5 +1,5 @@
 import { createSpiedPlugin, createTestkit } from '@envelop/testing';
-import { GraphQLError, validate, ValidationContext } from 'graphql';
+import { GraphQLError, GraphQLSchema, validate, ValidationContext } from 'graphql';
 import { schema, query } from './common';
 
 describe('validate', () => {
@@ -12,7 +12,7 @@ describe('validate', () => {
       context: expect.any(Object),
       extendContext: expect.any(Function),
       params: {
-        schema,
+        schema: expect.any(GraphQLSchema),
         documentAST: expect.any(Object),
         options: undefined,
         rules: undefined,
@@ -47,7 +47,7 @@ describe('validate', () => {
     );
     await teskit.execute(query);
     expect(replacementFn).toHaveBeenCalledTimes(1);
-    expect(replacementFn).toHaveBeenCalledWith(schema, expect.any(Object), undefined, undefined, undefined);
+    expect(replacementFn).toHaveBeenCalledWith(expect.any(GraphQLSchema), expect.any(Object), undefined, undefined, undefined);
   });
 
   it('Should allow to set validation result and avoid running validate', async () => {
