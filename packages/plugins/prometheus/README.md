@@ -17,7 +17,7 @@ You can opt-in to collect tracing from the following phases:
 ## Getting Started
 
 ```
-yarn add @envelop/prometheus
+yarn add prom-client @envelop/prometheus
 ```
 
 ## Usage Example

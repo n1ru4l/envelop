@@ -29,16 +29,15 @@
     "test": "jest",
     "prepack": "bob prepack"
   },
-  "dependencies": {
-    "prom-client": "13.1.0"
-  },
   "devDependencies": {
+    "prom-client": "13.1.0",
     "@graphql-tools/schema": "7.1.5",
     "bob-the-bundler": "1.4.1",
     "graphql": "15.5.1",
     "typescript": "4.3.5"
   },
   "peerDependencies": {
+    "prom-client": "^13",
     "graphql": "^14.0.0 || ^15.0.0"
   },
   "buildOptions": {
