@@ -9,6 +9,7 @@ export function createSpiedPlugin() {
 
   const baseSpies = {
     onSchemaChange: jest.fn(),
+    onEnveloped: jest.fn(),
     afterParse: jest.fn(),
     afterValidate: jest.fn(),
     afterContextBuilding: jest.fn(),
@@ -36,6 +37,7 @@ export function createSpiedPlugin() {
     },
     spies,
     plugin: <Plugin>{
+      onEnveloped: spies.onEnveloped,
       onSchemaChange: spies.onSchemaChange,
       onParse: spies.beforeParse,
       onValidate: spies.beforeValidate,
@@ -69,7 +71,7 @@ export function createTestkit(
     },
   };
 
-  const initRequest = Array.isArray(pluginsOrEnvelop)
+  const getEnveloped = Array.isArray(pluginsOrEnvelop)
     ? envelop({
         plugins: [useSchema(schema!), replaceSchemaPlugin, ...pluginsOrEnvelop],
       })
@@ -88,7 +90,7 @@ export function createTestkit(
           variables: rawVariables,
         },
       };
-      const proxy = initRequest(initialContext);
+      const { execute, parse, validate, contextFactory, schema } = getEnveloped(initialContext);
       const { operationName, query, variables } = getGraphQLParameters(request);
 
       const r = await processRequest({
@@ -96,17 +98,17 @@ export function createTestkit(
         query,
         variables,
         request,
-        execute: proxy.execute,
-        parse: proxy.parse,
-        validate: proxy.validate,
-        contextFactory: proxy.contextFactory,
-        schema: proxy.schema,
+        execute,
+        parse,
+        validate,
+        contextFactory,
+        schema,
       });
 
       return (r as any).payload as ExecutionResult;
     },
     executeRaw: async (args: ExecutionArgs) => {
-      const proxy = initRequest(args.contextValue);
+      const proxy = getEnveloped(args.contextValue);
       return await proxy.execute({
         ...args,
         contextValue: await proxy.contextFactory(),

@@ -33,13 +33,15 @@ const getEnveloped = envelop({
   plugins: [useSchema(schema), useLogger(), useTiming()],
 });
 
-const { execute, subscribe } = getEnveloped({});
+// Set this to `null` in order to get the static instnaces of `getEnveloped`.
+const { execute, subscribe } = getEnveloped(null);
 
 useServer(
   {
     execute,
     subscribe,
     onSubscribe: async (ctx, msg) => {
+      // Here we can it again with a real initial context, which leads to a complete lifecycle execution.
       const { schema, contextFactory, parse, validate } = getEnveloped({
         connectionParams: ctx.connectionParams,
         socket: ctx.extra.socket,

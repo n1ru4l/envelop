@@ -49,6 +49,8 @@ myHttpServer.on('request', async req => {
 });
 ```
 
+> Note: the initial `context` can be also set to `null` in order skip `onEnveloped` hook of your plugins. Use this only if you are integrating `envelop` with other libraries that needs access to static definition of `execute` / `subscribe` (like `graphql-ws`).
+
 Plugins might also use this `context` to keep a contextual reference for objects they might need across stages.
 
 So for example, if you wish to make some data from `parse` stage available for you in `execute` phase, you can extend the context while running `onParse` and then access that data in `onExecute`:
@@ -83,6 +85,10 @@ This method is called only once when the plugin is being initialized. This hook 
 ### `onEnveloped(api)`
 
 This method is called every time `getEnveloped` is called, and per request. This is useful if you need to do some setup right before an incoming execution flow.
+
+**Note:**: If `getEnveloped` is called with initial context set explicitly to `null`, this hook will no get called. This is done in order to distinguish a static call to `getEnveloped` from a dynamic call (where the context matters).
+
+> If you wish to measure execution time (for example, for tracing and metrics), you can use this hook for the begining of the execution, and use `onAfterExecute` for the end.
 
 **API**:
 
