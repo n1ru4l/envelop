@@ -1,0 +1,124 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Prom Metrics plugin integration 1`] = `
+"# HELP graphql_envelop_phase_parse Time spent on running GraphQL \\"parse\\" function
+# TYPE graphql_envelop_phase_parse histogram
+graphql_envelop_phase_parse_bucket{le=\\"0.005\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_parse_bucket{le=\\"0.01\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_parse_bucket{le=\\"0.025\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_parse_bucket{le=\\"0.05\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_parse_bucket{le=\\"0.1\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_parse_bucket{le=\\"0.25\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_parse_bucket{le=\\"0.5\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_parse_bucket{le=\\"1\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_parse_bucket{le=\\"2.5\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_parse_bucket{le=\\"5\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_parse_bucket{le=\\"10\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_parse_bucket{le=\\"+Inf\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_parse_sum{operationName=\\"Anonymous\\",operationType=\\"query\\"} 0.001
+graphql_envelop_phase_parse_count{operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+
+# HELP graphql_envelop_phase_validate Time spent on running GraphQL \\"validate\\" function
+# TYPE graphql_envelop_phase_validate histogram
+graphql_envelop_phase_validate_bucket{le=\\"0.005\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_validate_bucket{le=\\"0.01\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_validate_bucket{le=\\"0.025\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_validate_bucket{le=\\"0.05\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_validate_bucket{le=\\"0.1\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_validate_bucket{le=\\"0.25\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_validate_bucket{le=\\"0.5\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_validate_bucket{le=\\"1\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_validate_bucket{le=\\"2.5\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_validate_bucket{le=\\"5\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_validate_bucket{le=\\"10\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_validate_bucket{le=\\"+Inf\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_validate_sum{operationName=\\"Anonymous\\",operationType=\\"query\\"} 0.004
+graphql_envelop_phase_validate_count{operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+
+# HELP graphql_envelop_phase_context Time spent on building the GraphQL context
+# TYPE graphql_envelop_phase_context histogram
+graphql_envelop_phase_context_bucket{le=\\"0.005\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 0
+graphql_envelop_phase_context_bucket{le=\\"0.01\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 0
+graphql_envelop_phase_context_bucket{le=\\"0.025\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 0
+graphql_envelop_phase_context_bucket{le=\\"0.05\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 0
+graphql_envelop_phase_context_bucket{le=\\"0.1\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 0
+graphql_envelop_phase_context_bucket{le=\\"0.25\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 0
+graphql_envelop_phase_context_bucket{le=\\"0.5\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_context_bucket{le=\\"1\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_context_bucket{le=\\"2.5\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_context_bucket{le=\\"5\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_context_bucket{le=\\"10\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_context_bucket{le=\\"+Inf\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_context_sum{operationName=\\"Anonymous\\",operationType=\\"query\\"} 0.254
+graphql_envelop_phase_context_count{operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+
+# HELP graphql_envelop_phase_execute Time spent on running the GraphQL \\"execute\\" function
+# TYPE graphql_envelop_phase_execute histogram
+graphql_envelop_phase_execute_bucket{le=\\"0.005\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 0
+graphql_envelop_phase_execute_bucket{le=\\"0.01\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 0
+graphql_envelop_phase_execute_bucket{le=\\"0.025\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 0
+graphql_envelop_phase_execute_bucket{le=\\"0.05\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 0
+graphql_envelop_phase_execute_bucket{le=\\"0.1\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 0
+graphql_envelop_phase_execute_bucket{le=\\"0.25\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 0
+graphql_envelop_phase_execute_bucket{le=\\"0.5\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 0
+graphql_envelop_phase_execute_bucket{le=\\"1\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_execute_bucket{le=\\"2.5\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_execute_bucket{le=\\"5\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_execute_bucket{le=\\"10\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_execute_bucket{le=\\"+Inf\\",operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+graphql_envelop_phase_execute_sum{operationName=\\"Anonymous\\",operationType=\\"query\\"} 0.502
+graphql_envelop_phase_execute_count{operationName=\\"Anonymous\\",operationType=\\"query\\"} 1
+
+# HELP graphql_envelop_execute_resolver Time spent on running the GraphQL resolvers
+# TYPE graphql_envelop_execute_resolver histogram
+graphql_envelop_execute_resolver_bucket{le=\\"0.005\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"regularField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"0.01\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"regularField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"0.025\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"regularField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"0.05\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"regularField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"0.1\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"regularField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"0.25\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"regularField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"0.5\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"regularField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"1\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"regularField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"2.5\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"regularField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"5\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"regularField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"10\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"regularField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"+Inf\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"regularField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_sum{operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"regularField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 0
+graphql_envelop_execute_resolver_count{operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"regularField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"0.005\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"deprecatedField\\",typeName=\\"Query\\",returnType=\\"String\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"0.01\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"deprecatedField\\",typeName=\\"Query\\",returnType=\\"String\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"0.025\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"deprecatedField\\",typeName=\\"Query\\",returnType=\\"String\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"0.05\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"deprecatedField\\",typeName=\\"Query\\",returnType=\\"String\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"0.1\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"deprecatedField\\",typeName=\\"Query\\",returnType=\\"String\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"0.25\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"deprecatedField\\",typeName=\\"Query\\",returnType=\\"String\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"0.5\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"deprecatedField\\",typeName=\\"Query\\",returnType=\\"String\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"1\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"deprecatedField\\",typeName=\\"Query\\",returnType=\\"String\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"2.5\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"deprecatedField\\",typeName=\\"Query\\",returnType=\\"String\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"5\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"deprecatedField\\",typeName=\\"Query\\",returnType=\\"String\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"10\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"deprecatedField\\",typeName=\\"Query\\",returnType=\\"String\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"+Inf\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"deprecatedField\\",typeName=\\"Query\\",returnType=\\"String\\"} 1
+graphql_envelop_execute_resolver_sum{operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"deprecatedField\\",typeName=\\"Query\\",returnType=\\"String\\"} 0
+graphql_envelop_execute_resolver_count{operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"deprecatedField\\",typeName=\\"Query\\",returnType=\\"String\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"0.005\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"longField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 0
+graphql_envelop_execute_resolver_bucket{le=\\"0.01\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"longField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 0
+graphql_envelop_execute_resolver_bucket{le=\\"0.025\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"longField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 0
+graphql_envelop_execute_resolver_bucket{le=\\"0.05\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"longField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 0
+graphql_envelop_execute_resolver_bucket{le=\\"0.1\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"longField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 0
+graphql_envelop_execute_resolver_bucket{le=\\"0.25\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"longField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 0
+graphql_envelop_execute_resolver_bucket{le=\\"0.5\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"longField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"1\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"longField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"2.5\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"longField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"5\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"longField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"10\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"longField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_bucket{le=\\"+Inf\\",operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"longField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+graphql_envelop_execute_resolver_sum{operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"longField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 0.5
+graphql_envelop_execute_resolver_count{operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"longField\\",typeName=\\"Query\\",returnType=\\"String!\\"} 1
+
+# HELP graphql_envelop_error_result Counts the amount of errors reported from all phases
+# TYPE graphql_envelop_error_result counter
+
+# HELP graphql_envelop_deprecated_field Counts the amount of deprecated fields used in selection sets
+# TYPE graphql_envelop_deprecated_field counter
+graphql_envelop_deprecated_field{operationName=\\"Anonymous\\",operationType=\\"query\\",fieldName=\\"deprecatedField\\",typeName=\\"Query\\"} 1
+"
+`;
