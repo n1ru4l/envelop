@@ -84,7 +84,15 @@ describe('Prom Metrics plugin', () => {
     const result = await execute('query { regularField longField deprecatedField }');
 
     expect(result.errors).toBeUndefined();
-    expect(await allMetrics()).toMatchSnapshot();
+    const metricsStr = await allMetrics();
+
+    expect(metricsStr).toContain('graphql_envelop_phase_parse_count{');
+    expect(metricsStr).toContain('graphql_envelop_phase_validate_count{');
+    expect(metricsStr).toContain('graphql_envelop_phase_context_count{');
+    expect(metricsStr).toContain('graphql_envelop_phase_execute_count{');
+    expect(metricsStr).toContain('graphql_envelop_execute_resolver_count{');
+    expect(metricsStr).toContain('graphql_envelop_deprecated_field{');
+    expect(metricsStr).not.toContain('graphql_envelop_error_result{');
   });
 
   describe('parse', () => {
