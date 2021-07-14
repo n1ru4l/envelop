@@ -1,33 +1,21 @@
-## `@envelop/apollo-tracing`
+## `@envelop/prometheus`
 
-This plugin tracks execution and resolvers and reports it using [`apollo-tracing`](https://github.com/apollographql/apollo-server/tree/main/packages/apollo-tracing) format (based on GraphQL `extensions`).
+This plugin tracks the complete execution flow, and reports metrics using Prometheus tracing (based on `prom-client`).
 
-You can see the results of the collected metrics if you are using [GraphQL Playground](https://github.com/graphql/graphql-playground).
+You can opt-in to collect tracing from the following phases:
 
-This is how it looks like (note the `TRACING` section):
-
-![Example](./example.png)
+-
 
 ## Getting Started
 
 ```
-yarn add @envelop/apollo-tracing
+yarn add @envelop/prometheus
 ```
 
 ## Usage Example
 
-```ts
-import { envelop } from '@envelop/core';
-import { useApolloTracing } from '@envelop/apollo-tracing';
+## Configuration
 
-const getEnveloped = envelop({
-  plugins: [
-    // ... other plugins ...
-    useApolloTracing(),
-  ],
-});
-```
+### Custom registry
 
-## Notes
-
-It's recommended to keep this plugin active only while developing only, since it's mainly used for performance tracking while developing.
+### Custom `prom-client` instances

@@ -8,7 +8,7 @@ import {
   OnContextBuildingHook,
   OnExecuteHook,
 } from '@envelop/types';
-import { DocumentNode, OperationDefinitionNode, GraphQLResolveInfo } from 'graphql';
+import { DocumentNode, OperationDefinitionNode, GraphQLResolveInfo, GraphQLError } from 'graphql';
 import { Counter, Histogram, Registry, register as defaultRegistry } from 'prom-client';
 
 export type TracerOptions<Args> = {
@@ -24,8 +24,8 @@ export type FillLabelsFnParams = {
   operationName: string;
   operationType: OperationDefinitionNode['operation'];
   info?: GraphQLResolveInfo;
-  errorPath?: string;
   errorPhase?: string;
+  error?: GraphQLError;
 };
 
 function getOperation(document: DocumentNode): OperationDefinitionNode {
@@ -101,6 +101,18 @@ type PluginInternalContext = {
   [promPluginContext]: FillLabelsFnParams;
 };
 
+function shouldTraceFieldResolver(info: GraphQLResolveInfo, whitelist: string[] | undefined): boolean {
+  if (!whitelist) {
+    return true;
+  }
+
+  const parentType = info.parentType.name;
+  const fieldName = info.fieldName;
+  const coordinate = `${parentType}.${fieldName}`;
+
+  return whitelist.includes(coordinate) || whitelist.includes(`${parentType}.*`);
+}
+
 export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin<PluginInternalContext> => {
   const parseHistogram = getHistogram(
     config,
@@ -162,7 +174,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin<Plu
           fillLabelsFn: params => ({
             operationName: params.operationName,
             operationType: params.operationType,
-            path: params.errorPath!,
+            path: params.error?.path?.join('.')!,
             phase: params.errorPhase!,
           }),
         })
@@ -279,10 +291,9 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin<Plu
                   ? errorsCounter.fillLabelsFn({
                       ...args.contextValue[promPluginContext],
                       errorPhase: 'execute',
-                      errorPath: error.path?.join('.'),
+                      error,
                     })
                   : {};
-
                 errorsCounter.counter.labels(errorLabels).inc();
               }
             }
@@ -291,6 +302,12 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin<Plu
 
         if (resolversHistogram) {
           result.onResolverCalled = ({ info }) => {
+            const shouldTrace = shouldTraceFieldResolver(info, config.resolversWhitelist);
+
+            if (!shouldTrace) {
+              return undefined;
+            }
+
             const startTime = Date.now();
 
             return () => {
@@ -304,7 +321,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin<Plu
 
               if (deprecationCounter && info.parentType.getFields()[info.fieldName].isDeprecated) {
                 const depLabels = deprecationCounter.fillLabelsFn ? deprecationCounter.fillLabelsFn(paramsCtx) : {};
-                deprecationCounter.counter.labels(depLabels).inc(totalTime);
+                deprecationCounter.counter.labels(depLabels).inc();
               }
             };
           };
