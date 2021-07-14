@@ -9,7 +9,7 @@ import {
   OnExecuteHook,
 } from '@envelop/types';
 import { DocumentNode, OperationDefinitionNode, GraphQLResolveInfo } from 'graphql';
-import { Counter, Histogram } from 'prom-client';
+import { Counter, Histogram, Registry, register as defaultRegistry } from 'prom-client';
 
 export type TracerOptions<Args> = {
   name: string;
@@ -66,10 +66,11 @@ export type PrometheusTracingPluginConfig = {
   validate?: boolean | ReturnType<typeof createHistogram>;
   contextBuilding?: boolean | ReturnType<typeof createHistogram>;
   execute?: boolean | ReturnType<typeof createHistogram>;
-  errors?: ReturnType<typeof createCounter>;
-  resolvers?: ReturnType<typeof createHistogram>;
+  errors?: boolean | ReturnType<typeof createCounter>;
+  resolvers?: boolean | ReturnType<typeof createHistogram>;
   resolversWhitelist?: string[];
-  deprecatedFields?: ReturnType<typeof createCounter>;
+  deprecatedFields?: boolean | ReturnType<typeof createCounter>;
+  registry?: Registry;
 };
 
 function getHistogram(
@@ -86,6 +87,7 @@ function getHistogram(
           name,
           help,
           labelNames: ['operationType', 'operationName'] as const,
+          registers: [config.registry || defaultRegistry],
         }),
         fillLabelsFn: params => ({
           operationName: params.operationName,
@@ -134,6 +136,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin<Plu
             name: 'graphql_envelop_execute_resolver',
             help: 'Time spent on running the GraphQL resolvers',
             labelNames: ['operationType', 'operationName', 'fieldName', 'typeName', 'returnType'] as const,
+            registers: [config.registry || defaultRegistry],
           }),
           fillLabelsFn: params => ({
             operationName: params.operationName,
@@ -154,6 +157,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin<Plu
             name: 'graphql_envelop_error_result',
             help: 'Counts the amount of errors reported from all phases',
             labelNames: ['operationType', 'operationName', 'path', 'phase'] as const,
+            registers: [config.registry || defaultRegistry],
           }),
           fillLabelsFn: params => ({
             operationName: params.operationName,
@@ -173,6 +177,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin<Plu
             name: 'graphql_envelop_deprecated_field',
             help: 'Counts the amount of deprecated fields used in selection sets',
             labelNames: ['operationType', 'operationName', 'fieldName', 'typeName'] as const,
+            registers: [config.registry || defaultRegistry],
           }),
           fillLabelsFn: params => ({
             operationName: params.operationName,
@@ -183,47 +188,55 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin<Plu
         })
       : undefined;
 
-  const onParse: OnParseHook<PluginInternalContext> | undefined = parseHistogram
-    ? ({ extendContext }) => {
+  const onParse: OnParseHook<PluginInternalContext> = ({ extendContext }) => {
+    const startTime = Date.now();
+
+    return params => {
+      const totalTime = (Date.now() - startTime) / 1000;
+      const internalContext = createInternalContext(params.result);
+
+      if (internalContext) {
+        extendContext({
+          [promPluginContext]: internalContext,
+        });
+
+        if (parseHistogram) {
+          const labels = parseHistogram.fillLabelsFn ? parseHistogram.fillLabelsFn(internalContext) : {};
+          parseHistogram.histogram.observe(labels, totalTime);
+        }
+      } else {
+        // means that we got a parse error, report it
+        errorsCounter?.counter
+          .labels({
+            phase: 'parse',
+          })
+          .inc();
+      }
+    };
+  };
+
+  const onValidate: OnValidateHook<PluginInternalContext> | undefined = validateHistogram
+    ? ({ context }) => {
+        if (!context[promPluginContext]) {
+          return undefined;
+        }
+
         const startTime = Date.now();
 
-        return params => {
-          const internalContext = createInternalContext(params.result);
+        return ({ valid }) => {
+          const labels = validateHistogram.fillLabelsFn ? validateHistogram.fillLabelsFn(context[promPluginContext]) : {};
+          const totalTime = (Date.now() - startTime) / 1000;
+          validateHistogram.histogram.observe(labels, totalTime);
 
-          if (internalContext) {
-            extendContext({
-              [promPluginContext]: internalContext,
-            });
-
-            const totalTime = (Date.now() - startTime) / 1000;
-            const labels = parseHistogram.fillLabelsFn ? parseHistogram.fillLabelsFn(internalContext) : {};
-            parseHistogram.histogram.observe(labels, totalTime);
-          } else {
-            // means that we got a parse error, report it
+          if (!valid) {
             errorsCounter?.counter
               .labels({
-                phase: 'parse',
+                ...labels,
+                phase: 'validate',
               })
               .inc();
           }
         };
-      }
-    : undefined;
-
-  const onValidate: OnValidateHook<PluginInternalContext> | undefined = validateHistogram
-    ? ({ context }) => {
-        if (context[promPluginContext]) {
-          const startTime = Date.now();
-
-          return ({ valid }) => {
-            const labels = validateHistogram.fillLabelsFn ? validateHistogram.fillLabelsFn(context[promPluginContext]) : {};
-            const totalTime = (Date.now() - startTime) / 1000;
-            validateHistogram.histogram.observe(labels, totalTime);
-            errorsCounter?.counter.labels(labels).inc();
-          };
-        }
-
-        return undefined;
       }
     : undefined;
 
