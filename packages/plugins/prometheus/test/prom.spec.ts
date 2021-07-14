@@ -55,6 +55,9 @@ describe('Prom Metrics plugin', () => {
       async metricString(name: string) {
         return registry.getSingleMetricAsString(name);
       },
+      async allMetrics() {
+        return await registry.metrics();
+      },
       async metricCount(name: string, sub: string | null = null) {
         const arr = await registry.getMetricsAsJSON();
         const m = arr.find(m => m.name === name);
@@ -67,6 +70,22 @@ describe('Prom Metrics plugin', () => {
       },
     };
   }
+
+  it('integration', async () => {
+    const { execute, allMetrics } = prepare({
+      errors: true,
+      execute: true,
+      parse: true,
+      validate: true,
+      contextBuilding: true,
+      deprecatedFields: true,
+      resolvers: true,
+    });
+    const result = await execute('query { regularField longField deprecatedField }');
+
+    expect(result.errors).toBeUndefined();
+    expect(await allMetrics()).toMatchSnapshot();
+  });
 
   describe('parse', () => {
     it('Should trace error during parse', async () => {

@@ -228,4 +228,11 @@ export const pluginsArr: RawPlugin[] = [
     iconUrl: '/assets/logos/graphql.png',
     tags: ['security', 'authorization'],
   },
+  {
+    identifier: 'use-prometheus',
+    title: 'usePrometheus',
+    npmPackage: '@envelop/prometheus',
+    iconUrl: '/assets/logos/prometheus.png',
+    tags: ['metrics', 'errors'],
+  },
 ];

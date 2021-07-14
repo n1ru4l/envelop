@@ -254,19 +254,19 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin<Plu
 
   const onContextBuilding: OnContextBuildingHook<PluginInternalContext> | undefined = contextBuildingHistogram
     ? ({ context }) => {
-        if (context[promPluginContext]) {
-          const startTime = Date.now();
-
-          return () => {
-            const totalTime = (Date.now() - startTime) / 1000;
-            const labels = contextBuildingHistogram.fillLabelsFn
-              ? contextBuildingHistogram.fillLabelsFn(context[promPluginContext])
-              : {};
-            contextBuildingHistogram.histogram.observe(labels, totalTime);
-          };
+        if (!context[promPluginContext]) {
+          return undefined;
         }
 
-        return undefined;
+        const startTime = Date.now();
+
+        return () => {
+          const totalTime = (Date.now() - startTime) / 1000;
+          const labels = contextBuildingHistogram.fillLabelsFn
+            ? contextBuildingHistogram.fillLabelsFn(context[promPluginContext])
+            : {};
+          contextBuildingHistogram.histogram.observe(labels, totalTime);
+        };
       }
     : undefined;
 
