@@ -38,7 +38,7 @@ export type EnvelopOrchestrator<
   InitialContext extends ArbitraryObject = ArbitraryObject,
   PluginsContext extends ArbitraryObject = ArbitraryObject
 > = {
-  init: (initialContext: InitialContext) => void;
+  init: (initialContext?: Maybe<InitialContext>) => void;
   parse: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['parse'], InitialContext>;
   validate: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['validate'], InitialContext>;
   execute: ReturnType<GetEnvelopedFn<PluginsContext>>['execute'];
@@ -109,6 +109,10 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
       onEnveloped({
         context: initialContext,
         extendContext: extension => {
+          if (!initialContext) {
+            return;
+          }
+
           Object.assign(initialContext, extension);
         },
         setSchema: modifiedSchema => replaceSchema(modifiedSchema, i),
