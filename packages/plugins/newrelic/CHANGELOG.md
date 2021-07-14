@@ -1,5 +1,11 @@
 # @envelop/newrelic
 
+## 0.0.4
+
+### Patch Changes
+
+- 932f6a8: Better type-safety for hooks
+
 ## 0.0.3
 
 ### Patch Changes

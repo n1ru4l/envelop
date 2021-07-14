@@ -1,6 +1,6 @@
 {
   "name": "@envelop/operation-field-permissions",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "Laurin Quast <laurinquast@googlemail.com.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@envelop/extended-validation": "0.2.2",
-    "@envelop/core": "0.5.0"
+    "@envelop/core": "0.5.1"
   },
   "devDependencies": {
     "bob-the-bundler": "1.4.1",
