@@ -15,7 +15,9 @@
     "./examples/azure-functions",
     "./examples/google-cloud-functions",
     "./examples/cloudflare-workers",
-    "./examples/with-esm"
+    "./examples/with-esm",
+    "./examples/typegraphql",
+    "./examples/nexus"
   ],
   "scripts": {
     "prepare": "husky install",

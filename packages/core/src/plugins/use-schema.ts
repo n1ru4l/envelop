@@ -8,3 +8,13 @@ export const useSchema = (schema: GraphQLSchema): Plugin => {
     },
   };
 };
+
+export const useAsyncSchema = (schemaPromise: Promise<GraphQLSchema>): Plugin => {
+  return {
+    onPluginInit({ setSchema }) {
+      schemaPromise.then(schemaObj => {
+        setSchema(schemaObj);
+      });
+    },
+  };
+};

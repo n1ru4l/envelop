@@ -27,6 +27,26 @@ const getEnveloped = envelop({
 });
 ```
 
+#### useAsyncSchema
+
+This plugin is the simplest plugin for specifying your GraphQL schema, but in an async way.
+
+If you are using a framework that creates the schema in an async way, you can either use this plugin, or `await` for the schema and then use `useSchema`.
+
+```ts
+import { envelop, useSchema } from '@envelop/core';
+import { buildSchema } from 'graphql';
+
+const mySchema = buildSchema(...);
+
+const getEnveloped = envelop({
+  plugins: [
+    useSchema(mySchema),
+    // ... other plugins ...
+  ],
+});
+```
+
 #### useErrorHandler
 
 This plugin invokes a custom function with the every time execution encounters an error.
