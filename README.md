@@ -137,6 +137,7 @@ We provide a few built-in plugins within the `@envelop/core`, and many more plug
 | useFragmentArguments         | [`@envelop/fragment-arguments`](./packages/plugins/fragment-arguments)                   | Adds support for using arguments on fragments                                                                                                     |
 | useApolloServerErrors        | [`@envelop/apollo-server-errors`](./packages/plugins/apollo-server-errors)               | Exposes execution error in the same structure as Apollo-Server                                                                                    |
 | useOperationFieldPermissions | [`@envelop/operation-field-permissions`](./packages/plugins/operation-field-permissions) | Extended validation rule for creating user-aware permissions, based on types and fields                                                           |
+| usePrometheus                | [`@envelop/prometheus`](./packages/plugins/prometheus)                                   | Exports Prometheus metrics from all GraphQL execution phases                                                                                      |
 
 ## Sharing / Composing `envelop`s
 
