@@ -1,6 +1,6 @@
 import { shim as instrumentationApi } from 'newrelic';
-import { Plugin, OnExecuteHookResult, OnResolverCalledHook } from '@envelop/types';
-import { print, FieldNode, Kind, OperationDefinitionNode, SelectionNode } from 'graphql';
+import { Plugin, OnResolverCalledHook } from '@envelop/types';
+import { print, FieldNode, Kind, OperationDefinitionNode } from 'graphql';
 import { Path } from 'graphql/jsutils/Path';
 
 enum AttributeName {
@@ -66,7 +66,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
         definitionNode => definitionNode.kind === Kind.OPERATION_DEFINITION
       ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
-      const document = print(args.contextValue.document);
+      const document = print(args.document);
       const operationName =
         args.document[options.operationNameProperty as string] ||
         args.operationName ||

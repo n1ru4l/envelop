@@ -14,6 +14,8 @@ import {
   OnValidateHook,
   Plugin,
   SubscribeResultHook,
+  TypedSubscriptionArgs,
+  TypedExecutionArgs,
 } from '@envelop/types';
 import {
   DocumentNode,
@@ -309,7 +311,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
         extendContext: extension => {
           context = { ...context, ...extension };
         },
-        args,
+        args: args as TypedSubscriptionArgs<PluginsContext>,
       });
 
       if (after) {
@@ -401,7 +403,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
                 );
               }
             },
-            args,
+            args: args as TypedExecutionArgs<PluginsContext>,
           });
 
           if (stopCalled) {

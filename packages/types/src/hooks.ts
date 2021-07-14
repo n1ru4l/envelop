@@ -136,10 +136,11 @@ export type OnResolverCalledHook<
 ) => PromiseOrValue<void | AfterResolverHook>;
 
 /** onExecute */
+export type TypedExecutionArgs<ContextType> = Omit<ExecutionArgs, 'contextValue'> & { contextValue: ContextType };
 export type OriginalExecuteFn = typeof execute;
 export type OnExecuteEventPayload<ContextType> = {
   executeFn: OriginalExecuteFn;
-  args: Omit<ExecutionArgs, 'contextValue'> & { contextValue: ContextType };
+  args: TypedExecutionArgs<ContextType>;
   setExecuteFn: (newExecute: OriginalExecuteFn) => void;
   setResultAndStopExecution: (newResult: ExecutionResult) => void;
   extendContext: (contextExtension: Partial<ContextType>) => void;
@@ -155,10 +156,12 @@ export type OnExecuteHook<ContextType> = (
 ) => PromiseOrValue<void | OnExecuteHookResult<ContextType>>;
 
 /** onSubscribe */
+export type TypedSubscriptionArgs<ContextType> = Omit<SubscriptionArgs, 'contextValue'> & { contextValue: ContextType };
+
 export type OriginalSubscribeFn = typeof subscribe;
 export type OnSubscribeEventPayload<ContextType> = {
   subscribeFn: OriginalSubscribeFn;
-  args: Omit<SubscriptionArgs, 'contextValue'> & { contextValue: ContextType };
+  args: TypedSubscriptionArgs<ContextType>;
   setSubscribeFn: (newSubscribe: OriginalSubscribeFn) => void;
   extendContext: (contextExtension: Partial<ContextType>) => void;
 };
