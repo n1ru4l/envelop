@@ -1,5 +1,15 @@
 # @envelop/types
 
+## 0.4.0
+
+### Minor Changes
+
+- 50dffaa: Added new hook for onEnveloped
+
+### Patch Changes
+
+- 778c207: Better type safety for OnEnveloped hook
+
 ## 0.3.0
 
 ### Minor Changes

@@ -1,5 +1,19 @@
 # @envelop/core
 
+## 0.5.0
+
+### Minor Changes
+
+- 50dffaa: Added new hook for onEnveloped
+
+### Patch Changes
+
+- cca1e39: Added built-in plugin: useAsyncSchema
+- 778c207: Better type safety for OnEnveloped hook
+- Updated dependencies [50dffaa]
+- Updated dependencies [778c207]
+  - @envelop/types@0.4.0
+
 ## 0.4.0
 
 ### Minor Changes
