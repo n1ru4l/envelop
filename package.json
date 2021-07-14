@@ -60,7 +60,7 @@
     "@types/jest": "26.0.24",
     "ts-jest": "27.0.3",
     "rimraf": "3.0.2",
-    "typescript": "4.4.0-dev.20210712",
+    "typescript": "4.4.0-dev.20210714",
     "jest": "27.0.6"
   },
   "resolutions": {
