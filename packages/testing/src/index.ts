@@ -2,7 +2,7 @@ import { DocumentNode, ExecutionArgs, ExecutionResult, GraphQLSchema, print } fr
 import { getGraphQLParameters, processRequest } from 'graphql-helix';
 import { envelop, useSchema } from '@envelop/core';
 import { GetEnvelopedFn, Plugin } from '@envelop/types';
-import { addResolversToSchema } from '@graphql-tools/schema';
+import { cloneSchema } from '@graphql-tools/utils';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function createSpiedPlugin() {
@@ -72,22 +72,7 @@ export function createTestkit(
 
   const initRequest = Array.isArray(pluginsOrEnvelop)
     ? envelop({
-        plugins: [
-          ...(schema
-            ? [
-                useSchema(
-                  // This just clones the schema for now
-                  addResolversToSchema({
-                    schema,
-                    resolvers: {},
-                    updateResolversInPlace: false,
-                  })
-                ),
-              ]
-            : []),
-          replaceSchemaPlugin,
-          ...pluginsOrEnvelop,
-        ],
+        plugins: [...(schema ? [useSchema(cloneSchema(schema))] : []), replaceSchemaPlugin, ...pluginsOrEnvelop],
       })
     : pluginsOrEnvelop;
 
