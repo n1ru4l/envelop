@@ -139,7 +139,7 @@ export type OnResolverCalledHook<
 export type OriginalExecuteFn = typeof execute;
 export type OnExecuteEventPayload<ContextType> = {
   executeFn: OriginalExecuteFn;
-  args: ExecutionArgs;
+  args: Omit<ExecutionArgs, 'contextValue'> & { contextValue: ContextType };
   setExecuteFn: (newExecute: OriginalExecuteFn) => void;
   setResultAndStopExecution: (newResult: ExecutionResult) => void;
   extendContext: (contextExtension: Partial<ContextType>) => void;
@@ -158,7 +158,7 @@ export type OnExecuteHook<ContextType> = (
 export type OriginalSubscribeFn = typeof subscribe;
 export type OnSubscribeEventPayload<ContextType> = {
   subscribeFn: OriginalSubscribeFn;
-  args: SubscriptionArgs;
+  args: Omit<SubscriptionArgs, 'contextValue'> & { contextValue: ContextType };
   setSubscribeFn: (newSubscribe: OriginalSubscribeFn) => void;
   extendContext: (contextExtension: Partial<ContextType>) => void;
 };
