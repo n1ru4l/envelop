@@ -72,13 +72,13 @@ export const options = buildOptions({
   'prom-tracing': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: ['p(95)<=15'],
-    graphql_execute: ['p(95)<=1'],
+    http_req_duration: ['p(95)<=40'],
+    graphql_execute: ['p(95)<=4'],
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
     graphql_parse: ['p(95)<=1'],
     envelop_init: ['p(95)<=1'],
-    envelop_total: ['p(95)<=1'],
+    envelop_total: ['p(95)<=4'],
   },
   'envelop-cache-and-no-internal-tracing': {
     no_errors: ['rate=1.0'],
