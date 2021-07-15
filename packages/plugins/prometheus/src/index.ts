@@ -1,138 +1,44 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+import { Plugin, OnExecuteHookResult, OnParseHook, OnValidateHook, OnContextBuildingHook, OnExecuteHook } from '@envelop/types';
+import { Counter, Histogram, register as defaultRegistry } from 'prom-client';
 import {
-  Plugin,
-  OnExecuteHookResult,
-  OnParseHook,
-  AfterParseEventPayload,
-  OnValidateHook,
-  OnContextBuildingHook,
-  OnExecuteHook,
-} from '@envelop/types';
-import { DocumentNode, OperationDefinitionNode, GraphQLResolveInfo, GraphQLError } from 'graphql';
-import { Counter, Histogram, Registry, register as defaultRegistry } from 'prom-client';
+  getHistogramFromConfig,
+  createHistogram,
+  createCounter,
+  shouldTraceFieldResolver,
+  FillLabelsFnParams,
+  createInternalContext,
+} from './utils';
+import { PrometheusTracingPluginConfig } from './config';
 
-export type TracerOptions<Args> = {
-  name: string;
-  help?: string;
-  modifyReportLabels?: (args: Args, labels: Record<string, string>) => Record<string, string>[];
-};
+export { PrometheusTracingPluginConfig, createCounter, createHistogram, FillLabelsFnParams };
 
 const promPluginContext = Symbol('promPluginContext');
-
-export type FillLabelsFnParams = {
-  document: DocumentNode;
-  operationName: string;
-  operationType: OperationDefinitionNode['operation'];
-  info?: GraphQLResolveInfo;
-  errorPhase?: string;
-  error?: GraphQLError;
-};
-
-function getOperation(document: DocumentNode): OperationDefinitionNode {
-  return document.definitions[0] as OperationDefinitionNode;
-}
-
-function createInternalContext(parseResult: AfterParseEventPayload<any>['result']): FillLabelsFnParams | null {
-  if (parseResult === null) {
-    return null;
-  } else if (parseResult instanceof Error) {
-    return null;
-  } else {
-    const operation = getOperation(parseResult);
-    return {
-      document: parseResult,
-      operationName: operation.name?.value || 'Anonymous',
-      operationType: operation.operation,
-    };
-  }
-}
-
-export function createHistogram<LabelNames extends string>(options: {
-  histogram: Histogram<LabelNames>;
-  fillLabelsFn?: (params: FillLabelsFnParams) => Record<LabelNames, string>;
-}): typeof options {
-  return options;
-}
-
-export function createCounter<LabelNames extends string>(options: {
-  counter: Counter<LabelNames>;
-  fillLabelsFn?: (params: FillLabelsFnParams) => Record<LabelNames, string>;
-}): typeof options {
-  return options;
-}
-
-export type PrometheusTracingPluginConfig = {
-  parse?: boolean | ReturnType<typeof createHistogram>;
-  validate?: boolean | ReturnType<typeof createHistogram>;
-  contextBuilding?: boolean | ReturnType<typeof createHistogram>;
-  execute?: boolean | ReturnType<typeof createHistogram>;
-  errors?: boolean | ReturnType<typeof createCounter>;
-  resolvers?: boolean | ReturnType<typeof createHistogram>;
-  resolversWhitelist?: string[];
-  deprecatedFields?: boolean | ReturnType<typeof createCounter>;
-  registry?: Registry;
-};
-
-function getHistogram(
-  config: PrometheusTracingPluginConfig,
-  phase: keyof PrometheusTracingPluginConfig,
-  name: string,
-  help: string
-): ReturnType<typeof createHistogram> | undefined {
-  return typeof config[phase] === 'object'
-    ? (config[phase] as ReturnType<typeof createHistogram>)
-    : config[phase] === true
-    ? createHistogram({
-        histogram: new Histogram({
-          name,
-          help,
-          labelNames: ['operationType', 'operationName'] as const,
-          registers: [config.registry || defaultRegistry],
-        }),
-        fillLabelsFn: params => ({
-          operationName: params.operationName,
-          operationType: params.operationType,
-        }),
-      })
-    : undefined;
-}
 
 type PluginInternalContext = {
   [promPluginContext]: FillLabelsFnParams;
 };
 
-function shouldTraceFieldResolver(info: GraphQLResolveInfo, whitelist: string[] | undefined): boolean {
-  if (!whitelist) {
-    return true;
-  }
-
-  const parentType = info.parentType.name;
-  const fieldName = info.fieldName;
-  const coordinate = `${parentType}.${fieldName}`;
-
-  return whitelist.includes(coordinate) || whitelist.includes(`${parentType}.*`);
-}
-
 export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugin<PluginInternalContext> => {
-  const parseHistogram = getHistogram(
+  const parseHistogram = getHistogramFromConfig(
     config,
     'parse',
     'graphql_envelop_phase_parse',
     'Time spent on running GraphQL "parse" function'
   );
-  const validateHistogram = getHistogram(
+  const validateHistogram = getHistogramFromConfig(
     config,
     'validate',
     'graphql_envelop_phase_validate',
     'Time spent on running GraphQL "validate" function'
   );
-  const contextBuildingHistogram = getHistogram(
+  const contextBuildingHistogram = getHistogramFromConfig(
     config,
     'contextBuilding',
     'graphql_envelop_phase_context',
     'Time spent on building the GraphQL context'
   );
-  const executeHistogram = getHistogram(
+  const executeHistogram = getHistogramFromConfig(
     config,
     'execute',
     'graphql_envelop_phase_execute',
