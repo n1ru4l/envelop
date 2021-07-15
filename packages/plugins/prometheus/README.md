@@ -38,7 +38,7 @@ const getEnveloped = envelop({
       errors: true,
       resolvers: true, // requires "execute" to be `true` as well
       resolversWhitelist: ['Mutation.*', 'Query.user'], // reports metrics als for these resolvers, leave `undefined` to report all fields
-      deprecatedFields: true, // requires "execute" and "resolvers" to be `true` as well
+      deprecatedFields: true,
       registry: myRegistry, // If you are using a custom prom-client registry, please set it here
     }),
   ],

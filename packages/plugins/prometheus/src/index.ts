@@ -8,8 +8,10 @@ import {
   shouldTraceFieldResolver,
   FillLabelsFnParams,
   createInternalContext,
+  extractDeprecatedFields,
 } from './utils';
 import { PrometheusTracingPluginConfig } from './config';
+import { TypeInfo } from 'graphql';
 
 export { PrometheusTracingPluginConfig, createCounter, createHistogram, FillLabelsFnParams };
 
@@ -20,6 +22,8 @@ type PluginInternalContext = {
 };
 
 export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugin<PluginInternalContext> => {
+  let typeInfo: TypeInfo | null = null;
+
   const parseHistogram = getHistogramFromConfig(
     config,
     'parse',
@@ -100,8 +104,8 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
           fillLabelsFn: params => ({
             operationName: params.operationName,
             operationType: params.operationType,
-            fieldName: params.info?.fieldName!,
-            typeName: params.info?.parentType.name!,
+            fieldName: params.deprecationInfo?.fieldName!,
+            typeName: params.deprecationInfo?.typeName!,
           }),
         })
       : undefined;
@@ -121,6 +125,22 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
         if (parseHistogram) {
           const labels = parseHistogram.fillLabelsFn ? parseHistogram.fillLabelsFn(internalContext) : {};
           parseHistogram.histogram.observe(labels, totalTime);
+        }
+
+        if (deprecationCounter && typeInfo) {
+          const deprecatedFields = extractDeprecatedFields(internalContext.document, typeInfo);
+
+          if (deprecatedFields.length > 0) {
+            for (const depField of deprecatedFields) {
+              const depLabels = deprecationCounter.fillLabelsFn
+                ? deprecationCounter.fillLabelsFn({
+                    ...internalContext,
+                    deprecationInfo: depField,
+                  })
+                : {};
+              deprecationCounter.counter.labels(depLabels).inc();
+            }
+          }
         }
       } else {
         // means that we got a parse error, report it
@@ -224,11 +244,6 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
               const totalTime = (Date.now() - startTime) / 1000;
               const labels = resolversHistogram.fillLabelsFn ? resolversHistogram.fillLabelsFn(paramsCtx) : {};
               resolversHistogram.histogram.observe(labels, totalTime);
-
-              if (deprecationCounter && info.parentType.getFields()[info.fieldName].isDeprecated) {
-                const depLabels = deprecationCounter.fillLabelsFn ? deprecationCounter.fillLabelsFn(paramsCtx) : {};
-                deprecationCounter.counter.labels(depLabels).inc();
-              }
             };
           };
         }
@@ -238,6 +253,9 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
     : undefined;
 
   return {
+    onSchemaChange({ schema }) {
+      typeInfo = new TypeInfo(schema);
+    },
     onParse,
     onValidate,
     onContextBuilding,

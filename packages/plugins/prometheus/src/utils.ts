@@ -1,7 +1,21 @@
-import { GraphQLError, DocumentNode, OperationDefinitionNode, GraphQLResolveInfo } from 'graphql';
+import {
+  GraphQLError,
+  DocumentNode,
+  OperationDefinitionNode,
+  GraphQLResolveInfo,
+  TypeInfo,
+  visit,
+  ASTNode,
+  visitWithTypeInfo,
+} from 'graphql';
 import { AfterParseEventPayload } from '@envelop/types';
 import { PrometheusTracingPluginConfig } from './config';
 import { Counter, Histogram, register as defaultRegistry } from 'prom-client';
+
+export type DeprecatedFieldInfo = {
+  fieldName: string;
+  typeName: string;
+};
 
 export type FillLabelsFnParams = {
   document: DocumentNode;
@@ -10,6 +24,7 @@ export type FillLabelsFnParams = {
   info?: GraphQLResolveInfo;
   errorPhase?: string;
   error?: GraphQLError;
+  deprecationInfo?: DeprecatedFieldInfo;
 };
 
 export function shouldTraceFieldResolver(info: GraphQLResolveInfo, whitelist: string[] | undefined): boolean {
@@ -79,4 +94,26 @@ export function getHistogramFromConfig(
         }),
       })
     : undefined;
+}
+
+export function extractDeprecatedFields(node: ASTNode, typeInfo: TypeInfo): DeprecatedFieldInfo[] {
+  const found: DeprecatedFieldInfo[] = [];
+
+  visit(
+    node,
+    visitWithTypeInfo(typeInfo, {
+      Field: () => {
+        const field = typeInfo.getFieldDef();
+
+        if (field && field.isDeprecated) {
+          found.push({
+            fieldName: field.name,
+            typeName: typeInfo.getParentType()!.name || '',
+          });
+        }
+      },
+    })
+  );
+
+  return found;
 }
