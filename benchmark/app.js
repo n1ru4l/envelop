@@ -1,7 +1,8 @@
 /// @ts-check
 const { makeExecutableSchema } = require('@graphql-tools/schema');
-const { envelop, useSchema, useExtendContext } = require('../packages/core');
+const { envelop, useSchema } = require('../packages/core');
 const { useParserCache } = require('../packages/plugins/parser-cache');
+const { usePrometheus } = require('../packages/plugins/prometheus');
 const { useGraphQlJit } = require('../packages/plugins/graphql-jit');
 const { useValidationCache } = require('../packages/plugins/validation-cache');
 const { fastify } = require('fastify');
@@ -35,47 +36,65 @@ function generateData() {
 
 const data = generateData();
 
-const schema = makeExecutableSchema({
-  typeDefs: /* GraphQL */ `
-    type Author {
-      id: ID!
-      name: String!
-      company: String!
-      books: [Book!]!
-    }
+const schema = () =>
+  makeExecutableSchema({
+    typeDefs: /* GraphQL */ `
+      type Author {
+        id: ID!
+        name: String!
+        company: String!
+        books: [Book!]!
+      }
 
-    type Book {
-      id: ID!
-      name: String!
-      numPages: Int!
-    }
+      type Book {
+        id: ID!
+        name: String!
+        numPages: Int!
+      }
 
-    type Query {
-      authors: [Author!]!
-    }
-  `,
-  resolvers: {
-    Author: {},
-    Query: {
-      authors: () => data,
+      type Query {
+        authors: [Author!]!
+      }
+    `,
+    resolvers: {
+      Author: {},
+      Query: {
+        authors: () => data,
+      },
     },
-  },
-});
+  });
 
 const envelopsMap = {
   'graphql-js': envelop({
-    plugins: [useSchema(schema)],
+    plugins: [useSchema(schema())],
     enableInternalTracing: true,
   }),
   'envelop-just-cache': envelop({
-    plugins: [useSchema(schema), useParserCache(), useValidationCache()],
+    plugins: [useSchema(schema()), useParserCache(), useValidationCache()],
     enableInternalTracing: true,
   }),
   'envelop-cache-and-no-internal-tracing': envelop({
-    plugins: [useSchema(schema), useParserCache(), useValidationCache()],
+    plugins: [useSchema(schema()), useParserCache(), useValidationCache()],
   }),
   'envelop-cache-jit': envelop({
-    plugins: [useSchema(schema), useGraphQlJit(), useParserCache(), useValidationCache()],
+    plugins: [useSchema(schema()), useGraphQlJit(), useParserCache(), useValidationCache()],
+    enableInternalTracing: true,
+  }),
+  'prom-tracing': envelop({
+    plugins: [
+      useSchema(schema()),
+      useParserCache(),
+      useValidationCache(),
+      usePrometheus({
+        contextBuilding: true,
+        deprecatedFields: true,
+        errors: true,
+        execute: true,
+        parse: true,
+        resolvers: true,
+        validate: true,
+      }),
+    ],
     enableInternalTracing: true,
   }),
 };

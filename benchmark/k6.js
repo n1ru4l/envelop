@@ -4,7 +4,7 @@ import { Trend } from 'k6/metrics';
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';
 import { githubComment } from './github.js';
 
-const DURATION = 30;
+const DURATION = 10;
 const VUS = 10;
 
 function buildOptions(scenarioToThresholdsMap) {
@@ -68,6 +68,17 @@ export const options = buildOptions({
     graphql_parse: ['p(95)<=1'],
     envelop_init: ['p(95)<=1'],
     envelop_total: ['p(95)<=1'],
+  },
+  'prom-tracing': {
+    no_errors: ['rate=1.0'],
+    expected_result: ['rate=1.0'],
+    http_req_duration: ['p(95)<=15'],
+    graphql_execute: ['p(95)<=2'], // Tracing resolvers consts 0.1ms per resolver
+    graphql_context: ['p(95)<=1'],
+    graphql_validate: ['p(95)<=1'],
+    graphql_parse: ['p(95)<=1'],
+    envelop_init: ['p(95)<=1'],
+    envelop_total: ['p(95)<=2'],
   },
   'envelop-cache-and-no-internal-tracing': {
     no_errors: ['rate=1.0'],
