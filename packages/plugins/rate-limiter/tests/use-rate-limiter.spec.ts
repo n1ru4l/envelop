@@ -1,4 +1,4 @@
-import { createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { DIRECTIVE_SDL, IdentifyFn, useRateLimiter } from '../src';
 
@@ -42,8 +42,9 @@ describe('useRateLimiter', () => {
     testInstance.execute(`query { unlimited }`);
     await testInstance.execute(`query { unlimited }`);
     const result = await testInstance.execute(`query { unlimited }`);
+    assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
-    expect(result.data.unlimited).toBe('unlimited');
+    expect(result.data?.unlimited).toBe('unlimited');
   });
 
   it('Should allow calls with enough delay', async () => {
@@ -59,8 +60,9 @@ describe('useRateLimiter', () => {
     await testInstance.execute(`query { limited }`);
     await delay(300);
     const result = await testInstance.execute(`query { limited }`);
+    assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
-    expect(result.data.limited).toBe('limited');
+    expect(result.data?.limited).toBe('limited');
   });
 
   it('Should limit calls', async () => {
@@ -74,6 +76,7 @@ describe('useRateLimiter', () => {
     );
     await testInstance.execute(`query { limited }`);
     const result = await testInstance.execute(`query { limited }`);
+    assertSingleExecutionValue(result);
     expect(result.errors!.length).toBe(1);
     expect(result.errors![0].message).toBe('too many calls');
     expect(result.errors![0].path).toEqual(['limited']);

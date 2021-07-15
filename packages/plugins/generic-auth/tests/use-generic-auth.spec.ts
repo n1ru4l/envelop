@@ -1,4 +1,4 @@
-import { createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { DIRECTIVE_SDL, ResolveUserFn, useGenericAuth } from '../src';
 
@@ -41,8 +41,9 @@ describe('useGenericAuth', () => {
       );
 
       const result = await testInstance.execute(`query { test }`);
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
-      expect(result.data.test).toBe('Dotan');
+      expect(result.data?.test).toBe('Dotan');
     });
 
     it('Should prevent execution when user is not authenticated correctly', async () => {
@@ -57,6 +58,7 @@ describe('useGenericAuth', () => {
       );
 
       const result = await testInstance.execute(`query { test }`);
+      assertSingleExecutionValue(result);
       expect(result.errors!.length).toBe(1);
       expect(result.errors![0].message).toBe('Unauthenticated!');
       expect(result.errors![0].path).toBeUndefined();
@@ -78,6 +80,7 @@ describe('useGenericAuth', () => {
       );
 
       const result = await testInstance.execute(`query { test }`);
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(spyFn).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -107,8 +110,9 @@ describe('useGenericAuth', () => {
       );
 
       const result = await testInstance.execute(`query { test }`);
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
-      expect(result.data.test).toBe('Dotan');
+      expect(result.data?.test).toBe('Dotan');
     });
 
     it('Should passthrough also when the user is not authenticated', async () => {
@@ -123,8 +127,9 @@ describe('useGenericAuth', () => {
       );
 
       const result = await testInstance.execute(`query { test }`);
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
-      expect(result.data.test).toBe('');
+      expect(result.data?.test).toBe('');
     });
 
     it('Should inject currentUser into the context when the user is valid', async () => {
@@ -143,6 +148,7 @@ describe('useGenericAuth', () => {
       );
 
       const result = await testInstance.execute(`query { test }`);
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(spyFn).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -174,6 +180,7 @@ describe('useGenericAuth', () => {
       );
 
       const result = await testInstance.execute(`query { test }`);
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(spyFn).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -202,6 +209,7 @@ describe('useGenericAuth', () => {
       );
 
       const result = await testInstance.execute(`query { test }`);
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(spyFn).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -245,8 +253,9 @@ describe('useGenericAuth', () => {
       );
 
       const result = await testInstance.execute(`query { protected }`);
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
-      expect(result.data.protected).toBe('Dotan');
+      expect(result.data?.protected).toBe('Dotan');
     });
 
     it('Should allow execution for public field when the user is authenticated ', async () => {
@@ -261,8 +270,9 @@ describe('useGenericAuth', () => {
       );
 
       const result = await testInstance.execute(`query { public }`);
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
-      expect(result.data.public).toBe('public');
+      expect(result.data?.public).toBe('public');
     });
 
     it('Should allow execution for public field when the user incorrectly authenticated', async () => {
@@ -277,8 +287,9 @@ describe('useGenericAuth', () => {
       );
 
       const result = await testInstance.execute(`query { public }`);
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
-      expect(result.data.public).toBe('public');
+      expect(result.data?.public).toBe('public');
     });
 
     it('Should prevent field execution when user is not authenticated correctly', async () => {
@@ -293,9 +304,10 @@ describe('useGenericAuth', () => {
       );
 
       const result = await testInstance.execute(`query { protected }`);
-      expect(result.errors!.length).toBe(1);
-      expect(result.errors![0].message).toBe('Unauthenticated!');
-      expect(result.errors![0].path).toEqual(['protected']);
+      assertSingleExecutionValue(result);
+      expect(result.errors?.length).toBe(1);
+      expect(result.errors?.[0].message).toBe('Unauthenticated!');
+      expect(result.errors?.[0].path).toEqual(['protected']);
     });
   });
 });

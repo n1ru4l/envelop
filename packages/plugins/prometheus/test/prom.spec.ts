@@ -1,6 +1,6 @@
 import { PrometheusTracingPluginConfig, usePrometheus, createHistogram, createCounter } from '../src';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { Registry, Histogram, Counter } from 'prom-client';
 import { print } from 'graphql';
 import { useExtendContext } from '@envelop/core';
@@ -82,6 +82,7 @@ describe('Prom Metrics plugin', () => {
       resolvers: true,
     });
     const result = await execute('query { regularField longField deprecatedField }');
+    assertSingleExecutionValue(result);
 
     expect(result.errors).toBeUndefined();
     const metricsStr = await allMetrics();
@@ -99,6 +100,7 @@ describe('Prom Metrics plugin', () => {
     it('Should trace error during parse', async () => {
       const { execute, metricCount, metricString } = prepare({ parse: true, errors: true });
       const result = await execute('query {');
+      assertSingleExecutionValue(result);
 
       expect(result.errors?.length).toBe(1);
       expect(await metricString('graphql_envelop_error_result')).toContain('graphql_envelop_error_result{phase="parse"} 1');
@@ -109,6 +111,7 @@ describe('Prom Metrics plugin', () => {
     it('Should trace valid parse result', async () => {
       const { execute, metricCount, metricString } = prepare({ parse: true, errors: true });
       const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
@@ -121,6 +124,7 @@ describe('Prom Metrics plugin', () => {
     it('Should skip parse when parse = false', async () => {
       const { execute, metricCount } = prepare({ parse: false });
       const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_phase_parse')).toBe(0);
@@ -148,6 +152,7 @@ describe('Prom Metrics plugin', () => {
         registry
       );
       const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
@@ -179,6 +184,7 @@ describe('Prom Metrics plugin', () => {
         registry
       );
       const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
@@ -194,6 +200,7 @@ describe('Prom Metrics plugin', () => {
     it('Should trace error during validate, and also trace timing', async () => {
       const { execute, metricCount, metricString } = prepare({ validate: true, errors: true });
       const result = await execute('query test($v: String!) { regularField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors?.length).toBe(1);
       expect(await metricString('graphql_envelop_error_result')).toContain(
@@ -206,6 +213,7 @@ describe('Prom Metrics plugin', () => {
     it('Should trace valid validations result', async () => {
       const { execute, metricCount, metricString } = prepare({ validate: true, errors: true });
       const result = await execute('query test { regularField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
@@ -218,6 +226,7 @@ describe('Prom Metrics plugin', () => {
     it('Should skip validate when validate = false', async () => {
       const { execute, metricCount } = prepare({ validate: false });
       const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_phase_validate')).toBe(0);
@@ -247,6 +256,7 @@ describe('Prom Metrics plugin', () => {
         registry
       );
       const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
@@ -257,6 +267,7 @@ describe('Prom Metrics plugin', () => {
     it('Should trace contextBuilding timing', async () => {
       const { execute, metricCount } = prepare({ contextBuilding: true });
       const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_phase_context', 'count')).toBe(1);
@@ -264,6 +275,7 @@ describe('Prom Metrics plugin', () => {
     it('Should skip contextBuilding when contextBuilding = false', async () => {
       const { execute, metricCount } = prepare({ contextBuilding: false });
       const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_phase_context')).toBe(0);
@@ -293,6 +305,7 @@ describe('Prom Metrics plugin', () => {
         registry
       );
       const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
@@ -303,6 +316,7 @@ describe('Prom Metrics plugin', () => {
     it('Should trace error during execute with a single error', async () => {
       const { execute, metricCount, metricString } = prepare({ errors: true, execute: true });
       const result = await execute('query { errorField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors?.length).toBe(1);
       expect(await metricString('graphql_envelop_error_result')).toContain(
@@ -315,6 +329,7 @@ describe('Prom Metrics plugin', () => {
     it('Should trace error during execute with a multiple errors', async () => {
       const { execute, metricCount, metricString } = prepare({ errors: true, execute: true });
       const result = await execute('query { errorField test: errorField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors?.length).toBe(2);
       expect(await metricString('graphql_envelop_error_result')).toContain(
@@ -327,6 +342,7 @@ describe('Prom Metrics plugin', () => {
     it('Should trace valid execute result', async () => {
       const { execute, metricCount } = prepare({ errors: true, execute: true });
       const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
@@ -336,6 +352,7 @@ describe('Prom Metrics plugin', () => {
     it('Should skip execute when execute = false', async () => {
       const { execute, metricCount } = prepare({ errors: true, execute: false });
       const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
@@ -367,6 +384,7 @@ describe('Prom Metrics plugin', () => {
         registry
       );
       const result = await execute('query { errorField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors?.length).toBe(1);
       expect(await metricCount('test_error')).toBe(1);
@@ -378,6 +396,7 @@ describe('Prom Metrics plugin', () => {
     it('Should not trace parse errors when not needed', async () => {
       const { execute, metricCount } = prepare({ parse: true, errors: false });
       const result = await execute('query {');
+      assertSingleExecutionValue(result);
 
       expect(result.errors?.length).toBe(1);
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
@@ -386,6 +405,7 @@ describe('Prom Metrics plugin', () => {
     it('Should not trace validate errors when not needed', async () => {
       const { execute, metricCount } = prepare({ validate: true, errors: false });
       const result = await execute('query test($v: String!) { regularField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors?.length).toBe(1);
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
@@ -394,6 +414,7 @@ describe('Prom Metrics plugin', () => {
     it('Should not trace execute errors when not needed', async () => {
       const { execute, metricCount } = prepare({ errors: false });
       const result = await execute('query { errorField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors?.length).toBe(1);
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
@@ -404,6 +425,7 @@ describe('Prom Metrics plugin', () => {
     it('Should trace all resolvers times correctly', async () => {
       const { execute, metricCount, metricString } = prepare({ execute: true, resolvers: true });
       const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
@@ -420,6 +442,7 @@ describe('Prom Metrics plugin', () => {
         resolversWhitelist: ['Query.regularField'],
       });
       const result = await execute('query { regularField longField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
@@ -434,6 +457,7 @@ describe('Prom Metrics plugin', () => {
     it('Should not trace deprecation when not needed', async () => {
       const { execute, metricCount } = prepare({ execute: true, resolvers: true });
       const result = await execute('query { regularField deprecatedField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
@@ -444,6 +468,7 @@ describe('Prom Metrics plugin', () => {
     it('Should trace all deprecated fields times correctly', async () => {
       const { execute, metricCount } = prepare({ execute: true, resolvers: true, deprecatedFields: true });
       const result = await execute('query { regularField deprecatedField }');
+      assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);

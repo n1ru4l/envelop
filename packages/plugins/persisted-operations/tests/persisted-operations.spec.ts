@@ -1,6 +1,6 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { DocumentNode, parse } from 'graphql';
-import { createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { PersistedOperationsStore, usePersistedOperations } from '../src';
 
 describe('usePersistedOperations', () => {
@@ -38,8 +38,9 @@ describe('usePersistedOperations', () => {
     );
 
     const result = await testInstance.execute(`persisted_1`, {}, {});
+    assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
-    expect(result.data.foo).toBe('test');
+    expect(result.data?.foo).toBe('test');
   });
 
   it('Should allow store to return string', async () => {
@@ -58,8 +59,9 @@ describe('usePersistedOperations', () => {
     );
 
     const result = await testInstance.execute(`persisted_1`, {}, {});
+    assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
-    expect(result.data.foo).toBe('test');
+    expect(result.data?.foo).toBe('test');
   });
 
   it('Should fail when key is valid, but operation is not persisted', async () => {
@@ -76,6 +78,7 @@ describe('usePersistedOperations', () => {
     );
 
     const result = await testInstance.execute(`persisted_1`);
+    assertSingleExecutionValue(result);
     expect(result.errors![0].message).toBe('The operation hash "persisted_1" is not valid');
   });
 
@@ -95,6 +98,7 @@ describe('usePersistedOperations', () => {
     );
 
     const result = await testInstance.execute(`invalid`);
+    assertSingleExecutionValue(result);
     expect(result.errors![0].message).toBe(`Failed to handle GraphQL persisted operation.`);
   });
 
@@ -114,6 +118,7 @@ describe('usePersistedOperations', () => {
     );
 
     const result = await testInstance.execute(`invalid`);
+    assertSingleExecutionValue(result);
     expect(result.errors![0].message).toBe(`Syntax Error: Unexpected Name \"invalid\".`);
   });
 
@@ -133,8 +138,9 @@ describe('usePersistedOperations', () => {
     );
 
     const result = await testInstance.execute(`query { foo }`);
+    assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
-    expect(result.data.foo).toBe('test');
+    expect(result.data?.foo).toBe('test');
   });
 
   it('Should prevent regular operations flow when onlyPersistedOperations=true and valid operation', async () => {
@@ -153,6 +159,7 @@ describe('usePersistedOperations', () => {
     );
 
     const result = await testInstance.execute(`query { foo }`);
+    assertSingleExecutionValue(result);
     expect(result.errors![0].message).toBe(`Failed to handle GraphQL persisted operation.`);
   });
 });

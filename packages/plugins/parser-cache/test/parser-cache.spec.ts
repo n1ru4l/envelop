@@ -1,5 +1,5 @@
 import { buildSchema, parse } from 'graphql';
-import { createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useParserCache } from '../src';
 import { Plugin } from '@envelop/types';
 
@@ -18,7 +18,7 @@ describe('useParserCache', () => {
 
     useTestPlugin = {
       onParse({ setParseFn }) {
-        setParseFn((testParser as any) as typeof parse);
+        setParseFn(testParser as any as typeof parse);
       },
     };
   });
@@ -44,7 +44,9 @@ describe('useParserCache', () => {
   it('Should call parse once once when operation is cached and errored', async () => {
     const testInstance = createTestkit([useTestPlugin, useParserCache()], testSchema);
     const r1 = await testInstance.execute(`FAILED\ { foo }`);
+    assertSingleExecutionValue(r1);
     const r2 = await testInstance.execute(`FAILED\ { foo }`);
+    assertSingleExecutionValue(r2);
     expect(testParser).toHaveBeenCalledTimes(1);
     expect(r1.errors![0].message).toBe(`Syntax Error: Unexpected Name "FAILED".`);
     expect(r2.errors![0].message).toBe(`Syntax Error: Unexpected Name "FAILED".`);

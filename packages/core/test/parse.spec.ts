@@ -1,4 +1,4 @@
-import { createSpiedPlugin, createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { FieldNode, parse, visit } from 'graphql';
 import { schema, query } from './common';
 
@@ -104,8 +104,9 @@ describe('parse', () => {
       schema
     );
     const result = await teskit.execute(query);
+    assertSingleExecutionValue(result);
     expect(afterFn).toHaveBeenCalledTimes(1);
-    expect(result.data.currentUser).toBeDefined();
-    expect(result.data.me).not.toBeDefined();
+    expect(result.data?.currentUser).toBeDefined();
+    expect(result.data?.me).not.toBeDefined();
   });
 });

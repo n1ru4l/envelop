@@ -1,6 +1,6 @@
 import { useOperationPermissions } from '../src';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 
 const schema = makeExecutableSchema({
   typeDefs: [
@@ -41,6 +41,7 @@ describe('useOperationPermissions', () => {
     );
 
     const result = await kit.execute(query);
+    assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
   });
   it('allow only one field', async () => {
@@ -54,6 +55,7 @@ describe('useOperationPermissions', () => {
     );
 
     const result = await kit.execute(query);
+    assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
 Array [
   [GraphQLError: Insufficient permissions for selecting 'Query.foo'.],
@@ -73,6 +75,7 @@ Array [
     );
 
     const result = await kit.execute(query);
+    assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
 Array [
   [GraphQLError: Insufficient permissions for selecting 'User.id'.],
@@ -90,6 +93,7 @@ Array [
     );
 
     const result = await kit.execute(query);
+    assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
   });
 });

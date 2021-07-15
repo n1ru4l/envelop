@@ -1,4 +1,4 @@
-import { createSpiedPlugin, createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { execute } from 'graphql';
 import { useGraphQlJit } from '../src';
@@ -36,6 +36,7 @@ describe('useGraphQlJit', () => {
   it('Should execute correctly', async () => {
     const testInstance = createTestkit([useGraphQlJit()], schema);
     const result = await testInstance.execute(`query { test }`);
-    expect(result.data.test).toBe('boop');
+    assertSingleExecutionValue(result);
+    expect(result.data?.test).toBe('boop');
   });
 });

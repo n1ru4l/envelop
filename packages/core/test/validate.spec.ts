@@ -1,4 +1,4 @@
-import { createSpiedPlugin, createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { GraphQLError, GraphQLSchema, validate, ValidationContext } from 'graphql';
 import { schema, query } from './common';
 
@@ -95,7 +95,30 @@ describe('validate', () => {
     });
   });
 
-  it('Should allow to add validation rules', async () => {
+  it('Should allow to add validation rules (reportError)', async () => {
+    const teskit = createTestkit(
+      [
+        {
+          onValidate: ({ addValidationRule }) => {
+            addValidationRule(context => {
+              context.reportError(new GraphQLError('Invalid!'));
+              return {};
+            });
+          },
+        },
+      ],
+      schema
+    );
+
+    const r = await teskit.execute(query);
+    assertSingleExecutionValue(r);
+
+    expect(r.errors).toBeDefined();
+    expect(r.errors!.length).toBe(1);
+    expect(r.errors![0].message).toBe('Invalid!');
+  });
+
+  it('Should allow to add validation rules (throw)', async () => {
     const teskit = createTestkit(
       [
         {
@@ -110,6 +133,8 @@ describe('validate', () => {
     );
 
     const r = await teskit.execute(query);
+    assertSingleExecutionValue(r);
+
     expect(r.errors).toBeDefined();
     expect(r.errors!.length).toBe(1);
     expect(r.errors![0].message).toBe('Invalid!');

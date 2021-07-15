@@ -1,5 +1,5 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { EnvelopError, useMaskedErrors } from '../../src/plugins/use-masked-errors';
 
 describe('useMaskedErrors', () => {
@@ -32,6 +32,7 @@ describe('useMaskedErrors', () => {
   it('Should mask non EnvelopErrors', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
     const result = await testInstance.execute(`query { secret }`);
+    assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toHaveLength(1);
     const [error] = result.errors!;
@@ -41,6 +42,7 @@ describe('useMaskedErrors', () => {
   it('Should mask unexpected errors', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
     const result = await testInstance.execute(`query { secretEnvelop }`);
+    assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toHaveLength(1);
     const [error] = result.errors!;
@@ -50,6 +52,7 @@ describe('useMaskedErrors', () => {
   it('Should not mask GraphQL operation syntax errors (of course it does not since we are only hooking in after execute, but just to be sure)', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
     const result = await testInstance.execute(`query { idonotexist }`);
+    assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toHaveLength(1);
     const [error] = result.errors!;
@@ -59,6 +62,7 @@ describe('useMaskedErrors', () => {
   it('Should forward extensions from EnvelopError to final GraphQLError in errors array', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
     const result = await testInstance.execute(`query { secretWithExtensions }`);
+    assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toHaveLength(1);
     const [error] = result.errors!;

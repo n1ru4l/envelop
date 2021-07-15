@@ -10,7 +10,7 @@ import {
   GraphQLBoolean,
   GraphQLList,
 } from 'graphql';
-import { createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useExtendedValidation, ONE_OF_DIRECTIVE_SDL, OneOfInputObjectsRule } from '../src';
 
 describe('oneOf', () => {
@@ -459,7 +459,7 @@ describe('oneOf', () => {
         );
 
         const result = await testInstance.execute(document, variables);
-
+        assertSingleExecutionValue(result);
         if (expectedError) {
           expect(result.errors).toBeDefined();
           expect(result.errors!.length).toBe(1);
@@ -556,7 +556,7 @@ describe('oneOf', () => {
         );
 
         const result = await testInstance.execute(document, variables);
-
+        assertSingleExecutionValue(result);
         if (expectedError) {
           expect(result.errors).toBeDefined();
           expect(result.errors!.length).toBe(1);

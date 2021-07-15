@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { parse } from 'graphql';
 import { Application, createApplication, createModule, Injectable, Scope } from 'graphql-modules';
-import { createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useGraphQLModules } from '../src';
 
 describe('useGraphQLModules', () => {
@@ -38,6 +38,7 @@ describe('useGraphQLModules', () => {
   it('Should work correctly and init all providers at the right time', async () => {
     const testInstance = createTestkit([useGraphQLModules(app)]);
     const result = await testInstance.execute(`query { foo }`);
-    expect(result.data.foo).toBe('testFoo');
+    assertSingleExecutionValue(result);
+    expect(result.data?.foo).toBe('testFoo');
   });
 });

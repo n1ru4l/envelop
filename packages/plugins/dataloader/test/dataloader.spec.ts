@@ -1,6 +1,6 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import DataLoader from 'dataloader';
-import { createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useDataLoader } from '../src';
 
 describe('useDataLoader', () => {
@@ -28,6 +28,7 @@ describe('useDataLoader', () => {
     );
 
     const result = await testInstance.execute(`query { test }`);
-    expect(result.data.test).toBe('myValue');
+    assertSingleExecutionValue(result);
+    expect(result.data?.test).toBe('myValue');
   });
 });

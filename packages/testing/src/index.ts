@@ -1,8 +1,8 @@
-import { DocumentNode, ExecutionArgs, ExecutionResult, GraphQLSchema, print } from 'graphql';
-import { getGraphQLParameters, processRequest } from 'graphql-helix';
+import { DocumentNode, ExecutionResult, getOperationAST, GraphQLError, GraphQLSchema, print } from 'graphql';
 import { envelop, useSchema } from '@envelop/core';
 import { GetEnvelopedFn, Plugin } from '@envelop/types';
-import { cloneSchema } from '@graphql-tools/utils';
+import { cloneSchema, isDocumentNode } from '@graphql-tools/utils';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function createSpiedPlugin() {
@@ -49,6 +49,8 @@ export function createSpiedPlugin() {
 type MaybePromise<T> = T | Promise<T>;
 type MaybeAsyncIterableIterator<T> = T | AsyncIterableIterator<T>;
 
+type ExecutionReturn = MaybeAsyncIterableIterator<ExecutionResult>;
+
 export function createTestkit(
   pluginsOrEnvelop: GetEnvelopedFn<any> | Plugin<any>[],
   schema?: GraphQLSchema
@@ -57,10 +59,9 @@ export function createTestkit(
     operation: DocumentNode | string,
     variables?: Record<string, any>,
     initialContext?: any
-  ) => Promise<ExecutionResult<any>>;
+  ) => MaybePromise<ExecutionReturn>;
   replaceSchema: (schema: GraphQLSchema) => void;
   wait: (ms: number) => Promise<void>;
-  executeRaw: (args: ExecutionArgs) => MaybePromise<MaybeAsyncIterableIterator<ExecutionResult>>;
 } {
   let replaceSchema: (s: GraphQLSchema) => void = () => {};
 
@@ -68,6 +69,15 @@ export function createTestkit(
     onPluginInit({ setSchema }) {
       replaceSchema = setSchema;
     },
+  };
+
+  const toGraphQLErrorOrThrow = (thrownThing: unknown): GraphQLError => {
+    if (thrownThing instanceof GraphQLError) {
+      return thrownThing;
+    } else if (thrownThing instanceof Error) {
+      return new GraphQLError(thrownThing.message);
+    }
+    throw thrownThing;
   };
 
   const initRequest = Array.isArray(pluginsOrEnvelop)
@@ -79,39 +89,93 @@ export function createTestkit(
   return {
     wait: ms => new Promise(resolve => setTimeout(resolve, ms)),
     replaceSchema,
-    execute: async (operation, rawVariables = {}, initialContext = {}) => {
-      const request = {
-        headers: {},
-        method: 'POST',
-        query: '',
-        body: {
-          query: typeof operation === 'string' ? operation : print(operation),
-          variables: rawVariables,
-        },
-      };
+    execute: async (operation, variableValues = {}, initialContext = {}) => {
       const proxy = initRequest(initialContext);
-      const { operationName, query, variables } = getGraphQLParameters(request);
 
-      const r = await processRequest({
-        operationName,
-        query,
-        variables,
-        request,
-        execute: proxy.execute,
-        parse: proxy.parse,
-        validate: proxy.validate,
-        contextFactory: proxy.contextFactory,
+      let document: DocumentNode;
+      try {
+        document = isDocumentNode(operation) ? operation : proxy.parse(operation);
+      } catch (err: unknown) {
+        return {
+          errors: [toGraphQLErrorOrThrow(err)],
+        };
+      }
+
+      let validationErrors: ReadonlyArray<GraphQLError>;
+      try {
+        validationErrors = proxy.validate(proxy.schema, document);
+      } catch (err: unknown) {
+        return {
+          errors: [toGraphQLErrorOrThrow(err)],
+        };
+      }
+
+      if (validationErrors.length > 0) {
+        return {
+          errors: validationErrors,
+        };
+      }
+
+      const mainOperation = getOperationAST(document);
+
+      if (mainOperation == null) {
+        return {
+          errors: [new GraphQLError('Could not identify main operation.')],
+        };
+      }
+
+      let contextValue: any;
+
+      try {
+        contextValue = await proxy.contextFactory({
+          request: {
+            headers: {},
+            method: 'POST',
+            query: '',
+            body: {
+              query: print(document),
+              variables: variableValues,
+            },
+          },
+          document,
+          operation: print(document),
+          variables: variableValues,
+          ...initialContext,
+        });
+      } catch (err: unknown) {
+        return {
+          errors: [toGraphQLErrorOrThrow(err)],
+        };
+      }
+
+      if (mainOperation.operation === 'subscription') {
+        return proxy.subscribe({
+          variableValues,
+          contextValue,
+          schema: proxy.schema,
+          document,
+          rootValue: {},
+        });
+      }
+      return proxy.execute({
+        variableValues,
+        contextValue,
         schema: proxy.schema,
-      });
-
-      return (r as any).payload as ExecutionResult;
-    },
-    executeRaw: async (args: ExecutionArgs) => {
-      const proxy = initRequest(args.contextValue);
-      return await proxy.execute({
-        ...args,
-        contextValue: await proxy.contextFactory(),
+        document,
+        rootValue: {},
       });
     },
   };
+}
+
+export function assertSingleExecutionValue(input: ExecutionReturn): asserts input is ExecutionResult {
+  if (isAsyncIterable(input)) {
+    throw new Error('Received stream but expected single result');
+  }
+}
+
+export function assertStreamExecutionValue(input: ExecutionReturn): asserts input is AsyncIterableIterator<ExecutionResult> {
+  if (!isAsyncIterable(input)) {
+    throw new Error('Received single result but expected stream.');
+  }
 }

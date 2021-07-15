@@ -1,7 +1,7 @@
 import { useLiveQuery, GraphQLLiveDirectiveSDL } from '../src';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
-import { createTestkit } from '@envelop/testing';
+import { createTestkit, assertStreamExecutionValue } from '@envelop/testing';
 import { parse } from 'graphql';
 
 const schema = makeExecutableSchema({
@@ -20,13 +20,6 @@ const schema = makeExecutableSchema({
   },
 });
 
-function assertAsyncIterable(input: object): asserts input is AsyncIterableIterator<any> {
-  if (Symbol.asyncIterator in input) {
-    return;
-  }
-  throw new Error('Expected AsyncIterableIterator.');
-}
-
 describe('useLiveQuery', () => {
   it('works with simple schema', async () => {
     const liveQueryStore = new InMemoryLiveQueryStore();
@@ -34,16 +27,16 @@ describe('useLiveQuery', () => {
     const contextValue = {
       greetings: ['Hi', 'Sup', 'Ola'],
     };
-    const result = await testKit.executeRaw({
-      schema,
-      contextValue,
-      document: parse(/* GraphQL */ `
+    const result = await testKit.execute(
+      /* GraphQL */ `
         query @live {
           greetings
         }
-      `),
-    });
-    assertAsyncIterable(result);
+      `,
+      undefined,
+      contextValue
+    );
+    assertStreamExecutionValue(result);
     let current = await result.next();
     expect(current.value).toMatchInlineSnapshot(`
 Object {
