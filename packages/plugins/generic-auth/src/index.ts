@@ -1,9 +1,9 @@
 import { DefaultContext, Plugin } from '@envelop/types';
-import { DirectiveNode, GraphQLResolveInfo } from 'graphql';
+import { DirectiveNode, GraphQLError, GraphQLResolveInfo } from 'graphql';
 import { getDirective } from './utils';
 export * from './utils';
 
-export class UnauthenticatedError extends Error {}
+export class UnauthenticatedError extends GraphQLError {}
 
 export type ResolveUserFn<UserType, ContextType = DefaultContext> = (
   context: ContextType

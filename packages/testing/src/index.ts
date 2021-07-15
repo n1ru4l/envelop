@@ -74,8 +74,6 @@ export function createTestkit(
   const toGraphQLErrorOrThrow = (thrownThing: unknown): GraphQLError => {
     if (thrownThing instanceof GraphQLError) {
       return thrownThing;
-    } else if (thrownThing instanceof Error) {
-      return new GraphQLError(thrownThing.message);
     }
     throw thrownThing;
   };

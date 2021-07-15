@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
 /* eslint-disable dot-notation */
-import { ComposeContext, Plugin } from '@envelop/types';
+import { Plugin } from '@envelop/types';
 import * as JwksRsa from 'jwks-rsa';
 import { decode, verify, VerifyOptions, DecodeOptions } from 'jsonwebtoken';
+import { GraphQLError } from 'graphql';
 
 export type Auth0PluginOptions = {
   domain: string;
@@ -20,7 +21,7 @@ export type Auth0PluginOptions = {
   headerName?: string;
 };
 
-export class UnauthenticatedError extends Error {}
+export class UnauthenticatedError extends GraphQLError {}
 
 export type UserPayload = {
   sub: string;
