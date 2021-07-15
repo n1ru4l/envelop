@@ -21,7 +21,6 @@
   ],
   "scripts": {
     "prepare": "husky install",
-    "benchmark": "NODE_ENV=production ts-node --project tsconfig.benchmark.json benchmark/execute.case.ts",
     "postinstall": "patch-package",
     "lint": "eslint --config .eslintrc.json --ext .ts .",
     "prebuild": "rimraf packages/*/dist packages/plugins/*/dist",
@@ -31,6 +30,7 @@
     "prerelease": "yarn build",
     "release": "changeset publish",
     "loadtest:start-server": "NODE_ENV=production node ./benchmark/app.js",
+    "loadtest:run": "k6 -e GRAPHQL_HOSTNAME=0.0.0.0 run ./benchmark/k6.js",
     "release:canary": "(node scripts/canary-release.js && yarn build && yarn changeset publish --tag alpha) || echo Skipping Canary...",
     "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\""
   },

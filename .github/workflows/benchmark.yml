@@ -7,7 +7,7 @@ on:
 
 jobs:
   bench:
-    name: Benchmark
+    name: k6
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
