@@ -71,6 +71,13 @@ const envelopsMap = {
     plugins: [useSchema(schema), useParserCache(), useValidationCache()],
     enableInternalTracing: true,
   }),
+  'envelop-cache-and-no-internal-tracing': envelop({
+    plugins: [useSchema(schema), useParserCache(), useValidationCache()],
+  }),
+  'envelop-cache-jit': envelop({
+    plugins: [useSchema(schema), useGraphQlJit(), useParserCache(), useValidationCache()],
+    enableInternalTracing: true,
+  }),
 };
 
 const app = fastify();
