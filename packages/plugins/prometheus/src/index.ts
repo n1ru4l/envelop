@@ -14,7 +14,7 @@ import {
 import { PrometheusTracingPluginConfig } from './config';
 import { TypeInfo } from 'graphql';
 
-export { PrometheusTracingPluginConfig, createCounter, createHistogram, FillLabelsFnParams };
+export { PrometheusTracingPluginConfig, createCounter, createHistogram, createSummary, FillLabelsFnParams };
 
 const promPluginContext = Symbol('promPluginContext');
 const promPluginExecutionStartTimeSymbol = Symbol('promPluginExecutionStartTimeSymbol');
@@ -90,9 +90,6 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
           }),
         })
       : undefined;
-
-  // OnEnveloped -> request has started -> collect current time
-  // OnAfterExecute -> request has done -> calculate duration
 
   const requestSummary =
     typeof config.requestSummary === 'object'
@@ -182,11 +179,6 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
           [promPluginContext]: internalContext,
         });
 
-        if (reqCounter) {
-          const labels = reqCounter.fillLabelsFn ? reqCounter.fillLabelsFn(internalContext) : {};
-          reqCounter.counter.labels(labels).inc();
-        }
-
         if (parseHistogram) {
           const labels = parseHistogram.fillLabelsFn ? parseHistogram.fillLabelsFn(internalContext) : {};
           parseHistogram.histogram.observe(labels, totalTime);
@@ -265,6 +257,11 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
     ? ({ args }) => {
         if (!args.contextValue[promPluginContext]) {
           return undefined;
+        }
+
+        if (reqCounter) {
+          const labels = reqCounter.fillLabelsFn ? reqCounter.fillLabelsFn(args.contextValue[promPluginContext]) : {};
+          reqCounter.counter.labels(labels).inc();
         }
 
         const startTime = Date.now();
