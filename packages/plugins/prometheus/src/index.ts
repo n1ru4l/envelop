@@ -113,7 +113,7 @@ function shouldTraceFieldResolver(info: GraphQLResolveInfo, whitelist: string[] 
   return whitelist.includes(coordinate) || whitelist.includes(`${parentType}.*`);
 }
 
-export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin<PluginInternalContext> => {
+export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugin<PluginInternalContext> => {
   const parseHistogram = getHistogram(
     config,
     'parse',
