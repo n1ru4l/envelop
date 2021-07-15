@@ -1,7 +1,10 @@
-import { createCounter, createHistogram } from './utils';
+import { createCounter, createHistogram, createSummary } from './utils';
 import { Registry } from 'prom-client';
 
 export type PrometheusTracingPluginConfig = {
+  requestCount?: boolean | ReturnType<typeof createCounter>;
+  requestTotalDuration?: boolean | ReturnType<typeof createHistogram>;
+  requestSummary?: boolean | ReturnType<typeof createSummary>;
   parse?: boolean | ReturnType<typeof createHistogram>;
   validate?: boolean | ReturnType<typeof createHistogram>;
   contextBuilding?: boolean | ReturnType<typeof createHistogram>;

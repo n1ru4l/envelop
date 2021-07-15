@@ -7,6 +7,7 @@ You can opt-in to collect tracing from the following phases:
 - errors (categorized by `phase`)
 - resolvers tracing and runtime
 - deprecated fields usage
+- count of graphql operations
 - `parse` execution time
 - `validate` execution time
 - `contextBuilding` execution time

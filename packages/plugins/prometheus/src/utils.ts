@@ -10,7 +10,7 @@ import {
 } from 'graphql';
 import { AfterParseEventPayload } from '@envelop/types';
 import { PrometheusTracingPluginConfig } from './config';
-import { Counter, Histogram, register as defaultRegistry } from 'prom-client';
+import { Counter, Histogram, register as defaultRegistry, Summary } from 'prom-client';
 
 export type DeprecatedFieldInfo = {
   fieldName: string;
@@ -60,6 +60,13 @@ export function createInternalContext(parseResult: AfterParseEventPayload<any>['
 
 export function createHistogram<LabelNames extends string>(options: {
   histogram: Histogram<LabelNames>;
+  fillLabelsFn?: (params: FillLabelsFnParams) => Record<LabelNames, string>;
+}): typeof options {
+  return options;
+}
+
+export function createSummary<LabelNames extends string>(options: {
+  summary: Summary<LabelNames>;
   fillLabelsFn?: (params: FillLabelsFnParams) => Record<LabelNames, string>;
 }): typeof options {
   return options;

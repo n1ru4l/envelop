@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { Plugin, OnExecuteHookResult, OnParseHook, OnValidateHook, OnContextBuildingHook, OnExecuteHook } from '@envelop/types';
-import { Counter, Histogram, register as defaultRegistry } from 'prom-client';
+import { Summary, Counter, Histogram, register as defaultRegistry } from 'prom-client';
 import {
   getHistogramFromConfig,
   createHistogram,
@@ -9,6 +9,7 @@ import {
   FillLabelsFnParams,
   createInternalContext,
   extractDeprecatedFields,
+  createSummary,
 } from './utils';
 import { PrometheusTracingPluginConfig } from './config';
 import { TypeInfo } from 'graphql';
@@ -16,9 +17,11 @@ import { TypeInfo } from 'graphql';
 export { PrometheusTracingPluginConfig, createCounter, createHistogram, FillLabelsFnParams };
 
 const promPluginContext = Symbol('promPluginContext');
+const promPluginExecutionStartTimeSymbol = Symbol('promPluginExecutionStartTimeSymbol');
 
 type PluginInternalContext = {
   [promPluginContext]: FillLabelsFnParams;
+  [promPluginExecutionStartTimeSymbol]: number;
 };
 
 export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugin<PluginInternalContext> => {
@@ -70,6 +73,45 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
         })
       : undefined;
 
+  const requestTotalHistogram =
+    typeof config.requestTotalDuration === 'object'
+      ? config.requestTotalDuration
+      : config.requestTotalDuration === true
+      ? createHistogram({
+          histogram: new Histogram({
+            name: 'graphql_envelop_request_duration',
+            help: 'Time spent on running the GraphQL operation from parse to execute',
+            labelNames: ['operationType', 'operationName'] as const,
+            registers: [config.registry || defaultRegistry],
+          }),
+          fillLabelsFn: params => ({
+            operationName: params.operationName,
+            operationType: params.operationType,
+          }),
+        })
+      : undefined;
+
+  // OnEnveloped -> request has started -> collect current time
+  // OnAfterExecute -> request has done -> calculate duration
+
+  const requestSummary =
+    typeof config.requestSummary === 'object'
+      ? config.requestSummary
+      : config.requestSummary === true
+      ? createSummary({
+          summary: new Summary({
+            name: 'graphql_envelop_request_time_summary',
+            help: 'Summary to measure the time to complete GraphQL operations',
+            labelNames: ['operationType', 'operationName'] as const,
+            registers: [config.registry || defaultRegistry],
+          }),
+          fillLabelsFn: params => ({
+            operationName: params.operationName,
+            operationType: params.operationType,
+          }),
+        })
+      : undefined;
+
   const errorsCounter =
     typeof config.errors === 'object'
       ? config.errors
@@ -86,6 +128,24 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
             operationType: params.operationType,
             path: params.error?.path?.join('.')!,
             phase: params.errorPhase!,
+          }),
+        })
+      : undefined;
+
+  const reqCounter =
+    typeof config.requestCount === 'object'
+      ? config.requestCount
+      : config.requestCount === true
+      ? createCounter({
+          counter: new Counter({
+            name: 'graphql_envelop_request',
+            help: 'Counts the amount of GraphQL requests executed through Envelop',
+            labelNames: ['operationType', 'operationName'] as const,
+            registers: [config.registry || defaultRegistry],
+          }),
+          fillLabelsFn: params => ({
+            operationName: params.operationName,
+            operationType: params.operationType,
           }),
         })
       : undefined;
@@ -121,6 +181,11 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
         extendContext({
           [promPluginContext]: internalContext,
         });
+
+        if (reqCounter) {
+          const labels = reqCounter.fillLabelsFn ? reqCounter.fillLabelsFn(internalContext) : {};
+          reqCounter.counter.labels(labels).inc();
+        }
 
         if (parseHistogram) {
           const labels = parseHistogram.fillLabelsFn ? parseHistogram.fillLabelsFn(internalContext) : {};
@@ -203,6 +268,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
         }
 
         const startTime = Date.now();
+
         const result: OnExecuteHookResult<PluginInternalContext> = {
           onExecuteDone: ({ result }) => {
             const totalTime = (Date.now() - startTime) / 1000;
@@ -210,6 +276,20 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
               ? executeHistogram.fillLabelsFn(args.contextValue[promPluginContext])
               : {};
             executeHistogram.histogram.observe(labels, totalTime);
+
+            if (requestTotalHistogram) {
+              const requestTotalHistogramLabels = requestTotalHistogram.fillLabelsFn
+                ? requestTotalHistogram.fillLabelsFn(args.contextValue[promPluginContext])
+                : {};
+              requestTotalHistogram.histogram.observe(requestTotalHistogramLabels, totalTime);
+            }
+
+            if (requestSummary) {
+              const requestSummaryLabels = requestSummary.fillLabelsFn
+                ? requestSummary.fillLabelsFn(args.contextValue[promPluginContext])
+                : {};
+              requestSummary.summary.observe(requestSummaryLabels, totalTime);
+            }
 
             if (errorsCounter && result.errors && result.errors.length > 0) {
               for (const error of result.errors) {
@@ -253,6 +333,11 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
     : undefined;
 
   return {
+    onEnveloped({ extendContext }) {
+      extendContext({
+        [promPluginExecutionStartTimeSymbol]: Date.now(),
+      });
+    },
     onSchemaChange({ schema }) {
       typeInfo = new TypeInfo(schema);
     },
