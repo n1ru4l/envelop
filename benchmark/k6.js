@@ -1,9 +1,41 @@
-/// @ts-check
 import { check } from 'k6';
 import { graphql, checkNoErrors } from './utils.js';
 import { Trend } from 'k6/metrics';
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';
 import { githubComment } from './github.js';
+
+const DURATION = 10;
+const VUS = 10;
+
+function buildOptions(scenarioToThresholdsMap) {
+  const result = {
+    scenarios: {},
+    thresholds: {},
+  };
+
+  let index = 0;
+
+  for (const [scenario, thresholds] of Object.entries(scenarioToThresholdsMap)) {
+    result.scenarios[scenario] = {
+      executor: 'constant-vus',
+      exec: 'run',
+      startTime: DURATION * index + 's',
+      vus: VUS,
+      duration: DURATION + 's',
+      env: { MODE: scenario },
+      tags: { mode: scenario },
+    };
+
+    const t = Object.keys(thresholds || {}).reduce((prev, key) => {
+      return Object.assign({}, prev, { [`${key}{mode:${scenario}}`]: thresholds[key] });
+    }, {});
+
+    Object.assign(result.thresholds, t);
+    index++;
+  }
+
+  return result;
+}
 
 const trace = {
   init: new Trend('envelop_init', true),
@@ -14,10 +46,13 @@ const trace = {
   total: new Trend('envelop_total', true),
 };
 
-export const options = {
-  vus: 10,
-  duration: '60s',
-  thresholds: {
+export const options = buildOptions({
+  'graphql-js': {
+    no_errors: ['rate=1.0'],
+    expected_result: ['rate=1.0'],
+    http_req_duration: ['p(95)<=15'],
+  },
+  'envelop-just-cache': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
     http_req_duration: ['p(95)<=15'],
@@ -28,7 +63,7 @@ export const options = {
     envelop_init: ['p(95)<=1'],
     envelop_total: ['p(95)<=1'],
   },
-};
+});
 
 export function handleSummary(data) {
   githubComment(data, {
@@ -66,7 +101,7 @@ export function handleSummary(data) {
   };
 }
 
-export default function () {
+export function run() {
   const res = graphql({
     query: /* GraphQL */ `
       query authors {

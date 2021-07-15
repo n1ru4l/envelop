@@ -62,30 +62,24 @@ const schema = makeExecutableSchema({
   },
 });
 
-const getEnveloped = envelop({
-  plugins: [
-    useSchema(schema),
-    useGraphQlJit(),
-    useParserCache(),
-    useValidationCache(),
-    useExtendContext(async () => {
-      // Uncomment this to add an intentional delay
-      // await new Promise(resolve => setTimeout(resolve, 100));
+const envelopsMap = {
+  'graphql-js': envelop({
+    plugins: [useSchema(schema)],
+    enableInternalTracing: true,
+  }),
+  'envelop-just-cache': envelop({
+    plugins: [useSchema(schema), useParserCache(), useValidationCache()],
+    enableInternalTracing: true,
+  }),
+};
 
-      return {
-        customContext: 'test',
-      };
-    }),
-  ],
-  enableInternalTracing: true,
-});
 const app = fastify();
 
 app.route({
   method: 'POST',
   url: '/graphql',
   async handler(req, res) {
-    const proxy = getEnveloped({ req });
+    const proxy = envelopsMap[req.headers['x-test-scenario']]({ req });
     const document = proxy.parse(req.body.query);
     const errors = proxy.validate(proxy.schema, document);
 
