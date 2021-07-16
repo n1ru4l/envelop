@@ -1,4 +1,4 @@
-import {
+import type {
   DocumentNode,
   execute,
   ExecutionArgs,
@@ -9,7 +9,6 @@ import {
   parse,
   ParseOptions,
   Source,
-  subscribe,
   SubscriptionArgs,
   TypeInfo,
   validate,
@@ -18,6 +17,7 @@ import {
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { DefaultContext } from './context-types';
+import { SubscribeFunction } from './graphql';
 import { Plugin } from './plugin';
 
 export type DefaultArgs = Record<string, unknown>;
@@ -158,7 +158,7 @@ export type OnExecuteHook<ContextType> = (
 /** onSubscribe */
 export type TypedSubscriptionArgs<ContextType> = Omit<SubscriptionArgs, 'contextValue'> & { contextValue: ContextType };
 
-export type OriginalSubscribeFn = typeof subscribe;
+export type OriginalSubscribeFn = SubscribeFunction;
 export type OnSubscribeEventPayload<ContextType> = {
   subscribeFn: OriginalSubscribeFn;
   args: TypedSubscriptionArgs<ContextType>;
@@ -169,7 +169,12 @@ export type OnSubscribeResultEventPayload = {
   result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
   setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
 };
-export type SubscribeResultHook = (options: OnSubscribeResultEventPayload) => void;
+export type OnSubscribeResultResultOnNextPayload = { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void };
+export type OnSubscribeResultResult = {
+  onNext?: (options: OnSubscribeResultResultOnNextPayload) => void | Promise<void>;
+  onEnd?: () => void;
+};
+export type SubscribeResultHook = (options: OnSubscribeResultEventPayload) => void | OnSubscribeResultResult;
 export type OnSubscribeHookResult<ContextType> = {
   onSubscribeResult?: SubscribeResultHook;
   onResolverCalled?: OnResolverCalledHook<ContextType>;
