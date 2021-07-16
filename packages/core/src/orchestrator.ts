@@ -11,13 +11,14 @@ import {
   OnParseHook,
   OnResolverCalledHook,
   OnSubscribeHook,
-  OnSubscribeResultResult,
   OnValidateHook,
   Plugin,
   SubscribeResultHook,
   TypedSubscriptionArgs,
   TypedExecutionArgs,
   SubscribeFunction,
+  OnSubscribeResultResultOnNextHook,
+  OnSubscribeResultResultOnEndHook,
 } from '@envelop/types';
 import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
 import {
@@ -313,8 +314,8 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
       contextValue: context,
     });
 
-    const onNextHandler: Exclude<OnSubscribeResultResult['onNext'], void>[] = [];
-    const onEndHandler: Exclude<OnSubscribeResultResult['onEnd'], void>[] = [];
+    const onNextHandler: OnSubscribeResultResultOnNextHook[] = [];
+    const onEndHandler: OnSubscribeResultResultOnEndHook[] = [];
 
     for (const afterCb of afterCalls) {
       const hookResult = afterCb({
@@ -333,22 +334,20 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
       }
     }
 
-    if (isAsyncIterable(result)) {
-      if (onNextHandler.length) {
-        result = mapAsyncIterator(result, async result => {
-          for (const onNext of onNextHandler) {
-            await onNext({ result, setResult: newResult => (result = newResult) });
-          }
-          return result;
-        });
-      }
-      if (onEndHandler.length) {
-        result = finalAsyncIterator(result, () => {
-          for (const onEnd of onEndHandler) {
-            onEnd();
-          }
-        });
-      }
+    if (onNextHandler.length && isAsyncIterable(result)) {
+      result = mapAsyncIterator(result, async result => {
+        for (const onNext of onNextHandler) {
+          await onNext({ result, setResult: newResult => (result = newResult) });
+        }
+        return result;
+      });
+    }
+    if (onEndHandler.length && isAsyncIterable(result)) {
+      result = finalAsyncIterator(result, () => {
+        for (const onEnd of onEndHandler) {
+          onEnd();
+        }
+      });
     }
     return result;
   });
