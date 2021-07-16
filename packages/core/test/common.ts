@@ -9,6 +9,10 @@ export const schema = makeExecutableSchema({
       id: ID!
       name: String!
     }
+
+    type Subscription {
+      alphabet: String!
+    }
   `,
   resolvers: {
     Query: {
