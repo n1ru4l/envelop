@@ -169,10 +169,15 @@ export type OnSubscribeResultEventPayload = {
   result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
   setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
 };
-export type OnSubscribeResultResultOnNextPayload = { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void };
+export type OnSubscribeResultResultOnNextHookPayload = {
+  result: ExecutionResult;
+  setResult: (newResult: ExecutionResult) => void;
+};
+export type OnSubscribeResultResultOnNextHook = (payload: OnSubscribeResultResultOnNextHookPayload) => void | Promise<void>;
+export type OnSubscribeResultResultOnEndHook = () => void;
 export type OnSubscribeResultResult = {
-  onNext?: (options: OnSubscribeResultResultOnNextPayload) => void | Promise<void>;
-  onEnd?: () => void;
+  onNext?: OnSubscribeResultResultOnNextHook;
+  onEnd?: OnSubscribeResultResultOnEndHook;
 };
 export type SubscribeResultHook = (options: OnSubscribeResultEventPayload) => void | OnSubscribeResultResult;
 export type OnSubscribeHookResult<ContextType> = {
