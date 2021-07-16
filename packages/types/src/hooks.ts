@@ -16,7 +16,7 @@ import type {
 } from 'graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
-import { DefaultContext } from 'packages/core/src';
+import { AsyncIterableIteratorOrValue, DefaultContext, ExecuteFunction } from 'packages/core/src';
 import { SubscribeFunction } from './graphql';
 import { Plugin } from './plugin';
 
@@ -137,7 +137,7 @@ export type OnResolverCalledHook<
 
 /** onExecute */
 export type TypedExecutionArgs<ContextType> = Omit<ExecutionArgs, 'contextValue'> & { contextValue: ContextType };
-export type OriginalExecuteFn = typeof execute;
+export type OriginalExecuteFn = ExecuteFunction;
 export type OnExecuteEventPayload<ContextType> = {
   executeFn: OriginalExecuteFn;
   args: TypedExecutionArgs<ContextType>;
@@ -145,8 +145,21 @@ export type OnExecuteEventPayload<ContextType> = {
   setResultAndStopExecution: (newResult: ExecutionResult) => void;
   extendContext: (contextExtension: Partial<ContextType>) => void;
 };
-export type OnExecuteDoneEventPayload = { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void };
-export type OnExecuteDoneHook = (options: OnExecuteDoneEventPayload) => void;
+export type OnExecuteDoneHookResultOnNextHookPayload = {
+  result: ExecutionResult;
+  setResult: (newResult: ExecutionResult) => void;
+};
+export type OnExecuteDoneHookResultOnNextHook = (payload: OnExecuteDoneHookResultOnNextHookPayload) => void | Promise<void>;
+export type OnExecuteDoneHookResultOnEndHook = () => void;
+export type OnExecuteDoneHookResult = {
+  onNext?: OnExecuteDoneHookResultOnNextHook;
+  onEnd?: OnExecuteDoneHookResultOnEndHook;
+};
+export type OnExecuteDoneEventPayload = {
+  result: AsyncIterableIteratorOrValue<ExecutionResult>;
+  setResult: (newResult: AsyncIterableIteratorOrValue<ExecutionResult>) => void;
+};
+export type OnExecuteDoneHook = (options: OnExecuteDoneEventPayload) => void | OnExecuteDoneHookResult;
 export type OnExecuteHookResult<ContextType> = {
   onExecuteDone?: OnExecuteDoneHook;
   onResolverCalled?: OnResolverCalledHook<any, DefaultArgs, ContextType>;

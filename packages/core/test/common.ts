@@ -4,6 +4,7 @@ export const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `
     type Query {
       me: User!
+      alphabet: [String]!
     }
     type User {
       id: ID!
