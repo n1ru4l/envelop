@@ -19,7 +19,7 @@ import {
   TypedExecutionArgs,
   SubscribeFunction,
 } from '@envelop/types';
-import { isAsyncIterable } from 'graphql/jsutils/isAsyncIterable';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
 import {
   DocumentNode,
   execute,
