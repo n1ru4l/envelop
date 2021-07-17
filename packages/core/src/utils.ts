@@ -8,8 +8,9 @@ import {
   Source,
   ExecutionResult,
   SubscriptionArgs,
+  ExecutionArgs,
 } from 'graphql';
-import { PolymorphicSubscribeArguments } from '@envelop/types';
+import { AsyncIterableIteratorOrValue, PolymorphicExecuteArguments, PolymorphicSubscribeArguments } from '@envelop/types';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 
 export const envelopIsIntrospectionSymbol = Symbol('ENVELOP_IS_INTROSPECTION');
@@ -78,6 +79,29 @@ export async function* mapAsyncIterator<TInput, TOutput = TInput>(
     yield map(value);
   }
 }
+
+export function getExecuteArgs(args: PolymorphicExecuteArguments): ExecutionArgs {
+  return args.length === 1
+    ? args[0]
+    : {
+        schema: args[0],
+        document: args[1],
+        rootValue: args[2],
+        contextValue: args[3],
+        variableValues: args[4],
+        operationName: args[5],
+        fieldResolver: args[6],
+        typeResolver: args[7],
+      };
+}
+
+/**
+ * Utility function for making a execute function that handles polymorphic arguments.
+ */
+export const makeExecute =
+  (executeFn: (args: ExecutionArgs) => PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>>) =>
+  (...polyArgs: PolymorphicExecuteArguments): PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>> =>
+    executeFn(getExecuteArgs(polyArgs));
 
 export async function* finalAsyncIterator<TInput>(
   asyncIterable: AsyncIterableIterator<TInput>,
