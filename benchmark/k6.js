@@ -50,7 +50,7 @@ export const options = buildOptions({
   'graphql-js': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: ['p(95)<=25'],
+    http_req_duration: ['p(95)<=28'],
     graphql_execute: ['p(95)<=1'],
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
