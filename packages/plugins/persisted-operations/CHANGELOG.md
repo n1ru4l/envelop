@@ -1,5 +1,11 @@
 # @envelop/persisted-operations
 
+## 0.2.0
+
+### Minor Changes
+
+- 83b2b92: Extend plugin errors from GraphQLError.
+
 ## 0.1.1
 
 ### Patch Changes

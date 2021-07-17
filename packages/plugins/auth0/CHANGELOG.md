@@ -1,5 +1,11 @@
 # @envelop/auth0
 
+## 0.3.0
+
+### Minor Changes
+
+- 83b2b92: Extend plugin errors from GraphQLError.
+
 ## 0.2.1
 
 ### Patch Changes
