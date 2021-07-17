@@ -1,4 +1,4 @@
-import { createTestkit } from '@envelop/testing';
+import { createTestkit, assertSingleExecutionValue } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useOverrideFields } from '../src';
 
@@ -81,9 +81,10 @@ describe('useOverrideFields', () => {
       const result = await testInstance.execute(
         `query { countries { alphaCode2 alphaCode3 continent { countries { alphaCode2 alphaCode3 name } } } }`
       );
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(mockCountries).not.toHaveBeenCalled();
-      expect(result.data.countries).toBe(null);
+      expect(result.data!.countries).toBe(null);
     });
 
     it('Should correctly override root Type and nested field', async () => {
@@ -99,15 +100,16 @@ describe('useOverrideFields', () => {
       const result = await testInstance.execute(
         `query { countries { alphaCode2 alphaCode3 continent { countries { alphaCode2 alphaCode3 name } } } }`
       );
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(mockContinentCountries).not.toHaveBeenCalled();
 
-      expect(result.data.countries[0].continent.countries).toBe(null);
-      expect(result.data.countries[0]).toMatchObject({
+      expect(result.data!.countries[0].continent.countries).toBe(null);
+      expect(result.data!.countries[0]).toMatchObject({
         alphaCode2: 'GB',
         alphaCode3: 'GBR',
       });
-      expect(result.data.countries[1]).toMatchObject({
+      expect(result.data!.countries[1]).toMatchObject({
         alphaCode2: 'IT',
         alphaCode3: 'ITA',
       });
@@ -126,26 +128,27 @@ describe('useOverrideFields', () => {
       const result = await testInstance.execute(
         `query { countries { alphaCode2 alphaCode3 continent { countries { alphaCode2 alphaCode3 name } } } }`
       );
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(mockCountryAlphaCode2).toHaveBeenCalledTimes(2);
       expect(mockContinentCountryAlphaCode2).toHaveBeenCalledTimes(4);
       expect(mockCountryAlphaCode3).not.toHaveBeenCalled();
       expect(mockContinentCountryAlphaCode3).not.toHaveBeenCalled();
 
-      expect(result.data.countries[0]).toMatchObject({
+      expect(result.data!.countries[0]).toMatchObject({
         alphaCode2: 'GB',
         alphaCode3: null,
       });
-      expect(result.data.countries[1]).toMatchObject({
+      expect(result.data!.countries[1]).toMatchObject({
         alphaCode2: 'IT',
         alphaCode3: null,
       });
 
-      expect(result.data.countries[0].continent.countries[0]).toMatchObject({
+      expect(result.data!.countries[0].continent.countries[0]).toMatchObject({
         alphaCode2: 'AD',
         alphaCode3: null,
       });
-      expect(result.data.countries[1].continent.countries[1]).toMatchObject({
+      expect(result.data!.countries[1].continent.countries[1]).toMatchObject({
         alphaCode2: 'AL',
         alphaCode3: null,
       });
@@ -164,26 +167,27 @@ describe('useOverrideFields', () => {
       const result = await testInstance.execute(
         `query { countries { alphaCode2 alphaCode3 continent { countries { alphaCode2 alphaCode3 name } } } }`
       );
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(mockCountryAlphaCode2).not.toHaveBeenCalled();
       expect(mockContinentCountryAlphaCode2).not.toHaveBeenCalled();
       expect(mockCountryAlphaCode3).not.toHaveBeenCalled();
       expect(mockContinentCountryAlphaCode3).not.toHaveBeenCalled();
 
-      expect(result.data.countries[0]).toMatchObject({
+      expect(result.data!.countries[0]).toMatchObject({
         alphaCode2: null,
         alphaCode3: null,
       });
-      expect(result.data.countries[1]).toMatchObject({
+      expect(result.data!.countries[1]).toMatchObject({
         alphaCode2: null,
         alphaCode3: null,
       });
 
-      expect(result.data.countries[0].continent.countries[0]).toMatchObject({
+      expect(result.data!.countries[0].continent.countries[0]).toMatchObject({
         alphaCode2: null,
         alphaCode3: null,
       });
-      expect(result.data.countries[1].continent.countries[1]).toMatchObject({
+      expect(result.data!.countries[1].continent.countries[1]).toMatchObject({
         alphaCode2: null,
         alphaCode3: null,
       });
@@ -205,25 +209,26 @@ describe('useOverrideFields', () => {
       const result = await testInstance.execute(
         `query { countries { alphaCode2 alphaCode3 continent { countries { alphaCode2 alphaCode3 name } } } }`
       );
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(mockContinentCountries).toHaveBeenCalledTimes(2);
       expect(mockContinentCountryAlphaCode2).toHaveBeenCalledTimes(4);
       expect(mockContinentCountryAlphaCode3).toHaveBeenCalledTimes(4);
 
-      expect(result.data.countries[0].continent.countries[0]).toMatchObject({
+      expect(result.data!.countries[0].continent.countries[0]).toMatchObject({
         alphaCode2: 'AD',
         alphaCode3: 'AND',
       });
-      expect(result.data.countries[1].continent.countries[1]).toMatchObject({
+      expect(result.data!.countries[1].continent.countries[1]).toMatchObject({
         alphaCode2: 'AL',
         alphaCode3: 'ALB',
       });
 
-      expect(result.data.countries[0]).toMatchObject({
+      expect(result.data!.countries[0]).toMatchObject({
         alphaCode2: 'GB',
         alphaCode3: 'GBR',
       });
-      expect(result.data.countries[1]).toMatchObject({
+      expect(result.data!.countries[1]).toMatchObject({
         alphaCode2: 'IT',
         alphaCode3: 'ITA',
       });
@@ -243,17 +248,18 @@ describe('useOverrideFields', () => {
       const result = await testInstance.execute(
         `query { countries { alphaCode2 alphaCode3 continent { countries { alphaCode2 alphaCode3 name } } } }`
       );
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(mockContinentCountries).not.toHaveBeenCalled();
       expect(mockContinentCountryAlphaCode2).not.toHaveBeenCalled();
       expect(mockContinentCountryAlphaCode3).not.toHaveBeenCalled();
 
-      expect(result.data.countries[0].continent.countries).toBe(null);
-      expect(result.data.countries[0]).toMatchObject({
+      expect(result.data!.countries[0].continent.countries).toBe(null);
+      expect(result.data!.countries[0]).toMatchObject({
         alphaCode2: 'GB',
         alphaCode3: 'GBR',
       });
-      expect(result.data.countries[1]).toMatchObject({
+      expect(result.data!.countries[1]).toMatchObject({
         alphaCode2: 'IT',
         alphaCode3: 'ITA',
       });
@@ -273,26 +279,27 @@ describe('useOverrideFields', () => {
       const result = await testInstance.execute(
         `query { countries { alphaCode2 alphaCode3 continent { countries { alphaCode2 alphaCode3 name } } } }`
       );
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(mockCountryAlphaCode2).toHaveBeenCalledTimes(2);
       expect(mockContinentCountryAlphaCode2).toHaveBeenCalledTimes(4);
       expect(mockCountryAlphaCode3).toHaveBeenCalledTimes(2);
       expect(mockContinentCountryAlphaCode3).toHaveBeenCalledTimes(4);
 
-      expect(result.data.countries[0]).toMatchObject({
+      expect(result.data!.countries[0]).toMatchObject({
         alphaCode2: 'GB',
         alphaCode3: 'GBR',
       });
-      expect(result.data.countries[1]).toMatchObject({
+      expect(result.data!.countries[1]).toMatchObject({
         alphaCode2: 'IT',
         alphaCode3: 'ITA',
       });
 
-      expect(result.data.countries[0].continent.countries[0]).toMatchObject({
+      expect(result.data!.countries[0].continent.countries[0]).toMatchObject({
         alphaCode2: 'AD',
         alphaCode3: 'AND',
       });
-      expect(result.data.countries[0].continent.countries[1]).toMatchObject({
+      expect(result.data!.countries[0].continent.countries[1]).toMatchObject({
         alphaCode2: 'AL',
         alphaCode3: 'ALB',
       });
@@ -312,26 +319,27 @@ describe('useOverrideFields', () => {
       const result = await testInstance.execute(
         `query { countries { alphaCode2 alphaCode3 continent { countries { alphaCode2 alphaCode3 name } } } }`
       );
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(mockCountryAlphaCode2).not.toHaveBeenCalled();
       expect(mockContinentCountryAlphaCode2).not.toHaveBeenCalled();
       expect(mockCountryAlphaCode3).not.toHaveBeenCalled();
       expect(mockContinentCountryAlphaCode3).not.toHaveBeenCalled();
 
-      expect(result.data.countries[0]).toMatchObject({
+      expect(result.data!.countries[0]).toMatchObject({
         alphaCode2: null,
         alphaCode3: null,
       });
-      expect(result.data.countries[1]).toMatchObject({
+      expect(result.data!.countries[1]).toMatchObject({
         alphaCode2: null,
         alphaCode3: null,
       });
 
-      expect(result.data.countries[1].continent.countries[0]).toMatchObject({
+      expect(result.data!.countries[1].continent.countries[0]).toMatchObject({
         alphaCode2: null,
         alphaCode3: null,
       });
-      expect(result.data.countries[1].continent.countries[1]).toMatchObject({
+      expect(result.data!.countries[1].continent.countries[1]).toMatchObject({
         alphaCode2: null,
         alphaCode3: null,
       });
@@ -359,21 +367,22 @@ describe('useOverrideFields', () => {
       const result = await testInstance.execute(
         `query { countries { alphaCode2 alphaCode3 continent { countries { alphaCode2 alphaCode3 name } } } }`
       );
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(mockContinentCountries).not.toHaveBeenCalled();
 
-      expect(result.data.countries[0].continent.countries).toEqual([
+      expect(result.data!.countries[0].continent.countries).toEqual([
         {
           alphaCode2: 'AT',
           alphaCode3: 'AUT',
           name: 'Austria',
         },
       ]);
-      expect(result.data.countries[0]).toMatchObject({
+      expect(result.data!.countries[0]).toMatchObject({
         alphaCode2: 'GB',
         alphaCode3: 'GBR',
       });
-      expect(result.data.countries[1]).toMatchObject({
+      expect(result.data!.countries[1]).toMatchObject({
         alphaCode2: 'IT',
         alphaCode3: 'ITA',
       });
@@ -393,26 +402,27 @@ describe('useOverrideFields', () => {
       const result = await testInstance.execute(
         `query { countries { alphaCode2 alphaCode3 continent { countries { alphaCode2 alphaCode3 name } } } }`
       );
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(mockCountryAlphaCode2).not.toHaveBeenCalled();
       expect(mockCountryAlphaCode3).not.toHaveBeenCalled();
       expect(mockContinentCountryAlphaCode2).not.toHaveBeenCalled();
       expect(mockContinentCountryAlphaCode3).not.toHaveBeenCalled();
 
-      expect(result.data.countries[0]).toMatchObject({
+      expect(result.data!.countries[0]).toMatchObject({
         alphaCode2: 'customAlphaCode',
         alphaCode3: 'customAlphaCode',
       });
-      expect(result.data.countries[1]).toMatchObject({
+      expect(result.data!.countries[1]).toMatchObject({
         alphaCode2: 'customAlphaCode',
         alphaCode3: 'customAlphaCode',
       });
 
-      expect(result.data.countries[0].continent.countries[0]).toMatchObject({
+      expect(result.data!.countries[0].continent.countries[0]).toMatchObject({
         alphaCode2: 'customAlphaCode',
         alphaCode3: 'customAlphaCode',
       });
-      expect(result.data.countries[0].continent.countries[1]).toMatchObject({
+      expect(result.data!.countries[0].continent.countries[1]).toMatchObject({
         alphaCode2: 'customAlphaCode',
         alphaCode3: 'customAlphaCode',
       });
@@ -441,21 +451,22 @@ describe('useOverrideFields', () => {
       const result = await testInstance.execute(
         `query { countries { alphaCode2 alphaCode3 continent { countries { alphaCode2 alphaCode3 name } } } }`
       );
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(mockContinentCountries).not.toHaveBeenCalled();
 
-      expect(result.data.countries[0].continent.countries).toEqual([
+      expect(result.data!.countries[0].continent.countries).toEqual([
         {
           alphaCode2: 'AT',
           alphaCode3: 'AUT',
           name: 'Austria',
         },
       ]);
-      expect(result.data.countries[0]).toMatchObject({
+      expect(result.data!.countries[0]).toMatchObject({
         alphaCode2: 'GB',
         alphaCode3: 'GBR',
       });
-      expect(result.data.countries[1]).toMatchObject({
+      expect(result.data!.countries[1]).toMatchObject({
         alphaCode2: 'IT',
         alphaCode3: 'ITA',
       });
@@ -482,10 +493,11 @@ describe('useOverrideFields', () => {
       const result = await testInstance.execute(
         `query { countries { alphaCode2 alphaCode3 continent { countries { alphaCode2 alphaCode3 name } } } }`
       );
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(mockContinentCountries).toHaveBeenCalledTimes(2);
 
-      expect(result.data.countries[0].continent.countries).toEqual([
+      expect(result.data!.countries[0].continent.countries).toEqual([
         {
           alphaCode2: 'AD',
           alphaCode3: 'AND',
@@ -497,11 +509,11 @@ describe('useOverrideFields', () => {
           name: 'Albania',
         },
       ]);
-      expect(result.data.countries[0]).toMatchObject({
+      expect(result.data!.countries[0]).toMatchObject({
         alphaCode2: 'GB',
         alphaCode3: 'GBR',
       });
-      expect(result.data.countries[1]).toMatchObject({
+      expect(result.data!.countries[1]).toMatchObject({
         alphaCode2: 'IT',
         alphaCode3: 'ITA',
       });
@@ -522,26 +534,27 @@ describe('useOverrideFields', () => {
       const result = await testInstance.execute(
         `query { countries { alphaCode2 alphaCode3 continent { countries { alphaCode2 alphaCode3 name } } } }`
       );
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(mockCountryAlphaCode2).not.toHaveBeenCalled();
       expect(mockCountryAlphaCode3).not.toHaveBeenCalled();
       expect(mockCountryAlphaCode3).not.toHaveBeenCalled();
       expect(mockContinentCountryAlphaCode3).not.toHaveBeenCalled();
 
-      expect(result.data.countries[0]).toMatchObject({
+      expect(result.data!.countries[0]).toMatchObject({
         alphaCode2: 'customAlphaCode',
         alphaCode3: 'customAlphaCode',
       });
-      expect(result.data.countries[1]).toMatchObject({
+      expect(result.data!.countries[1]).toMatchObject({
         alphaCode2: 'customAlphaCode',
         alphaCode3: 'customAlphaCode',
       });
 
-      expect(result.data.countries[1].continent.countries[0]).toMatchObject({
+      expect(result.data!.countries[1].continent.countries[0]).toMatchObject({
         alphaCode2: 'customAlphaCode',
         alphaCode3: 'customAlphaCode',
       });
-      expect(result.data.countries[1].continent.countries[1]).toMatchObject({
+      expect(result.data!.countries[1].continent.countries[1]).toMatchObject({
         alphaCode2: 'customAlphaCode',
         alphaCode3: 'customAlphaCode',
       });
@@ -562,26 +575,27 @@ describe('useOverrideFields', () => {
       const result = await testInstance.execute(
         `query { countries { alphaCode2 alphaCode3 continent { countries { alphaCode2 alphaCode3 name } } } }`
       );
+      assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(mockCountryAlphaCode2).toHaveBeenCalledTimes(2);
       expect(mockCountryAlphaCode3).toHaveBeenCalledTimes(2);
       expect(mockContinentCountryAlphaCode2).toHaveBeenCalledTimes(4);
       expect(mockContinentCountryAlphaCode3).toHaveBeenCalledTimes(4);
 
-      expect(result.data.countries[0]).toMatchObject({
+      expect(result.data!.countries[0]).toMatchObject({
         alphaCode2: 'GB',
         alphaCode3: 'GBR',
       });
-      expect(result.data.countries[1]).toMatchObject({
+      expect(result.data!.countries[1]).toMatchObject({
         alphaCode2: 'IT',
         alphaCode3: 'ITA',
       });
 
-      expect(result.data.countries[1].continent.countries[0]).toMatchObject({
+      expect(result.data!.countries[1].continent.countries[0]).toMatchObject({
         alphaCode2: 'AD',
         alphaCode3: 'AND',
       });
-      expect(result.data.countries[1].continent.countries[1]).toMatchObject({
+      expect(result.data!.countries[1].continent.countries[1]).toMatchObject({
         alphaCode2: 'AL',
         alphaCode3: 'ALB',
       });
