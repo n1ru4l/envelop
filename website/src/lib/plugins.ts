@@ -229,6 +229,13 @@ export const pluginsArr: RawPlugin[] = [
     tags: ['security', 'authorization'],
   },
   {
+    identifier: 'use-extended-validation',
+    title: 'useExtendedValidation',
+    npmPackage: '@envelop/extended-validation',
+    iconUrl: '/assets/logos/graphql.png',
+    tags: ['devtool', 'utilities'],
+  },
+  {
     identifier: 'use-prometheus',
     title: 'usePrometheus',
     npmPackage: '@envelop/prometheus',
