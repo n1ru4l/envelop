@@ -18,9 +18,9 @@ export type DeprecatedFieldInfo = {
 };
 
 export type FillLabelsFnParams = {
-  document: DocumentNode;
-  operationName: string;
-  operationType: OperationDefinitionNode['operation'];
+  document?: DocumentNode;
+  operationName?: string;
+  operationType?: OperationDefinitionNode['operation'];
   info?: GraphQLResolveInfo;
   errorPhase?: string;
   error?: GraphQLError;
@@ -58,23 +58,25 @@ export function createInternalContext(parseResult: AfterParseEventPayload<any>['
   }
 }
 
+export type FillLabelsFn<LabelNames extends string> = (params: FillLabelsFnParams, rawContext: any) => Record<LabelNames, string>;
+
 export function createHistogram<LabelNames extends string>(options: {
   histogram: Histogram<LabelNames>;
-  fillLabelsFn?: (params: FillLabelsFnParams) => Record<LabelNames, string>;
+  fillLabelsFn: FillLabelsFn<LabelNames>;
 }): typeof options {
   return options;
 }
 
 export function createSummary<LabelNames extends string>(options: {
   summary: Summary<LabelNames>;
-  fillLabelsFn?: (params: FillLabelsFnParams) => Record<LabelNames, string>;
+  fillLabelsFn: FillLabelsFn<LabelNames>;
 }): typeof options {
   return options;
 }
 
 export function createCounter<LabelNames extends string>(options: {
   counter: Counter<LabelNames>;
-  fillLabelsFn?: (params: FillLabelsFnParams) => Record<LabelNames, string>;
+  fillLabelsFn: FillLabelsFn<LabelNames>;
 }): typeof options {
   return options;
 }
@@ -96,8 +98,8 @@ export function getHistogramFromConfig(
           registers: [config.registry || defaultRegistry],
         }),
         fillLabelsFn: params => ({
-          operationName: params.operationName,
-          operationType: params.operationType,
+          operationName: params.operationName!,
+          operationType: params.operationType!,
         }),
       })
     : undefined;

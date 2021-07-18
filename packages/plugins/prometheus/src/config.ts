@@ -14,4 +14,5 @@ export type PrometheusTracingPluginConfig = {
   resolversWhitelist?: string[];
   deprecatedFields?: boolean | ReturnType<typeof createCounter>;
   registry?: Registry;
+  skipIntrospection?: boolean;
 };
