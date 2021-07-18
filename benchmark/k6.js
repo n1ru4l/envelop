@@ -51,7 +51,7 @@ export const options = buildOptions({
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
     http_req_duration: ['p(95)<=28'],
-    graphql_execute: ['p(95)<=1'],
+    graphql_execute: ['p(95)<=2'],
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
     graphql_parse: ['p(95)<=1'],
@@ -72,7 +72,7 @@ export const options = buildOptions({
   'prom-tracing': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: ['p(95)<=40'],
+    http_req_duration: ['p(95)<=45'],
     graphql_execute: ['p(95)<=4'],
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
