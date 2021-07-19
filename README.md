@@ -180,11 +180,10 @@ If this is your first time contributing to this project, please do read our [Con
 
 Feel free to open issues and pull requests. We're always welcome support from the community.
 
-For a contribution guide specific to this project, please refer to: http://graphql-code-generator.com/docs/custom-codegen/contributing
-
 ### Code of Conduct
 
-Help us keep GraphQL Codegenerator open and inclusive. Please read and follow our [Code of Conduct](https://github.com/the-guild-org/Stack/blob/master/CODE_OF_CONDUCT.md) as adopted from [Contributor Covenant](https://www.contributor-covenant.org/)
+Help us keep Envelop open and inclusive. Please read and follow our [
+of Conduct](https://github.com/the-guild-org/Stack/blob/master/CODE_OF_CONDUCT.md) as adopted from [Contributor Covenant](https://www.contributor-covenant.org/)
 
 ### License
 
