@@ -1,6 +1,6 @@
 import { DocumentNode, ExecutionArgs, GraphQLFieldResolver, GraphQLSchema, GraphQLTypeResolver, SubscriptionArgs } from 'graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
-import { ArbitraryObject } from 'packages/types/src/get-enveloped';
+import { ArbitraryObject } from '@envelop/types';
 import { EnvelopOrchestrator } from './orchestrator';
 
 const HR_TO_NS = 1e9;

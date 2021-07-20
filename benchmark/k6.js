@@ -61,7 +61,7 @@ export const options = buildOptions({
   'envelop-just-cache': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: ['p(95)<=18'],
+    http_req_duration: ['p(95)<=20'],
     graphql_execute: ['p(95)<=1'],
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
