@@ -1,4 +1,4 @@
-import { GetEnvelopedFn } from 'packages/core/src';
+import { GetEnvelopedFn } from './get-enveloped';
 import { Plugin } from './plugin';
 import { Spread, TuplifyUnion, Unarray } from './utils';
 

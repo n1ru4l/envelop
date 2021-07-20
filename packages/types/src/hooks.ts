@@ -17,7 +17,7 @@ import {
 } from 'graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
-import { DefaultContext } from 'packages/core/src';
+import { DefaultContext } from './context-types';
 import { Plugin } from './plugin';
 
 export type DefaultArgs = Record<string, unknown>;
