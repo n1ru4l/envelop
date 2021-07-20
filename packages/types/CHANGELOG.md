@@ -1,5 +1,11 @@
 # @envelop/types
 
+## 0.4.2
+
+### Patch Changes
+
+- a7321e1: Fix issues with compiled d.ts
+
 ## 0.4.1
 
 ### Patch Changes

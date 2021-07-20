@@ -1,5 +1,13 @@
 # @envelop/core
 
+## 0.5.2
+
+### Patch Changes
+
+- bcbaccb: Fix issues with incorrect types generated in d.ts
+- Updated dependencies [a7321e1]
+  - @envelop/types@0.4.2
+
 ## 0.5.1
 
 ### Patch Changes
