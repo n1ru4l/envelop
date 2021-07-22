@@ -136,6 +136,8 @@ would result in the following error:
 
 ## Prevent leaking sensitive Information
 
+### Error Masking
+
 In most GraphQL servers any thrown error or rejected promise will result in the original error leaking to the outside world. Some frameworks have custom logic for catching unexpected errors and mapping them to an unexpected error instead. With envelop this abstraction is now possible with any server! Just add the [`useMaskedErrors`](https://www.envelop.dev/plugins/use-masked-errors) plugin and throw `EnvelopError` instances for expected errors that should leak to the outside world. You can also add custom extension fields that will also be sent to the clients.
 
 ```tsx
@@ -174,6 +176,23 @@ const getEnveloped = envelop({
 ```
 
 For people migrating from apollo-server the [`useApolloServerErrors`](/plugins/use-apollo-server-errors) plugin provides full backwards-compatibility to how apollo-server handles GraphQL error masking.
+
+### Disable Schema Introspection
+
+If your schema includes sensitive information that you want to hide from the outside world, disabling the schema introspection is a possible solution. The [`useDisableIntrospection`](/plugins/use-disable-introspection) plugin solves that in a single line of code!
+
+```ts
+import { envelop } from '@envelop/core';
+import { useDisableIntrospection } from '@envelop/disable-introspection';
+
+const getEnveloped = envelop({
+  plugins: [useDisableIntrospection()],
+});
+```
+
+However, just disabling introspection is not enough as graphql.js by default produces hints for possible selection set "typos" when querying for invalid selection sets. A potential attacker could still be getting all the schema information by brute-forcing a lot of operations against the API.
+
+Thus we rather recommend using persisted operations instead of disabling schema introspection.
 
 ## Protection against malicious GraphQL operations
 
