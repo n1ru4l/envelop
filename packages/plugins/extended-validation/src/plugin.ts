@@ -12,7 +12,7 @@ export const useExtendedValidation = (options: { rules: ExtendedValidationRule[]
       schemaTypeInfo = new TypeInfo(schema);
     },
     onParse({ context, extendContext }) {
-      const rules: ExtendedValidationRule[] = (context as any)?.[SYMBOL_EXTENDED_VALIDATION_RULES] ?? [];
+      const rules: ExtendedValidationRule[] = context?.[SYMBOL_EXTENDED_VALIDATION_RULES] ?? [];
       rules.push(...options.rules);
       extendContext({
         [SYMBOL_EXTENDED_VALIDATION_RULES]: rules,

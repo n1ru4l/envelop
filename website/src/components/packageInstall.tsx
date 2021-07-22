@@ -40,7 +40,7 @@ const useCurrentInstaller = create<{
   )
 );
 
-export function PackageInstall({ packageName, ...props }: { packageName: string } & Omit<TabsProps, 'children'>) {
+export function PackageInstall({ packageName, ...props }: { packageName: string } & Omit<TabsProps, 'children' | 'as'>) {
   const { current, setNPM, setPNPM, setYarn } = useCurrentInstaller();
 
   const [index, setIndex] = useState(0);
@@ -80,7 +80,7 @@ export function PackageInstall({ packageName, ...props }: { packageName: string 
             return setNPM();
         }
       }}
-      {...(props as any)}
+      {...props}
     >
       <TabList>
         <Tab>yarn</Tab>

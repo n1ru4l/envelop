@@ -76,7 +76,7 @@ export const makeSubscribe = (
   subscribeFn: (args: SubscriptionArgs) => PromiseOrValue<AsyncIterableIterator<ExecutionResult> | ExecutionResult>
 ): SubscribeFunction =>
   ((...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<ExecutionResult> | ExecutionResult> =>
-    subscribeFn(getSubscribeArgs(polyArgs))) as any;
+    subscribeFn(getSubscribeArgs(polyArgs))) as SubscribeFunction;
 
 export async function* mapAsyncIterator<TInput, TOutput = TInput>(
   asyncIterable: AsyncIterableIterator<TInput>,
@@ -109,7 +109,7 @@ export const makeExecute = (
   executeFn: (args: ExecutionArgs) => PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>>
 ): ExecuteFunction =>
   ((...polyArgs: PolymorphicExecuteArguments): PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>> =>
-    executeFn(getExecuteArgs(polyArgs))) as any;
+    executeFn(getExecuteArgs(polyArgs))) as ExecuteFunction;
 
 export async function* finalAsyncIterator<TInput>(
   asyncIterable: AsyncIterableIterator<TInput>,

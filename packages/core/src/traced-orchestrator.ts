@@ -28,7 +28,7 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
 
   return {
     ...orchestrator,
-    init: (ctx = {} as any) => {
+    init: (ctx = {} as TInitialContext) => {
       ctx!._envelopTracing = ctx!._envelopTracing || {};
       const done = createTracer('init', ctx || {});
 
@@ -38,7 +38,7 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
         done();
       }
     },
-    parse: (ctx = {} as any) => {
+    parse: (ctx = {} as TInitialContext) => {
       ctx._envelopTracing = ctx._envelopTracing || {};
       const actualFn = orchestrator.parse(ctx);
 
@@ -52,7 +52,7 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
         }
       };
     },
-    validate: (ctx = {} as any) => {
+    validate: (ctx = {} as TInitialContext) => {
       ctx._envelopTracing = ctx._envelopTracing || {};
       const actualFn = orchestrator.validate(ctx);
 
@@ -144,7 +144,7 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
         done();
       }
     },
-    contextFactory: (ctx = {} as any) => {
+    contextFactory: (ctx = {} as TInitialContext) => {
       const actualFn = orchestrator.contextFactory(ctx);
 
       return async childCtx => {
