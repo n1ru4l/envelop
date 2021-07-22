@@ -84,7 +84,7 @@ export default function PluginPageContent({ data }: PluginPageProps) {
           <Link href="/plugins" passHref>
             <a>Plugin Hub</a>
           </Link>
-          {'>'} {pluginData.title}
+          {' >'} {pluginData.title}
         </Title>
         <Grid templateColumns={['1fr', '1fr', '1fr 350px']} gap={4}>
           <Box>
