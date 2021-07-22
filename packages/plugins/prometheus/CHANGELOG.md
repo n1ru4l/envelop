@@ -1,5 +1,17 @@
 # @envelop/prometheus
 
+## 1.0.0
+
+### Major Changes
+
+- 40bc444: v1 major release for envelop packages
+
+### Patch Changes
+
+- Updated dependencies [dbb241d]
+- Updated dependencies [40bc444]
+  - @envelop/core@1.0.0
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @envelop/rate-limiter
 
+## 1.0.0
+
+### Major Changes
+
+- 40bc444: v1 major release for envelop packages
+
 ## 0.1.1
 
 ### Patch Changes
