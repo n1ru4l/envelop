@@ -3,9 +3,10 @@ title: Sharing Envelops
 sidebar_label: Sharing Envelops
 ---
 
-## Sharing / Composing `envelop`s
+## Sharing / Composing `envelop` instances
 
-After an `envelop` has been created, you can share it with others as a complete plugins layer. This is useful if you wish to create a predefined layer of plugins and share it with others. In addition, you can use it as a shell and as a base for writing shareable pieces of servers.
+After an `envelop` has been created, you can re-use the envelop and compose it with different envelops or plugins. This is useful if you wish to create a predefined layer of plugins and share it with others.
+This allows writing shareable pieces that can be used
 
 Here's a small exmple for sharing envelops:
 
@@ -26,4 +27,3 @@ const myEnvelop = envelop({
 ```
 
 This approach allows developers to create a base Envelop and share it across the organization: you can define your monitoring setup, logging, authentication, etc., only once in a shared package and share it with others without losing the ability to extend it.
-
