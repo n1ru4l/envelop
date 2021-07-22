@@ -3,11 +3,12 @@ import type {
   GraphQLFieldResolver,
   GraphQLSchema,
   SubscriptionArgs,
-  ExecutionResult,
   ExecutionArgs,
   GraphQLTypeResolver,
+  subscribe,
+  execute,
 } from 'graphql';
-import type { Maybe, PromiseOrValue, AsyncIterableIteratorOrValue } from './utils';
+import type { Maybe } from './utils';
 
 export type PolymorphicExecuteArguments =
   | [ExecutionArgs]
@@ -22,9 +23,7 @@ export type PolymorphicExecuteArguments =
       Maybe<GraphQLTypeResolver<any, any>>
     ];
 
-export type ExecuteFunction = (
-  ...args: PolymorphicExecuteArguments
-) => PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>>;
+export type ExecuteFunction = typeof execute;
 
 export type PolymorphicSubscribeArguments =
   | [SubscriptionArgs]
@@ -39,6 +38,4 @@ export type PolymorphicSubscribeArguments =
       Maybe<GraphQLFieldResolver<any, any>>?
     ];
 
-export type SubscribeFunction = (
-  ...args: PolymorphicSubscribeArguments
-) => PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>>;
+export type SubscribeFunction = typeof subscribe;

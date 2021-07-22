@@ -10,7 +10,13 @@ import {
   SubscriptionArgs,
   ExecutionArgs,
 } from 'graphql';
-import { AsyncIterableIteratorOrValue, PolymorphicExecuteArguments, PolymorphicSubscribeArguments } from '@envelop/types';
+import {
+  AsyncIterableIteratorOrValue,
+  ExecuteFunction,
+  PolymorphicExecuteArguments,
+  PolymorphicSubscribeArguments,
+  SubscribeFunction,
+} from '@envelop/types';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 
 export const envelopIsIntrospectionSymbol = Symbol('ENVELOP_IS_INTROSPECTION');
@@ -66,10 +72,11 @@ export function getSubscribeArgs(args: PolymorphicSubscribeArguments): Subscript
 /**
  * Utility function for making a subscribe function that handles polymorphic arguments.
  */
-export const makeSubscribe =
-  (subscribeFn: (args: SubscriptionArgs) => PromiseOrValue<AsyncIterableIterator<ExecutionResult> | ExecutionResult>) =>
-  (...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<ExecutionResult> | ExecutionResult> =>
-    subscribeFn(getSubscribeArgs(polyArgs));
+export const makeSubscribe = (
+  subscribeFn: (args: SubscriptionArgs) => PromiseOrValue<AsyncIterableIterator<ExecutionResult> | ExecutionResult>
+): SubscribeFunction =>
+  ((...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<ExecutionResult> | ExecutionResult> =>
+    subscribeFn(getSubscribeArgs(polyArgs))) as any;
 
 export async function* mapAsyncIterator<TInput, TOutput = TInput>(
   asyncIterable: AsyncIterableIterator<TInput>,
@@ -98,10 +105,11 @@ export function getExecuteArgs(args: PolymorphicExecuteArguments): ExecutionArgs
 /**
  * Utility function for making a execute function that handles polymorphic arguments.
  */
-export const makeExecute =
-  (executeFn: (args: ExecutionArgs) => PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>>) =>
-  (...polyArgs: PolymorphicExecuteArguments): PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>> =>
-    executeFn(getExecuteArgs(polyArgs));
+export const makeExecute = (
+  executeFn: (args: ExecutionArgs) => PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>>
+): ExecuteFunction =>
+  ((...polyArgs: PolymorphicExecuteArguments): PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>> =>
+    executeFn(getExecuteArgs(polyArgs))) as any;
 
 export async function* finalAsyncIterator<TInput>(
   asyncIterable: AsyncIterableIterator<TInput>,

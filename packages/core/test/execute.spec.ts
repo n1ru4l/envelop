@@ -150,7 +150,7 @@ describe('execute', () => {
       [
         {
           onExecute({ setExecuteFn }) {
-            setExecuteFn(streamExecuteFn);
+            setExecuteFn(streamExecuteFn as any);
 
             return {
               onExecuteDone: () => {
@@ -194,7 +194,7 @@ describe('execute', () => {
       [
         {
           onExecute({ setExecuteFn }) {
-            setExecuteFn(streamExecuteFn);
+            setExecuteFn(streamExecuteFn as any);
 
             return {
               onExecuteDone: () => {
@@ -237,7 +237,7 @@ describe('execute', () => {
       [
         {
           onExecute({ setExecuteFn }) {
-            setExecuteFn(streamExecuteFn);
+            setExecuteFn(streamExecuteFn as any);
 
             return {
               onExecuteDone: () => {
