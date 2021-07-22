@@ -138,7 +138,7 @@ would result in the following error:
 
 ### Error Masking
 
-In most GraphQL servers any thrown error or rejected promise will result in the original error leaking to the outside world. Some frameworks have custom logic for catching unexpected errors and mapping them to an unexpected error instead. With envelop this abstraction is now possible with any server! Just add the [`useMaskedErrors`](https://www.envelop.dev/plugins/use-masked-errors) plugin and throw `EnvelopError` instances for expected errors that should leak to the outside world. You can also add custom extension fields that will also be sent to the clients.
+In most GraphQL servers any thrown error or rejected promise will result in the original error leaking to the outside world. Some frameworks have custom logic for catching unexpected errors and mapping them to an opaque error instead. With envelop this abstraction is now possible with any server! Just add the [`useMaskedErrors`](https://www.envelop.dev/plugins/use-masked-errors) plugin and throw `EnvelopError` instances for expected errors that should leak to the outside world. You can also add custom extension fields that will also be sent to the clients.
 
 ```tsx
 import { envelop, useSchema, useMaskedErrors, EnvelopError } from '@envelop/core';
