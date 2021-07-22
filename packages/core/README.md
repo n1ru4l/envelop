@@ -22,6 +22,14 @@ const getEnveloped = envelop({
 });
 ```
 
+#### `useAsyncSchema`
+
+Same as `useSchema`, but you can provide a `Promise<GraphQLSchema>` to load the actual schema.
+
+#### `useLazyLoadedSchema`
+
+Same as `useSchema`, but you can provide a `(initialContext) => GraphQLSchema` function to load the actual schema.
+
 #### `useErrorHandler`
 
 This plugin triggers a custom function every time execution encounter an error.

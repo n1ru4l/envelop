@@ -1,4 +1,4 @@
-import { useOperationPermissions } from '../src';
+import { useOperationFieldPermissions } from '../src';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 
@@ -33,7 +33,7 @@ describe('useOperationPermissions', () => {
   it('allow everything', async () => {
     const kit = createTestkit(
       [
-        useOperationPermissions({
+        useOperationFieldPermissions({
           getPermissions: () => '*',
         }),
       ],
@@ -47,7 +47,7 @@ describe('useOperationPermissions', () => {
   it('allow only one field', async () => {
     const kit = createTestkit(
       [
-        useOperationPermissions({
+        useOperationFieldPermissions({
           getPermissions: () => 'Query.greetings',
         }),
       ],
@@ -67,7 +67,7 @@ Array [
   it('allow wildcard for types', async () => {
     const kit = createTestkit(
       [
-        useOperationPermissions({
+        useOperationFieldPermissions({
           getPermissions: () => 'Query.*',
         }),
       ],
@@ -85,7 +85,7 @@ Array [
   it('allow selecting specific fields', async () => {
     const kit = createTestkit(
       [
-        useOperationPermissions({
+        useOperationFieldPermissions({
           getPermissions: () => new Set(['Query.greetings', 'Query.foo', 'Query.user', 'User.id']),
         }),
       ],

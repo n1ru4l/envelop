@@ -1,0 +1,82 @@
+---
+title: Monitoring and Tracing
+sidebar_label: Monitoring and Tracing
+---
+
+## Monitoring and Tracing
+
+If something is not working as it should within your GraphQL server you would not want it to go unnoticed. Envelop has a wide variety of plugins for different error tracking and performance monitoring services.
+
+### Sentry
+
+Sentry is the biggest player regarding error tracking within JavaScript land. With the [`useSentry` plugin](/plugins/use-sentry) any error can be tracked with a proper context, containing important information for tracking down the root cause of the error.
+
+![Example reported error on sentry](https://raw.githubusercontent.com/dotansimha/envelop/HEAD/packages/plugins/sentry/error2.png)
+
+As with any other envelop plugin the setup is straight forward!
+
+```ts
+import { envelop } from '@envelop/core';
+import { useSentry } from '@envelop/sentry';
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useSentry(),
+  ],
+});
+```
+
+### OpenTelemetry
+
+OpenTelemetry is a possible alternative for Sentry that allows tracking errors as exceptions. [Learn more about the `useOpenTelemetry` plugin](/plugins/use-open-telemetry)
+
+### Prometheus
+
+Prometheus is a platform for scraping metrics from services and utilities. You can use `usePrometheus` plugin to expose and collect metrics from all phases of your GraphQL execution.
+
+[Learn more about the `usePrometheus` plugin](/plugins/use-prometheus)
+
+### New Relic
+
+If you wish to integrate NewRelic for tracing, monitoring and error reporting, you can use [`useNewRelic`](/plugins/use-newrelic) plugin.
+
+![Example NewRelic](https://raw.githubusercontent.com/dotansimha/envelop/HEAD/packages/plugins/newrelic/error_operation.png)
+
+As with any other envelop plugin the setup is straight forward!
+
+```ts
+import { envelop } from '@envelop/core';
+import { useNewRelic } from '@envelop/newrelic';
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useNewRelic({
+      // ...
+    }),
+  ],
+});
+```
+
+[Learn more about the `useNewRelic` plugin](/plugins/use-newrelic)
+
+### Apollo-Tracing
+
+Apollo introduced the apollo-tracing specification and implemented it in apollo-server. With envelop it is possible to use apollo-tracing for tracking down slow resolvers with any server.
+
+```ts
+import { envelop } from '@envelop/core';
+import { useApolloTracing } from '@envelop/apollo-tracing';
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useApolloTracing(),
+  ],
+});
+```
+
+Also, if you are using GraphQL Playground as part if your setup, you'll be able to see the tracing information under `TRACING` section:
+
+![Example for using ApolloTracing with Playground](https://raw.githubusercontent.com/dotansimha/envelop/HEAD/packages/plugins/apollo-tracing/example.png)

@@ -121,7 +121,7 @@ export const pluginsArr: RawPlugin[] = [
     title: 'useApolloTracing',
     npmPackage: '@envelop/apollo-tracing',
     iconUrl: '/assets/logos/apollo.png',
-    tags: ['devtool'],
+    tags: ['devtool', 'metrics'],
   },
   {
     identifier: 'use-open-telemetry',
@@ -154,7 +154,7 @@ export const pluginsArr: RawPlugin[] = [
   {
     identifier: 'use-rate-limiter',
     title: 'useRateLimiter',
-    npmPackage: '@envelop/graphql-middleware',
+    npmPackage: '@envelop/rate-limiter',
     iconUrl: '/assets/logos/rate_limiter.png',
     tags: ['schema', 'utilities', 'security'],
   },

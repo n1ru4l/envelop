@@ -1,5 +1,4 @@
 import { IRoutes, GenerateRoutes } from '@guild-docs/server';
-
 export function getRoutes(): IRoutes {
   const Routes: IRoutes = {
     _: {
@@ -10,6 +9,10 @@ export function getRoutes(): IRoutes {
           plugins: {
             $name: 'Plugins',
             $routes: ['README', 'custom-plugin', 'lifecycle'],
+          },
+          guides: {
+            $name: 'Guides',
+            $routes: ['securing-your-graphql-api'],
           },
         },
       },
