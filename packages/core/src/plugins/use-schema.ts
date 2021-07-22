@@ -1,10 +1,10 @@
 import { GraphQLSchema } from 'graphql';
-import { Plugin } from '@envelop/types';
+import { DefaultContext, Maybe, Plugin } from '@envelop/types';
 
-export const useSchema = (schema: GraphQLSchema): Plugin => {
+export const useSchema = (schema: GraphQLSchema | ((context: Maybe<DefaultContext>) => GraphQLSchema)): Plugin => {
   return {
-    onPluginInit({ setSchema }) {
-      setSchema(schema);
+    onEnveloped({ setSchema, context }) {
+      setSchema(schema instanceof GraphQLSchema ? schema : schema(context));
     },
   };
 };
