@@ -301,46 +301,34 @@ const getEnveloped = envelop({
 
 This can prevent malicious API users executing GraphQL operations with deeply nested selection sets. You need to tweak the maximum depth an operation selection set is allowed to have based on your schema and needs, as it could vary between users.
 
-## Alerting and Monitoring
+### Rate Limiting
 
-If something is not working as it should within your GraphQL server you would not want it to go unnoticed. Envelop has a wide variety of plugins for different error tracking and performance monitoring services.
+Rate-limiting is a common practice with APIs, and with GraphQL it gets more complicated because of the flexibility of the graph and the ability to choose what fields to query.
 
-### Sentry
-
-Sentry is the biggest player regarding error tracking within JavaScript land. With the [`useSentry` plugin](/plugins/use-sentry) any error can be tracked with a proper context, containing important information for tracking down the root cause of the error.
-
-![Example reported error on sentry](https://raw.githubusercontent.com/dotansimha/envelop/HEAD/packages/plugins/sentry/error2.png)
-
-As with any other envelop plugin the setup is straight forward!
+The [`useRateLimiter`](/plugins/use-rate-limiter) to limit access to resources, by a field level.
 
 ```ts
 import { envelop } from '@envelop/core';
-import { useSentry } from '@envelop/sentry';
+import { useRateLimiter } from '@envelop/rate-limiter';
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useSentry(),
+    useRateLimiter({
+      /// ...
+    }),
   ],
 });
 ```
 
-### OpenTelemetry
+And then in your GraphQL schema, you can define the limitations in a declerative way:
 
-OpenTelemetry is a possible alternative for Sentry that allows tracking errors as exceptions. [Learn more about the `useOpenTelemetry` plugin](https://www.envelop.dev/plugins/use-open-telemetry)
-
-### Tracing
-
-Apollo introduced the apollo-tracing specification and implemented it in apollo-server. With envelop it is possible to use apollo-tracing for tracking down slow resolvers with any server.
-
-```ts
-import { envelop } from '@envelop/core';
-import { useApolloTracing } from '@envelop/apollo-tracing';
-
-const getEnveloped = envelop({
-  plugins: [
-    // ... other plugins ...
-    useApolloTracing(),
-  ],
-});
+```graphql
+type Query {
+  posts: [Post]! @rateLimit(
+    window: "5s", // time interval window for request limit quota
+    max: 10,  // maximum requests allowed in time window
+    message: "Too many calls!"  // quota reached error message
+  )
+}
 ```
