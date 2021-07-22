@@ -24,15 +24,12 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "paths": {
-      "@envelop/*": [
-        "packages/*/src/index.ts",
-        "packages/plugins/*/src/index.ts"
-      ]
+      "@envelop/core": ["packages/core/src/index.ts"],
+      "@envelop/testing": ["packages/testing/src/index.ts"],
+      "@envelop/types": ["packages/types/src/index.ts"],
+      "@envelop/*": ["packages/plugins/*/src/index.ts"]
     }
   },
   "include": ["packages"],
-  "exclude": [
-    "**/dist",
-    "**/temp"
-  ]
+  "exclude": ["**/dist", "**/temp"]
 }

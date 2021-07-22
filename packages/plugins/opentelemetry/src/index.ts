@@ -3,6 +3,7 @@ import { SpanAttributes, SpanKind } from '@opentelemetry/api';
 import * as opentelemetry from '@opentelemetry/api';
 import { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/tracing';
 import { print } from 'graphql';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
 
 export enum AttributeName {
   EXECUTION_ERROR = 'graphql.execute.error',
@@ -58,6 +59,15 @@ export const useOpenTelemetry = (
 
       const resultCbs: OnExecuteHookResult<PluginContext> = {
         onExecuteDone({ result }) {
+          if (isAsyncIterable(result)) {
+            executionSpan.end();
+            // eslint-disable-next-line no-console
+            console.warn(
+              `Plugin "newrelic" encountered a AsyncIterator which is not supported yet, so tracing data is not available for the operation.`
+            );
+            return;
+          }
+
           if (result.data && options.result) {
             executionSpan.setAttribute(AttributeName.EXECUTION_RESULT, JSON.stringify(result));
           }

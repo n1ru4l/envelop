@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-console */
 /* eslint-disable dot-notation */
-import { Plugin, OnExecuteHookResult, OnResolverCalledHook } from '@envelop/types';
+import { Plugin, OnResolverCalledHook } from '@envelop/types';
 import * as Sentry from '@sentry/node';
 import { Span } from '@sentry/types';
 import { ExecutionArgs, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
 
 export type SentryPluginOptions = {
   startTransaction?: boolean;
@@ -126,6 +127,15 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
       return {
         onResolverCalled,
         onExecuteDone({ result }) {
+          if (isAsyncIterable(result)) {
+            rootSpan.finish();
+            // eslint-disable-next-line no-console
+            console.warn(
+              `Plugin "sentry" encountered a AsyncIterator which is not supported yet, so tracing data is not available for the operation.`
+            );
+            return;
+          }
+
           if (includeRawResult) {
             rootSpan.setData('result', result);
           }

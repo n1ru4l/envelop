@@ -1,5 +1,4 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { mapAsyncIterator } from '../src';
 
 export const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `

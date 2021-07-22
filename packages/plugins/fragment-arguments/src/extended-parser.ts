@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Parser } from 'graphql/language/parser';
 import { Lexer } from 'graphql/language/lexer';
 import { TokenKind, Kind, Source, DocumentNode, TokenKindEnum, Token } from 'graphql';

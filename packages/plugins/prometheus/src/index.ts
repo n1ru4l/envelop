@@ -14,6 +14,7 @@ import {
 import { PrometheusTracingPluginConfig } from './config';
 import { TypeInfo } from 'graphql';
 import { isIntrospectionOperationString } from '@envelop/core';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
 
 export { PrometheusTracingPluginConfig, createCounter, createHistogram, createSummary, FillLabelsFnParams };
 
@@ -290,7 +291,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
               );
             }
 
-            if (errorsCounter && result.errors && result.errors.length > 0) {
+            if (errorsCounter && !isAsyncIterable(result) && result.errors && result.errors.length > 0) {
               for (const error of result.errors) {
                 errorsCounter.counter
                   .labels(

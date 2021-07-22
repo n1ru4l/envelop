@@ -3,7 +3,7 @@ import { ApolloServerBase } from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
 import { envelop, useSchema } from '@envelop/core';
 import { useApolloServerErrors } from '../src';
-import { assertSingleExecutionValue } from 'packages/testing/src';
+import { assertSingleExecutionValue } from '@envelop/testing';
 
 describe('useApolloServerErrors', () => {
   const executeBoth = async (schema: GraphQLSchema, query: string, debug: boolean) => {
