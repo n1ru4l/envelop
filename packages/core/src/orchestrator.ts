@@ -51,7 +51,7 @@ export type EnvelopOrchestrator<
   execute: ReturnType<GetEnvelopedFn<PluginsContext>>['execute'];
   subscribe: ReturnType<GetEnvelopedFn<PluginsContext>>['subscribe'];
   contextFactory: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['contextFactory'], PluginsContext>;
-  schema: Maybe<GraphQLSchema>;
+  getCurrentSchema: () => Maybe<GraphQLSchema>;
 };
 
 export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[]): EnvelopOrchestrator<any, PluginsContext> {
@@ -469,7 +469,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
   }
 
   return {
-    get schema() {
+    getCurrentSchema() {
       return schema;
     },
     init,

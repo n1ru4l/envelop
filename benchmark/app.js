@@ -36,7 +36,7 @@ function generateData() {
 
 const data = generateData();
 
-const schema = () =>
+const createSchema = () =>
   makeExecutableSchema({
     typeDefs: /* GraphQL */ `
       type Author {
@@ -66,23 +66,23 @@ const schema = () =>
 
 const envelopsMap = {
   'graphql-js': envelop({
-    plugins: [useSchema(schema())],
+    plugins: [useSchema(createSchema())],
     enableInternalTracing: true,
   }),
   'envelop-just-cache': envelop({
-    plugins: [useSchema(schema()), useParserCache(), useValidationCache()],
+    plugins: [useSchema(createSchema()), useParserCache(), useValidationCache()],
     enableInternalTracing: true,
   }),
   'envelop-cache-and-no-internal-tracing': envelop({
-    plugins: [useSchema(schema()), useParserCache(), useValidationCache()],
+    plugins: [useSchema(createSchema()), useParserCache(), useValidationCache()],
   }),
   'envelop-cache-jit': envelop({
-    plugins: [useSchema(schema()), useGraphQlJit(), useParserCache(), useValidationCache()],
+    plugins: [useSchema(createSchema()), useGraphQlJit(), useParserCache(), useValidationCache()],
     enableInternalTracing: true,
   }),
   'prom-tracing': envelop({
     plugins: [
-      useSchema(schema()),
+      useSchema(createSchema()),
       useParserCache(),
       useValidationCache(),
       usePrometheus({
@@ -105,7 +105,8 @@ app.route({
   method: 'POST',
   url: '/graphql',
   async handler(req, res) {
-    const proxy = envelopsMap[req.headers['x-test-scenario']]({ req });
+    const getEnveloped = envelopsMap[req.headers['x-test-scenario']];
+    const proxy = getEnveloped({ req });
     const document = proxy.parse(req.body.query);
     const errors = proxy.validate(proxy.schema, document);
 

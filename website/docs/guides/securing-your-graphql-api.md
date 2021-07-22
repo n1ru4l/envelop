@@ -72,13 +72,13 @@ With the `useSchema` plugin it is possible to dynamically select a schema for ex
 Libraries such as [`graphql-public-schema-filter`](https://github.com/n1ru4l/graphql-public-schema-filter) can be used for generating a schema with only access to a sub part of the original schema using either SDL directives or schema field extensions.
 
 ```ts
-import { envelop, useSchema } from '@envelop/core';
+import { envelop, useLazyLoadedSchema } from '@envelop/core';
 import { privateSchema, publicSchema } from './schema';
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins (e.g. useAuth0)
-    useSchema(context => (context.isPrivateApiUser ? privateSchema : publicSchema)),
+    useLazyLoadedSchema(context => (context.isPrivateApiUser ? privateSchema : publicSchema)),
   ],
 });
 ```
