@@ -14,7 +14,7 @@ yarn add @envelop/persisted-operations
 
 ```ts
 import { envelop } from '@envelop/core';
-import { usePersistedOperations } from '@envelop/parser-cache';
+import { usePersistedOperations } from '@envelop/persisted-operations';
 
 const getEnveloped = envelop({
   plugins: [
@@ -32,17 +32,17 @@ Store implementation is based on 2 simple functions, you can connect to any data
 Here's a simple example for an in-memory store:
 
 ```ts
-import { PersistedOperationsStore } from '@envelop/parser-cache';
+import { PersistedOperationsStore } from '@envelop/persisted-operations';
 
 // You can implement `data` in any custom way, and even fetch it from a remote store.
 const data: Record<string, DocumentNode> = {
-  'persisted_1': parse(`query`),
+  persisted_1: parse(`query`),
 };
 
 export const myStore: PersistedOperationsStore = {
-  canHandle: key => key && key.startsWith('persisted_');
+  canHandle: key => key && key.startsWith('persisted_'),
   get: key => data[key],
-}
+};
 ```
 
 Now, when running operations through your GraphQL server, you can use a key instead of a query language:
