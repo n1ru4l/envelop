@@ -3,6 +3,8 @@ title: Monitoring and Tracing
 sidebar_label: Monitoring and Tracing
 ---
 
+## Monitoring and Tracing
+
 If something is not working as it should within your GraphQL server you would not want it to go unnoticed. Envelop has a wide variety of plugins for different error tracking and performance monitoring services.
 
 ### Sentry
