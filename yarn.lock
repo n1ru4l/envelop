@@ -6306,10 +6306,10 @@ graphql-middleware@6.0.10:
     "@graphql-tools/delegate" "^7.1.5"
     "@graphql-tools/schema" "^7.1.5"
 
-graphql-modules@1.4.3:
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/graphql-modules/-/graphql-modules-1.4.3.tgz#279b9388e2dc68cc07c73fa2207bc6ac2a94d97a"
-  integrity sha512-ArkkqJvrhIsXHZVs89vkjjmHFDRjt3Y1zfayJLt73qSdOG/VNfTt5bEkXcvJ5P1hP+ywj6ODzJqFq8HbJcBHKQ==
+graphql-modules@1.4.4:
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/graphql-modules/-/graphql-modules-1.4.4.tgz#ff552a9f0aa35e018d0f36928bc74204d6e087aa"
+  integrity sha512-jRmUdJYA2KzpezxhH0roS8we4wRnWY3VvHpBngZJqdEz8QCTp2WNc8YoBTcR2zZCCRjAHoPn0OkgA4UOHaVQPQ==
   dependencies:
     "@graphql-tools/schema" "^7.0.0"
     "@graphql-tools/wrap" "^7.0.1"
