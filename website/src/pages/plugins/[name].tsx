@@ -14,6 +14,9 @@ import { getPluginsData, PluginWithStats } from '../../lib/pluginsData';
 export const SubTitle = styled.h2(() => [tw`mt-0 mb-4 font-bold text-lg md:text-xl`]);
 export const Title = styled.h2(() => [tw`mt-0 mb-4 font-bold text-xl md:text-2xl`]);
 
+const StyledLink = styled.a(() => [tw`cursor-pointer`]);
+const CodeLink = styled(Code)(() => [tw`hover:font-bold`]);
+
 interface PluginPageProps {
   data: (PluginWithStats & { mdx: CompiledMDX })[];
 }
@@ -98,9 +101,11 @@ export default function PluginPageContent({ data }: PluginPageProps) {
           <Box gridRow={['1', '1', 'auto']}>
             <SubTitle>Plugin Details</SubTitle>
             <SimpleGrid columns={2}>
-              <div>Identifier</div>
+              <div>Package</div>
               <div>
-                <Code>{pluginData.npmPackage}</Code>
+                <StyledLink href={`https://www.npmjs.com/package/${pluginData.npmPackage}`}>
+                  <CodeLink as="span">{pluginData.npmPackage}</CodeLink>
+                </StyledLink>
               </div>
               {pluginData.stats?.collected?.metadata?.license ? (
                 <>
