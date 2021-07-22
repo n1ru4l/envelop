@@ -5,9 +5,9 @@ sidebar_label: Securing your GraphQL API
 
 # Securing your GraphQL API
 
-Building a secure GraphQL API is hard because by design of to the "Graph" part withing GraphQL.
-Tooling for making different aspects of a GraphQL server secure have existed since forever.
-However, combining that tooling is often cumbersome and results in messy code.
+Building a secure GraphQL API is hard by design of to the because "Graph" part withing GraphQL.
+Libraries for making different aspects of a GraphQL server secure have existed since the early days of GraphQL.
+However, combining those tools is often cumbersome and results in messy code.
 With envelop securing your server is now as easy as pie!
 
 ## Authentication
@@ -233,7 +233,7 @@ There are a few measurements you can use for preventing the execution of such op
 
 ### Persisted Operations
 
-Instead of allowing any arbitrary GraphQL operation in production usage, we could use an allow-list of operations that the server is allowed to execute. We can collect such a list by scanning the code-base and extracting the list of operations. This is easy as pie with [GraphQL Codegen](https://www.npmjs.com/package/graphql-codegen-persisted-query-ids)
+Instead of allowing any arbitrary GraphQL operation in production usage, we could use an allow-list of operations that the server is allowed to execute. We can collect such a list by scanning the code-base and extracting the list of operations. This can be done with [GraphQL Codegen](https://www.npmjs.com/package/graphql-codegen-persisted-query-ids)
 
 With the [`usePersistedOperations`](/plugins/use-persisted-operations) plugin such an extracted map can easily be used for allow-listing such operations.
 
@@ -292,7 +292,7 @@ Sentry is the biggest player regarding error tracking within JavaScript land. Wi
 
 ![Example reported error on sentry](https://raw.githubusercontent.com/dotansimha/envelop/HEAD/packages/plugins/sentry/error2.png)
 
-As with any other envelop plugin the setup is easy as pie!
+As with any other envelop plugin the setup is straight forward!
 
 ```ts
 import { envelop } from '@envelop/core';
