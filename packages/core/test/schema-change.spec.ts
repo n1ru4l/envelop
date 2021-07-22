@@ -1,8 +1,15 @@
 import { createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { Plugin } from '@envelop/types';
 import { buildSchema, GraphQLSchema } from 'graphql';
+import { schema, query } from './common';
 
 describe('schemaChange', () => {
+  it('Should trigger schema change initially when schema is available', async () => {
+    const spiedPlugin = createSpiedPlugin();
+    createTestkit([spiedPlugin.plugin], schema);
+    expect(spiedPlugin.spies.onSchemaChange).toHaveBeenCalledTimes(1);
+  });
+
   it('Should not trigger schema change initially when schema is not available', async () => {
     const spiedPlugin = createSpiedPlugin();
     createTestkit([spiedPlugin.plugin]);

@@ -38,14 +38,14 @@ describe('useValidationCache', () => {
     await testInstance.execute(`query { foo }`);
     await testInstance.execute(`query { foo }`);
     await testInstance.execute(`query { foo }`);
-    expect(testValidator).toHaveBeenCalledTimes(3);
+    expect(testValidator).toHaveBeenCalledTimes(1);
   });
 
   it('Should call validate once once when operation is cached and errored', async () => {
     const testInstance = createTestkit([useTestPlugin, useValidationCache()], testSchema);
     const r1 = await testInstance.execute(`query { foo2 }`);
     const r2 = await testInstance.execute(`query { foo2 }`);
-    expect(testValidator).toHaveBeenCalledTimes(2);
+    expect(testValidator).toHaveBeenCalledTimes(1);
     expect(r1).toEqual(r2);
   });
 

@@ -67,7 +67,7 @@ Right now envelop ships with two plugins that allow applying authorization befor
 
 ### Schema based on context
 
-With the `useSchema` plugin it is possible to dynamically select a schema for execution based on the context object. This is handy if you have a public schema (e.g. for third-party API consumers) and a private schema (for in-house API consumers).
+With the `useLazyLoadedSchema` plugin it is possible to dynamically select a schema for execution based on the context object. This is handy if you have a public schema (e.g. for third-party API consumers) and a private schema (for in-house API consumers).
 
 Libraries such as [`graphql-public-schema-filter`](https://github.com/n1ru4l/graphql-public-schema-filter) can be used for generating a schema with only access to a sub part of the original schema using either SDL directives or schema field extensions.
 
