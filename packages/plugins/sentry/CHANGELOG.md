@@ -1,5 +1,11 @@
 # @envelop/sentry
 
+## 1.0.0
+
+### Major Changes
+
+- 40bc444: v1 major release for envelop packages
+
 ## 0.3.1
 
 ### Patch Changes

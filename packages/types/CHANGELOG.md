@@ -1,5 +1,15 @@
 # @envelop/types
 
+## 1.0.0
+
+### Major Changes
+
+- 40bc444: v1 major release for envelop packages
+
+### Minor Changes
+
+- dbb241d: allow hooking into published subscribe values
+
 ## 0.4.2
 
 ### Patch Changes
