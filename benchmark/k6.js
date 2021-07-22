@@ -178,9 +178,9 @@ export function run() {
   check(res, {
     no_errors: checkNoErrors,
     expected_result: resp => {
-      const data = 'id' in resp.json().data;
+      const data = resp.json().data;
 
-      return data && !!data.authors[0].id;
+      return data && data.authors[0].id;
     },
   });
 }
