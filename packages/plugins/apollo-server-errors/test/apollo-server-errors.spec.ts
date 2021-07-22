@@ -1,8 +1,9 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { ApolloServerBase } from 'apollo-server-core';
-import { GraphQLError, GraphQLSchema } from 'graphql';
+import { GraphQLSchema } from 'graphql';
 import { envelop, useSchema } from '@envelop/core';
 import { useApolloServerErrors } from '../src';
+import { assertSingleExecutionValue } from '@envelop/testing';
 
 describe('useApolloServerErrors', () => {
   const executeBoth = async (schema: GraphQLSchema, query: string, debug: boolean) => {
@@ -32,6 +33,7 @@ describe('useApolloServerErrors', () => {
 
     const query = `query test { test }`;
     const results = await executeBoth(schema, query, false);
+    assertSingleExecutionValue(results.envelop);
     expect(results.apollo.data!.test).toBeNull();
     expect(results.envelop.data!.test).toBeNull();
     expect(results.envelop.errors![0].locations).toEqual(results.apollo.errors![0].locations);
@@ -55,6 +57,7 @@ describe('useApolloServerErrors', () => {
 
     const query = `query test { test }`;
     const results = await executeBoth(schema, query, true);
+    assertSingleExecutionValue(results.envelop);
     expect(results.apollo.data!.test).toBeNull();
     expect(results.envelop.data!.test).toBeNull();
     expect(results.envelop.errors![0].locations).toEqual(results.apollo.errors![0].locations);

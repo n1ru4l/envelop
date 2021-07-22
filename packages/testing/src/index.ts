@@ -177,3 +177,11 @@ export function assertStreamExecutionValue(input: ExecutionReturn): asserts inpu
     throw new Error('Received single result but expected stream.');
   }
 }
+
+export const collectAsyncIteratorValues = async <TType>(asyncIterable: AsyncIterableIterator<TType>): Promise<Array<TType>> => {
+  const values: Array<TType> = [];
+  for await (const value of asyncIterable) {
+    values.push(value);
+  }
+  return values;
+};

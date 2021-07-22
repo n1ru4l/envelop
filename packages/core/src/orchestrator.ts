@@ -16,25 +16,30 @@ import {
   SubscribeResultHook,
   TypedSubscriptionArgs,
   TypedExecutionArgs,
+  SubscribeFunction,
+  OnSubscribeResultResultOnNextHook,
+  OnSubscribeResultResultOnEndHook,
+  OnExecuteDoneHookResultOnNextHook,
+  OnExecuteDoneHookResultOnEndHook,
+  ExecuteFunction,
+  AsyncIterableIteratorOrValue,
 } from '@envelop/types';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
 import {
   DocumentNode,
   execute,
-  ExecutionArgs,
   ExecutionResult,
   GraphQLError,
-  GraphQLFieldResolver,
   GraphQLSchema,
-  GraphQLTypeResolver,
   parse,
   specifiedRules,
   subscribe,
-  SubscriptionArgs,
   validate,
   ValidationRule,
 } from 'graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema';
+import { finalAsyncIterator, makeExecute, makeSubscribe, mapAsyncIterator } from './utils';
 
 export type EnvelopOrchestrator<
   InitialContext extends ArbitraryObject = ArbitraryObject,
@@ -272,32 +277,9 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
       }
     : initialContext => orchestratorCtx => orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
 
-  const customSubscribe = async (
-    argsOrSchema: SubscriptionArgs | GraphQLSchema,
-    document?: DocumentNode,
-    rootValue?: any,
-    contextValue?: any,
-    variableValues?: Maybe<{ [key: string]: any }>,
-    operationName?: Maybe<string>,
-    fieldResolver?: Maybe<GraphQLFieldResolver<any, any>>,
-    subscribeFieldResolver?: Maybe<GraphQLFieldResolver<any, any>>
-  ) => {
-    const args: SubscriptionArgs =
-      argsOrSchema instanceof GraphQLSchema
-        ? {
-            schema: argsOrSchema,
-            document: document!,
-            rootValue,
-            contextValue,
-            variableValues,
-            operationName,
-            fieldResolver,
-            subscribeFieldResolver,
-          }
-        : argsOrSchema;
-
+  const customSubscribe = makeSubscribe(async args => {
     const onResolversHandlers: OnResolverCalledHook[] = [];
-    let subscribeFn: typeof subscribe = subscribe;
+    let subscribeFn = subscribe as SubscribeFunction;
 
     const afterCalls: SubscribeResultHook[] = [];
     let context = args.contextValue || {};
@@ -333,46 +315,49 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
       contextValue: context,
     });
 
+    const onNextHandler: OnSubscribeResultResultOnNextHook[] = [];
+    const onEndHandler: OnSubscribeResultResultOnEndHook[] = [];
+
     for (const afterCb of afterCalls) {
-      afterCb({
+      const hookResult = afterCb({
         result,
         setResult: newResult => {
           result = newResult;
         },
       });
+      if (hookResult) {
+        if (hookResult.onNext) {
+          onNextHandler.push(hookResult.onNext);
+        }
+        if (hookResult.onEnd) {
+          onEndHandler.push(hookResult.onEnd);
+        }
+      }
     }
 
+    if (onNextHandler.length && isAsyncIterable(result)) {
+      result = mapAsyncIterator(result, async result => {
+        for (const onNext of onNextHandler) {
+          await onNext({ result, setResult: newResult => (result = newResult) });
+        }
+        return result;
+      });
+    }
+    if (onEndHandler.length && isAsyncIterable(result)) {
+      result = finalAsyncIterator(result, () => {
+        for (const onEnd of onEndHandler) {
+          onEnd();
+        }
+      });
+    }
     return result;
-  };
+  });
 
   const customExecute = beforeCallbacks.execute.length
-    ? async (
-        argsOrSchema: ExecutionArgs | GraphQLSchema,
-        document?: DocumentNode,
-        rootValue?: any,
-        contextValue?: any,
-        variableValues?: Maybe<{ [key: string]: any }>,
-        operationName?: Maybe<string>,
-        fieldResolver?: Maybe<GraphQLFieldResolver<any, any>>,
-        typeResolver?: Maybe<GraphQLTypeResolver<any, any>>
-      ) => {
-        const args: ExecutionArgs =
-          argsOrSchema instanceof GraphQLSchema
-            ? {
-                schema: argsOrSchema,
-                document: document!,
-                rootValue,
-                contextValue,
-                variableValues,
-                operationName,
-                fieldResolver,
-                typeResolver,
-              }
-            : argsOrSchema;
-
+    ? makeExecute(async args => {
         const onResolversHandlers: OnResolverCalledHook[] = [];
-        let executeFn: typeof execute = execute;
-        let result: ExecutionResult;
+        let executeFn = execute as ExecuteFunction;
+        let result: AsyncIterableIteratorOrValue<ExecutionResult>;
 
         const afterCalls: OnExecuteDoneHook[] = [];
         let context = args.contextValue || {};
@@ -429,17 +414,44 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
           contextValue: context,
         });
 
+        const onNextHandler: OnExecuteDoneHookResultOnNextHook[] = [];
+        const onEndHandler: OnExecuteDoneHookResultOnEndHook[] = [];
+
         for (const afterCb of afterCalls) {
-          afterCb({
+          const hookResult = afterCb({
             result,
             setResult: newResult => {
               result = newResult;
             },
           });
+          if (hookResult) {
+            if (hookResult.onNext) {
+              onNextHandler.push(hookResult.onNext);
+            }
+            if (hookResult.onEnd) {
+              onEndHandler.push(hookResult.onEnd);
+            }
+          }
+        }
+
+        if (onNextHandler.length && isAsyncIterable(result)) {
+          result = mapAsyncIterator(result, async result => {
+            for (const onNext of onNextHandler) {
+              await onNext({ result, setResult: newResult => (result = newResult) });
+            }
+            return result;
+          });
+        }
+        if (onEndHandler.length && isAsyncIterable(result)) {
+          result = finalAsyncIterator(result, () => {
+            for (const onEnd of onEndHandler) {
+              onEnd();
+            }
+          });
         }
 
         return result;
-      }
+      })
     : execute;
 
   initDone = true;
@@ -463,7 +475,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
     init,
     parse: customParse,
     validate: customValidate,
-    execute: customExecute,
+    execute: customExecute as ExecuteFunction,
     subscribe: customSubscribe,
     contextFactory: customContextFactory,
   };

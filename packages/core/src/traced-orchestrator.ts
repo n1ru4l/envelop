@@ -2,6 +2,7 @@ import { DocumentNode, ExecutionArgs, GraphQLFieldResolver, GraphQLSchema, Graph
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { ArbitraryObject } from '@envelop/types';
 import { EnvelopOrchestrator } from './orchestrator';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
 
 const HR_TO_NS = 1e9;
 const NS_TO_MS = 1e6;
@@ -94,8 +95,16 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
       try {
         const result = await orchestrator.execute(args);
         done();
-        result.extensions = result.extensions || {};
-        result.extensions.envelopTracing = args.contextValue._envelopTracing;
+
+        if (!isAsyncIterable(result)) {
+          result.extensions = result.extensions || {};
+          result.extensions.envelopTracing = args.contextValue._envelopTracing;
+        } else {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `"traceOrchestrator" encountered a AsyncIterator which is not supported yet, so tracing data is not available for the operation.`
+          );
+        }
 
         return result;
       } catch (e) {

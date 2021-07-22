@@ -1,6 +1,5 @@
-import {
+import type {
   DocumentNode,
-  execute,
   ExecutionArgs,
   ExecutionResult,
   GraphQLError,
@@ -9,7 +8,6 @@ import {
   parse,
   ParseOptions,
   Source,
-  subscribe,
   SubscriptionArgs,
   TypeInfo,
   validate,
@@ -18,6 +16,8 @@ import {
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { DefaultContext } from './context-types';
+import { AsyncIterableIteratorOrValue, ExecuteFunction } from '@envelop/core';
+import { SubscribeFunction } from './graphql';
 import { Plugin } from './plugin';
 
 export type DefaultArgs = Record<string, unknown>;
@@ -137,7 +137,7 @@ export type OnResolverCalledHook<
 
 /** onExecute */
 export type TypedExecutionArgs<ContextType> = Omit<ExecutionArgs, 'contextValue'> & { contextValue: ContextType };
-export type OriginalExecuteFn = typeof execute;
+export type OriginalExecuteFn = ExecuteFunction;
 export type OnExecuteEventPayload<ContextType> = {
   executeFn: OriginalExecuteFn;
   args: TypedExecutionArgs<ContextType>;
@@ -145,8 +145,21 @@ export type OnExecuteEventPayload<ContextType> = {
   setResultAndStopExecution: (newResult: ExecutionResult) => void;
   extendContext: (contextExtension: Partial<ContextType>) => void;
 };
-export type OnExecuteDoneEventPayload = { result: ExecutionResult; setResult: (newResult: ExecutionResult) => void };
-export type OnExecuteDoneHook = (options: OnExecuteDoneEventPayload) => void;
+export type OnExecuteDoneHookResultOnNextHookPayload = {
+  result: ExecutionResult;
+  setResult: (newResult: ExecutionResult) => void;
+};
+export type OnExecuteDoneHookResultOnNextHook = (payload: OnExecuteDoneHookResultOnNextHookPayload) => void | Promise<void>;
+export type OnExecuteDoneHookResultOnEndHook = () => void;
+export type OnExecuteDoneHookResult = {
+  onNext?: OnExecuteDoneHookResultOnNextHook;
+  onEnd?: OnExecuteDoneHookResultOnEndHook;
+};
+export type OnExecuteDoneEventPayload = {
+  result: AsyncIterableIteratorOrValue<ExecutionResult>;
+  setResult: (newResult: AsyncIterableIteratorOrValue<ExecutionResult>) => void;
+};
+export type OnExecuteDoneHook = (options: OnExecuteDoneEventPayload) => void | OnExecuteDoneHookResult;
 export type OnExecuteHookResult<ContextType> = {
   onExecuteDone?: OnExecuteDoneHook;
   onResolverCalled?: OnResolverCalledHook<any, DefaultArgs, ContextType>;
@@ -158,7 +171,7 @@ export type OnExecuteHook<ContextType> = (
 /** onSubscribe */
 export type TypedSubscriptionArgs<ContextType> = Omit<SubscriptionArgs, 'contextValue'> & { contextValue: ContextType };
 
-export type OriginalSubscribeFn = typeof subscribe;
+export type OriginalSubscribeFn = SubscribeFunction;
 export type OnSubscribeEventPayload<ContextType> = {
   subscribeFn: OriginalSubscribeFn;
   args: TypedSubscriptionArgs<ContextType>;
@@ -169,7 +182,17 @@ export type OnSubscribeResultEventPayload = {
   result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
   setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
 };
-export type SubscribeResultHook = (options: OnSubscribeResultEventPayload) => void;
+export type OnSubscribeResultResultOnNextHookPayload = {
+  result: ExecutionResult;
+  setResult: (newResult: ExecutionResult) => void;
+};
+export type OnSubscribeResultResultOnNextHook = (payload: OnSubscribeResultResultOnNextHookPayload) => void | Promise<void>;
+export type OnSubscribeResultResultOnEndHook = () => void;
+export type OnSubscribeResultResult = {
+  onNext?: OnSubscribeResultResultOnNextHook;
+  onEnd?: OnSubscribeResultResultOnEndHook;
+};
+export type SubscribeResultHook = (options: OnSubscribeResultEventPayload) => void | OnSubscribeResultResult;
 export type OnSubscribeHookResult<ContextType> = {
   onSubscribeResult?: SubscribeResultHook;
   onResolverCalled?: OnResolverCalledHook<ContextType>;
