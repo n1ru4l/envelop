@@ -8,8 +8,6 @@ import type {
   ParseOptions,
   Source,
   SubscriptionArgs,
-  TypeInfo,
-  validate,
   ValidationRule,
 } from 'graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
@@ -245,7 +243,6 @@ export type OnContextBuildingHook<ContextType> = (
   options: OnContextBuildingEventPayload<ContextType>
 ) => PromiseOrValue<void | AfterContextBuildingHook<ContextType>>;
 
-/** onResolverCalled */
 export type ResolverFn<ParentType = unknown, ArgsType = DefaultArgs, ContextType = unknown, ResultType = unknown> = (
   root: ParentType,
   args: ArgsType,
@@ -280,75 +277,211 @@ export type OnResolverCalledHook<
   options: OnBeforeResolverCalledEventPayload<ParentType, ArgsType, ContextType, ResultType>
 ) => PromiseOrValue<void | AfterResolverHook>;
 
-/** onExecute */
+/**
+ * Execution arguments with inferred context value type.
+ */
 export type TypedExecutionArgs<ContextType> = Omit<ExecutionArgs, 'contextValue'> & { contextValue: ContextType };
 
+/**
+ * Payload that is passed to the onExecute hook.
+ */
 export type OnExecuteEventPayload<ContextType> = {
+  /**
+   * Current execute function that will be used for execution.
+   */
   executeFn: ExecuteFunction;
+  /**
+   * Arguments the execute function will be invoked with.
+   */
   args: TypedExecutionArgs<ContextType>;
+  /**
+   * Replace the current execute function with a new one.
+   */
   setExecuteFn: (newExecute: ExecuteFunction) => void;
+  /**
+   * Set a execution result and skip calling the execute function.
+   */
   setResultAndStopExecution: (newResult: ExecutionResult) => void;
+  /**
+   * Extend the context object with a partial.
+   */
   extendContext: (contextExtension: Partial<ContextType>) => void;
 };
 
+/**
+ * Payload that is passed to the onExecuteDone hook.
+ */
 export type OnExecuteDoneHookResultOnNextHookPayload = {
+  /**
+   * The execution result.
+   */
   result: ExecutionResult;
+  /**
+   * Replace the execution result with a new execution result.
+   */
   setResult: (newResult: ExecutionResult) => void;
 };
 
+/**
+ * Hook that is invoked for each value a AsyncIterable returned from execute publishes.
+ */
 export type OnExecuteDoneHookResultOnNextHook = (payload: OnExecuteDoneHookResultOnNextHookPayload) => void | Promise<void>;
 
+/**
+ * Hook that is invoked after a AsyncIterable returned from execute completes.
+ */
 export type OnExecuteDoneHookResultOnEndHook = () => void;
 
+/**
+ * Hook for hooking into AsyncIterables returned from execute.
+ */
 export type OnExecuteDoneHookResult = {
+  /**
+   * Hook that is invoked for each value a AsyncIterable returned from execute publishes.
+   */
   onNext?: OnExecuteDoneHookResultOnNextHook;
+  /**
+   * Hook that is invoked after a AsyncIterable returned from execute completes.
+   */
   onEnd?: OnExecuteDoneHookResultOnEndHook;
 };
 
+/**
+ * Payload with which the onExecuteDone hook is invoked.
+ */
 export type OnExecuteDoneEventPayload = {
+  /**
+   * The execution result returned from the execute function.
+   * Can return an AsyncIterable if a graphql.js that has defer/stream implemented is used.
+   */
   result: AsyncIterableIteratorOrValue<ExecutionResult>;
+  /**
+   * Replace the execution result with a new execution result.
+   */
   setResult: (newResult: AsyncIterableIteratorOrValue<ExecutionResult>) => void;
 };
 
+/**
+ * Hook that is invoked after the execute function has been invoked.
+ * Allows returning a OnExecuteDoneHookResult for hooking into stream values if execute returned an AsyncIterable.
+ */
 export type OnExecuteDoneHook = (options: OnExecuteDoneEventPayload) => void | OnExecuteDoneHookResult;
 
+/**
+ * Result returned from the onExecute hook result for hooking into subsequent phases.
+ */
 export type OnExecuteHookResult<ContextType> = {
+  /**
+   * Invoked with the execution result returned from execute.
+   */
   onExecuteDone?: OnExecuteDoneHook;
+  /**
+   * Invoked before each resolver has been invoked during the execution phase.
+   */
   onResolverCalled?: OnResolverCalledHook<any, DefaultArgs, ContextType>;
 };
 
+/**
+ * onExecute hook that is invoked before the execute function is invoked.
+ */
 export type OnExecuteHook<ContextType> = (
   options: OnExecuteEventPayload<ContextType>
 ) => PromiseOrValue<void | OnExecuteHookResult<ContextType>>;
 
-/** onSubscribe */
+/**
+ * Subscription arguments with inferred context value type.
+ */
 export type TypedSubscriptionArgs<ContextType> = Omit<SubscriptionArgs, 'contextValue'> & { contextValue: ContextType };
 
+/**
+ * Payload with which the onSubscribe hook is invoked.
+ */
 export type OnSubscribeEventPayload<ContextType> = {
+  /**
+   * Current subscribe function that will be used for setting up the subscription.
+   */
   subscribeFn: SubscribeFunction;
+  /**
+   * Current arguments with which the subscribe function will be invoked.
+   */
   args: TypedSubscriptionArgs<ContextType>;
+  /**
+   * Replace the current subscribe function with a new one that will be used for setting up the subscription.
+   */
   setSubscribeFn: (newSubscribe: SubscribeFunction) => void;
+  /**
+   * Extend the context object with a partial.
+   */
   extendContext: (contextExtension: Partial<ContextType>) => void;
 };
+
+/**
+ * Payload with which the onSubscribeResult hook is invoked.
+ */
 export type OnSubscribeResultEventPayload = {
+  /**
+   * The current execution result.
+   */
   result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
+  /**
+   * Replace the current execution result with a new execution result.
+   */
   setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
 };
+
 export type OnSubscribeResultResultOnNextHookPayload = {
+  /**
+   * The current execution result.
+   */
   result: ExecutionResult;
+  /**
+   * Replace the current execution result with a new execution result.
+   */
   setResult: (newResult: ExecutionResult) => void;
 };
+
+/**
+ * Hook invoked for each value published by the AsyncIterable returned from subscribe.
+ */
 export type OnSubscribeResultResultOnNextHook = (payload: OnSubscribeResultResultOnNextHookPayload) => void | Promise<void>;
+
+/**
+ * Hook invoked after the AsyncIterable returned from subscribe completes.
+ */
 export type OnSubscribeResultResultOnEndHook = () => void;
+
 export type OnSubscribeResultResult = {
+  /**
+   * Invoked for each value published by the AsyncIterable returned from subscribe.
+   */
   onNext?: OnSubscribeResultResultOnNextHook;
+  /**
+   * Invoked after the AsyncIterable returned from subscribe completes.
+   */
   onEnd?: OnSubscribeResultResultOnEndHook;
 };
+
+/**
+ * Hook that is invoked with the result of the subscribe call.
+ * Return a OnSubscribeResultResult for hooking into the AsyncIterable returned from subscribe.
+ */
 export type SubscribeResultHook = (options: OnSubscribeResultEventPayload) => void | OnSubscribeResultResult;
+
 export type OnSubscribeHookResult<ContextType> = {
+  /**
+   * Invoked with the result returned from subscribe.
+   */
   onSubscribeResult?: SubscribeResultHook;
+  /**
+   * Invoked before each resolver has been invoked during the execution phase.
+   */
   onResolverCalled?: OnResolverCalledHook<ContextType>;
 };
+
+/**
+ * onSubscribe hook that is invoked before the subscribe function is called.
+ * Return a OnSubscribeHookResult for hooking into phase after the subscribe function has been called.
+ */
 export type OnSubscribeHook<ContextType> = (
   options: OnSubscribeEventPayload<ContextType>
 ) => PromiseOrValue<void | OnSubscribeHookResult<ContextType>>;
