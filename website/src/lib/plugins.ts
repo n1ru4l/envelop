@@ -11,6 +11,7 @@ export const ALL_TAGS = [
   'authentication',
   'authorization',
   'schema',
+  'subscription',
 ] as const;
 
 export type Tags = typeof ALL_TAGS[number];
@@ -241,5 +242,12 @@ export const pluginsArr: RawPlugin[] = [
     npmPackage: '@envelop/prometheus',
     iconUrl: '/assets/logos/prometheus.png',
     tags: ['metrics', 'errors'],
+  },
+  {
+    identifier: 'use-context-value-per-execute-subscription-event',
+    title: 'useContextValuePerExecuteSubscriptionEvent',
+    npmPackage: '@envelop/execute-subscription-event',
+    iconUrl: '/assets/logos/graphql.png',
+    tags: ['utilities', 'subscription'],
   },
 ];

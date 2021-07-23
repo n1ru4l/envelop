@@ -12,7 +12,12 @@ export function getRoutes(): IRoutes {
           },
           guides: {
             $name: 'Guides',
-            $routes: ['securing-your-graphql-api', 'monitoring-and-tracing', 'using-graphql-features-from-the-future'],
+            $routes: [
+              'securing-your-graphql-api',
+              'monitoring-and-tracing',
+              'using-graphql-features-from-the-future',
+              'resolving-subscription-data-loader-caching-issues',
+            ],
           },
         },
       },
