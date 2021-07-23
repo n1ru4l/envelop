@@ -14,7 +14,7 @@ import {
 import { PrometheusTracingPluginConfig } from './config';
 import { TypeInfo } from 'graphql';
 import { isIntrospectionOperationString } from '@envelop/core';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 export { PrometheusTracingPluginConfig, createCounter, createHistogram, createSummary, FillLabelsFnParams };
 

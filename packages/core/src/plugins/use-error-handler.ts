@@ -1,6 +1,6 @@
 import { Plugin } from '@envelop/types';
 import { ExecutionResult, GraphQLError } from 'graphql';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 export type ErrorHandler = (errors: readonly GraphQLError[]) => void;
 

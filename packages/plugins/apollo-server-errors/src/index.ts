@@ -1,7 +1,7 @@
 import { Plugin } from '@envelop/types';
 import { formatApolloErrors } from 'apollo-server-errors';
 import type { ExecutionResult } from 'graphql';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 const makeHandleResult =
   (options: Parameters<typeof formatApolloErrors>[1] = {}) =>

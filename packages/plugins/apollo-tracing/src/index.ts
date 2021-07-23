@@ -1,7 +1,7 @@
 import { Plugin } from '@envelop/types';
 import { TracingFormat } from 'apollo-tracing';
 import { GraphQLType, ResponsePath, responsePathAsArray } from 'graphql';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 const HR_TO_NS = 1e9;
 const NS_TO_MS = 1e6;

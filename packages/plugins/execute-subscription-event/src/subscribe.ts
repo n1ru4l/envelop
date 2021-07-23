@@ -1,7 +1,7 @@
 import { createSourceEventStream } from 'graphql';
 
 import { ExecuteFunction, makeSubscribe, SubscribeFunction } from '@envelop/core';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 import mapAsyncIterator from 'graphql/subscription/mapAsyncIterator';
 
 /**
