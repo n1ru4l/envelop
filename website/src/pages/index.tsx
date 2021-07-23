@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { FeatureList, HeroGradient, HeroIllustration, HeroMarketplace, InfoList } from '@theguild/components';
-import { handlePushRoute } from '@guild-docs/client';
+import { handlePushRoute, NPMBadge } from '@guild-docs/client';
 
 export default function Index() {
   return (
@@ -17,11 +17,7 @@ export default function Index() {
           title: 'Learn more about GraphQL Envelop',
           onClick: e => handlePushRoute('/docs', e),
         }}
-        version={
-          <a href="https://www.npmjs.com/package/@envelop/core" target="_blank">
-            <img src="https://badge.fury.io/js/%40envelop%2Fcore.svg" alt="npm version" height="18" />
-          </a>
-        }
+        version={<NPMBadge name="@envelop/core" />}
         colors={['#FF34AE', '#1CC8EE']}
         image={{
           src: '/assets/home-claw.png',
