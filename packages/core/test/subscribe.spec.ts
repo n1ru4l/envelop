@@ -14,7 +14,7 @@ describe('subscribe', () => {
       [
         {
           onSubscribe({ setSubscribeFn }) {
-            setSubscribeFn(streamExecuteFn);
+            setSubscribeFn(streamExecuteFn as any);
 
             return {
               onSubscribeResult: () => {
@@ -58,7 +58,7 @@ describe('subscribe', () => {
       [
         {
           onSubscribe({ setSubscribeFn }) {
-            setSubscribeFn(streamExecuteFn);
+            setSubscribeFn(streamExecuteFn as any);
 
             return {
               onSubscribeResult: () => {

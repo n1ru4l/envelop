@@ -6,7 +6,7 @@ export function envelop<PluginsType extends Plugin<any>[]>(options: {
   plugins: PluginsType;
   enableInternalTracing?: boolean;
 }): GetEnvelopedFn<ComposeContext<PluginsType>> {
-  let orchestrator = createEnvelopOrchestrator<ComposeContext<PluginsType>>(options.plugins as any);
+  let orchestrator = createEnvelopOrchestrator<ComposeContext<PluginsType>>(options.plugins);
 
   if (options.enableInternalTracing) {
     orchestrator = traceOrchestrator(orchestrator);
@@ -28,5 +28,5 @@ export function envelop<PluginsType extends Plugin<any>[]>(options: {
 
   getEnveloped._plugins = options.plugins;
 
-  return getEnveloped as any;
+  return getEnveloped as GetEnvelopedFn<ComposeContext<PluginsType>>;
 }

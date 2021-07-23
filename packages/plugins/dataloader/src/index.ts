@@ -14,7 +14,7 @@ export const useDataLoader = <TName extends string, Key, Value, CacheKey = Key, 
     onContextBuilding({ context, extendContext }) {
       extendContext({
         [name]: builderFn(context as any as Context),
-      } as any as { [K in TName]: DataLoader<Key, Value, CacheKey> });
+      } as { [K in TName]: DataLoader<Key, Value, CacheKey> });
     },
   };
 };
