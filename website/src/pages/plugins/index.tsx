@@ -2,26 +2,24 @@ import { compareDesc } from 'date-fns';
 import Head from 'next/head';
 import React from 'react';
 
+import { handlePushRoute, PackageInstall, RemoteGHMarkdown } from '@guild-docs/client';
 import { buildMultipleMDX, CompiledMDX } from '@guild-docs/server';
+import { getPackagesData, PackageWithStats } from '@guild-docs/server/npm';
 import { MarketplaceSearch } from '@theguild/components';
 import { IMarketplaceItemProps } from '@theguild/components/dist/types/components';
-import { handlePushRoute } from '@guild-docs/client';
 
 import { Markdown } from '../../components/Markdown';
-import { PackageInstall } from '../../components/packageInstall';
-import { RemoteGHMarkdown } from '../../components/RemoteGhMarkdown';
-import { getPluginsData } from '../../lib/pluginsData';
+import { ALL_TAGS, pluginsArr as packageList } from '../../lib/plugins';
 
-import type { PluginWithStats } from '../../lib/pluginsData';
 import type { GetStaticProps } from 'next';
-import { ALL_TAGS } from '../../lib/plugins';
-
 interface MarketplaceProps {
-  data: (PluginWithStats & { description: CompiledMDX; content: CompiledMDX })[];
+  data: (PackageWithStats & { description: CompiledMDX; content: CompiledMDX })[];
 }
 
 export const getStaticProps: GetStaticProps<MarketplaceProps> = async () => {
-  const pluginsData = await getPluginsData();
+  const pluginsData = await getPackagesData({
+    packageList,
+  });
 
   const data = await Promise.all(
     pluginsData.map(async plugin => {
@@ -47,9 +45,9 @@ export const getStaticProps: GetStaticProps<MarketplaceProps> = async () => {
 };
 
 export default function Marketplace({ data }: MarketplaceProps) {
-  const marketplaceItems: Array<IMarketplaceItemProps & { raw: PluginWithStats }> = React.useMemo(() => {
+  const marketplaceItems: Array<IMarketplaceItemProps & { raw: PackageWithStats }> = React.useMemo(() => {
     if (data && data.length > 0) {
-      return data.map<IMarketplaceItemProps & { raw: PluginWithStats }>(rawPlugin => {
+      return data.map<IMarketplaceItemProps & { raw: PackageWithStats }>(rawPlugin => {
         const linkHref = `/plugins/${rawPlugin.identifier}`;
         return {
           raw: rawPlugin,
@@ -79,7 +77,7 @@ export default function Marketplace({ data }: MarketplaceProps) {
             },
             content: (
               <>
-                <PackageInstall packageName={rawPlugin.npmPackage} />
+                <PackageInstall packages={rawPlugin.npmPackage} />
                 <RemoteGHMarkdown
                   directory={rawPlugin.stats?.collected?.metadata?.repository?.directory}
                   repo={rawPlugin.stats?.collected?.metadata?.links?.repository}

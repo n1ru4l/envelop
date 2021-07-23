@@ -1,3 +1,5 @@
+import type { Package } from '@guild-docs/server/npm';
+
 export const ALL_TAGS = [
   'tracing',
   'metrics',
@@ -16,16 +18,7 @@ export const ALL_TAGS = [
 
 export type Tags = typeof ALL_TAGS[number];
 
-export type RawPlugin = {
-  identifier: string;
-  title: string;
-  npmPackage: string;
-  tags: Tags[];
-  readme?: string;
-  iconUrl?: string;
-};
-
-export const pluginsArr: RawPlugin[] = [
+export const pluginsArr: Package<Tags>[] = [
   {
     identifier: 'use-sentry',
     title: 'useSentry',

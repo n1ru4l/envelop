@@ -1,15 +1,15 @@
 import { format } from 'date-fns';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import Link from 'next/link';
 import React from 'react';
 import tw, { styled } from 'twin.macro';
-import Link from 'next/link';
 
 import { Box, Center, Code, Container, Grid, SimpleGrid } from '@chakra-ui/react';
+import { PackageInstall, RemoteGHMarkdown } from '@guild-docs/client';
 import { buildMDX, CompiledMDX } from '@guild-docs/server';
+import { getPackagesData, PackageWithStats } from '@guild-docs/server/npm';
 
-import { PackageInstall } from '../../components/packageInstall';
-import { RemoteGHMarkdown } from '../../components/RemoteGhMarkdown';
-import { getPluginsData, PluginWithStats } from '../../lib/pluginsData';
+import { pluginsArr as packageList } from '../../lib/plugins';
 
 export const SubTitle = styled.h2(() => [tw`mt-0 mb-4 font-bold text-lg md:text-xl`]);
 export const Title = styled.h2(() => [tw`mt-0 mb-4 font-bold text-xl md:text-2xl`]);
@@ -18,7 +18,7 @@ const StyledLink = styled.a(() => [tw`cursor-pointer`]);
 const CodeLink = styled(Code)(() => [tw`hover:font-bold`]);
 
 interface PluginPageProps {
-  data: (PluginWithStats & { mdx: CompiledMDX })[];
+  data: (PackageWithStats & { mdx: CompiledMDX })[];
 }
 
 type PluginPageParams = {
@@ -30,8 +30,9 @@ export const getStaticProps: GetStaticProps<PluginPageProps, PluginPageParams> =
 
   const pluginsData =
     typeof pluginName === 'string'
-      ? await getPluginsData({
+      ? await getPackagesData({
           idSpecific: pluginName,
+          packageList,
         })
       : [];
 
@@ -54,7 +55,9 @@ export const getStaticProps: GetStaticProps<PluginPageProps, PluginPageParams> =
 };
 
 export const getStaticPaths: GetStaticPaths<PluginPageParams> = async () => {
-  const plugins = await getPluginsData();
+  const plugins = await getPackagesData({
+    packageList,
+  });
 
   return {
     fallback: 'blocking',
@@ -91,7 +94,7 @@ export default function PluginPageContent({ data }: PluginPageProps) {
         </Title>
         <Grid templateColumns={['1fr', '1fr', '1fr 350px']} gap={4}>
           <Box>
-            <PackageInstall packageName={pluginData.npmPackage} />
+            <PackageInstall packages={pluginData.npmPackage} />
             <RemoteGHMarkdown
               directory={pluginData.stats?.collected?.metadata?.repository?.directory}
               repo={pluginData.stats?.collected?.metadata?.links?.repository}

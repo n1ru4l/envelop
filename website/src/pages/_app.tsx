@@ -4,21 +4,10 @@ import '../../public/style.css';
 import '../../public/admonitions.css';
 
 import { appWithTranslation } from 'next-i18next';
-import {
-  chakra,
-  Code,
-  extendTheme,
-  Text,
-  theme as chakraTheme,
-  UnorderedList,
-  useColorModeValue,
-  Center,
-  Spinner,
-} from '@chakra-ui/react';
+import { chakra, Code, extendTheme, Text, theme as chakraTheme, UnorderedList, useColorModeValue } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 import { AppSeoProps, CombinedThemeProvider, DocsPage, ExtendComponents, handlePushRoute } from '@guild-docs/client';
 import { Footer, Header, Subheader } from '@theguild/components';
-import { PackageInstall } from '../components/packageInstall';
 
 import type { AppProps } from 'next/app';
 
@@ -47,7 +36,6 @@ ExtendComponents({
     return <Code display={'inline'} margin="1px" colorScheme={colorScheme} fontWeight="semibold" fontSize="0.875em" {...props} />;
   },
   Text,
-  PackageInstall,
   ul: UnorderedList,
 });
 
