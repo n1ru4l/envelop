@@ -5,7 +5,7 @@ import { Plugin, OnResolverCalledHook } from '@envelop/types';
 import * as Sentry from '@sentry/node';
 import { Span } from '@sentry/types';
 import { ExecutionArgs, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 export type SentryPluginOptions = {
   startTransaction?: boolean;

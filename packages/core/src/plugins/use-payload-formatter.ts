@@ -1,6 +1,6 @@
 import { Plugin } from '@envelop/types';
 import { ExecutionResult } from 'graphql';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 export type FormatterFunction = (result: ExecutionResult<any, any>) => false | ExecutionResult<any, any>;
 

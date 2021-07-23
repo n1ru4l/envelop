@@ -1,5 +1,5 @@
 import { Plugin } from '@envelop/types';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 export type UsePreloadAssetsOpts = {
   shouldPreloadAssets?: (context: unknown) => boolean;

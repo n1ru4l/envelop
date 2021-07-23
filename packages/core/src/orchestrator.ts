@@ -24,7 +24,7 @@ import {
   ExecuteFunction,
   AsyncIterableIteratorOrValue,
 } from '@envelop/types';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 import {
   DocumentNode,
   execute,
