@@ -2,14 +2,13 @@ import { compareDesc } from 'date-fns';
 import Head from 'next/head';
 import React from 'react';
 
-import { handlePushRoute, PackageInstall } from '@guild-docs/client';
+import { handlePushRoute, PackageInstall, RemoteGHMarkdown } from '@guild-docs/client';
 import { buildMultipleMDX, CompiledMDX } from '@guild-docs/server';
 import { getPackagesData, PackageWithStats } from '@guild-docs/server/npm';
 import { MarketplaceSearch } from '@theguild/components';
 import { IMarketplaceItemProps } from '@theguild/components/dist/types/components';
 
 import { Markdown } from '../../components/Markdown';
-import { RemoteGHMarkdown } from '../../components/RemoteGhMarkdown';
 import { ALL_TAGS, pluginsArr as packageList } from '../../lib/plugins';
 
 import type { GetStaticProps } from 'next';

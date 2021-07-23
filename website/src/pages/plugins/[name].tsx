@@ -5,11 +5,10 @@ import React from 'react';
 import tw, { styled } from 'twin.macro';
 
 import { Box, Center, Code, Container, Grid, SimpleGrid } from '@chakra-ui/react';
-import { PackageInstall } from '@guild-docs/client';
+import { PackageInstall, RemoteGHMarkdown } from '@guild-docs/client';
 import { buildMDX, CompiledMDX } from '@guild-docs/server';
 import { getPackagesData, PackageWithStats } from '@guild-docs/server/npm';
 
-import { RemoteGHMarkdown } from '../../components/RemoteGhMarkdown';
 import { pluginsArr as packageList } from '../../lib/plugins';
 
 export const SubTitle = styled.h2(() => [tw`mt-0 mb-4 font-bold text-lg md:text-xl`]);
