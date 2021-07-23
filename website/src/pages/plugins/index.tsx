@@ -2,14 +2,13 @@ import { compareDesc } from 'date-fns';
 import Head from 'next/head';
 import React from 'react';
 
-import { handlePushRoute } from '@guild-docs/client';
+import { handlePushRoute, PackageInstall } from '@guild-docs/client';
 import { buildMultipleMDX, CompiledMDX } from '@guild-docs/server';
 import { getPackagesData, PackageWithStats } from '@guild-docs/server/npm';
 import { MarketplaceSearch } from '@theguild/components';
 import { IMarketplaceItemProps } from '@theguild/components/dist/types/components';
 
 import { Markdown } from '../../components/Markdown';
-import { PackageInstall } from '../../components/packageInstall';
 import { RemoteGHMarkdown } from '../../components/RemoteGhMarkdown';
 import { ALL_TAGS, pluginsArr as packageList } from '../../lib/plugins';
 
@@ -79,7 +78,7 @@ export default function Marketplace({ data }: MarketplaceProps) {
             },
             content: (
               <>
-                <PackageInstall packageName={rawPlugin.npmPackage} />
+                <PackageInstall packages={rawPlugin.npmPackage} />
                 <RemoteGHMarkdown
                   directory={rawPlugin.stats?.collected?.metadata?.repository?.directory}
                   repo={rawPlugin.stats?.collected?.metadata?.links?.repository}

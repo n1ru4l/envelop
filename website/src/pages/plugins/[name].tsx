@@ -5,10 +5,10 @@ import React from 'react';
 import tw, { styled } from 'twin.macro';
 
 import { Box, Center, Code, Container, Grid, SimpleGrid } from '@chakra-ui/react';
+import { PackageInstall } from '@guild-docs/client';
 import { buildMDX, CompiledMDX } from '@guild-docs/server';
 import { getPackagesData, PackageWithStats } from '@guild-docs/server/npm';
 
-import { PackageInstall } from '../../components/packageInstall';
 import { RemoteGHMarkdown } from '../../components/RemoteGhMarkdown';
 import { pluginsArr as packageList } from '../../lib/plugins';
 
@@ -95,7 +95,7 @@ export default function PluginPageContent({ data }: PluginPageProps) {
         </Title>
         <Grid templateColumns={['1fr', '1fr', '1fr 350px']} gap={4}>
           <Box>
-            <PackageInstall packageName={pluginData.npmPackage} />
+            <PackageInstall packages={pluginData.npmPackage} />
             <RemoteGHMarkdown
               directory={pluginData.stats?.collected?.metadata?.repository?.directory}
               repo={pluginData.stats?.collected?.metadata?.links?.repository}
