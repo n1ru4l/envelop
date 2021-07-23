@@ -7,9 +7,12 @@ import type {
   GraphQLTypeResolver,
   subscribe,
   execute,
+  parse,
+  validate,
 } from 'graphql';
 import type { Maybe } from './utils';
 
+/** @private */
 export type PolymorphicExecuteArguments =
   | [ExecutionArgs]
   | [
@@ -25,6 +28,7 @@ export type PolymorphicExecuteArguments =
 
 export type ExecuteFunction = typeof execute;
 
+/** @private */
 export type PolymorphicSubscribeArguments =
   | [SubscriptionArgs]
   | [
@@ -39,3 +43,15 @@ export type PolymorphicSubscribeArguments =
     ];
 
 export type SubscribeFunction = typeof subscribe;
+
+export type ParseFunction = typeof parse;
+
+export type ValidateFunction = typeof validate;
+
+export type ValidateFunctionParameter = {
+  schema: Parameters<ValidateFunction>[0];
+  documentAST: Parameters<ValidateFunction>[1];
+  rules?: Parameters<ValidateFunction>[2];
+  typeInfo?: Parameters<ValidateFunction>[3];
+  options?: Parameters<ValidateFunction>[4];
+};
