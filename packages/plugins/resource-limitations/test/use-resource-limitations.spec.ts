@@ -318,4 +318,21 @@ describe('useResourceLimitations', () => {
       'Cannot request more than 20 nodes in a single document. Please split your operation into multiple sub operations or reduce the amount of requested nodes.'
     );
   });
+  it('minimum cost is always 1', async () => {
+    const testkit = createTestkit([useResourceLimitations({ extensions: true, nodeCostLimit: 20 })], schema);
+    const result = await testkit.execute(/* GraphQL */ `
+      query {
+        viewer {
+          id
+        }
+      }
+    `);
+    assertSingleExecutionValue(result);
+    expect(result.extensions).toEqual({
+      resourceLimitations: {
+        nodeCost: 1,
+      },
+    });
+    expect(result.errors).toBeUndefined();
+  });
 });

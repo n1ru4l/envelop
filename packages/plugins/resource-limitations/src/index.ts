@@ -153,6 +153,9 @@ export const ResourceLimitationValidationRule =
       },
       Document: {
         leave(documentNode) {
+          if (totalNodeCost === 0) {
+            totalNodeCost = 1;
+          }
           if (totalNodeCost > params.nodeCostLimit) {
             context.reportError(
               new GraphQLError(
