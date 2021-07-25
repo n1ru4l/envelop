@@ -1,5 +1,17 @@
 # @envelop/core
 
+## 1.0.1
+
+### Patch Changes
+
+- c24a8fd: re-use graphql "execute" & "subscribe" types
+- f45c0bf: Include README and documentation as part of the package
+- 8021229: fix ESM graphql import
+- adca399: add jsdoc comments for hook types
+- Updated dependencies [c24a8fd]
+- Updated dependencies [adca399]
+  - @envelop/types@1.0.1
+
 ## 1.0.0
 
 ### Major Changes

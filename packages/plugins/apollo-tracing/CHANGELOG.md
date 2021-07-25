@@ -1,5 +1,11 @@
 # @envelop/apollo-tracing
 
+## 1.0.1
+
+### Patch Changes
+
+- 8021229: fix ESM graphql import
+
 ## 1.0.0
 
 ### Major Changes
