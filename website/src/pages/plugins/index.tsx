@@ -7,6 +7,7 @@ import { buildMultipleMDX, CompiledMDX } from '@guild-docs/server';
 import { getPackagesData, PackageWithStats } from '@guild-docs/server/npm';
 import { MarketplaceSearch } from '@theguild/components';
 import { IMarketplaceItemProps } from '@theguild/components/dist/types/components';
+import type { Package } from '@guild-docs/server/npm';
 
 import { Markdown } from '../../components/Markdown';
 import { ALL_TAGS, pluginsArr as packageList } from '../../lib/plugins';
@@ -27,6 +28,7 @@ export const getStaticProps: GetStaticProps<MarketplaceProps> = async () => {
         `${plugin.stats?.collected?.metadata?.version || ''}\n\n${plugin.stats?.collected?.metadata?.description || ''}`,
         plugin.readme || plugin.stats?.collected?.metadata?.readme || '',
       ]);
+
       return {
         ...plugin,
         description,
@@ -115,7 +117,7 @@ export default function Marketplace({ data }: MarketplaceProps) {
   const trendingItems = React.useMemo(() => {
     if (marketplaceItems && marketplaceItems.length > 0) {
       return [...marketplaceItems]
-        .filter(i => i.raw.stats?.collected?.npm.downloads)
+        .filter(i => i.raw.stats?.collected?.npm.downloads && i.raw.npmPackage !== '@envelop/core')
         .sort((a, b) => {
           const aMonthlyDownloads = a.raw.stats?.collected.npm.downloads[2].count || 0;
           const bMonthlyDownloads = b.raw.stats?.collected.npm.downloads[2].count || 0;
@@ -166,19 +168,19 @@ export default function Marketplace({ data }: MarketplaceProps) {
           title: 'Trending',
           items: trendingItems,
           placeholder: '0 items',
-          pagination: 10,
+          pagination: 8,
         }}
         secondaryList={{
           title: 'Recently Updated',
           items: recentlyUpdatedItems,
           placeholder: '0 items',
-          pagination: 10,
+          pagination: 8,
         }}
         queryList={{
           title: 'Search Results',
           items: marketplaceItems,
           placeholder: 'No results for {query}',
-          pagination: 10,
+          pagination: 8,
         }}
       />
     </>

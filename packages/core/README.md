@@ -4,12 +4,12 @@ This is the core package for Envelop. You can find a complete documentation here
 
 ### Built-in plugins
 
-- [`useSchema`](./use-schema.md)
-- [`useAsyncSchema`](./use-async-schema.md)
-- [`useLazyLoadedSchema`](./use-lazy-loaded-schema.md)
-- [`useErrorHandler`](./use-error-handler.md)
-- [`useExtendContext`](./use-extend-context.md)
-- [`useLogger`](./use-logger.md)
-- [`useMaskedErrors`](./use-masked-errors.md)
-- [`usePayloadFormatter`](./use-payload-formatter.md)
-- [`useTiming`](./use-timing.md)
+- [`useSchema`](./docs/use-schema.md)
+- [`useAsyncSchema`](./docs/use-async-schema.md)
+- [`useLazyLoadedSchema`](./docs/use-lazy-loaded-schema.md)
+- [`useErrorHandler`](./docs/use-error-handler.md)
+- [`useExtendContext`](./docs/use-extend-context.md)
+- [`useLogger`](./docs/use-logger.md)
+- [`useMaskedErrors`](./docs/use-masked-errors.md)
+- [`usePayloadFormatter`](./docs/use-payload-formatter.md)
+- [`useTiming`](./docs/use-timing.md)
