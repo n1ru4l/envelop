@@ -321,7 +321,7 @@ const getEnveloped = envelop({
 });
 ```
 
-And then in your GraphQL schema, you can define the limitations in a declerative way:
+And then in your GraphQL schema, you can define the limitations in a declarative way:
 
 ```graphql
 type Query {

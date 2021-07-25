@@ -54,7 +54,7 @@ export function isIntrospectionOperationString(operation: string | Source): bool
   return (typeof operation === 'string' ? operation : operation.body).indexOf('__schema') !== -1;
 }
 
-export function getSubscribeArgs(args: PolymorphicSubscribeArguments): SubscriptionArgs {
+function getSubscribeArgs(args: PolymorphicSubscribeArguments): SubscriptionArgs {
   return args.length === 1
     ? args[0]
     : {
@@ -87,7 +87,7 @@ export async function* mapAsyncIterator<TInput, TOutput = TInput>(
   }
 }
 
-export function getExecuteArgs(args: PolymorphicExecuteArguments): ExecutionArgs {
+function getExecuteArgs(args: PolymorphicExecuteArguments): ExecutionArgs {
   return args.length === 1
     ? args[0]
     : {
