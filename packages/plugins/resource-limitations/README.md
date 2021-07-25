@@ -1,18 +1,18 @@
-## `@envelop/use-resource-limitations`
+## `@envelop/resource-limitations`
 
 This plugins uses `extended-valiations` concept ([details here](https://github.com/dotansimha/envelop/tree/main/packages/plugins/extended-validation#envelopextended-validation)) for implemeting a resource-limitations rate-limit similar to GitHub GraphQL API (see https://docs.github.com/en/graphql/overview/resource-limitations for more details)
 
 ## Getting Started
 
 ```
-yarn add @envelop/use-resource-limitations
+yarn add @envelop/resource-limitations
 ```
 
 ## Usage Example
 
 ```ts
 import { envelop } from '@envelop/core';
-import { useResourceLimitations } from '@envelop/use-resource-limitations';
+import { useResourceLimitations } from '@envelop/resource-limitations';
 
 const getEnveloped = envelop({
   plugins: [
