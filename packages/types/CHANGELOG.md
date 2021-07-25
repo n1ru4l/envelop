@@ -1,5 +1,12 @@
 # @envelop/types
 
+## 1.0.1
+
+### Patch Changes
+
+- c24a8fd: re-use graphql "execute" & "subscribe" types
+- adca399: add jsdoc comments for hook types
+
 ## 1.0.0
 
 ### Major Changes
