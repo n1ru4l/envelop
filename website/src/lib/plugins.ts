@@ -243,4 +243,11 @@ export const pluginsArr: Package<Tags>[] = [
     iconUrl: '/assets/logos/graphql.png',
     tags: ['utilities', 'subscription'],
   },
+  {
+    identifier: 'use-resource-limitations',
+    title: 'useResourceLimitations',
+    npmPackage: '@envelop/resource-limitations',
+    iconUrl: '/assets/logos/rate_limiter.png',
+    tags: ['schema', 'utilities', 'security'],
+  },
 ];
