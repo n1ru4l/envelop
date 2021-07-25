@@ -12,7 +12,7 @@ yarn add @envelop/rate-limiter
 
 ```ts
 import { envelop } from '@envelop/core';
-import { useRateLimiter, IdentifyFn } from '@envelop/generic-auth';
+import { useRateLimiter, IdentifyFn } from '@envelop/rate-limiter';
 
 const identifyFn: IdentifyFn = async context => {
   return context.request.ip;
