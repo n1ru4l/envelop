@@ -11,3 +11,5 @@ In this exmaple, Apollo-Server provides the basic HTTP wrapper and execution flo
 3. Open http://localhost:3000/graphql in your browser, and try to run: `query { hello }`.
 
 ## Limitations
+
+See https://github.com/apollographql/apollo-server/discussions/5541 
