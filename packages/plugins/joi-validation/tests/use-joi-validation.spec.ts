@@ -8,18 +8,25 @@ describe('useJoiValidations', () => {
     ${DIRECTIVE_SDL}
     
     type Query {
-      test: String
+      test(
+        v: Int @number(positive: true)
+      ): String
     }
     `,
     resolvers: {
-      Query: {},
+      Query: {
+        test: () => 'dummy',
+      },
     },
   });
 
   it('Should allow to set limitations ', async () => {
-    const testInstance = createTestkit([useJoiValidations({})], schema);
-    const result = await testInstance.execute(`query { test }`);
+    const testInstance = createTestkit([useJoiValidations()], schema);
+    const result = await testInstance.execute(`query test($val: Int!) { test(v: $val) }`, {
+      val: -5,
+    });
     assertSingleExecutionValue(result);
-    expect(result.errors).toBeUndefined();
+    console.log(result);
+    expect(result.errors).toBeDefined();
   });
 });

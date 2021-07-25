@@ -29,13 +29,17 @@
     "test": "jest",
     "prepack": "bob prepack"
   },
-  "dependencies": {},
+  "dependencies": {
+    "joi": "^17.4.1"
+  },
   "devDependencies": {
+    "@envelop/extended-validation": "1.1.0",
     "bob-the-bundler": "1.4.1",
     "graphql": "15.5.1",
     "typescript": "4.3.5"
   },
   "peerDependencies": {
+    "@envelop/extended-validation": "^1",
     "graphql": "^14.0.0 || ^15.0.0"
   },
   "buildOptions": {

@@ -13,13 +13,21 @@ export type ExtendedValidationRule = (context: ValidationContext, executionArgs:
 
 export function getDirectiveFromAstNode(
   astNode: { directives?: ReadonlyArray<DirectiveNode> },
-  names: string | string[]
+  names: string
 ): null | DirectiveNode {
   const directives = astNode.directives || [];
   const namesArr = Array.isArray(names) ? names : [names];
-  const authDirective = directives.find(d => namesArr.includes(d.name.value));
+  const directive = directives.find(d => namesArr.includes(d.name.value));
 
-  return authDirective || null;
+  return directive || null;
+}
+
+export function extractDirectives(astNode: { directives?: ReadonlyArray<DirectiveNode> }, names: string): null | DirectiveNode {
+  const directives = astNode.directives || [];
+  const namesArr = Array.isArray(names) ? names : [names];
+  const directive = directives.find(d => namesArr.includes(d.name.value));
+
+  return directive || null;
 }
 
 export function unwrapType(type: GraphQLType): GraphQLNamedType {
