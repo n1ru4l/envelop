@@ -1,5 +1,6 @@
 {
   "name": "@envelop/resource-limitations",
+  "description": "A rate-limit implementation based on resource limitations and static calculation of the score (similar to GitHub GraphQL API)",
   "version": "0.0.0",
   "author": "Laurin Quast <laurinquast@googlemail.com>",
   "license": "MIT",
