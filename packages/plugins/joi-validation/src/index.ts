@@ -1,7 +1,9 @@
 import { Plugin } from '@envelop/types';
-import { getDirectiveFromAstNode, useExtendedValidation, ExtendedValidationRule } from '@envelop/extended-validation';
-import { getArgumentValues } from 'graphql/execution/values.js';
-import { GraphQLArgument } from 'graphql';
+import { useExtendedValidation, ExtendedValidationRule, extractDirectives } from '@envelop/extended-validation';
+import { getArgumentValues, getDirectiveValues } from 'graphql/execution/values.js';
+import { GraphQLArgument, GraphQLError, GraphQLSchema } from 'graphql';
+import { Maybe } from 'graphql/jsutils/Maybe';
+import * as yup from 'yup';
 
 export const DIRECTIVE_SDL = /* GraphQL */ `
   """
@@ -33,19 +35,74 @@ export const DIRECTIVE_SDL = /* GraphQL */ `
 
 const DIRECTIVE_NAMES = ['number'];
 
-function extractJoiDirectives(arg: GraphQLArgument) {
+function extractAndMapDirectives(
+  schema: GraphQLSchema,
+  arg: GraphQLArgument,
+  variableValues: Maybe<{ [key: string]: any }>
+): Record<string, any> {
   if (arg.extensions) {
-    const keys = Object.keys(arg.extensions);
+    const relevantKeys = Object.keys(arg.extensions).filter(key => DIRECTIVE_NAMES.includes(key));
+
+    if (relevantKeys.length > 0) {
+      return relevantKeys.reduce((prev, key) => {
+        return {
+          ...prev,
+          [key]: arg.extensions![key],
+        };
+      }, {} as Record<string, any>);
+    }
   }
 
-  const directive = arg.extensions?.oneOf || (arg.astNode && getDirectiveFromAstNode(arg.astNode, DIRECTIVE_NAMES));
+  if (arg.astNode) {
+    const directives = extractDirectives(arg.astNode, DIRECTIVE_NAMES);
+    const result = {};
+
+    for (const directiveUsage of directives) {
+      const directive = schema.getDirective(directiveUsage.name.value);
+
+      if (directive) {
+        result[directiveUsage.name.value] = getDirectiveValues(directive, arg.astNode, variableValues);
+      }
+    }
+
+    return result;
+  }
+
+  return {};
+}
+
+function createYupSchema(root: string, def: Record<string, any>) {
+  let resultSchema = yup[root]();
+
+  for (const [name, value] of Object.entries(def)) {
+    if (typeof value === 'boolean') {
+      if (value === true) {
+        resultSchema = resultSchema[name]();
+      }
+    } else {
+      resultSchema = resultSchema[name](value);
+    }
+  }
+
+  return resultSchema;
 }
 
 function createJoiValidationRule(): ExtendedValidationRule {
-  return (context, executionArgs) => {
+  function getValidationSchema(schema: GraphQLSchema, arg: GraphQLArgument, variableValues: Maybe<{ [key: string]: any }>) {
+    const fieldValidations = extractAndMapDirectives(schema, arg, variableValues);
+    const validationKey = Object.keys(fieldValidations)[0];
+
+    if (!validationKey) {
+      return null;
+    }
+
+    return createYupSchema(validationKey, fieldValidations[validationKey]);
+  }
+
+  return (validationContext, executionArgs) => {
     return {
-      Field: node => {
-        const fieldDef = context.getFieldDef();
+      Field: (node, key, parent, path) => {
+        const fieldDef = validationContext.getFieldDef();
 
         if (!fieldDef) {
           return;
@@ -53,12 +110,32 @@ function createJoiValidationRule(): ExtendedValidationRule {
 
         const args = fieldDef.args || {};
 
-        const relevantArgs = [];
+        for (const arg of args) {
+          const validationSchema = getValidationSchema(validationContext.getSchema(), arg, executionArgs.variableValues);
+          const values = getArgumentValues(fieldDef, node, executionArgs.variableValues);
+          console.log(arg, validationSchema, values);
 
-        for (const [argName, arg] of Object.entries(args)) {
+          if (!validationSchema) {
+            continue;
+          }
+
+          if (values[arg.name] !== undefined) {
+            try {
+              validationSchema.validateSync(values[arg.name]);
+            } catch (e) {
+              validationContext.reportError(
+                new GraphQLError(
+                  `Input validation failed for argument "${arg.name}" on field "${fieldDef.name}": ${e.message}`,
+                  [node],
+                  undefined,
+                  undefined,
+                  path,
+                  e
+                )
+              );
+            }
+          }
         }
-
-        // const values = getArgumentValues(fieldDef, node, executionArgs.variableValues);
       },
     };
   };
