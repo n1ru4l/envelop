@@ -1,6 +1,5 @@
-import { Plugin } from '@envelop/types';
+import { handleStreamOrSingleExecutionResult, Plugin } from '@envelop/types';
 import { ExecutionResult } from 'graphql';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 export type FormatterFunction = (result: ExecutionResult<any, any>) => false | ExecutionResult<any, any>;
 
@@ -17,17 +16,8 @@ export const usePayloadFormatter = (formatter: FormatterFunction): Plugin => ({
   onExecute() {
     const handleResult = makeHandleResult(formatter);
     return {
-      onExecuteDone({ result, setResult }) {
-        if (isAsyncIterable(result)) {
-          return {
-            onNext({ result, setResult }) {
-              handleResult({ result, setResult });
-            },
-          };
-        }
-
-        handleResult({ result, setResult });
-        return undefined;
+      onExecuteDone(payload) {
+        return handleStreamOrSingleExecutionResult(payload, handleResult);
       },
     };
   },

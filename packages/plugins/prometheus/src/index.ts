@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-import { Plugin, OnExecuteHookResult, OnParseHook, OnValidateHook, OnContextBuildingHook, OnExecuteHook } from '@envelop/types';
+import {
+  Plugin,
+  OnExecuteHookResult,
+  OnParseHook,
+  OnValidateHook,
+  OnContextBuildingHook,
+  OnExecuteHook,
+  isAsyncIterable,
+} from '@envelop/types';
 import { Summary, Counter, Histogram, register as defaultRegistry } from 'prom-client';
 import {
   getHistogramFromConfig,
@@ -14,7 +22,6 @@ import {
 import { PrometheusTracingPluginConfig } from './config';
 import { TypeInfo } from 'graphql';
 import { isIntrospectionOperationString } from '@envelop/core';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 export { PrometheusTracingPluginConfig, createCounter, createHistogram, createSummary, FillLabelsFnParams };
 

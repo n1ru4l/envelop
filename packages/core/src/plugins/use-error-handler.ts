@@ -1,6 +1,5 @@
-import { Plugin } from '@envelop/types';
+import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/types';
 import { ExecutionResult, GraphQLError } from 'graphql';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 export type ErrorHandler = (errors: readonly GraphQLError[]) => void;
 
@@ -16,16 +15,8 @@ export const useErrorHandler = (errorHandler: ErrorHandler): Plugin => ({
   onExecute() {
     const handleResult = makeHandleResult(errorHandler);
     return {
-      onExecuteDone({ result }) {
-        if (isAsyncIterable(result)) {
-          return {
-            onNext({ result }) {
-              handleResult({ result });
-            },
-          };
-        }
-        handleResult({ result });
-        return undefined;
+      onExecuteDone(payload) {
+        return handleStreamOrSingleExecutionResult(payload, handleResult);
       },
     };
   },

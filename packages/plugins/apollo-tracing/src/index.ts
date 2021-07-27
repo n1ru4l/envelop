@@ -1,7 +1,6 @@
-import { Plugin } from '@envelop/types';
+import { handleStreamOrSingleExecutionResult, Plugin } from '@envelop/types';
 import { TracingFormat } from 'apollo-tracing';
 import { GraphQLType, ResponsePath, responsePathAsArray } from 'graphql';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 const HR_TO_NS = 1e9;
 const NS_TO_MS = 1e6;
@@ -55,7 +54,7 @@ export const useApolloTracing = (): Plugin => {
             resolversTiming.push(resolverCall);
           };
         },
-        onExecuteDone({ result }) {
+        onExecuteDone(payload) {
           const endTime = new Date();
 
           const tracing: TracingFormat = {
@@ -80,15 +79,10 @@ export const useApolloTracing = (): Plugin => {
             },
           };
 
-          if (!isAsyncIterable(result)) {
+          return handleStreamOrSingleExecutionResult(payload, ({ result }) => {
             result.extensions = result.extensions || {};
             result.extensions.tracing = tracing;
-          } else {
-            // eslint-disable-next-line no-console
-            console.warn(
-              `Plugin "apollo-tracing" encountered a AsyncIterator which is not supported yet, so tracing data is not available for the operation.`
-            );
-          }
+          });
         },
       };
     },

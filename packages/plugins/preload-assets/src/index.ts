@@ -1,4 +1,4 @@
-import { handleMaybeStream, Plugin } from '@envelop/types';
+import { handleStreamOrSingleExecutionResult, Plugin } from '@envelop/types';
 
 export type UsePreloadAssetsOpts = {
   shouldPreloadAssets?: (context: unknown) => boolean;
@@ -19,7 +19,7 @@ export const usePreloadAssets = (opts?: UsePreloadAssetsOpts): Plugin => ({
             return;
           }
 
-          return handleMaybeStream(payload, ({ result, setResult }) => {
+          return handleStreamOrSingleExecutionResult(payload, ({ result, setResult }) => {
             setResult({
               ...result,
               extensions: {

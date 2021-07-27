@@ -1,4 +1,4 @@
-import type { Plugin } from '@envelop/types';
+import { handleStreamOrSingleExecutionResult, Plugin } from '@envelop/types';
 import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
 import {
   ExecutionArgs,
@@ -13,7 +13,6 @@ import {
   GraphQLType,
 } from 'graphql';
 import { getArgumentValues } from 'graphql/execution/values.js';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 const getWrappedType = (graphqlType: GraphQLType): Exclude<GraphQLType, GraphQLList<any> | GraphQLNonNull<any>> => {
   if (graphqlType instanceof GraphQLList || graphqlType instanceof GraphQLNonNull) {
@@ -220,11 +219,8 @@ export const useResourceLimitations = (params?: UseResourceLimitationsParams): P
     },
     onExecute({ args }) {
       return {
-        onExecuteDone({ result }) {
-          if (isAsyncIterable(result)) {
-            return;
-          }
-          handleResult({ result, args });
+        onExecuteDone(payload) {
+          return handleStreamOrSingleExecutionResult(payload, ({ result }) => handleResult({ result, args }));
         },
       };
     },
