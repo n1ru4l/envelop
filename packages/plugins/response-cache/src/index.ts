@@ -21,6 +21,11 @@ interface Options<C = any> {
    */
   ttl?: number;
   /**
+   * Overwrite the ttl for query operations whose execution result contains a specific object type.
+   * Useful if the occurrence of a object time should reduce the TTL of the query.
+   */
+  ttlPerType?: Record<string, number>;
+  /**
    * Allows to manually control the cache. Use `createController` to create a controller and pass it here.
    */
   controller?: Controller;
@@ -57,6 +62,7 @@ export function useResponseCache({
   controller,
   session = () => null,
   ignoredTypes = [],
+  ttlPerType = {},
 }: Options = {}): Plugin {
   if (controller) {
     controller.ɵregister((typename, id) => {
@@ -157,8 +163,14 @@ export function useResponseCache({
             let skip = false;
             const collectedEntities: [string, string | undefined][] = [];
 
+            let ttlForOperation = ttl;
+
             collectEntity(result.data, (typename, id) => {
               skip = skip || ignoredTypesMap.has(typename);
+
+              if (typename in ttlPerType) {
+                ttlForOperation = Math.min(ttlForOperation, ttlPerType[typename]);
+              }
 
               if (!skip) {
                 collectedEntities.push([typename, id]);
@@ -169,7 +181,7 @@ export function useResponseCache({
               return;
             }
 
-            cachedResponses.set(operationId, result);
+            cachedResponses.set(operationId, result, ttlForOperation);
             responseToEnity.set(operationId, new Set());
 
             for (const [typename, id] of collectedEntities) {
