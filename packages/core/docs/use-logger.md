@@ -1,6 +1,6 @@
 #### `useLogger`
 
-Logs paramaters and information about the execution phases. You can easily plug your custom logger.
+Logs parameters and information about the execution phases. You can easily plug your custom logger.
 
 ```ts
 import { envelop, useLogger } from '@envelop/core';

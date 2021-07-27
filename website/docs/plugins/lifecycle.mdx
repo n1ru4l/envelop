@@ -3,13 +3,13 @@ title: Plugins Lifecycle
 sidebar_label: Lifecycle & API
 ---
 
-## Plugins Lifecylce
+## Plugins Lifecycle
 
 Plugins are executed in order of their usage, and inject functionality serially, so aim to keep your plugins simple and standalone as much as possible.
 
 The `before` functions are called in order, and then the `after` function of each hook will be called in the same order, when the phase has done.
 
-The basic API allow you to keep the JS clousure between `before` and `after`, for example:
+The basic API allow you to keep the JS closure between `before` and `after`, for example:
 
 ```ts
 const myPlugin = {
@@ -97,7 +97,7 @@ Called every time an operation is being executed.
 **`before` API**:
 
 - `params` - the original parameters passes to `parse` function.
-- `parseFn` - the current `parse` function. By defualt, it's the one from `graphql` package.
+- `parseFn` - the current `parse` function. By default, it's the one from `graphql` package.
 - `setParseFn` - Replaces the `parse` function with a custom function.
 - `setParsedDocument` - sets the parse result. Setting this will skip calling `parse` for the executed operation.
 - `context` - the context object built so far by other plugins.
@@ -117,7 +117,7 @@ Called every time an operation is being executed.
 **`before` API**:
 
 - `params` - the original parameters passes to `validate` function.
-- `validateFn` - the current `validate` function. By defualt, it's the one from `graphql` package.
+- `validateFn` - the current `validate` function. By default, it's the one from `graphql` package.
 - `setValidationFn` - Replaces the `validate` function with a custom function.
 - `addValidationRule` - Adds a validation rule to the list of default validation rules (as defined in `graphql` package).
 - `setResult` - sets the validation result. Setting this will skip calling `validate` for the executed operation.
@@ -127,7 +127,7 @@ Called every time an operation is being executed.
 **`after` API**:
 
 - `valid` - A boolean indicates if the validation passed.
-- `result` - `null` in case of valid document, otherwise an array of valiation errors.
+- `result` - `null` in case of valid document, otherwise an array of validation errors.
 - `context` - the context object built so far by other plugins.
 - `extendContext` - extends the context object with additional fields.
 
@@ -155,7 +155,7 @@ Called every time an operation is being executed. The return value of this funct
 - `executeFn` - the `execute` function to use, by default it's the one from `graphql` package.
 - `setExecuteFn` - replaces the `execute` function.
 - `setResultAndStopExecution` - sets the result of the execution immediately. Calling this function will stop execution.
-- `extendContext` - allow you to extend the context before executin the operation.
+- `extendContext` - allow you to extend the context before executing the operation.
 
 You can return an `object` from that function, with the following fields:
 
@@ -186,7 +186,7 @@ Called every time a `subscription` operation is being executed. The return value
 - `args` - arguments passes to `subscribe` (contains the document, variables and everything else that needed for executing the GraphQL operation)
 - `subscribeFn` - the `subscribe` function to use, by default it's the one from `graphql` package.
 - `setSubscribeFn` - replaces the `subscribe` function.
-- `extendContext` - allow you to extend the context before executin the operation.
+- `extendContext` - allow you to extend the context before executing the operation.
 
 You can return an `object` from that function, with the following fields:
 
