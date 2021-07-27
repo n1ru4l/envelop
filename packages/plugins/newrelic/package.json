@@ -34,11 +34,11 @@
     "@types/newrelic": "7.0.2",
     "bob-the-bundler": "1.4.1",
     "graphql": "15.5.1",
-    "newrelic": "7.5.2",
+    "newrelic": "8.0.0",
     "typescript": "4.3.5"
   },
   "peerDependencies": {
-    "newrelic": "^7",
+    "newrelic": "^7 || ^8.0.0",
     "graphql": "^14.0.0 || ^15.0.0"
   },
   "buildOptions": {
