@@ -18,7 +18,7 @@ const myPlugin: Plugin = {
   onParse({ params }) {
     console.log('Parse started!', { args });
 
-    return (result) => {
+    return result => {
       console.log('Parse done!', { result });
     };
   },
@@ -41,7 +41,7 @@ const getEnveloped = envelop({
 });
 ```
 
-## Configureable Plugin
+## Configurable Plugin
 
 If your plugin requires additional configuration you with to pass to it, you can create your plugins as a function, and accept the configuration there:
 
@@ -67,4 +67,3 @@ const getEnveloped = envelop({
   ],
 });
 ```
-
