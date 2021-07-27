@@ -1,7 +1,17 @@
 import { Plugin } from '@envelop/types';
 import LRU from 'lru-cache';
 import { createHash } from 'crypto';
-import { DocumentNode, OperationDefinitionNode, FieldNode, SelectionNode, visit, parse, print } from 'graphql';
+import {
+  DocumentNode,
+  OperationDefinitionNode,
+  FieldNode,
+  SelectionNode,
+  visit,
+  parse,
+  print,
+  TypeInfo,
+  visitWithTypeInfo,
+} from 'graphql';
 import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 type Listener = (typename: string, id?: string | number) => void;
@@ -22,9 +32,14 @@ interface Options<C = any> {
   ttl?: number;
   /**
    * Overwrite the ttl for query operations whose execution result contains a specific object type.
-   * Useful if the occurrence of a object time should reduce the TTL of the query.
+   * Useful if the occurrence of a object time in the execution result should reduce the ttl of the query operation.
    */
   ttlPerType?: Record<string, number>;
+  /**
+   * Overwrite the ttl for query operations whose selection contains a specific schema coordinate (e.g. Query.users).
+   * Useful if the selection of a specific field should reduce the TTL of the query operation.
+   */
+  ttlPerSchemaCoordinate?: Record<string, number>;
   /**
    * Allows to manually control the cache. Use `createController` to create a controller and pass it here.
    */
@@ -63,6 +78,7 @@ export function useResponseCache({
   session = () => null,
   ignoredTypes = [],
   ttlPerType = {},
+  ttlPerSchemaCoordinate,
 }: Options = {}): Plugin {
   if (controller) {
     controller.ɵregister((typename, id) => {
@@ -152,6 +168,26 @@ export function useResponseCache({
           return;
         }
 
+        let ttlForOperation = ttl;
+
+        if (ttlPerSchemaCoordinate) {
+          const typeInfo = new TypeInfo(ctx.args.schema);
+          visit(
+            ctx.args.document,
+            visitWithTypeInfo(typeInfo, {
+              Field(fieldNode) {
+                const parentType = typeInfo.getParentType();
+                if (parentType) {
+                  const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
+                  if (schemaCoordinate in ttlPerSchemaCoordinate) {
+                    ttlForOperation = Math.min(ttlForOperation, ttlPerSchemaCoordinate[schemaCoordinate]);
+                  }
+                }
+              },
+            })
+          );
+        }
+
         return {
           onExecuteDone({ result }) {
             if (isAsyncIterable(result)) {
@@ -162,8 +198,6 @@ export function useResponseCache({
 
             let skip = false;
             const collectedEntities: [string, string | undefined][] = [];
-
-            let ttlForOperation = ttl;
 
             collectEntity(result.data, (typename, id) => {
               skip = skip || ignoredTypesMap.has(typename);
