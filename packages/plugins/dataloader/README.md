@@ -18,10 +18,7 @@ import { useDataLoader } from '@envelop/dataloader';
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useDataLoader({
-      name: 'users',
-      builderFn: context => new DataLoader(keys => myBatchGetUsers(keys)),
-    }),
+    useDataLoader('users', context => new DataLoader(keys => myBatchGetUsers(keys))),
   ],
 });
 ```
