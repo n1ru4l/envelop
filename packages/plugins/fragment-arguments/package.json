@@ -1,6 +1,6 @@
 {
   "name": "@envelop/fragment-arguments",
-  "version": "0.0.5",
+  "version": "1.0.1",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "repository": {
@@ -29,7 +29,7 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "@envelop/types": "0.4.1"
+    "@envelop/types": "1.0.1"
   },
   "devDependencies": {
     "@types/common-tags": "1.8.1",
@@ -37,7 +37,7 @@
     "@graphql-tools/schema": "7.1.5",
     "bob-the-bundler": "1.4.1",
     "graphql": "15.5.1",
-    "typescript": "4.4.0-dev.20210715",
+    "typescript": "4.3.5",
     "oneline": "1.0.3",
     "common-tags": "1.8.0"
   },

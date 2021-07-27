@@ -1,6 +1,6 @@
 {
   "name": "@envelop/opentelemetry",
-  "version": "0.2.1",
+  "version": "1.0.1",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,

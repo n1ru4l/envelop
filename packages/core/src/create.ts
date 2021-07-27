@@ -6,15 +6,15 @@ export function envelop<PluginsType extends Plugin<any>[]>(options: {
   plugins: PluginsType;
   enableInternalTracing?: boolean;
 }): GetEnvelopedFn<ComposeContext<PluginsType>> {
-  let orchestrator = createEnvelopOrchestrator<ComposeContext<PluginsType>>(options.plugins as any);
+  let orchestrator = createEnvelopOrchestrator<ComposeContext<PluginsType>>(options.plugins);
 
   if (options.enableInternalTracing) {
     orchestrator = traceOrchestrator(orchestrator);
   }
 
   const getEnveloped = <TInitialContext extends ArbitraryObject>(initialContext: TInitialContext = {} as TInitialContext) => {
-    orchestrator.init(initialContext);
     const typedOrchestrator = orchestrator as EnvelopOrchestrator<TInitialContext, ComposeContext<PluginsType>>;
+    typedOrchestrator.init(initialContext);
 
     return {
       parse: typedOrchestrator.parse(initialContext),
@@ -22,11 +22,11 @@ export function envelop<PluginsType extends Plugin<any>[]>(options: {
       contextFactory: typedOrchestrator.contextFactory(initialContext),
       execute: typedOrchestrator.execute,
       subscribe: typedOrchestrator.subscribe,
-      schema: typedOrchestrator.schema!,
+      schema: typedOrchestrator.getCurrentSchema(),
     };
   };
 
   getEnveloped._plugins = options.plugins;
 
-  return getEnveloped as any;
+  return getEnveloped as GetEnvelopedFn<ComposeContext<PluginsType>>;
 }

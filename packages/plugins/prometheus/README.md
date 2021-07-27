@@ -4,9 +4,12 @@ This plugin tracks the complete execution flow, and reports metrics using Promet
 
 You can opt-in to collect tracing from the following phases:
 
+- Sucessfull requests (`requestCount`)
+- Request summary (`requestSummary`)
 - errors (categorized by `phase`)
 - resolvers tracing and runtime
 - deprecated fields usage
+- count of graphql operations
 - `parse` execution time
 - `validate` execution time
 - `contextBuilding` execution time
@@ -31,6 +34,8 @@ const getEnveloped = envelop({
     // ... other plugins ...
     usePrometheus({
       // all optional, and by default, all set to false, please opt-in to the metrics you wish to get
+      requestCount: true, // requries `execute` to be true as well
+      requestSummary: true, // requries `execute` to be true as well
       parse: true,
       validate: true,
       contextBuilding: true,
@@ -38,12 +43,14 @@ const getEnveloped = envelop({
       errors: true,
       resolvers: true, // requires "execute" to be `true` as well
       resolversWhitelist: ['Mutation.*', 'Query.user'], // reports metrics als for these resolvers, leave `undefined` to report all fields
-      deprecatedFields: true, // requires "execute" and "resolvers" to be `true` as well
+      deprecatedFields: true,
       registry: myRegistry, // If you are using a custom prom-client registry, please set it here
     }),
   ],
 });
 ```
+
+> Note: Tracing resolvers using `resovlers: true` might have a performance impact on your GraphQL runtime. Please consider to test it locally first and then decide if it's needed.
 
 ### Custom registry
 
@@ -66,6 +73,10 @@ const getEnveloped = envelop({
 ```
 
 > Note: if you are using custom `prom-client` instances, you need to make sure to pass your registry there as well.
+
+### Introspection
+
+If you wish to disable introspection logging, you can use `skipIntrospection: true` in your config object.
 
 ### Custom `prom-client` instances
 

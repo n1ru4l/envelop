@@ -1,5 +1,5 @@
-import { createSpiedPlugin, createTestkit } from '@envelop/testing';
-import { execute, GraphQLSchema } from 'graphql';
+import { assertStreamExecutionValue, collectAsyncIteratorValues, createSpiedPlugin, createTestkit } from '@envelop/testing';
+import { execute, ExecutionResult, GraphQLSchema } from 'graphql';
 import { schema, query } from './common';
 
 describe('execute', () => {
@@ -137,5 +137,135 @@ describe('execute', () => {
       result: 'Dotan Simha',
       setResult: expect.any(Function),
     });
+  });
+
+  it('Should be able to manipulate streams', async () => {
+    const streamExecuteFn = async function* () {
+      for (const value of ['a', 'b', 'c', 'd']) {
+        yield { data: { alphabet: value } };
+      }
+    };
+
+    const teskit = createTestkit(
+      [
+        {
+          onExecute({ setExecuteFn }) {
+            setExecuteFn(streamExecuteFn as any);
+
+            return {
+              onExecuteDone: () => {
+                return {
+                  onNext: ({ setResult }) => {
+                    setResult({ data: { alphabet: 'x' } });
+                  },
+                };
+              },
+            };
+          },
+        },
+      ],
+      schema
+    );
+
+    const result = await teskit.execute(/* GraphQL */ `
+      query {
+        alphabet
+      }
+    `);
+    assertStreamExecutionValue(result);
+    const values = await collectAsyncIteratorValues(result);
+    expect(values).toEqual([
+      { data: { alphabet: 'x' } },
+      { data: { alphabet: 'x' } },
+      { data: { alphabet: 'x' } },
+      { data: { alphabet: 'x' } },
+    ]);
+  });
+
+  it('Should be able to invoke something after the stream has ended.', async () => {
+    expect.assertions(1);
+    const streamExecuteFn = async function* () {
+      for (const value of ['a', 'b', 'c', 'd']) {
+        yield { data: { alphabet: value } };
+      }
+    };
+
+    const teskit = createTestkit(
+      [
+        {
+          onExecute({ setExecuteFn }) {
+            setExecuteFn(streamExecuteFn as any);
+
+            return {
+              onExecuteDone: () => {
+                let latestResult: ExecutionResult;
+                return {
+                  onNext: ({ result }) => {
+                    latestResult = result;
+                  },
+                  onEnd: () => {
+                    expect(latestResult).toEqual({ data: { alphabet: 'd' } });
+                  },
+                };
+              },
+            };
+          },
+        },
+      ],
+      schema
+    );
+
+    const result = await teskit.execute(/* GraphQL */ `
+      query {
+        alphabet
+      }
+    `);
+    assertStreamExecutionValue(result);
+    // run AsyncGenerator
+    await collectAsyncIteratorValues(result);
+  });
+
+  it('Should be able to invoke something after the stream has ended (manual return).', async () => {
+    expect.assertions(1);
+    const streamExecuteFn = async function* () {
+      for (const value of ['a', 'b', 'c', 'd']) {
+        yield { data: { alphabet: value } };
+      }
+    };
+
+    const teskit = createTestkit(
+      [
+        {
+          onExecute({ setExecuteFn }) {
+            setExecuteFn(streamExecuteFn as any);
+
+            return {
+              onExecuteDone: () => {
+                let latestResult: ExecutionResult;
+                return {
+                  onNext: ({ result }) => {
+                    latestResult = result;
+                  },
+                  onEnd: () => {
+                    expect(latestResult).toEqual({ data: { alphabet: 'a' } });
+                  },
+                };
+              },
+            };
+          },
+        },
+      ],
+      schema
+    );
+
+    const result = await teskit.execute(/* GraphQL */ `
+      query {
+        alphabet
+      }
+    `);
+    assertStreamExecutionValue(result);
+    const instance = result[Symbol.asyncIterator]();
+    await instance.next();
+    await instance.return!();
   });
 });

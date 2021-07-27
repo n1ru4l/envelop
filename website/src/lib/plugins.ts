@@ -1,3 +1,5 @@
+import type { Package } from '@guild-docs/server/npm';
+
 export const ALL_TAGS = [
   'tracing',
   'metrics',
@@ -11,20 +13,12 @@ export const ALL_TAGS = [
   'authentication',
   'authorization',
   'schema',
+  'subscription',
 ] as const;
 
 export type Tags = typeof ALL_TAGS[number];
 
-export type RawPlugin = {
-  identifier: string;
-  title: string;
-  npmPackage: string;
-  tags: Tags[];
-  readme?: string;
-  iconUrl?: string;
-};
-
-export const pluginsArr: RawPlugin[] = [
+export const pluginsArr: Package<Tags>[] = [
   {
     identifier: 'use-sentry',
     title: 'useSentry',
@@ -35,13 +29,43 @@ export const pluginsArr: RawPlugin[] = [
   {
     identifier: 'use-schema',
     title: 'useSchema',
+    githubReadme: {
+      repo: 'dotansimha/envelop',
+      path: 'packages/core/docs/use-schema.md',
+    },
     npmPackage: '@envelop/core',
     iconUrl: '/logo.png',
-    tags: ['core'],
+    tags: ['core', 'schema'],
+  },
+  {
+    identifier: 'use-async-schema',
+    title: 'useAsyncSchema',
+    githubReadme: {
+      repo: 'dotansimha/envelop',
+      path: 'packages/core/docs/use-async-schema.md',
+    },
+    npmPackage: '@envelop/core',
+    iconUrl: '/logo.png',
+    tags: ['core', 'schema'],
+  },
+  {
+    identifier: 'use-lazy-loaded-schema',
+    title: 'useLazyLoadedSchema',
+    githubReadme: {
+      repo: 'dotansimha/envelop',
+      path: 'packages/core/docs/use-lazy-loaded-schema.md',
+    },
+    npmPackage: '@envelop/core',
+    iconUrl: '/logo.png',
+    tags: ['core', 'schema'],
   },
   {
     identifier: 'use-error-handler',
     title: 'useErrorHandler',
+    githubReadme: {
+      repo: 'dotansimha/envelop',
+      path: 'packages/core/docs/use-error-handler.md',
+    },
     npmPackage: '@envelop/core',
     iconUrl: '/logo.png',
     tags: ['core', 'errors'],
@@ -49,6 +73,10 @@ export const pluginsArr: RawPlugin[] = [
   {
     identifier: 'use-masked-errors',
     title: 'useMaskedErrors',
+    githubReadme: {
+      repo: 'dotansimha/envelop',
+      path: 'packages/core/docs/use-masked-errors.md',
+    },
     npmPackage: '@envelop/core',
     iconUrl: '/logo.png',
     tags: ['core', 'errors', 'security'],
@@ -56,6 +84,10 @@ export const pluginsArr: RawPlugin[] = [
   {
     identifier: 'use-extend-context',
     title: 'useExtendContext',
+    githubReadme: {
+      repo: 'dotansimha/envelop',
+      path: 'packages/core/docs/use-extend-context.md',
+    },
     npmPackage: '@envelop/core',
     iconUrl: '/logo.png',
     tags: ['core', 'utilities'],
@@ -63,6 +95,10 @@ export const pluginsArr: RawPlugin[] = [
   {
     identifier: 'use-logger',
     title: 'useLogger',
+    githubReadme: {
+      repo: 'dotansimha/envelop',
+      path: 'packages/core/docs/use-logger.md',
+    },
     npmPackage: '@envelop/core',
     iconUrl: '/logo.png',
     tags: ['core', 'utilities'],
@@ -70,6 +106,10 @@ export const pluginsArr: RawPlugin[] = [
   {
     identifier: 'use-payload-formatter',
     title: 'usePayloadFormatter',
+    githubReadme: {
+      repo: 'dotansimha/envelop',
+      path: 'packages/core/docs/use-payload-formatter.md',
+    },
     npmPackage: '@envelop/core',
     iconUrl: '/logo.png',
     tags: ['core', 'utilities'],
@@ -77,6 +117,10 @@ export const pluginsArr: RawPlugin[] = [
   {
     identifier: 'use-timing',
     title: 'useTiming',
+    githubReadme: {
+      repo: 'dotansimha/envelop',
+      path: 'packages/core/docs/use-timing.md',
+    },
     npmPackage: '@envelop/core',
     iconUrl: '/logo.png',
     tags: ['core', 'tracing', 'utilities'],
@@ -114,14 +158,14 @@ export const pluginsArr: RawPlugin[] = [
     title: 'useDataLoader',
     npmPackage: '@envelop/dataloader',
     iconUrl: '/assets/logos/graphql.png',
-    tags: ['performance'],
+    tags: ['performance', 'caching'],
   },
   {
     identifier: 'use-apollo-tracing',
     title: 'useApolloTracing',
     npmPackage: '@envelop/apollo-tracing',
     iconUrl: '/assets/logos/apollo.png',
-    tags: ['devtool'],
+    tags: ['devtool', 'metrics'],
   },
   {
     identifier: 'use-open-telemetry',
@@ -154,7 +198,7 @@ export const pluginsArr: RawPlugin[] = [
   {
     identifier: 'use-rate-limiter',
     title: 'useRateLimiter',
-    npmPackage: '@envelop/graphql-middleware',
+    npmPackage: '@envelop/rate-limiter',
     iconUrl: '/assets/logos/rate_limiter.png',
     tags: ['schema', 'utilities', 'security'],
   },
@@ -229,10 +273,31 @@ export const pluginsArr: RawPlugin[] = [
     tags: ['security', 'authorization'],
   },
   {
+    identifier: 'use-extended-validation',
+    title: 'useExtendedValidation',
+    npmPackage: '@envelop/extended-validation',
+    iconUrl: '/assets/logos/graphql.png',
+    tags: ['devtool', 'utilities'],
+  },
+  {
     identifier: 'use-prometheus',
     title: 'usePrometheus',
     npmPackage: '@envelop/prometheus',
     iconUrl: '/assets/logos/prometheus.png',
     tags: ['metrics', 'errors'],
+  },
+  {
+    identifier: 'use-context-value-per-execute-subscription-event',
+    title: 'useContextValuePerExecuteSubscriptionEvent',
+    npmPackage: '@envelop/execute-subscription-event',
+    iconUrl: '/assets/logos/graphql.png',
+    tags: ['utilities', 'subscription'],
+  },
+  {
+    identifier: 'use-resource-limitations',
+    title: 'useResourceLimitations',
+    npmPackage: '@envelop/resource-limitations',
+    iconUrl: '/assets/logos/rate_limiter.png',
+    tags: ['schema', 'utilities', 'security'],
   },
 ];

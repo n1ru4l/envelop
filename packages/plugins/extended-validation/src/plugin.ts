@@ -1,10 +1,29 @@
 import { Plugin } from '@envelop/types';
-import { GraphQLError, TypeInfo, ValidationContext, visit, visitInParallel, visitWithTypeInfo } from 'graphql';
+import {
+  ExecutionArgs,
+  ExecutionResult,
+  GraphQLError,
+  TypeInfo,
+  ValidationContext,
+  visit,
+  visitInParallel,
+  visitWithTypeInfo,
+} from 'graphql';
 import { ExtendedValidationRule } from './common';
 
 const SYMBOL_EXTENDED_VALIDATION_RULES = Symbol('SYMBOL_EXTENDED_VALIDATION_RULES');
 
-export const useExtendedValidation = (options: { rules: ExtendedValidationRule[] }): Plugin => {
+export const useExtendedValidation = (options: {
+  rules: ExtendedValidationRule[];
+  /**
+   * Callback that is invoked if the extended validation yields any errors.
+   */
+  onValidationFailed?: (params: {
+    args: ExecutionArgs;
+    result: ExecutionResult;
+    setResult: (result: ExecutionResult) => void;
+  }) => void;
+}): Plugin => {
   let schemaTypeInfo: TypeInfo;
 
   return {
@@ -12,7 +31,7 @@ export const useExtendedValidation = (options: { rules: ExtendedValidationRule[]
       schemaTypeInfo = new TypeInfo(schema);
     },
     onParse({ context, extendContext }) {
-      const rules: ExtendedValidationRule[] = (context as any)?.[SYMBOL_EXTENDED_VALIDATION_RULES] ?? [];
+      const rules: ExtendedValidationRule[] = context?.[SYMBOL_EXTENDED_VALIDATION_RULES] ?? [];
       rules.push(...options.rules);
       extendContext({
         [SYMBOL_EXTENDED_VALIDATION_RULES]: rules,
@@ -34,10 +53,14 @@ export const useExtendedValidation = (options: { rules: ExtendedValidationRule[]
       }
 
       if (errors.length > 0) {
-        return setResultAndStopExecution({
+        let result: ExecutionResult = {
           data: null,
           errors,
-        });
+        };
+        if (options.onValidationFailed) {
+          options.onValidationFailed({ args, result, setResult: newResult => (result = newResult) });
+        }
+        return setResultAndStopExecution(result);
       }
     },
   };

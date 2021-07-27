@@ -2,6 +2,7 @@ import { shim as instrumentationApi } from 'newrelic';
 import { Plugin, OnResolverCalledHook } from '@envelop/types';
 import { print, FieldNode, Kind, OperationDefinitionNode } from 'graphql';
 import { Path } from 'graphql/jsutils/Path';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 enum AttributeName {
   COMPONENT_NAME = 'Envelop_NewRelic_Plugin',
@@ -158,6 +159,16 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
       return {
         onResolverCalled,
         onExecuteDone({ result }) {
+          if (isAsyncIterable(result)) {
+            operationSegment.end();
+            // eslint-disable-next-line no-console
+            console.warn(
+              `Plugin "newrelic" encountered a AsyncIterator which is not supported yet, so tracing data is not available for the operation.`
+            );
+
+            return;
+          }
+
           if (result.data && options.includeRawResult) {
             spanContext.addCustomAttribute(AttributeName.EXECUTION_RESULT, JSON.stringify(result));
           }

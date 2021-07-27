@@ -21,7 +21,7 @@ describe('useApolloTracing', () => {
     expect(result.data).toBeDefined();
     expect(result.extensions?.tracing).toBeDefined();
     expect(result.extensions?.tracing.duration).toBeGreaterThan(1000000000);
-    expect(result.extensions?.tracing.execution.resolvers[0].duration).toBeGreaterThan(1000000000);
+    expect(result.extensions?.tracing.execution.resolvers[0].duration).toBeGreaterThan(990000000);
     expect(result.extensions?.tracing.execution.resolvers[0].path).toEqual(['foo']);
     expect(result.extensions?.tracing.execution.resolvers[0].parentType).toBe('Query');
     expect(result.extensions?.tracing.execution.resolvers[0].fieldName).toBe('foo');

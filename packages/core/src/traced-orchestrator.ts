@@ -1,7 +1,8 @@
 import { DocumentNode, ExecutionArgs, GraphQLFieldResolver, GraphQLSchema, GraphQLTypeResolver, SubscriptionArgs } from 'graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
-import { ArbitraryObject } from 'packages/types/src/get-enveloped';
+import { ArbitraryObject } from '@envelop/types';
 import { EnvelopOrchestrator } from './orchestrator';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 const HR_TO_NS = 1e9;
 const NS_TO_MS = 1e6;
@@ -27,7 +28,7 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
 
   return {
     ...orchestrator,
-    init: (ctx = {} as any) => {
+    init: (ctx = {} as TInitialContext) => {
       ctx!._envelopTracing = ctx!._envelopTracing || {};
       const done = createTracer('init', ctx || {});
 
@@ -37,7 +38,7 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
         done();
       }
     },
-    parse: (ctx = {} as any) => {
+    parse: (ctx = {} as TInitialContext) => {
       ctx._envelopTracing = ctx._envelopTracing || {};
       const actualFn = orchestrator.parse(ctx);
 
@@ -51,7 +52,7 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
         }
       };
     },
-    validate: (ctx = {} as any) => {
+    validate: (ctx = {} as TInitialContext) => {
       ctx._envelopTracing = ctx._envelopTracing || {};
       const actualFn = orchestrator.validate(ctx);
 
@@ -94,8 +95,16 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
       try {
         const result = await orchestrator.execute(args);
         done();
-        result.extensions = result.extensions || {};
-        result.extensions.envelopTracing = args.contextValue._envelopTracing;
+
+        if (!isAsyncIterable(result)) {
+          result.extensions = result.extensions || {};
+          result.extensions.envelopTracing = args.contextValue._envelopTracing;
+        } else {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `"traceOrchestrator" encountered a AsyncIterator which is not supported yet, so tracing data is not available for the operation.`
+          );
+        }
 
         return result;
       } catch (e) {
@@ -135,7 +144,7 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
         done();
       }
     },
-    contextFactory: (ctx = {} as any) => {
+    contextFactory: (ctx = {} as TInitialContext) => {
       const actualFn = orchestrator.contextFactory(ctx);
 
       return async childCtx => {

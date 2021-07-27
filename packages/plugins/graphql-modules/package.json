@@ -1,6 +1,6 @@
 {
   "name": "@envelop/graphql-modules",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -32,7 +32,7 @@
   "dependencies": {},
   "devDependencies": {
     "reflect-metadata": "0.1.13",
-    "graphql-modules": "1.4.3",
+    "graphql-modules": "1.4.4",
     "bob-the-bundler": "1.4.1",
     "graphql": "15.5.1",
     "typescript": "4.3.5"

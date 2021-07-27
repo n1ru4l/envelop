@@ -50,18 +50,18 @@ export const options = buildOptions({
   'graphql-js': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: ['p(95)<=28'],
-    graphql_execute: ['p(95)<=1'],
+    http_req_duration: ['p(95)<=35'],
+    graphql_execute: ['p(95)<=2'],
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
     graphql_parse: ['p(95)<=1'],
     envelop_init: ['p(95)<=1'],
-    envelop_total: ['p(95)<=1'],
+    envelop_total: ['p(95)<=2'],
   },
   'envelop-just-cache': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: ['p(95)<=15'],
+    http_req_duration: ['p(95)<=23'],
     graphql_execute: ['p(95)<=1'],
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
@@ -72,23 +72,23 @@ export const options = buildOptions({
   'prom-tracing': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: ['p(95)<=40'],
-    graphql_execute: ['p(95)<=4'],
+    http_req_duration: ['p(95)<=52'],
+    graphql_execute: ['p(95)<=6'],
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
     graphql_parse: ['p(95)<=1'],
     envelop_init: ['p(95)<=1'],
-    envelop_total: ['p(95)<=4'],
+    envelop_total: ['p(95)<=6'],
   },
   'envelop-cache-and-no-internal-tracing': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: ['p(95)<=15'],
+    http_req_duration: ['p(95)<=18'],
   },
   'envelop-cache-jit': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: ['p(95)<=14'],
+    http_req_duration: ['p(95)<=16'],
     graphql_execute: ['p(95)<=1'],
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
@@ -177,6 +177,10 @@ export function run() {
 
   check(res, {
     no_errors: checkNoErrors,
-    expected_result: resp => 'id' in resp.json().data.authors[0],
+    expected_result: resp => {
+      const data = resp.json().data;
+
+      return data && data.authors[0].id;
+    },
   });
 }

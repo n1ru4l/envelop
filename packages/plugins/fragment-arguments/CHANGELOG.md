@@ -1,5 +1,32 @@
 # @envelop/fragment-arguments
 
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies [c24a8fd]
+- Updated dependencies [adca399]
+  - @envelop/types@1.0.1
+
+## 1.0.0
+
+### Major Changes
+
+- 40bc444: v1 major release for envelop packages
+
+### Patch Changes
+
+- Updated dependencies [dbb241d]
+- Updated dependencies [40bc444]
+  - @envelop/types@1.0.0
+
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies [a7321e1]
+  - @envelop/types@0.4.2
+
 ## 0.0.5
 
 ### Patch Changes

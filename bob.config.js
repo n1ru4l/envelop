@@ -1,3 +1,1 @@
-module.exports = {
-  ignore: ['@envelop/testing'],
-};
+module.exports = {};

@@ -11,7 +11,7 @@ and collaborate on GraphQL-related plugins while filling the missing pieces in G
 
 ## Key Concepts
 
-#### Plugins & community
+#### Plugins & Community
 
 The `envelop` plugins are small, reusable, shareable pieces of code, that can be shipped as NPM packages, or inlined within your codebase.
 
@@ -29,7 +29,7 @@ The core of `envelop` has zero dependencies and will only alter your GraphQL exe
 
 It can be integrated with any GraphQL server that follows [the execution phase, as defined in the GraphQL specification](https://spec.graphql.org/June2018/#sec-Executing-Requests) and lets you provide your own lifecycle methods.
 
-#### Wrap the entire pipeline
+#### Wrap the entire GraphQL Pipeline
 
 `envelop` wraps the entire pipeline of the GraphQL operation execution, so developers can hook into all the phases - `parse`, `validate`, context building, `execute` and more.
 
@@ -37,15 +37,15 @@ By offering hooks for the entire pipeline, we allow developers to create plugins
 
 Here is a breakdown of a few `envelop` plugins, and an explanation of how each of them contribute to the execution pipeline:
 
-- `useLogger` - hooks into “before” of all phases, and prints the execution parameters to the console using `console.log`.
-- `useTiming` - hooks into “before” and “after” of all phases, measures times, and then prints them.
-- `useParserCache` - hooks into “before“ and “after“ of the `parse` phase and implements caching based on the operation string.
-- `useGraphQLJit` - hooks into `execute` phase and replaces the `execute` function with GraphQL-Jit’s executor.
-- `usePersistedOperations` - hooks into `parse` and replaces the `parse` function with a function that maps a hash into a DocumentNode.
-- `useGenericAuth` - hooks into context building and resolves the current user from the GraphQL request, then hooks into the `execute` phase to verify the users identity.
-- `useOpenTelemetry` - hooks into all phases, execution and resolvers, and creates Spans for OpenTelemetry tracing.
+- [`useLogger`](/plugins/use-logger) - hooks into "before" of all phases, and prints the execution parameters to the console using `console.log`.
+- [`useTiming`](/plugins/use-timing) - hooks into "before" and "after" of all phases, measures times, and then prints them.
+- [`useParserCache`](/plugins/use-parser-cache) - hooks into "before" and "after" of the `parse` phase and implements caching based on the operation string.
+- [`useGraphQLJit`](/plugins/use-graphql-jit) - hooks into `execute` phase and replaces the `execute` function with GraphQL-Jit’s executor.
+- [`usePersistedOperations`](/plugins/use-persisted-operations) - hooks into `parse` and replaces the `parse` function with a function that maps a hash into a DocumentNode.
+- [`useGenericAuth`](/plugins/use-generic-auth) - hooks into context building and resolves the current user from the GraphQL request, then hooks into the `execute` phase to verify the users identity.
+- [`useOpenTelemetry`](/plugins/use-open-telemetry) - hooks into all phases, execution and resolvers, and creates Spans for OpenTelemetry tracing.
 
-#### No vendor-locking
+#### No Vendor Lock-In
 
 We do not aim to provide a complete, vendor lock-in suite, since we believe that developers should be able to adjust and replace any part of their application, at any time, without major implications or refactoring.
 
@@ -54,7 +54,7 @@ However, you can still create plugins that include specific logic for your HTTP 
 
 Envelop can be used with any environment (Node.js or browser) and any GraphQL workflow (client/server, client-side, or server-to-server).
 
-#### Features are just plugins
+#### Features are just Plugins
 
 Separating the execution workflow and the logic that it runs in each phase allows you to write reusable pieces of code.
 
@@ -70,7 +70,7 @@ By using plugins that extends your GraphQL execution, you can very easily add fe
 
 And <Text as="span" fontWeight="bold">much more</Text>, without having to write it explicitly every time for every project or microservice.
 
-#### Sharing Envelops
+#### Share Envelop instances
 
 Often, developers are looking for a way to reuse their server setup as a boilerplate/template with minimal effort.
 

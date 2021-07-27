@@ -1,4 +1,4 @@
-declare module 'graphql/jsutils/isAsyncIterable' {
-  function isAsyncIterable(input: unknown): input is AsyncIterable<any>;
+declare module 'graphql/jsutils/isAsyncIterable.js' {
+  function isAsyncIterable(input: unknown): input is AsyncIterableIterator<any>;
   export default isAsyncIterable;
 }

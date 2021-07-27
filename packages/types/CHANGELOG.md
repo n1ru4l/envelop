@@ -1,5 +1,28 @@
 # @envelop/types
 
+## 1.0.1
+
+### Patch Changes
+
+- c24a8fd: re-use graphql "execute" & "subscribe" types
+- adca399: add jsdoc comments for hook types
+
+## 1.0.0
+
+### Major Changes
+
+- 40bc444: v1 major release for envelop packages
+
+### Minor Changes
+
+- dbb241d: allow hooking into published subscribe values
+
+## 0.4.2
+
+### Patch Changes
+
+- a7321e1: Fix issues with compiled d.ts
+
 ## 0.4.1
 
 ### Patch Changes

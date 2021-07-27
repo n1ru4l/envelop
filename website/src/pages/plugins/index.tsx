@@ -2,26 +2,25 @@ import { compareDesc } from 'date-fns';
 import Head from 'next/head';
 import React from 'react';
 
+import { handlePushRoute, PackageInstall, RemoteGHMarkdown } from '@guild-docs/client';
 import { buildMultipleMDX, CompiledMDX } from '@guild-docs/server';
+import { getPackagesData, PackageWithStats } from '@guild-docs/server/npm';
 import { MarketplaceSearch } from '@theguild/components';
 import { IMarketplaceItemProps } from '@theguild/components/dist/types/components';
-import { handlePushRoute } from '@guild-docs/client';
+import type { Package } from '@guild-docs/server/npm';
 
 import { Markdown } from '../../components/Markdown';
-import { PackageInstall } from '../../components/packageInstall';
-import { RemoteGHMarkdown } from '../../components/RemoteGhMarkdown';
-import { getPluginsData } from '../../lib/pluginsData';
+import { ALL_TAGS, pluginsArr as packageList } from '../../lib/plugins';
 
-import type { PluginWithStats } from '../../lib/pluginsData';
 import type { GetStaticProps } from 'next';
-import { ALL_TAGS } from '../../lib/plugins';
-
 interface MarketplaceProps {
-  data: (PluginWithStats & { description: CompiledMDX; content: CompiledMDX })[];
+  data: (PackageWithStats & { description: CompiledMDX; content: CompiledMDX })[];
 }
 
 export const getStaticProps: GetStaticProps<MarketplaceProps> = async () => {
-  const pluginsData = await getPluginsData();
+  const pluginsData = await getPackagesData({
+    packageList,
+  });
 
   const data = await Promise.all(
     pluginsData.map(async plugin => {
@@ -29,6 +28,7 @@ export const getStaticProps: GetStaticProps<MarketplaceProps> = async () => {
         `${plugin.stats?.collected?.metadata?.version || ''}\n\n${plugin.stats?.collected?.metadata?.description || ''}`,
         plugin.readme || plugin.stats?.collected?.metadata?.readme || '',
       ]);
+
       return {
         ...plugin,
         description,
@@ -47,9 +47,9 @@ export const getStaticProps: GetStaticProps<MarketplaceProps> = async () => {
 };
 
 export default function Marketplace({ data }: MarketplaceProps) {
-  const marketplaceItems: Array<IMarketplaceItemProps & { raw: PluginWithStats }> = React.useMemo(() => {
+  const marketplaceItems: Array<IMarketplaceItemProps & { raw: PackageWithStats }> = React.useMemo(() => {
     if (data && data.length > 0) {
-      return data.map<IMarketplaceItemProps & { raw: PluginWithStats }>(rawPlugin => {
+      return data.map<IMarketplaceItemProps & { raw: PackageWithStats }>(rawPlugin => {
         const linkHref = `/plugins/${rawPlugin.identifier}`;
         return {
           raw: rawPlugin,
@@ -79,7 +79,7 @@ export default function Marketplace({ data }: MarketplaceProps) {
             },
             content: (
               <>
-                <PackageInstall packageName={rawPlugin.npmPackage} />
+                <PackageInstall packages={rawPlugin.npmPackage} />
                 <RemoteGHMarkdown
                   directory={rawPlugin.stats?.collected?.metadata?.repository?.directory}
                   repo={rawPlugin.stats?.collected?.metadata?.links?.repository}
@@ -117,7 +117,7 @@ export default function Marketplace({ data }: MarketplaceProps) {
   const trendingItems = React.useMemo(() => {
     if (marketplaceItems && marketplaceItems.length > 0) {
       return [...marketplaceItems]
-        .filter(i => i.raw.stats?.collected?.npm.downloads)
+        .filter(i => i.raw.stats?.collected?.npm.downloads && i.raw.npmPackage !== '@envelop/core')
         .sort((a, b) => {
           const aMonthlyDownloads = a.raw.stats?.collected.npm.downloads[2].count || 0;
           const bMonthlyDownloads = b.raw.stats?.collected.npm.downloads[2].count || 0;
@@ -168,19 +168,19 @@ export default function Marketplace({ data }: MarketplaceProps) {
           title: 'Trending',
           items: trendingItems,
           placeholder: '0 items',
-          pagination: 10,
+          pagination: 8,
         }}
         secondaryList={{
           title: 'Recently Updated',
           items: recentlyUpdatedItems,
           placeholder: '0 items',
-          pagination: 10,
+          pagination: 8,
         }}
         queryList={{
           title: 'Search Results',
           items: marketplaceItems,
           placeholder: 'No results for {query}',
-          pagination: 10,
+          pagination: 8,
         }}
       />
     </>

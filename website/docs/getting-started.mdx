@@ -8,7 +8,7 @@ title: Getting Started
 
 Start by adding the core of `envelop` to your codebase:
 
-<PackageInstall packageName="graphql @envelop/core" />
+<PackageInstall packages="graphql @envelop/core" />
 
 ### Create your Envelop
 
@@ -16,13 +16,16 @@ Then, create a simple Envelop based on your GraphQL schema:
 
 ```ts
 import { envelop, useSchema } from '@envelop/core';
+import { buildSchema } from 'graphql';
 
-const mySchema = buildSchema( ... ); // GraphQLSchema
+const mySchema = buildSchema(/* GraphQL */ `
+  type Query {
+    hello: String
+  }
+`);
 
 export const getEnveloped = envelop({
-  plugins: [
-    useSchema(mySchema)
-  ],
+  plugins: [useSchema(mySchema)],
 });
 ```
 

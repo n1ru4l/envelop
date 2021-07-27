@@ -1,5 +1,17 @@
 # @envelop/extended-validation
 
+## 1.1.0
+
+### Minor Changes
+
+- 7c897ae: Added onValidationFailed callback
+
+## 1.0.0
+
+### Major Changes
+
+- 40bc444: v1 major release for envelop packages
+
 ## 0.2.2
 
 ### Patch Changes

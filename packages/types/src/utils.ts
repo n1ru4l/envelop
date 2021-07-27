@@ -27,4 +27,5 @@ export type Unarray<T> = T extends Array<infer U> ? U : T;
 
 export type ArbitraryObject = Record<string | number | symbol, any>;
 export type PromiseOrValue<T> = T | Promise<T>;
+export type AsyncIterableIteratorOrValue<T> = T | AsyncIterableIterator<T>;
 export type Maybe<T> = T | null | undefined;

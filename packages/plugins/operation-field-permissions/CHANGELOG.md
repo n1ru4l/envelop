@@ -1,5 +1,37 @@
 # @envelop/operation-field-permissions
 
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies [c24a8fd]
+- Updated dependencies [7c897ae]
+- Updated dependencies [f45c0bf]
+- Updated dependencies [8021229]
+- Updated dependencies [adca399]
+  - @envelop/core@1.0.1
+  - @envelop/extended-validation@1.1.0
+
+## 1.0.0
+
+### Major Changes
+
+- 40bc444: v1 major release for envelop packages
+
+### Patch Changes
+
+- Updated dependencies [dbb241d]
+- Updated dependencies [40bc444]
+  - @envelop/core@1.0.0
+  - @envelop/extended-validation@1.0.0
+
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies [bcbaccb]
+  - @envelop/core@0.5.2
+
 ## 0.0.5
 
 ### Patch Changes
