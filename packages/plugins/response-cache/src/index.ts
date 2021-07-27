@@ -2,6 +2,7 @@ import { Plugin } from '@envelop/types';
 import LRU from 'lru-cache';
 import { createHash } from 'crypto';
 import { DocumentNode, OperationDefinitionNode, FieldNode, SelectionNode, visit, parse, print } from 'graphql';
+import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 type Listener = (typename: string, id?: string | number) => void;
 
@@ -114,6 +115,12 @@ export function useResponseCache({
       if (isMutation(ctx.args.document)) {
         return {
           onExecuteDone({ result }) {
+            if (isAsyncIterable(result)) {
+              // eslint-disable-next-line no-console
+              console.warn('[useResponseCache] AsyncIterable returned from execute is currently unsupported.');
+              return;
+            }
+
             const entitiesToRemove = new Set<string>();
 
             collectEntity(result.data, (typename, id) => {
@@ -141,6 +148,12 @@ export function useResponseCache({
 
         return {
           onExecuteDone({ result }) {
+            if (isAsyncIterable(result)) {
+              // eslint-disable-next-line no-console
+              console.warn('[useResponseCache] AsyncIterable returned from execute is currently unsupported.');
+              return;
+            }
+
             let skip = false;
             const collectedEntities: [string, string | undefined][] = [];
 
