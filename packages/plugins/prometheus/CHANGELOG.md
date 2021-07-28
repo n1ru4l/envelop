@@ -1,5 +1,14 @@
 # @envelop/prometheus
 
+## 1.0.2
+
+### Patch Changes
+
+- 94db02d: Update usage of plugins to use the correct `isAsyncIterable` and new helper `handleStreamOrSingleExecutionResult`
+- Updated dependencies [94db02d]
+- Updated dependencies [94db02d]
+  - @envelop/core@1.0.2
+
 ## 1.0.1
 
 ### Patch Changes

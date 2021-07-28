@@ -1,5 +1,11 @@
 # @envelop/graphql-jit
 
+## 1.1.0
+
+### Minor Changes
+
+- cc71515: Added `enableIf` config flag to allow flexibility on jit executor
+
 ## 1.0.0
 
 ### Major Changes

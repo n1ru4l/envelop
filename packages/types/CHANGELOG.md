@@ -1,5 +1,12 @@
 # @envelop/types
 
+## 1.0.2
+
+### Patch Changes
+
+- 94db02d: Added new helper `handleStreamOrSingleExecutionResult`
+- 94db02d: Update usage of plugins to use the correct `isAsyncIterable` and new helper `handleStreamOrSingleExecutionResult`
+
 ## 1.0.1
 
 ### Patch Changes

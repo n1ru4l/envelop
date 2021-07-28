@@ -1,6 +1,6 @@
 {
   "name": "@envelop/prometheus",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "repository": {
@@ -30,7 +30,7 @@
     "prepack": "bob prepack"
   },
   "devDependencies": {
-    "@envelop/core": "1.0.1",
+    "@envelop/core": "1.0.2",
     "prom-client": "13.1.0",
     "@graphql-tools/schema": "7.1.5",
     "bob-the-bundler": "1.4.1",
@@ -38,7 +38,7 @@
     "typescript": "4.3.5"
   },
   "peerDependencies": {
-    "@envelop/core": "^1.0.1",
+    "@envelop/core": "^1.0.2",
     "prom-client": "^13",
     "graphql": "^14.0.0 || ^15.0.0"
   },
