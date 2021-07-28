@@ -23,8 +23,8 @@ import {
   OnExecuteDoneHookResultOnEndHook,
   ExecuteFunction,
   AsyncIterableIteratorOrValue,
+  isAsyncIterable,
 } from '@envelop/types';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 import {
   DocumentNode,
   execute,

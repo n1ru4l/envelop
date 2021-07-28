@@ -163,8 +163,50 @@ You can return an `object` from that function, with the following fields:
 
 Triggered when the execution of the operation is done.
 
-- `result` - the execution result.
+- `result` - the execution result, or AsyncIterable in case of stream response.
 - `setResult` - replaces the result. can either be with data or errors.
+
+Since `envelop` aims to support stream responses (for live queries, or `@stream/@defer`), the `result` might be an `AsyncIterable` of multiple execution results.
+
+If you wish you plugin to support this, please make sure to use the `handleStreamOrSingleExecutionResult` helper, like that:
+
+```ts
+import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/types';
+
+const myPlugin = (): Plugin => {
+  return {
+    onExecute({ args }) {
+      return {
+        onExecuteDone: payload => {
+          return handleStreamOrSingleExecutionResult(payload, ({ result, setResult }) => {
+            // Here you can access result, and modify it with setResult if needed
+          });
+        },
+      };
+    },
+  };
+};
+```
+
+Alternately, if you don't need to support stream responses, you can use the `isAsyncIterable` function as type-guard:
+
+```ts
+import { Plugin, isAsyncIterable } from '@envelop/types';
+
+const myPlugin = (): Plugin => {
+  return {
+    onExecute({ args }) {
+      return {
+        onExecuteDone: ({ result, setResult }) => {
+          if (isAsyncIterable(result)) {
+            // Here you can access result, and modify it with setResult if needed
+          }
+        },
+      };
+    },
+  };
+};
+```
 
 **`onResolverCalled` API**:
 

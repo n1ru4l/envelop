@@ -1,6 +1,5 @@
-import { Plugin } from '@envelop/types';
+import { handleStreamOrSingleExecutionResult, Plugin } from '@envelop/types';
 import { ExecutionResult, GraphQLError } from 'graphql';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 
 export class EnvelopError extends GraphQLError {
   constructor(message: string, extensions?: Record<string, any>) {
@@ -37,16 +36,8 @@ export const useMaskedErrors = (opts?: UseMaskedErrorsOpts): Plugin => {
   return {
     onExecute() {
       return {
-        onExecuteDone({ result, setResult }) {
-          if (isAsyncIterable(result)) {
-            return {
-              onNext: ({ result, setResult }) => {
-                handleResult({ result, setResult });
-              },
-            };
-          }
-          handleResult({ result, setResult });
-          return undefined;
+        onExecuteDone(payload) {
+          return handleStreamOrSingleExecutionResult(payload, handleResult);
         },
       };
     },
