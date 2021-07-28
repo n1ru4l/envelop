@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import { Plugin } from '@envelop/types';
-import { GraphQLError, DocumentNode, Source } from 'graphql';
+import { DefaultContext, Plugin } from '@envelop/types';
+import { GraphQLError, DocumentNode, Source, ExecutionArgs } from 'graphql';
 import { compileQuery, isCompiledQuery, CompilerOptions } from 'graphql-jit';
 import lru from 'tiny-lru';
 
@@ -10,6 +10,13 @@ const DEFAULT_TTL = 3600000;
 export const useGraphQlJit = (
   compilerOptions: Partial<CompilerOptions> = {},
   pluginOptions: {
+    /**
+     * A helper function that helps to conditionally enable JIT based on incoming request
+     */
+    enableIf?: (executionArgs: ExecutionArgs) => boolean;
+    /**
+     * Callback triggered in case of GraphQL Jit compilation error.
+     */
     onError?: (r: ReturnType<typeof compileQuery>) => void;
     /**
      * Maximum size of LRU Cache
@@ -40,39 +47,40 @@ export const useGraphQlJit = (
       };
     },
     onExecute({ args, setExecuteFn }) {
-      setExecuteFn(function jitExecutor() {
-        let compiledQuery: ReturnType<typeof compileQuery> | undefined;
+      if (!pluginOptions.enableIf || (pluginOptions.enableIf && pluginOptions.enableIf(args))) {
+        setExecuteFn(function jitExecutor() {
+          let compiledQuery: ReturnType<typeof compileQuery> | undefined;
+          const documentSource = documentSourceMap.get(args.document);
 
-        const documentSource = documentSourceMap.get(args.document);
+          if (documentSource) compiledQuery = jitCache.get(documentSource);
 
-        if (documentSource) compiledQuery = jitCache.get(documentSource);
+          if (!compiledQuery) {
+            compiledQuery = compileQuery(args.schema, args.document, args.operationName ?? undefined, compilerOptions);
 
-        if (!compiledQuery) {
-          compiledQuery = compileQuery(args.schema, args.document, args.operationName ?? undefined, compilerOptions);
-
-          if (documentSource) jitCache.set(documentSource, compiledQuery);
-        }
-
-        if (!isCompiledQuery(compiledQuery)) {
-          if (pluginOptions?.onError) {
-            try {
-              pluginOptions.onError(compiledQuery);
-            } catch (e) {
-              return {
-                errors: [e as GraphQLError],
-              };
-            }
-          } else {
-            console.error(compiledQuery);
+            if (documentSource) jitCache.set(documentSource, compiledQuery);
           }
 
-          return {
-            errors: [new GraphQLError('Error compiling query')],
-          };
-        } else {
-          return compiledQuery.query(args.rootValue, args.contextValue, args.variableValues);
-        }
-      });
+          if (!isCompiledQuery(compiledQuery)) {
+            if (pluginOptions?.onError) {
+              try {
+                pluginOptions.onError(compiledQuery);
+              } catch (e) {
+                return {
+                  errors: [e as GraphQLError],
+                };
+              }
+            } else {
+              console.error(compiledQuery);
+            }
+
+            return {
+              errors: [new GraphQLError('Error compiling query')],
+            };
+          } else {
+            return compiledQuery.query(args.rootValue, args.contextValue, args.variableValues);
+          }
+        });
+      }
     },
   };
 };

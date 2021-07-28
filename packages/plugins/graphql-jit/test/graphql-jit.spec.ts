@@ -33,6 +33,50 @@ describe('useGraphQlJit', () => {
     expect(onExecuteSpy.mock.calls[0][0].executeFn.name).toBe('jitExecutor');
   });
 
+  it('Should not override execute function when enableIf returns false', async () => {
+    const onExecuteSpy = jest.fn();
+
+    const testInstance = createTestkit(
+      [
+        useGraphQlJit(
+          {},
+          {
+            enableIf: () => false,
+          }
+        ),
+        {
+          onExecute: onExecuteSpy,
+        },
+      ],
+      schema
+    );
+
+    await testInstance.execute(`query { test }`);
+
+    expect(onExecuteSpy).toHaveBeenCalledTimes(1);
+    expect(onExecuteSpy.mock.calls[0][0].executeFn).toBe(execute);
+    expect(onExecuteSpy.mock.calls[0][0].executeFn.name).not.toBe('jitExecutor');
+  });
+  it('Should override execute function', async () => {
+    const onExecuteSpy = jest.fn();
+
+    const testInstance = createTestkit(
+      [
+        useGraphQlJit(),
+        {
+          onExecute: onExecuteSpy,
+        },
+      ],
+      schema
+    );
+
+    await testInstance.execute(`query { test }`);
+
+    expect(onExecuteSpy).toHaveBeenCalledTimes(1);
+    expect(onExecuteSpy.mock.calls[0][0].executeFn).not.toBe(execute);
+    expect(onExecuteSpy.mock.calls[0][0].executeFn.name).toBe('jitExecutor');
+  });
+
   it('Should execute correctly', async () => {
     const testInstance = createTestkit([useGraphQlJit()], schema);
     const result = await testInstance.execute(`query { test }`);

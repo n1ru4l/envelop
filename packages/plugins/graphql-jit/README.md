@@ -29,7 +29,28 @@ const getEnveloped = envelop({
 });
 ```
 
-#### `
+## Conditional Execution
+
+If you wish to conditionally use the JIT executor based on the incoming request, you can use `enableIf` config flag and return a `boolean` based on the `ExecutionArgs`:
+
+```ts
+import { envelop } from '@envelop/core';
+import { useGraphQlJit } from '@envelop/graphql-jit';
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useGraphQlJit(
+      {
+        // your compiler options here. See https://github.com/zalando-incubator/graphql-jit#compiledquery--compilequeryschema-document-operationname-compileroptions
+      },
+      {
+        enableIf: executionArgs => executionArgs.contextValue.shouldUseJit,
+      }
+    ),
+  ],
+});
+```
 
 ## Notes
 
