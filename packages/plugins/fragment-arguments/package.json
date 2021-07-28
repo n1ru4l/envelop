@@ -1,6 +1,6 @@
 {
   "name": "@envelop/fragment-arguments",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "repository": {
@@ -29,7 +29,7 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "@envelop/types": "1.0.1"
+    "@envelop/types": "1.0.2"
   },
   "devDependencies": {
     "@types/common-tags": "1.8.1",

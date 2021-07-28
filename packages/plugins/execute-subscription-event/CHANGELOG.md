@@ -1,5 +1,11 @@
 # @envelop/execute-subscription-event
 
+## 0.0.3
+
+### Patch Changes
+
+- 94db02d: Update usage of plugins to use the correct `isAsyncIterable` and new helper `handleStreamOrSingleExecutionResult`
+
 ## 0.0.2
 
 ### Patch Changes
