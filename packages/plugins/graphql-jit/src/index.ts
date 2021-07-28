@@ -13,7 +13,7 @@ export const useGraphQlJit = (
     /**
      * A helper function that helps to conditionally enable JIT based on incoming request
      */
-    enableIf?: (executionArgs: ExecutionArgs) => boolean;
+    enableIf?: (executionArgs: ExecutionArgs) => boolean | Promise<boolean>;
     /**
      * Callback triggered in case of GraphQL Jit compilation error.
      */
@@ -46,8 +46,8 @@ export const useGraphQlJit = (
         documentSourceMap.set(result, key);
       };
     },
-    onExecute({ args, setExecuteFn }) {
-      if (!pluginOptions.enableIf || (pluginOptions.enableIf && pluginOptions.enableIf(args))) {
+    async onExecute({ args, setExecuteFn }) {
+      if (!pluginOptions.enableIf || (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))) {
         setExecuteFn(function jitExecutor() {
           let compiledQuery: ReturnType<typeof compileQuery> | undefined;
           const documentSource = documentSourceMap.get(args.document);
