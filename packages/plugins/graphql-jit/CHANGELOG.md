@@ -1,5 +1,11 @@
 # @envelop/graphql-jit
 
+## 1.1.1
+
+### Patch Changes
+
+- abae5a2: Allow `enableIf` to return Promise
+
 ## 1.1.0
 
 ### Minor Changes
