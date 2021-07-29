@@ -55,9 +55,15 @@ interface Options<C = any> {
    */
   ignoredTypes?: string[];
   /**
-   * List of fields that are used to identify a entity. Defaults to `["id"]`
+   * List of fields that are used to identify a entity.
+   * Defaults to `["id"]`
    */
   idFields?: Array<string>;
+  /**
+   * Whether the mutation execution result should be used for invalidating resources.
+   * Defaults to `true`
+   */
+  invalidateViaMutation?: boolean;
 }
 
 const schemaCache = new WeakMap<GraphQLSchema, GraphQLSchema>();
@@ -70,6 +76,7 @@ export function useResponseCache({
   ttlPerType = {},
   ttlPerSchemaCoordinate,
   idFields = ['id'],
+  invalidateViaMutation = true,
 }: Options = {}): Plugin {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
 
@@ -100,6 +107,10 @@ export function useResponseCache({
       });
 
       if (isMutation(ctx.args.document)) {
+        if (invalidateViaMutation === false) {
+          return;
+        }
+
         return {
           onExecuteDone({ result }) {
             if (isAsyncIterable(result)) {
