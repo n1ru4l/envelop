@@ -1,19 +1,30 @@
-import { Maybe, Plugin, isAsyncIterable } from '@envelop/types';
+import { Plugin, isAsyncIterable } from '@envelop/types';
+import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import { createHash } from 'crypto';
 import {
   DocumentNode,
   OperationDefinitionNode,
-  FieldNode,
-  SelectionNode,
   visit,
-  parse,
   print,
   TypeInfo,
   visitWithTypeInfo,
+  GraphQLSchema,
+  defaultFieldResolver,
 } from 'graphql';
-import type { Cache, CacheInvalidationRecord } from './cache';
+import type { Cache, CacheResourceRecord } from './cache';
 import { createInMemoryCache } from './in-memory-cache';
 export { createInMemoryCache } from './in-memory-cache';
+
+const contextSymbol = Symbol('responseCache');
+
+type Context = {
+  identifier: Map<string, CacheResourceRecord>;
+  types: Set<string>;
+  ttl: number;
+  ttlPerType: Record<string, number>;
+  ignoredTypesMap: Set<string>;
+  skip: boolean;
+};
 
 interface Options<C = any> {
   cache?: Cache;
@@ -43,7 +54,13 @@ interface Options<C = any> {
    * Skip caching of following the types.
    */
   ignoredTypes?: string[];
+  /**
+   * List of fields that are used to identify a entity. Defaults to `["id"]`
+   */
+  idFields?: Array<string>;
 }
+
+const schemaCache = new WeakMap<GraphQLSchema, GraphQLSchema>();
 
 export function useResponseCache({
   cache = createInMemoryCache(),
@@ -52,14 +69,36 @@ export function useResponseCache({
   ignoredTypes = [],
   ttlPerType = {},
   ttlPerSchemaCoordinate,
+  idFields = ['id'],
 }: Options = {}): Plugin {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
 
   return {
-    onParse(ctx) {
-      ctx.setParseFn((source, options) => addTypenameToDocument(parse(source, options)));
+    onSchemaChange(ctx) {
+      let schema = schemaCache.get(ctx.schema);
+      if (schema == null) {
+        schema = applyResponseCacheLogic(ctx.schema, idFields);
+        schemaCache.set(ctx.schema, schema);
+      }
+      ctx.replaceSchema(schema);
     },
     async onExecute(ctx) {
+      const identifier = new Map<string, CacheResourceRecord>();
+      const types = new Set<string>();
+
+      const context: Context = {
+        identifier,
+        types,
+        ttl,
+        ttlPerType,
+        ignoredTypesMap,
+        skip: false,
+      };
+
+      ctx.extendContext({
+        [contextSymbol]: context,
+      });
+
       if (isMutation(ctx.args.document)) {
         return {
           onExecuteDone({ result }) {
@@ -69,15 +108,7 @@ export function useResponseCache({
               return;
             }
 
-            const entitiesToRemove = new Set<CacheInvalidationRecord>();
-
-            collectEntity(result.data, (typename, id) => {
-              if (id != null) {
-                entitiesToRemove.add({ typename, id });
-              }
-            });
-
-            cache.invalidate(entitiesToRemove);
+            cache.invalidate(context.identifier.values());
           },
         };
       } else {
@@ -96,8 +127,6 @@ export function useResponseCache({
           return;
         }
 
-        let ttlForOperation = ttl;
-
         if (ttlPerSchemaCoordinate) {
           const typeInfo = new TypeInfo(ctx.args.schema);
           visit(
@@ -108,7 +137,7 @@ export function useResponseCache({
                 if (parentType) {
                   const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
                   if (schemaCoordinate in ttlPerSchemaCoordinate) {
-                    ttlForOperation = Math.min(ttlForOperation, ttlPerSchemaCoordinate[schemaCoordinate]);
+                    context.ttl = Math.min(context.ttl, ttlPerSchemaCoordinate[schemaCoordinate]);
                   }
                 }
               },
@@ -124,26 +153,11 @@ export function useResponseCache({
               return;
             }
 
-            let skip = false;
-            const collectedEntities: [string, Maybe<string>][] = [];
-
-            collectEntity(result.data, (typename, id) => {
-              skip = skip || ignoredTypesMap.has(typename);
-
-              if (typename in ttlPerType) {
-                ttlForOperation = Math.min(ttlForOperation, ttlPerType[typename]);
-              }
-
-              if (!skip) {
-                collectedEntities.push([typename, id]);
-              }
-            });
-
-            if (skip) {
+            if (context.skip) {
               return;
             }
 
-            cache.set(operationId, result, collectedEntities, ttlForOperation);
+            cache.set(operationId, result, identifier.values(), context.ttl);
           },
         };
       }
@@ -159,69 +173,45 @@ function isMutation(doc: DocumentNode) {
   return doc.definitions.find(isOperationDefinition)!.operation === 'mutation';
 }
 
-function collectEntity(data: any, add: (typename: string, id?: string) => void) {
-  if (!data) {
-    return;
-  }
-
-  if (typeof data === 'object') {
-    for (const field in data) {
-      const value = data[field];
-
-      if (field === '__typename') {
-        add(value);
-
-        if ('id' in data) {
-          add(value, data.id);
-        }
-      } else {
-        collectEntity(value, add);
-      }
-    }
-  } else if (Array.isArray(data)) {
-    for (const obj of data) {
-      collectEntity(obj, add);
-    }
+function runWith<T>(input: T | Promise<T>, callback: (value: T) => void) {
+  if (input instanceof Promise) {
+    input.then(callback, () => undefined);
+  } else {
+    callback(input);
   }
 }
 
-const TYPENAME_FIELD: FieldNode = {
-  kind: 'Field',
-  name: {
-    kind: 'Name',
-    value: '__typename',
-  },
-};
-
-function addTypenameToDocument(doc: DocumentNode): DocumentNode {
-  return visit(doc, {
-    SelectionSet: {
-      enter(node, _key, parent) {
-        if (parent && isOperationDefinition(parent)) {
-          return;
-        }
-
-        if (!node.selections) {
-          return;
-        }
-
-        const skip = node.selections.some(selection => {
-          return isField(selection) && (selection.name.value === '__typename' || selection.name.value.lastIndexOf('__', 0) === 0);
-        });
-
-        if (skip) {
-          return;
-        }
-
+function applyResponseCacheLogic(schema: GraphQLSchema, idFieldNames: Array<string>): GraphQLSchema {
+  return mapSchema(schema, {
+    [MapperKind.OBJECT_FIELD](fieldConfig, fieldName, typename) {
+      if (idFieldNames.includes(fieldName)) {
         return {
-          ...node,
-          selections: [...node.selections, TYPENAME_FIELD],
+          ...fieldConfig,
+          resolve(src, args, context, info) {
+            const result = (fieldConfig.resolve ?? defaultFieldResolver)(src, args, context, info);
+            runWith(result, (id: string) => {
+              if (contextSymbol in context) {
+                const ctx: Context = context[contextSymbol];
+                if (ctx.ignoredTypesMap.has(typename)) {
+                  ctx.skip = true;
+                }
+                if (ctx.skip === true) {
+                  ctx.skip = true;
+                  return;
+                }
+                ctx.identifier.set(`${typename}:${id}`, { typename, id });
+                ctx.types.add(typename);
+                if (typename in ctx.ttlPerType) {
+                  ctx.ttl = Math.min(ctx.ttl, ctx.ttlPerType[typename]);
+                }
+              }
+            });
+            return result;
+          },
         };
-      },
+      }
+
+      return fieldConfig;
     },
   });
-}
-
-function isField(selection: SelectionNode): selection is FieldNode {
-  return selection.kind === 'Field';
 }

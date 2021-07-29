@@ -56,8 +56,7 @@ export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
       responseToEntity.set(operationId, new Set());
 
       responseToEntity.set(operationId, new Set());
-
-      for (const [typename, id] of collectedEntities) {
+      for (const { typename, id } of collectedEntities) {
         if (!entityToResponse.has(typename)) {
           entityToResponse.set(typename, new Set());
         }
