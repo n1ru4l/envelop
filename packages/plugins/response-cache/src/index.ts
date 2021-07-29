@@ -1,4 +1,4 @@
-import { Maybe, Plugin } from '@envelop/types';
+import { Maybe, Plugin, isAsyncIterable } from '@envelop/types';
 import { createHash } from 'crypto';
 import {
   DocumentNode,
@@ -11,7 +11,6 @@ import {
   TypeInfo,
   visitWithTypeInfo,
 } from 'graphql';
-import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
 import { Cache } from './cache';
 import { createInMemoryCache } from './in-memory-cache';
 export { createInMemoryCache } from './in-memory-cache';
