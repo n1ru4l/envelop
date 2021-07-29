@@ -11,16 +11,9 @@ import {
   TypeInfo,
   visitWithTypeInfo,
 } from 'graphql';
-import { Cache } from './cache';
+import type { Cache, CacheInvalidationRecord } from './cache';
 import { createInMemoryCache } from './in-memory-cache';
 export { createInMemoryCache } from './in-memory-cache';
-
-type Listener = (typename: string, id?: string | number) => void;
-
-interface Controller {
-  purge(typename: string, id?: string | number): void;
-  ɵregister(listener: Listener): void;
-}
 
 interface Options<C = any> {
   cache?: Cache;
@@ -39,10 +32,6 @@ interface Options<C = any> {
    */
   ttlPerSchemaCoordinate?: Record<string, number>;
   /**
-   * Allows to manually control the cache. Use `createController` to create a controller and pass it here.
-   */
-  controller?: Controller;
-  /**
    * Allows to cache responses based on the resolved session id.
    * Return a unique value for each session.
    * Return `null` or `undefined` to mark the session as public/global.
@@ -56,34 +45,14 @@ interface Options<C = any> {
   ignoredTypes?: string[];
 }
 
-export function createController(): Controller {
-  let listener: Listener = () => {};
-
-  return {
-    purge(typename, id) {
-      listener(typename, id);
-    },
-    ɵregister(audience) {
-      listener = audience;
-    },
-  };
-}
-
 export function useResponseCache({
   cache = createInMemoryCache(),
   ttl = Infinity,
-  controller,
   session = () => null,
   ignoredTypes = [],
   ttlPerType = {},
   ttlPerSchemaCoordinate,
 }: Options = {}): Plugin {
-  if (controller) {
-    controller.ɵregister((typename, id) => {
-      cache.invalidate([typeof id !== 'undefined' ? makeId(typename, id) : typename]);
-    });
-  }
-
   const ignoredTypesMap = new Set<string>(ignoredTypes);
 
   return {
@@ -100,11 +69,11 @@ export function useResponseCache({
               return;
             }
 
-            const entitiesToRemove = new Set<string>();
+            const entitiesToRemove = new Set<CacheInvalidationRecord>();
 
             collectEntity(result.data, (typename, id) => {
-              if (typeof id !== 'undefined') {
-                entitiesToRemove.add(makeId(typename, id));
+              if (id != null) {
+                entitiesToRemove.add({ typename, id });
               }
             });
 
@@ -166,11 +135,7 @@ export function useResponseCache({
               }
 
               if (!skip) {
-                let entityId: Maybe<string> = null;
-                if (id != null) {
-                  entityId = makeId(typename, id);
-                }
-                collectedEntities.push([typename, entityId]);
+                collectedEntities.push([typename, id]);
               }
             });
 
@@ -192,10 +157,6 @@ function isOperationDefinition(node: any): node is OperationDefinitionNode {
 
 function isMutation(doc: DocumentNode) {
   return doc.definitions.find(isOperationDefinition)!.operation === 'mutation';
-}
-
-function makeId(typename: string, id: number | string): string {
-  return `${typename}:${id}`;
 }
 
 function collectEntity(data: any, add: (typename: string, id?: string) => void) {

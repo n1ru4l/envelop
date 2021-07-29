@@ -1,5 +1,5 @@
 import LRU from 'lru-cache';
-import { Cache } from './cache';
+import type { Cache } from './cache';
 
 export type InMemoryCacheParameter = {
   /**
@@ -57,7 +57,7 @@ export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
 
       responseToEntity.set(operationId, new Set());
 
-      for (const [typename, entityId] of collectedEntities) {
+      for (const [typename, id] of collectedEntities) {
         if (!entityToResponse.has(typename)) {
           entityToResponse.set(typename, new Set());
         }
@@ -67,7 +67,8 @@ export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
         // operation => typename
         responseToEntity.get(operationId)!.add(typename);
 
-        if (entityId != null) {
+        if (id != null) {
+          const entityId = makeId(typename, id);
           if (!entityToResponse.has(entityId)) {
             entityToResponse.set(entityId, new Set());
           }
@@ -83,9 +84,13 @@ export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
       return cachedResponses.get(operationId) ?? null;
     },
     invalidate(entitiesToRemove) {
-      for (const entity of entitiesToRemove) {
-        purgeEntity(entity);
+      for (const { typename, id } of entitiesToRemove) {
+        purgeEntity(id != null ? makeId(typename, id) : typename);
       }
     },
   };
 };
+
+function makeId(typename: string, id: number | string): string {
+  return `${typename}:${id}`;
+}

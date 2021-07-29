@@ -1,6 +1,6 @@
 import { createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { useResponseCache, createController } from '../src';
+import { useResponseCache, createInMemoryCache } from '../src';
 
 describe('useResponseCache', () => {
   beforeEach(() => jest.useRealTimers());
@@ -220,8 +220,8 @@ describe('useResponseCache', () => {
       },
     });
 
-    const controller = createController();
-    const testInstance = createTestkit([useResponseCache({ controller })], schema);
+    const cache = createInMemoryCache();
+    const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -240,7 +240,7 @@ describe('useResponseCache', () => {
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
 
-    controller.purge('Comment', 2);
+    cache.invalidate([{ typename: 'Comment', id: 2 }]);
 
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(2);
@@ -305,8 +305,8 @@ describe('useResponseCache', () => {
       },
     });
 
-    const controller = createController();
-    const testInstance = createTestkit([useResponseCache({ controller })], schema);
+    const cache = createInMemoryCache();
+    const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -325,7 +325,7 @@ describe('useResponseCache', () => {
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
 
-    controller.purge('Comment');
+    cache.invalidate([{ typename: 'Comment' }]);
 
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(2);
