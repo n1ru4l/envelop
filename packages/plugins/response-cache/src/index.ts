@@ -51,6 +51,11 @@ interface Options<C = any> {
    */
   session?(context: C): string | undefined | null;
   /**
+   * Specify whether the cache should be used based on the context.
+   * By default any request uses the cache.
+   */
+  enabled?(context: C): boolean;
+  /**
    * Skip caching of following the types.
    */
   ignoredTypes?: string[];
@@ -72,6 +77,7 @@ export function useResponseCache({
   cache = createInMemoryCache(),
   ttl = Infinity,
   session = () => null,
+  enabled,
   ignoredTypes = [],
   ttlPerType = {},
   ttlPerSchemaCoordinate,
@@ -131,11 +137,13 @@ export function useResponseCache({
           )
           .digest('base64');
 
-        const cachedResponse = await cache.get(operationId);
+        if ((enabled?.(ctx.args.contextValue) ?? true) === true) {
+          const cachedResponse = await cache.get(operationId);
 
-        if (cachedResponse != null) {
-          ctx.setResultAndStopExecution(cachedResponse);
-          return;
+          if (cachedResponse != null) {
+            ctx.setResultAndStopExecution(cachedResponse);
+            return;
+          }
         }
 
         if (ttlPerSchemaCoordinate) {
