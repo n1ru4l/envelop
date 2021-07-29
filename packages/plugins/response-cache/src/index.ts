@@ -97,18 +97,18 @@ export function useResponseCache({
   });
 
   const entityToResponse = new Map<string, Set<string>>();
-  const responseToEnity = new Map<string, Set<string>>();
+  const responseToEntity = new Map<string, Set<string>>();
   const ignoredTypesMap = new Set<string>(ignoredTypes);
 
   function purgeResponse(responseId: string, shouldRemove = true) {
     // get entities related to the response
-    if (responseToEnity.has(responseId)) {
-      responseToEnity.get(responseId)!.forEach(entityId => {
+    if (responseToEntity.has(responseId)) {
+      responseToEntity.get(responseId)!.forEach(entityId => {
         // remove the response mapping from the entity
         entityToResponse.get(entityId)?.delete(responseId);
       });
       // remove all the entity mappings from the response
-      responseToEnity.delete(responseId);
+      responseToEntity.delete(responseId);
     }
 
     if (shouldRemove) {
@@ -216,7 +216,7 @@ export function useResponseCache({
             }
 
             cachedResponses.set(operationId, result, ttlForOperation);
-            responseToEnity.set(operationId, new Set());
+            responseToEntity.set(operationId, new Set());
 
             for (const [typename, id] of collectedEntities) {
               if (!entityToResponse.has(typename)) {
@@ -226,7 +226,7 @@ export function useResponseCache({
               // typename => operation
               entityToResponse.get(typename)!.add(operationId);
               // operation => typename
-              responseToEnity.get(operationId)!.add(typename);
+              responseToEntity.get(operationId)!.add(typename);
 
               if (typeof id !== 'undefined') {
                 const eid = makeId(typename, id);
@@ -238,7 +238,7 @@ export function useResponseCache({
                 // typename:id => operation
                 entityToResponse.get(eid)!.add(operationId);
                 // operation => typename:id
-                responseToEnity.get(operationId)!.add(eid);
+                responseToEntity.get(operationId)!.add(eid);
               }
             }
           },
