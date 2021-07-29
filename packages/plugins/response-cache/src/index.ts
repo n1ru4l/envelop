@@ -1,5 +1,4 @@
-import { Plugin } from '@envelop/types';
-import LRU from 'lru-cache';
+import { Maybe, Plugin } from '@envelop/types';
 import { createHash } from 'crypto';
 import {
   DocumentNode,
@@ -13,6 +12,9 @@ import {
   visitWithTypeInfo,
 } from 'graphql';
 import isAsyncIterable from 'graphql/jsutils/isAsyncIterable.js';
+import { Cache } from './cache';
+import { createInMemoryCache } from './in-memory-cache';
+export { createInMemoryCache } from './in-memory-cache';
 
 type Listener = (typename: string, id?: string | number) => void;
 
@@ -22,10 +24,7 @@ interface Controller {
 }
 
 interface Options<C = any> {
-  /**
-   * Maximum size of the cache. Defaults to `Infinity`.
-   */
-  max?: number;
+  cache?: Cache;
   /**
    * Maximum age in ms. Defaults to `Infinity`.
    */
@@ -72,7 +71,7 @@ export function createController(): Controller {
 }
 
 export function useResponseCache({
-  max = Infinity,
+  cache = createInMemoryCache(),
   ttl = Infinity,
   controller,
   session = () => null,
@@ -82,58 +81,17 @@ export function useResponseCache({
 }: Options = {}): Plugin {
   if (controller) {
     controller.ɵregister((typename, id) => {
-      purgeEntity(typeof id !== 'undefined' ? makeId(typename, id) : typename);
+      cache.invalidate([typeof id !== 'undefined' ? makeId(typename, id) : typename]);
     });
   }
 
-  const cachedResponses = new LRU<string, any>({
-    max: max,
-    maxAge: ttl,
-    stale: false,
-    noDisposeOnSet: true,
-    dispose(responseId) {
-      purgeResponse(responseId, false);
-    },
-  });
-
-  const entityToResponse = new Map<string, Set<string>>();
-  const responseToEntity = new Map<string, Set<string>>();
   const ignoredTypesMap = new Set<string>(ignoredTypes);
-
-  function purgeResponse(responseId: string, shouldRemove = true) {
-    // get entities related to the response
-    if (responseToEntity.has(responseId)) {
-      responseToEntity.get(responseId)!.forEach(entityId => {
-        // remove the response mapping from the entity
-        entityToResponse.get(entityId)?.delete(responseId);
-      });
-      // remove all the entity mappings from the response
-      responseToEntity.delete(responseId);
-    }
-
-    if (shouldRemove) {
-      // remove the response from the cache
-      cachedResponses.del(responseId);
-    }
-  }
-
-  function purgeEntity(entity: string) {
-    if (entityToResponse.has(entity)) {
-      const responsesToRemove = entityToResponse.get(entity);
-
-      if (responsesToRemove) {
-        responsesToRemove.forEach(responseId => {
-          purgeResponse(responseId);
-        });
-      }
-    }
-  }
 
   return {
     onParse(ctx) {
       ctx.setParseFn((source, options) => addTypenameToDocument(parse(source, options)));
     },
-    onExecute(ctx) {
+    async onExecute(ctx) {
       if (isMutation(ctx.args.document)) {
         return {
           onExecuteDone({ result }) {
@@ -151,7 +109,7 @@ export function useResponseCache({
               }
             });
 
-            entitiesToRemove.forEach(purgeEntity);
+            cache.invalidate(entitiesToRemove);
           },
         };
       } else {
@@ -163,8 +121,10 @@ export function useResponseCache({
           )
           .digest('base64');
 
-        if (cachedResponses.has(operationId)) {
-          ctx.setResultAndStopExecution(cachedResponses.get(operationId));
+        const cachedResponse = await cache.get(operationId);
+
+        if (cachedResponse != null) {
+          ctx.setResultAndStopExecution(cachedResponse);
           return;
         }
 
@@ -197,7 +157,7 @@ export function useResponseCache({
             }
 
             let skip = false;
-            const collectedEntities: [string, string | undefined][] = [];
+            const collectedEntities: [string, Maybe<string>][] = [];
 
             collectEntity(result.data, (typename, id) => {
               skip = skip || ignoredTypesMap.has(typename);
@@ -207,7 +167,11 @@ export function useResponseCache({
               }
 
               if (!skip) {
-                collectedEntities.push([typename, id]);
+                let entityId: Maybe<string> = null;
+                if (id != null) {
+                  entityId = makeId(typename, id);
+                }
+                collectedEntities.push([typename, entityId]);
               }
             });
 
@@ -215,32 +179,7 @@ export function useResponseCache({
               return;
             }
 
-            cachedResponses.set(operationId, result, ttlForOperation);
-            responseToEntity.set(operationId, new Set());
-
-            for (const [typename, id] of collectedEntities) {
-              if (!entityToResponse.has(typename)) {
-                entityToResponse.set(typename, new Set());
-              }
-
-              // typename => operation
-              entityToResponse.get(typename)!.add(operationId);
-              // operation => typename
-              responseToEntity.get(operationId)!.add(typename);
-
-              if (typeof id !== 'undefined') {
-                const eid = makeId(typename, id);
-
-                if (!entityToResponse.has(eid)) {
-                  entityToResponse.set(eid, new Set());
-                }
-
-                // typename:id => operation
-                entityToResponse.get(eid)!.add(operationId);
-                // operation => typename:id
-                responseToEntity.get(operationId)!.add(eid);
-              }
-            }
+            cache.set(operationId, result, collectedEntities, ttlForOperation);
           },
         };
       }
