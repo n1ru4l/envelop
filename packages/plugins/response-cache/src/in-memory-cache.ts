@@ -1,14 +1,22 @@
 import LRU from 'lru-cache';
 import type { Cache } from './cache';
 
+export type BuildEntityId = (typename: string, id: number | string) => string;
+
 export type InMemoryCacheParameter = {
   /**
    * Maximum amount of items in the cache. Defaults to `Infinity`.
    */
   max?: number;
+  /**
+   * Customize how the cache entity id is built.
+   * By default the typename is concatenated with the id e.g. `User:1`
+   */
+  buildEntityId?: BuildEntityId;
 };
 
 export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
+  const buildEntityId = params?.buildEntityId ?? defaultBuildEntityId;
   const cachedResponses = new LRU<string, any>({
     max: params?.max,
     stale: false,
@@ -67,7 +75,7 @@ export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
         responseToEntity.get(operationId)!.add(typename);
 
         if (id != null) {
-          const entityId = makeId(typename, id);
+          const entityId = buildEntityId(typename, id);
           if (!entityToResponse.has(entityId)) {
             entityToResponse.set(entityId, new Set());
           }
@@ -84,12 +92,10 @@ export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
     },
     invalidate(entitiesToRemove) {
       for (const { typename, id } of entitiesToRemove) {
-        purgeEntity(id != null ? makeId(typename, id) : typename);
+        purgeEntity(id != null ? buildEntityId(typename, id) : typename);
       }
     },
   };
 };
 
-function makeId(typename: string, id: number | string): string {
-  return `${typename}:${id}`;
-}
+export const defaultBuildEntityId: BuildEntityId = (typename, id) => `${typename}:${id}`;
