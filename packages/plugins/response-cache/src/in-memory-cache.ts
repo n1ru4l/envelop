@@ -26,18 +26,19 @@ export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
     },
   });
 
-  const entityToResponse = new Map<string, Set<string>>();
-  const responseToEntity = new Map<string, Set<string>>();
+  const entityToResponseIds = new Map<string, Set<string>>();
+  const responseIdToEntityIds = new Map<string, Set<string>>();
 
   function purgeResponse(responseId: string, shouldRemove = true) {
+    const entityIds = responseIdToEntityIds.get(responseId);
     // get entities related to the response
-    if (responseToEntity.has(responseId)) {
-      responseToEntity.get(responseId)!.forEach(entityId => {
+    if (entityIds != null) {
+      for (const entityId of entityIds) {
         // remove the response mapping from the entity
-        entityToResponse.get(entityId)?.delete(responseId);
-      });
+        entityToResponseIds.get(entityId)?.delete(responseId);
+      }
       // remove all the entity mappings from the response
-      responseToEntity.delete(responseId);
+      responseIdToEntityIds.delete(responseId);
     }
 
     if (shouldRemove) {
@@ -47,48 +48,50 @@ export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
   }
 
   function purgeEntity(entity: string) {
-    if (entityToResponse.has(entity)) {
-      const responsesToRemove = entityToResponse.get(entity);
+    const responseIds = entityToResponseIds.get(entity);
 
-      if (responsesToRemove) {
-        responsesToRemove.forEach(responseId => {
-          purgeResponse(responseId);
-        });
+    if (responseIds != null) {
+      for (const responseId of responseIds) {
+        purgeResponse(responseId);
       }
     }
   }
 
   return {
-    set(operationId, result, collectedEntities, ttl) {
-      cachedResponses.set(operationId, result, ttl);
-      responseToEntity.set(operationId, new Set());
+    set(responseId, result, collectedEntities, ttl) {
+      cachedResponses.set(responseId, result, ttl);
+      const entityIds = new Set<string>();
+      responseIdToEntityIds.set(responseId, entityIds);
 
-      responseToEntity.set(operationId, new Set());
       for (const { typename, id } of collectedEntities) {
-        if (!entityToResponse.has(typename)) {
-          entityToResponse.set(typename, new Set());
+        let operationIds = entityToResponseIds.get(typename);
+        if (operationIds == null) {
+          operationIds = new Set<string>();
+          entityToResponseIds.set(typename, operationIds);
         }
 
         // typename => operation
-        entityToResponse.get(typename)!.add(operationId);
+        operationIds.add(responseId);
         // operation => typename
-        responseToEntity.get(operationId)!.add(typename);
+        entityIds.add(typename);
 
         if (id != null) {
           const entityId = buildEntityId(typename, id);
-          if (!entityToResponse.has(entityId)) {
-            entityToResponse.set(entityId, new Set());
+          let responseIds = entityToResponseIds.get(entityId);
+          if (responseIds == null) {
+            responseIds = new Set();
+            entityToResponseIds.set(entityId, responseIds);
           }
 
           // typename:id => operation
-          entityToResponse.get(entityId)!.add(operationId);
+          responseIds.add(responseId);
           // operation => typename:id
-          responseToEntity.get(operationId)!.add(entityId);
+          entityIds.add(entityId);
         }
       }
     },
-    get(operationId) {
-      return cachedResponses.get(operationId) ?? null;
+    get(responseId) {
+      return cachedResponses.get(responseId) ?? null;
     },
     invalidate(entitiesToRemove) {
       for (const { typename, id } of entitiesToRemove) {
