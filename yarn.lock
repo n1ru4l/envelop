@@ -11919,10 +11919,10 @@ validator@13.6.0, validator@^13.5.2:
   resolved "https://registry.yarnpkg.com/validator/-/validator-13.6.0.tgz#1e71899c14cdc7b2068463cb24c1cc16f6ec7059"
   integrity sha512-gVgKbdbHgtxpRyR8K0O6oFZPhhB5tT1jeEHZR0Znr9Svg03U0+r9DXWMrnRAB+HtCStDQKlaIZm42tVsVjqtjg==
 
-valtio@1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/valtio/-/valtio-1.1.1.tgz#15298a6a5fb454cbe3f65bc4e338c33dbd7ddf2b"
-  integrity sha512-z4JyB9oirJcIDrJXzfVwlXptC2t86q71GAmCRqofozkJK5OGr/WJVJDFE55aebGbDxAwDPbARaUI996iJRz1HQ==
+valtio@1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/valtio/-/valtio-1.1.2.tgz#232095f61efe13755719ed0019b70d7926630be1"
+  integrity sha512-nj2tba3pM/Z3awGZ/A3aRYmBBYjyaeusfUKoWvRdDAO+VL+RgXjKzfarv/ql2HDRQboa3w9FGlpBKiGUODQuQw==
   dependencies:
     proxy-compare "2.0.1"
 
