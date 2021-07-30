@@ -5,7 +5,7 @@ sidebar_label: Securing your GraphQL API
 
 # Securing your GraphQL API
 
-Building a secure GraphQL API is hard by design of to the because "Graph" part withing GraphQL.
+Building a secure GraphQL API is hard by design because of the "Graph" nature of GraphQL.
 Libraries for making different aspects of a GraphQL server secure have existed since the early days of GraphQL.
 However, combining those tools is often cumbersome and results in messy code.
 With envelop securing your server is now as easy as pie!
