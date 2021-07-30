@@ -32,7 +32,7 @@ export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
   function purgeResponse(responseId: string, shouldRemove = true) {
     const entityIds = responseIdToEntityIds.get(responseId);
     // get entities related to the response
-    if (entityIds != null) {
+    if (entityIds !== undefined) {
       for (const entityId of entityIds) {
         // remove the response mapping from the entity
         entityToResponseIds.get(entityId)?.delete(responseId);
@@ -50,7 +50,7 @@ export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
   function purgeEntity(entity: string) {
     const responseIds = entityToResponseIds.get(entity);
 
-    if (responseIds != null) {
+    if (responseIds !== undefined) {
       for (const responseId of responseIds) {
         purgeResponse(responseId);
       }
@@ -75,7 +75,7 @@ export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
         // operation => typename
         entityIds.add(typename);
 
-        if (id != null) {
+        if (id !== undefined) {
           const entityId = buildEntityId(typename, id);
           let responseIds = entityToResponseIds.get(entityId);
           if (responseIds == null) {
