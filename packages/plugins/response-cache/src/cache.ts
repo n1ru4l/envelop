@@ -1,7 +1,7 @@
 import type { Maybe, PromiseOrValue } from '@envelop/core';
 import type { ExecutionResult } from 'graphql';
 
-export type CacheResourceRecord = {
+export type CacheEntityRecord = {
   typename: string;
   id?: number | string;
 };
@@ -17,12 +17,12 @@ export type Cache = {
     /** the result that should be cached */
     data: ExecutionResult,
     /** array of typename and entityId tuples */
-    collectedEntities: Iterable<CacheResourceRecord>,
+    collectedEntities: Iterable<CacheEntityRecord>,
     /** how long the operation should be cached */
     ttl: number
   ): PromiseOrValue<void>;
   /** get a cached response */
   get(id: string): PromiseOrValue<Maybe<ExecutionResult>>;
   /** invalidate operations via typename or id */
-  invalidate(entityIds: Iterable<CacheResourceRecord>): PromiseOrValue<void>;
+  invalidate(entityIds: Iterable<CacheEntityRecord>): PromiseOrValue<void>;
 };
