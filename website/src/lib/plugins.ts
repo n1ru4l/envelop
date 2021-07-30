@@ -300,4 +300,11 @@ export const pluginsArr: Package<Tags>[] = [
     iconUrl: '/assets/logos/rate_limiter.png',
     tags: ['schema', 'utilities', 'security'],
   },
+  {
+    identifier: 'use-response-cache',
+    title: 'useResponseCache',
+    npmPackage: '@envelop/response-cache',
+    iconUrl: '/logo.png',
+    tags: ['caching', 'performance'],
+  },
 ];
