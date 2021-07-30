@@ -16,13 +16,13 @@ export type Cache = {
     id: string,
     /** the result that should be cached */
     data: ExecutionResult,
-    /** array of typename and entityId tuples */
-    collectedEntities: Iterable<CacheEntityRecord>,
+    /** array of entity records that were collected during execution */
+    entities: Iterable<CacheEntityRecord>,
     /** how long the operation should be cached */
     ttl: number
   ): PromiseOrValue<void>;
   /** get a cached response */
   get(id: string): PromiseOrValue<Maybe<ExecutionResult>>;
   /** invalidate operations via typename or id */
-  invalidate(entityIds: Iterable<CacheEntityRecord>): PromiseOrValue<void>;
+  invalidate(entities: Iterable<CacheEntityRecord>): PromiseOrValue<void>;
 };

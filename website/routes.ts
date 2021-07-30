@@ -17,6 +17,7 @@ export function getRoutes(): IRoutes {
               'monitoring-and-tracing',
               'using-graphql-features-from-the-future',
               'resolving-subscription-data-loader-caching-issues',
+              'adding-a-graphql-response-cache',
             ],
           },
         },
