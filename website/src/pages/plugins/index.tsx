@@ -164,6 +164,9 @@ export default function Marketplace({ data }: MarketplaceProps) {
         title="Explore Plugin Hub"
         tagsFilter={ALL_TAGS as any as string[]}
         placeholder="Find plugins..."
+        wrapperProps={{
+          className: 'plugins-list',
+        }}
         primaryList={{
           title: 'Trending',
           items: trendingItems,

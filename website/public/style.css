@@ -20,3 +20,7 @@ article {
 #__next {
   font-family: TGCFont, sans-serif;
 }
+
+.plugins-list td:first-child {
+  min-width: 60px;
+}
