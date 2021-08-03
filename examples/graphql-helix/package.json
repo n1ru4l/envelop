@@ -9,7 +9,7 @@
     "fastify": "3.14.0",
     "@envelop/core": "*",
     "graphql-helix": "1.6.1",
-    "@graphql-tools/schema": "7.1.5"
+    "@graphql-tools/schema": "8.0.1"
   },
   "devDependencies": {
     "@types/node": "15.6.1",

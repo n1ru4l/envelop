@@ -1,7 +1,7 @@
 import { DocumentNode, ExecutionResult, getOperationAST, GraphQLError, GraphQLSchema, print } from 'graphql';
 import { envelop, useSchema } from '@envelop/core';
 import { GetEnvelopedFn, Plugin, isAsyncIterable } from '@envelop/types';
-import { cloneSchema, isDocumentNode } from '@graphql-tools/utils';
+import { mapSchema as cloneSchema, isDocumentNode } from '@graphql-tools/utils';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function createSpiedPlugin() {

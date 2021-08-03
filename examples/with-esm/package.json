@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@envelop/core": "*",
-    "@graphql-tools/schema": "7.1.5",
+    "@graphql-tools/schema": "8.0.1",
     "fastify": "3.14.0",
     "graphql-helix": "1.6.1"
   },
