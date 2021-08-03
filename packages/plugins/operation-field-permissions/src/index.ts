@@ -1,6 +1,16 @@
 import { Plugin, useExtendContext } from '@envelop/core';
 import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
-import { GraphQLType, GraphQLList, GraphQLNonNull, GraphQLError } from 'graphql';
+import {
+  GraphQLType,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLError,
+  isUnionType,
+  FieldNode,
+  GraphQLObjectType,
+  isObjectType,
+  isInterfaceType,
+} from 'graphql';
 
 type PromiseOrValue<T> = T | Promise<T>;
 
@@ -50,19 +60,35 @@ const OperationScopeRule =
   (options: OperationScopeRuleOptions): ExtendedValidationRule =>
   (context, executionArgs) => {
     const permissionContext = getContext(executionArgs.contextValue);
+
+    const handleField = (node: FieldNode, objectType: GraphQLObjectType) => {
+      const schemaCoordinate = `${objectType.name}.${node.name.value}`;
+
+      if (
+        !permissionContext.allowAll &&
+        !permissionContext.wildcardTypes.has(objectType.name) &&
+        !permissionContext.schemaCoordinates.has(schemaCoordinate)
+      ) {
+        context.reportError(new GraphQLError(options.formatError(schemaCoordinate), [node]));
+      }
+    };
+
     return {
       Field(node) {
         const parentType = context.getParentType();
         if (parentType) {
           const wrappedType = getWrappedType(parentType);
-          const schemaCoordinate = `${wrappedType.name}.${node.name.value}`;
 
-          if (
-            !permissionContext.allowAll &&
-            !permissionContext.wildcardTypes.has(wrappedType.name) &&
-            !permissionContext.schemaCoordinates.has(schemaCoordinate)
-          ) {
-            context.reportError(new GraphQLError(options.formatError(schemaCoordinate), [node]));
+          if (isObjectType(wrappedType)) {
+            handleField(node, wrappedType);
+          } else if (isUnionType(wrappedType)) {
+            for (const objectType of wrappedType.getTypes()) {
+              handleField(node, objectType);
+            }
+          } else if (isInterfaceType(wrappedType)) {
+            for (const objectType of executionArgs.schema.getImplementations(wrappedType).objects) {
+              handleField(node, objectType);
+            }
           }
         }
       },
