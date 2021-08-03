@@ -58,4 +58,4 @@ Now, when running operations through your GraphQL server, you can use a key inst
 
 If you are using Relay, you can leverage `relay-compiler` feature for hashing and and creating the store for you, during build.
 
-You can [read more about this feature here](https://relay.dev/docs/v2.0.0/persisted-queries/). After building your hashes, you can use `queryMap.json` as your store.
+You can [read more about this feature here](https://relay.dev/docs/guides/persisted-queries/). After building your hashes, you can use `queryMap.json` as your store.
