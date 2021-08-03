@@ -1,5 +1,11 @@
 # @envelop/live-query
 
+## 1.0.1
+
+### Patch Changes
+
+- 452af8f: Update dependencies of graphql-tools to latest
+
 ## 1.0.0
 
 ### Major Changes
