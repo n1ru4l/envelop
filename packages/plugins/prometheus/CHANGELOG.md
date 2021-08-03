@@ -1,5 +1,13 @@
 # @envelop/prometheus
 
+## 1.0.3
+
+### Patch Changes
+
+- 452af8f: Update dependencies of graphql-tools to latest
+- Updated dependencies [452af8f]
+  - @envelop/core@1.0.3
+
 ## 1.0.2
 
 ### Patch Changes

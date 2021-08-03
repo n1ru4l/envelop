@@ -1,5 +1,11 @@
 # @envelop/fragment-arguments
 
+## 1.0.3
+
+### Patch Changes
+
+- 452af8f: Update dependencies of graphql-tools to latest
+
 ## 1.0.2
 
 ### Patch Changes
