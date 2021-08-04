@@ -42,8 +42,8 @@
     "@envelop/types": "1.0.2"
   },
   "devDependencies": {
-    "@graphql-tools/utils": "8.0.1",
-    "@graphql-tools/schema": "8.0.1",
+    "@graphql-tools/utils": "8.0.2",
+    "@graphql-tools/schema": "8.0.2",
     "bob-the-bundler": "1.4.1",
     "graphql": "15.5.1",
     "typescript": "4.3.5"
