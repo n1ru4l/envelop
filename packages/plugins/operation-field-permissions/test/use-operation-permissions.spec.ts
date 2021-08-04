@@ -9,9 +9,20 @@ const schema = makeExecutableSchema({
         greetings: [String!]
         foo: String
         user: User
+        postOrUser: PostOrUser
+        node: Node
       }
 
-      type User {
+      type User implements Node {
+        id: ID!
+      }
+
+      type Post implements Node {
+        id: ID!
+      }
+
+      union PostOrUser = Post | User
+      interface Node {
         id: ID!
       }
     `,
@@ -95,5 +106,58 @@ Array [
     const result = await kit.execute(query);
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
+  });
+  it('union errors', async () => {
+    const kit = createTestkit(
+      [
+        useOperationFieldPermissions({
+          getPermissions: () => new Set([]),
+        }),
+      ],
+      schema
+    );
+
+    const result = await kit.execute(/* GraphQL */ `
+      query {
+        postOrUser {
+          __typename
+        }
+      }
+    `);
+    assertSingleExecutionValue(result);
+    expect(result.errors).toMatchInlineSnapshot(`
+Array [
+  [GraphQLError: Insufficient permissions for selecting 'Query.postOrUser'.],
+  [GraphQLError: Insufficient permissions for selecting 'Post.__typename'.],
+  [GraphQLError: Insufficient permissions for selecting 'User.__typename'.],
+]
+`);
+  });
+
+  it('interface errors', async () => {
+    const kit = createTestkit(
+      [
+        useOperationFieldPermissions({
+          getPermissions: () => new Set([]),
+        }),
+      ],
+      schema
+    );
+
+    const result = await kit.execute(/* GraphQL */ `
+      query {
+        node {
+          __typename
+        }
+      }
+    `);
+    assertSingleExecutionValue(result);
+    expect(result.errors).toMatchInlineSnapshot(`
+Array [
+  [GraphQLError: Insufficient permissions for selecting 'Query.node'.],
+  [GraphQLError: Insufficient permissions for selecting 'User.__typename'.],
+  [GraphQLError: Insufficient permissions for selecting 'Post.__typename'.],
+]
+`);
   });
 });
