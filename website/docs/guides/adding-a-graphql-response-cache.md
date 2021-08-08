@@ -7,21 +7,21 @@ sidebar_label: Adding a GraphQL Response Cache
 
 ## A brief Introduction to Caching
 
-Huge GraphQL query operations can slow down your server as deeply nested selection sets can cause a lot of subsequent database reads or calls to other remote services. Tools like `DataLoader` can reduce the amount of concurrent and subsequent requests via batching and id based caching during the execution of a single request. Features like `@defer` and `@stream` can help with streaming slow-to-retrieve result partials to the clients progressively. However, for subsequent requests we hit the same bottle-neck over and over again.
+Huge GraphQL query operations can slow down your server as deeply nested selection sets can cause a lot of subsequent database reads or calls to other remote services. Tools like `DataLoader` can reduce the amount of concurrent and subsequent requests via batching and caching during the execution of a single GraphQL operation. Features like `@defer` and `@stream` can help with streaming slow-to-retrieve result partials to the clients progressively. However, for subsequent requests we hit the same bottle-neck over and over again.
 
-What if we don't need to go through the execution phase at all for subsequent requests executing the same query operation with the same variables?
+What if we don't need to go through the execution phase at all for subsequent requests that execute the same query operation with the same variables?
 
 A common practice for reducing slow requests is to leverage caching. There are many types of caching available. E.g. We could cache the whole HTTP responses based on the POST body of the request or an in memory cache within our GraphQL field resolver business logic in order to hit slow services less frequently.
 
-Having a cache comes with the drawback of requiring some kind of cache invalidation mechanism in case the underlying entities have changed. Expiring the cache via a TTL (time to live) is a widespread practice, but can result in hitting the cache too often or too scarcely. Another popular strategy is to incorporate cache invalidation logic into the business logic. Writing such logic can potentially become too verbose and hard to maintain. Other systems might use database write log observers for invalidating resources based on updated database rows.
+Having a cache comes with the drawback of requiring some kind of cache invalidation mechanism. Expiring the cache via a TTL (time to live) is a widespread practice, but can result in hitting the cache too often or too scarcely. Another popular strategy is to incorporate cache invalidation logic into the business logic. Writing such logic can potentially become too verbose and hard to maintain. Other systems might use database write log observers for invalidating entities based on updated database rows.
 
-In a strict REST API environment, caching entities is significantly easier, as each endpoint represents one resource, and thus a `GET` method can be cached and a `PATCH` method can be used for automatically invalidating the resource which is described via the HTTP path (`/api/user/12`).
+In a strict REST API environment, caching entities is significantly easier, as each endpoint represents one resource, and thus a `GET` method can be cached and a `PATCH` method can be used for automatically invalidating the cache for the corresponding `GET` request, which is described via the HTTP path (`/api/user/12`).
 
-With GraphQL such things become much harder. First of all, we usually only have a single HTTP endpoint `/graphql` to which we send a `POST` request. A query operation execution result could contain many different types of entities, thus, we need different strategies for caching GraphQL APIs.
+With GraphQL such things become much harder and complicated. First of all, we usually only have a single HTTP endpoint `/graphql` that only accepts `POST` requests. A query operation execution result could contain many different types of entities, thus, we need different strategies for caching GraphQL APIs.
 
 SaaS services like FastQL and GraphCDN started popping providing proxies for your existing GraphQL API, that magically add response based caching. But how does this even work?
 
-## How does Response Caching work?
+## How does GraphQL Response Caching work?
 
 ### Caching Query Operations
 
@@ -67,7 +67,7 @@ Under some circumstances it is also required to cache based on the request initi
 OperationCacheKey (e.g. SHA1) = hash(GraphQLOperationString, Stringify(GraphQLVariables), RequestorId)
 ```
 
-This allows us to identify recurring operations with the same variables and serve it from the cache for subsequent requests.
+This allows us to identify recurring operations with the same variables and serve it from the cache for subsequent requests. If we can serve a response from the cache we don't need to parse the GraphQL operation document and furthermore can skip the expensive execution phase. That will result in significant speed improvements.
 
 But in order to make our cache smart we still need a suitable cache invalidation mechanism.
 
@@ -149,11 +149,11 @@ The remaining question is, how can we track an entity becoming stale?
 
 As mentioned before, listening to a database write log is a possible option - but the implementation is very specific and differs based on the chosen database type. Time to live is also a possible, but a very inaccurate solution.
 
-Another solution is to add invalidation logic within our GraphQL mutation resolver. By the GraphQL Specification mutations are meant to modify our GraphQL graph that we can query via query operations.
+Another solution is to add invalidation logic within our GraphQL mutation resolver. By the GraphQL Specification mutations are meant to modify our GraphQL graph.
 
 A common pattern when sending mutations from clients is to select and return affected/mutated entities with the selection set.
 
-For our example from above the following could be a possible mutation.
+For our example from above the following could be a possible mutation for adding a new repository to the repositories field on the user entity.
 
 **Example: GraphQL Mutation**
 
