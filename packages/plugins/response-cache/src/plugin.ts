@@ -1,20 +1,21 @@
-import { Plugin, isAsyncIterable } from '@envelop/types';
+import { Plugin, isAsyncIterable, Maybe, DefaultContext } from '@envelop/types';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import { createHash } from 'crypto';
 import {
   DocumentNode,
   OperationDefinitionNode,
   visit,
-  print,
   TypeInfo,
   visitWithTypeInfo,
   GraphQLSchema,
   defaultFieldResolver,
+  ExecutionArgs,
 } from 'graphql';
 import type { Cache, CacheEntityRecord } from './cache';
 import { createInMemoryCache } from './in-memory-cache';
 
 const contextSymbol = Symbol('responseCache');
+const rawDocumentStringSymbol = Symbol('rawDocumentString');
 
 type Context = {
   identifier: Map<string, CacheEntityRecord>;
@@ -24,6 +25,20 @@ type Context = {
   ignoredTypesMap: Set<string>;
   skip: boolean;
 };
+
+/**
+ * Function for building the response cache key based on the input parameters
+ */
+export type BuildResponseCacheKeyFunction = (params: {
+  /** Raw document string as sent from the client. */
+  documentString: string;
+  /** Variable values as sent form the client. */
+  variableValues: ExecutionArgs['variableValues'];
+  /** optional sessionId for make unique cache keys based on the session.  */
+  sessionId?: Maybe<string>;
+}) => string;
+
+export type GetDocumentStringFromContextFunction = (params: DefaultContext) => Maybe<string>;
 
 export type UseResponseCacheParameter<C = any> = {
   cache?: Cache;
@@ -68,7 +83,31 @@ export type UseResponseCacheParameter<C = any> = {
    * Defaults to `true`
    */
   invalidateViaMutation?: boolean;
+  /**
+   * Customize the behavior how the response cache key is computed from the document, variable values and sessionId.
+   * Defaults to `defaultBuildResponseCacheKey`
+   */
+  buildResponseCacheKey?: BuildResponseCacheKeyFunction;
+  /**
+   * Function used for reading the document string that is used for building the response cache key from the context object.
+   * By default, the useResponseCache plugin hooks into onParse and writes the original operation string to the context.
+   * If you are hard overriding parse you need to set this function, otherwise responses will not be cached or served from the cache.
+   * Defaults to `defaultGetDocumentStringFromContext`
+   */
+  getDocumentStringFromContext?: GetDocumentStringFromContextFunction;
 };
+
+/**
+ * Default function used for building the response cache key.
+ * It is exported here for advanced use-cases. E.g. if you want to short circuit and serve responses from the cache on a global level in order to completely by-pass the GraphQL flow.
+ */
+export const defaultBuildResponseCacheKey: BuildResponseCacheKeyFunction = params =>
+  createHash('sha1')
+    .update([params.documentString, JSON.stringify(params.variableValues ?? {}), params.sessionId ?? ''].join('|'))
+    .digest('base64');
+
+export const defaultGetDocumentStringFromContext: GetDocumentStringFromContextFunction = context =>
+  context[rawDocumentStringSymbol as any] as any;
 
 export function useResponseCache({
   cache = createInMemoryCache(),
@@ -80,6 +119,8 @@ export function useResponseCache({
   ttlPerSchemaCoordinate,
   idFields = ['id'],
   invalidateViaMutation = true,
+  buildResponseCacheKey = defaultBuildResponseCacheKey,
+  getDocumentStringFromContext = defaultGetDocumentStringFromContext,
 }: UseResponseCacheParameter = {}): Plugin {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
   const schemaCache = new WeakMap<GraphQLSchema, GraphQLSchema>();
@@ -92,6 +133,17 @@ export function useResponseCache({
         schemaCache.set(ctx.schema, schema);
       }
       ctx.replaceSchema(schema);
+    },
+    onParse(parseCtx) {
+      return function onParseEnd(ctx) {
+        if (ctx.result && 'kind' in ctx.result) {
+          const source = parseCtx.params.source;
+          const rawDocumentString = typeof source === 'string' ? source : source.body;
+          ctx.extendContext({
+            [rawDocumentStringSymbol]: rawDocumentString,
+          });
+        }
+      };
     },
     async onExecute(ctx) {
       const identifier = new Map<string, CacheEntityRecord>();
@@ -127,56 +179,64 @@ export function useResponseCache({
           },
         };
       } else {
-        const operationId = createHash('sha1')
-          .update(
-            [print(ctx.args.document), JSON.stringify(ctx.args.variableValues || {}), session(ctx.args.contextValue) ?? ''].join(
-              '|'
-            )
-          )
-          .digest('base64');
+        const documentString = getDocumentStringFromContext(ctx.args.contextValue);
+        if (documentString != null) {
+          const operationId = buildResponseCacheKey({
+            documentString,
+            variableValues: ctx.args.variableValues,
+            sessionId: session(ctx.args.contextValue),
+          });
 
-        if ((enabled?.(ctx.args.contextValue) ?? true) === true) {
-          const cachedResponse = await cache.get(operationId);
+          if ((enabled?.(ctx.args.contextValue) ?? true) === true) {
+            const cachedResponse = await cache.get(operationId);
 
-          if (cachedResponse != null) {
-            ctx.setResultAndStopExecution(cachedResponse);
-            return;
+            if (cachedResponse != null) {
+              ctx.setResultAndStopExecution(cachedResponse);
+              return;
+            }
           }
-        }
 
-        if (ttlPerSchemaCoordinate) {
-          const typeInfo = new TypeInfo(ctx.args.schema);
-          visit(
-            ctx.args.document,
-            visitWithTypeInfo(typeInfo, {
-              Field(fieldNode) {
-                const parentType = typeInfo.getParentType();
-                if (parentType) {
-                  const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
-                  if (schemaCoordinate in ttlPerSchemaCoordinate) {
-                    context.ttl = Math.min(context.ttl, ttlPerSchemaCoordinate[schemaCoordinate]);
+          if (ttlPerSchemaCoordinate) {
+            const typeInfo = new TypeInfo(ctx.args.schema);
+            visit(
+              ctx.args.document,
+              visitWithTypeInfo(typeInfo, {
+                Field(fieldNode) {
+                  const parentType = typeInfo.getParentType();
+                  if (parentType) {
+                    const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
+                    if (schemaCoordinate in ttlPerSchemaCoordinate) {
+                      context.ttl = Math.min(context.ttl, ttlPerSchemaCoordinate[schemaCoordinate]);
+                    }
                   }
-                }
-              },
-            })
+                },
+              })
+            );
+          }
+
+          return {
+            onExecuteDone({ result }) {
+              if (isAsyncIterable(result)) {
+                // eslint-disable-next-line no-console
+                console.warn('[useResponseCache] AsyncIterable returned from execute is currently unsupported.');
+                return;
+              }
+
+              if (context.skip) {
+                return;
+              }
+
+              cache.set(operationId, result, identifier.values(), context.ttl);
+            },
+          };
+        } else {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `[useResponseCache] Failed extracting document string from the context. The response will not be cached or served from the cache. ` +
+              `If you are overriding the 'parse' behavior make sure to pass a custom 'getDocumentStringFromContext' function for getting the document string, which is required for building the response cache key.`
           );
+          return undefined;
         }
-
-        return {
-          onExecuteDone({ result }) {
-            if (isAsyncIterable(result)) {
-              // eslint-disable-next-line no-console
-              console.warn('[useResponseCache] AsyncIterable returned from execute is currently unsupported.');
-              return;
-            }
-
-            if (context.skip) {
-              return;
-            }
-
-            cache.set(operationId, result, identifier.values(), context.ttl);
-          },
-        };
       }
     },
   };
