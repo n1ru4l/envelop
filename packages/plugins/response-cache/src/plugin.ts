@@ -70,8 +70,6 @@ export type UseResponseCacheParameter<C = any> = {
   invalidateViaMutation?: boolean;
 };
 
-const schemaCache = new WeakMap<GraphQLSchema, GraphQLSchema>();
-
 export function useResponseCache({
   cache = createInMemoryCache(),
   ttl = Infinity,
@@ -84,6 +82,7 @@ export function useResponseCache({
   invalidateViaMutation = true,
 }: UseResponseCacheParameter = {}): Plugin {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
+  const schemaCache = new WeakMap<GraphQLSchema, GraphQLSchema>();
 
   return {
     onSchemaChange(ctx) {
