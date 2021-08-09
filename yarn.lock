@@ -1657,10 +1657,10 @@
     protobufjs "^6.10.0"
     yargs "^16.1.1"
 
-"@guild-docs/client@0.2.27":
-  version "0.2.27"
-  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-0.2.27.tgz#40182b9df8dc5cdf2781bfad95a7fe5f8b7bea8f"
-  integrity sha512-WgjWBr28lUQP0BVrGnRtPEQIn5D9QAuHzHBTo6nZrrn+H52lBgw0kXqgzvbqPz3egNow7h2IArgER2KzosMi8A==
+"@guild-docs/client@0.2.28":
+  version "0.2.28"
+  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-0.2.28.tgz#6e257f810590628182ef144301ee191d5da9fcf8"
+  integrity sha512-Y/lmg7JgBeE4um4xG8QXtOoblDb/M7pHqDCts0i0leS7tbls7Rz72Zw+crjk1ZQWnxKaD8Ugm3kiQd/Uj8VFuA==
   dependencies:
     "@guild-docs/types" "^0.2.27"
     immer "^9.0.5"
