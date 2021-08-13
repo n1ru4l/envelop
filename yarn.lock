@@ -11709,10 +11709,10 @@ typescript@4.3.5:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.5.tgz#4d1c37cc16e893973c45a06886b7113234f119f4"
   integrity sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
 
-undici@4.4.1:
-  version "4.4.1"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-4.4.1.tgz#832a64e593e3f068e87a9b8f3c3037f7f48b7cfe"
-  integrity sha512-diVUJ5KcFxF5STCYC6oarfFa5UrIMEbY99Zt9IAXbQusrelH2btUFQwZtZyN+jLXIkFMTQoWPprZEIhYJmSDFw==
+undici@4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-4.4.2.tgz#2c02d5642f24f1d94e86958caf45c3b9ddc07fad"
+  integrity sha512-ATdfIjCZgbF2DL/IX7/iURr+UfJA8QJS62GzjPkO1rHdIdwNjo35U9XvfEZ6O60KSQNQFrhokD7oJcExQumDtQ==
 
 unherit@^1.0.4:
   version "1.1.3"
