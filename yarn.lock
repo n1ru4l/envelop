@@ -1669,12 +1669,12 @@
     protobufjs "^6.10.0"
     yargs "^16.1.1"
 
-"@guild-docs/client@0.2.28":
-  version "0.2.28"
-  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-0.2.28.tgz#6e257f810590628182ef144301ee191d5da9fcf8"
-  integrity sha512-Y/lmg7JgBeE4um4xG8QXtOoblDb/M7pHqDCts0i0leS7tbls7Rz72Zw+crjk1ZQWnxKaD8Ugm3kiQd/Uj8VFuA==
+"@guild-docs/client@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-1.0.0.tgz#0713290ea505d1a9f3a65808f12555f0eed882bd"
+  integrity sha512-JTPQGCsR6Ml5aFZDERc0JqfnluJIn2VgH9NEunoxGm8xGX8qU448ZXBe+WV/mhE6K0cSdm7ysdWLDaO9rlGZFA==
   dependencies:
-    "@guild-docs/types" "^0.2.27"
+    "@guild-docs/types" "^1.0.0"
     immer "^9.0.5"
     next-mdx-remote "^3.0.4"
     next-seo "^4.26.0"
@@ -1683,7 +1683,7 @@
     react-intersection-observer "^8.32.0"
     react-use "^17.2.4"
     use-immer "^0.6.0"
-    zustand "^3.5.7"
+    zustand "^3.5.8"
 
 "@guild-docs/server@0.2.25":
   version "0.2.25"
@@ -1701,10 +1701,15 @@
     remark-slug "^6.1.0"
     tiny-lru "^7.0.6"
 
-"@guild-docs/types@^0.2.17", "@guild-docs/types@^0.2.27":
+"@guild-docs/types@^0.2.17":
   version "0.2.27"
   resolved "https://registry.yarnpkg.com/@guild-docs/types/-/types-0.2.27.tgz#ec40dd729ac60a05f0ac55c7592f87629d094eb6"
   integrity sha512-Aeu12/5Tp4NVh+JYuVHsPuJkvzYaAzyh53F3BPBBOCVSlVhJVMbUZJqjkEXd+NzFMz/GeysDcE3CyFG+7MizSg==
+
+"@guild-docs/types@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@guild-docs/types/-/types-1.0.0.tgz#58bfdc6792be267dbbb8af77754337c98874f6f7"
+  integrity sha512-OKrSg5+GqSGSNb6XJmxiMPM+I7zkm8c+piG7IzbKbD1qtzXM8xUEpXdOjvUCxRS6C+e3zDmXOZ66krsINTCZXg==
 
 "@hapi/accept@5.0.2":
   version "5.0.2"
@@ -12469,7 +12474,7 @@ zen-observable@^0.8.0:
   resolved "https://registry.npmjs.org/zen-observable/-/zen-observable-0.8.15.tgz#96415c512d8e3ffd920afd3889604e30b9eaac15"
   integrity sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==
 
-zustand@3.5.8, zustand@^3.5.7:
+zustand@3.5.8, zustand@^3.5.8:
   version "3.5.8"
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.5.8.tgz#820d12b3a5855a5b93fa75ed52b320b091bb8f76"
   integrity sha512-QA5h4cyJFPG0Gsk7u9gvwF7x6HbrjllSifwePluFK+tcthvaIo9zqiwjoUrXwb4e3BGxzVOXEgbhaB6jVCD7Kw==
