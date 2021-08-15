@@ -1669,10 +1669,10 @@
     protobufjs "^6.10.0"
     yargs "^16.1.1"
 
-"@guild-docs/client@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-1.0.0.tgz#0713290ea505d1a9f3a65808f12555f0eed882bd"
-  integrity sha512-JTPQGCsR6Ml5aFZDERc0JqfnluJIn2VgH9NEunoxGm8xGX8qU448ZXBe+WV/mhE6K0cSdm7ysdWLDaO9rlGZFA==
+"@guild-docs/client@1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-1.0.2.tgz#195a187ad4aaf30fbf0d08a8acb05255ce5a5516"
+  integrity sha512-85RRFmG5MU9BJmjiyxE0ROVGZHs8/HvauNuBLRRcXUmf3gSYrVCdr6Dj0y6XcrLV3SJYkdrfDYhK2VMxvZHj1w==
   dependencies:
     "@guild-docs/types" "^1.0.0"
     immer "^9.0.5"
@@ -1685,10 +1685,10 @@
     use-immer "^0.6.0"
     zustand "^3.5.8"
 
-"@guild-docs/server@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@guild-docs/server/-/server-1.0.0.tgz#9ec78477355ae520dad5761258da701efa0d1ed0"
-  integrity sha512-92BlG4a+9fftURi5dCGI9YORRh+KJZezYGUdKt7oiL2k5INjH/Pvt9fTgt5xKfMyovhWhYCgVwGaMpRL4gHcFA==
+"@guild-docs/server@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@guild-docs/server/-/server-1.0.1.tgz#17858925507c7448971c6564ae67f91509224ca2"
+  integrity sha512-f12E9JTdsDYcIHXmvJnqDd0dzESZ4PAI/C9zpvFgA8ZHdZeOsmqljh6EtGVyJIl9QyuIm4zCWplMrT+3zpJh0Q==
   dependencies:
     "@guild-docs/types" "^1.0.0"
     "@stefanprobst/remark-shiki" "^1.1.1"
