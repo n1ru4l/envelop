@@ -31,7 +31,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "graphql-middleware": "6.1.2",
+    "graphql-middleware": "6.1.3",
     "bob-the-bundler": "1.5.1",
     "graphql": "15.5.1",
     "typescript": "4.3.5"
