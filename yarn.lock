@@ -11818,10 +11818,10 @@ unbox-primitive@^1.0.1:
     has-symbols "^1.0.2"
     which-boxed-primitive "^1.0.2"
 
-undici@4.4.5:
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-4.4.5.tgz#6273807c0b839d2e033e44472c39532238743867"
-  integrity sha512-g4PtQrFE2+WkBaL7P4ethZDhkFh8fS5UnN/L+NLtfLXkGGi7asZR+s08qKVR54KZSytD6RQscGTlOwbElGRNyw==
+undici@4.4.6:
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-4.4.6.tgz#628f1902db7857a369da4a0547a91bac1f957474"
+  integrity sha512-NxnFqJouVi+R7wC7TtIeIP9AeBIy1ZHwnUHtmDFyXhtKNFQ2pjxFZdz3yYBKEWDTPQ5D2ipYxtovOi1tuU6s4w==
 
 unherit@^1.0.4:
   version "1.1.3"
