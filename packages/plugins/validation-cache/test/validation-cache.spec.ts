@@ -71,20 +71,4 @@ describe('useValidationCache', () => {
     await testInstance.execute(`query t { foo }`);
     expect(testValidator).toHaveBeenCalledTimes(2);
   });
-
-  it('should call validate multiple times when schema changes', async () => {
-    const testInstance = createTestkit([useTestPlugin, useValidationCache()], testSchema);
-    await testInstance.execute(`query t { foo }`);
-
-    testInstance.replaceSchema(
-      buildSchema(/* GraphQL */ `
-        type Query {
-          foo2: String
-        }
-      `)
-    );
-
-    await testInstance.execute(`query t { foo }`);
-    expect(testValidator).toHaveBeenCalledTimes(2);
-  });
 });
