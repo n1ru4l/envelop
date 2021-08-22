@@ -1,3 +1,4 @@
+import http from 'http';
 import { envelop, useSchema, useLogger, useTiming } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { createHandler } from 'graphql-sse';
@@ -34,7 +35,7 @@ const getEnveloped = envelop({
 
 const { execute, subscribe, validate } = getEnveloped();
 
-createHandler({
+const handler = createHandler({
   execute,
   subscribe,
   validate,
@@ -49,3 +50,11 @@ createHandler({
     };
   },
 });
+
+const server = http.createServer((req, res) => {
+  if (req.url.startsWith('/graphql/stream')) return handler(req, res);
+  return res.writeHead(404).end();
+});
+
+server.listen(3415);
+console.log('Listening to port 3415');
