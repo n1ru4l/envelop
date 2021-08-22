@@ -79,21 +79,12 @@ export type TestkitInstance = {
     variables?: Record<string, any>,
     initialContext?: any
   ) => MaybePromise<ExecutionReturn>;
-  replaceSchema: (schema: GraphQLSchema) => void;
   modifyPlugins: (modifyPluginsFn: ModifyPluginsFn) => void;
   mockPhase: (phaseReplacement: PhaseReplacementParams) => void;
   wait: (ms: number) => Promise<void>;
 };
 
 export function createTestkit(pluginsOrEnvelop: GetEnvelopedFn<any> | Plugin<any>[], schema?: GraphQLSchema): TestkitInstance {
-  let replaceSchema: (s: GraphQLSchema) => void = () => {};
-
-  const replaceSchemaPlugin: Plugin = {
-    onPluginInit({ setSchema }) {
-      replaceSchema = setSchema;
-    },
-  };
-
   const toGraphQLErrorOrThrow = (thrownThing: unknown): GraphQLError => {
     if (thrownThing instanceof GraphQLError) {
       return thrownThing;
@@ -102,21 +93,25 @@ export function createTestkit(pluginsOrEnvelop: GetEnvelopedFn<any> | Plugin<any
     throw thrownThing;
   };
 
-  let pluginsArr = Array.isArray(pluginsOrEnvelop) ? [replaceSchemaPlugin, ...pluginsOrEnvelop] : pluginsOrEnvelop._plugins;
-
   const phasesReplacements: PhaseReplacementParams[] = [];
+  let getEnveloped = Array.isArray(pluginsOrEnvelop)
+    ? envelop({
+        plugins: [...(schema ? [useSchema(cloneSchema(schema))] : []), ...pluginsOrEnvelop],
+      })
+    : pluginsOrEnvelop;
 
   return {
     modifyPlugins(modifyPluginsFn: ModifyPluginsFn) {
-      pluginsArr = modifyPluginsFn(pluginsArr);
+      getEnveloped = envelop({
+        plugins: [...(schema ? [useSchema(cloneSchema(schema))] : []), ...modifyPluginsFn(getEnveloped._plugins)],
+      });
     },
     mockPhase(phaseReplacement: PhaseReplacementParams) {
       phasesReplacements.push(phaseReplacement);
     },
     wait: ms => new Promise(resolve => setTimeout(resolve, ms)),
-    replaceSchema,
     execute: async (operation, variableValues = {}, initialContext = {}) => {
-      const proxy = envelop({ plugins: [...pluginsArr, ...(schema ? [useSchema(cloneSchema(schema))] : [])] })(initialContext);
+      const proxy = getEnveloped(initialContext);
 
       for (const replacement of phasesReplacements) {
         switch (replacement.phase) {

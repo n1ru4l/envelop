@@ -104,20 +104,6 @@ testkit.mockPhase({
 
 > Note: Replacing whole phases might effect plugins execution, so use it carefully!
 
-### Replacing The Schema
-
-The testkit comes with an helper called `replaceSchema` that allows you to replace the schema used by the envelop.
-
-During tests, if you need to run a specific testkit against multiple schemas, you can just do:
-
-```ts
-// Create a testkit based on the envelop, with a dummy schema
-const testkit = createTestkit(getEnveloped, myInitialSchema);
-const result1 = await testkit.execute(`query testQuery { foo }`);
-testkit.replaceSchema(newSchema);
-const result2 = await testkit.execute(`query testQuery { foo }`);
-```
-
 ### Spying On Phases
 
 If you are using Jest, you can use a pre-defined plugin that can help you spy on Envelop phases and check the validity of your parameters.
