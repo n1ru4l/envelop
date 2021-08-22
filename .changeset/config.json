@@ -10,6 +10,7 @@
     "@envelop-examples/*",
     "@envelop/website",
     "@envelop-examples/graphql-ws",
+    "@envelop-examples/graphql-sse",
     "@envelop-examples/apollo-server",
     "@envelop-examples/graphql-helix",
     "@envelop-examples/graphql-socket.io",
