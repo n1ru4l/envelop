@@ -1,5 +1,11 @@
 # @envelop/testing
 
+## 1.1.0
+
+### Minor Changes
+
+- 94d8243: Improved testking and allow mocking/overriding of phases and plugins
+
 ## 1.0.3
 
 ### Patch Changes
