@@ -53,11 +53,12 @@ const getEnveloped = envelop({
 > Note: Transaction and segment/span timings may be affected by other plugins used. In order to get more accurate tracking, it is recommended to add the New Relic plugin last.
 
 ## Advanced usage
+
 The plugin allows you to keep control over the variables and arguments that are tracked in New Relic.  
-In addition to the basic `true/false` boolean value, `includeExecuteVariables` and `includeResolverArgs` also accept a RegEx pattern. This allows you to implement white and black listing of properties to be tracked in New Relic.  
+In addition to the basic `true/false` boolean value, `includeExecuteVariables` and `includeResolverArgs` also accept a RegEx pattern. This allows you to implement white and black listing of properties to be tracked in New Relic.
 
 This is particularly useful if you have properties coming through variables and arguments that are useful for debugging, but you don't want to leak users' data (such as PII).  
-Below is a quick example of how you can use RegEx to set up white/black listing functionalities.  
+Below is a quick example of how you can use RegEx to set up white/black listing functionalities.
 
 ```ts
 useNewRelic({
@@ -67,9 +68,10 @@ useNewRelic({
 }),
 ```
 
-Obviously, the ones above are just a couple of examples, but clearly you have endless options to use any RegEx pattern to filter the variables and arguments in the way that best work for you.  
+Obviously, the ones above are just a couple of examples, but clearly you have endless options to use any RegEx pattern to filter the variables and arguments in the way that best work for you.
 
 > Be aware that the only way to filter variables and arguments is to loop through them, so there is an O(_n_) cost when filtering, where _n_ is the number of variables sent to the operation (when tracking execute variables), or the number of arguments passed to resolvers (when tracking resolvers arguments).
+
 ## Agent Configuration
 
 For full details about New Relic Agent configuration, we recommend reading [New Relic's official Node.js agent configuration documentation](https://docs.newrelic.com/docs/agents/nodejs-agent/installation-configuration/nodejs-agent-configuration/).
@@ -84,20 +86,20 @@ If you choose to use the newrelic.js file, then you need this file located in th
 If you choose to configure the New Relic Agent through environment variables, then you can follow your preferred strategy to make sure the variables are set and available when your application starts.  
 The variables are the same you can set in newrelic.js file, you just need to know that they need to start with `NEW_RELIC_`, obviously, the variables name must be fully uppercase.
 
-The two variables that are always required are:  
+The two variables that are always required are:
 
-| Description | newrelic.js | Environment variable |
-| ----------- | ----------- | -------------------- |
-| Application name | `app_name: ['MyAppName']` | `NEW_RELIC_APP_NAME=MyAppName` |
-| License key | `license_key: '40HexadecimalCharacters'` | `NEW_RELIC_LICENSE_KEY=40HexadecimalCharacters` |
+| Description      | newrelic.js                              | Environment variable                            |
+| ---------------- | ---------------------------------------- | ----------------------------------------------- |
+| Application name | `app_name: ['MyAppName']`                | `NEW_RELIC_APP_NAME=MyAppName`                  |
+| License key      | `license_key: '40HexadecimalCharacters'` | `NEW_RELIC_LICENSE_KEY=40HexadecimalCharacters` |
 
-Other variables that are popularly used are:  
+Other variables that are popularly used are:
 
-| Description | newrelic.js | Environment variable |
-| ----------- | ----------- | -------------------- |
-| Enable distributed tracing | `distributed_tracing: { enabled: true }` | `NEW_RELIC_DISTRIBUTED_TRACING_ENABLED=true` |
-| Logging level | `logging: { level: 'info' }` | `NEW_RELIC_LOG_LEVEL=info` |
-| Capture all request headers | `allow_all_headers: true` | `NEW_RELIC_ALLOW_ALL_HEADERS=true` |
-| Enable error collection | `error_collector: { enabled: true }` | `NEW_RELIC_ERROR_COLLECTOR_ENABLED=true` |
+| Description                 | newrelic.js                              | Environment variable                         |
+| --------------------------- | ---------------------------------------- | -------------------------------------------- |
+| Enable distributed tracing  | `distributed_tracing: { enabled: true }` | `NEW_RELIC_DISTRIBUTED_TRACING_ENABLED=true` |
+| Logging level               | `logging: { level: 'info' }`             | `NEW_RELIC_LOG_LEVEL=info`                   |
+| Capture all request headers | `allow_all_headers: true`                | `NEW_RELIC_ALLOW_ALL_HEADERS=true`           |
+| Enable error collection     | `error_collector: { enabled: true }`     | `NEW_RELIC_ERROR_COLLECTOR_ENABLED=true`     |
 
 Finally, [here](https://github.com/newrelic/node-newrelic/blob/main/lib/config/default.js) is also a reference of all the configuration variables you can include in your newrelic.js file, or translate into the env variables equivalent.
