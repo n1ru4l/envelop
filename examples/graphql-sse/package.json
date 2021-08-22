@@ -1,5 +1,5 @@
 {
-  "name": "@envelop-examples/graphql-ws",
+  "name": "@envelop-examples/graphql-sse",
   "private": true,
   "version": "1.0.0",
   "main": "index.js",
