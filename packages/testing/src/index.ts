@@ -1,7 +1,30 @@
 import { DocumentNode, ExecutionResult, getOperationAST, GraphQLError, GraphQLSchema, print } from 'graphql';
-import { envelop, useSchema } from '@envelop/core';
+import { useSchema, envelop } from '@envelop/core';
 import { GetEnvelopedFn, Plugin, isAsyncIterable } from '@envelop/types';
 import { mapSchema as cloneSchema, isDocumentNode } from '@graphql-tools/utils';
+
+export type ModifyPluginsFn = (plugins: Plugin<any>[]) => Plugin<any>[];
+export type PhaseReplacementParams =
+  | {
+      phase: 'parse';
+      fn: ReturnType<GetEnvelopedFn<any>>['parse'];
+    }
+  | {
+      phase: 'validate';
+      fn: ReturnType<GetEnvelopedFn<any>>['validate'];
+    }
+  | {
+      phase: 'execute';
+      fn: ReturnType<GetEnvelopedFn<any>>['execute'];
+    }
+  | {
+      phase: 'subscribe';
+      fn: ReturnType<GetEnvelopedFn<any>>['subscribe'];
+    }
+  | {
+      phase: 'contextFactory';
+      fn: () => any | Promise<any>;
+    };
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function createSpiedPlugin() {
@@ -50,18 +73,19 @@ type MaybeAsyncIterableIterator<T> = T | AsyncIterableIterator<T>;
 
 type ExecutionReturn = MaybeAsyncIterableIterator<ExecutionResult>;
 
-export function createTestkit(
-  pluginsOrEnvelop: GetEnvelopedFn<any> | Plugin<any>[],
-  schema?: GraphQLSchema
-): {
+export type TestkitInstance = {
   execute: (
     operation: DocumentNode | string,
     variables?: Record<string, any>,
     initialContext?: any
   ) => MaybePromise<ExecutionReturn>;
   replaceSchema: (schema: GraphQLSchema) => void;
+  modifyPlugins: (modifyPluginsFn: ModifyPluginsFn) => void;
+  mockPhase: (phaseReplacement: PhaseReplacementParams) => void;
   wait: (ms: number) => Promise<void>;
-} {
+};
+
+export function createTestkit(pluginsOrEnvelop: GetEnvelopedFn<any> | Plugin<any>[], schema?: GraphQLSchema): TestkitInstance {
   let replaceSchema: (s: GraphQLSchema) => void = () => {};
 
   const replaceSchemaPlugin: Plugin = {
@@ -74,20 +98,45 @@ export function createTestkit(
     if (thrownThing instanceof GraphQLError) {
       return thrownThing;
     }
+
     throw thrownThing;
   };
 
-  const initRequest = Array.isArray(pluginsOrEnvelop)
-    ? envelop({
-        plugins: [...(schema ? [useSchema(cloneSchema(schema))] : []), replaceSchemaPlugin, ...pluginsOrEnvelop],
-      })
-    : pluginsOrEnvelop;
+  let pluginsArr = Array.isArray(pluginsOrEnvelop) ? [replaceSchemaPlugin, ...pluginsOrEnvelop] : pluginsOrEnvelop._plugins;
+
+  const phasesReplacements: PhaseReplacementParams[] = [];
 
   return {
+    modifyPlugins(modifyPluginsFn: ModifyPluginsFn) {
+      pluginsArr = modifyPluginsFn(pluginsArr);
+    },
+    mockPhase(phaseReplacement: PhaseReplacementParams) {
+      phasesReplacements.push(phaseReplacement);
+    },
     wait: ms => new Promise(resolve => setTimeout(resolve, ms)),
     replaceSchema,
     execute: async (operation, variableValues = {}, initialContext = {}) => {
-      const proxy = initRequest(initialContext);
+      const proxy = envelop({ plugins: [...pluginsArr, ...(schema ? [useSchema(cloneSchema(schema))] : [])] })(initialContext);
+
+      for (const replacement of phasesReplacements) {
+        switch (replacement.phase) {
+          case 'parse':
+            proxy.parse = replacement.fn;
+            break;
+          case 'validate':
+            proxy.validate = replacement.fn;
+            break;
+          case 'subscribe':
+            proxy.subscribe = replacement.fn;
+            break;
+          case 'execute':
+            proxy.execute = replacement.fn;
+            break;
+          case 'contextFactory':
+            proxy.contextFactory = replacement.fn;
+            break;
+        }
+      }
 
       let document: DocumentNode;
       try {
@@ -154,6 +203,7 @@ export function createTestkit(
           rootValue: {},
         });
       }
+
       return proxy.execute({
         variableValues,
         contextValue,

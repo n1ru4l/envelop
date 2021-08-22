@@ -8,7 +8,7 @@ export function getRoutes(): IRoutes {
         _: {
           plugins: {
             $name: 'Plugins',
-            $routes: ['README', 'custom-plugin', 'lifecycle'],
+            $routes: ['README', 'custom-plugin', 'lifecycle', 'testing'],
           },
           guides: {
             $name: 'Guides',
