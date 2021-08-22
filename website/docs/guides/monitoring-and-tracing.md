@@ -27,6 +27,12 @@ const getEnveloped = envelop({
 });
 ```
 
+### DataDog, InfluxDB, Telegraf, StatsD
+
+You can use `useStatsD` plugin to collect and send metrics to Datadog's DogStatsD and InfluxDB's Telegraf StatsD services.
+
+[Learn more about the `useStatsD` plugin](/plugins/use-statsd)
+
 ### OpenTelemetry
 
 OpenTelemetry is a possible alternative for Sentry that allows tracking errors as exceptions. [Learn more about the `useOpenTelemetry` plugin](/plugins/use-open-telemetry)

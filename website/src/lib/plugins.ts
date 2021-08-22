@@ -27,6 +27,13 @@ export const pluginsArr: Package<Tags>[] = [
     tags: ['tracing', 'metrics', 'errors'],
   },
   {
+    identifier: 'use-statsd',
+    title: 'useStatsD',
+    npmPackage: '@envelop/statsd',
+    iconUrl: '/assets/logos/datadog.png',
+    tags: ['metrics', 'errors'],
+  },
+  {
     identifier: 'use-schema',
     title: 'useSchema',
     githubReadme: {
