@@ -57,4 +57,3 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(3415);
-console.log('Listening to port 3415');
