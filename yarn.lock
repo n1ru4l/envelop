@@ -6464,10 +6464,10 @@ graphql-shield@^7.5.0:
     object-hash "^2.0.3"
     yup "^0.31.0"
 
-graphql-sse@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/graphql-sse/-/graphql-sse-1.0.0.tgz#f954c35487a0d65e7d5f220587d87897caa2c008"
-  integrity sha512-AcuUQbmyFCRfLYTlaex7xYBfI1FEuQhYQL6WluRR+7XNhzWHXCeqCk0QI3EvpfJ4HXEgau2B/5Qtkrd5YcfZVA==
+graphql-sse@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/graphql-sse/-/graphql-sse-1.0.1.tgz#d263a8077865b06eaf1b074204683d72a92a5e25"
+  integrity sha512-CByxV9oKmUv/k9tlv8Bg/Hn9CcRlfsRQnU5YKI7Z2MfMckLBrXKq6Y1ln9GZh81Id/n5YV4O4X+p+QUHCu24sQ==
 
 graphql-subscriptions@^1.0.0, graphql-subscriptions@^1.1.0:
   version "1.2.1"

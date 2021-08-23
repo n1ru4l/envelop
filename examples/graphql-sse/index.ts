@@ -44,7 +44,7 @@ const handler = createHandler({
     return {
       schema,
       operationName: params.operationName,
-      document: parse(params.query),
+      document: typeof params.query === 'string' ? parse(params.query) : params.query,
       variableValues: params.variables,
       contextValue: await contextFactory(req),
     };
