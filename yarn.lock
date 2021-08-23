@@ -1669,10 +1669,10 @@
     protobufjs "^6.10.0"
     yargs "^16.1.1"
 
-"@guild-docs/client@1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-1.0.2.tgz#195a187ad4aaf30fbf0d08a8acb05255ce5a5516"
-  integrity sha512-85RRFmG5MU9BJmjiyxE0ROVGZHs8/HvauNuBLRRcXUmf3gSYrVCdr6Dj0y6XcrLV3SJYkdrfDYhK2VMxvZHj1w==
+"@guild-docs/client@1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-1.0.3.tgz#00ee77e0ce64d61d72bd7afc23d14ab64d65b865"
+  integrity sha512-lkD87OHUWKdVS8HX/SnaVY9XAjS+ZsZwSsA78a/OdlBRMfJxjf8pFwwXgFBZQIzNPPRpll5u4u0212VNPMrz9Q==
   dependencies:
     "@guild-docs/types" "^1.0.0"
     immer "^9.0.5"
@@ -1683,7 +1683,7 @@
     react-intersection-observer "^8.32.0"
     react-use "^17.2.4"
     use-immer "^0.6.0"
-    zustand "^3.5.8"
+    zustand "^3.5.9"
 
 "@guild-docs/server@1.0.1":
   version "1.0.1"
@@ -6463,6 +6463,11 @@ graphql-shield@^7.5.0:
     "@types/yup" "0.29.11"
     object-hash "^2.0.3"
     yup "^0.31.0"
+
+graphql-sse@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/graphql-sse/-/graphql-sse-1.0.0.tgz#f954c35487a0d65e7d5f220587d87897caa2c008"
+  integrity sha512-AcuUQbmyFCRfLYTlaex7xYBfI1FEuQhYQL6WluRR+7XNhzWHXCeqCk0QI3EvpfJ4HXEgau2B/5Qtkrd5YcfZVA==
 
 graphql-subscriptions@^1.0.0, graphql-subscriptions@^1.1.0:
   version "1.2.1"
@@ -12882,7 +12887,7 @@ zen-observable@^0.8.0:
   resolved "https://registry.npmjs.org/zen-observable/-/zen-observable-0.8.15.tgz#96415c512d8e3ffd920afd3889604e30b9eaac15"
   integrity sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==
 
-zustand@3.5.9, zustand@^3.5.8:
+zustand@3.5.9, zustand@^3.5.9:
   version "3.5.9"
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.5.9.tgz#93fcf9eb29d10bc7fc37bdb5806464af516e7da9"
   integrity sha512-ELj8XLrf5TZoiffbsZKaJ0uGnT1t4PGU9IgFLfiLsjMhOXFfKEl3fEUa5mNAWTzrietJuA1R2YY6GBE1siyE5Q==
