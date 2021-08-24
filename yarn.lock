@@ -12022,10 +12022,10 @@ unbox-primitive@^1.0.1:
     has-symbols "^1.0.2"
     which-boxed-primitive "^1.0.2"
 
-undici@4.4.6:
-  version "4.4.6"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-4.4.6.tgz#628f1902db7857a369da4a0547a91bac1f957474"
-  integrity sha512-NxnFqJouVi+R7wC7TtIeIP9AeBIy1ZHwnUHtmDFyXhtKNFQ2pjxFZdz3yYBKEWDTPQ5D2ipYxtovOi1tuU6s4w==
+undici@4.4.7:
+  version "4.4.7"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-4.4.7.tgz#3fbc1eb2d01d76950168c92e5b0d22d307589958"
+  integrity sha512-41YDu0wuKPhvd2oPDHRe0ufai70O8nOyL6vgpWkv1DUPTwOx59GhZVRvZwinBLAiKJHta/91gSb7wmrDghuJIw==
 
 unherit@^1.0.4:
   version "1.1.3"
