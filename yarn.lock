@@ -12893,10 +12893,10 @@ zen-observable@^0.8.0:
   resolved "https://registry.npmjs.org/zen-observable/-/zen-observable-0.8.15.tgz#96415c512d8e3ffd920afd3889604e30b9eaac15"
   integrity sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==
 
-zustand@3.5.9, zustand@^3.5.9:
-  version "3.5.9"
-  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.5.9.tgz#93fcf9eb29d10bc7fc37bdb5806464af516e7da9"
-  integrity sha512-ELj8XLrf5TZoiffbsZKaJ0uGnT1t4PGU9IgFLfiLsjMhOXFfKEl3fEUa5mNAWTzrietJuA1R2YY6GBE1siyE5Q==
+zustand@3.5.10, zustand@^3.5.9:
+  version "3.5.10"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.5.10.tgz#d2622efd64530ffda285ee5b13ff645b68ab0faf"
+  integrity sha512-upluvSRWrlCiExu2UbkuMIPJ9AigyjRFoO7O9eUossIj7rPPq7pcJ0NKk6t2P7KF80tg/UdPX6/pNKOSbs9DEg==
 
 zwitch@^1.0.0:
   version "1.0.5"

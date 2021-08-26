@@ -42,7 +42,7 @@
     "undici": "4.5.0",
     "use-http": "1.0.24",
     "valtio": "1.2.1",
-    "zustand": "3.5.9"
+    "zustand": "3.5.10"
   },
   "babelMacros": {
     "twin": {
