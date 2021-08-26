@@ -482,11 +482,22 @@ export type OnSubscribeResultResult = {
  */
 export type SubscribeResultHook = (options: OnSubscribeResultEventPayload) => void | OnSubscribeResultResult;
 
+export type SubscribeErrorHookPayload = {
+  error: unknown;
+  setError: (err: unknown) => void;
+};
+
+export type SubscribeErrorHook = (payload: SubscribeErrorHookPayload) => void;
+
 export type OnSubscribeHookResult<ContextType> = {
   /**
    * Invoked with the result returned from subscribe.
    */
   onSubscribeResult?: SubscribeResultHook;
+  /**
+   * Invoked if the source stream returned from subscribe throws an error.
+   */
+  onSubscribeError?: SubscribeErrorHook;
   /**
    * Invoked before each resolver has been invoked during the execution phase.
    */

@@ -25,6 +25,7 @@ import {
   AsyncIterableIteratorOrValue,
   isAsyncIterable,
   OnContextErrorHandler,
+  SubscribeErrorHook,
 } from '@envelop/types';
 import {
   DocumentNode,
@@ -40,7 +41,7 @@ import {
 } from 'graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema';
-import { finalAsyncIterator, makeExecute, makeSubscribe, mapAsyncIterator } from './utils';
+import { errorAsyncIterator, finalAsyncIterator, makeExecute, makeSubscribe, mapAsyncIterator } from './utils';
 
 export type EnvelopOrchestrator<
   InitialContext extends ArbitraryObject = ArbitraryObject,
@@ -301,6 +302,8 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
     let subscribeFn = subscribe as SubscribeFunction;
 
     const afterCalls: SubscribeResultHook[] = [];
+    const subscribeErrorHandlers: SubscribeErrorHook[] = [];
+
     let context = args.contextValue || {};
 
     for (const onSubscribe of beforeCallbacks.subscribe) {
@@ -318,6 +321,9 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
       if (after) {
         if (after.onSubscribeResult) {
           afterCalls.push(after.onSubscribeResult);
+        }
+        if (after.onSubscribeError) {
+          subscribeErrorHandlers.push(after.onSubscribeError);
         }
         if (after.onResolverCalled) {
           onResolversHandlers.push(after.onResolverCalled);
@@ -369,6 +375,22 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
         }
       });
     }
+
+    if (subscribeErrorHandlers.length && isAsyncIterable(result)) {
+      result = errorAsyncIterator(result, err => {
+        let error = err;
+        for (const handler of subscribeErrorHandlers) {
+          handler({
+            error,
+            setError: err => {
+              error = err;
+            },
+          });
+        }
+        throw error;
+      });
+    }
+
     return result;
   });
 

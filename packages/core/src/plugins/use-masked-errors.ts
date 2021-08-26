@@ -53,6 +53,9 @@ export const useMaskedErrors = (opts?: UseMaskedErrorsOpts): Plugin => {
         onSubscribeResult(payload) {
           return handleStreamOrSingleExecutionResult(payload, handleResult);
         },
+        onSubscribeError({ error, setError }) {
+          setError(formatError(error));
+        },
       };
     },
   };

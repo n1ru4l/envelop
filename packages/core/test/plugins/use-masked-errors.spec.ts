@@ -188,28 +188,25 @@ Array [
   });
 
   it('Should mask subscribe (AsyncIterable) subscription errors', async () => {
+    expect.assertions(1);
     const testInstance = createTestkit([useMaskedErrors()], schema);
     const resultStream = await testInstance.execute(`subscription { streamError }`);
     assertStreamExecutionValue(resultStream);
-    const allResults = await collectAsyncIteratorValues(resultStream);
-    expect(allResults).toHaveLength(1);
-    const [result] = allResults;
-    expect(result.errors).toBeDefined();
-    expect(result.errors).toMatchInlineSnapshot();
+    try {
+      await collectAsyncIteratorValues(resultStream);
+    } catch (err) {
+      expect(err).toMatchInlineSnapshot(`[GraphQLError: Unexpected error.]`);
+    }
   });
   it('Should not mask subscribe (AsyncIterable) subscription envelop errors', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
     const resultStream = await testInstance.execute(`subscription { streamEnvelopError }`);
     assertStreamExecutionValue(resultStream);
-    const allResults = await collectAsyncIteratorValues(resultStream);
-    expect(allResults).toHaveLength(1);
-    const [result] = allResults;
-    expect(result.errors).toBeDefined();
-    expect(result.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: Noop],
-]
-`);
+    try {
+      await collectAsyncIteratorValues(resultStream);
+    } catch (err) {
+      expect(err).toMatchInlineSnapshot(`[GraphQLError: Noop]`);
+    }
   });
 
   it('Should mask resolve subscription errors', async () => {
