@@ -1,6 +1,7 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { EnvelopError, useMaskedErrors } from '../../src/plugins/use-masked-errors';
+import { useExtendContext } from '@envelop/core';
 
 describe('useMaskedErrors', () => {
   const schema = makeExecutableSchema({
@@ -70,5 +71,41 @@ describe('useMaskedErrors', () => {
       code: 'Foo',
       message: 'Bar',
     });
+  });
+
+  it('Should properly mask context creation errors', async () => {
+    expect.assertions(1);
+    const testInstance = createTestkit(
+      [
+        useMaskedErrors(),
+        useExtendContext((): {} => {
+          throw new Error('No context for you!');
+        }),
+      ],
+      schema
+    );
+    try {
+      await testInstance.execute(`query { secretWithExtensions }`);
+    } catch (err) {
+      expect(err).toMatchInlineSnapshot(`[GraphQLError: Unexpected error.]`);
+    }
+  });
+
+  it('Should not mask expected context creation errors', async () => {
+    expect.assertions(1);
+    const testInstance = createTestkit(
+      [
+        useMaskedErrors(),
+        useExtendContext((): {} => {
+          throw new EnvelopError('No context for you!');
+        }),
+      ],
+      schema
+    );
+    try {
+      await testInstance.execute(`query { secretWithExtensions }`);
+    } catch (err) {
+      expect(err).toMatchInlineSnapshot(`[GraphQLError: No context for you!]`);
+    }
   });
 });

@@ -24,6 +24,8 @@ import {
   ExecuteFunction,
   AsyncIterableIteratorOrValue,
   isAsyncIterable,
+  OnEndContextBuildingHook,
+  OnErrorContextBuildingHook,
 } from '@envelop/types';
 import {
   DocumentNode,
@@ -250,30 +252,54 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
 
   const customContextFactory: EnvelopContextFnWrapper<(orchestratorCtx?: any) => any, any> = beforeCallbacks.context.length
     ? initialContext => async orchestratorCtx => {
-        const afterCalls: OnContextBuildingHook<any>[] = [];
-        let context = orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
+        const onEndCalls: OnEndContextBuildingHook<any>[] = [];
+        const onErrorCalls: OnErrorContextBuildingHook[] = [];
+        try {
+          let context = orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
 
-        for (const onContext of beforeCallbacks.context) {
-          const afterFn = await onContext({
-            context,
-            extendContext: extension => {
-              context = { ...context, ...extension };
-            },
-          });
+          for (const onContext of beforeCallbacks.context) {
+            const afterHookResult = await onContext({
+              context,
+              extendContext: extension => {
+                context = { ...context, ...extension };
+              },
+            });
 
-          afterFn && afterCalls.push(afterFn);
+            if (afterHookResult) {
+              if (typeof afterHookResult === 'function') {
+                onEndCalls.push(afterHookResult);
+              } else {
+                if (afterHookResult.onEnd) {
+                  onEndCalls.push(afterHookResult.onEnd);
+                }
+                if (afterHookResult.onError) {
+                  onErrorCalls.push(afterHookResult.onError);
+                }
+              }
+            }
+          }
+
+          for (const afterCb of onEndCalls) {
+            afterCb({
+              context,
+              extendContext: extension => {
+                context = { ...context, ...extension };
+              },
+            });
+          }
+          return context;
+        } catch (err) {
+          let error: unknown = err;
+          for (const errorCb of onErrorCalls) {
+            await errorCb({
+              error,
+              setError: err => {
+                error = err;
+              },
+            });
+          }
+          throw error;
         }
-
-        for (const afterCb of afterCalls) {
-          afterCb({
-            context,
-            extendContext: extension => {
-              context = { ...context, ...extension };
-            },
-          });
-        }
-
-        return context;
       }
     : initialContext => orchestratorCtx => orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
 

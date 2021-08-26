@@ -231,9 +231,29 @@ export type AfterContextBuildingEventPayload<ContextType> = {
 /**
  * Invoked after the context has been builded.
  */
-export type AfterContextBuildingHook<ContextType> = (
+export type OnEndContextBuildingHook<ContextType> = (
   options: AfterContextBuildingEventPayload<ContextType>
 ) => PromiseOrValue<void>;
+
+type OnErrorContextBuildingHookEventPayload = {
+  /** The error or thing that got rejected or thrown */
+  error: unknown;
+  /** Overwrite the error or thing that got rejected or thrown. */
+  setError: (err: unknown) => void;
+};
+
+export type OnErrorContextBuildingHook = (options: OnErrorContextBuildingHookEventPayload) => PromiseOrValue<void>;
+
+export type AfterContextBuildingHooks<ContextType> = {
+  /** Invoked after the context was created successfully. */
+  onEnd?: OnEndContextBuildingHook<ContextType>;
+  /** Invoked after the context creation failed. */
+  onError?: OnErrorContextBuildingHook;
+};
+
+export type AfterContextBuildingHook<ContextType> =
+  | OnEndContextBuildingHook<ContextType>
+  | AfterContextBuildingHooks<ContextType>;
 
 /**
  * Invoked before the context has been builded.
