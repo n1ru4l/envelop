@@ -41,5 +41,12 @@ export const useMaskedErrors = (opts?: UseMaskedErrorsOpts): Plugin => {
         },
       };
     },
+    onSubscribe() {
+      return {
+        onSubscribeResult(payload) {
+          return handleStreamOrSingleExecutionResult(payload, handleResult);
+        },
+      };
+    },
   };
 };
