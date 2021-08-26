@@ -2,4 +2,4 @@
 '@envelop/core': minor
 ---
 
-useMaskedErrors now also handles subscription errors
+useMaskedErrors now also handles errors that are occurring during subscriptions.
