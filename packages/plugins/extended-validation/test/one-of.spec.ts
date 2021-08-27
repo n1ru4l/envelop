@@ -7,34 +7,11 @@ import {
   GraphQLInt,
   GraphQLSchema,
   GraphQLBoolean,
-  GraphQLNonNull as _GraphQLNonNull,
-  GraphQLList as _GraphQLList,
-  GraphQLNullableType,
-  GraphQLType,
+  GraphQLNonNull,
+  GraphQLList,
 } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useExtendedValidation, ONE_OF_DIRECTIVE_SDL, OneOfInputObjectsRule } from '../src';
-
-// GraphQL.js 16 introduced requiring new constructor calls for creating GraphQLNonNull
-function GraphQLNonNull<T extends GraphQLNullableType>(type: T): _GraphQLNonNull<T> {
-  try {
-    // @ts-ignore
-    return _GraphQLNonNull(type);
-  } catch (_) {
-    // @ts-ignore
-    return new _GraphQLNonNull(type);
-  }
-}
-// GraphQL.js 16 introduced requiring new constructor calls for creating GraphQLList
-function GraphQLList<T extends GraphQLType>(type: T): _GraphQLList<T> {
-  try {
-    // @ts-ignore
-    return _GraphQLList(type);
-  } catch (_) {
-    // @ts-ignore
-    return new _GraphQLList(type);
-  }
-}
 
 describe('oneOf', () => {
   const astSchema = buildSchema(/* GraphQL */ `
@@ -75,7 +52,7 @@ describe('oneOf', () => {
     name: 'User',
     fields: {
       id: {
-        type: GraphQLNonNull(GraphQLID),
+        type: new GraphQLNonNull(GraphQLID),
       },
     },
   });
@@ -97,7 +74,7 @@ describe('oneOf', () => {
     name: 'NestedOneOfFieldInput',
     fields: {
       field: {
-        type: GraphQLNonNull(GraphQLUserUniqueCondition),
+        type: new GraphQLNonNull(GraphQLUserUniqueCondition),
       },
     },
   });
@@ -105,7 +82,7 @@ describe('oneOf', () => {
     name: 'DeeplyNestedOneOfFieldInput',
     fields: {
       field: {
-        type: GraphQLNonNull(GraphQLNestedOneOfFieldInput),
+        type: new GraphQLNonNull(GraphQLNestedOneOfFieldInput),
       },
     },
   });
@@ -113,7 +90,7 @@ describe('oneOf', () => {
     name: 'ListOneOfInput',
     fields: {
       items: {
-        type: GraphQLList(GraphQLNonNull(GraphQLUserUniqueCondition)),
+        type: new GraphQLList(new GraphQLNonNull(GraphQLUserUniqueCondition)),
       },
     },
   });
@@ -152,7 +129,7 @@ describe('oneOf', () => {
         type: GraphQLBoolean,
         args: {
           input: {
-            type: GraphQLNonNull(GraphQLNestedOneOfFieldInput),
+            type: new GraphQLNonNull(GraphQLNestedOneOfFieldInput),
           },
         },
       },
@@ -168,7 +145,7 @@ describe('oneOf', () => {
         type: GraphQLBoolean,
         args: {
           input: {
-            type: GraphQLList(GraphQLNonNull(GraphQLUserUniqueCondition)),
+            type: new GraphQLList(new GraphQLNonNull(GraphQLUserUniqueCondition)),
           },
         },
       },
