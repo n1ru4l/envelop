@@ -27,6 +27,7 @@ import {
   OnContextErrorHandler,
   SubscribeErrorHook,
   DefaultContext,
+  Maybe,
 } from '@envelop/types';
 import {
   DocumentNode,
@@ -40,7 +41,6 @@ import {
   validate,
   ValidationRule,
 } from 'graphql';
-import { Maybe } from 'graphql/jsutils/Maybe';
 import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema';
 import { errorAsyncIterator, finalAsyncIterator, makeExecute, makeSubscribe, mapAsyncIterator } from './utils';
 
@@ -307,7 +307,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     const afterCalls: SubscribeResultHook<PluginsContext>[] = [];
     const subscribeErrorHandlers: SubscribeErrorHook[] = [];
 
-    let context = args.contextValue || {};
+    let context = (args.contextValue as {}) || {};
 
     for (const onSubscribe of beforeCallbacks.subscribe) {
       const after = await onSubscribe({
@@ -338,9 +338,11 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
       context[resolversHooksSymbol] = onResolversHandlers;
     }
 
-    let result = await subscribeFn({
+    let result: AsyncIterableIteratorOrValue<ExecutionResult> = await subscribeFn({
       ...args,
       contextValue: context,
+      // Casted for GraphQL.js 15 compatibility
+      // Can be removed once we drop support for GraphQL.js 15
     });
 
     const onNextHandler: OnSubscribeResultResultOnNextHook<PluginsContext>[] = [];
@@ -399,7 +401,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
       });
     }
 
-    return result;
+    return result as AsyncIterableIterator<ExecutionResult>;
   });
 
   const customExecute = beforeCallbacks.execute.length
@@ -409,7 +411,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
         let result: AsyncIterableIteratorOrValue<ExecutionResult>;
 
         const afterCalls: OnExecuteDoneHook<PluginsContext>[] = [];
-        let context = args.contextValue || {};
+        let context = (args.contextValue as {}) || {};
 
         for (const onExecute of beforeCallbacks.execute) {
           let stopCalled = false;

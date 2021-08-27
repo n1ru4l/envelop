@@ -16,8 +16,8 @@ import {
   PolymorphicExecuteArguments,
   PolymorphicSubscribeArguments,
   SubscribeFunction,
+  PromiseOrValue,
 } from '@envelop/types';
-import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 
 export const envelopIsIntrospectionSymbol = Symbol('ENVELOP_IS_INTROSPECTION');
 
@@ -73,13 +73,13 @@ function getSubscribeArgs(args: PolymorphicSubscribeArguments): SubscriptionArgs
  * Utility function for making a subscribe function that handles polymorphic arguments.
  */
 export const makeSubscribe = (
-  subscribeFn: (args: SubscriptionArgs) => PromiseOrValue<AsyncIterableIterator<ExecutionResult> | ExecutionResult>
+  subscribeFn: (args: SubscriptionArgs) => PromiseOrValue<AsyncIterableIterator<ExecutionResult>>
 ): SubscribeFunction =>
-  ((...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<ExecutionResult> | ExecutionResult> =>
+  ((...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<ExecutionResult>> =>
     subscribeFn(getSubscribeArgs(polyArgs))) as SubscribeFunction;
 
 export async function* mapAsyncIterator<TInput, TOutput = TInput>(
-  asyncIterable: AsyncIterableIterator<TInput>,
+  asyncIterable: AsyncIterable<TInput>,
   map: (input: TInput) => Promise<TOutput> | TOutput
 ): AsyncIterableIterator<TOutput> {
   for await (const value of asyncIterable) {
@@ -109,10 +109,10 @@ export const makeExecute = (
   executeFn: (args: ExecutionArgs) => PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>>
 ): ExecuteFunction =>
   ((...polyArgs: PolymorphicExecuteArguments): PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>> =>
-    executeFn(getExecuteArgs(polyArgs))) as ExecuteFunction;
+    executeFn(getExecuteArgs(polyArgs))) as unknown as ExecuteFunction;
 
 export async function* finalAsyncIterator<TInput>(
-  asyncIterable: AsyncIterableIterator<TInput>,
+  asyncIterable: AsyncIterable<TInput>,
   onFinal: () => void
 ): AsyncIterableIterator<TInput> {
   try {
@@ -123,7 +123,7 @@ export async function* finalAsyncIterator<TInput>(
 }
 
 export async function* errorAsyncIterator<TInput>(
-  asyncIterable: AsyncIterableIterator<TInput>,
+  asyncIterable: AsyncIterable<TInput>,
   onError: (err: unknown) => void
 ): AsyncIterableIterator<TInput> {
   try {

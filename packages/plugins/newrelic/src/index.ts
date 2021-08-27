@@ -1,7 +1,6 @@
 import newRelic from 'newrelic';
-import { Plugin, OnResolverCalledHook, isAsyncIterable } from '@envelop/types';
+import { Plugin, OnResolverCalledHook, isAsyncIterable, Path } from '@envelop/types';
 import { print, FieldNode, Kind, OperationDefinitionNode } from 'graphql';
-import { Path } from 'graphql/jsutils/Path';
 
 const { shim: instrumentationApi } = newRelic;
 

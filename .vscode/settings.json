@@ -1,5 +1,15 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "test-lib": true,
+    "lib": true,
+    "coverage": true,
+    "npm": true,
+    "**/dist": true
+  }
 }

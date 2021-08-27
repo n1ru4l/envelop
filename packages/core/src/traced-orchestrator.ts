@@ -1,6 +1,5 @@
 import { DocumentNode, ExecutionArgs, GraphQLFieldResolver, GraphQLSchema, GraphQLTypeResolver, SubscriptionArgs } from 'graphql';
-import { Maybe } from 'graphql/jsutils/Maybe';
-import { ArbitraryObject, isAsyncIterable } from '@envelop/types';
+import { ArbitraryObject, isAsyncIterable, Maybe } from '@envelop/types';
 import { EnvelopOrchestrator } from './orchestrator';
 
 const HR_TO_NS = 1e9;
@@ -88,7 +87,8 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
               typeResolver,
             }
           : argsOrSchema;
-
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore GraphQL.js types contextValue as unknown
       const done = createTracer('execute', args.contextValue || {});
 
       try {
@@ -97,6 +97,8 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
 
         if (!isAsyncIterable(result)) {
           result.extensions = result.extensions || {};
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore GraphQL.js types contextValue as unknown
           result.extensions.envelopTracing = args.contextValue._envelopTracing;
         } else {
           // eslint-disable-next-line no-console
@@ -135,6 +137,8 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
               subscribeFieldResolver,
             }
           : argsOrSchema;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore GraphQL.js types contextValue as unknown
       const done = createTracer('subscribe', args.contextValue || {});
 
       try {

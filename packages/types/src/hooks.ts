@@ -10,8 +10,7 @@ import type {
   SubscriptionArgs,
   ValidationRule,
 } from 'graphql';
-import { Maybe } from 'graphql/jsutils/Maybe';
-import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
+import { Maybe, PromiseOrValue } from './utils';
 import { DefaultContext } from './context-types';
 import {
   AsyncIterableIteratorOrValue,
@@ -453,11 +452,11 @@ export type OnSubscribeResultEventPayload<ContextType> = {
   /**
    * The current execution result.
    */
-  result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
+  result: AsyncIterableIteratorOrValue<ExecutionResult>;
   /**
    * Replace the current execution result with a new execution result.
    */
-  setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
+  setResult: (newResult: AsyncIterableIteratorOrValue<ExecutionResult>) => void;
 };
 
 export type OnSubscribeResultResultOnNextHookPayload<ContextType> = {
