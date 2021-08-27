@@ -110,7 +110,7 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
 
         extendContext({
           [fieldName]: user,
-          validateUser: () => validateUser(user!, context as unknown as ContextType),
+          validateUser,
         } as unknown as ContextType);
       },
       onExecute() {
