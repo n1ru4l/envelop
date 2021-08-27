@@ -1,10 +1,30 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { Parser } from 'graphql/language/parser.js';
-import { TokenKind, Kind } from 'graphql';
+import { ParseOptions, Parser } from 'graphql/language/parser.js';
+import type { Lexer } from 'graphql/language/lexer.js';
+import { TokenKind, Kind, Token, Location } from 'graphql';
 
 export class FragmentArgumentCompatibleParser extends Parser {
+  // see https://github.com/graphql/graphql-js/pull/3248
+  getLexer(): Lexer {
+    return (this as any)._lexer as Lexer;
+  }
+
+  // see https://github.com/graphql/graphql-js/pull/3248
+  getOptions(): ParseOptions {
+    return (this as any)._options as ParseOptions;
+  }
+
+  // for backwards-compat with v15, this api was removed in v16 in favor of the this.node API.
+  loc(startToken: Token): Location | undefined {
+    if (this.getOptions()?.noLocation !== true) {
+      const lexer = this.getLexer();
+      return new Location(startToken, lexer.lastToken, lexer.source);
+    }
+    return undefined;
+  }
+
   parseFragment() {
-    const start = this._lexer.token;
+    const start = this.getLexer().token;
     this.expectToken(TokenKind.SPREAD);
     const hasTypeCondition = this.expectOptionalKeyword('on');
 
@@ -39,7 +59,7 @@ export class FragmentArgumentCompatibleParser extends Parser {
   }
 
   parseFragmentDefinition() {
-    const start = this._lexer.token;
+    const start = this.getLexer().token;
     this.expectKeyword('fragment');
     const name = this.parseFragmentName();
 

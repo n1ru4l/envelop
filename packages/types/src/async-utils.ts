@@ -5,7 +5,6 @@ import {
   OnExecuteDoneHookResult,
   OnExecuteDoneHookResultOnNextHook,
 } from '@envelop/core';
-import { ExecutionResult } from 'graphql';
 
 /**
  * Returns true if the provided object implements the AsyncIterator protocol via
@@ -13,7 +12,7 @@ import { ExecutionResult } from 'graphql';
  *
  * Source: https://github.com/graphql/graphql-js/blob/main/src/jsutils/isAsyncIterable.ts
  */
-export function isAsyncIterable(maybeAsyncIterable: any): maybeAsyncIterable is AsyncIterableIterator<ExecutionResult> {
+export function isAsyncIterable(maybeAsyncIterable: any): maybeAsyncIterable is AsyncIterable<any> {
   return typeof maybeAsyncIterable?.[Symbol.asyncIterator] === 'function';
 }
 

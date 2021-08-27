@@ -5,13 +5,36 @@ import {
   GraphQLString,
   GraphQLID,
   GraphQLInt,
-  GraphQLNonNull,
   GraphQLSchema,
   GraphQLBoolean,
-  GraphQLList,
+  GraphQLNonNull as _GraphQLNonNull,
+  GraphQLList as _GraphQLList,
+  GraphQLNullableType,
+  GraphQLType,
 } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useExtendedValidation, ONE_OF_DIRECTIVE_SDL, OneOfInputObjectsRule } from '../src';
+
+// GraphQL.js 16 introduced requiring new constructor calls for creating GraphQLNonNull
+function GraphQLNonNull<T extends GraphQLNullableType>(type: T): _GraphQLNonNull<T> {
+  try {
+    // @ts-ignore
+    return _GraphQLNonNull(type);
+  } catch (_) {
+    // @ts-ignore
+    return new _GraphQLNonNull(type);
+  }
+}
+// GraphQL.js 16 introduced requiring new constructor calls for creating GraphQLList
+function GraphQLList<T extends GraphQLType>(type: T): _GraphQLList<T> {
+  try {
+    // @ts-ignore
+    return _GraphQLList(type);
+  } catch (_) {
+    // @ts-ignore
+    return new _GraphQLList(type);
+  }
+}
 
 describe('oneOf', () => {
   const astSchema = buildSchema(/* GraphQL */ `

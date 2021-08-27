@@ -14,7 +14,7 @@ import { Maybe } from 'graphql/jsutils/Maybe';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { DefaultContext } from './context-types';
 import {
-  AsyncIterableIteratorOrValue,
+  AsyncGeneratorOrValue,
   ExecuteFunction,
   ParseFunction,
   ValidateFunction,
@@ -379,11 +379,11 @@ export type OnExecuteDoneEventPayload<ContextType> = {
    * The execution result returned from the execute function.
    * Can return an AsyncIterable if a graphql.js that has defer/stream implemented is used.
    */
-  result: AsyncIterableIteratorOrValue<ExecutionResult>;
+  result: AsyncGeneratorOrValue<ExecutionResult>;
   /**
    * Replace the execution result with a new execution result.
    */
-  setResult: (newResult: AsyncIterableIteratorOrValue<ExecutionResult>) => void;
+  setResult: (newResult: AsyncGeneratorOrValue<ExecutionResult>) => void;
 };
 
 /**
@@ -453,11 +453,11 @@ export type OnSubscribeResultEventPayload<ContextType> = {
   /**
    * The current execution result.
    */
-  result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
+  result: AsyncGenerator<ExecutionResult> | ExecutionResult;
   /**
    * Replace the current execution result with a new execution result.
    */
-  setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
+  setResult: (newResult: AsyncGenerator<ExecutionResult, void, void> | ExecutionResult) => void;
 };
 
 export type OnSubscribeResultResultOnNextHookPayload<ContextType> = {

@@ -346,7 +346,7 @@ export function useResponseCache({
           // eslint-disable-next-line no-console
           console.warn(
             `[useResponseCache] Failed extracting document string from the context. The response will not be cached or served from the cache. ` +
-              `If you are overriding the 'parse' behavior make sure to pass a custom 'getDocumentStringFromContext' function for getting the document string, which is required for building the response cache key.`
+            `If you are overriding the 'parse' behavior make sure to pass a custom 'getDocumentStringFromContext' function for getting the document string, which is required for building the response cache key.`
           );
           return undefined;
         }
@@ -396,6 +396,8 @@ function applyResponseCacheLogic(schema: GraphQLSchema, idFieldNames: Array<stri
                   ctx.skip = true;
                   return;
                 }
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore  TODO: investigate what to do if id is something unexpected
                 ctx.identifier.set(`${typename}:${id}`, { typename, id });
                 ctx.types.add(typename);
                 if (typename in ctx.ttlPerType) {
