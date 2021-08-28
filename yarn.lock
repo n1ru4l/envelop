@@ -12035,10 +12035,10 @@ unbox-primitive@^1.0.1:
     has-symbols "^1.0.2"
     which-boxed-primitive "^1.0.2"
 
-undici@4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-4.5.0.tgz#87d42cfe2c363fb14f278b0a0043b436ee2b5dd7"
-  integrity sha512-N2e4eDS+rv6qljPP+RMlTZXSS4O6V9LuyIvDT9btweBOPMjUAe5k+u4JfJdbGe8WFjJMhqmOu6dR8tSY0XqNgw==
+undici@4.5.1:
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-4.5.1.tgz#482456da326b06220fcbd4db3eacc2fba1f2d05d"
+  integrity sha512-1Kmphp4SMwVbSauz9xH4gxt0m3sLGs5qRHs/XYgjeO3bNSt6hspDZqMhM8+ETu9ynB5bq9e6mnwcDz+NVCQ3UQ==
 
 unherit@^1.0.4:
   version "1.1.3"
