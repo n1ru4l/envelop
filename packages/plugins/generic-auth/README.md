@@ -234,7 +234,7 @@ const validateUser: ValidateUserFn<UserType> = async (user, context, { root, arg
     throw new Error(`Unauthenticated!`);
   }
 
-  const valueNode = authDirectiveNode.arguments.find(arg => arg.name.value === 'role').value as EnumValueNode;
+  const valueNode = directiveNode.arguments.find(arg => arg.name.value === 'role').value as EnumValueNode;
   const role = valueNode.value;
 
   if (role !== user.role) {

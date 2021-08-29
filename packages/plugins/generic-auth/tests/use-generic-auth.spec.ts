@@ -1,6 +1,7 @@
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { DIRECTIVE_SDL, ResolveUserFn, useGenericAuth } from '../src';
+import { EnumValueNode } from 'graphql';
+import { DIRECTIVE_SDL, ResolveUserFn, useGenericAuth, ValidateUserFn } from '../src';
 
 type UserType = {
   id: number;
@@ -308,6 +309,103 @@ describe('useGenericAuth', () => {
       expect(result.errors?.length).toBe(1);
       expect(result.errors?.[0].message).toBe('Unauthenticated!');
       expect(result.errors?.[0].path).toEqual(['protected']);
+    });
+
+    describe('auth directive with role', () => {
+      type UserTypeWithRole = UserType & { role: 'ADMIN' | 'USER' };
+      const validateUserFn: ValidateUserFn<UserTypeWithRole> = async (user, _context, _ctx, directiveNode) => {
+        if (!user) {
+          throw new Error(`Unauthenticated!`);
+        }
+
+        if (directiveNode?.arguments) {
+          const valueNode = directiveNode.arguments.find(arg => arg.name.value === 'role')?.value as EnumValueNode | undefined;
+          if (valueNode) {
+            const role = valueNode.value;
+
+            if (role !== user.role) {
+              throw new Error('Unauthorized!');
+            }
+          }
+        }
+      };
+
+      const invalidRoleResolveUserFn: ResolveUserFn<UserTypeWithRole> = async context => {
+        return {
+          id: 1,
+          name: 'Dotan',
+          role: 'USER',
+        };
+      };
+
+      const validRoleResolveUserFn: ResolveUserFn<UserTypeWithRole> = async context => {
+        return {
+          id: 1,
+          name: 'Dotan',
+          role: 'ADMIN',
+        };
+      };
+
+      const schemaWithDirectiveWithRole = makeExecutableSchema({
+        typeDefs: `
+        enum Role {
+          ADMIN
+          USER
+        }
+      
+        directive @auth(role: Role! = USER) on FIELD_DEFINITION
+        
+        type Query {
+          protected: String @auth
+          admin: String @auth(role: ADMIN)
+          public: String
+        }
+        `,
+        resolvers: {
+          Query: {
+            protected: (root, args, context) => context.currentUser.name,
+            public: (root, args, context) => 'public',
+            admin: (root, args, context) => 'admin',
+          },
+        },
+      });
+
+      it('Should prevent field execution when user does not have right role', async () => {
+        const testInstance = createTestkit(
+          [
+            useGenericAuth({
+              mode: 'protect-auth-directive',
+              resolveUser: invalidRoleResolveUserFn,
+              validateUser: validateUserFn,
+            }),
+          ],
+          schemaWithDirectiveWithRole
+        );
+
+        const result = await testInstance.execute(`query { admin }`);
+        assertSingleExecutionValue(result);
+        expect(result.errors?.length).toBe(1);
+        expect(result.errors?.[0].message).toBe('Unauthorized!');
+        expect(result.errors?.[0].path).toEqual(['admin']);
+      });
+
+      it('Should allow execution when user has right role', async () => {
+        const testInstance = createTestkit(
+          [
+            useGenericAuth({
+              mode: 'protect-auth-directive',
+              resolveUser: validRoleResolveUserFn,
+              validateUser: validateUserFn,
+            }),
+          ],
+          schemaWithDirectiveWithRole
+        );
+
+        const result = await testInstance.execute(`query { admin }`);
+        assertSingleExecutionValue(result);
+        expect(result.errors).toBeUndefined();
+        expect(result.data?.admin).toBe('admin');
+      });
     });
   });
 });

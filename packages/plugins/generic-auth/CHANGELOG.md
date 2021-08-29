@@ -1,5 +1,12 @@
 # @envelop/generic-auth
 
+## 1.1.0
+
+### Minor Changes
+
+- Rename resolveUserFn to resolveUser
+- Fix issue with inaccessible directiveNode
+
 ## 1.0.0
 
 ### Major Changes
