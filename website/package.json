@@ -41,7 +41,7 @@
     "tiny-lru": "7.0.6",
     "undici": "4.5.1",
     "use-http": "1.0.24",
-    "valtio": "1.2.1",
+    "valtio": "1.2.2",
     "zustand": "3.5.10"
   },
   "babelMacros": {
