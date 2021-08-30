@@ -299,6 +299,10 @@ export const pluginsArr: Package<Tags>[] = [
     npmPackage: '@envelop/execute-subscription-event',
     iconUrl: '/assets/logos/graphql.png',
     tags: ['utilities', 'subscription'],
+    githubReadme: {
+      repo: 'dotansimha/envelop',
+      path: '/packages/plugins/execute-subscription-event/README.md',
+    },
   },
   {
     identifier: 'use-resource-limitations',
