@@ -67,7 +67,7 @@
     "jest": "27.1.0"
   },
   "resolutions": {
-    "@changesets/git": "1.1.1",
+    "@changesets/git": "1.1.2",
     "esbuild": "^0.12.12",
     "prettier": "2.3.2"
   },
