@@ -37,7 +37,7 @@
     "react-markdown": "7.0.1",
     "react-use": "17.2.4",
     "remark-admonitions": "1.2.1",
-    "shiki": "0.9.8",
+    "shiki": "0.9.9",
     "tiny-lru": "7.0.6",
     "undici": "4.5.1",
     "use-http": "1.0.24",
