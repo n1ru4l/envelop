@@ -28,7 +28,7 @@ export const useExtendContextValuePerExecuteSubscriptionEvent = <TContextValue =
       const executeNew = makeExecute(async executionArgs => {
         const context = await createContext({ args });
         try {
-          return execute({
+          return await execute({
             ...executionArgs,
             contextValue: { ...executionArgs.contextValue, ...context?.contextPartial },
           });
