@@ -20,7 +20,7 @@ yarn add @envelop/generic-auth
 
 Then, define your authentication methods:
 
-1. Resolve your user from the request by implementing `resolveUser` function:
+1. Resolve your user from the request by implementing `resolveUserFn`:
 
 Use this method to only extract the user from the context, with any custom code, for example:
 
@@ -31,7 +31,7 @@ type UserType = {
   id: string;
 };
 
-const resolveUser: ResolveUserFn<UserType> = async context => {
+const resolveUserFn: ResolveUserFn<UserType> = async context => {
   // Here you can implement any custom sync/async code, and use the context built so far in Envelop and the HTTP request
   // to find the current user.
   // Common practice is to use a JWT token here, validate it, and use the payload as-is, or fetch the user from an external services.
@@ -78,12 +78,12 @@ To setup this mode, use the following config:
 
 ```ts
 import { envelop } from '@envelop/core';
-import { useGenericAuth, ResolveUserFn, ValidateUserFn } from '@envelop/generic-auth';
+import { useGenericAuth, resolveUser, ValidateUserFn } from '@envelop/generic-auth';
 
 type UserType = {
   id: string;
 };
-const resolveUser: ResolveUserFn<UserType> = async context => {
+const resolveUserFn: ResolveUserFn<UserType> = async context => {
   /* ... */
 };
 const validateUser: ValidateUserFn<UserType> = async (user, context) => {
@@ -108,12 +108,12 @@ This mode uses the plugin to inject the authenticated user into the `context`, a
 
 ```ts
 import { envelop } from '@envelop/core';
-import { useGenericAuth, ResolveUserFn, ValidateUserFn } from '@envelop/generic-auth';
+import { useGenericAuth, resolveUser, ValidateUserFn } from '@envelop/generic-auth';
 
 type UserType = {
   id: string;
 };
-const resolveUser: ResolveUserFn<UserType> = async context => {
+const resolveUserFn: ResolveUserFn<UserType> = async context => {
   /* ... */
 };
 const validateUser: ValidateUserFn<UserType> = async (user, context) => {
@@ -153,12 +153,12 @@ This mode is similar to option #2, but it uses `@auth` SDL directive to automati
 
 ```ts
 import { envelop } from '@envelop/core';
-import { useGenericAuth, ResolveUserFn, ValidateUserFn } from '@envelop/generic-auth';
+import { useGenericAuth, resolveUser, ValidateUserFn } from '@envelop/generic-auth';
 
 type UserType = {
   id: string;
 };
-const resolveUser: ResolveUserFn<UserType> = async context => {
+const resolveUserFn: ResolveUserFn<UserType> = async context => {
   /* ... */
 };
 const validateUser: ValidateUserFn<UserType> = async (user, context) => {

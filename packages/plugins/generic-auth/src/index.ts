@@ -27,7 +27,7 @@ export type GenericAuthPluginOptions<UserType extends {} = {}, ContextType exten
    * Common practice is to use a JWT token here, validate it, and use the payload as-is, or fetch the user from an external services.
    * Make sure to either return `null` or the user object.
    */
-  resolveUser: ResolveUserFn<UserType, ContextType>;
+  resolveUserFn: ResolveUserFn<UserType, ContextType>;
   /**
    * Here you can implement any custom to check if the user is valid and have access to the server.
    * This method is being triggered in different flows, besed on the mode you chose to implement.
@@ -84,7 +84,7 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
   if (options.mode === 'protect-all') {
     return {
       async onContextBuilding({ context, extendContext }) {
-        const user = await options.resolveUser(context as unknown as ContextType);
+        const user = await options.resolveUserFn(context as unknown as ContextType);
         await validateUser(user!, context as unknown as ContextType);
 
         extendContext({
@@ -95,7 +95,7 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
   } else if (options.mode === 'resolve-only') {
     return {
       async onContextBuilding({ context, extendContext }) {
-        const user = await options.resolveUser(context as unknown as ContextType);
+        const user = await options.resolveUserFn(context as unknown as ContextType);
 
         extendContext({
           [fieldName]: user,
@@ -106,7 +106,7 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
   } else if (options.mode === 'protect-auth-directive') {
     return {
       async onContextBuilding({ context, extendContext }) {
-        const user = await options.resolveUser(context as unknown as ContextType);
+        const user = await options.resolveUserFn(context as unknown as ContextType);
 
         extendContext({
           [fieldName]: user,

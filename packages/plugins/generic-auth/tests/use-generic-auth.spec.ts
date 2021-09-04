@@ -35,7 +35,7 @@ describe('useGenericAuth', () => {
         [
           useGenericAuth({
             mode: 'protect-all',
-            resolveUser: validresolveUserFn,
+            resolveUserFn: validresolveUserFn,
           }),
         ],
         schema
@@ -52,7 +52,7 @@ describe('useGenericAuth', () => {
         [
           useGenericAuth({
             mode: 'protect-all',
-            resolveUser: invalidresolveUserFn,
+            resolveUserFn: invalidresolveUserFn,
           }),
         ],
         schema
@@ -71,7 +71,7 @@ describe('useGenericAuth', () => {
         [
           useGenericAuth({
             mode: 'resolve-only',
-            resolveUser: validresolveUserFn,
+            resolveUserFn: validresolveUserFn,
           }),
           {
             onExecute: spyFn,
@@ -104,7 +104,7 @@ describe('useGenericAuth', () => {
         [
           useGenericAuth({
             mode: 'resolve-only',
-            resolveUser: validresolveUserFn,
+            resolveUserFn: validresolveUserFn,
           }),
         ],
         schema
@@ -121,7 +121,7 @@ describe('useGenericAuth', () => {
         [
           useGenericAuth({
             mode: 'resolve-only',
-            resolveUser: invalidresolveUserFn,
+            resolveUserFn: invalidresolveUserFn,
           }),
         ],
         schema
@@ -139,7 +139,7 @@ describe('useGenericAuth', () => {
         [
           useGenericAuth({
             mode: 'resolve-only',
-            resolveUser: validresolveUserFn,
+            resolveUserFn: validresolveUserFn,
           }),
           {
             onExecute: spyFn,
@@ -171,7 +171,7 @@ describe('useGenericAuth', () => {
         [
           useGenericAuth({
             mode: 'resolve-only',
-            resolveUser: invalidresolveUserFn,
+            resolveUserFn: invalidresolveUserFn,
           }),
           {
             onExecute: spyFn,
@@ -200,7 +200,7 @@ describe('useGenericAuth', () => {
         [
           useGenericAuth({
             mode: 'resolve-only',
-            resolveUser: validresolveUserFn,
+            resolveUserFn: validresolveUserFn,
           }),
           {
             onExecute: spyFn,
@@ -247,7 +247,7 @@ describe('useGenericAuth', () => {
         [
           useGenericAuth({
             mode: 'protect-auth-directive',
-            resolveUser: validresolveUserFn,
+            resolveUserFn: validresolveUserFn,
           }),
         ],
         schemaWithDirective
@@ -264,7 +264,7 @@ describe('useGenericAuth', () => {
         [
           useGenericAuth({
             mode: 'protect-auth-directive',
-            resolveUser: validresolveUserFn,
+            resolveUserFn: validresolveUserFn,
           }),
         ],
         schemaWithDirective
@@ -281,7 +281,7 @@ describe('useGenericAuth', () => {
         [
           useGenericAuth({
             mode: 'protect-auth-directive',
-            resolveUser: invalidresolveUserFn,
+            resolveUserFn: invalidresolveUserFn,
           }),
         ],
         schemaWithDirective
@@ -298,7 +298,7 @@ describe('useGenericAuth', () => {
         [
           useGenericAuth({
             mode: 'protect-auth-directive',
-            resolveUser: invalidresolveUserFn,
+            resolveUserFn: invalidresolveUserFn,
           }),
         ],
         schemaWithDirective
