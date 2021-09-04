@@ -1,6 +1,5 @@
 ---
-'@envelop/generic-auth': minor
+'@envelop/generic-auth': patch
 ---
 
-- Rename resolveUserFn to resolveUser
-- Fix issue with inaccessible directiveNode
+Fix issue with inaccessible directiveNode

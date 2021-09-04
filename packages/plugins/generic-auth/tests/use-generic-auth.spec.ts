@@ -375,7 +375,7 @@ describe('useGenericAuth', () => {
           [
             useGenericAuth({
               mode: 'protect-auth-directive',
-              resolveUser: invalidRoleResolveUserFn,
+              resolveUserFn: invalidRoleResolveUserFn,
               validateUser: validateUserFn,
             }),
           ],
@@ -394,7 +394,7 @@ describe('useGenericAuth', () => {
           [
             useGenericAuth({
               mode: 'protect-auth-directive',
-              resolveUser: validRoleResolveUserFn,
+              resolveUserFn: validRoleResolveUserFn,
               validateUser: validateUserFn,
             }),
           ],

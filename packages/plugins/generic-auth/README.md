@@ -78,7 +78,7 @@ To setup this mode, use the following config:
 
 ```ts
 import { envelop } from '@envelop/core';
-import { useGenericAuth, resolveUser, ValidateUserFn } from '@envelop/generic-auth';
+import { useGenericAuth, ResolveUserFn, ValidateUserFn } from '@envelop/generic-auth';
 
 type UserType = {
   id: string;
@@ -94,7 +94,7 @@ const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useGenericAuth({
-      resolveUser,
+      resolveUserFn,
       validateUser,
       mode: 'protect-all',
     }),
@@ -108,7 +108,7 @@ This mode uses the plugin to inject the authenticated user into the `context`, a
 
 ```ts
 import { envelop } from '@envelop/core';
-import { useGenericAuth, resolveUser, ValidateUserFn } from '@envelop/generic-auth';
+import { useGenericAuth, ResolveUserFn, ValidateUserFn } from '@envelop/generic-auth';
 
 type UserType = {
   id: string;
@@ -124,7 +124,7 @@ const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useGenericAuth({
-      resolveUser,
+      resolveUserFn,
       validateUser,
       mode: 'resolve-only',
     }),
@@ -153,7 +153,7 @@ This mode is similar to option #2, but it uses `@auth` SDL directive to automati
 
 ```ts
 import { envelop } from '@envelop/core';
-import { useGenericAuth, resolveUser, ValidateUserFn } from '@envelop/generic-auth';
+import { useGenericAuth, ResolveUserFn, ValidateUserFn } from '@envelop/generic-auth';
 
 type UserType = {
   id: string;
@@ -169,7 +169,7 @@ const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useGenericAuth({
-      resolveUser,
+      resolveUserFn,
       validateUser,
       mode: 'protect-auth-directive',
     }),
