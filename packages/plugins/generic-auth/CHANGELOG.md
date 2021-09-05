@@ -1,5 +1,11 @@
 # @envelop/generic-auth
 
+## 1.0.1
+
+### Patch Changes
+
+- Fix issue with inaccessible directiveNode
+
 ## 1.0.0
 
 ### Major Changes
