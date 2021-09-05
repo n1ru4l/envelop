@@ -1,5 +1,11 @@
 # @envelop/execute-subscription-event
 
+## 0.0.4
+
+### Patch Changes
+
+- 01c8171: fix: await execute before calling "onEnd"
+
 ## 0.0.3
 
 ### Patch Changes

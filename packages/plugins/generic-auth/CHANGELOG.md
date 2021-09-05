@@ -4,6 +4,12 @@
 
 ### Patch Changes
 
+- 546db6c: Fix issue with inaccessible directiveNode
+
+## 1.0.1
+
+### Patch Changes
+
 - Fix issue with inaccessible directiveNode
 
 ## 1.0.0
