@@ -16,10 +16,12 @@ yarn add @envelop/persisted-operations
 import { envelop } from '@envelop/core';
 import { usePersistedOperations } from '@envelop/persisted-operations';
 
-// You can retrieve the store in any way (e.g. from a remote source) and implement it with a Map
-const myStore = new Map();
-myStore.set('persisted_1', parse(`query { ... }`));
-myStore.set('persisted_2', 'query { ... }'));
+// You can retrieve the store in any way (e.g. from a remote source) and implement it with a simple Map / Key->Value
+const myData = new Map();
+myData.set('persisted_1', parse(`query { ... }`));
+myData.set('persisted_2', 'query { ... }'));
+
+const store =
 
 const getEnveloped = envelop({
   plugins: [
