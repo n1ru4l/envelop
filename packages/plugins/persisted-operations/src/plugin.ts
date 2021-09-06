@@ -8,7 +8,7 @@ export type UsePersistedOperationsOptions<ContextType = DefaultContext> = {
    * Set to `false` to allow running operations that are not available in the store.
    * Set to `true` to allow running only persisted operations.
    */
-  onlyPersistedOperations?: boolean;
+  onlyPersisted?: boolean;
   /**
    * The store to use. You can implement a store that loads data from any source.
    * You can even support multiple stores and implement a function that returns one of those stores based on context values.
@@ -18,31 +18,23 @@ export type UsePersistedOperationsOptions<ContextType = DefaultContext> = {
    * Function that returns the operation id, e.g. by retrieving it from cusotm properties within context
    */
   setOperationId?: (context: Readonly<DefaultContext>) => string | undefined;
-  /**
-   * Writes operation id to the context (enabled by default)
-   */
-  writeToContext?: boolean;
 };
 
 const DEFAULT_OPTIONS: Omit<UsePersistedOperationsOptions, 'store'> = {
-  onlyPersistedOperations: false,
-  writeToContext: true,
+  onlyPersisted: false,
 };
 
 const contextProperty = Symbol('persistedOperationId');
 
-export type PersistedOperationPluginContext<TOptions extends Partial<UsePersistedOperationsOptions>> =
-  TOptions['writeToContext'] extends true ? { [contextProperty]: string } : {};
+export type PersistedOperationPluginContext = {
+  [contextProperty]: string;
+};
 
-export function readOperationId<TOptions extends UsePersistedOperationsOptions>(
-  context: PersistedOperationPluginContext<TOptions>
-): string {
+export function readOperationId(context: PersistedOperationPluginContext): string {
   return context[contextProperty];
 }
 
-export const usePersistedOperations = <TOptions extends UsePersistedOperationsOptions>(
-  rawOptions: TOptions
-): Plugin<PersistedOperationPluginContext<TOptions>> => {
+export const usePersistedOperations = (rawOptions: UsePersistedOperationsOptions): Plugin<PersistedOperationPluginContext> => {
   const options: UsePersistedOperationsOptions = {
     ...DEFAULT_OPTIONS,
     ...(rawOptions || {}),
@@ -53,7 +45,7 @@ export const usePersistedOperations = <TOptions extends UsePersistedOperationsOp
       const operationId = options.setOperationId ? options.setOperationId(context) : operationIdFromSource(params.source);
 
       if (!operationId) {
-        if (options.onlyPersistedOperations) {
+        if (options.onlyPersisted) {
           throw new GraphQLError('Must provide operation id');
         }
 
@@ -70,17 +62,13 @@ export const usePersistedOperations = <TOptions extends UsePersistedOperationsOp
 
       if (rawResult) {
         const document = typeof rawResult === 'string' ? parse(rawResult) : rawResult;
-
-        if (options.writeToContext) {
-          extendContext({ [contextProperty]: operationId } as PersistedOperationPluginContext<{ writeToContext: true }>);
-        }
-
+        extendContext({ [contextProperty]: operationId });
         setParsedDocument(document);
 
         return;
       }
 
-      if (options.onlyPersistedOperations) {
+      if (options.onlyPersisted) {
         // we want to throw an error only when "onlyPersistedOperations" is true, otherwise we let execution continue normally
         throw new GraphQLError(`Unable to match operation with id '${operationId}'`);
       }
