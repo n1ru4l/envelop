@@ -8,7 +8,7 @@ export interface PersistedOperationsStore {
    * Return `null` in case of a store miss.
    * @param operationId
    */
-  get(operationId: string): string | DocumentNode | null;
+  get(operationId: string): string | DocumentNode | undefined;
 }
 
 export type PersistedOperationsFunctionStore<ContextType = DefaultContext> = (

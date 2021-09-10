@@ -12,8 +12,8 @@ export class InMemoryStore implements PersistedOperationsStore {
     this.storeId = options?.storeId ?? `store_${Date.now()}`;
   }
 
-  get(operationId: string): string | DocumentNode | null {
-    return this.storeData.get(operationId) || null;
+  get(operationId: string): string | DocumentNode | undefined {
+    return this.storeData.get(operationId) || undefined;
   }
 
   public prime(operationId: string, document: string | DocumentNode): void {

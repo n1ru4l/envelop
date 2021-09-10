@@ -4,7 +4,7 @@ import { PersistedOperationsStore } from '../types';
 export class AggregatedStore implements PersistedOperationsStore {
   constructor(private stores: PersistedOperationsStore[]) {}
 
-  get(operationId: string): string | DocumentNode | null {
+  get(operationId: string): string | DocumentNode | undefined {
     for (const store of this.stores) {
       const item = store.get(operationId);
 
@@ -13,6 +13,6 @@ export class AggregatedStore implements PersistedOperationsStore {
       }
     }
 
-    return null;
+    return undefined;
   }
 }

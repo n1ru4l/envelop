@@ -17,7 +17,7 @@ export type UsePersistedOperationsOptions<ContextType = DefaultContext> = {
   /**
    * Function that returns the operation id, e.g. by retrieving it from cusotm properties within context
    */
-  setOperationId?: (context: Readonly<DefaultContext>) => string | undefined;
+  setOperationId?: (context: Readonly<ContextType>) => string | undefined;
 };
 
 const DEFAULT_OPTIONS: Omit<UsePersistedOperationsOptions, 'store'> = {
@@ -69,11 +69,11 @@ export const usePersistedOperations = (rawOptions: UsePersistedOperationsOptions
       }
 
       if (options.onlyPersisted) {
-        // we want to throw an error only when "onlyPersistedOperations" is true, otherwise we let execution continue normally
+        // we want to throw an error only when "onlyPersisted" is true, otherwise we let execution continue normally
         throw new GraphQLError(`Unable to match operation with id '${operationId}'`);
       }
 
-      // if we reach this stage we could not retrieve a persisted operation and we didn't throw any error as onlyPersistedOperations is false
+      // if we reach this stage we could not retrieve a persisted operation and we didn't throw any error as onlyPersisted is false
       // hence we let operation continue assuming consumer is not passing an operation id, but a plain query string, with current request.
     },
   };

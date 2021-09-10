@@ -14,12 +14,12 @@ export class JsonFileStore implements PersistedOperationsStore {
     this.storeData = null;
   }
 
-  get(operationId: string): string | DocumentNode | null {
+  get(operationId: string): string | DocumentNode | undefined {
     if (!this.storeData) {
-      return null;
+      return undefined;
     }
 
-    return this.storeData.get(operationId) || null;
+    return this.storeData.get(operationId) || undefined;
   }
 
   public loadFromFileSync(path: string): void {
