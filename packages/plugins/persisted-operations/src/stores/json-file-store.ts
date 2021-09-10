@@ -1,5 +1,4 @@
-import { readFileSync } from 'fs';
-import { readFile } from 'fs/promises';
+import { readFileSync, promises } from 'fs';
 import { DocumentNode } from 'graphql';
 import { PersistedOperationsStore } from '../types';
 
@@ -28,7 +27,7 @@ export class JsonFileStore implements PersistedOperationsStore {
   }
 
   public async loadFromFile(path: string): Promise<void> {
-    const data = JSON.parse(await readFile(path, 'utf-8'));
+    const data = JSON.parse(await promises.readFile(path, 'utf-8'));
     this.storeData = new Map(Object.entries(data));
   }
 }
