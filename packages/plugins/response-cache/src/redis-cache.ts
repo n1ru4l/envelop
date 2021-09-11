@@ -27,8 +27,8 @@ export const createRedisCache = (params?: RedisCacheParameter): Cache => {
   const entityToResponseIds = new Map<string, Set<string>>();
   const responseIdToEntityIds = new Map<string, Set<string>>();
 
-  async function purgeResponse(responseId: string, shouldRemove = true) {
-    const entityIds = await responseIdToEntityIds.get(responseId);
+  function purgeResponse(responseId: string, shouldRemove = true) {
+    const entityIds = responseIdToEntityIds.get(responseId);
 
     // get entities related to the response
     if (entityIds !== undefined) {
@@ -46,19 +46,19 @@ export const createRedisCache = (params?: RedisCacheParameter): Cache => {
     }
   }
 
-  async function purgeEntity(entity: string) {
+  function purgeEntity(entity: string) {
     const responseIds = entityToResponseIds.get(entity);
 
     if (responseIds !== undefined) {
       for (const responseId of responseIds) {
-        await purgeResponse(responseId);
+        purgeResponse(responseId);
       }
     }
   }
 
   return {
-    async set(responseId, result, collectedEntities, ttl) {
-      await cachedResponses.set(responseId, JSON.stringify(result), 'EX', ttl);
+    set(responseId, result, collectedEntities, ttl) {
+      cachedResponses.set(responseId, JSON.stringify(result), 'EX', ttl);
 
       const entityIds = new Set<string>();
       responseIdToEntityIds.set(responseId, entityIds);
@@ -90,14 +90,16 @@ export const createRedisCache = (params?: RedisCacheParameter): Cache => {
         }
       }
     },
-    async get(responseId) {
-      const result = (await cachedResponses.get(responseId)) ?? null;
-
-      return result && JSON.parse(result);
+    get(responseId) {
+      return (
+        cachedResponses.get(responseId).then(function (result) {
+          return result && JSON.parse(result);
+        }) ?? null
+      );
     },
-    async invalidate(entitiesToRemove) {
+    invalidate(entitiesToRemove) {
       for (const { typename, id } of entitiesToRemove) {
-        await purgeEntity(id != null ? buildRedisEntityId(typename, id) : typename);
+        purgeEntity(id != null ? buildRedisEntityId(typename, id) : typename);
       }
     },
   };

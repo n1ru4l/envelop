@@ -242,7 +242,7 @@ describe('useResponseCache with Redis backed cache', () => {
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
 
-    await cache.invalidate([{ typename: 'Comment', id: 2 }]);
+    cache.invalidate([{ typename: 'Comment', id: 2 }]);
 
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(2);
@@ -327,7 +327,7 @@ describe('useResponseCache with Redis backed cache', () => {
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
 
-    await cache.invalidate([{ typename: 'Comment' }]);
+    cache.invalidate([{ typename: 'Comment' }]);
 
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(2);
