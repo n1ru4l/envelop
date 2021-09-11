@@ -222,9 +222,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const cache = createRedisCache({
-      connectionString: 'rediss://',
-    });
+    const cache = createRedisCache();
     const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `
@@ -309,9 +307,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const cache = createRedisCache({
-      connectionString: 'rediss://',
-    });
+    const cache = createRedisCache();
     const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `

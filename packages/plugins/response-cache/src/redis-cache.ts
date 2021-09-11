@@ -1,13 +1,14 @@
-import Redis from 'ioredis';
+import Redis, { RedisOptions } from 'ioredis';
 import type { Cache } from './cache';
 
 export type BuildRedisEntityId = (typename: string, id: number | string) => string;
 
 export type RedisCacheParameter = {
   /**
-   * Connect to Redis
+   * Creates a Redis instance
+   * @see RedisOptions https://github.com/luin/ioredis/blob/master/lib/redis/index.ts
    */
-  connectionString: string;
+  redisOptions?: RedisOptions;
   /**
    * Maximum amount of items in the cache. Defaults to `Infinity`.
    */
@@ -19,9 +20,9 @@ export type RedisCacheParameter = {
   buildRedisEntityId?: BuildRedisEntityId;
 };
 
-export const createRedisCache = (params: RedisCacheParameter): Cache => {
+export const createRedisCache = (params?: RedisCacheParameter): Cache => {
   const buildRedisEntityId = params?.buildRedisEntityId ?? defaultBuildRedisEntityId;
-  const cachedResponses = new Redis(params.connectionString);
+  const cachedResponses = new Redis(params?.redisOptions);
 
   const entityToResponseIds = new Map<string, Set<string>>();
   const responseIdToEntityIds = new Map<string, Set<string>>();
