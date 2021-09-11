@@ -4,7 +4,7 @@ import { useResponseCache, createRedisCache } from '../src';
 
 jest.mock('ioredis', () => require('ioredis-mock/jest'));
 
-describe('useResponseCache', () => {
+describe('useResponseCache with Redis backed cache', () => {
   beforeEach(() => jest.useRealTimers());
 
   test('should reuse cache', async () => {
