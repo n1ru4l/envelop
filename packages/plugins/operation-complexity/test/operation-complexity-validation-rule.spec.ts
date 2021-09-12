@@ -1,4 +1,15 @@
-import { buildSchema, DocumentNode, GraphQLSchema, parse, TypeInfo, ValidationContext, visit, visitWithTypeInfo } from 'graphql';
+import {
+  buildSchema,
+  DocumentNode,
+  GraphQLObjectType,
+  GraphQLSchema,
+  parse,
+  TypeInfo,
+  ValidationContext,
+  visit,
+  visitWithTypeInfo,
+} from 'graphql';
+import { attachConnectionCostHandler } from '../src/attach-connection-cost-handler';
 import { OperationComplexityFieldCosts, OperationComplexityValidationRule } from '../src/operation-complexity-validation-rule';
 
 const createSchema = () =>
@@ -20,6 +31,22 @@ const createSchema = () =>
     type User implements Node {
       id: ID!
       latestPost: Post
+      friends(first: Int): UserConnection!
+      friendsCustomPagination(first: Int): [User!]!
+    }
+
+    type UserConnection {
+      pageInfo: PageInfo!
+      edges: [UserEdge!]!
+    }
+
+    type PageInfo {
+      hasNext: Boolean!
+      nextCursor: String
+    }
+
+    type UserEdge {
+      user: User!
     }
 
     type Post implements Node {
@@ -245,7 +272,7 @@ describe('OperationComplexityValidationRule', () => {
     });
     expect(totalCost).toEqual(10);
   });
-  it('respects custom cost defined via field extension fields.', () => {
+  it('respects custom cost defined via field extensions.', () => {
     const schema = createSchema();
     const queryType = schema.getQueryType()!;
 
@@ -263,7 +290,47 @@ describe('OperationComplexityValidationRule', () => {
     const totalCost = runRule(document, { schema });
     expect(totalCost).toEqual(420);
   });
-  it('respects custom cost defined via type extension fields', () => {
+  it('respects additional cost defined via type extensions', () => {
+    const schema = createSchema();
+    const userType = schema.getType('User')!;
+
+    userType.extensions = {
+      queryComplexity: {
+        additionalCost: 69,
+      },
+    };
+
+    const document = parse(/* GraphQL */ `
+      query {
+        user(id: "1") {
+          id
+        }
+      }
+    `);
+    const totalCost = runRule(document, { schema });
+    expect(totalCost).toEqual(70);
+  });
+  it('respects additional cost defined via field extensions', () => {
+    const schema = createSchema();
+    const queryType = schema.getQueryType()!;
+
+    queryType.getFields()['user'].extensions = {
+      queryComplexity: {
+        additionalCost: 13,
+      },
+    };
+
+    const document = parse(/* GraphQL */ `
+      query {
+        user(id: "1") {
+          id
+        }
+      }
+    `);
+    const totalCost = runRule(document, { schema });
+    expect(totalCost).toEqual(14);
+  });
+  it('respects custom cost defined via type extensions', () => {
     const schema = createSchema();
     const booleanType = schema.getType('Boolean')!;
 
@@ -280,5 +347,127 @@ describe('OperationComplexityValidationRule', () => {
     `);
     const totalCost = runRule(document, { schema });
     expect(totalCost).toEqual(419);
+    booleanType.extensions = undefined;
+  });
+  it('handles pagination cost', () => {
+    const schema = attachConnectionCostHandler(createSchema());
+    const document = parse(/* GraphQL */ `
+      query {
+        # cost 1 (object)
+        user(id: "1") {
+          # cost 2 (connection)
+          friends(first: 100) {
+            # cost 1 * 100 = 100 (object on connection)
+            edges {
+              # cost 1 * 100 = 100 (object on connection)
+              user {
+                # cost 0
+                id
+              }
+            }
+          }
+        }
+      }
+    `);
+    const totalCost = runRule(document, { schema });
+    expect(totalCost).toEqual(203);
+  });
+  it('handles nested pagination cost', () => {
+    const schema = attachConnectionCostHandler(createSchema());
+    const document = parse(/* GraphQL */ `
+      query {
+        # cost 1 (object)
+        user(id: "1") {
+          # cost 2 (connection)
+          friends(first: 10) {
+            # cost 1 * 10 = 10
+            edges {
+              # cost 1 * 10 = 10
+              user {
+                # cost 2 * 10 = 20
+                friends(first: 2) {
+                  # cost 1 * 10 * 2 = 20
+                  edges {
+                    # cost 1 * 10 * 2 = 20
+                    user {
+                      id
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `);
+    const totalCost = runRule(document, { schema });
+    expect(totalCost).toEqual(83);
+  });
+  it('only applies cost multiplication on edges', () => {
+    const schema = attachConnectionCostHandler(createSchema());
+    const document = parse(/* GraphQL */ `
+      query {
+        # cost 1
+        user(id: "1") {
+          # cost 2 connection
+          friends(first: 100) {
+            # cost 100
+            edges {
+              # cost 100
+              user {
+                id
+                # cost 100
+                latestPost {
+                  id
+                }
+              }
+            }
+            # cost 1
+            pageInfo {
+              # cost 0
+              hasNext
+            }
+          }
+        }
+      }
+      ## sum 304
+    `);
+    const totalCost = runRule(document, {
+      schema,
+    });
+    expect(totalCost).toEqual(304);
+  });
+  it('applies cost multiplication on generic pagination', () => {
+    const schema = attachConnectionCostHandler(createSchema());
+    const user = schema.getType('User') as GraphQLObjectType;
+    user.getFields()['friendsCustomPagination'].extensions = {
+      queryComplexity: {
+        additionalCost: 2,
+        count(argumentValues: Record<string, unknown>) {
+          return argumentValues.first;
+        },
+      },
+    };
+    const document = parse(/* GraphQL */ `
+      query {
+        # cost 1
+        user(id: "1") {
+          # cost 2 (connection)
+          # cost 100 (items from first argument)
+          friendsCustomPagination(first: 100) {
+            id
+            # cost 100
+            latestPost {
+              id
+            }
+          }
+        }
+      }
+      ## sum 203
+    `);
+    const totalCost = runRule(document, {
+      schema,
+    });
+    expect(totalCost).toEqual(203);
   });
 });

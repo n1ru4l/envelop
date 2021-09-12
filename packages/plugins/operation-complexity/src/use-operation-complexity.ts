@@ -35,7 +35,7 @@ export const defaultMaximumBudget = 1000;
 export const useOperationComplexity = <Context = DefaultContext>(
   config: UseOperationComplexityConfig | ((context: DefaultContext) => PromiseOrValue<UseOperationComplexityConfig>)
 ): Plugin<Context> => {
-  const totalCostMap = new WeakMap<object, number>();
+  const estimatedOperationCostMap = new WeakMap<object, number>();
 
   return {
     onPluginInit({ addPlugin }) {
@@ -44,7 +44,7 @@ export const useOperationComplexity = <Context = DefaultContext>(
           rules: [
             OperationComplexityValidationRule({
               reportTotalCost: (totalCost, executionArgs) => {
-                totalCostMap.set(executionArgs.contextValue, totalCost);
+                estimatedOperationCostMap.set(executionArgs.contextValue, totalCost);
               },
             }),
           ],
@@ -58,9 +58,9 @@ export const useOperationComplexity = <Context = DefaultContext>(
 
       setExecuteFn(
         makeExecute(async args => {
-          const cost = totalCostMap.get(args.contextValue);
+          const estimatedCost = estimatedOperationCostMap.get(args.contextValue);
 
-          if (cost === undefined) {
+          if (estimatedCost === undefined) {
             // eslint-disable-next-line no-console
             console.warn('[useOperationComplexity] Failed resolving the cost of the operation.');
             return executeFn(args);
@@ -68,7 +68,7 @@ export const useOperationComplexity = <Context = DefaultContext>(
 
           // If we dont have a rate limit store we treat the current
           if (params.rateLimit === undefined) {
-            if (cost > maximumPoints) {
+            if (estimatedCost > maximumPoints) {
               return {
                 errors: [new GraphQLError('Operation complexity exceeds the limit.')],
               };
@@ -79,7 +79,7 @@ export const useOperationComplexity = <Context = DefaultContext>(
           const currentPoints = await params.rateLimit.store.get(params.rateLimit.sessionId);
           const maximumRateLimitPoints = params.rateLimit.maximumPeriodCost ?? defaultMaximumBudget;
 
-          if (currentPoints + cost > maximumRateLimitPoints) {
+          if (currentPoints + estimatedCost > maximumRateLimitPoints) {
             return {
               errors: [new GraphQLError('Operation complexity exceeds the limit for the current time period.')],
             };
@@ -88,7 +88,8 @@ export const useOperationComplexity = <Context = DefaultContext>(
           try {
             return executeFn(args);
           } finally {
-            await params.rateLimit.store.add(params.rateLimit.sessionId, cost);
+            // TODO: we should add the actual cost collected during execution.
+            await params.rateLimit.store.add(params.rateLimit.sessionId, estimatedCost);
           }
         })
       );
