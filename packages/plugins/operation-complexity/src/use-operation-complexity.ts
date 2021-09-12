@@ -1,31 +1,40 @@
-import { makeExecute, Plugin } from '@envelop/core';
+import { DefaultContext, makeExecute, Plugin } from '@envelop/core';
 import { useExtendedValidation } from '@envelop/extended-validation';
 import { GraphQLError } from 'graphql';
+import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import type { OperationComplexityStore } from './operation-complexity-store';
-import { OperationComplexityFieldCosts, OperationComplexityValidationRule } from './operation-complexity-validation-rule';
+import {
+  fieldCostsSymbol,
+  OperationComplexityFieldCosts,
+  OperationComplexityValidationRule,
+} from './operation-complexity-validation-rule';
 
-export type useOperationComplexity = {
-  /**
-   * Store used for storing the consumed budget for each API consumer for subsequent requests.
-   * If not provided the budget is applied for each individual request instead of requests over a time period.
-   * For production usage it is recommended to use a store.
-   * */
-  rateLimit?: {
-    store: OperationComplexityStore;
-    /** Identify the API consumer from the context. */
-    identify: (context: object) => string;
-  };
-  /** The maximum points for each API consumer can have. */
-  maximumPoints?: number;
+export type OperationComplexityRateLimitOptions = {
+  /** The store that should be used for persisting the rate-limit information. */
+  store: OperationComplexityStore;
+  /** String that uniquely identifies the client for subsequent executions. */
+  sessionId: string;
+  /** The maximum cost a consumer can reach in a period before being rate limited and subsequent operations will be rejected. */
+  maximumPeriodCost?: number;
+};
+
+export type UseOperationComplexityConfig = {
+  /** The maximum cost a operation can have before being rejected. */
+  maximumOperationCost?: number;
   /** The cost of the selection fo certain fields. */
   queryComplexityFieldCosts?: Partial<OperationComplexityFieldCosts>;
+  /**
+   * Config for determining whether rate limiting should be applied.
+   * For production usage using rate limiting is recommended.
+   * */
+  rateLimit?: OperationComplexityRateLimitOptions;
 };
 
 export const defaultMaximumBudget = 1000;
 
-export const useOperationComplexity = (params: useOperationComplexity): Plugin => {
-  const maximumPoints = params?.maximumPoints ?? defaultMaximumBudget;
-
+export const useOperationComplexity = <Context = DefaultContext>(
+  config: UseOperationComplexityConfig | ((context: DefaultContext) => PromiseOrValue<UseOperationComplexityConfig>)
+): Plugin<Context> => {
   const totalCostMap = new WeakMap<object, number>();
 
   return {
@@ -34,7 +43,6 @@ export const useOperationComplexity = (params: useOperationComplexity): Plugin =
         useExtendedValidation({
           rules: [
             OperationComplexityValidationRule({
-              fieldCosts: params?.queryComplexityFieldCosts,
               reportTotalCost: (totalCost, executionArgs) => {
                 totalCostMap.set(executionArgs.contextValue, totalCost);
               },
@@ -43,7 +51,11 @@ export const useOperationComplexity = (params: useOperationComplexity): Plugin =
         })
       );
     },
-    async onExecute({ setExecuteFn, executeFn }) {
+    async onExecute({ args, setExecuteFn, executeFn }) {
+      const params = typeof config === 'function' ? await config(args.contextValue as DefaultContext) : config;
+      const maximumPoints = params?.maximumOperationCost ?? defaultMaximumBudget;
+      args.contextValue[fieldCostsSymbol] = params.queryComplexityFieldCosts;
+
       setExecuteFn(
         makeExecute(async args => {
           const cost = totalCostMap.get(args.contextValue);
@@ -64,11 +76,10 @@ export const useOperationComplexity = (params: useOperationComplexity): Plugin =
             return executeFn(args);
           }
 
-          const { identify, store } = params.rateLimit;
-          const identifier = identify(args.contextValue);
-          const currentPoints = await store.get(identifier);
+          const currentPoints = await params.rateLimit.store.get(params.rateLimit.sessionId);
+          const maximumRateLimitPoints = params.rateLimit.maximumPeriodCost ?? defaultMaximumBudget;
 
-          if (currentPoints + cost > maximumPoints) {
+          if (currentPoints + cost > maximumRateLimitPoints) {
             return {
               errors: [new GraphQLError('Operation complexity exceeds the limit for the current time period.')],
             };
@@ -77,7 +88,7 @@ export const useOperationComplexity = (params: useOperationComplexity): Plugin =
           try {
             return executeFn(args);
           } finally {
-            await store.add(identifier, cost);
+            await params.rateLimit.store.add(params.rateLimit.sessionId, cost);
           }
         })
       );

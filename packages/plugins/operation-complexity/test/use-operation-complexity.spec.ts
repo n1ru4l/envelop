@@ -22,7 +22,7 @@ describe('useOperationComplexity', () => {
     const testkit = createTestkit([
       useSchema(schema),
       useOperationComplexity({
-        maximumPoints: 1,
+        maximumOperationCost: 1,
       }),
     ]);
 
@@ -40,7 +40,7 @@ describe('useOperationComplexity', () => {
     const testkit = createTestkit([
       useSchema(schema),
       useOperationComplexity({
-        maximumPoints: 1,
+        maximumOperationCost: 1,
       }),
     ]);
 
@@ -65,13 +65,13 @@ describe('useOperationComplexity', () => {
     const store = createInMemoryOperationComplexityStore();
     const testkit = createTestkit([
       useSchema(schema),
-      useOperationComplexity({
-        maximumPoints: 2,
+      useOperationComplexity(context => ({
         rateLimit: {
           store,
-          identify: (context: any) => context.id,
+          sessionId: context.id as string,
+          maximumPeriodCost: 2,
         },
-      }),
+      })),
     ]);
 
     const operation = /* GraphQL */ `

@@ -29,20 +29,28 @@ export const defaultQueryComplexityFieldCosts: OperationComplexityFieldCosts = {
 };
 
 export type OperationComplexityValidationRuleParams = {
+  /** Use custom field costs. */
   fieldCosts?: Partial<OperationComplexityFieldCosts>;
+  /** Report the total field cost for later usage. */
   reportTotalCost: (totalCost: number, executionArgs: ExecutionArgs) => void;
 };
+
+/** Symbol for retrieving the field costs from the context object. */
+export const fieldCostsSymbol = Symbol('fieldCosts');
 
 /**
  * Validate whether a user is allowed to execute a certain GraphQL operation.
  */
 export const OperationComplexityValidationRule = (params: OperationComplexityValidationRuleParams): ExtendedValidationRule => {
-  const fieldCosts = {
-    ...defaultQueryComplexityFieldCosts,
-    ...params.fieldCosts,
-  };
-
   return (context, executionArgs) => {
+    const fieldCosts = {
+      ...defaultQueryComplexityFieldCosts,
+      ...params.fieldCosts,
+      // Because we retrieve this lazily, after the rule has been specified we have this way of reading the costs from the context.
+      // It is kind of an optimization.
+      ...executionArgs.contextValue?.[fieldCostsSymbol],
+    };
+
     let totalCost = 0;
 
     return {
