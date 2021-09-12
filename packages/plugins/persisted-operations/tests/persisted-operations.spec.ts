@@ -171,7 +171,7 @@ describe('usePersistedOperations', () => {
         usePersistedOperations({
           onlyPersisted: true,
           store,
-          setOperationId: (context: any) => context.request.body.operationId,
+          extractOperationId: (context: any) => context.request.body.operationId,
         }),
       ],
       testSchema
@@ -190,7 +190,7 @@ describe('usePersistedOperations', () => {
         usePersistedOperations({
           onlyPersisted: true,
           store,
-          setOperationId: (context: any) => context.request.body.operationId,
+          extractOperationId: (context: any) => context.request.body.operationId,
         }),
       ],
       testSchema
