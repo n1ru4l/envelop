@@ -4,7 +4,7 @@ import { useResponseCache, createRedisCache } from '../src';
 
 jest.mock('ioredis', () => require('ioredis-mock/jest'));
 
-describe('useResponseCache with Redis backed cache', () => {
+describe('useResponseCache with Redis store', () => {
   beforeEach(() => jest.useRealTimers());
 
   test('should reuse cache', async () => {
@@ -242,7 +242,7 @@ describe('useResponseCache with Redis backed cache', () => {
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
 
-    cache.invalidate([{ typename: 'Comment', id: 2 }]);
+    await cache.invalidate([{ typename: 'Comment', id: 2 }]);
 
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(2);
@@ -327,7 +327,7 @@ describe('useResponseCache with Redis backed cache', () => {
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
 
-    cache.invalidate([{ typename: 'Comment' }]);
+    await cache.invalidate([{ typename: 'Comment' }]);
 
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(2);

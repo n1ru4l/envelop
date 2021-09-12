@@ -2,6 +2,7 @@ import Redis, { RedisOptions } from 'ioredis';
 import type { Cache } from './cache';
 
 export type BuildRedisEntityId = (typename: string, id: number | string) => string;
+export type BuildRedisResponseOpsKey = (responseId: string) => string;
 
 export type RedisCacheParameter = {
   /**
@@ -18,81 +19,86 @@ export type RedisCacheParameter = {
    * By default the typename is concatenated with the id e.g. `User:1`
    */
   buildRedisEntityId?: BuildRedisEntityId;
+  /**
+   * Customize how the cache key that stores the operations associated with the response is built.
+   * By default `operations` is concatenated with the responseId e.g. `operations:arZm3tCKgGmpu+a5slrpSH9vjSQ=`
+   */
+  buildRedisResponseOpsKey?: BuildRedisResponseOpsKey;
 };
 
 export const createRedisCache = (params?: RedisCacheParameter): Cache => {
-  const buildRedisEntityId = params?.buildRedisEntityId ?? defaultBuildRedisEntityId;
-  const cachedResponses = new Redis(params?.redisOptions);
+  const store = new Redis(params?.redisOptions);
 
-  const entityToResponseIds = new Map<string, Set<string>>();
-  const responseIdToEntityIds = new Map<string, Set<string>>();
+  const buildRedisEntityId = params?.buildRedisEntityId ?? defaultBuildRedisEntityId;
+  const buildRedisResponseOpsKey = params?.buildRedisResponseOpsKey ?? defaultBuildRedisResponseOpsKey;
 
   function purgeResponse(responseId: string, shouldRemove = true) {
-    const entityIds = responseIdToEntityIds.get(responseId);
+    let entityIds: string[] = [];
 
-    // get entities related to the response
-    if (entityIds !== undefined) {
-      for (const entityId of entityIds) {
-        // remove the response mapping from the entity
-        entityToResponseIds.get(entityId)?.delete(responseId);
+    const responseKey = buildRedisResponseOpsKey(responseId);
+
+    store.smembers(responseKey).then(function (result) {
+      entityIds = result;
+
+      // get entities related to the response
+      if (entityIds !== undefined) {
+        for (const entityId of entityIds) {
+          // remove the response mapping from the entity
+          store.srem(entityId, responseId);
+        }
+        // remove all the entity mappings from the response
+        store.del(responseKey);
       }
-      // remove all the entity mappings from the response
-      responseIdToEntityIds.delete(responseId);
-    }
 
-    if (shouldRemove) {
-      // remove the response from the cache
-      cachedResponses.del(responseId);
-    }
+      if (shouldRemove) {
+        // remove the response from the cache
+        store.del(responseId);
+      }
+    });
   }
 
   function purgeEntity(entity: string) {
-    const responseIds = entityToResponseIds.get(entity);
+    let responseIds: string[] = [];
 
-    if (responseIds !== undefined) {
-      for (const responseId of responseIds) {
-        purgeResponse(responseId);
+    store.smembers(entity).then(function (result) {
+      responseIds = result;
+
+      if (responseIds !== undefined) {
+        for (const responseId of responseIds) {
+          purgeResponse(responseId);
+        }
       }
-    }
+    });
   }
 
   return {
     set(responseId, result, collectedEntities, ttl) {
-      cachedResponses.set(responseId, JSON.stringify(result), 'EX', ttl);
+      if (ttl === Infinity) {
+        store.set(responseId, JSON.stringify(result));
+      } else {
+        store.set(responseId, JSON.stringify(result), 'EX', ttl);
+      }
 
-      const entityIds = new Set<string>();
-      responseIdToEntityIds.set(responseId, entityIds);
+      const responseKey = buildRedisResponseOpsKey(responseId);
 
       for (const { typename, id } of collectedEntities) {
-        let operationIds = entityToResponseIds.get(typename);
-        if (operationIds == null) {
-          operationIds = new Set<string>();
-          entityToResponseIds.set(typename, operationIds);
-        }
-
         // typename => operation
-        operationIds.add(responseId);
+        store.sadd(typename, responseId);
         // operation => typename
-        entityIds.add(typename);
+        store.sadd(responseKey, typename);
 
-        if (id !== undefined) {
+        if (id) {
           const entityId = buildRedisEntityId(typename, id);
-          let responseIds = entityToResponseIds.get(entityId);
-          if (responseIds == null) {
-            responseIds = new Set();
-            entityToResponseIds.set(entityId, responseIds);
-          }
-
           // typename:id => operation
-          responseIds.add(responseId);
+          store.sadd(entityId, responseId);
           // operation => typename:id
-          entityIds.add(entityId);
+          store.sadd(responseKey, entityId);
         }
       }
     },
     get(responseId) {
       return (
-        cachedResponses.get(responseId).then(function (result) {
+        store.get(responseId).then(function (result) {
           return result && JSON.parse(result);
         }) ?? null
       );
@@ -106,3 +112,4 @@ export const createRedisCache = (params?: RedisCacheParameter): Cache => {
 };
 
 export const defaultBuildRedisEntityId: BuildRedisEntityId = (typename, id) => `${typename}:${id}`;
+export const defaultBuildRedisResponseOpsKey: BuildRedisResponseOpsKey = responseId => `operations:${responseId}`;
