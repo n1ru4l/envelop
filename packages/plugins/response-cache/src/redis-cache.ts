@@ -45,25 +45,37 @@ export const createRedisCache = (params?: RedisCacheParameter): RedisCache => {
   }
 
   function purgeEntity(entity: string) {
-    let responseIds: string[] = [];
-
-    store.smembers(entity).then(function (result) {
-      responseIds = result;
-
+    // find the responseIds for the entity
+    store.smembers(entity).then(function (responseIds) {
+      // and purge each response since they contained the entity data
       if (responseIds !== undefined) {
         for (const responseId of responseIds) {
-          const responseKey = buildRedisResponseOpsKey(responseId);
-          store.srem(responseKey, entity);
-
           purgeResponse(responseId);
         }
       }
     });
 
-    store.keys(`${entity}:*`).then(function (result) {
-      store.del(result);
+    // if purging an entity like Comment, then also purge Comment:1, Comment:2, etc
+    store.keys(`${entity}:*`).then(function (entityKeys) {
+      if (entityKeys !== undefined) {
+        for (const entityKey of entityKeys) {
+          // and purge any reponses in each of those entity keys
+          store.smembers(entityKey).then(function (responseIds) {
+            // and purge each response since they contained the entity data
+            if (responseIds !== undefined) {
+              for (const responseId of responseIds) {
+                purgeResponse(responseId);
+              }
+            }
+          });
+        }
+
+        // then purge the entityKeys like Comment:1, Comment:2 etc
+        store.del(entityKeys);
+      }
     });
 
+    // and then purge the entity itself
     store.del(entity);
   }
 
@@ -72,22 +84,23 @@ export const createRedisCache = (params?: RedisCacheParameter): RedisCache => {
       if (ttl === Infinity) {
         store.set(responseId, JSON.stringify(result));
       } else {
+        // set the ttl in milliseconds
         store.set(responseId, JSON.stringify(result), 'PX', ttl);
       }
 
       const responseKey = buildRedisResponseOpsKey(responseId);
 
       for (const { typename, id } of collectedEntities) {
-        // typename => response
+        // Adds a key for the typename => response
         store.sadd(typename, responseId);
-        // operation => typename
+        // Adds a key for the operation => typename
         store.sadd(responseKey, typename);
 
         if (id) {
           const entityId = buildRedisEntityId(typename, id);
-          // typename:id => response
+          // Adds a key for the typename:id => response
           store.sadd(entityId, responseId);
-          // operation => typename:id
+          // Adds a key for the operation => typename:id
           store.sadd(responseKey, entityId);
         }
       }
