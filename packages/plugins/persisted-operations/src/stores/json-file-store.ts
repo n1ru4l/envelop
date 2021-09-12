@@ -5,13 +5,7 @@ import { PersistedOperationsStore } from '../types';
 export type JsonFileStoreDataMap = Map<string, DocumentNode | string>;
 
 export class JsonFileStore implements PersistedOperationsStore {
-  public storeId: string;
-  private storeData: JsonFileStoreDataMap | null;
-
-  constructor(options?: { storeId?: string }) {
-    this.storeId = options?.storeId ?? `jsonstore_${Date.now()}`;
-    this.storeData = null;
-  }
+  private storeData: JsonFileStoreDataMap | null = null;
 
   get(operationId: string): string | DocumentNode | undefined {
     if (!this.storeData) {

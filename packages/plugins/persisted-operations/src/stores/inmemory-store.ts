@@ -5,11 +5,9 @@ export type InMemoryStoreDataMap = Map<string, DocumentNode | string>;
 
 export class InMemoryStore implements PersistedOperationsStore {
   private storeData: InMemoryStoreDataMap;
-  public storeId: string;
 
-  constructor(options?: { initialData?: InMemoryStoreDataMap; storeId?: string }) {
+  constructor(options?: { initialData?: InMemoryStoreDataMap }) {
     this.storeData = options?.initialData ?? new Map();
-    this.storeId = options?.storeId ?? `store_${Date.now()}`;
   }
 
   get(operationId: string): string | DocumentNode | undefined {

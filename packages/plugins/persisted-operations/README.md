@@ -12,16 +12,20 @@ yarn add @envelop/persisted-operations
 
 ## Usage Example
 
+The most basic implementation can use an in-memory JS `Map` wrapper with a `Store` object:
+
 ```ts
 import { envelop } from '@envelop/core';
-import { usePersistedOperations } from '@envelop/persisted-operations';
+import { usePersistedOperations, InMemoryStore } from '@envelop/persisted-operations';
 
 // You can retrieve the store in any way (e.g. from a remote source) and implement it with a simple Map / Key->Value
 const myData = new Map();
 myData.set('persisted_1', parse(`query { ... }`));
 myData.set('persisted_2', 'query { ... }'));
 
-const store =
+const store = new InMemoryStore({
+  initialData: myData,
+})
 
 const getEnveloped = envelop({
   plugins: [
@@ -51,26 +55,52 @@ usePersistedOperations({
 }),
 ```
 
-## Usage Example with built-in Json-Files-Store
+## Usage Example with built-in JsonFileStore
 
 ```ts
-import { usePersistedOperations, JsonFilesStore } from '@envelop/persisted-operations';
+import { usePersistedOperations, JsonFileStore } from '@envelop/persisted-operations';
 
-const persistedOperationsPaths = [
-  resolve(process.cwd(), 'assets/client1PersistedOperations.json'),
-  resolve(process.cwd(), 'assets/client2PersistedOperations.json'),
-];
-const persistedOperationsStore = new JsonFilesStore(persistedOperationsPaths);
-await persistedOperationsStore.load(); // load and parse persisted-operations files
+const persistedOperationsStore = new JsonFilesStore();
+const filePath = resolve(process.cwd(), 'assets/client1PersistedOperations.json');
+
+// sync
+persistedOperationsStore.loadFromFileSync(filePath); // load and parse persisted-operations files
+
+// or async
+await persistedOperationsStore.loadFromFile(filePath); // load and parse persisted-operations files
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     usePersistedOperations({
-      store: persistedOperationsStore.get(),
+      store: persistedOperationsStore,
     }),
   ],
 });
+```
+
+## Multiple Stores
+
+The `store` parameter accepts both a `Store` instance, or a function. If you need to support multiple stores (based on incoming GraphQL operation/HTTP request), you can provide a function to toggle between the stores, based on your needs:
+
+```ts
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    usePersistedOperations({
+      store: context => {
+        if (context.req.headers['user-agent'].includes('Android')) {
+          return mobileClientsStore;
+        }
+
+        return defaultStore;
+      },
+    }),
+  ],
+});
+
+// later, pass the initial context
+const proxyFns = getEnveloped({ req });
 ```
 
 ## With Relay
