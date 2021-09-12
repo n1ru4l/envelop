@@ -1,7 +1,7 @@
+import { parse } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { DocumentNode, parse } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { PersistedOperationsStore, usePersistedOperations } from '../src';
+import { usePersistedOperations } from '../src';
 
 describe('usePersistedOperations', () => {
   const testSchema = makeExecutableSchema({
@@ -17,20 +17,13 @@ describe('usePersistedOperations', () => {
     `,
   });
 
-  const createStore = (data: Record<string, DocumentNode | string>): PersistedOperationsStore => ({
-    canHandle: key => key.startsWith('persisted_'),
-    get: key => data[key],
-  });
-
-  it('Should allow running persisted operations', async () => {
-    const store = createStore({
-      persisted_1: parse(`query { foo }`),
-    });
+  it('Should allow running persisted operations from source', async () => {
+    const store = new Map([['persisted_1', `query { foo }`]]);
 
     const testInstance = createTestkit(
       [
         usePersistedOperations({
-          onlyPersistedOperations: true,
+          onlyPersisted: true,
           store,
         }),
       ],
@@ -43,34 +36,13 @@ describe('usePersistedOperations', () => {
     expect(result.data?.foo).toBe('test');
   });
 
-  it('Should allow store to return string', async () => {
-    const store = createStore({
-      persisted_1: 'query { foo }',
-    });
+  it('Should fail when store is empty and `onlyPersisted` is true', async () => {
+    const store = new Map();
 
     const testInstance = createTestkit(
       [
         usePersistedOperations({
-          onlyPersistedOperations: true,
-          store,
-        }),
-      ],
-      testSchema
-    );
-
-    const result = await testInstance.execute(`persisted_1`, {}, {});
-    assertSingleExecutionValue(result);
-    expect(result.errors).toBeUndefined();
-    expect(result.data?.foo).toBe('test');
-  });
-
-  it('Should fail when key is valid, but operation is not persisted', async () => {
-    const store = createStore({});
-
-    const testInstance = createTestkit(
-      [
-        usePersistedOperations({
-          onlyPersistedOperations: true,
+          onlyPersisted: true,
           store,
         }),
       ],
@@ -79,18 +51,34 @@ describe('usePersistedOperations', () => {
 
     const result = await testInstance.execute(`persisted_1`);
     assertSingleExecutionValue(result);
-    expect(result.errors![0].message).toBe('The operation hash "persisted_1" is not valid');
+    expect(result.errors![0].message).toBe(`Unable to match operation with id 'persisted_1'`);
   });
 
-  it('Should throw an error in case of an invalid key', async () => {
-    const store = createStore({
-      persisted_1: parse(`query { foo }`),
-    });
+  it('Should fail when persisted operation is not available and `onlyPersisted` is true', async () => {
+    const store = new Map([['persisted_1', parse(`query { foo }`)]]);
 
     const testInstance = createTestkit(
       [
         usePersistedOperations({
-          onlyPersistedOperations: true,
+          onlyPersisted: true,
+          store,
+        }),
+      ],
+      testSchema
+    );
+
+    const result = await testInstance.execute(`persisted_2`);
+    assertSingleExecutionValue(result);
+    expect(result.errors![0].message).toBe(`Unable to match operation with id 'persisted_2'`);
+  });
+
+  it('Should allow standard query parsing when `onlyPersisted` is false and source is invalid', async () => {
+    const store = new Map([['persisted_1', parse(`query { foo }`)]]);
+
+    const testInstance = createTestkit(
+      [
+        usePersistedOperations({
+          onlyPersisted: false,
           store,
         }),
       ],
@@ -99,38 +87,16 @@ describe('usePersistedOperations', () => {
 
     const result = await testInstance.execute(`invalid`);
     assertSingleExecutionValue(result);
-    expect(result.errors![0].message).toBe(`Failed to handle GraphQL persisted operation.`);
+    expect(result.errors![0].message).toBe(`Syntax Error: Unexpected Name "invalid".`);
   });
 
-  it('Should allow regular parse flow when onlyPersistedOperations=false', async () => {
-    const store = createStore({
-      persisted_1: parse(`query { foo }`),
-    });
+  it('Should allow standard query parsing when `onlyPersisted` is false and source is valid', async () => {
+    const store = new Map([['persisted_1', parse(`query { foo }`)]]);
 
     const testInstance = createTestkit(
       [
         usePersistedOperations({
-          onlyPersistedOperations: false,
-          store,
-        }),
-      ],
-      testSchema
-    );
-
-    const result = await testInstance.execute(`invalid`);
-    assertSingleExecutionValue(result);
-    expect(result.errors![0].message).toBe(`Syntax Error: Unexpected Name \"invalid\".`);
-  });
-
-  it('Should allow regular parse flow when onlyPersistedOperations=false and valid operation', async () => {
-    const store = createStore({
-      persisted_1: parse(`query { foo }`),
-    });
-
-    const testInstance = createTestkit(
-      [
-        usePersistedOperations({
-          onlyPersistedOperations: false,
+          onlyPersisted: false,
           store,
         }),
       ],
@@ -143,15 +109,13 @@ describe('usePersistedOperations', () => {
     expect(result.data?.foo).toBe('test');
   });
 
-  it('Should prevent regular operations flow when onlyPersistedOperations=true and valid operation', async () => {
-    const store = createStore({
-      persisted_1: parse(`query { foo }`),
-    });
+  it('Should prevent standard query parsing when `onlyPersisted` is true and source is valid', async () => {
+    const store = new Map([['persisted_1', parse(`query { foo }`)]]);
 
     const testInstance = createTestkit(
       [
         usePersistedOperations({
-          onlyPersistedOperations: true,
+          onlyPersisted: true,
           store,
         }),
       ],
@@ -160,6 +124,80 @@ describe('usePersistedOperations', () => {
 
     const result = await testInstance.execute(`query { foo }`);
     assertSingleExecutionValue(result);
-    expect(result.errors![0].message).toBe(`Failed to handle GraphQL persisted operation.`);
+    expect(result.errors![0].message).toBe('Must provide operation id');
+  });
+
+  it('Should fail when no store is returned and only `onlyPersisted` is true', async () => {
+    const store = () => undefined as any;
+    const testInstance = createTestkit(
+      [
+        usePersistedOperations({
+          onlyPersisted: true,
+          store,
+        }),
+      ],
+      testSchema
+    );
+
+    const result = await testInstance.execute('persisted_1');
+    assertSingleExecutionValue(result);
+    expect(result.errors![0].message).toBe('Must provide store for persisted-operations!');
+  });
+
+  it('Should allow store function to return actual persisted operations store, using context value', async () => {
+    const initialContext = { storeId: 'custom' };
+    const customStore = new Map([['persisted_1', parse(`query { foo }`)]]);
+    const globalStore = new Map();
+    const testInstance = createTestkit(
+      [
+        usePersistedOperations({
+          onlyPersisted: true,
+          store: context => (context.storeId === 'custom' ? customStore : globalStore),
+        }),
+      ],
+      testSchema
+    );
+
+    const result = await testInstance.execute('persisted_1', {}, initialContext);
+    assertSingleExecutionValue(result);
+    expect(result.data?.foo).toBe('test');
+  });
+
+  it('Should allow setting imperative operation Id, using context value, when source is invalid', async () => {
+    const initialContext = { request: { body: { operationId: 'persisted_1' } } };
+    const store = new Map([['persisted_1', parse(`query { foo }`)]]);
+    const testInstance = createTestkit(
+      [
+        usePersistedOperations({
+          onlyPersisted: true,
+          store,
+          extractOperationId: (context: any) => context.request.body.operationId,
+        }),
+      ],
+      testSchema
+    );
+
+    const result = await testInstance.execute('invalid', {}, initialContext);
+    assertSingleExecutionValue(result);
+    expect(result.data?.foo).toBe('test');
+  });
+
+  it('Should allow setting imperative operation Id, using context value, when source valid', async () => {
+    const initialContext = { request: { body: { operationId: 'persisted_1' } } };
+    const store = new Map([['persisted_1', parse(`query { foo }`)]]);
+    const testInstance = createTestkit(
+      [
+        usePersistedOperations({
+          onlyPersisted: true,
+          store,
+          extractOperationId: (context: any) => context.request.body.operationId,
+        }),
+      ],
+      testSchema
+    );
+
+    const result = await testInstance.execute(`query { bar }`, {}, initialContext);
+    assertSingleExecutionValue(result);
+    expect(result.data?.foo).toBe('test');
   });
 });
