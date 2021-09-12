@@ -37,42 +37,25 @@ export const createRedisCache = (params?: RedisCacheParameter): RedisCache => {
   const buildRedisEntityId = params?.buildRedisEntityId ?? defaultBuildRedisEntityId;
   const buildRedisResponseOpsKey = params?.buildRedisResponseOpsKey ?? defaultBuildRedisResponseOpsKey;
 
-  function purgeResponse(responseId: string, shouldRemove = true) {
-    if (shouldRemove) {
-      // remove the response from the cache
-      store.del(responseId);
-    }
-  }
-
   function purgeEntity(entity: string) {
     // find the responseIds for the entity
     store.smembers(entity).then(function (responseIds) {
       // and purge each response since they contained the entity data
-      if (responseIds !== undefined) {
-        for (const responseId of responseIds) {
-          purgeResponse(responseId);
-        }
-      }
+      store.del(responseIds);
     });
 
     // if purging an entity like Comment, then also purge Comment:1, Comment:2, etc
     store.keys(`${entity}:*`).then(function (entityKeys) {
-      if (entityKeys !== undefined) {
-        for (const entityKey of entityKeys) {
-          // and purge any reponses in each of those entity keys
-          store.smembers(entityKey).then(function (responseIds) {
-            // and purge each response since they contained the entity data
-            if (responseIds !== undefined) {
-              for (const responseId of responseIds) {
-                purgeResponse(responseId);
-              }
-            }
-          });
-        }
-
-        // then purge the entityKeys like Comment:1, Comment:2 etc
-        store.del(entityKeys);
+      for (const entityKey of entityKeys) {
+        // and purge any reponses in each of those entity keys
+        store.smembers(entityKey).then(function (responseIds) {
+          // and purge each response since they contained the entity data
+          store.del(responseIds);
+        });
       }
+
+      // then purge the entityKeys like Comment:1, Comment:2 etc
+      store.del(entityKeys);
     });
 
     // and then purge the entity itself

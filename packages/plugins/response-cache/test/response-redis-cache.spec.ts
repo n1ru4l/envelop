@@ -267,25 +267,20 @@ describe('useResponseCache with Redis store', () => {
     expect(await store.exists('User:3')).toBeFalsy();
 
     const commentMembers = await store.smembers('Comment');
-    console.log(commentMembers);
     expect(commentMembers).toHaveLength(1);
 
     const comment1Members = await store.smembers('Comment:1');
-    console.log(comment1Members);
     expect(comment1Members).toHaveLength(1);
 
     const comment2Members = await store.smembers('Comment:2');
-    console.log(comment2Members);
     expect(comment2Members).toHaveLength(1);
 
     await cache.invalidate([{ typename: 'Comment', id: 2 }]);
 
     const commentMembersInvalidated = await store.smembers('Comment');
-    console.log(commentMembersInvalidated);
     expect(commentMembersInvalidated).toHaveLength(1);
 
     const comment1MembersInvalidated = await store.get('Comment:1');
-    console.log(comment1Members);
     expect(comment1Members).toHaveLength(1);
 
     expect(await store.exists('Comment:1')).toBeTruthy();
