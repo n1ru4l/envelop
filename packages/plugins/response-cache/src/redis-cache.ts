@@ -1,8 +1,13 @@
-import Redis, { RedisOptions } from 'ioredis';
+import Redis from 'ioredis';
+import type { RedisOptions } from 'ioredis';
 import type { Cache } from './cache';
 
 export type BuildRedisEntityId = (typename: string, id: number | string) => string;
 export type BuildRedisResponseOpsKey = (responseId: string) => string;
+
+export type RedisCache = Cache & {
+  store(): Redis.Redis;
+};
 
 export type RedisCacheParameter = {
   /**
@@ -26,35 +31,17 @@ export type RedisCacheParameter = {
   buildRedisResponseOpsKey?: BuildRedisResponseOpsKey;
 };
 
-export const createRedisCache = (params?: RedisCacheParameter): Cache => {
+export const createRedisCache = (params?: RedisCacheParameter): RedisCache => {
   const store = new Redis(params?.redisOptions);
 
   const buildRedisEntityId = params?.buildRedisEntityId ?? defaultBuildRedisEntityId;
   const buildRedisResponseOpsKey = params?.buildRedisResponseOpsKey ?? defaultBuildRedisResponseOpsKey;
 
   function purgeResponse(responseId: string, shouldRemove = true) {
-    let entityIds: string[] = [];
-
-    const responseKey = buildRedisResponseOpsKey(responseId);
-
-    store.smembers(responseKey).then(function (result) {
-      entityIds = result;
-
-      // get entities related to the response
-      if (entityIds !== undefined) {
-        for (const entityId of entityIds) {
-          // remove the response mapping from the entity
-          store.srem(entityId, responseId);
-        }
-        // remove all the entity mappings from the response
-        store.del(responseKey);
-      }
-
-      if (shouldRemove) {
-        // remove the response from the cache
-        store.del(responseId);
-      }
-    });
+    if (shouldRemove) {
+      // remove the response from the cache
+      store.del(responseId);
+    }
   }
 
   function purgeEntity(entity: string) {
@@ -65,10 +52,19 @@ export const createRedisCache = (params?: RedisCacheParameter): Cache => {
 
       if (responseIds !== undefined) {
         for (const responseId of responseIds) {
+          const responseKey = buildRedisResponseOpsKey(responseId);
+          store.srem(responseKey, entity);
+
           purgeResponse(responseId);
         }
       }
     });
+
+    store.keys(`${entity}:*`).then(function (result) {
+      store.del(result);
+    });
+
+    store.del(entity);
   }
 
   return {
@@ -76,20 +72,20 @@ export const createRedisCache = (params?: RedisCacheParameter): Cache => {
       if (ttl === Infinity) {
         store.set(responseId, JSON.stringify(result));
       } else {
-        store.set(responseId, JSON.stringify(result), 'EX', ttl);
+        store.set(responseId, JSON.stringify(result), 'PX', ttl);
       }
 
       const responseKey = buildRedisResponseOpsKey(responseId);
 
       for (const { typename, id } of collectedEntities) {
-        // typename => operation
+        // typename => response
         store.sadd(typename, responseId);
         // operation => typename
         store.sadd(responseKey, typename);
 
         if (id) {
           const entityId = buildRedisEntityId(typename, id);
-          // typename:id => operation
+          // typename:id => response
           store.sadd(entityId, responseId);
           // operation => typename:id
           store.sadd(responseKey, entityId);
@@ -107,6 +103,9 @@ export const createRedisCache = (params?: RedisCacheParameter): Cache => {
       for (const { typename, id } of entitiesToRemove) {
         purgeEntity(id != null ? buildRedisEntityId(typename, id) : typename);
       }
+    },
+    store() {
+      return store;
     },
   };
 };
