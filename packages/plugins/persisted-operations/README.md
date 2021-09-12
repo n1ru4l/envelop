@@ -46,12 +46,12 @@ Now, when running operations through your GraphQL server, you can use a key inst
 }
 ```
 
-You can also provide a function to retrieve the operation id from a custom property available in your context
+You can also provide a function to retrieve the operation id from a custom property available in your context / incoming request:
 
 ```ts
 usePersistedOperations({
   store: myStore,
-  setOperationId: (context) => context.request.body.operationId // get id from custom property in body object
+  extractOperationId: (context) => context.request.body.operationId // get id from custom property in body object
 }),
 ```
 

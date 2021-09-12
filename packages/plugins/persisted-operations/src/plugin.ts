@@ -17,7 +17,7 @@ export type UsePersistedOperationsOptions<ContextType = DefaultContext> = {
   /**
    * Function that returns the operation id, e.g. by retrieving it from cusotm properties within context
    */
-  setOperationId?: (context: Readonly<ContextType>) => string | undefined;
+  extractOperationId?: (context: Readonly<ContextType>) => string | undefined;
 };
 
 const DEFAULT_OPTIONS: Omit<UsePersistedOperationsOptions, 'store'> = {
@@ -42,7 +42,7 @@ export const usePersistedOperations = (rawOptions: UsePersistedOperationsOptions
 
   return {
     onParse({ context, params, extendContext, setParsedDocument }) {
-      const operationId = options.setOperationId ? options.setOperationId(context) : operationIdFromSource(params.source);
+      const operationId = options.extractOperationId ? options.extractOperationId(context) : operationIdFromSource(params.source);
 
       if (!operationId) {
         if (options.onlyPersisted) {
