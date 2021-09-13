@@ -46,18 +46,20 @@ const getEnveloped = envelop({
 If your plugin requires additional configuration you with to pass to it, you can create your plugins as a function, and accept the configuration there:
 
 ```ts
-const myPlugin = (printResult): Plugin {
-  onExecute({ args }) {
-    console.log('Execution started!', { args });
+const myPlugin = (printResult): Plugin => {
+  return {
+    onExecute({ args }) {
+      console.log('Execution started!', { args });
 
-    return {
-      onExecuteDone: ({ result }) => {
-        if (printResult) {
-          console.log('Execution done!', { result });
-        }
-      },
-    };
-  },
+      return {
+        onExecuteDone: ({ result }) => {
+          if (printResult) {
+            console.log('Execution done!', { result });
+          }
+        },
+      };
+    },
+  };
 };
 
 const getEnveloped = envelop({
