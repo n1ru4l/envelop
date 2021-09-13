@@ -1,26 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Parser } from 'graphql/language/parser';
-import { Lexer } from 'graphql/language/lexer';
-import { TokenKind, Kind, Source, DocumentNode, TokenKindEnum, Token } from 'graphql';
-
-declare module 'graphql/language/parser' {
-  export class Parser {
-    constructor(source: string | Source, options?: ParseOptions);
-    _lexer: Lexer;
-    expectOptionalKeyword(word: string): boolean;
-    expectToken(token: TokenKindEnum): void;
-    peek(token: TokenKindEnum): boolean;
-    parseFragmentName(): string;
-    parseArguments(flag: boolean): any;
-    parseDirectives(flag: boolean): any;
-    loc(start: Token): any;
-    parseNamedType(): any;
-    parseSelectionSet(): any;
-    expectKeyword(keyword: string): void;
-    parseVariableDefinitions(): void;
-    parseDocument(): DocumentNode;
-  }
-}
+import { TokenKind, Kind } from 'graphql';
 
 export class FragmentArgumentCompatibleParser extends Parser {
   parseFragment() {
@@ -35,8 +15,8 @@ export class FragmentArgumentCompatibleParser extends Parser {
         return {
           kind: Kind.FRAGMENT_SPREAD,
           name,
-          arguments: this.parseArguments(false),
-          directives: this.parseDirectives(false),
+          arguments: this.parseArguments(),
+          directives: this.parseDirectives(),
           loc: this.loc(start),
         };
       }
@@ -44,7 +24,7 @@ export class FragmentArgumentCompatibleParser extends Parser {
       return {
         kind: Kind.FRAGMENT_SPREAD,
         name: this.parseFragmentName(),
-        directives: this.parseDirectives(false),
+        directives: this.parseDirectives(),
         loc: this.loc(start),
       };
     }
@@ -52,7 +32,7 @@ export class FragmentArgumentCompatibleParser extends Parser {
     return {
       kind: Kind.INLINE_FRAGMENT,
       typeCondition: hasTypeCondition ? this.parseNamedType() : undefined,
-      directives: this.parseDirectives(false),
+      directives: this.parseDirectives(),
       selectionSet: this.parseSelectionSet(),
       loc: this.loc(start),
     };
@@ -69,7 +49,7 @@ export class FragmentArgumentCompatibleParser extends Parser {
         name,
         variableDefinitions: this.parseVariableDefinitions(),
         typeCondition: (this.expectKeyword('on'), this.parseNamedType()),
-        directives: this.parseDirectives(false),
+        directives: this.parseDirectives(),
         selectionSet: this.parseSelectionSet(),
         loc: this.loc(start),
       };
@@ -79,7 +59,7 @@ export class FragmentArgumentCompatibleParser extends Parser {
       kind: Kind.FRAGMENT_DEFINITION,
       name,
       typeCondition: (this.expectKeyword('on'), this.parseNamedType()),
-      directives: this.parseDirectives(false),
+      directives: this.parseDirectives(),
       selectionSet: this.parseSelectionSet(),
       loc: this.loc(start),
     };
