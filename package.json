@@ -12,6 +12,7 @@
     "./examples/graphql-socket.io",
     "./examples/simple-http",
     "./examples/graphql-helix",
+    "./examples/graphql-helix-auth0",
     "./examples/lambda-aws",
     "./examples/azure-functions",
     "./examples/google-cloud-functions",

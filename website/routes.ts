@@ -14,6 +14,7 @@ export function getRoutes(): IRoutes {
             $name: 'Guides',
             $routes: [
               'securing-your-graphql-api',
+              'adding-authentication-with-auth0',
               'monitoring-and-tracing',
               'using-graphql-features-from-the-future',
               'resolving-subscription-data-loader-caching-issues',
