@@ -6,7 +6,7 @@ This plugin validates an JWT token created by [Auth0](https://auth0.com/), and i
 
 ## Getting Started
 
-We recommend using the [Adding Authentication with Auth0 guide](/docs/guides/adding-authentication-with-auth0) if this is your first time using this plugin!
+We recommend using the [Adding Authentication with Auth0 guide](https://www.envelop.dev/docs/guides/adding-authentication-with-auth0) if this is your first time using this plugin!
 
 1. Sign up for [Auth0](https://auth0.com/), create a tenant based on your needs, and then create an Auth0 Application (https://auth0.com/docs/applications).
 2. Setup Auth0 client based on your client app. You should be able to login on your app, and get a JWT token from Auth0. Make sure to pass that token in your GraphQL requests sent to your server, using headers (for example: `Authorization: Bearer XYZ`). You can find more info here: https://auth0.com/docs/quickstart/spa
