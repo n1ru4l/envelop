@@ -30,23 +30,28 @@ const getEnveloped = envelop({
     useAuth0({
       domain: 'YOUR_AUTH0_DOMAIN_HERE',
       audience: 'YOUR_AUTH0_AUDIENCE_HERE',
-      headerName: 'authorization',
       extendContextField: 'auth0',
-      tokenType: 'Bearer',
     }),
     // load user from database and add it to context
     // so it is available within the resolvers
     useExtendContext(async ({ auth0, db }) => {
-      const user = await db.users.load(auth0.sub);
+      if (auth0.sub) {
+        const user = await db.users.load(auth0.sub);
+        return {
+          user,
+        };
+      }
       return {
-        user,
+        user: null,
       };
     }),
   ],
 });
 ```
 
-On the client you just need to add the `Authorization: Bearer tokenXXX` header and you are good!
+On the client you just need to add the `Authorization: Bearer <auth_token>` header and you are good!
+For a full hands on guide for setting things up check out our [Adding Authentication with Auth0 guide](/docs/adding-authentication-with-auth0).
+
 Check out the [Auth0 Envelop plugin](/plugins/use-auth0) for all possible configuration options.
 
 ### Generic Auth
