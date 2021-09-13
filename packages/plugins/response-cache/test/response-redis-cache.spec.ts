@@ -64,7 +64,9 @@ describe('useResponseCache with Redis store', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({})], schema);
+    const cache = createRedisCache();
+    const store = cache.store();
+    const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -142,7 +144,9 @@ describe('useResponseCache with Redis store', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({})], schema);
+    const cache = createRedisCache();
+    const store = cache.store();
+    const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
