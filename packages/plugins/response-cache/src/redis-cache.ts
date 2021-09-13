@@ -41,21 +41,44 @@ export const createRedisCache = (params?: RedisCacheParameter): RedisCache => {
     // find the responseIds for the entity
     store.smembers(entity).then(function (responseIds) {
       // and purge each response since they contained the entity data
+      store.del(
+        responseIds.map(responseId => {
+          return buildRedisResponseOpsKey(responseId);
+        })
+      );
       store.del(responseIds);
     });
 
     // if purging an entity like Comment, then also purge Comment:1, Comment:2, etc
-    store.keys(`${entity}:*`).then(function (entityKeys) {
-      for (const entityKey of entityKeys) {
-        // and purge any reponses in each of those entity keys
-        store.smembers(entityKey).then(function (responseIds) {
+    if (!entity.includes(':')) {
+      store.keys(`${entity}:*`).then(function (entityKeys) {
+        for (const entityKey of entityKeys) {
+          // and purge any reponses in each of those entity keys
+          store.smembers(entityKey).then(function (responseIds) {
+            // and purge each response since they contained the entity data
+            store.del(
+              responseIds.map(responseId => {
+                return buildRedisResponseOpsKey(responseId);
+              })
+            );
+            store.del(responseIds);
+          });
+        }
+
+        // then purge the entityKeys like Comment:1, Comment:2 etc
+        store.del(entityKeys);
+      });
+    }
+
+    // if purging an entity check for associated operations containing that entity
+    store.keys(`operations:*`).then(function (operationKeys) {
+      for (const operationKey of operationKeys) {
+        // and purge operation key that contains the entity
+        store.sismember(operationKey, entity).then(function () {
           // and purge each response since they contained the entity data
-          store.del(responseIds);
+          store.del(operationKey);
         });
       }
-
-      // then purge the entityKeys like Comment:1, Comment:2 etc
-      store.del(entityKeys);
     });
 
     // and then purge the entity itself
