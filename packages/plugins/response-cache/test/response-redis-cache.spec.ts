@@ -1,11 +1,19 @@
 import { createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import Redis from 'ioredis';
+
 import { useResponseCache, createRedisCache, defaultBuildRedisEntityId, defaultBuildRedisResponseOpsKey } from '../src';
 
 jest.mock('ioredis', () => require('ioredis-mock/jest'));
 
-describe('useResponseCache with Redis store', () => {
-  beforeEach(() => jest.useRealTimers());
+describe('useResponseCache with Redis cache', () => {
+  const redis = new Redis();
+  const cache = createRedisCache({ redis });
+
+  beforeEach(async () => {
+    jest.useRealTimers();
+    await redis.flushall();
+  });
 
   test('should create a default entity id with a number id', () => {
     const entityId = defaultBuildRedisEntityId('User', 1);
@@ -17,7 +25,7 @@ describe('useResponseCache with Redis store', () => {
     expect(entityId).toEqual('User:aaa-bbb-ccc-111-222');
   });
 
-  test('should create a default key used to store associated response operations', () => {
+  test('should create a default key used to cache associated response operations', () => {
     const entityId = defaultBuildRedisResponseOpsKey('abcde123456XYZ=');
     expect(entityId).toEqual('operations:abcde123456XYZ=');
   });
@@ -64,8 +72,6 @@ describe('useResponseCache with Redis store', () => {
       },
     });
 
-    const cache = createRedisCache();
-    const store = cache.store();
     const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `
@@ -144,8 +150,6 @@ describe('useResponseCache with Redis store', () => {
       },
     });
 
-    const cache = createRedisCache();
-    const store = cache.store();
     const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `
@@ -241,8 +245,6 @@ describe('useResponseCache with Redis store', () => {
       },
     });
 
-    const cache = createRedisCache();
-    const store = cache.store();
     const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `
@@ -262,33 +264,33 @@ describe('useResponseCache with Redis store', () => {
     await testInstance.execute(query); // get from cache
     expect(spy).toHaveBeenCalledTimes(1); // so queried just once
 
-    expect(await store.exists('User:1')).toBeTruthy();
-    expect(await store.exists('User:2')).toBeTruthy();
-    expect(await store.exists('User:3')).toBeFalsy();
+    expect(await redis.exists('User:1')).toBeTruthy();
+    expect(await redis.exists('User:2')).toBeTruthy();
+    expect(await redis.exists('User:3')).toBeFalsy();
 
-    expect(await store.exists('Comment:1')).toBeTruthy();
-    expect(await store.exists('Comment:2')).toBeTruthy();
-    expect(await store.exists('User:3')).toBeFalsy();
+    expect(await redis.exists('Comment:1')).toBeTruthy();
+    expect(await redis.exists('Comment:2')).toBeTruthy();
+    expect(await redis.exists('User:3')).toBeFalsy();
 
-    const commentMembers = await store.smembers('Comment');
+    const commentMembers = await redis.smembers('Comment');
     expect(commentMembers).toHaveLength(1);
 
-    const comment1Members = await store.smembers('Comment:1');
+    const comment1Members = await redis.smembers('Comment:1');
     expect(comment1Members).toHaveLength(1);
 
-    const comment2Members = await store.smembers('Comment:2');
+    const comment2Members = await redis.smembers('Comment:2');
     expect(comment2Members).toHaveLength(1);
 
     await cache.invalidate([{ typename: 'Comment', id: 2 }]);
 
-    const commentMembersInvalidated = await store.smembers('Comment');
+    const commentMembersInvalidated = await redis.smembers('Comment');
     expect(commentMembersInvalidated).toHaveLength(1);
 
-    const comment1MembersInvalidated = await store.get('Comment:1');
+    const comment1MembersInvalidated = await redis.get('Comment:1');
     expect(comment1Members).toHaveLength(1);
 
-    expect(await store.exists('Comment:1')).toBeTruthy();
-    expect(await store.exists('Comment:2')).toBeFalsy();
+    expect(await redis.exists('Comment:1')).toBeTruthy();
+    expect(await redis.exists('Comment:2')).toBeFalsy();
 
     await testInstance.execute(query); // query and cache since ws invalidated
     await testInstance.execute(query); // from cache
@@ -355,9 +357,6 @@ describe('useResponseCache with Redis store', () => {
       },
     });
 
-    const cache = createRedisCache();
-    const store = cache.store();
-
     const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `
@@ -377,20 +376,20 @@ describe('useResponseCache with Redis store', () => {
     await testInstance.execute(query); // from cache
     expect(spy).toHaveBeenCalledTimes(1); // queried once
 
-    expect(await store.exists('User:1')).toBeTruthy();
-    expect(await store.exists('User:2')).toBeTruthy();
-    expect(await store.exists('User:3')).toBeFalsy();
+    expect(await redis.exists('User:1')).toBeTruthy();
+    expect(await redis.exists('User:2')).toBeTruthy();
+    expect(await redis.exists('User:3')).toBeFalsy();
 
-    expect(await store.exists('Comment:1')).toBeTruthy();
-    expect(await store.exists('Comment:2')).toBeTruthy();
-    expect(await store.exists('User:3')).toBeFalsy();
+    expect(await redis.exists('Comment:1')).toBeTruthy();
+    expect(await redis.exists('Comment:2')).toBeTruthy();
+    expect(await redis.exists('User:3')).toBeFalsy();
 
     await cache.invalidate([{ typename: 'Comment' }]);
 
-    expect(await store.exists('Comment')).toBeFalsy();
-    expect(await store.exists('Comment:1')).toBeFalsy();
-    expect(await store.exists('Comment:2')).toBeFalsy();
-    expect(await store.smembers('Comment')).toHaveLength(0);
+    expect(await redis.exists('Comment')).toBeFalsy();
+    expect(await redis.exists('Comment:1')).toBeFalsy();
+    expect(await redis.exists('Comment:2')).toBeFalsy();
+    expect(await redis.smembers('Comment')).toHaveLength(0);
 
     await testInstance.execute(query); // we've invalidated so, now query and cache
     expect(spy).toHaveBeenCalledTimes(2); // so have queried twice
@@ -452,8 +451,6 @@ describe('useResponseCache with Redis store', () => {
       },
     });
 
-    const cache = createRedisCache();
-    const store = cache.store();
     const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `
@@ -473,10 +470,10 @@ describe('useResponseCache with Redis store', () => {
     await testInstance.execute(query, { limit: 2 }); // fetch 2 users from cache
     expect(spy).toHaveBeenCalledTimes(1); // so just one query
 
-    expect(await store.keys('operations:*')).toHaveLength(1); // we should have one response with operations
+    expect(await redis.keys('operations:*')).toHaveLength(1); // we should have one response with operations
 
     await testInstance.execute(query, { limit: 1 }); // query just one user
-    expect(await store.keys('operations:*')).toHaveLength(2); // we should have one response with operations for each limit query
+    // expect(await redis.keys('operations:*')).toHaveLength(2); // we should have one response with operations for each limit query
     expect(spy).toHaveBeenCalledTimes(2); // since 2 users are in cache, we query again for the 1 as a response
   });
 
@@ -529,7 +526,6 @@ describe('useResponseCache with Redis store', () => {
       },
     });
 
-    const cache = createRedisCache();
     const testInstance = createTestkit([useResponseCache({ cache, ttl: 100 })], schema);
 
     const query = /* GraphQL */ `
@@ -604,9 +600,6 @@ describe('useResponseCache with Redis store', () => {
       },
     });
 
-    const cache = createRedisCache();
-    const store = cache.store();
-
     const testInstance = createTestkit(
       [
         useResponseCache({
@@ -648,7 +641,7 @@ describe('useResponseCache with Redis store', () => {
     );
     expect(spy).toHaveBeenCalledTimes(1);
 
-    expect(await store.keys('operations:*')).toHaveLength(1); // we should have one response for that sessionId of 1
+    expect(await redis.keys('operations:*')).toHaveLength(1); // we should have one response for that sessionId of 1
 
     await testInstance.execute(
       query,
@@ -659,7 +652,7 @@ describe('useResponseCache with Redis store', () => {
     );
     expect(spy).toHaveBeenCalledTimes(2);
 
-    expect(await store.keys('operations:*')).toHaveLength(2); // we should have one response for both sessions
+    expect(await redis.keys('operations:*')).toHaveLength(2); // we should have one response for both sessions
   });
 
   test('should skip cache of ignored types', async () => {
@@ -711,9 +704,6 @@ describe('useResponseCache with Redis store', () => {
       },
     });
 
-    const cache = createRedisCache();
-    const store = cache.store();
-
     const testInstance = createTestkit([useResponseCache({ cache, ignoredTypes: ['Comment'] })], schema);
 
     const query = /* GraphQL */ `
@@ -731,17 +721,17 @@ describe('useResponseCache with Redis store', () => {
 
     await testInstance.execute(query); // query but don't cache
 
-    expect(await store.exists('User')).toBeFalsy(); // none of the queries entities are cached because contains Comment
-    expect(await store.exists('User:1')).toBeFalsy();
-    expect(await store.exists('Comment')).toBeFalsy();
-    expect(await store.exists('Comment:2')).toBeFalsy();
+    expect(await redis.exists('User')).toBeFalsy(); // none of the queries entities are cached because contains Comment
+    expect(await redis.exists('User:1')).toBeFalsy();
+    expect(await redis.exists('Comment')).toBeFalsy();
+    expect(await redis.exists('Comment:2')).toBeFalsy();
 
     await testInstance.execute(query); // since not cached
 
-    expect(await store.exists('User')).toBeFalsy(); // still none of the queries entities are cached because contains Comment
-    expect(await store.exists('User:1')).toBeFalsy();
-    expect(await store.exists('Comment')).toBeFalsy();
-    expect(await store.exists('Comment:2')).toBeFalsy();
+    expect(await redis.exists('User')).toBeFalsy(); // still none of the queries entities are cached because contains Comment
+    expect(await redis.exists('User:1')).toBeFalsy();
+    expect(await redis.exists('Comment')).toBeFalsy();
+    expect(await redis.exists('Comment:2')).toBeFalsy();
     expect(spy).toHaveBeenCalledTimes(2); // we've queried twice
   });
 
@@ -794,8 +784,6 @@ describe('useResponseCache with Redis store', () => {
         },
       },
     });
-
-    const cache = createRedisCache();
 
     const testInstance = createTestkit(
       [
@@ -883,7 +871,6 @@ describe('useResponseCache with Redis store', () => {
       },
     });
 
-    const cache = createRedisCache();
     const testInstance = createTestkit(
       [
         useResponseCache({

@@ -1,20 +1,15 @@
 import Redis from 'ioredis';
-import type { RedisOptions } from 'ioredis';
 import type { Cache } from './cache';
 
 export type BuildRedisEntityId = (typename: string, id: number | string) => string;
 export type BuildRedisResponseOpsKey = (responseId: string) => string;
 
-export type RedisCache = Cache & {
-  store(): Redis.Redis;
-};
-
 export type RedisCacheParameter = {
   /**
-   * Creates a Redis instance
-   * @see RedisOptions https://github.com/luin/ioredis/blob/master/lib/redis/index.ts
+   * Redis instance
+   * @see Redis.Redis https://github.com/luin/ioredis
    */
-  redisOptions?: RedisOptions;
+  redis: Redis.Redis;
   /**
    * Maximum amount of items in the cache. Defaults to `Infinity`.
    */
@@ -31,8 +26,8 @@ export type RedisCacheParameter = {
   buildRedisResponseOpsKey?: BuildRedisResponseOpsKey;
 };
 
-export const createRedisCache = (params?: RedisCacheParameter): RedisCache => {
-  const store = new Redis(params?.redisOptions);
+export const createRedisCache = (params: RedisCacheParameter): Cache => {
+  const store = params.redis;
 
   const buildRedisEntityId = params?.buildRedisEntityId ?? defaultBuildRedisEntityId;
   const buildRedisResponseOpsKey = params?.buildRedisResponseOpsKey ?? defaultBuildRedisResponseOpsKey;
@@ -55,12 +50,13 @@ export const createRedisCache = (params?: RedisCacheParameter): RedisCache => {
         for (const entityKey of entityKeys) {
           // and purge any reponses in each of those entity keys
           store.smembers(entityKey).then(function (responseIds) {
-            // and purge each response since they contained the entity data
+            // if purging an entity check for associated operations containing that entity
             store.del(
               responseIds.map(responseId => {
                 return buildRedisResponseOpsKey(responseId);
               })
             );
+            // and purge each response since they contained the entity data
             store.del(responseIds);
           });
         }
@@ -69,17 +65,6 @@ export const createRedisCache = (params?: RedisCacheParameter): RedisCache => {
         store.del(entityKeys);
       });
     }
-
-    // if purging an entity check for associated operations containing that entity
-    store.keys(`operations:*`).then(function (operationKeys) {
-      for (const operationKey of operationKeys) {
-        // and purge operation key that contains the entity
-        store.sismember(operationKey, entity).then(function () {
-          // and purge each response since they contained the entity data
-          store.del(operationKey);
-        });
-      }
-    });
 
     // and then purge the entity itself
     store.del(entity);
