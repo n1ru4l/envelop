@@ -1,9 +1,18 @@
-import { createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useResponseCache, createInMemoryCache } from '../src';
 
 describe('useResponseCache', () => {
   beforeEach(() => jest.useRealTimers());
+
+  let value = process.env.NODE_ENV;
+
+  beforeAll(() => {
+    process.env.NODE_ENV = 'development';
+  });
+  afterAll(() => {
+    process.env.NODE_ENV = value;
+  });
 
   test('should reuse cache', async () => {
     const spy = jest.fn(() => [
@@ -140,11 +149,15 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await testInstance.execute(query);
-    await testInstance.execute(query);
+    let result = await testInstance.execute(query);
+    assertSingleExecutionValue(result);
+    expect(result.extensions?.responseCache).toEqual({ hit: false });
+    result = await testInstance.execute(query);
+    assertSingleExecutionValue(result);
+    expect(result.extensions?.responseCache).toEqual({ hit: true });
     expect(spy).toHaveBeenCalledTimes(1);
 
-    await testInstance.execute(
+    result = await testInstance.execute(
       /* GraphQL */ `
         mutation test($id: ID!) {
           updateUser(id: $id) {
@@ -156,8 +169,12 @@ describe('useResponseCache', () => {
         id: 1,
       }
     );
+    assertSingleExecutionValue(result);
+    expect(result?.extensions?.responseCache).toEqual({ invalidatedEntities: [{ id: '1', typename: 'User' }] });
 
-    await testInstance.execute(query);
+    result = await testInstance.execute(query);
+    assertSingleExecutionValue(result);
+    expect(result.extensions?.responseCache).toEqual({ hit: false });
     expect(spy).toHaveBeenCalledTimes(2);
   });
 

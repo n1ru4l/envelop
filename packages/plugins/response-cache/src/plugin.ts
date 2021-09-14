@@ -95,6 +95,11 @@ export type UseResponseCacheParameter<C = any> = {
    * Defaults to `defaultGetDocumentStringFromContext`
    */
   getDocumentStringFromContext?: GetDocumentStringFromContextFunction;
+  /**
+   * Include extensions that provide use-ful information, such as whether the cache was hit or which mutations were invalidated.
+   * Default value is true if process.env.NODE_ENV is set to "development", otherwise false
+   */
+  includeExtensions?: boolean;
 };
 
 /**
@@ -124,6 +129,9 @@ export function useResponseCache({
 }: UseResponseCacheParameter = {}): Plugin {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
   const schemaCache = new WeakMap<GraphQLSchema, GraphQLSchema>();
+
+  // eslint-disable-next-line dot-notation
+  const shouldIncludeExtensions = typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false;
 
   return {
     onSchemaChange(ctx) {
@@ -168,7 +176,7 @@ export function useResponseCache({
         }
 
         return {
-          onExecuteDone({ result }) {
+          onExecuteDone({ result, setResult }) {
             if (isAsyncIterable(result)) {
               // eslint-disable-next-line no-console
               console.warn('[useResponseCache] AsyncIterable returned from execute is currently unsupported.');
@@ -176,6 +184,17 @@ export function useResponseCache({
             }
 
             cache.invalidate(context.identifier.values());
+            if (shouldIncludeExtensions) {
+              setResult({
+                ...result,
+                extensions: {
+                  ...result.extensions,
+                  responseCache: {
+                    invalidatedEntities: Array.from(context.identifier.values()),
+                  },
+                },
+              });
+            }
           },
         };
       } else {
@@ -191,7 +210,18 @@ export function useResponseCache({
             const cachedResponse = await cache.get(operationId);
 
             if (cachedResponse != null) {
-              ctx.setResultAndStopExecution(cachedResponse);
+              if (shouldIncludeExtensions) {
+                ctx.setResultAndStopExecution({
+                  ...cachedResponse,
+                  extensions: {
+                    responseCache: {
+                      hit: true,
+                    },
+                  },
+                });
+              } else {
+                ctx.setResultAndStopExecution(cachedResponse);
+              }
               return;
             }
           }
@@ -215,7 +245,7 @@ export function useResponseCache({
           }
 
           return {
-            onExecuteDone({ result }) {
+            onExecuteDone({ result, setResult }) {
               if (isAsyncIterable(result)) {
                 // eslint-disable-next-line no-console
                 console.warn('[useResponseCache] AsyncIterable returned from execute is currently unsupported.');
@@ -227,6 +257,16 @@ export function useResponseCache({
               }
 
               cache.set(operationId, result, identifier.values(), context.ttl);
+              if (shouldIncludeExtensions) {
+                setResult({
+                  ...result,
+                  extensions: {
+                    responseCache: {
+                      hit: false,
+                    },
+                  },
+                });
+              }
             },
           };
         } else {
