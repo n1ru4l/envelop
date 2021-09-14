@@ -7,20 +7,63 @@ import { Span } from '@sentry/types';
 import { ExecutionArgs, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
 
 export type SentryPluginOptions = {
+  /**
+   * Starts a new transaction for every GraphQL Operation.
+   * When disabled, an already existing Transaction will be used.
+   *
+   * @default true
+   */
   startTransaction?: boolean;
+  /**
+   * Renames Transaction.
+   * @default false
+   */
   renameTransaction?: boolean;
+  /**
+   * Creates a Span for every resolve function
+   * @default true
+   */
   trackResolvers?: boolean;
+  /**
+   * Adds result of each resolver and operation to Span's data (available under "result")
+   * @default false
+   */
   includeRawResult?: boolean;
+  /**
+   * Adds arguments of each resolver to Span's tag called "args"
+   * @default false
+   */
   includeResolverArgs?: boolean;
+  /**
+   * Adds operation's variables to a Scope (only in case of errors)
+   * @default false
+   */
   includeExecuteVariables?: boolean;
+  /**
+   * Adds custom tags to every Transaction.
+   */
   appendTags?: (args: ExecutionArgs) => Record<string, unknown>;
+  /**
+   * Produces a name of Transaction (only when "renameTransaction" or "startTransaction" are enabled) and description of created Span.
+   *
+   * @default operation's name or "Anonymous Operation" when missing)
+   */
   transactionName?: (args: ExecutionArgs) => string;
+  /**
+   * Produces a "op" (operation) of created Span.
+   *
+   * @default execute
+   */
   operationName?: (args: ExecutionArgs) => string;
+  /**
+   * Indicates whether or not to skip the entire Sentry flow for given GraphQL operation
+   */
+  skip?: (args: ExecutionArgs) => boolean;
 };
 
 export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
-  function pick<K extends keyof SentryPluginOptions>(key: K, defaultValue?: SentryPluginOptions[K]): SentryPluginOptions[K] {
-    return prioritize(options[key], defaultValue);
+  function pick<K extends keyof SentryPluginOptions>(key: K, defaultValue: NonNullable<SentryPluginOptions[K]>) {
+    return options[key] ?? defaultValue;
   }
 
   const startTransaction = pick('startTransaction', true);
@@ -29,9 +72,14 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const includeRawResult = pick('includeRawResult', false);
   const includeExecuteVariables = pick('includeExecuteVariables', false);
   const renameTransaction = pick('renameTransaction', false);
+  const skip = pick('skip', () => false);
 
   return {
     onExecute({ args }) {
+      if (skip(args)) {
+        return;
+      }
+
       const rootOperation = args.document.definitions.find(o => o.kind === Kind.OPERATION_DEFINITION) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
       const document = print(args.document);
@@ -187,16 +235,3 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
     },
   };
 };
-
-/**
- * Sets a priority for provided values from left (highest) to right (lowest)
- */
-function prioritize<T>(...values: T[]): T {
-  const picked = values.find(val => typeof val !== 'undefined');
-
-  if (typeof picked === 'undefined') {
-    return values[values.length - 1];
-  }
-
-  return picked;
-}
