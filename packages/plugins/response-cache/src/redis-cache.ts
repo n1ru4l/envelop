@@ -108,9 +108,6 @@ export const createRedisCache = (params: RedisCacheParameter): Cache => {
         purgeEntity(id != null ? buildRedisEntityId(typename, id) : typename);
       }
     },
-    store() {
-      return store;
-    },
   };
 };
 
