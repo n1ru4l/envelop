@@ -1,5 +1,48 @@
 # @envelop/core
 
+## 1.1.0
+
+### Minor Changes
+
+- 7704fc3: Add API for registering a context creation error handler.
+
+  ```ts
+  export const useMyHook = (): Plugin => {
+    return {
+      onPluginInit(context) {
+        context.registerContextErrorHandler(({ error, setError }) => {
+          console.error('Error occurred during context creation.', error);
+          setError(new Error('Something went wrong :('));
+        });
+      },
+    };
+  };
+  ```
+
+- 7704fc3: `useMaskedErrors` now masks errors thrown during context creation (calling `contextFactory`).
+
+  It might be possible that you need to load some data during context creation from a remote source that could be unavailable and thus yield in an error being thrown. `useMaskedErrors` now handles such scenarios and prevents leaking such information to clients.
+
+  ✅ context error will be masked
+
+  ```ts
+  const getEnveloped = envelop({
+    plugins: [
+      useExtendContext(() => {
+        throw new Error('Oooooops.');
+      }),
+      useMaskedErrors(),
+    ],
+  });
+  ```
+
+- 7704fc3: useMaskedErrors now also handles errors that are occurring during subscriptions.
+
+### Patch Changes
+
+- Updated dependencies [7704fc3]
+  - @envelop/types@1.1.0
+
 ## 1.0.4
 
 ### Patch Changes
