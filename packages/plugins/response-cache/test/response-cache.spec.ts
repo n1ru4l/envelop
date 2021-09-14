@@ -1,4 +1,4 @@
-import { createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useResponseCache, createInMemoryCache } from '../src';
 
@@ -125,7 +125,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({})], schema);
+    const testInstance = createTestkit([useResponseCache({ includeExtensionMetadata: true })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -140,11 +140,15 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await testInstance.execute(query);
-    await testInstance.execute(query);
+    let result = await testInstance.execute(query);
+    assertSingleExecutionValue(result);
+    expect(result.extensions?.responseCache).toEqual({ hit: false });
+    result = await testInstance.execute(query);
+    assertSingleExecutionValue(result);
+    expect(result.extensions?.responseCache).toEqual({ hit: true });
     expect(spy).toHaveBeenCalledTimes(1);
 
-    await testInstance.execute(
+    result = await testInstance.execute(
       /* GraphQL */ `
         mutation test($id: ID!) {
           updateUser(id: $id) {
@@ -156,8 +160,12 @@ describe('useResponseCache', () => {
         id: 1,
       }
     );
+    assertSingleExecutionValue(result);
+    expect(result?.extensions?.responseCache).toEqual({ invalidatedEntities: [{ id: '1', typename: 'User' }] });
 
-    await testInstance.execute(query);
+    result = await testInstance.execute(query);
+    assertSingleExecutionValue(result);
+    expect(result.extensions?.responseCache).toEqual({ hit: false });
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
