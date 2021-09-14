@@ -62,8 +62,8 @@ export type SentryPluginOptions = {
 };
 
 export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
-  function pick<K extends keyof SentryPluginOptions>(key: K, defaultValue?: SentryPluginOptions[K]): SentryPluginOptions[K] {
-    return prioritize(options[key], defaultValue);
+  function pick<K extends keyof SentryPluginOptions>(key: K, defaultValue: NonNullable<SentryPluginOptions[K]>) {
+    return options[key] ?? defaultValue;
   }
 
   const startTransaction = pick('startTransaction', true);
@@ -72,7 +72,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const includeRawResult = pick('includeRawResult', false);
   const includeExecuteVariables = pick('includeExecuteVariables', false);
   const renameTransaction = pick('renameTransaction', false);
-  const skip = pick('skip', () => false)!;
+  const skip = pick('skip', () => false);
 
   return {
     onExecute({ args }) {
@@ -235,16 +235,3 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
     },
   };
 };
-
-/**
- * Sets a priority for provided values from left (highest) to right (lowest)
- */
-function prioritize<T>(...values: T[]): T {
-  const picked = values.find(val => typeof val !== 'undefined');
-
-  if (typeof picked === 'undefined') {
-    return values[values.length - 1];
-  }
-
-  return picked;
-}
