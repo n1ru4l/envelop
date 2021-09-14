@@ -1,5 +1,20 @@
 # @envelop/persisted-operations
 
+## 2.0.0
+
+### Major Changes
+
+- f9841ba: BREAKING CHANGE: Renamed `onlyPersistedOperations` to `onlyPersisted`
+- f9841ba: BREAKING CHANGE: Remove `writeToContext` - now the operation id is always written to the context
+- f9841ba: BREAKING CHANGE: The operation ID written to the context is now a Symbol (instead of a string), use `readOperationId` to get it within your code / other plugins
+- f9841ba: BREAKING CHANGE: Removed `canHandle` from interface. Replace it with returning `null` from the `get` function of your Store
+
+### Minor Changes
+
+- f9841ba: Added `extractOperationId` callback for extracting the persisted operation from the incoming http request
+- f9841ba: Added support for dynamic store based on incoming req / initial context
+- f9841ba: Added InMemoryStore and JsonFileStore
+
 ## 1.0.1
 
 ### Patch Changes

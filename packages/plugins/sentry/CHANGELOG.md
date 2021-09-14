@@ -1,5 +1,11 @@
 # @envelop/sentry
 
+## 1.1.0
+
+### Minor Changes
+
+- b5bdcad: Adds "skip" to indicate whether or not to skip the entire Sentry flow for given GraphQL operation
+
 ## 1.0.2
 
 ### Patch Changes

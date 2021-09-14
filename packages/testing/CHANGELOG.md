@@ -1,5 +1,11 @@
 # @envelop/testing
 
+## 1.1.1
+
+### Patch Changes
+
+- 7704fc3: Do not swallow/map errors thrown from contextFactory
+
 ## 1.1.0
 
 ### Minor Changes
