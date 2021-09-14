@@ -5,15 +5,6 @@ import { useResponseCache, createInMemoryCache } from '../src';
 describe('useResponseCache', () => {
   beforeEach(() => jest.useRealTimers());
 
-  let value = process.env.NODE_ENV;
-
-  beforeAll(() => {
-    process.env.NODE_ENV = 'development';
-  });
-  afterAll(() => {
-    process.env.NODE_ENV = value;
-  });
-
   test('should reuse cache', async () => {
     const spy = jest.fn(() => [
       {
@@ -134,7 +125,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({})], schema);
+    const testInstance = createTestkit([useResponseCache({ includeExtensionMetadata: true })], schema);
 
     const query = /* GraphQL */ `
       query test {

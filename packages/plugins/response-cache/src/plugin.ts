@@ -96,10 +96,10 @@ export type UseResponseCacheParameter<C = any> = {
    */
   getDocumentStringFromContext?: GetDocumentStringFromContextFunction;
   /**
-   * Include extensions that provide use-ful information, such as whether the cache was hit or which mutations were invalidated.
-   * Default value is true if process.env.NODE_ENV is set to "development", otherwise false
+   * Include extension values that provide useful information, such as whether the cache was hit or which resources a mutation invalidated.
+   * Defaults to `true` if `process.env["NODE_ENV"]` is set to `"development"`, otherwise `false`.
    */
-  includeExtensions?: boolean;
+  includeExtensionMetadata?: boolean;
 };
 
 /**
@@ -126,12 +126,11 @@ export function useResponseCache({
   invalidateViaMutation = true,
   buildResponseCacheKey = defaultBuildResponseCacheKey,
   getDocumentStringFromContext = defaultGetDocumentStringFromContext,
+  // eslint-disable-next-line dot-notation
+  includeExtensionMetadata = typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false,
 }: UseResponseCacheParameter = {}): Plugin {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
   const schemaCache = new WeakMap<GraphQLSchema, GraphQLSchema>();
-
-  // eslint-disable-next-line dot-notation
-  const shouldIncludeExtensions = typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false;
 
   return {
     onSchemaChange(ctx) {
@@ -184,7 +183,7 @@ export function useResponseCache({
             }
 
             cache.invalidate(context.identifier.values());
-            if (shouldIncludeExtensions) {
+            if (includeExtensionMetadata) {
               setResult({
                 ...result,
                 extensions: {
@@ -210,7 +209,7 @@ export function useResponseCache({
             const cachedResponse = await cache.get(operationId);
 
             if (cachedResponse != null) {
-              if (shouldIncludeExtensions) {
+              if (includeExtensionMetadata) {
                 ctx.setResultAndStopExecution({
                   ...cachedResponse,
                   extensions: {
@@ -257,7 +256,7 @@ export function useResponseCache({
               }
 
               cache.set(operationId, result, identifier.values(), context.ttl);
-              if (shouldIncludeExtensions) {
+              if (includeExtensionMetadata) {
                 setResult({
                   ...result,
                   extensions: {
