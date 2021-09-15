@@ -32,42 +32,41 @@ export const createRedisCache = (params: RedisCacheParameter): Cache => {
   const buildRedisEntityId = params?.buildRedisEntityId ?? defaultBuildRedisEntityId;
   const buildRedisResponseOpsKey = params?.buildRedisResponseOpsKey ?? defaultBuildRedisResponseOpsKey;
 
-  function purgeEntity(entity: string): Promise<string[]> {
+  function buildEntityInvalidationsKeys(entity: string): Promise<string[]> {
     return new Promise(function (resolve, reject) {
-      const keysToPurge: string[] = [entity];
+      const keysToInvalidate: string[] = [entity];
 
       // find the responseIds for the entity
       store.smembers(entity).then(function (responseIds) {
-        // and purge each response since they contained the entity data
+        // and add each response to be invalidated since they contained the entity data
         responseIds.forEach(responseId => {
-          keysToPurge.push(responseId);
-          keysToPurge.push(buildRedisResponseOpsKey(responseId));
+          keysToInvalidate.push(responseId);
+          keysToInvalidate.push(buildRedisResponseOpsKey(responseId));
         });
 
-        // if purging an entity like Comment, then also purge Comment:1, Comment:2, etc
+        // if invalidating an entity like Comment, then also invalidate Comment:1, Comment:2, etc
         if (!entity.includes(':')) {
           store.keys(`${entity}:*`).then(function (entityKeys) {
             for (const entityKey of entityKeys) {
-              // and purge any reponses in each of those entity keys
+              // and invalidate any responses in each of those entity keys
               store.smembers(entityKey).then(function (responseIds) {
-                // if purging an entity check for associated operations containing that entity
-                // and purge each response since they contained the entity data
+                // if invalidating an entity check for associated operations containing that entity
+                // and invalidate each response since they contained the entity data
                 responseIds.forEach(responseId => {
-                  keysToPurge.push(responseId);
-                  keysToPurge.push(buildRedisResponseOpsKey(responseId));
+                  keysToInvalidate.push(responseId);
+                  keysToInvalidate.push(buildRedisResponseOpsKey(responseId));
                 });
               });
             }
 
-            // then purge the entityKeys like Comment:1, Comment:2 etc
+            // then the entityKeys like Comment:1, Comment:2 etc to be invalidated
             entityKeys.forEach(entityKey => {
-              keysToPurge.push(entityKey);
+              keysToInvalidate.push(entityKey);
             });
           });
         }
 
-        // and then purge the entity itself
-        resolve(keysToPurge);
+        resolve(keysToInvalidate);
       });
     });
   }
@@ -113,7 +112,7 @@ export const createRedisCache = (params: RedisCacheParameter): Cache => {
       const keys$: Promise<string[]>[] = [];
 
       for (const { typename, id } of entitiesToRemove) {
-        keys$.push(purgeEntity(id != null ? buildRedisEntityId(typename, id) : typename));
+        keys$.push(buildEntityInvalidationsKeys(id != null ? buildRedisEntityId(typename, id) : typename));
       }
 
       return Promise.all(keys$).then(keys => {
