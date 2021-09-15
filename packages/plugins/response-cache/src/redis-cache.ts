@@ -32,69 +32,75 @@ export const createRedisCache = (params: RedisCacheParameter): Cache => {
   const buildRedisEntityId = params?.buildRedisEntityId ?? defaultBuildRedisEntityId;
   const buildRedisResponseOpsKey = params?.buildRedisResponseOpsKey ?? defaultBuildRedisResponseOpsKey;
 
-  function purgeEntity(entity: string) {
-    // find the responseIds for the entity
-    store.smembers(entity).then(function (responseIds) {
-      // and purge each response since they contained the entity data
-      store.del(
-        responseIds.map(responseId => {
-          return buildRedisResponseOpsKey(responseId);
-        })
-      );
-      store.del(responseIds);
-    });
+  function purgeEntity(entity: string): Promise<string[]> {
+    return new Promise(function (resolve, reject) {
+      const keysToPurge: string[] = [entity];
 
-    // if purging an entity like Comment, then also purge Comment:1, Comment:2, etc
-    if (!entity.includes(':')) {
-      store.keys(`${entity}:*`).then(function (entityKeys) {
-        for (const entityKey of entityKeys) {
-          // and purge any reponses in each of those entity keys
-          store.smembers(entityKey).then(function (responseIds) {
-            // if purging an entity check for associated operations containing that entity
-            store.del(
-              responseIds.map(responseId => {
-                return buildRedisResponseOpsKey(responseId);
-              })
-            );
-            // and purge each response since they contained the entity data
-            store.del(responseIds);
+      // find the responseIds for the entity
+      store.smembers(entity).then(function (responseIds) {
+        // and purge each response since they contained the entity data
+        responseIds.forEach(responseId => {
+          keysToPurge.push(responseId);
+          keysToPurge.push(buildRedisResponseOpsKey(responseId));
+        });
+
+        // if purging an entity like Comment, then also purge Comment:1, Comment:2, etc
+        if (!entity.includes(':')) {
+          store.keys(`${entity}:*`).then(function (entityKeys) {
+            for (const entityKey of entityKeys) {
+              // and purge any reponses in each of those entity keys
+              store.smembers(entityKey).then(function (responseIds) {
+                // if purging an entity check for associated operations containing that entity
+                // and purge each response since they contained the entity data
+                responseIds.forEach(responseId => {
+                  keysToPurge.push(responseId);
+                  keysToPurge.push(buildRedisResponseOpsKey(responseId));
+                });
+              });
+            }
+
+            // then purge the entityKeys like Comment:1, Comment:2 etc
+            entityKeys.forEach(entityKey => {
+              keysToPurge.push(entityKey);
+            });
           });
         }
 
-        // then purge the entityKeys like Comment:1, Comment:2 etc
-        store.del(entityKeys);
+        // and then purge the entity itself
+        resolve(keysToPurge);
       });
-    }
-
-    // and then purge the entity itself
-    store.del(entity);
+    });
   }
 
   return {
     set(responseId, result, collectedEntities, ttl) {
+      const pipeline = store.pipeline();
+
       if (ttl === Infinity) {
-        store.set(responseId, JSON.stringify(result));
+        pipeline.set(responseId, JSON.stringify(result));
       } else {
         // set the ttl in milliseconds
-        store.set(responseId, JSON.stringify(result), 'PX', ttl);
+        pipeline.set(responseId, JSON.stringify(result), 'PX', ttl);
       }
 
       const responseKey = buildRedisResponseOpsKey(responseId);
 
       for (const { typename, id } of collectedEntities) {
         // Adds a key for the typename => response
-        store.sadd(typename, responseId);
+        pipeline.sadd(typename, responseId);
         // Adds a key for the operation => typename
-        store.sadd(responseKey, typename);
+        pipeline.sadd(responseKey, typename);
 
         if (id) {
           const entityId = buildRedisEntityId(typename, id);
           // Adds a key for the typename:id => response
-          store.sadd(entityId, responseId);
+          pipeline.sadd(entityId, responseId);
           // Adds a key for the operation => typename:id
-          store.sadd(responseKey, entityId);
+          pipeline.sadd(responseKey, entityId);
         }
       }
+
+      pipeline.exec();
     },
     get(responseId) {
       return (
@@ -104,9 +110,15 @@ export const createRedisCache = (params: RedisCacheParameter): Cache => {
       );
     },
     invalidate(entitiesToRemove) {
+      const keys$: Promise<string[]>[] = [];
+
       for (const { typename, id } of entitiesToRemove) {
-        purgeEntity(id != null ? buildRedisEntityId(typename, id) : typename);
+        keys$.push(purgeEntity(id != null ? buildRedisEntityId(typename, id) : typename));
       }
+
+      return Promise.all(keys$).then(keys => {
+        store.del(keys.flat());
+      });
     },
   };
 };

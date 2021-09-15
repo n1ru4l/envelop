@@ -384,7 +384,11 @@ describe('useResponseCache with Redis cache', () => {
     expect(await redis.exists('Comment:2')).toBeTruthy();
     expect(await redis.exists('User:3')).toBeFalsy();
 
+    console.log('Keys before invalidation', await redis.keys('*'));
+
     await cache.invalidate([{ typename: 'Comment' }]);
+
+    console.log('Keys AFTER invalidation', await redis.keys('*'));
 
     expect(await redis.exists('Comment')).toBeFalsy();
     expect(await redis.exists('Comment:1')).toBeFalsy();
