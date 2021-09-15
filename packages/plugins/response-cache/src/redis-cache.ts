@@ -33,7 +33,7 @@ export const createRedisCache = (params: RedisCacheParameter): Cache => {
   const buildRedisResponseOpsKey = params?.buildRedisResponseOpsKey ?? defaultBuildRedisResponseOpsKey;
 
   function buildEntityInvalidationsKeys(entity: string): Promise<string[]> {
-    return new Promise(function (resolve, reject) {
+    const invalidationPromise: Promise<string[]> = new Promise(function (resolve, reject) {
       const keysToInvalidate: string[] = [entity];
 
       // find the responseIds for the entity
@@ -63,12 +63,21 @@ export const createRedisCache = (params: RedisCacheParameter): Cache => {
             entityKeys.forEach(entityKey => {
               keysToInvalidate.push(entityKey);
             });
-          });
-        }
 
-        resolve(keysToInvalidate);
+            // if entity and also invalidate Comment:1, Comment:2, etc
+            return resolve(keysToInvalidate);
+          });
+        } else {
+          // if entity and its responseIds
+          return resolve(keysToInvalidate);
+        }
       });
+
+      // just the entity
+      return resolve(keysToInvalidate);
     });
+
+    return invalidationPromise;
   }
 
   return {
