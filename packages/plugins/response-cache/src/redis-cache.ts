@@ -100,15 +100,13 @@ export const createRedisCache = (params: RedisCacheParameter): Cache => {
       return result && JSON.parse(result);
     },
     async invalidate(entitiesToRemove) {
-      const keys$: Promise<string[]>[] = [];
+      const invalidationKeys: string[][] = [];
 
       for (const { typename, id } of entitiesToRemove) {
-        keys$.push(buildEntityInvalidationsKeys(id != null ? buildRedisEntityId(typename, id) : typename));
+        invalidationKeys.push(await buildEntityInvalidationsKeys(id != null ? buildRedisEntityId(typename, id) : typename));
       }
 
-      return Promise.all(keys$).then(keys => {
-        store.del(keys.flat());
-      });
+      await store.del(invalidationKeys.flat());
     },
   };
 };
