@@ -32,56 +32,40 @@ export const createRedisCache = (params: RedisCacheParameter): Cache => {
   const buildRedisEntityId = params?.buildRedisEntityId ?? defaultBuildRedisEntityId;
   const buildRedisResponseOpsKey = params?.buildRedisResponseOpsKey ?? defaultBuildRedisResponseOpsKey;
 
-  function buildEntityInvalidationsKeys(entity: string): Promise<string[]> {
-    const invalidationPromise: Promise<string[]> = new Promise(function (resolve, reject) {
-      const keysToInvalidate: string[] = [entity];
+  async function buildEntityInvalidationsKeys(entity: string): Promise<string[]> {
+    const keysToInvalidate: string[] = [entity];
 
-      // find the responseIds for the entity
-      store.smembers(entity).then(function (responseIds) {
-        // and add each response to be invalidated since they contained the entity data
-        responseIds.forEach(responseId => {
+    // find the responseIds for the entity
+    const responseIds = await store.smembers(entity);
+    // and add each response to be invalidated since they contained the entity data
+    responseIds.forEach(responseId => {
+      keysToInvalidate.push(responseId);
+      keysToInvalidate.push(buildRedisResponseOpsKey(responseId));
+    });
+
+    // if invalidating an entity like Comment, then also invalidate Comment:1, Comment:2, etc
+    if (!entity.includes(':')) {
+      const entityKeys = await store.keys(`${entity}:*`);
+      for (const entityKey of entityKeys) {
+        // and invalidate any responses in each of those entity keys
+        const entityResponseIds = await store.smembers(entityKey);
+        // if invalidating an entity check for associated operations containing that entity
+        // and invalidate each response since they contained the entity data
+        entityResponseIds.forEach(responseId => {
           keysToInvalidate.push(responseId);
           keysToInvalidate.push(buildRedisResponseOpsKey(responseId));
         });
 
-        // if invalidating an entity like Comment, then also invalidate Comment:1, Comment:2, etc
-        if (!entity.includes(':')) {
-          store.keys(`${entity}:*`).then(function (entityKeys) {
-            for (const entityKey of entityKeys) {
-              // and invalidate any responses in each of those entity keys
-              store.smembers(entityKey).then(function (responseIds) {
-                // if invalidating an entity check for associated operations containing that entity
-                // and invalidate each response since they contained the entity data
-                responseIds.forEach(responseId => {
-                  keysToInvalidate.push(responseId);
-                  keysToInvalidate.push(buildRedisResponseOpsKey(responseId));
-                });
-              });
-            }
+        // then the entityKeys like Comment:1, Comment:2 etc to be invalidated
+        keysToInvalidate.push(entityKey);
+      }
+    }
 
-            // then the entityKeys like Comment:1, Comment:2 etc to be invalidated
-            entityKeys.forEach(entityKey => {
-              keysToInvalidate.push(entityKey);
-            });
-
-            // if entity and also invalidate Comment:1, Comment:2, etc
-            return resolve(keysToInvalidate);
-          });
-        } else {
-          // if entity and its responseIds
-          return resolve(keysToInvalidate);
-        }
-      });
-
-      // just the entity
-      return resolve(keysToInvalidate);
-    });
-
-    return invalidationPromise;
+    return keysToInvalidate;
   }
 
   return {
-    set(responseId, result, collectedEntities, ttl) {
+    async set(responseId, result, collectedEntities, ttl) {
       const pipeline = store.pipeline();
 
       if (ttl === Infinity) {
@@ -108,16 +92,14 @@ export const createRedisCache = (params: RedisCacheParameter): Cache => {
         }
       }
 
-      pipeline.exec();
+      await pipeline.exec();
     },
-    get(responseId) {
-      return (
-        store.get(responseId).then(function (result) {
-          return result && JSON.parse(result);
-        }) ?? null
-      );
+    async get(responseId) {
+      const result = await store.get(responseId);
+
+      return result && JSON.parse(result);
     },
-    invalidate(entitiesToRemove) {
+    async invalidate(entitiesToRemove) {
       const keys$: Promise<string[]>[] = [];
 
       for (const { typename, id } of entitiesToRemove) {
