@@ -374,6 +374,7 @@ describe('useResponseCache with Redis cache', () => {
 
     await testInstance.execute(query); // query and cache
     await testInstance.execute(query); // from cache
+
     expect(spy).toHaveBeenCalledTimes(1); // queried once
 
     expect(await redis.exists('User:1')).toBeTruthy();
@@ -398,6 +399,205 @@ describe('useResponseCache with Redis cache', () => {
     await testInstance.execute(query); // from cache
     await testInstance.execute(query); // from cache
     expect(spy).toHaveBeenCalledTimes(2); // still just queried twice
+  });
+
+  test('should indicate if the cache was hit or missed', async () => {
+    const spy = jest.fn(() => [
+      {
+        id: 1,
+        name: 'User 1',
+        comments: [
+          {
+            id: 1,
+            text: 'Comment 1 of User 1',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'User 2',
+        comments: [
+          {
+            id: 2,
+            text: 'Comment 2 of User 2',
+          },
+        ],
+      },
+    ]);
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type Mutation {
+          updateUser(id: ID!): User!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+        Mutation: {
+          updateUser(_, { id }) {
+            return {
+              id,
+            };
+          },
+        },
+      },
+    });
+
+    const testInstance = createTestkit([useResponseCache({ cache, includeExtensionMetadata: true })], schema);
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+          comments {
+            id
+            text
+          }
+        }
+      }
+    `;
+
+    const queryResult = await testInstance.execute(query); // query and cache
+
+    let cacheHitMaybe = queryResult['extensions']['responseCache']['hit'];
+    expect(cacheHitMaybe).toBeFalsy();
+
+    const cachedResult = await testInstance.execute(query); // get from cache
+
+    cacheHitMaybe = cachedResult['extensions']['responseCache']['hit'];
+    expect(cacheHitMaybe).toBeTruthy();
+
+    const mutationResult = await testInstance.execute(
+      /* GraphQL */ `
+        mutation test($id: ID!) {
+          updateUser(id: $id) {
+            id
+          }
+        }
+      `,
+      {
+        id: 1,
+      }
+    );
+
+    cacheHitMaybe = mutationResult['extensions']['responseCache']['hit'];
+    expect(cacheHitMaybe).toBeFalsy();
+  });
+
+  test('should purge cache on mutation and include invalidated entities', async () => {
+    const spy = jest.fn(() => [
+      {
+        id: 1,
+        name: 'User 1',
+        comments: [
+          {
+            id: 1,
+            text: 'Comment 1 of User 1',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'User 2',
+        comments: [
+          {
+            id: 2,
+            text: 'Comment 2 of User 2',
+          },
+        ],
+      },
+    ]);
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type Mutation {
+          updateUser(id: ID!): User!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+        Mutation: {
+          updateUser(_, { id }) {
+            return {
+              id,
+            };
+          },
+        },
+      },
+    });
+
+    const testInstance = createTestkit([useResponseCache({ cache, includeExtensionMetadata: true })], schema);
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+          comments {
+            id
+            text
+          }
+        }
+      }
+    `;
+
+    const result = await testInstance.execute(
+      /* GraphQL */ `
+        mutation test($id: ID!) {
+          updateUser(id: $id) {
+            id
+          }
+        }
+      `,
+      {
+        id: 1,
+      }
+    );
+
+    const responseCache = result['extensions']['responseCache'];
+    const invalidatedEntities = responseCache['invalidatedEntities'];
+    expect(invalidatedEntities).toHaveLength(1);
+
+    const invalidatedUser = invalidatedEntities[0];
+    expect(invalidatedUser).toHaveProperty('typename');
+    expect(invalidatedUser).toHaveProperty('id');
+    expect(invalidatedUser.typename).toEqual('User');
+    expect(invalidatedUser.id).toEqual('1');
   });
 
   test('should consider variables when saving response', async () => {
