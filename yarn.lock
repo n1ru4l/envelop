@@ -5340,7 +5340,7 @@ esbuild-register@3.0.0:
   dependencies:
     jsonc-parser "^3.0.0"
 
-esbuild@0.12.28, esbuild@^0.11.12, esbuild@^0.12.12, esbuild@^0.12.9:
+esbuild@0.12.28, esbuild@^0.11.12, esbuild@^0.12.12, esbuild@^0.12.28, esbuild@^0.12.9:
   version "0.12.12"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.12.12.tgz#2c3815c508e20f771cf6b2ffb03aa7349e651657"
   integrity sha512-fdB/8HRg9u95Zi4/qV+osrfzpvLzubFKUr8SkZf/kUKImLiX61Y7qBzV14FCKphFk7YoXWY85nbPGkI6pq+Zeg==
@@ -11436,10 +11436,10 @@ subscriptions-transport-ws@^0.9.19:
     symbol-observable "^1.0.4"
     ws "^5.2.0 || ^6.0.0 || ^7.0.0"
 
-sucrase@^3.18.1:
-  version "3.18.2"
-  resolved "https://registry.npmjs.org/sucrase/-/sucrase-3.18.2.tgz#d9f16f1dd4f91e0293ad6f692867772eda301e4b"
-  integrity sha512-xCFP35OA6uAtBUVB8jPSftiR2Udjh0d9JkQnUOYppILpN4rBSk0yxiy67GVzD3XsFGIB6LlyIfhCABtwlopMSw==
+sucrase@^3.18.1, sucrase@^3.20.1:
+  version "3.20.1"
+  resolved "https://registry.yarnpkg.com/sucrase/-/sucrase-3.20.1.tgz#1c055e97d0fab2f9857f02461364075b3a4ab226"
+  integrity sha512-BIG59HaJOxNct9Va6KvT5yzBA/rcMGetzvZyTx0ZdCcspIbpJTPS64zuAfYlJuOj+3WaI5JOdA+F0bJQQi8ZiQ==
   dependencies:
     commander "^4.0.0"
     glob "7.1.6"
@@ -11902,23 +11902,23 @@ tsup@4.11.2:
     sucrase "^3.18.1"
     tree-kill "^1.2.2"
 
-tsup@4.14.0:
-  version "4.14.0"
-  resolved "https://registry.yarnpkg.com/tsup/-/tsup-4.14.0.tgz#3e2f602d8446041b48fcb557904a709c0fcec981"
-  integrity sha512-77rWdzhikTP9mQ34XMRzK83tw++LF6f4ox/HNERlgesB7g6g5VQ1iJlueG9O0P9HAZGVKavUwyoZv0+322p6rg==
+tsup@5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/tsup/-/tsup-5.1.0.tgz#d9e916648fe6344466057c45c49bf7e0628a2ac2"
+  integrity sha512-shox7rIKPneySkC6CI7py1N1Buqlp++sofTztZxGAESP4od2WrPD/y0FwNo6+XaoXfuzVV6bDAwvCtDpc0bq1A==
   dependencies:
     cac "^6.7.2"
     chalk "^4.1.0"
     chokidar "^3.5.1"
     debug "^4.3.1"
-    esbuild "^0.12.9"
+    esbuild "^0.12.28"
     execa "^5.0.0"
     globby "^11.0.3"
     joycon "^3.0.1"
     postcss-load-config "^3.0.1"
     resolve-from "^5.0.0"
     rollup "^2.56.1"
-    sucrase "^3.18.1"
+    sucrase "^3.20.1"
     tree-kill "^1.2.2"
 
 tsutils@^3.21.0:
