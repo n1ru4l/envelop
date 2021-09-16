@@ -260,9 +260,12 @@ describe('useResponseCache with Redis cache', () => {
       }
     `;
 
-    await testInstance.execute(query); // query and cache
-    await testInstance.execute(query); // get from cache
-    expect(spy).toHaveBeenCalledTimes(1); // so queried just once
+    // query and cache
+    await testInstance.execute(query);
+    // get from cache
+    await testInstance.execute(query);
+    // so queried just once
+    expect(spy).toHaveBeenCalledTimes(1);
 
     expect(await redis.exists('User:1')).toBeTruthy();
     expect(await redis.exists('User:2')).toBeTruthy();
@@ -292,10 +295,14 @@ describe('useResponseCache with Redis cache', () => {
     expect(await redis.exists('Comment:1')).toBeTruthy();
     expect(await redis.exists('Comment:2')).toBeFalsy();
 
-    await testInstance.execute(query); // query and cache since ws invalidated
-    await testInstance.execute(query); // from cache
-    await testInstance.execute(query); // from cache
-    expect(spy).toHaveBeenCalledTimes(2); // but since we've queried once before, we've now queried twice
+    // query and cache since ws invalidated
+    await testInstance.execute(query);
+    // from cache
+    await testInstance.execute(query);
+    // from cache
+    await testInstance.execute(query);
+    // but since we've queried once before, we've now queried twice
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   test('should purge cache on demand (typename)', async () => {
@@ -372,10 +379,13 @@ describe('useResponseCache with Redis cache', () => {
       }
     `;
 
-    await testInstance.execute(query); // query and cache
-    await testInstance.execute(query); // from cache
+    // query and cache
+    await testInstance.execute(query);
+    // from cache
+    await testInstance.execute(query);
 
-    expect(spy).toHaveBeenCalledTimes(1); // queried once
+    // queried once
+    expect(spy).toHaveBeenCalledTimes(1);
 
     expect(await redis.exists('User:1')).toBeTruthy();
     expect(await redis.exists('User:2')).toBeTruthy();
@@ -392,13 +402,20 @@ describe('useResponseCache with Redis cache', () => {
     expect(await redis.exists('Comment:2')).toBeFalsy();
     expect(await redis.smembers('Comment')).toHaveLength(0);
 
-    await testInstance.execute(query); // we've invalidated so, now query and cache
-    expect(spy).toHaveBeenCalledTimes(2); // so have queried twice
+    // we've invalidated so, now query and cache
+    await testInstance.execute(query);
+    // so have queried twice
+    expect(spy).toHaveBeenCalledTimes(2);
 
-    await testInstance.execute(query); // from cache
-    await testInstance.execute(query); // from cache
-    await testInstance.execute(query); // from cache
-    expect(spy).toHaveBeenCalledTimes(2); // still just queried twice
+    // from cache
+    await testInstance.execute(query);
+    // from cache
+    await testInstance.execute(query);
+    // from cache
+    await testInstance.execute(query);
+
+    // still just queried twice
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   test('should indicate if the cache was hit or missed', async () => {
@@ -475,12 +492,14 @@ describe('useResponseCache with Redis cache', () => {
       }
     `;
 
-    const queryResult = await testInstance.execute(query); // query and cache
+    // query and cache
+    const queryResult = await testInstance.execute(query);
 
     let cacheHitMaybe = queryResult['extensions']['responseCache']['hit'];
     expect(cacheHitMaybe).toBeFalsy();
 
-    const cachedResult = await testInstance.execute(query); // get from cache
+    // get from cache
+    const cachedResult = await testInstance.execute(query);
 
     cacheHitMaybe = cachedResult['extensions']['responseCache']['hit'];
     expect(cacheHitMaybe).toBeTruthy();
@@ -666,15 +685,21 @@ describe('useResponseCache with Redis cache', () => {
       }
     `;
 
-    await testInstance.execute(query, { limit: 2 }); // query and cache 2 users
-    await testInstance.execute(query, { limit: 2 }); // fetch 2 users from cache
-    expect(spy).toHaveBeenCalledTimes(1); // so just one query
+    // query and cache 2 users
+    await testInstance.execute(query, { limit: 2 });
+    // fetch 2 users from cache
+    await testInstance.execute(query, { limit: 2 });
+    // so just one query
+    expect(spy).toHaveBeenCalledTimes(1);
 
-    expect(await redis.keys('operations:*')).toHaveLength(1); // we should have one response with operations
+    // we should have one response with operations
+    expect(await redis.keys('operations:*')).toHaveLength(1);
 
-    await testInstance.execute(query, { limit: 1 }); // query just one user
-    // expect(await redis.keys('operations:*')).toHaveLength(2); // we should have one response with operations for each limit query
-    expect(spy).toHaveBeenCalledTimes(2); // since 2 users are in cache, we query again for the 1 as a response
+    // query just one user
+    await testInstance.execute(query, { limit: 1 });
+
+    // since 2 users are in cache, we query again for the 1 as a response
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   test('should purge response after it expired', async () => {
@@ -741,14 +766,19 @@ describe('useResponseCache with Redis cache', () => {
       }
     `;
 
-    await testInstance.execute(query); // query and cache
-    await testInstance.execute(query); // from cahce
-    expect(spy).toHaveBeenCalledTimes(1); // so queried just once
+    // query and cache
+    await testInstance.execute(query);
+    // from cache
+    await testInstance.execute(query);
+    // so queried just once
+    expect(spy).toHaveBeenCalledTimes(1);
 
     await new Promise(resolve => setTimeout(resolve, 150));
 
-    await testInstance.execute(query); // since the cache has expired, now when we query
-    expect(spy).toHaveBeenCalledTimes(2); // we query again so now twice
+    // since the cache has expired, now when we query
+    await testInstance.execute(query);
+    // we query again so now twice
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   test('should cache responses based on session', async () => {
@@ -841,7 +871,8 @@ describe('useResponseCache with Redis cache', () => {
     );
     expect(spy).toHaveBeenCalledTimes(1);
 
-    expect(await redis.keys('operations:*')).toHaveLength(1); // we should have one response for that sessionId of 1
+    // we should have one response for that sessionId of 1
+    expect(await redis.keys('operations:*')).toHaveLength(1);
 
     await testInstance.execute(
       query,
@@ -852,7 +883,8 @@ describe('useResponseCache with Redis cache', () => {
     );
     expect(spy).toHaveBeenCalledTimes(2);
 
-    expect(await redis.keys('operations:*')).toHaveLength(2); // we should have one response for both sessions
+    // we should have one response for both sessions
+    expect(await redis.keys('operations:*')).toHaveLength(2);
   });
 
   test('should skip cache of ignored types', async () => {
@@ -919,20 +951,25 @@ describe('useResponseCache with Redis cache', () => {
       }
     `;
 
-    await testInstance.execute(query); // query but don't cache
+    // query but don't cache
+    await testInstance.execute(query);
 
-    expect(await redis.exists('User')).toBeFalsy(); // none of the queries entities are cached because contains Comment
+    // none of the queries entities are cached because contains Comment
+    expect(await redis.exists('User')).toBeFalsy();
     expect(await redis.exists('User:1')).toBeFalsy();
     expect(await redis.exists('Comment')).toBeFalsy();
     expect(await redis.exists('Comment:2')).toBeFalsy();
 
-    await testInstance.execute(query); // since not cached
+    // since not cached
+    await testInstance.execute(query);
 
-    expect(await redis.exists('User')).toBeFalsy(); // still none of the queries entities are cached because contains Comment
+    // still none of the queries entities are cached because contains Comment
+    expect(await redis.exists('User')).toBeFalsy();
     expect(await redis.exists('User:1')).toBeFalsy();
     expect(await redis.exists('Comment')).toBeFalsy();
     expect(await redis.exists('Comment:2')).toBeFalsy();
-    expect(spy).toHaveBeenCalledTimes(2); // we've queried twice
+    // we've queried twice
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   test('custom ttl per type', async () => {
@@ -1011,14 +1048,18 @@ describe('useResponseCache with Redis cache', () => {
       }
     `;
 
-    await testInstance.execute(query); //query and cache
-    await testInstance.execute(query); // from cache
+    // query and cache
+    await testInstance.execute(query);
+    // from cache
+    await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(201); // wait so User expires
+    // wait so User expires
+    jest.advanceTimersByTime(201);
 
     await testInstance.execute(query);
-    expect(spy).toHaveBeenCalledTimes(2); // now we've queried twice
+    // now we've queried twice
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   test('custom ttl per schema coordinate', async () => {
@@ -1097,13 +1138,17 @@ describe('useResponseCache with Redis cache', () => {
       }
     `;
 
-    await testInstance.execute(query); //query and cache
-    await testInstance.execute(query); // from cache
+    // query and cache
+    await testInstance.execute(query);
+    // from cache
+    await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(201); // wait so User expires
+    // wait so User expires
+    jest.advanceTimersByTime(201);
 
     await testInstance.execute(query);
-    expect(spy).toHaveBeenCalledTimes(2); // now we've queried twice
+    // now we've queried twice
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 });
