@@ -11,7 +11,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "date-fns": "2.23.0",
+    "date-fns": "2.24.0",
     "@chakra-ui/icons": "1.0.15",
     "@chakra-ui/react": "1.6.7",
     "@chakra-ui/system": "1.7.3",
