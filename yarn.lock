@@ -12444,10 +12444,10 @@ validator@13.6.0, validator@^13.5.2:
   resolved "https://registry.yarnpkg.com/validator/-/validator-13.6.0.tgz#1e71899c14cdc7b2068463cb24c1cc16f6ec7059"
   integrity sha512-gVgKbdbHgtxpRyR8K0O6oFZPhhB5tT1jeEHZR0Znr9Svg03U0+r9DXWMrnRAB+HtCStDQKlaIZm42tVsVjqtjg==
 
-valtio@1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/valtio/-/valtio-1.2.2.tgz#94965004f3a4ab673d56bbc05d458a9defe7d258"
-  integrity sha512-r0gJjtJanckdn1uFwJWedlMor5wj9kqzv7aajMQL4Im6ZVhcjZC4DwNoEAznZO9WF9cgiWlhotB2n3o1Z7ntog==
+valtio@1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/valtio/-/valtio-1.2.3.tgz#988aac4aac70e6749cfb9e7c5060eac3851cee9f"
+  integrity sha512-ci74EjmFwSoF4jLugz3I0BmSAK9S0+splzikIDdKuixPBkAFt+ez4KNKLiS6kihGe6L0vTyEgm/oDutXrPlKpA==
   dependencies:
     proxy-compare "2.0.2"
 
