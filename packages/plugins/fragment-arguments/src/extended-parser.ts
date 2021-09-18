@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { Parser } from 'graphql/language/parser';
+import { Parser } from 'graphql/language/parser.js';
 import { TokenKind, Kind } from 'graphql';
 
 export class FragmentArgumentCompatibleParser extends Parser {

@@ -1,7 +1,9 @@
-import { shim as instrumentationApi } from 'newrelic';
+import newRelic from 'newrelic';
 import { Plugin, OnResolverCalledHook, isAsyncIterable } from '@envelop/types';
 import { print, FieldNode, Kind, OperationDefinitionNode } from 'graphql';
 import { Path } from 'graphql/jsutils/Path';
+
+const { shim: instrumentationApi } = newRelic;
 
 enum AttributeName {
   COMPONENT_NAME = 'Envelop_NewRelic_Plugin',
