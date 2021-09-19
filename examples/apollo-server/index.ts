@@ -2,6 +2,7 @@
 import { ApolloServer } from 'apollo-server';
 import { envelop, useSchema, useTiming } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `
@@ -21,6 +22,7 @@ const getEnveloped = envelop({
 });
 
 const server = new ApolloServer({
+  schema,
   executor: async requestContext => {
     const { schema, execute, contextFactory } = getEnveloped({ req: requestContext.request.http });
 
@@ -32,6 +34,7 @@ const server = new ApolloServer({
       operationName: requestContext.operationName,
     });
   },
+  plugins: [ApolloServerPluginLandingPageGraphQLPlayground({ endpoint: '/graphql' })],
 });
 
 server.listen(3000);
