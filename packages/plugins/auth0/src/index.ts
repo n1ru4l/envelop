@@ -2,8 +2,10 @@
 /* eslint-disable dot-notation */
 import { Plugin } from '@envelop/types';
 import * as JwksRsa from 'jwks-rsa';
-import { decode, verify, VerifyOptions, DecodeOptions } from 'jsonwebtoken';
+import jwtPkg, { VerifyOptions, DecodeOptions } from 'jsonwebtoken';
 import { GraphQLError } from 'graphql';
+
+const { decode, verify } = jwtPkg;
 
 export type Auth0PluginOptions = {
   domain: string;

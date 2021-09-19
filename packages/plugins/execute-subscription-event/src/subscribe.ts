@@ -2,7 +2,7 @@ import { createSourceEventStream } from 'graphql';
 
 import { ExecuteFunction, makeSubscribe, SubscribeFunction } from '@envelop/core';
 import { isAsyncIterable } from '@envelop/types';
-import mapAsyncIterator from 'graphql/subscription/mapAsyncIterator';
+import mapAsyncIterator from 'graphql/subscription/mapAsyncIterator.js';
 
 /**
  * This is a almost identical port from graphql-js subscribe.
