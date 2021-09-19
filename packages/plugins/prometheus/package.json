@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@envelop/core": "1.1.0",
-    "prom-client": "13.2.0",
+    "prom-client": "14.0.0",
     "@graphql-tools/schema": "8.2.0",
     "bob-the-bundler": "1.5.1",
     "graphql": "15.5.3",
@@ -39,7 +39,7 @@
   },
   "peerDependencies": {
     "@envelop/core": "^1.1.0",
-    "prom-client": "^13",
+    "prom-client": "^13 || ^14.0.0",
     "graphql": "^14.0.0 || ^15.0.0"
   },
   "buildOptions": {
