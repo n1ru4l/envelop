@@ -33,7 +33,7 @@
     "@graphql-tools/utils": "8.2.2",
     "@types/lru-cache": "5.1.1",
     "bob-the-bundler": "1.4.1",
-    "graphql": "15.5.3",
+    "graphql": "15.6.0",
     "typescript": "4.4.3"
   },
   "dependencies": {
