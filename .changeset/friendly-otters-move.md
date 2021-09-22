@@ -1,5 +1,5 @@
 ---
-'@envelop/federation': minor
+'@envelop/apollo-federation': minor
 ---
 
-New Federation Plugin
+New Apollo Federation Plugin

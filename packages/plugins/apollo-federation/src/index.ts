@@ -5,7 +5,7 @@ import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { CachePolicy, GraphQLRequestMetrics, Logger, SchemaHash } from 'apollo-server-types';
 import { newCachePolicy } from './newCachePolicy';
 
-export interface FederationPluginConfig {
+export interface ApolloFederationPluginConfig {
   gateway: ApolloGateway;
   metrics?: GraphQLRequestMetrics;
   cache?: KeyValueCache;
@@ -13,7 +13,7 @@ export interface FederationPluginConfig {
   overallCachePolicy?: CachePolicy;
 }
 
-export const useFederation = (options: FederationPluginConfig): Plugin => {
+export const useApolloFederation = (options: ApolloFederationPluginConfig): Plugin => {
   const {
     gateway,
     cache = new InMemoryLRUCache(),
