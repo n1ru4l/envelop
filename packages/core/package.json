@@ -42,7 +42,7 @@
     "@envelop/types": "1.1.0"
   },
   "devDependencies": {
-    "@graphql-tools/utils": "8.2.2",
+    "@graphql-tools/utils": "8.2.3",
     "@graphql-tools/schema": "8.2.0",
     "bob-the-bundler": "1.5.1",
     "graphql": "15.6.0",
