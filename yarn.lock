@@ -120,7 +120,7 @@
     apollo-server-types "^3.0.2"
     lodash.xorby "^4.7.0"
 
-"@apollo/gateway@^0.41.0":
+"@apollo/gateway@0.41.0":
   version "0.41.0"
   resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.41.0.tgz#a0a320a019af5bf6ca66aa84c72b81bea3ba5b28"
   integrity sha512-6gU4glOKmSqAeHS9I3HREW4nsTJ1nYw5InpXh8suCHUG+CY+aeMOK5rUQx9lqVkdWzozs9N3u9lnUeqfQAtjbA==
