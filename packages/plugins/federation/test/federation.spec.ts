@@ -1,4 +1,4 @@
-import { LocalGraphQLDataSource } from '@apollo/gateway';
+import { ApolloGateway, LocalGraphQLDataSource } from '@apollo/gateway';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { execute } from 'graphql';
 import { useFederation } from '../src';
@@ -23,26 +23,30 @@ describe('useFederation', () => {
     }
   `;
 
+  const gateway = new ApolloGateway({
+    localServiceList: [
+      { name: 'accounts', typeDefs: accounts.typeDefs },
+      { name: 'products', typeDefs: products.typeDefs },
+      { name: 'reviews', typeDefs: reviews.typeDefs },
+    ],
+    buildService: definition => {
+      switch (definition.name) {
+        case 'accounts':
+          return new LocalGraphQLDataSource(accounts.schema);
+        case 'products':
+          return new LocalGraphQLDataSource(products.schema);
+        case 'reviews':
+          return new LocalGraphQLDataSource(reviews.schema);
+      }
+      throw new Error(`Unknown service ${definition.name}`);
+    },
+  });
+
+  gateway.load();
+
   const useTestFederation = () =>
     useFederation({
-      gateway: {
-        localServiceList: [
-          { name: 'accounts', typeDefs: accounts.typeDefs },
-          { name: 'products', typeDefs: products.typeDefs },
-          { name: 'reviews', typeDefs: reviews.typeDefs },
-        ],
-        buildService: definition => {
-          switch (definition.name) {
-            case 'accounts':
-              return new LocalGraphQLDataSource(accounts.schema);
-            case 'products':
-              return new LocalGraphQLDataSource(products.schema);
-            case 'reviews':
-              return new LocalGraphQLDataSource(reviews.schema);
-          }
-          throw new Error(`Unknown service ${definition.name}`);
-        },
-      },
+      gateway,
     });
 
   it('Should override execute function', async () => {

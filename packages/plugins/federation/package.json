@@ -30,18 +30,19 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "@apollo/gateway": "^0.41.0",
-    "apollo-server-caching": "^0.7.0",
-    "apollo-server-types": "^0.9.0"
+    "apollo-server-caching": "^3.1.0",
+    "apollo-server-types": "^3.2.0"
   },
   "devDependencies": {
     "bob-the-bundler": "1.5.1",
-    "graphql": "15.5.1",
+    "graphql": "15.6.0",
     "typescript": "4.4.3",
+    "@apollo/gateway": "0.41.0",
     "@apollo/federation": "0.32.0",
     "graphql-tag": "2.12.5"
   },
   "peerDependencies": {
+    "@apollo/gateway": "^0.41.0",
     "graphql": "^14.0.0 || ^15.0.0"
   },
   "buildOptions": {

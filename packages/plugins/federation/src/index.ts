@@ -1,37 +1,39 @@
 import { Plugin } from '@envelop/types';
-import { ApolloGateway, GatewayConfig } from '@apollo/gateway';
-import { getOperationAST, print } from 'graphql';
+import { ApolloGateway } from '@apollo/gateway';
+import { getOperationAST, print, printSchema } from 'graphql';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
-import { GraphQLRequestMetrics, Logger } from 'apollo-server-types';
+import { CachePolicy, GraphQLRequestMetrics, Logger, SchemaHash } from 'apollo-server-types';
+import { newCachePolicy } from './newCachePolicy';
 
-export interface FederationConfig {
-  gateway?: GatewayConfig;
-  load?: Parameters<ApolloGateway['load']>[0];
+export interface FederationPluginConfig {
+  gateway: ApolloGateway;
   metrics?: GraphQLRequestMetrics;
   cache?: KeyValueCache;
   logger?: Logger;
+  overallCachePolicy?: CachePolicy;
 }
 
-export const useFederation = (options: FederationConfig = {}): Plugin => {
+export const useFederation = (options: FederationPluginConfig): Plugin => {
   const {
-    gateway: gatewayConfig = {},
-    load: loadConfig = {},
+    gateway,
     cache = new InMemoryLRUCache(),
     logger = console,
-    metrics = {},
+    metrics = Object.create(null),
+    overallCachePolicy = newCachePolicy(),
   } = options;
-  const gateway = new ApolloGateway(gatewayConfig);
-  gateway.load(loadConfig);
-  let schemaHash: any;
+  let schemaHash: SchemaHash;
   return {
     onPluginInit({ setSchema }) {
-      if (gateway.schema) {
-        setSchema(gateway.schema);
+      if (!gateway.schema) {
+        throw new Error(
+          `ApolloGateway doesn't have the schema loaded. Please make sure ApolloGateway is loaded with .load() method.`
+        );
       }
+      setSchema(gateway.schema);
+      gateway.onSchemaLoadOrUpdate(({ apiSchema }) => setSchema(apiSchema));
     },
-    onSchemaChange: ({ replaceSchema }) => {
-      schemaHash = Date.now().toString();
-      gateway.onSchemaChange(replaceSchema);
+    onSchemaChange({ schema }) {
+      schemaHash = printSchema(schema) as SchemaHash;
     },
     onExecute({ args, setExecuteFn }) {
       setExecuteFn(function federationExecutor() {
@@ -47,6 +49,7 @@ export const useFederation = (options: FederationConfig = {}): Plugin => {
             operationName: args.operationName ?? undefined,
             variables: args.variableValues ?? undefined,
           },
+          overallCachePolicy,
           operationName: args.operationName ?? null,
           cache,
           context: args.contextValue,
