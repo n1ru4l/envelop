@@ -39,7 +39,7 @@
     "remark-admonitions": "1.2.1",
     "shiki": "0.9.11",
     "tiny-lru": "7.0.6",
-    "undici": "4.6.0",
+    "undici": "4.7.0",
     "use-http": "1.0.24",
     "valtio": "1.2.3",
     "zustand": "3.5.10"
