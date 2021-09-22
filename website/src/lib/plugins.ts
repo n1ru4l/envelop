@@ -318,4 +318,11 @@ export const pluginsArr: Package<Tags>[] = [
     iconUrl: '/logo.png',
     tags: ['caching', 'performance'],
   },
+  {
+    identifier: 'use-apollo-federation',
+    title: 'useApolloFederation',
+    npmPackage: '@envelop/apollo-federation',
+    iconUrl: '/assets/logos/apollo.png',
+    tags: ['schema', 'utilities'],
+  },
 ];
