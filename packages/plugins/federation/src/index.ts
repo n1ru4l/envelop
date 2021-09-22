@@ -1,6 +1,6 @@
 import { Plugin } from '@envelop/types';
 import { ApolloGateway } from '@apollo/gateway';
-import { getOperationAST, print, printSchema } from 'graphql';
+import { DocumentNode, getOperationAST, printSchema, Source } from 'graphql';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { CachePolicy, GraphQLRequestMetrics, Logger, SchemaHash } from 'apollo-server-types';
 import { newCachePolicy } from './newCachePolicy';
@@ -22,6 +22,7 @@ export const useFederation = (options: FederationPluginConfig): Plugin => {
     overallCachePolicy = newCachePolicy(),
   } = options;
   let schemaHash: SchemaHash;
+  const documentSourceMap = new WeakMap<DocumentNode, string>();
   return {
     onPluginInit({ setSchema }) {
       if (!gateway.schema) {
@@ -35,9 +36,21 @@ export const useFederation = (options: FederationPluginConfig): Plugin => {
     onSchemaChange({ schema }) {
       schemaHash = printSchema(schema) as SchemaHash;
     },
+    onParse({ params: { source } }) {
+      const key = source instanceof Source ? source.body : source;
+
+      return ({ result }) => {
+        if (!result || result instanceof Error) return;
+
+        documentSourceMap.set(result, key);
+      };
+    },
     onExecute({ args, setExecuteFn }) {
       setExecuteFn(function federationExecutor() {
-        const documentStr = print(args.document);
+        const documentStr = documentSourceMap.get(args.document);
+        if (!documentStr) {
+          throw new Error(`Parse error!`);
+        }
         const operation = getOperationAST(args.document, args.operationName ?? undefined);
         if (!operation) {
           throw new Error(`Operation ${args.operationName || ''} cannot be found in ${documentStr}`);
