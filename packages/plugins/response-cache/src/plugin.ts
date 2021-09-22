@@ -235,7 +235,7 @@ export function useResponseCache({
                   if (parentType) {
                     const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
                     if (schemaCoordinate in ttlPerSchemaCoordinate) {
-                      context.ttl = Math.min(context.ttl, ttlPerSchemaCoordinate[schemaCoordinate]);
+                      context.ttl = calculateTtl(context.ttl, ttlPerSchemaCoordinate[schemaCoordinate]);
                     }
                   }
                 },
@@ -285,6 +285,18 @@ function isOperationDefinition(node: any): node is OperationDefinitionNode {
   return node?.kind === 'OperationDefinition';
 }
 
+function calculateTtl(globalTtl: number, typeTtl?: number | undefined): number {
+  if (typeof typeTtl === 'number') {
+    if (globalTtl === 0) {
+      return typeTtl;
+    }
+
+    return Math.min(globalTtl, typeTtl);
+  }
+
+  return globalTtl;
+}
+
 function isMutation(doc: DocumentNode) {
   return doc.definitions.find(isOperationDefinition)!.operation === 'mutation';
 }
@@ -318,7 +330,7 @@ function applyResponseCacheLogic(schema: GraphQLSchema, idFieldNames: Array<stri
                 ctx.identifier.set(`${typename}:${id}`, { typename, id });
                 ctx.types.add(typename);
                 if (typename in ctx.ttlPerType) {
-                  ctx.ttl = Math.min(ctx.ttl, ctx.ttlPerType[typename]);
+                  ctx.ttl = calculateTtl(ctx.ttl, ctx.ttlPerType[typename]);
                 }
               }
             });
