@@ -1,5 +1,11 @@
 # @envelop/fragment-arguments
 
+## 1.0.5
+
+### Patch Changes
+
+- 422a6c6: fix ESM
+
 ## 1.0.4
 
 ### Patch Changes

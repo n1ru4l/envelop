@@ -1,6 +1,6 @@
 {
   "name": "@envelop/execute-subscription-event",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "Laurin Quast <laurinquast@googlemail.com>",
   "license": "MIT",
   "sideEffects": false,

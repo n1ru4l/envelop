@@ -1,5 +1,11 @@
 # @envelop/auth0
 
+## 1.0.1
+
+### Patch Changes
+
+- 422a6c6: fix ESM
+
 ## 1.0.0
 
 ### Major Changes

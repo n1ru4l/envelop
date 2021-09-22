@@ -1,6 +1,6 @@
 {
   "name": "@envelop/apollo-federation",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
