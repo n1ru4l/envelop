@@ -1,5 +1,11 @@
 # @envelop/extended-validation
 
+## 1.1.1
+
+### Patch Changes
+
+- 422a6c6: fix ESM
+
 ## 1.1.0
 
 ### Minor Changes
