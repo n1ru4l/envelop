@@ -1,5 +1,11 @@
 # @envelop/execute-subscription-event
 
+## 0.0.5
+
+### Patch Changes
+
+- 422a6c6: fix ESM
+
 ## 0.0.4
 
 ### Patch Changes
