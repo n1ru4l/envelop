@@ -61,7 +61,7 @@
     "esbuild-register": "3.0.0",
     "open-cli": "6.0.1",
     "strict-npm-engines": "0.0.1",
-    "tsup": "5.1.0",
+    "tsup": "5.2.0",
     "typescript": "4.4.3",
     "wait-on": "6.0.0"
   }
