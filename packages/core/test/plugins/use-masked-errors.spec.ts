@@ -193,13 +193,13 @@ Array [
   });
 
   it('Should mask subscribe (sync/promise) subscription errors with a custom error message', async () => {
-    const testInstance = createTestkit([useMaskedErrors({ errorMessage: 'My Custom subscription errror message.' })], schema);
+    const testInstance = createTestkit([useMaskedErrors({ errorMessage: 'My Custom subscription error message.' })], schema);
     const result = await testInstance.execute(`subscription { instantError }`);
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchInlineSnapshot(`
 Array [
-  [GraphQLError: My Custom subscription errror message.],
+  [GraphQLError: My Custom subscription error message.],
 ]
 `);
   });
