@@ -22,18 +22,16 @@ export const useParserCache = (pluginOptions: ParserCacheOptions = {}): Plugin =
       const { source } = params;
       const key = source instanceof Source ? source.body : source;
 
-      if (errorCache.get(key)) {
-        const error = errorCache.get(key);
+      const cachedError = errorCache.get(key);
 
-        throw error;
+      if (cachedError !== undefined) {
+        throw cachedError;
       }
 
-      if (documentCache.get(key)) {
-        const document = documentCache.get(key);
+      const cachedDocument = documentCache.get(key);
 
-        if (document) {
-          setParsedDocument(document);
-        }
+      if (cachedDocument !== undefined) {
+        setParsedDocument(cachedDocument);
       }
 
       return ({ result }) => {
