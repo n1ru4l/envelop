@@ -5,7 +5,7 @@ import {
   collectAsyncIteratorValues,
   createTestkit,
 } from '@envelop/testing';
-import { EnvelopError, useMaskedErrors } from '../../src/plugins/use-masked-errors';
+import { EnvelopError, useMaskedErrors, DEFAULT_ERROR_MESSAGE } from '../../src/plugins/use-masked-errors';
 import { useExtendContext } from '@envelop/core';
 
 describe('useMaskedErrors', () => {
@@ -92,7 +92,7 @@ describe('useMaskedErrors', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors).toHaveLength(1);
     const [error] = result.errors!;
-    expect(error.message).toEqual('Unexpected error.');
+    expect(error.message).toEqual(DEFAULT_ERROR_MESSAGE);
   });
 
   it('Should mask unexpected errors', async () => {
@@ -128,6 +128,23 @@ describe('useMaskedErrors', () => {
     });
   });
 
+  it('Should properly mask context creation errors with a custom error message', async () => {
+    expect.assertions(1);
+    const testInstance = createTestkit(
+      [
+        useExtendContext((): {} => {
+          throw new Error('No context for you!');
+        }),
+        useMaskedErrors({ errorMessage: 'My Custom Error Message.' }),
+      ],
+      schema
+    );
+    try {
+      await testInstance.execute(`query { secretWithExtensions }`);
+    } catch (err) {
+      expect(err).toMatchInlineSnapshot(`[GraphQLError: My Custom Error Message.]`);
+    }
+  });
   it('Should properly mask context creation errors', async () => {
     expect.assertions(1);
     const testInstance = createTestkit(
@@ -142,7 +159,7 @@ describe('useMaskedErrors', () => {
     try {
       await testInstance.execute(`query { secretWithExtensions }`);
     } catch (err) {
-      expect(err).toMatchInlineSnapshot(`[GraphQLError: Unexpected error.]`);
+      expect(err).toMatchInlineSnapshot(`[GraphQLError: ${DEFAULT_ERROR_MESSAGE}]`);
     }
   });
 
@@ -170,7 +187,19 @@ describe('useMaskedErrors', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchInlineSnapshot(`
 Array [
-  [GraphQLError: Unexpected error.],
+  [GraphQLError: ${DEFAULT_ERROR_MESSAGE}],
+]
+`);
+  });
+
+  it('Should mask subscribe (sync/promise) subscription errors with a custom error message', async () => {
+    const testInstance = createTestkit([useMaskedErrors({ errorMessage: 'My Custom subscription error message.' })], schema);
+    const result = await testInstance.execute(`subscription { instantError }`);
+    assertSingleExecutionValue(result);
+    expect(result.errors).toBeDefined();
+    expect(result.errors).toMatchInlineSnapshot(`
+Array [
+  [GraphQLError: My Custom subscription error message.],
 ]
 `);
   });
@@ -195,9 +224,22 @@ Array [
     try {
       await collectAsyncIteratorValues(resultStream);
     } catch (err) {
-      expect(err).toMatchInlineSnapshot(`[GraphQLError: Unexpected error.]`);
+      expect(err).toMatchInlineSnapshot(`[GraphQLError: ${DEFAULT_ERROR_MESSAGE}]`);
     }
   });
+
+  it('Should mask subscribe (AsyncIterable) subscription errors with a custom error message', async () => {
+    expect.assertions(1);
+    const testInstance = createTestkit([useMaskedErrors({ errorMessage: 'My AsyncIterable Custom Error Message.' })], schema);
+    const resultStream = await testInstance.execute(`subscription { streamError }`);
+    assertStreamExecutionValue(resultStream);
+    try {
+      await collectAsyncIteratorValues(resultStream);
+    } catch (err) {
+      expect(err).toMatchInlineSnapshot(`[GraphQLError: My AsyncIterable Custom Error Message.]`);
+    }
+  });
+
   it('Should not mask subscribe (AsyncIterable) subscription envelop errors', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
     const resultStream = await testInstance.execute(`subscription { streamEnvelopError }`);
@@ -219,7 +261,21 @@ Array [
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchInlineSnapshot(`
 Array [
-  [GraphQLError: Unexpected error.],
+  [GraphQLError: ${DEFAULT_ERROR_MESSAGE}],
+]
+`);
+  });
+  it('Should mask resolve subscription errors with a custom error message', async () => {
+    const testInstance = createTestkit([useMaskedErrors({ errorMessage: 'Custom resolve subscription errors.' })], schema);
+    const resultStream = await testInstance.execute(`subscription { streamResolveError }`);
+    assertStreamExecutionValue(resultStream);
+    const allResults = await collectAsyncIteratorValues(resultStream);
+    expect(allResults).toHaveLength(1);
+    const [result] = allResults;
+    expect(result.errors).toBeDefined();
+    expect(result.errors).toMatchInlineSnapshot(`
+Array [
+  [GraphQLError: Custom resolve subscription errors.],
 ]
 `);
   });

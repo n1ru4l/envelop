@@ -36,3 +36,27 @@ const getEnveloped = envelop({
   plugins: [useSchema(schema), useMaskedErrors()],
 });
 ```
+
+You may customize the default error message `Unexpected error.` with your own `errorMessage`:
+
+```ts
+const getEnveloped = envelop({
+  plugins: [useSchema(schema), useMaskedErrors({ errorMessage: 'Something went wrong.' })],
+});
+```
+
+Or provide a custom formatter when masking the output:
+
+```ts
+export const customFormatError: FormatErrorHandler = (err: any) => {
+  if (err.originalError && err.originalError instanceof EnvelopError === false) {
+    return new GraphQLError('Sorry, something went wrong.');
+  }
+
+  return err;
+};
+
+const getEnveloped = envelop({
+  plugins: [useSchema(schema), useMaskedErrors({ formatError: customFormatError })],
+});
+```
