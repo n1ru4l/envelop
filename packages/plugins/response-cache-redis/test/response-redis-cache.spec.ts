@@ -2,7 +2,8 @@ import { createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import Redis from 'ioredis';
 
-import { useResponseCache, createRedisCache, defaultBuildRedisEntityId, defaultBuildRedisResponseOpsKey } from '../src';
+import { createRedisCache, defaultBuildRedisEntityId, defaultBuildRedisResponseOpsKey } from '../src';
+import { useResponseCache } from '@envelop/response-cache';
 
 jest.mock('ioredis', () => require('ioredis-mock/jest'));
 

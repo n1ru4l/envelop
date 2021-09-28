@@ -1,5 +1,5 @@
 import Redis from 'ioredis';
-import type { Cache } from './cache';
+import type { Cache } from '@envelop/response-cache';
 
 export type BuildRedisEntityId = (typename: string, id: number | string) => string;
 export type BuildRedisResponseOpsKey = (responseId: string) => string;
