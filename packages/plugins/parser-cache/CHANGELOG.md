@@ -1,5 +1,11 @@
 # @envelop/parser-cache
 
+## 1.0.1
+
+### Patch Changes
+
+- 58f3db8: Refactor to call document and error caches only once per request.
+
 ## 1.0.0
 
 ### Major Changes
