@@ -2,6 +2,7 @@ import { buildSchema, parse } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useParserCache } from '../src';
 import { Plugin } from '@envelop/types';
+import lru from 'tiny-lru';
 
 describe('useParserCache', () => {
   const testSchema = buildSchema(/* GraphQL */ `
@@ -74,5 +75,43 @@ describe('useParserCache', () => {
     await testInstance.wait(10);
     await testInstance.execute(`query t { foo }`);
     expect(testParser).toHaveBeenCalledTimes(2);
+  });
+
+  it('should use provided documentCache instance', async () => {
+    const documentCache = lru();
+    jest.spyOn(documentCache, 'set');
+    jest.spyOn(documentCache, 'get');
+    const testInstance = createTestkit(
+      [
+        useTestPlugin,
+        useParserCache({
+          documentCache,
+        }),
+      ],
+      testSchema
+    );
+
+    await testInstance.execute(`query t { foo }`);
+    expect(documentCache.get).toHaveBeenCalled();
+    expect(documentCache.set).toHaveBeenCalled();
+  });
+
+  it('should use provided documentCache instance', async () => {
+    const errorCache = lru();
+    jest.spyOn(errorCache, 'set');
+    jest.spyOn(errorCache, 'get');
+    const testInstance = createTestkit(
+      [
+        useTestPlugin,
+        useParserCache({
+          errorCache,
+        }),
+      ],
+      testSchema
+    );
+
+    await testInstance.execute(`FAILED\ { foo }`);
+    expect(errorCache.get).toHaveBeenCalled();
+    expect(errorCache.set).toHaveBeenCalled();
   });
 });

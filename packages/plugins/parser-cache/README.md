@@ -35,3 +35,11 @@ Set this to configure your maximum amount of items in the LRU cache. The default
 #### `ttl`
 
 Set this to configure the TTL (time to live) of items in the LRU cache. The default is `3600000`.
+
+#### `documentCache`
+
+Set this to pass in a cache instance for caching documents. By default a new LRU cache is created using `max` and `ttl`.
+
+#### `errorCache`
+
+Set this to pass in a cache instance for caching errors. By default a new LRU cache is created using `max` and `ttl`.

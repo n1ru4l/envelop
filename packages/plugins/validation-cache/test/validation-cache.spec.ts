@@ -1,7 +1,8 @@
-import { buildSchema, validate } from 'graphql';
+import { buildSchema, GraphQLError, validate } from 'graphql';
 import { createTestkit } from '@envelop/testing';
 import { useValidationCache } from '../src';
 import { Plugin } from '@envelop/types';
+import lru from 'tiny-lru';
 
 describe('useValidationCache', () => {
   const testSchema = buildSchema(/* GraphQL */ `
@@ -70,5 +71,24 @@ describe('useValidationCache', () => {
     await testInstance.wait(10);
     await testInstance.execute(`query t { foo }`);
     expect(testValidator).toHaveBeenCalledTimes(2);
+  });
+
+  it('should use provided cache instance', async () => {
+    const cache = lru<readonly GraphQLError[]>();
+    jest.spyOn(cache, 'set');
+    jest.spyOn(cache, 'get');
+    const testInstance = createTestkit(
+      [
+        useTestPlugin,
+        useValidationCache({
+          cache,
+        }),
+      ],
+      testSchema
+    );
+    await testInstance.execute(`query { foo2 }`);
+    await testInstance.execute(`query { foo2 }`);
+    expect(cache.get).toHaveBeenCalled();
+    expect(cache.set).toHaveBeenCalled();
   });
 });

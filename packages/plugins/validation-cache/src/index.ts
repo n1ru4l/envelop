@@ -1,10 +1,11 @@
-import { Plugin } from '@envelop/types';
+import { Cache, Plugin } from '@envelop/types';
 import { GraphQLError, print } from 'graphql';
 import lru from 'tiny-lru';
 
 export type ValidationCacheOptions = {
   max?: number;
   ttl?: number;
+  cache?: Cache<readonly GraphQLError[]>;
 };
 
 const DEFAULT_MAX = 1000;
@@ -13,7 +14,7 @@ const DEFAULT_TTL = 3600000;
 export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): Plugin => {
   const max = typeof pluginOptions.max === 'number' ? pluginOptions.max : DEFAULT_MAX;
   const ttl = typeof pluginOptions.ttl === 'number' ? pluginOptions.ttl : DEFAULT_TTL;
-  const resultCache = lru<readonly GraphQLError[]>(max, ttl);
+  const resultCache = typeof pluginOptions.cache !== 'undefined' ? pluginOptions.cache : lru<readonly GraphQLError[]>(max, ttl);
 
   return {
     onSchemaChange() {

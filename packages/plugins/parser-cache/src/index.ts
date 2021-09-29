@@ -1,10 +1,12 @@
-import { Plugin } from '@envelop/types';
+import { Cache, Plugin } from '@envelop/types';
 import { DocumentNode, Source } from 'graphql';
 import lru from 'tiny-lru';
 
 export type ParserCacheOptions = {
   max?: number;
   ttl?: number;
+  documentCache?: Cache<DocumentNode>;
+  errorCache?: Cache<Error>;
 };
 
 const DEFAULT_MAX = 1000;
@@ -14,8 +16,9 @@ export const useParserCache = (pluginOptions: ParserCacheOptions = {}): Plugin =
   const max = typeof pluginOptions.max === 'number' ? pluginOptions.max : DEFAULT_MAX;
   const ttl = typeof pluginOptions.ttl === 'number' ? pluginOptions.ttl : DEFAULT_TTL;
 
-  const documentCache = lru<DocumentNode>(max, ttl);
-  const errorCache = lru<Error>(max, ttl);
+  const documentCache =
+    typeof pluginOptions.documentCache !== 'undefined' ? pluginOptions.documentCache : lru<DocumentNode>(max, ttl);
+  const errorCache = typeof pluginOptions.errorCache !== 'undefined' ? pluginOptions.errorCache : lru<Error>(max, ttl);
 
   return {
     onParse({ params, setParsedDocument }) {
