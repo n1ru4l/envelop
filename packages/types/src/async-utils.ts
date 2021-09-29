@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { OnExecuteDoneEventPayload, OnExecuteDoneHookResult, OnExecuteDoneHookResultOnNextHook } from '@envelop/core';
+import {
+  DefaultContext,
+  OnExecuteDoneEventPayload,
+  OnExecuteDoneHookResult,
+  OnExecuteDoneHookResultOnNextHook,
+} from '@envelop/core';
 import { ExecutionResult } from 'graphql';
 
 /**
@@ -19,14 +24,15 @@ export function isAsyncIterable(maybeAsyncIterable: any): maybeAsyncIterable is 
  * @param fn The handler to be executed on each result
  * @returns a subscription for streamed results, or undefined in case of an non-async
  */
-export function handleStreamOrSingleExecutionResult(
-  payload: OnExecuteDoneEventPayload,
-  fn: OnExecuteDoneHookResultOnNextHook
-): void | OnExecuteDoneHookResult {
+export function handleStreamOrSingleExecutionResult<ContextType = DefaultContext>(
+  payload: OnExecuteDoneEventPayload<ContextType>,
+  fn: OnExecuteDoneHookResultOnNextHook<ContextType>
+): void | OnExecuteDoneHookResult<ContextType> {
   if (isAsyncIterable(payload.result)) {
     return { onNext: fn };
   } else {
     fn({
+      context: payload.context,
       result: payload.result,
       setResult: payload.setResult,
     });

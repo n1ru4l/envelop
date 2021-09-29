@@ -460,6 +460,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
 
         for (const afterCb of afterCalls) {
           const hookResult = afterCb({
+            context,
             result,
             setResult: newResult => {
               result = newResult;

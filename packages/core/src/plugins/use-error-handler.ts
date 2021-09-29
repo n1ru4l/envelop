@@ -1,19 +1,24 @@
-import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/types';
+import { Plugin, handleStreamOrSingleExecutionResult, DefaultContext } from '@envelop/types';
 import { ExecutionResult, GraphQLError } from 'graphql';
 
-export type ErrorHandler = (errors: readonly GraphQLError[]) => void;
+export type ErrorHandler = (errors: readonly GraphQLError[], context: Readonly<DefaultContext>) => void;
+
+type ErrorHandlerCallback<ContextType> = {
+  context: Readonly<ContextType>;
+  result: ExecutionResult;
+};
 
 const makeHandleResult =
-  (errorHandler: ErrorHandler) =>
-  ({ result }: { result: ExecutionResult }) => {
+  <ContextType>(errorHandler: ErrorHandler) =>
+  ({ context, result }: ErrorHandlerCallback<ContextType>) => {
     if (result.errors?.length) {
-      errorHandler(result.errors);
+      errorHandler(result.errors, context);
     }
   };
 
-export const useErrorHandler = (errorHandler: ErrorHandler): Plugin => ({
+export const useErrorHandler = <ContextType>(errorHandler: ErrorHandler): Plugin<ContextType> => ({
   onExecute() {
-    const handleResult = makeHandleResult(errorHandler);
+    const handleResult = makeHandleResult<ContextType>(errorHandler);
     return {
       onExecuteDone(payload) {
         return handleStreamOrSingleExecutionResult(payload, handleResult);

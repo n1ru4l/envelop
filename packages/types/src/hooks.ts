@@ -326,7 +326,11 @@ export type OnExecuteEventPayload<ContextType> = {
 /**
  * Payload that is passed to the onExecuteDone hook.
  */
-export type OnExecuteDoneHookResultOnNextHookPayload = {
+export type OnExecuteDoneHookResultOnNextHookPayload<ContextType> = {
+  /**
+   * The context object.
+   */
+  context: Readonly<ContextType>;
   /**
    * The execution result.
    */
@@ -340,7 +344,9 @@ export type OnExecuteDoneHookResultOnNextHookPayload = {
 /**
  * Hook that is invoked for each value a AsyncIterable returned from execute publishes.
  */
-export type OnExecuteDoneHookResultOnNextHook = (payload: OnExecuteDoneHookResultOnNextHookPayload) => void | Promise<void>;
+export type OnExecuteDoneHookResultOnNextHook<ContextType> = (
+  payload: OnExecuteDoneHookResultOnNextHookPayload<ContextType>
+) => void | Promise<void>;
 
 /**
  * Hook that is invoked after a AsyncIterable returned from execute completes.
@@ -350,11 +356,11 @@ export type OnExecuteDoneHookResultOnEndHook = () => void;
 /**
  * Hook for hooking into AsyncIterables returned from execute.
  */
-export type OnExecuteDoneHookResult = {
+export type OnExecuteDoneHookResult<ContextType> = {
   /**
    * Hook that is invoked for each value a AsyncIterable returned from execute publishes.
    */
-  onNext?: OnExecuteDoneHookResultOnNextHook;
+  onNext?: OnExecuteDoneHookResultOnNextHook<ContextType>;
   /**
    * Hook that is invoked after a AsyncIterable returned from execute completes.
    */
@@ -364,7 +370,11 @@ export type OnExecuteDoneHookResult = {
 /**
  * Payload with which the onExecuteDone hook is invoked.
  */
-export type OnExecuteDoneEventPayload = {
+export type OnExecuteDoneEventPayload<ContextType> = {
+  /**
+   * The context object.
+   */
+  context: Readonly<ContextType>;
   /**
    * The execution result returned from the execute function.
    * Can return an AsyncIterable if a graphql.js that has defer/stream implemented is used.
@@ -380,7 +390,9 @@ export type OnExecuteDoneEventPayload = {
  * Hook that is invoked after the execute function has been invoked.
  * Allows returning a OnExecuteDoneHookResult for hooking into stream values if execute returned an AsyncIterable.
  */
-export type OnExecuteDoneHook = (options: OnExecuteDoneEventPayload) => void | OnExecuteDoneHookResult;
+export type OnExecuteDoneHook<ContextType> = (
+  options: OnExecuteDoneEventPayload<ContextType>
+) => void | OnExecuteDoneHookResult<ContextType>;
 
 /**
  * Result returned from the onExecute hook result for hooking into subsequent phases.
@@ -389,7 +401,7 @@ export type OnExecuteHookResult<ContextType> = {
   /**
    * Invoked with the execution result returned from execute.
    */
-  onExecuteDone?: OnExecuteDoneHook;
+  onExecuteDone?: OnExecuteDoneHook<ContextType>;
   /**
    * Invoked before each resolver has been invoked during the execution phase.
    */
