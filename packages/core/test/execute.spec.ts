@@ -31,6 +31,7 @@ describe('execute', () => {
     expect(spiedPlugin.spies.afterResolver).toHaveBeenCalledTimes(3);
     expect(spiedPlugin.spies.afterExecute).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.afterExecute).toHaveBeenCalledWith({
+      context: expect.any(Object),
       setResult: expect.any(Function),
       result: {
         data: {
