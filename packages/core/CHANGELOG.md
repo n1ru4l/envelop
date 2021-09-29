@@ -1,5 +1,11 @@
 # @envelop/core
 
+## 1.2.0
+
+### Minor Changes
+
+- eb0a4bd: Adds a custom message option used when masking errors
+
 ## 1.1.0
 
 ### Minor Changes
