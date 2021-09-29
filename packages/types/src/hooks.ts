@@ -344,7 +344,7 @@ export type OnExecuteDoneHookResultOnNextHookPayload<ContextType> = {
 /**
  * Hook that is invoked for each value a AsyncIterable returned from execute publishes.
  */
-export type OnExecuteDoneHookResultOnNextHook<ContextType> = (
+export type OnExecuteDoneHookResultOnNextHook<ContextType = DefaultContext> = (
   payload: OnExecuteDoneHookResultOnNextHookPayload<ContextType>
 ) => void | Promise<void>;
 
@@ -370,7 +370,7 @@ export type OnExecuteDoneHookResult<ContextType> = {
 /**
  * Payload with which the onExecuteDone hook is invoked.
  */
-export type OnExecuteDoneEventPayload<ContextType> = {
+export type OnExecuteDoneEventPayload<ContextType = DefaultContext> = {
   /**
    * The context object.
    */
@@ -390,7 +390,7 @@ export type OnExecuteDoneEventPayload<ContextType> = {
  * Hook that is invoked after the execute function has been invoked.
  * Allows returning a OnExecuteDoneHookResult for hooking into stream values if execute returned an AsyncIterable.
  */
-export type OnExecuteDoneHook<ContextType> = (
+export type OnExecuteDoneHook<ContextType = DefaultContext> = (
   options: OnExecuteDoneEventPayload<ContextType>
 ) => void | OnExecuteDoneHookResult<ContextType>;
 
@@ -445,7 +445,11 @@ export type OnSubscribeEventPayload<ContextType> = {
 /**
  * Payload with which the onSubscribeResult hook is invoked.
  */
-export type OnSubscribeResultEventPayload = {
+export type OnSubscribeResultEventPayload<ContextType = DefaultContext> = {
+  /**
+   * The context object.
+   */
+  context: Readonly<ContextType>;
   /**
    * The current execution result.
    */
@@ -456,7 +460,11 @@ export type OnSubscribeResultEventPayload = {
   setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
 };
 
-export type OnSubscribeResultResultOnNextHookPayload = {
+export type OnSubscribeResultResultOnNextHookPayload<ContextType = DefaultContext> = {
+  /**
+   * The context object.
+   */
+  context: Readonly<ContextType>;
   /**
    * The current execution result.
    */
@@ -501,7 +509,7 @@ export type SubscribeErrorHookPayload = {
 
 export type SubscribeErrorHook = (payload: SubscribeErrorHookPayload) => void;
 
-export type OnSubscribeHookResult<ContextType> = {
+export type OnSubscribeHookResult<ContextType = DefaultContext> = {
   /**
    * Invoked with the result returned from subscribe.
    */
