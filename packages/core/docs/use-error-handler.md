@@ -8,7 +8,7 @@ import { buildSchema } from 'graphql';
 
 const getEnveloped = envelop({
   plugins: [
-    useErrorHandler(error => {
+    useErrorHandler((error, context) => {
       // This callback is called per each GraphQLError emitted during execution phase
     }),
     // ... other plugins ...
