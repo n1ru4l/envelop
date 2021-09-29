@@ -1,6 +1,11 @@
-import { Cache, Plugin } from '@envelop/types';
+import { Plugin } from '@envelop/types';
 import { DocumentNode, Source } from 'graphql';
 import lru from 'tiny-lru';
+
+interface Cache<T> {
+  get(key: string): T | undefined;
+  set(key: string, value: T): void;
+}
 
 export type ParserCacheOptions = {
   max?: number;

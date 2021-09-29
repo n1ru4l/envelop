@@ -1,6 +1,12 @@
-import { Cache, Plugin } from '@envelop/types';
+import { Plugin } from '@envelop/types';
 import { GraphQLError, print } from 'graphql';
 import lru from 'tiny-lru';
+
+interface Cache<T> {
+  get(key: string): T | undefined;
+  set(key: string, value: T): void;
+  clear(): void;
+}
 
 export type ValidationCacheOptions = {
   max?: number;
