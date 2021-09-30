@@ -298,26 +298,45 @@ const getEnveloped = envelop({
 });
 ```
 
-Want a global cache on Redis? Build a cache that implements the `Cache` interface and share it with the community!
+Want a global cache on Redis?
+
+Maybe you are in a server-less environment and the In-Memory Cache isn't an option.
+
+```bash
+yarn add @envelop/response-cache-redis
+```
+
+First create a Redis database with your favorite hosting provider.
+
+Once you have that, gather up the necessary connection settings (e.g., `host`, `port`, `username`, `password`, `tls`) -- or even easier is to just find the connection string -- so that you can [create and configure](<(https://github.com/luin/ioredis/blob/master/API.md#Redis)>) a [Redis client](https://github.com/luin/ioredis) and set any [additional options](https://github.com/luin/ioredis/blob/master/API.md#new_Redis_new).
+
+Then, with that instance of the Redis Cache setup, provide it to the `useResponseCache` plugin options and you're done.
+
+Here's an example:
 
 ```ts
-export type Cache = {
-  /** set a cache response */
-  set(
-    /** id/hash of the operation */
-    id: string,
-    /** the result that should be cached */
-    data: ExecutionResult,
-    /** array of entity records that were collected during execution */
-    entities: Iterable<CacheEntityRecord>,
-    /** how long the operation should be cached */
-    ttl: number
-  ): PromiseOrValue<void>;
-  /** get a cached response */
-  get(id: string): PromiseOrValue<Maybe<ExecutionResult>>;
-  /** invalidate operations via typename or id */
-  invalidate(entities: Iterable<CacheEntityRecord>): PromiseOrValue<void>;
-};
+import { envelop } from '@envelop/core';
+import { useResponseCache } from '@envelop/response-cache';
+import { createRedisCache } from '@envelop/response-cache-redis';
+
+import Redis from 'ioredis';
+
+const redis = new Redis({
+  host: 'my-redis-db.example.com',
+  port: '30652',
+  password: '1234567890',
+});
+
+const redis = new Redis(("rediss://:1234567890@my-redis-db.example.com':30652");
+
+const cache = createRedisCache({ redis });
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useResponseCache({ cache }),
+  ],
+});
 ```
 
 More information about all possible configuration options can be found on [the response cache docs on the Plugin Hub](/plugins/use-response-cache).

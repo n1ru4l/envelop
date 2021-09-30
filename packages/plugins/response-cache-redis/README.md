@@ -14,8 +14,6 @@ yarn add @envelop/response-cache-redis
 
 ## Usage Example
 
-When configuring the `useResponseCache`, you can choose the type of cache:
-
 In order to use the Redis cache, you need to:
 
 - Create a Redis database
