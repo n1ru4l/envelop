@@ -46,6 +46,8 @@ const getEnveloped = envelop({
 });
 ```
 
+> Note: Setting `ttl: 0` will disable TTL for all types. You can use that if you wish to disable caching for all type, and then enable caching for specific types using `ttlPerType`.
+
 ### Cache with custom TTL per object type
 
 ```ts
