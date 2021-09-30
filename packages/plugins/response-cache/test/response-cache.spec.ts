@@ -917,4 +917,212 @@ describe('useResponseCache', () => {
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(2);
   });
+
+  test('disable global ttl', async () => {
+    const spy = jest.fn(() => [
+      {
+        id: 1,
+        name: 'User 1',
+        comments: [
+          {
+            id: 1,
+            text: 'Comment 1 of User 1',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'User 2',
+        comments: [
+          {
+            id: 2,
+            text: 'Comment 2 of User 2',
+          },
+        ],
+      },
+    ]);
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+      },
+    });
+
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          ttl: 0,
+        }),
+      ],
+      schema
+    );
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+          comments {
+            id
+            text
+          }
+        }
+      }
+    `;
+
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  test('prioritize schema coordinate over global ttl', async () => {
+    jest.useFakeTimers();
+    const userSpy = jest.fn(() => [
+      {
+        id: 1,
+        name: 'User 1',
+        comments: [
+          {
+            id: 1,
+            text: 'Comment 1 of User 1',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'User 2',
+        comments: [
+          {
+            id: 2,
+            text: 'Comment 2 of User 2',
+          },
+        ],
+      },
+    ]);
+
+    const orderSpy = jest.fn(() => [
+      {
+        id: 1,
+        products: [
+          {
+            id: 1,
+            name: 'Jeans',
+          },
+        ],
+      },
+      {
+        id: 2,
+        products: [
+          {
+            id: 2,
+            name: 'Shoes',
+          },
+        ],
+      },
+    ]);
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+          orders: [Order!]!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+
+        type Order {
+          id: ID!
+          products: [Product!]!
+        }
+
+        type Product {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: userSpy,
+          orders: orderSpy,
+        },
+      },
+    });
+
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          ttl: 1,
+          ttlPerSchemaCoordinate: {
+            'Query.users': 200,
+          },
+        }),
+      ],
+      schema
+    );
+
+    const userQuery = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+          comments {
+            id
+            text
+          }
+        }
+      }
+    `;
+
+    const orderQuery = /* GraphQL */ `
+      query test {
+        order {
+          id
+          products {
+            id
+            name
+          }
+        }
+      }
+    `;
+
+    await testInstance.execute(userQuery);
+    await testInstance.execute(orderQuery);
+    jest.advanceTimersByTime(2);
+    await testInstance.execute(userQuery);
+    await testInstance.execute(orderQuery);
+    expect(userSpy).toHaveBeenCalledTimes(1);
+    expect(orderSpy).toHaveBeenCalledTimes(2);
+    jest.advanceTimersByTime(201);
+    await testInstance.execute(userQuery);
+    expect(userSpy).toHaveBeenCalledTimes(2);
+  });
 });
