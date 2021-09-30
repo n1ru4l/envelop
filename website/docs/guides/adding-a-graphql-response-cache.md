@@ -308,7 +308,7 @@ yarn add @envelop/response-cache-redis
 
 First create a Redis database with your favorite hosting provider.
 
-Once you have that, gather up the necessary connection settings (e.g., `host`, `port`, `username`, `password`, `tls`) -- or even easier is to just find the connection string -- so that you can [create and configure](<(https://github.com/luin/ioredis/blob/master/API.md#Redis)>) a [Redis client](https://github.com/luin/ioredis) and set any [additional options](https://github.com/luin/ioredis/blob/master/API.md#new_Redis_new).
+Once you have that, gather up the necessary connection settings (e.g., `host`, `port`, `username`, `password`, `tls`) -- or even easier is to just find the connection string -- so that you can [create and configure](https://github.com/luin/ioredis/blob/master/API.md#Redis) a [Redis client](https://github.com/luin/ioredis) and set any [additional options](https://github.com/luin/ioredis/blob/master/API.md#new_Redis_new).
 
 Then, with that instance of the Redis Cache setup, provide it to the `useResponseCache` plugin options and you're done.
 
