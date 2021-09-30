@@ -11,6 +11,7 @@ import {
   defaultFieldResolver,
   ExecutionArgs,
 } from 'graphql';
+import jsonStableStringify from 'fast-json-stable-stringify';
 import type { Cache, CacheEntityRecord } from './cache';
 import { createInMemoryCache } from './in-memory-cache';
 
@@ -34,6 +35,8 @@ export type BuildResponseCacheKeyFunction = (params: {
   documentString: string;
   /** Variable values as sent form the client. */
   variableValues: ExecutionArgs['variableValues'];
+  /** The name of the GraphQL operation that should be executed from within the document. */
+  operationName?: Maybe<string>;
   /** optional sessionId for make unique cache keys based on the session.  */
   sessionId?: Maybe<string>;
 }) => string;
@@ -103,7 +106,14 @@ export type UseResponseCacheParameter<C = any> = {
  */
 export const defaultBuildResponseCacheKey: BuildResponseCacheKeyFunction = params =>
   createHash('sha1')
-    .update([params.documentString, JSON.stringify(params.variableValues ?? {}), params.sessionId ?? ''].join('|'))
+    .update(
+      [
+        params.documentString,
+        params.operationName ?? '',
+        jsonStableStringify(params.variableValues ?? {}),
+        params.sessionId ?? '',
+      ].join('|')
+    )
     .digest('base64');
 
 export const defaultGetDocumentStringFromContext: GetDocumentStringFromContextFunction = context =>
@@ -184,6 +194,7 @@ export function useResponseCache({
           const operationId = buildResponseCacheKey({
             documentString,
             variableValues: ctx.args.variableValues,
+            operationName: ctx.args.operationName,
             sessionId: session(ctx.args.contextValue),
           });
 
