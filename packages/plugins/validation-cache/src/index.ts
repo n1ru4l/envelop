@@ -21,13 +21,10 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
     },
     onValidate({ params, setResult }) {
       const key = print(params.documentAST);
+      const cachedResult = resultCache.get(key);
 
-      if (resultCache.get(key)) {
-        const errors = resultCache.get(key);
-
-        if (errors) {
-          setResult(errors);
-        }
+      if (cachedResult !== undefined) {
+        setResult(cachedResult);
       }
 
       return ({ result }) => {
