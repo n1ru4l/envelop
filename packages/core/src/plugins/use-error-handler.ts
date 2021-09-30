@@ -16,7 +16,7 @@ const makeHandleResult =
     }
   };
 
-export const useErrorHandler = <ContextType>(errorHandler: ErrorHandler): Plugin<ContextType> => ({
+export const useErrorHandler = <ContextType = DefaultContext>(errorHandler: ErrorHandler): Plugin<ContextType> => ({
   onExecute() {
     const handleResult = makeHandleResult<ContextType>(errorHandler);
     return {
