@@ -34,14 +34,16 @@ This plugin is the simplest plugin for specifying your GraphQL schema, but in an
 If you are using a framework that creates the schema in an async way, you can either use this plugin, or `await` for the schema and then use `useSchema`.
 
 ```ts
-import { envelop, useSchema } from '@envelop/core';
+import { envelop, useAsyncSchema } from '@envelop/core';
 import { buildSchema } from 'graphql';
 
-const mySchema = buildSchema(...);
+const getSchema = async (): Promise<GraphQLSchema> => {
+  // return schema when it's ready
+};
 
 const getEnveloped = envelop({
   plugins: [
-    useSchema(mySchema),
+    useAsyncSchema(getSchema()),
     // ... other plugins ...
   ],
 });
