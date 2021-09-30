@@ -1084,6 +1084,7 @@ describe('useResponseCache', () => {
           ttlPerSchemaCoordinate: {
             'Query.users': 200,
           },
+          includeExtensionMetadata: true,
         }),
       ],
       schema
@@ -1104,7 +1105,7 @@ describe('useResponseCache', () => {
 
     const orderQuery = /* GraphQL */ `
       query test {
-        order {
+        orders {
           id
           products {
             id
@@ -1114,8 +1115,25 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await testInstance.execute(userQuery);
-    await testInstance.execute(orderQuery);
+    let result = await testInstance.execute(userQuery);
+    assertSingleExecutionValue(result);
+    expect(result.extensions).toEqual({
+      responseCache: {
+        didCache: true,
+        hit: false,
+        ttl: 200,
+      },
+    });
+    result = await testInstance.execute(orderQuery);
+    assertSingleExecutionValue(result);
+    expect(result.extensions).toEqual({
+      responseCache: {
+        didCache: true,
+        hit: false,
+        ttl: 1,
+      },
+    });
+
     jest.advanceTimersByTime(2);
     await testInstance.execute(userQuery);
     await testInstance.execute(orderQuery);
