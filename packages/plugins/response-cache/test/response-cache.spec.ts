@@ -498,6 +498,8 @@ describe('useResponseCache', () => {
   });
 
   test('should purge response after it expired', async () => {
+    jest.useFakeTimers();
+
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -572,7 +574,8 @@ describe('useResponseCache', () => {
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
 
-    await new Promise(resolve => setTimeout(resolve, 150));
+    // let's travel in time beyond the ttl of 100
+    jest.advanceTimersByTime(150);
 
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(2);

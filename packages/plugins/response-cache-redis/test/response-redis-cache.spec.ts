@@ -706,6 +706,8 @@ describe('useResponseCache with Redis cache', () => {
   });
 
   test('should purge response after it expired', async () => {
+    jest.useFakeTimers();
+
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -776,7 +778,8 @@ describe('useResponseCache with Redis cache', () => {
     // so queried just once
     expect(spy).toHaveBeenCalledTimes(1);
 
-    await new Promise(resolve => setTimeout(resolve, 150));
+    // let's travel in time beyond the ttl of 100
+    jest.advanceTimersByTime(150);
 
     // since the cache has expired, now when we query
     await testInstance.execute(query);
