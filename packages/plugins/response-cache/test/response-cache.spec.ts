@@ -5,7 +5,7 @@ import { useResponseCache, createInMemoryCache } from '../src';
 describe('useResponseCache', () => {
   beforeEach(() => jest.useRealTimers());
 
-  test('custom ttl per type, when global ttl=0 - should enable cache only for specific types', async () => {
+  test('custom ttl per type is used instead of the global ttl - only enable caching for a specific type when global ttl = 0', async () => {
     jest.useFakeTimers();
     const spy = jest.fn(() => [
       {

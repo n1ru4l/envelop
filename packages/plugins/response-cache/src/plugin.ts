@@ -43,12 +43,13 @@ export type GetDocumentStringFromContextFunction = (params: DefaultContext) => M
 export type UseResponseCacheParameter<C = any> = {
   cache?: Cache;
   /**
-   * Maximum age in ms. Defaults to `Infinity`.
+   * Maximum age in ms. Defaults to `Infinity`. Set it to 0 for disabling the global TTL.
    */
   ttl?: number;
   /**
    * Overwrite the ttl for query operations whose execution result contains a specific object type.
-   * Useful if the occurrence of a object time in the execution result should reduce the ttl of the query operation.
+   * Useful if the occurrence of a object time in the execution result should reduce or increase the TTL of the query operation.
+   * The TTL per type is always favored over the global TTL.
    */
   ttlPerType?: Record<string, number>;
   /**
