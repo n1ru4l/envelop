@@ -20,7 +20,8 @@ const rawDocumentStringSymbol = Symbol('rawDocumentString');
 type Context = {
   identifier: Map<string, CacheEntityRecord>;
   types: Set<string>;
-  ttl: number;
+  /** The current ttl computed for this operation. */
+  currentTtl: number | undefined;
   ttlPerType: Record<string, number>;
   ignoredTypesMap: Set<string>;
   skip: boolean;
@@ -117,7 +118,7 @@ export const defaultGetDocumentStringFromContext: GetDocumentStringFromContextFu
 
 export function useResponseCache({
   cache = createInMemoryCache(),
-  ttl = Infinity,
+  ttl: globalTtl = Infinity,
   session = () => null,
   enabled,
   ignoredTypes = [],
@@ -160,7 +161,7 @@ export function useResponseCache({
       const context: Context = {
         identifier,
         types,
-        ttl,
+        currentTtl: undefined,
         ttlPerType,
         ignoredTypesMap,
         skip: false,
@@ -236,7 +237,7 @@ export function useResponseCache({
                   if (parentType) {
                     const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
                     if (schemaCoordinate in ttlPerSchemaCoordinate) {
-                      context.ttl = calculateTtl(context.ttl, ttlPerSchemaCoordinate[schemaCoordinate]);
+                      context.currentTtl = calculateTtl(ttlPerSchemaCoordinate[schemaCoordinate], context.currentTtl);
                     }
                   }
                 },
@@ -256,13 +257,33 @@ export function useResponseCache({
                 return;
               }
 
-              cache.set(operationId, result, identifier.values(), context.ttl);
+              // we only use the global ttl if no currentTtl has been determined.
+              const finalTtl = context.currentTtl ?? globalTtl;
+
+              if (finalTtl === 0) {
+                if (includeExtensionMetadata) {
+                  setResult({
+                    ...result,
+                    extensions: {
+                      responseCache: {
+                        hit: false,
+                        didCache: false,
+                      },
+                    },
+                  });
+                }
+                return;
+              }
+
+              cache.set(operationId, result, identifier.values(), finalTtl);
               if (includeExtensionMetadata) {
                 setResult({
                   ...result,
                   extensions: {
                     responseCache: {
                       hit: false,
+                      didCache: true,
+                      ttl: finalTtl,
                     },
                   },
                 });
@@ -286,16 +307,11 @@ function isOperationDefinition(node: any): node is OperationDefinitionNode {
   return node?.kind === 'OperationDefinition';
 }
 
-function calculateTtl(globalTtl: number, typeTtl?: number | undefined): number {
-  if (typeof typeTtl === 'number') {
-    if (globalTtl === 0) {
-      return typeTtl;
-    }
-
-    return Math.min(globalTtl, typeTtl);
+function calculateTtl(typeTtl: number, currentTtl: number | undefined): number {
+  if (typeof currentTtl === 'number') {
+    return Math.min(currentTtl, typeTtl);
   }
-
-  return globalTtl;
+  return typeTtl;
 }
 
 function isMutation(doc: DocumentNode) {
@@ -319,8 +335,8 @@ function applyResponseCacheLogic(schema: GraphQLSchema, idFieldNames: Array<stri
           resolve(src, args, context, info) {
             const result = (fieldConfig.resolve ?? defaultFieldResolver)(src, args, context, info);
             runWith(result, (id: string) => {
-              if (contextSymbol in context) {
-                const ctx: Context = context[contextSymbol];
+              const ctx: Context | undefined = context[contextSymbol];
+              if (ctx !== undefined) {
                 if (ctx.ignoredTypesMap.has(typename)) {
                   ctx.skip = true;
                 }
@@ -331,7 +347,7 @@ function applyResponseCacheLogic(schema: GraphQLSchema, idFieldNames: Array<stri
                 ctx.identifier.set(`${typename}:${id}`, { typename, id });
                 ctx.types.add(typename);
                 if (typename in ctx.ttlPerType) {
-                  ctx.ttl = calculateTtl(ctx.ttl, ctx.ttlPerType[typename]);
+                  ctx.currentTtl = calculateTtl(ctx.ttlPerType[typename], ctx.currentTtl);
                 }
               }
             });

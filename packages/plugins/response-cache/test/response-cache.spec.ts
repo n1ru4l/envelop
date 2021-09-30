@@ -227,7 +227,7 @@ describe('useResponseCache', () => {
 
     let result = await testInstance.execute(query);
     assertSingleExecutionValue(result);
-    expect(result.extensions?.responseCache).toEqual({ hit: false });
+    expect(result.extensions?.responseCache).toEqual({ hit: false, didCache: true, ttl: Infinity });
     result = await testInstance.execute(query);
     assertSingleExecutionValue(result);
     expect(result.extensions?.responseCache).toEqual({ hit: true });
@@ -250,7 +250,7 @@ describe('useResponseCache', () => {
 
     result = await testInstance.execute(query);
     assertSingleExecutionValue(result);
-    expect(result.extensions?.responseCache).toEqual({ hit: false });
+    expect(result.extensions?.responseCache).toEqual({ hit: false, didCache: true, ttl: Infinity });
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
