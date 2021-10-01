@@ -4,7 +4,7 @@
 - Customize cache entry time to live based on fields and types within the execution result.
 - Automatically invalidate the cache based on mutation selection sets.
 - Customize invalidation through the cache api (e.g. listen to a database write log).
-- Implement your own global cache (e.g. using Redis) by implementing the `Cache` interface.
+- Implement your own global cache (e.g. using another key/value store) by implementing the `Cache` interface.
 
 [Check out the GraphQL Response Cache Guide for more information](https://envelop.dev/docs/guides/adding-a-graphql-response-cache)
 
@@ -15,6 +15,15 @@ yarn add @envelop/response-cache
 ```
 
 ## Usage Example
+
+When configuring the `useResponseCache`, you can choose the type of cache:
+
+- In-Memory LRU Cache (default)
+- Redis Cache (see: `@envelop/response-cache-redis`)
+
+### In-Memory Cache
+
+The in-memory LRU cache is used by default.
 
 ```ts
 import { envelop } from '@envelop/core';
@@ -27,6 +36,64 @@ const getEnveloped = envelop({
   ],
 });
 ```
+
+Or, you may create the in-memory LRU cache explicitly.
+
+```ts
+import { envelop } from '@envelop/core';
+import { useResponseCache, createInMemoryCache } from '@envelop/response-cache';
+
+const cache = createInMemoryCache();
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useResponseCache({ cache }),
+  ],
+});
+```
+
+> Note: The in-memory LRU cache is not suitable for serverless deployments. Instead, consider the Redis cache provided by `@envelop/response-cache-redis`.
+
+### Redis Cache
+
+```bash
+yarn add @envelop/response-cache-redis
+```
+
+In order to use the Redis cache, you need to:
+
+- Create a Redis database
+- Collect the connection settings (or its connection string), e.g., `host`, `port`, `username`, `password`, `tls`, etc.
+- Create and configure a [Redis client](https://github.com/luin/ioredis) with your [connection settings](https://github.com/luin/ioredis/blob/master/API.md#Redis) and any [additional options](https://github.com/luin/ioredis/blob/master/API.md#new_Redis_new)
+- Create an instance of the Redis Cache and set to the `useResponseCache` plugin options
+
+```ts
+import { envelop } from '@envelop/core';
+import { useResponseCache } from '@envelop/response-cache';
+import { createRedisCache } from '@envelop/response-cache-redis';
+
+import Redis from 'ioredis';
+
+const redis = new Redis({
+  host: 'my-redis-db.example.com',
+  port: '30652',
+  password: '1234567890',
+});
+
+const redis = new Redis(("rediss://:1234567890@my-redis-db.example.com':30652");
+
+const cache = createRedisCache({ redis });
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useResponseCache({ cache }),
+  ],
+});
+```
+
+> Note: In the Recipes below, be sure to provide your Redis `cache` instance with `useResponseCache({ cache })`.
 
 ## Recipes
 

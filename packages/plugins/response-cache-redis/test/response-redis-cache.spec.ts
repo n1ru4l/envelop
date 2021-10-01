@@ -1,93 +1,34 @@
-import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import { createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { useResponseCache, createInMemoryCache } from '../src';
+import Redis from 'ioredis';
 
-describe('useResponseCache', () => {
-  beforeEach(() => jest.useRealTimers());
+import { createRedisCache, defaultBuildRedisEntityId, defaultBuildRedisOperationResultCacheKey } from '../src';
+import { useResponseCache } from '@envelop/response-cache';
 
-  test('custom ttl per type is used instead of the global ttl - only enable caching for a specific type when global ttl = 0', async () => {
-    jest.useFakeTimers();
-    const spy = jest.fn(() => [
-      {
-        id: 1,
-        name: 'User 1',
-        comments: [
-          {
-            id: 1,
-            text: 'Comment 1 of User 1',
-          },
-        ],
-      },
-      {
-        id: 2,
-        name: 'User 2',
-        comments: [
-          {
-            id: 2,
-            text: 'Comment 2 of User 2',
-          },
-        ],
-      },
-    ]);
+jest.mock('ioredis', () => require('ioredis-mock/jest'));
 
-    const schema = makeExecutableSchema({
-      typeDefs: /* GraphQL */ `
-        type Query {
-          users: [User!]!
-        }
+describe('useResponseCache with Redis cache', () => {
+  const redis = new Redis();
+  const cache = createRedisCache({ redis });
 
-        type User {
-          id: ID!
-          name: String!
-          comments: [Comment!]!
-          recentComment: Comment
-        }
+  beforeEach(async () => {
+    jest.useRealTimers();
+    await redis.flushall();
+  });
 
-        type Comment {
-          id: ID!
-          text: String!
-        }
-      `,
-      resolvers: {
-        Query: {
-          users: spy,
-        },
-      },
-    });
+  test('should create a default entity id with a number id', () => {
+    const entityId = defaultBuildRedisEntityId('User', 1);
+    expect(entityId).toEqual('User:1');
+  });
 
-    const testInstance = createTestkit(
-      [
-        useResponseCache({
-          ttl: 0,
-          ttlPerType: {
-            User: 200,
-          },
-        }),
-      ],
-      schema
-    );
+  test('should create a default entity id with a string id', () => {
+    const entityId = defaultBuildRedisEntityId('User', 'aaa-bbb-ccc-111-222');
+    expect(entityId).toEqual('User:aaa-bbb-ccc-111-222');
+  });
 
-    const query = /* GraphQL */ `
-      query test {
-        users {
-          id
-          name
-          comments {
-            id
-            text
-          }
-        }
-      }
-    `;
-
-    await testInstance.execute(query);
-    await testInstance.execute(query);
-    expect(spy).toHaveBeenCalledTimes(1);
-    await testInstance.execute(query);
-    expect(spy).toHaveBeenCalledTimes(1);
-    jest.advanceTimersByTime(201);
-    await testInstance.execute(query);
-    expect(spy).toHaveBeenCalledTimes(2);
+  test('should create a default key used to cache associated response operations', () => {
+    const entityId = defaultBuildRedisOperationResultCacheKey('abcde123456XYZ=');
+    expect(entityId).toEqual('operations:abcde123456XYZ=');
   });
 
   test('should reuse cache', async () => {
@@ -132,7 +73,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({})], schema);
+    const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -210,7 +151,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ includeExtensionMetadata: true })], schema);
+    const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -225,15 +166,11 @@ describe('useResponseCache', () => {
       }
     `;
 
-    let result = await testInstance.execute(query);
-    assertSingleExecutionValue(result);
-    expect(result.extensions?.responseCache).toEqual({ hit: false, didCache: true, ttl: Infinity });
-    result = await testInstance.execute(query);
-    assertSingleExecutionValue(result);
-    expect(result.extensions?.responseCache).toEqual({ hit: true });
+    await testInstance.execute(query);
+    await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
 
-    result = await testInstance.execute(
+    await testInstance.execute(
       /* GraphQL */ `
         mutation test($id: ID!) {
           updateUser(id: $id) {
@@ -245,12 +182,8 @@ describe('useResponseCache', () => {
         id: 1,
       }
     );
-    assertSingleExecutionValue(result);
-    expect(result?.extensions?.responseCache).toEqual({ invalidatedEntities: [{ id: '1', typename: 'User' }] });
 
-    result = await testInstance.execute(query);
-    assertSingleExecutionValue(result);
-    expect(result.extensions?.responseCache).toEqual({ hit: false, didCache: true, ttl: Infinity });
+    await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -313,7 +246,6 @@ describe('useResponseCache', () => {
       },
     });
 
-    const cache = createInMemoryCache();
     const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `
@@ -329,13 +261,63 @@ describe('useResponseCache', () => {
       }
     `;
 
+    // query and cache
     await testInstance.execute(query);
+    // get from cache
     await testInstance.execute(query);
+    // so queried just once
     expect(spy).toHaveBeenCalledTimes(1);
 
-    cache.invalidate([{ typename: 'Comment', id: 2 }]);
+    // we have our two Users
+    expect(await redis.exists('User:1')).toBeTruthy();
+    expect(await redis.exists('User:2')).toBeTruthy();
+    // but not this one
+    expect(await redis.exists('User:3')).toBeFalsy();
 
+    // we have our two Comments
+    expect(await redis.exists('Comment:1')).toBeTruthy();
+    expect(await redis.exists('Comment:2')).toBeTruthy();
+    // but not this one
+    expect(await redis.exists('Comment:3')).toBeFalsy();
+
+    const commentResultCacheKeys = await redis.smembers('Comment');
+    // Comments are found in 1 ResultCacheKey
+    expect(commentResultCacheKeys).toHaveLength(1);
+
+    const comment1ResultCacheKeys = await redis.smembers('Comment:1');
+    // Comment:1 is found in 1 ResultCacheKey
+    expect(comment1ResultCacheKeys).toHaveLength(1);
+
+    const comment2ResultCacheKeys = await redis.smembers('Comment:2');
+    // Comment:2 is found in 1 ResultCacheKey
+    expect(comment2ResultCacheKeys).toHaveLength(1);
+
+    // then when we invalidate Comment:2
+    await cache.invalidate([{ typename: 'Comment', id: 2 }]);
+
+    // and get the all Comment(s) key
+    const commentResultCacheKeysAfterInvalidation = await redis.smembers('Comment');
+
+    // and the Comment:1 key
+    const comment1ResultCacheKeysAfterInvalidation = await redis.smembers('Comment:1');
+
+    // Comment:1 is found in 1 ResultCacheKey ...
+    expect(comment1ResultCacheKeysAfterInvalidation).toHaveLength(1);
+    // ... and Comment also is found in 1 key (the same result key)
+    expect(commentResultCacheKeysAfterInvalidation).toHaveLength(1);
+
+    expect(await redis.exists('Comment:1')).toBeTruthy();
+
+    // but Comment:2 is no longer there since if was been invalidated
+    expect(await redis.exists('Comment:2')).toBeFalsy();
+
+    // query and cache since ws invalidated
     await testInstance.execute(query);
+    // from cache
+    await testInstance.execute(query);
+    // from cache
+    await testInstance.execute(query);
+    // but since we've queried once before when we started above, we've now actually queried twice
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -398,7 +380,6 @@ describe('useResponseCache', () => {
       },
     });
 
-    const cache = createInMemoryCache();
     const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `
@@ -414,14 +395,231 @@ describe('useResponseCache', () => {
       }
     `;
 
+    // query and cache
     await testInstance.execute(query);
+    // from cache
     await testInstance.execute(query);
+
+    // queried once
     expect(spy).toHaveBeenCalledTimes(1);
 
-    cache.invalidate([{ typename: 'Comment' }]);
+    expect(await redis.exists('User:1')).toBeTruthy();
+    expect(await redis.exists('User:2')).toBeTruthy();
+    expect(await redis.exists('User:3')).toBeFalsy();
 
+    expect(await redis.exists('Comment:1')).toBeTruthy();
+    expect(await redis.exists('Comment:2')).toBeTruthy();
+    expect(await redis.exists('User:3')).toBeFalsy();
+
+    await cache.invalidate([{ typename: 'Comment' }]);
+
+    expect(await redis.exists('Comment')).toBeFalsy();
+    expect(await redis.exists('Comment:1')).toBeFalsy();
+    expect(await redis.exists('Comment:2')).toBeFalsy();
+    expect(await redis.smembers('Comment')).toHaveLength(0);
+
+    // we've invalidated so, now query and cache
     await testInstance.execute(query);
+    // so have queried twice
     expect(spy).toHaveBeenCalledTimes(2);
+
+    // from cache
+    await testInstance.execute(query);
+    // from cache
+    await testInstance.execute(query);
+    // from cache
+    await testInstance.execute(query);
+
+    // still just queried twice
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  test('should indicate if the cache was hit or missed', async () => {
+    const spy = jest.fn(() => [
+      {
+        id: 1,
+        name: 'User 1',
+        comments: [
+          {
+            id: 1,
+            text: 'Comment 1 of User 1',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'User 2',
+        comments: [
+          {
+            id: 2,
+            text: 'Comment 2 of User 2',
+          },
+        ],
+      },
+    ]);
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type Mutation {
+          updateUser(id: ID!): User!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+        Mutation: {
+          updateUser(_, { id }) {
+            return {
+              id,
+            };
+          },
+        },
+      },
+    });
+
+    const testInstance = createTestkit([useResponseCache({ cache, includeExtensionMetadata: true })], schema);
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+          comments {
+            id
+            text
+          }
+        }
+      }
+    `;
+
+    // query and cache
+    const queryResult = await testInstance.execute(query);
+
+    let cacheHitMaybe = queryResult['extensions']['responseCache']['hit'];
+    expect(cacheHitMaybe).toBeFalsy();
+
+    // get from cache
+    const cachedResult = await testInstance.execute(query);
+
+    cacheHitMaybe = cachedResult['extensions']['responseCache']['hit'];
+    expect(cacheHitMaybe).toBeTruthy();
+
+    const mutationResult = await testInstance.execute(
+      /* GraphQL */ `
+        mutation test($id: ID!) {
+          updateUser(id: $id) {
+            id
+          }
+        }
+      `,
+      {
+        id: 1,
+      }
+    );
+
+    cacheHitMaybe = mutationResult['extensions']['responseCache']['hit'];
+    expect(cacheHitMaybe).toBeFalsy();
+  });
+
+  test('should purge cache on mutation and include invalidated entities', async () => {
+    const spy = jest.fn(() => [
+      {
+        id: 1,
+        name: 'User 1',
+        comments: [
+          {
+            id: 1,
+            text: 'Comment 1 of User 1',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'User 2',
+        comments: [
+          {
+            id: 2,
+            text: 'Comment 2 of User 2',
+          },
+        ],
+      },
+    ]);
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type Mutation {
+          updateUser(id: ID!): User!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+        Mutation: {
+          updateUser(_, { id }) {
+            return {
+              id,
+            };
+          },
+        },
+      },
+    });
+
+    const testInstance = createTestkit([useResponseCache({ cache, includeExtensionMetadata: true })], schema);
+
+    const result = await testInstance.execute(
+      /* GraphQL */ `
+        mutation test($id: ID!) {
+          updateUser(id: $id) {
+            id
+          }
+        }
+      `,
+      {
+        id: 1,
+      }
+    );
+
+    const responseCache = result['extensions']['responseCache'];
+    const invalidatedEntities = responseCache['invalidatedEntities'];
+    expect(invalidatedEntities).toHaveLength(1);
+
+    const invalidatedUser = invalidatedEntities[0];
+    expect(invalidatedUser).toEqual({
+      typename: 'User',
+      id: '1',
+    });
   });
 
   test('should consider variables when saving response', async () => {
@@ -475,7 +673,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({})], schema);
+    const testInstance = createTestkit([useResponseCache({ cache })], schema);
 
     const query = /* GraphQL */ `
       query test($limit: Int!) {
@@ -490,10 +688,20 @@ describe('useResponseCache', () => {
       }
     `;
 
+    // query and cache 2 users
     await testInstance.execute(query, { limit: 2 });
+    // fetch 2 users from cache
     await testInstance.execute(query, { limit: 2 });
+    // so just one query
     expect(spy).toHaveBeenCalledTimes(1);
+
+    // we should have one response with operations
+    expect(await redis.keys('operations:*')).toHaveLength(1);
+
+    // query just one user
     await testInstance.execute(query, { limit: 1 });
+
+    // since 2 users are in cache, we query again for the 1 as a response
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -548,14 +756,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit(
-      [
-        useResponseCache({
-          ttl: 100,
-        }),
-      ],
-      schema
-    );
+    const testInstance = createTestkit([useResponseCache({ cache, ttl: 100 })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -570,14 +771,19 @@ describe('useResponseCache', () => {
       }
     `;
 
+    // query and cache
     await testInstance.execute(query);
+    // from cache
     await testInstance.execute(query);
+    // so queried just once
     expect(spy).toHaveBeenCalledTimes(1);
 
     // let's travel in time beyond the ttl of 100
     jest.advanceTimersByTime(150);
 
+    // since the cache has expired, now when we query
     await testInstance.execute(query);
+    // we query again so now twice
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -633,6 +839,7 @@ describe('useResponseCache', () => {
     const testInstance = createTestkit(
       [
         useResponseCache({
+          cache,
           session(ctx: { sessionId: number }) {
             return ctx.sessionId + '';
           },
@@ -669,6 +876,10 @@ describe('useResponseCache', () => {
       }
     );
     expect(spy).toHaveBeenCalledTimes(1);
+
+    // we should have one response for that sessionId of 1
+    expect(await redis.keys('operations:*')).toHaveLength(1);
+
     await testInstance.execute(
       query,
       {},
@@ -677,6 +888,9 @@ describe('useResponseCache', () => {
       }
     );
     expect(spy).toHaveBeenCalledTimes(2);
+
+    // we should have one response for both sessions
+    expect(await redis.keys('operations:*')).toHaveLength(2);
   });
 
   test('should skip cache of ignored types', async () => {
@@ -728,14 +942,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit(
-      [
-        useResponseCache({
-          ignoredTypes: ['Comment'],
-        }),
-      ],
-      schema
-    );
+    const testInstance = createTestkit([useResponseCache({ cache, ignoredTypes: ['Comment'] })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -750,8 +957,24 @@ describe('useResponseCache', () => {
       }
     `;
 
+    // query but don't cache
     await testInstance.execute(query);
+
+    // none of the queries entities are cached because contains Comment
+    expect(await redis.exists('User')).toBeFalsy();
+    expect(await redis.exists('User:1')).toBeFalsy();
+    expect(await redis.exists('Comment')).toBeFalsy();
+    expect(await redis.exists('Comment:2')).toBeFalsy();
+
+    // since not cached
     await testInstance.execute(query);
+
+    // still none of the queries entities are cached because contains Comment
+    expect(await redis.exists('User')).toBeFalsy();
+    expect(await redis.exists('User:1')).toBeFalsy();
+    expect(await redis.exists('Comment')).toBeFalsy();
+    expect(await redis.exists('Comment:2')).toBeFalsy();
+    // we've queried twice
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -808,6 +1031,7 @@ describe('useResponseCache', () => {
     const testInstance = createTestkit(
       [
         useResponseCache({
+          cache,
           ttl: 500,
           ttlPerType: {
             User: 200,
@@ -830,11 +1054,17 @@ describe('useResponseCache', () => {
       }
     `;
 
+    // query and cache
     await testInstance.execute(query);
+    // from cache
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
+
+    // wait so User expires
     jest.advanceTimersByTime(201);
+
     await testInstance.execute(query);
+    // now we've queried twice
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -891,6 +1121,7 @@ describe('useResponseCache', () => {
     const testInstance = createTestkit(
       [
         useResponseCache({
+          cache,
           ttl: 500,
           ttlPerSchemaCoordinate: {
             'Query.users': 200,
@@ -913,237 +1144,17 @@ describe('useResponseCache', () => {
       }
     `;
 
+    // query and cache
     await testInstance.execute(query);
+    // from cache
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
+
+    // wait so User expires
     jest.advanceTimersByTime(201);
+
     await testInstance.execute(query);
+    // now we've queried twice
     expect(spy).toHaveBeenCalledTimes(2);
-  });
-
-  test('disable global ttl', async () => {
-    const spy = jest.fn(() => [
-      {
-        id: 1,
-        name: 'User 1',
-        comments: [
-          {
-            id: 1,
-            text: 'Comment 1 of User 1',
-          },
-        ],
-      },
-      {
-        id: 2,
-        name: 'User 2',
-        comments: [
-          {
-            id: 2,
-            text: 'Comment 2 of User 2',
-          },
-        ],
-      },
-    ]);
-
-    const schema = makeExecutableSchema({
-      typeDefs: /* GraphQL */ `
-        type Query {
-          users: [User!]!
-        }
-
-        type User {
-          id: ID!
-          name: String!
-          comments: [Comment!]!
-          recentComment: Comment
-        }
-
-        type Comment {
-          id: ID!
-          text: String!
-        }
-      `,
-      resolvers: {
-        Query: {
-          users: spy,
-        },
-      },
-    });
-
-    const testInstance = createTestkit(
-      [
-        useResponseCache({
-          ttl: 0,
-        }),
-      ],
-      schema
-    );
-
-    const query = /* GraphQL */ `
-      query test {
-        users {
-          id
-          name
-          comments {
-            id
-            text
-          }
-        }
-      }
-    `;
-
-    await testInstance.execute(query);
-    await testInstance.execute(query);
-    expect(spy).toHaveBeenCalledTimes(2);
-  });
-
-  test('prioritize schema coordinate over global ttl', async () => {
-    jest.useFakeTimers();
-    const userSpy = jest.fn(() => [
-      {
-        id: 1,
-        name: 'User 1',
-        comments: [
-          {
-            id: 1,
-            text: 'Comment 1 of User 1',
-          },
-        ],
-      },
-      {
-        id: 2,
-        name: 'User 2',
-        comments: [
-          {
-            id: 2,
-            text: 'Comment 2 of User 2',
-          },
-        ],
-      },
-    ]);
-
-    const orderSpy = jest.fn(() => [
-      {
-        id: 1,
-        products: [
-          {
-            id: 1,
-            name: 'Jeans',
-          },
-        ],
-      },
-      {
-        id: 2,
-        products: [
-          {
-            id: 2,
-            name: 'Shoes',
-          },
-        ],
-      },
-    ]);
-
-    const schema = makeExecutableSchema({
-      typeDefs: /* GraphQL */ `
-        type Query {
-          users: [User!]!
-          orders: [Order!]!
-        }
-
-        type User {
-          id: ID!
-          name: String!
-          comments: [Comment!]!
-          recentComment: Comment
-        }
-
-        type Comment {
-          id: ID!
-          text: String!
-        }
-
-        type Order {
-          id: ID!
-          products: [Product!]!
-        }
-
-        type Product {
-          id: ID!
-          name: String!
-        }
-      `,
-      resolvers: {
-        Query: {
-          users: userSpy,
-          orders: orderSpy,
-        },
-      },
-    });
-
-    const testInstance = createTestkit(
-      [
-        useResponseCache({
-          ttl: 1,
-          ttlPerSchemaCoordinate: {
-            'Query.users': 200,
-          },
-          includeExtensionMetadata: true,
-        }),
-      ],
-      schema
-    );
-
-    const userQuery = /* GraphQL */ `
-      query test {
-        users {
-          id
-          name
-          comments {
-            id
-            text
-          }
-        }
-      }
-    `;
-
-    const orderQuery = /* GraphQL */ `
-      query test {
-        orders {
-          id
-          products {
-            id
-            name
-          }
-        }
-      }
-    `;
-
-    let result = await testInstance.execute(userQuery);
-    assertSingleExecutionValue(result);
-    expect(result.extensions).toEqual({
-      responseCache: {
-        didCache: true,
-        hit: false,
-        ttl: 200,
-      },
-    });
-    result = await testInstance.execute(orderQuery);
-    assertSingleExecutionValue(result);
-    expect(result.extensions).toEqual({
-      responseCache: {
-        didCache: true,
-        hit: false,
-        ttl: 1,
-      },
-    });
-
-    jest.advanceTimersByTime(2);
-    await testInstance.execute(userQuery);
-    await testInstance.execute(orderQuery);
-    expect(userSpy).toHaveBeenCalledTimes(1);
-    expect(orderSpy).toHaveBeenCalledTimes(2);
-    jest.advanceTimersByTime(201);
-    await testInstance.execute(userQuery);
-    expect(userSpy).toHaveBeenCalledTimes(2);
   });
 });
