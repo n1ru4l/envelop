@@ -7,11 +7,14 @@ interface Cache<T> {
   set(key: string, value: T): void;
 }
 
+export type DocumentCache = Cache<DocumentNode>;
+export type ErrorCache = Cache<Error>;
+
 export type ParserCacheOptions = {
   max?: number;
   ttl?: number;
-  documentCache?: Cache<DocumentNode>;
-  errorCache?: Cache<Error>;
+  documentCache?: DocumentCache;
+  errorCache?: ErrorCache;
 };
 
 const DEFAULT_MAX = 1000;
