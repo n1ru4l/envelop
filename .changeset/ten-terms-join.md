@@ -3,4 +3,4 @@
 '@envelop/types': minor
 ---
 
-useErrorHandler: Pass in the context to the error handler callbacks.
+useErrorHandler: Pass in the execution arguments to the error handler callbacks.

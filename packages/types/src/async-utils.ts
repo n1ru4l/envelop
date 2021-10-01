@@ -32,7 +32,7 @@ export function handleStreamOrSingleExecutionResult<ContextType = DefaultContext
     return { onNext: fn };
   } else {
     fn({
-      context: payload.context,
+      args: payload.args,
       result: payload.result,
       setResult: payload.setResult,
     });

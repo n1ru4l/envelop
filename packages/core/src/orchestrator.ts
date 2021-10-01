@@ -345,7 +345,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
 
     for (const afterCb of afterCalls) {
       const hookResult = afterCb({
-        context,
+        args,
         result,
         setResult: newResult => {
           result = newResult;
@@ -365,7 +365,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
       result = mapAsyncIterator(result, async result => {
         for (const onNext of onNextHandler) {
           await onNext({
-            context,
+            args,
             result,
             setResult: newResult => (result = newResult),
           });
@@ -465,7 +465,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
 
         for (const afterCb of afterCalls) {
           const hookResult = afterCb({
-            context,
+            args,
             result,
             setResult: newResult => {
               result = newResult;
@@ -485,7 +485,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
           result = mapAsyncIterator(result, async result => {
             for (const onNext of onNextHandler) {
               await onNext({
-                context,
+                args,
                 result,
                 setResult: newResult => (result = newResult),
               });

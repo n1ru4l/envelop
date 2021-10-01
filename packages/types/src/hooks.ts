@@ -295,7 +295,7 @@ export type OnResolverCalledHook<
 /**
  * Execution arguments with inferred context value type.
  */
-export type TypedExecutionArgs<ContextType> = Omit<ExecutionArgs, 'contextValue'> & { contextValue: ContextType };
+export type TypedExecutionArgs<ContextType> = Omit<ExecutionArgs, 'contextValue'> & { contextValue?: ContextType };
 
 /**
  * Payload that is passed to the onExecute hook.
@@ -328,9 +328,9 @@ export type OnExecuteEventPayload<ContextType> = {
  */
 export type OnExecuteDoneHookResultOnNextHookPayload<ContextType> = {
   /**
-   * The context object.
+   * The execution arguments.
    */
-  context: Readonly<ContextType>;
+  args: TypedExecutionArgs<ContextType>;
   /**
    * The execution result.
    */
@@ -372,9 +372,9 @@ export type OnExecuteDoneHookResult<ContextType> = {
  */
 export type OnExecuteDoneEventPayload<ContextType = DefaultContext> = {
   /**
-   * The context object.
+   * The execution arguments.
    */
-  context: Readonly<ContextType>;
+  args: TypedExecutionArgs<ContextType>;
   /**
    * The execution result returned from the execute function.
    * Can return an AsyncIterable if a graphql.js that has defer/stream implemented is used.
@@ -447,9 +447,9 @@ export type OnSubscribeEventPayload<ContextType> = {
  */
 export type OnSubscribeResultEventPayload<ContextType = DefaultContext> = {
   /**
-   * The context object.
+   * The execution arguments.
    */
-  context: Readonly<ContextType>;
+  args: TypedExecutionArgs<ContextType>;
   /**
    * The current execution result.
    */
@@ -462,9 +462,9 @@ export type OnSubscribeResultEventPayload<ContextType = DefaultContext> = {
 
 export type OnSubscribeResultResultOnNextHookPayload<ContextType = DefaultContext> = {
   /**
-   * The context object.
+   * The execution arguments.
    */
-  context: Readonly<ContextType>;
+  args: TypedExecutionArgs<ContextType>;
   /**
    * The current execution result.
    */

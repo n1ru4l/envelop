@@ -26,6 +26,13 @@ describe('useErrorHandler', () => {
     const testInstance = createTestkit([useErrorHandler(mockHandler)], schema);
     await testInstance.execute(`query { foo }`, {}, { foo: 'bar' });
 
-    expect(mockHandler).toHaveBeenCalledWith([testError], expect.objectContaining({ foo: 'bar' }));
+    expect(mockHandler).toHaveBeenCalledWith(
+      [testError],
+      expect.objectContaining({
+        contextValue: expect.objectContaining({
+          foo: 'bar',
+        }),
+      })
+    );
   });
 });
