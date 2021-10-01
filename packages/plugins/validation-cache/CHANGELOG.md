@@ -1,5 +1,11 @@
 # @envelop/validation-cache
 
+## 1.0.1
+
+### Patch Changes
+
+- 52af140: Read from cache only once per request.
+
 ## 1.0.0
 
 ### Major Changes
