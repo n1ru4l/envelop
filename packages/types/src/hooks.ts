@@ -295,7 +295,7 @@ export type OnResolverCalledHook<
 /**
  * Execution arguments with inferred context value type.
  */
-export type TypedExecutionArgs<ContextType> = Omit<ExecutionArgs, 'contextValue'> & { contextValue?: ContextType };
+export type TypedExecutionArgs<ContextType> = Omit<ExecutionArgs, 'contextValue'> & { contextValue: ContextType };
 
 /**
  * Payload that is passed to the onExecute hook.
@@ -344,7 +344,7 @@ export type OnExecuteDoneHookResultOnNextHookPayload<ContextType> = {
 /**
  * Hook that is invoked for each value a AsyncIterable returned from execute publishes.
  */
-export type OnExecuteDoneHookResultOnNextHook<ContextType = DefaultContext> = (
+export type OnExecuteDoneHookResultOnNextHook<ContextType> = (
   payload: OnExecuteDoneHookResultOnNextHookPayload<ContextType>
 ) => void | Promise<void>;
 
@@ -370,7 +370,7 @@ export type OnExecuteDoneHookResult<ContextType> = {
 /**
  * Payload with which the onExecuteDone hook is invoked.
  */
-export type OnExecuteDoneEventPayload<ContextType = DefaultContext> = {
+export type OnExecuteDoneEventPayload<ContextType> = {
   /**
    * The execution arguments.
    */
@@ -390,7 +390,7 @@ export type OnExecuteDoneEventPayload<ContextType = DefaultContext> = {
  * Hook that is invoked after the execute function has been invoked.
  * Allows returning a OnExecuteDoneHookResult for hooking into stream values if execute returned an AsyncIterable.
  */
-export type OnExecuteDoneHook<ContextType = DefaultContext> = (
+export type OnExecuteDoneHook<ContextType> = (
   options: OnExecuteDoneEventPayload<ContextType>
 ) => void | OnExecuteDoneHookResult<ContextType>;
 
@@ -445,7 +445,7 @@ export type OnSubscribeEventPayload<ContextType> = {
 /**
  * Payload with which the onSubscribeResult hook is invoked.
  */
-export type OnSubscribeResultEventPayload<ContextType = DefaultContext> = {
+export type OnSubscribeResultEventPayload<ContextType> = {
   /**
    * The execution arguments.
    */
@@ -460,7 +460,7 @@ export type OnSubscribeResultEventPayload<ContextType = DefaultContext> = {
   setResult: (newResult: AsyncIterableIterator<ExecutionResult> | ExecutionResult) => void;
 };
 
-export type OnSubscribeResultResultOnNextHookPayload<ContextType = DefaultContext> = {
+export type OnSubscribeResultResultOnNextHookPayload<ContextType> = {
   /**
    * The execution arguments.
    */
@@ -478,18 +478,20 @@ export type OnSubscribeResultResultOnNextHookPayload<ContextType = DefaultContex
 /**
  * Hook invoked for each value published by the AsyncIterable returned from subscribe.
  */
-export type OnSubscribeResultResultOnNextHook = (payload: OnSubscribeResultResultOnNextHookPayload) => void | Promise<void>;
+export type OnSubscribeResultResultOnNextHook<ContextType> = (
+  payload: OnSubscribeResultResultOnNextHookPayload<ContextType>
+) => void | Promise<void>;
 
 /**
  * Hook invoked after the AsyncIterable returned from subscribe completes.
  */
 export type OnSubscribeResultResultOnEndHook = () => void;
 
-export type OnSubscribeResultResult = {
+export type OnSubscribeResultResult<ContextType> = {
   /**
    * Invoked for each value published by the AsyncIterable returned from subscribe.
    */
-  onNext?: OnSubscribeResultResultOnNextHook;
+  onNext?: OnSubscribeResultResultOnNextHook<ContextType>;
   /**
    * Invoked after the AsyncIterable returned from subscribe completes.
    */
@@ -500,7 +502,9 @@ export type OnSubscribeResultResult = {
  * Hook that is invoked with the result of the subscribe call.
  * Return a OnSubscribeResultResult for hooking into the AsyncIterable returned from subscribe.
  */
-export type SubscribeResultHook = (options: OnSubscribeResultEventPayload) => void | OnSubscribeResultResult;
+export type SubscribeResultHook<ContextType> = (
+  options: OnSubscribeResultEventPayload<ContextType>
+) => void | OnSubscribeResultResult<ContextType>;
 
 export type SubscribeErrorHookPayload = {
   error: unknown;
@@ -509,11 +513,11 @@ export type SubscribeErrorHookPayload = {
 
 export type SubscribeErrorHook = (payload: SubscribeErrorHookPayload) => void;
 
-export type OnSubscribeHookResult<ContextType = DefaultContext> = {
+export type OnSubscribeHookResult<ContextType> = {
   /**
    * Invoked with the result returned from subscribe.
    */
-  onSubscribeResult?: SubscribeResultHook;
+  onSubscribeResult?: SubscribeResultHook<ContextType>;
   /**
    * Invoked if the source stream returned from subscribe throws an error.
    */

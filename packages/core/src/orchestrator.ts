@@ -26,6 +26,7 @@ import {
   isAsyncIterable,
   OnContextErrorHandler,
   SubscribeErrorHook,
+  DefaultContext,
 } from '@envelop/types';
 import {
   DocumentNode,
@@ -56,7 +57,9 @@ export type EnvelopOrchestrator<
   getCurrentSchema: () => Maybe<GraphQLSchema>;
 };
 
-export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[]): EnvelopOrchestrator<any, PluginsContext> {
+export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>(
+  plugins: Plugin[]
+): EnvelopOrchestrator<any, PluginsContext> {
   let schema: GraphQLSchema | undefined | null = null;
   let initDone = false;
 
@@ -301,7 +304,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
     const onResolversHandlers: OnResolverCalledHook[] = [];
     let subscribeFn = subscribe as SubscribeFunction;
 
-    const afterCalls: SubscribeResultHook[] = [];
+    const afterCalls: SubscribeResultHook<PluginsContext>[] = [];
     const subscribeErrorHandlers: SubscribeErrorHook[] = [];
 
     let context = args.contextValue || {};
@@ -340,12 +343,12 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
       contextValue: context,
     });
 
-    const onNextHandler: OnSubscribeResultResultOnNextHook[] = [];
+    const onNextHandler: OnSubscribeResultResultOnNextHook<PluginsContext>[] = [];
     const onEndHandler: OnSubscribeResultResultOnEndHook[] = [];
 
     for (const afterCb of afterCalls) {
       const hookResult = afterCb({
-        args,
+        args: args as TypedSubscriptionArgs<PluginsContext>,
         result,
         setResult: newResult => {
           result = newResult;
@@ -365,7 +368,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
       result = mapAsyncIterator(result, async result => {
         for (const onNext of onNextHandler) {
           await onNext({
-            args,
+            args: args as TypedSubscriptionArgs<PluginsContext>,
             result,
             setResult: newResult => (result = newResult),
           });
@@ -405,7 +408,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
         let executeFn = execute as ExecuteFunction;
         let result: AsyncIterableIteratorOrValue<ExecutionResult>;
 
-        const afterCalls: OnExecuteDoneHook[] = [];
+        const afterCalls: OnExecuteDoneHook<PluginsContext>[] = [];
         let context = args.contextValue || {};
 
         for (const onExecute of beforeCallbacks.execute) {
@@ -460,12 +463,12 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
           contextValue: context,
         });
 
-        const onNextHandler: OnExecuteDoneHookResultOnNextHook[] = [];
+        const onNextHandler: OnExecuteDoneHookResultOnNextHook<PluginsContext>[] = [];
         const onEndHandler: OnExecuteDoneHookResultOnEndHook[] = [];
 
         for (const afterCb of afterCalls) {
           const hookResult = afterCb({
-            args,
+            args: args as TypedExecutionArgs<PluginsContext>,
             result,
             setResult: newResult => {
               result = newResult;
@@ -485,7 +488,7 @@ export function createEnvelopOrchestrator<PluginsContext = any>(plugins: Plugin[
           result = mapAsyncIterator(result, async result => {
             for (const onNext of onNextHandler) {
               await onNext({
-                args,
+                args: args as TypedExecutionArgs<PluginsContext>,
                 result,
                 setResult: newResult => (result = newResult),
               });
