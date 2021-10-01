@@ -2709,10 +2709,10 @@
   dependencies:
     i18next "^19.7.0"
 
-"@types/ioredis@^4.27.2":
-  version "4.27.2"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.27.2.tgz#067d0e361d7a01f6231fa6b9c6f08846102ba71e"
-  integrity sha512-/HXAbeJOR4Ub1O0XVlOFxrRTf2Yeq7BSre3qGoBvTTxN29tSmQPPwIYYxyzm2SkNgvx0Re9ahqCVanOVHqAARg==
+"@types/ioredis@4.27.4":
+  version "4.27.4"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.27.4.tgz#2caf9d0222640c9d7ce278fca2f9892c1323f9c8"
+  integrity sha512-uTAA/woL//GxXQI1e9FuUoDZCpP8yn5LXQdea1IEFyLtb8GP2w3HfOE+SqglF6QSAp/3cZLWzrMhHqWSYI3bfg==
   dependencies:
     "@types/node" "*"
 
@@ -7069,7 +7069,7 @@ invariant@^2.2.4:
   dependencies:
     loose-envify "^1.0.0"
 
-ioredis-mock@^5.6.0:
+ioredis-mock@5.6.0:
   version "5.6.0"
   resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-5.6.0.tgz#f60f9fbc3a53b50f567be9369e2b211ed52c0653"
   integrity sha512-Ow+tyKdijg/gA2gSEv7lq8dLp6bO7FnwDXbJ9as37NF23XNRGMLzBc7ITaqMydfrbTodWnLcE2lKEaBs7SBpyA==
