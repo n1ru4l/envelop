@@ -300,7 +300,7 @@ const getEnveloped = envelop({
 
 Want a global cache on Redis?
 
-Maybe you are in a server-less environment and the In-Memory Cache isn't an option.
+Maybe you are in a server-less environment and the In-Memory Cache isn't an option. Also, when having multiple server replicas, you might want to have a shared cache between all the replicas.
 
 ```bash
 yarn add @envelop/response-cache-redis
