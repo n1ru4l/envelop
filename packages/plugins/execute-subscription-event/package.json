@@ -7,7 +7,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/dotansimha/envelop.git",
-    "directory": "packages/plugins/disable-introspection"
+    "directory": "packages/plugins/execute-subscription-event"
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
