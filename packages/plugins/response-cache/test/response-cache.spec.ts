@@ -174,6 +174,7 @@ describe('useResponseCache', () => {
         ],
       },
     ]);
+
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         type Query {
@@ -1145,5 +1146,187 @@ describe('useResponseCache', () => {
     jest.advanceTimersByTime(201);
     await testInstance.execute(userQuery);
     expect(userSpy).toHaveBeenCalledTimes(2);
+  });
+
+  test('should not cache query when data is null', async () => {
+    const spy = jest.fn(() => null);
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+      },
+    });
+
+    const testInstance = createTestkit([useResponseCache({})], schema);
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+        }
+      }
+    `;
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(4);
+  });
+
+  test('should not cache query when errors', async () => {
+    const spy = jest.fn(() => {
+      throw new Error('Do not cache an error');
+    });
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+      },
+    });
+
+    const testInstance = createTestkit([useResponseCache({})], schema);
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+        }
+      }
+    `;
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(4);
+  });
+
+  test('should not purge cache on mutation when error', async () => {
+    const spy = jest.fn(() => [
+      {
+        id: 1,
+        name: 'User 1',
+        comments: [
+          {
+            id: 1,
+            text: 'Comment 1 of User 1',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'User 2',
+        comments: [
+          {
+            id: 2,
+            text: 'Comment 2 of User 2',
+          },
+        ],
+      },
+    ]);
+
+    const errorSpy = jest.fn(() => {
+      throw new Error('could not get name');
+    });
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type Mutation {
+          updateUser(id: ID!): User!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+        Mutation: {
+          updateUser(_, { id }) {
+            return {
+              id,
+              name: errorSpy,
+            };
+          },
+        },
+      },
+    });
+
+    const testInstance = createTestkit([useResponseCache({ includeExtensionMetadata: true })], schema);
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+          comments {
+            id
+            text
+          }
+        }
+      }
+    `;
+
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    await testInstance.execute(
+      /* GraphQL */ `
+        mutation test($id: ID!) {
+          updateUser(id: $id) {
+            id
+            name
+          }
+        }
+      `,
+      {
+        id: 1,
+      }
+    );
+
+    expect(errorSpy).toHaveBeenCalledTimes(1);
+
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 });

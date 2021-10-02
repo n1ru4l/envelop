@@ -194,6 +194,18 @@ export function useResponseCache({
               return;
             }
 
+            if (result?.data === null || result?.data === undefined) {
+              // eslint-disable-next-line no-console
+              console.warn('[useResponseCache] Failed to invalidate due to missing data');
+              return;
+            }
+
+            if (result?.errors) {
+              // eslint-disable-next-line no-console
+              console.warn('[useResponseCache] Failed to invalidate due to errors');
+              return;
+            }
+
             cache.invalidate(context.identifier.values());
             if (includeExtensionMetadata) {
               setResult({
@@ -265,6 +277,18 @@ export function useResponseCache({
               }
 
               if (context.skip) {
+                return;
+              }
+
+              if (result?.errors) {
+                // eslint-disable-next-line no-console
+                console.warn('[useResponseCache] Failed to invalidate due to errors');
+                return;
+              }
+
+              if (result?.data === null || result?.data === undefined) {
+                // eslint-disable-next-line no-console
+                console.warn('[useResponseCache] Failed to cache due to missing data');
                 return;
               }
 
