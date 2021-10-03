@@ -24,6 +24,7 @@ export type TuplifyUnion<T, L = LastOf<T>, N = [T] extends [never] ? true : fals
   : Push<TuplifyUnion<Exclude<T, L>>, L>;
 
 export type Unarray<T> = T extends Array<infer U> ? U : T;
+export type NullableArray<T> = T extends Array<infer U> ? (U | null | undefined)[] : T[];
 
 export type ArbitraryObject = Record<string | number | symbol, any>;
 export type PromiseOrValue<T> = T | Promise<T>;

@@ -1,3 +1,4 @@
+import { useLogger, enableIf } from '@envelop/core';
 import { getIntrospectionQuery, parse } from 'graphql';
 import { isIntrospectionDocument } from '../src/utils';
 
@@ -25,6 +26,18 @@ describe('Utils', () => {
       const doc = `query { test: __schema { test }}`;
 
       expect(isIntrospectionDocument(parse(doc))).toBeTruthy();
+    });
+  });
+
+  describe('enableIf', () => {
+    it('Should return a plugin', () => {
+      const plugin = enableIf(true, useLogger());
+      expect(plugin).toBeTruthy();
+    });
+
+    it('Should return null', () => {
+      const plugin = enableIf(false, useLogger());
+      expect(plugin).toBeFalsy();
     });
   });
 });

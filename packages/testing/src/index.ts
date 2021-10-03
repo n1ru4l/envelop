@@ -1,6 +1,6 @@
 import { DocumentNode, ExecutionResult, getOperationAST, GraphQLError, GraphQLSchema, print } from 'graphql';
 import { useSchema, envelop } from '@envelop/core';
-import { GetEnvelopedFn, Plugin, isAsyncIterable } from '@envelop/types';
+import { GetEnvelopedFn, Plugin, isAsyncIterable, NullableArray } from '@envelop/types';
 import { mapSchema as cloneSchema, isDocumentNode } from '@graphql-tools/utils';
 
 export type ModifyPluginsFn = (plugins: Plugin<any>[]) => Plugin<any>[];
@@ -84,7 +84,10 @@ export type TestkitInstance = {
   wait: (ms: number) => Promise<void>;
 };
 
-export function createTestkit(pluginsOrEnvelop: GetEnvelopedFn<any> | Plugin<any>[], schema?: GraphQLSchema): TestkitInstance {
+export function createTestkit(
+  pluginsOrEnvelop: GetEnvelopedFn<any> | NullableArray<Array<Plugin<any>>>,
+  schema?: GraphQLSchema
+): TestkitInstance {
   const toGraphQLErrorOrThrow = (thrownThing: unknown): GraphQLError => {
     if (thrownThing instanceof GraphQLError) {
       return thrownThing;
