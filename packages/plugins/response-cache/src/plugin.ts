@@ -14,6 +14,7 @@ import {
 import jsonStableStringify from 'fast-json-stable-stringify';
 import type { Cache, CacheEntityRecord } from './cache';
 import { createInMemoryCache } from './in-memory-cache';
+import { isIntrospectionDocument } from '../../../core/src/utils';
 
 const contextSymbol = Symbol('responseCache');
 const rawDocumentStringSymbol = Symbol('rawDocumentString');
@@ -157,6 +158,7 @@ export function useResponseCache({
       return function onParseEnd(ctx) {
         if (ctx.result && 'kind' in ctx.result) {
           const source = parseCtx.params.source;
+
           const rawDocumentString = typeof source === 'string' ? source : source.body;
           ctx.extendContext({
             [rawDocumentStringSymbol]: rawDocumentString,
@@ -167,6 +169,10 @@ export function useResponseCache({
     async onExecute(ctx) {
       const identifier = new Map<string, CacheEntityRecord>();
       const types = new Set<string>();
+
+      if (isIntrospectionDocument(ctx.args.document)) {
+        return;
+      }
 
       const context: Context = {
         identifier,

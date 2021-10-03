@@ -1,6 +1,8 @@
+import { getIntrospectionQuery } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useResponseCache, createInMemoryCache } from '../src';
+import { useSchema } from '@envelop/core';
 
 describe('useResponseCache', () => {
   beforeEach(() => jest.useRealTimers());
@@ -1328,5 +1330,68 @@ describe('useResponseCache', () => {
 
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('Should not cache an introspection query', async () => {
+    const query = getIntrospectionQuery();
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          user: User!
+        }
+        type User {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          user: {
+            id: 1,
+            name: 'User 1',
+          },
+        },
+      },
+    });
+
+    const cache = createInMemoryCache();
+    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+    const introspectionQueryResult = await testInstance.execute(query);
+
+    const changedSchema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          user: User!
+          users: [User]!
+        }
+        type User {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          user: {
+            id: 1,
+            name: 'User 1',
+          },
+          users: [
+            { id: 1, name: 'User 1' },
+            { id: 2, name: 'User 2' },
+            { id: 3, name: 'User 3' },
+          ],
+        },
+      },
+    });
+
+    // we modify the schema, but use the same cache instance
+    const testInstanceWithChangedSchema = createTestkit([useResponseCache({ cache })], changedSchema);
+
+    // subsequent introspection queries should return different results
+    // since the schema has been changed
+    const changedIntrospectionQuery = await testInstanceWithChangedSchema.execute(query);
+
+    expect(changedIntrospectionQuery).not.toEqual(introspectionQueryResult);
   });
 });
