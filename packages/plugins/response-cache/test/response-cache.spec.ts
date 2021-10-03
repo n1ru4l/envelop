@@ -1332,7 +1332,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
-  it('Should not cache an introspection query', async () => {
+  it('Should not cache an introspection query by default', async () => {
     const query = getIntrospectionQuery();
 
     const schema = makeExecutableSchema({
@@ -1393,5 +1393,130 @@ describe('useResponseCache', () => {
     const changedIntrospectionQuery = await testInstanceWithChangedSchema.execute(query);
 
     expect(changedIntrospectionQuery).not.toEqual(introspectionQueryResult);
+  });
+
+  it('Should not cache an introspection query if cacheIntrospections is false', async () => {
+    const query = getIntrospectionQuery();
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          user: User!
+        }
+        type User {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          user: {
+            id: 1,
+            name: 'User 1',
+          },
+        },
+      },
+    });
+
+    const cache = createInMemoryCache();
+    const testInstance = createTestkit([useResponseCache({ cache, cacheIntrospections: false })], schema);
+    const introspectionQueryResult = await testInstance.execute(query);
+
+    const changedSchema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          user: User!
+          users: [User]!
+        }
+        type User {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          user: {
+            id: 1,
+            name: 'User 1',
+          },
+          users: [
+            { id: 1, name: 'User 1' },
+            { id: 2, name: 'User 2' },
+            { id: 3, name: 'User 3' },
+          ],
+        },
+      },
+    });
+
+    // we modify the schema, but use the same cache instance
+    const testInstanceWithChangedSchema = createTestkit([useResponseCache({ cache, cacheIntrospections: false })], changedSchema);
+
+    // subsequent introspection queries should return different results
+    // since the schema has been changed
+    const changedIntrospectionQuery = await testInstanceWithChangedSchema.execute(query);
+
+    expect(changedIntrospectionQuery).not.toEqual(introspectionQueryResult);
+  });
+  it('Should cache an introspection query if cacheIntrospections is true', async () => {
+    const query = getIntrospectionQuery();
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          user: User!
+        }
+        type User {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          user: {
+            id: 1,
+            name: 'User 1',
+          },
+        },
+      },
+    });
+
+    const cache = createInMemoryCache();
+    const testInstance = createTestkit([useResponseCache({ cache, cacheIntrospections: true })], schema);
+    const introspectionQueryResult = await testInstance.execute(query);
+
+    const changedSchema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          user: User!
+          users: [User]!
+        }
+        type User {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          user: {
+            id: 1,
+            name: 'User 1',
+          },
+          users: [
+            { id: 1, name: 'User 1' },
+            { id: 2, name: 'User 2' },
+            { id: 3, name: 'User 3' },
+          ],
+        },
+      },
+    });
+
+    // we modify the schema, but use the same cache instance
+    const testInstanceWithChangedSchema = createTestkit([useResponseCache({ cache, cacheIntrospections: true })], changedSchema);
+
+    // subsequent introspection queries should return the same result
+    // even though the schema has been changed because we elected to cacheIntrospections
+    const shouldBeCachedIntrospection = await testInstanceWithChangedSchema.execute(query);
+
+    expect(shouldBeCachedIntrospection).toEqual(introspectionQueryResult);
   });
 });

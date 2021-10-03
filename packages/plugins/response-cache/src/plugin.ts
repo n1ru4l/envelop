@@ -90,6 +90,11 @@ export type UseResponseCacheParameter<C = any> = {
    */
   invalidateViaMutation?: boolean;
   /**
+   * Whether Introspection query results should be cached.
+   * Defaults to `false`
+   */
+  cacheIntrospections?: boolean;
+  /**
    * Customize the behavior how the response cache key is computed from the document, variable values and sessionId.
    * Defaults to `defaultBuildResponseCacheKey`
    */
@@ -137,6 +142,7 @@ export function useResponseCache({
   ttlPerSchemaCoordinate,
   idFields = ['id'],
   invalidateViaMutation = true,
+  cacheIntrospections = false,
   buildResponseCacheKey = defaultBuildResponseCacheKey,
   getDocumentStringFromContext = defaultGetDocumentStringFromContext,
   // eslint-disable-next-line dot-notation
@@ -170,7 +176,7 @@ export function useResponseCache({
       const identifier = new Map<string, CacheEntityRecord>();
       const types = new Set<string>();
 
-      if (isIntrospectionDocument(ctx.args.document)) {
+      if (!cacheIntrospections && isIntrospectionDocument(ctx.args.document)) {
         return;
       }
 

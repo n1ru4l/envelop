@@ -191,7 +191,9 @@ const getEnveloped = envelop({
 });
 ```
 
-### Prevent caching of sensitive information
+### Prevent caching of Introspection queries
+
+By default, Introspection queries are not cached which is helpful when testing the cache behavior in development while the schema may be non yet finalized.
 
 ```ts
 import { envelop } from '@envelop/core';
@@ -201,9 +203,43 @@ const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useResponseCache({
-      ttl: 2000,
-      // never cache responses that include a RefreshToken object type.
-      ignoredTypes: ['RefreshToken'],
+      cacheIntrospections: false, // this is default behavior
+    }),
+  ],
+});
+```
+
+### Cache Introspection queries
+
+When in production and the schema is unlikely to change, then you my want to cache Inspection Queries.
+
+Note that if subsequent schema changes happen, you will need to invalidate or flush the cache to refresh the schema.
+
+```ts
+import { envelop } from '@envelop/core';
+import { useResponseCache } from '@envelop/response-cache';
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useResponseCache({
+      cacheIntrospections: true,
+    }),
+  ],
+});
+```
+
+### Cache with maximum TTL
+
+```ts
+import { envelop } from '@envelop/core';
+import { useResponseCache } from '@envelop/response-cache';
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useResponseCache({
+      ttl: 2000, // cached execution results become stale after 2 seconds
     }),
   ],
 });
