@@ -92,7 +92,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('should reuse cache', async () => {
+  it('Should reuse cache', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -153,7 +153,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
-  test('should purge cache on mutation', async () => {
+  it('Should purge cache on mutation', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -257,7 +257,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('should purge cache on demand (typename+id)', async () => {
+  it('Should purge cache on demand (typename+id)', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -342,7 +342,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('should purge cache on demand (typename)', async () => {
+  it('Should purge cache on demand (typename)', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -427,7 +427,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('should consider variables when saving response', async () => {
+  it('Should consider variables when saving response', async () => {
     const spy = jest.fn((_, { limit }: { limit: number }) =>
       [
         {
@@ -500,7 +500,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('should purge response after it expired', async () => {
+  it('Should purge response after it expired', async () => {
     jest.useFakeTimers();
 
     const spy = jest.fn(() => [
@@ -584,7 +584,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('should cache responses based on session', async () => {
+  it('Should cache responses based on session', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -682,7 +682,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('should skip cache of ignored types', async () => {
+  it('Should skip cache of ignored types', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -1150,7 +1150,7 @@ describe('useResponseCache', () => {
     expect(userSpy).toHaveBeenCalledTimes(2);
   });
 
-  test('should not cache query when data is null', async () => {
+  it('Should not cache query when data is null', async () => {
     const spy = jest.fn(() => null);
 
     const schema = makeExecutableSchema({
@@ -1188,7 +1188,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(4);
   });
 
-  test('should not cache query when errors', async () => {
+  it('Should not cache query when errors', async () => {
     const spy = jest.fn(() => {
       throw new Error('Do not cache an error');
     });
@@ -1228,7 +1228,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(4);
   });
 
-  test('should not purge cache on mutation when error', async () => {
+  it('Should not purge cache on mutation when error', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
