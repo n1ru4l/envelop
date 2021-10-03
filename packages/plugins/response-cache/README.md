@@ -191,6 +191,45 @@ const getEnveloped = envelop({
 });
 ```
 
+### Customize if result should be cached
+
+You can define s custom function used to check if the result should be cached.
+
+This is useful for advanced use-cases. E.g. if you want to
+cache Introspection queries or choose if results with certain error types
+should be cached.
+
+By default it used the `defaultShouldCacheResult` function:
+
+- Introspection queries are not cached.
+- Neither are any results with errors (unexpected, EnvelopError or GraphQLError) or
+- Results will missing data
+
+The `ShouldCacheResultFunction` can access the `DocumentNode` during the Parse phase and
+the `ExecutionResult` before or after the Execution phase.
+
+```ts
+import { envelop } from '@envelop/core';
+import { useResponseCache } from '@envelop/response-cache';
+
+const myCustomShouldCacheResult: ShouldCacheResultFunction = (params: {
+  cacheIntrospections?: Boolean;
+  documentNode?: DocumentNode;
+  result?: ExecutionResult;
+}): Boolean => {
+  return true; // if the ExecutionResult should be cached
+};
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useResponseCache({
+      shouldCacheResult = myCustomShouldCacheResult,
+    }),
+  ],
+});
+```
+
 ### Prevent caching of Introspection queries
 
 By default, Introspection queries are not cached which is helpful when testing the cache behavior in development while the schema may be non yet finalized.
@@ -208,6 +247,8 @@ const getEnveloped = envelop({
   ],
 });
 ```
+
+> Note: The `cacheIntrospections` is used by the `shouldCacheResult` function, so if you customize that behavior, you will need to handle the Introspection query caching logic.
 
 ### Cache Introspection queries
 
@@ -228,6 +269,8 @@ const getEnveloped = envelop({
   ],
 });
 ```
+
+> Note: The `cacheIntrospections` is used by the `shouldCacheResult` function, so if you customize that behavior, you will need to handle the Introspection query caching logic.
 
 ### Cache with maximum TTL
 

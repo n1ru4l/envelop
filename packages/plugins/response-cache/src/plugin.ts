@@ -10,6 +10,7 @@ import {
   GraphQLSchema,
   defaultFieldResolver,
   ExecutionArgs,
+  ExecutionResult,
 } from 'graphql';
 import jsonStableStringify from 'fast-json-stable-stringify';
 import type { Cache, CacheEntityRecord } from './cache';
@@ -44,6 +45,12 @@ export type BuildResponseCacheKeyFunction = (params: {
 }) => string;
 
 export type GetDocumentStringFromContextFunction = (params: DefaultContext) => Maybe<string>;
+
+export type ShouldCacheResultFunction = (params: {
+  cacheIntrospections?: Boolean;
+  documentNode?: DocumentNode;
+  result?: ExecutionResult;
+}) => Boolean;
 
 export type UseResponseCacheParameter<C = any> = {
   cache?: Cache;
@@ -111,6 +118,12 @@ export type UseResponseCacheParameter<C = any> = {
    * Defaults to `true` if `process.env["NODE_ENV"]` is set to `"development"`, otherwise `false`.
    */
   includeExtensionMetadata?: boolean;
+  /**
+   * Checks if the execution result should be cached or ignored. By default, any execution that
+   * raises any error, unexpected ot EnvelopError or GraphQLError are ignored.
+   * Use this function to customize the behavior, such as caching results that have an EnvelopError.
+   */
+  shouldCacheResult?: ShouldCacheResultFunction;
 };
 
 /**
@@ -129,6 +142,45 @@ export const defaultBuildResponseCacheKey: BuildResponseCacheKeyFunction = param
     )
     .digest('base64');
 
+/**
+ * Default function used to check if the result should be cached.
+ * It is exported here for advanced use-cases. E.g. if you want to
+ * cache Introspection queries or choose if results with certain error types
+ * should be cached.
+ *
+ * By default, introspection queries are not cached. Neither are any results
+ * with errors (unexpected, EnvelopError or GraphQLError) or results will missing data.
+ */
+export const defaultShouldCacheResult: ShouldCacheResultFunction = (params: {
+  cacheIntrospections?: Boolean;
+  documentNode?: DocumentNode;
+  result?: ExecutionResult;
+}): Boolean => {
+  if (params.documentNode) {
+    if (!params.cacheIntrospections && isIntrospectionDocument(params.documentNode)) {
+      // eslint-disable-next-line no-console
+      console.warn('[useResponseCache] Did not cache IntrospectionQuery');
+      return false;
+    }
+  } else {
+    if (params.result) {
+      if (params.result?.errors) {
+        // eslint-disable-next-line no-console
+        console.warn('[useResponseCache] Failed to cache or invalidate due to errors');
+        return false;
+      }
+
+      if (params.result?.data === null || params.result?.data === undefined) {
+        // eslint-disable-next-line no-console
+        console.warn('[useResponseCache] Failed to cache due to missing data');
+        return false;
+      }
+    }
+  }
+
+  return true;
+};
+
 export const defaultGetDocumentStringFromContext: GetDocumentStringFromContextFunction = context =>
   context[rawDocumentStringSymbol as any] as any;
 
@@ -145,6 +197,7 @@ export function useResponseCache({
   cacheIntrospections = false,
   buildResponseCacheKey = defaultBuildResponseCacheKey,
   getDocumentStringFromContext = defaultGetDocumentStringFromContext,
+  shouldCacheResult = defaultShouldCacheResult,
   // eslint-disable-next-line dot-notation
   includeExtensionMetadata = typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false,
 }: UseResponseCacheParameter = {}): Plugin {
@@ -176,7 +229,7 @@ export function useResponseCache({
       const identifier = new Map<string, CacheEntityRecord>();
       const types = new Set<string>();
 
-      if (!cacheIntrospections && isIntrospectionDocument(ctx.args.document)) {
+      if (!shouldCacheResult({ cacheIntrospections, documentNode: ctx.args.document })) {
         return;
       }
 
@@ -206,15 +259,7 @@ export function useResponseCache({
               return;
             }
 
-            if (result?.data === null || result?.data === undefined) {
-              // eslint-disable-next-line no-console
-              console.warn('[useResponseCache] Failed to invalidate due to missing data');
-              return;
-            }
-
-            if (result?.errors) {
-              // eslint-disable-next-line no-console
-              console.warn('[useResponseCache] Failed to invalidate due to errors');
+            if (!shouldCacheResult({ result })) {
               return;
             }
 
@@ -292,15 +337,7 @@ export function useResponseCache({
                 return;
               }
 
-              if (result?.errors) {
-                // eslint-disable-next-line no-console
-                console.warn('[useResponseCache] Failed to invalidate due to errors');
-                return;
-              }
-
-              if (result?.data === null || result?.data === undefined) {
-                // eslint-disable-next-line no-console
-                console.warn('[useResponseCache] Failed to cache due to missing data');
+              if (!shouldCacheResult({ result })) {
                 return;
               }
 
