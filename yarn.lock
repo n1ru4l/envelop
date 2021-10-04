@@ -2709,10 +2709,10 @@
   dependencies:
     i18next "^19.7.0"
 
-"@types/ioredis@4.27.5":
-  version "4.27.5"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.27.5.tgz#f3bd216d8fdd02e831fbac0fbdcf418a4a46b0f9"
-  integrity sha512-RA8Ba0MPNjCSwukqJlapzu4KRT/MokzauUHbHAfOJtgw93pZ0vX/BBmYvodp2kzIU5bwYycH9n6pGBJaysPqxQ==
+"@types/ioredis@4.27.6":
+  version "4.27.6"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.27.6.tgz#06f2826ca9bcf4e9c179cd11417a4d0413903cba"
+  integrity sha512-3FeeDlVQ2sdbvU436XnZzOiDMMgFbKfIsiUF2BnJnH7xxqCbJ1teJwfcu9fLwnfmV0qH2W1Vg3jFrtOehNIkMA==
   dependencies:
     "@types/node" "*"
 
@@ -12149,10 +12149,10 @@ tsup@4.11.2:
     sucrase "^3.18.1"
     tree-kill "^1.2.2"
 
-tsup@5.2.1:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/tsup/-/tsup-5.2.1.tgz#4ad4debd1d7852e8c4bb40075ebd2ee85efe7715"
-  integrity sha512-eQmRfKoHIiTFg38Dh2MARCx3J0+P+wbwB5iSHcXTwsnVR9csGLpln5qqBjdgyAGV1VTbOmyU37veCi2eA+wuqA==
+tsup@5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/tsup/-/tsup-5.3.0.tgz#a62bf44922a2234a6c0b7499cf4237ca12eeb9de"
+  integrity sha512-/LZTuAj1Lhh7iXBhtWTWjPodtmOkg6HnhdWo+sl4JftJTAJqnxnHerOiFYjPeA5RIhcaFc2w2Sho1rGLJ7rLhw==
   dependencies:
     cac "^6.7.2"
     chalk "^4.1.0"
