@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { Plugin } from '@envelop/types';
-import { envelopIsIntrospectionSymbol, isIntrospectionOperationString } from '..';
+import { envelopIsIntrospectionSymbol, isIntrospectionOperationString } from '../utils';
 
 type LoggerPluginOptions = {
   logFn: typeof console.log;
