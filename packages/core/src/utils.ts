@@ -16,7 +16,6 @@ import {
   PolymorphicExecuteArguments,
   PolymorphicSubscribeArguments,
   SubscribeFunction,
-  Plugin,
 } from '@envelop/types';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 
@@ -132,11 +131,4 @@ export async function* errorAsyncIterator<TInput>(
   } catch (err: unknown) {
     onError(err);
   }
-}
-
-/**
- * Utility function to enable a plugin.
- */
-export function enableIf(condition: boolean, plugin: Plugin): Plugin | null {
-  return condition ? plugin : null;
 }

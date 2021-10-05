@@ -1,13 +1,13 @@
-import { GetEnvelopedFn, ComposeContext, Plugin, ArbitraryObject, Unarray, NullableArray } from '@envelop/types';
+import { GetEnvelopedFn, ComposeContext, Plugin, ArbitraryObject } from '@envelop/types';
+import { isPluginEnabled, PluginOrDisabledPlugin } from './enable-if';
 import { createEnvelopOrchestrator, EnvelopOrchestrator } from './orchestrator';
 import { traceOrchestrator } from './traced-orchestrator';
 
 export function envelop<PluginsType extends Plugin<any>[]>(options: {
-  plugins: NullableArray<PluginsType>;
+  plugins: Array<PluginOrDisabledPlugin>;
   enableInternalTracing?: boolean;
 }): GetEnvelopedFn<ComposeContext<PluginsType>> {
-  const plugins = options.plugins.filter(Boolean) as PluginsType;
-
+  const plugins = options.plugins.filter(isPluginEnabled);
   let orchestrator = createEnvelopOrchestrator<ComposeContext<PluginsType>>(plugins);
 
   if (options.enableInternalTracing) {
