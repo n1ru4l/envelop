@@ -1,6 +1,7 @@
 import { useOperationFieldPermissions } from '../src';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import { getIntrospectionQuery } from 'graphql';
 
 const schema = makeExecutableSchema({
   typeDefs: [
@@ -41,6 +42,21 @@ const query = /* GraphQL */ `
 `;
 
 describe('useOperationPermissions', () => {
+  it('should skip for introspection query', async () => {
+    const kit = createTestkit(
+      [
+        useOperationFieldPermissions({
+          getPermissions: () => 'boop',
+        }),
+      ],
+      schema
+    );
+
+    const result = await kit.execute(getIntrospectionQuery());
+    assertSingleExecutionValue(result);
+    expect(result.errors).toBeUndefined();
+  });
+
   it('allow everything', async () => {
     const kit = createTestkit(
       [
@@ -55,6 +71,7 @@ describe('useOperationPermissions', () => {
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
   });
+
   it('allow only one field', async () => {
     const kit = createTestkit(
       [
