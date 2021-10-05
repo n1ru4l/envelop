@@ -1,4 +1,4 @@
-import { Plugin, useExtendContext } from '@envelop/core';
+import { Plugin, useExtendContext, isIntrospectionDocument } from '@envelop/core';
 import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
 import {
   GraphQLType,
@@ -59,6 +59,10 @@ type OperationScopeRuleOptions = {
 const OperationScopeRule =
   (options: OperationScopeRuleOptions): ExtendedValidationRule =>
   (context, executionArgs) => {
+    if (isIntrospectionDocument(executionArgs.document)) {
+      return {};
+    }
+
     const permissionContext = getContext(executionArgs.contextValue);
 
     const handleField = (node: FieldNode, objectType: GraphQLObjectType) => {
