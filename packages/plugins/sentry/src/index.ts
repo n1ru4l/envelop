@@ -3,7 +3,7 @@
 /* eslint-disable dot-notation */
 import { Plugin, OnResolverCalledHook, isAsyncIterable } from '@envelop/types';
 import * as Sentry from '@sentry/node';
-import { Span } from '@sentry/types';
+import { Span, Scope } from '@sentry/types';
 import { ExecutionArgs, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
 
 export type SentryPluginOptions = {
@@ -43,6 +43,10 @@ export type SentryPluginOptions = {
    * Adds custom tags to every Transaction.
    */
   appendTags?: (args: ExecutionArgs) => Record<string, unknown>;
+  /**
+   * Callback to set context information onto the scope.
+   */
+  configureScope?: (args: ExecutionArgs, scope: Sentry.Scope) => void;
   /**
    * Produces a name of Transaction (only when "renameTransaction" or "startTransaction" are enabled) and description of created Span.
    *
@@ -129,6 +133,10 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
       }
 
       rootSpan.setData('document', document);
+
+      if (options.configureScope) {
+        Sentry.configureScope(scope => options.configureScope!(args, scope));
+      }
 
       const onResolverCalled: OnResolverCalledHook | undefined = trackResolvers
         ? ({ args: resolversArgs, info }) => {
