@@ -2580,12 +2580,13 @@
   resolved "https://registry.yarnpkg.com/@types/component-emitter/-/component-emitter-1.2.10.tgz#ef5b1589b9f16544642e473db5ea5639107ef3ea"
   integrity sha512-bsjleuRKWmGqajMerkzox19aGbscQX5rmmvvXl3wlIp5gMG1HgkiwPxsN5p070fBDKTNSPgojVbuY1+HWMbFhg==
 
-"@types/concurrently@6.2.1":
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/@types/concurrently/-/concurrently-6.2.1.tgz#48540055add9d76c55d444aaaf6f4c964c405452"
-  integrity sha512-l+AH7GuHYSgIYoXAufh7P9/oYzRobM+m863XobAARzFiafcGdCjMQQ1grLbVc69+AJTBbO3S8mtt2UPsipk6WA==
+"@types/concurrently@6.3.0":
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/@types/concurrently/-/concurrently-6.3.0.tgz#ef6956d0e120f78d1da93d4435da6fe872256d04"
+  integrity sha512-R0M9Dt330vtNgNlBYQYniDfI3I3Sk6cu27M1EKS5VFoio2rZqTMuOBGe9DX+ISM0B6y+RGrgtpWCv2k2VBLtbQ==
   dependencies:
     "@types/node" "*"
+    chalk "^4.1.0"
 
 "@types/connect@*":
   version "3.4.34"
