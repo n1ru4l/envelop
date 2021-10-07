@@ -12584,10 +12584,10 @@ use-debounce@^7.0.0:
   resolved "https://registry.yarnpkg.com/use-debounce/-/use-debounce-7.0.0.tgz#00a67d23d4fe09905e11145a99278da06c01c880"
   integrity sha512-4fvxEEs7ztdNMh+c497HAgysdq2+Ascem6EaDANGlCIap1JzqfL03Xw8xkYc2lShfXm4uO6PA6V5zcXN7gJdFA==
 
-use-http@1.0.24:
-  version "1.0.24"
-  resolved "https://registry.yarnpkg.com/use-http/-/use-http-1.0.24.tgz#c94a8ec0d653eca5f0a907ebf64b3bb0d9a3b9eb"
-  integrity sha512-JPAfcOWEyXdTolQSlmbVYhbLLrIw7rscFFY23R/OZpcZ3C1F0avQLUEi6eMIMpBcvo4HZk4aDd0rg8zVpYvjXA==
+use-http@1.0.26:
+  version "1.0.26"
+  resolved "https://registry.yarnpkg.com/use-http/-/use-http-1.0.26.tgz#04faaa21a0389ff177531c7dfc2d73f021e6f3c4"
+  integrity sha512-yB0dXX2S0Doyiti/kHqMsvlShL3tlI8YkoEARao1OVFKrGvyXejmWvrYkEI+oVTPvUqGzOsHbNROY0qKDC88Pg==
   dependencies:
     urs "^0.0.8"
     use-ssr "^1.0.24"
