@@ -13191,10 +13191,10 @@ yup@^0.31.0:
     property-expr "^2.0.4"
     toposort "^2.0.2"
 
-zustand@3.5.12, zustand@^3.5.12:
-  version "3.5.12"
-  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.5.12.tgz#407a8685eb286a32d7f560e74966993bbff1dae8"
-  integrity sha512-Cv9fX/yM5HXYODkn3Q/HMmMofnmZw3yqM73VT/3rQEvI/04Yl0OFNO24qMofhN82xTPWcCffkGPFCMq8r67Whg==
+zustand@3.5.13, zustand@^3.5.12:
+  version "3.5.13"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.5.13.tgz#fd1af8c14a23ec7efdeb9ab167b8e69a8fc0980a"
+  integrity sha512-orO/XcYwSWffsrPVTdCtuKM/zkUaOIyKDasOk/lecsD3R0euELsj+cB65uKZ1KyinrK2STHIuUhRoLpH8QprQg==
 
 zwitch@^1.0.0:
   version "1.0.5"
