@@ -5378,7 +5378,7 @@ esbuild-windows-arm64@0.13.0:
   resolved "https://registry.yarnpkg.com/esbuild-windows-arm64/-/esbuild-windows-arm64-0.13.0.tgz#02f1acc106e0afadc95f364af82010d52ea8e85d"
   integrity sha512-dPchHf3BELctuyTEoZ7bNvmBplMHLulmnjz4dBFZFlVkLY/TNMuwWrQDVH98UkFRWqhtuqI1PnP4W9rw/cxFDQ==
 
-esbuild@0.13.4, esbuild@^0.11.12, esbuild@^0.12.28, esbuild@^0.12.9, esbuild@^0.13.0:
+esbuild@0.13.4, esbuild@^0.11.12, esbuild@^0.12.9, esbuild@^0.13.0, esbuild@^0.13.4:
   version "0.13.0"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.13.0.tgz#998858eaa6338055b33be64253da544a865d23da"
   integrity sha512-J5mHgg+AYY002TYGvrecLXyMJSPBju2xd9vh1iyj+xjtOmHb9dmsGtqCziDwxlwqJiysMYRTXJ+EeDz4WYfFKA==
@@ -12151,16 +12151,16 @@ tsup@4.11.2:
     sucrase "^3.18.1"
     tree-kill "^1.2.2"
 
-tsup@5.3.0:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/tsup/-/tsup-5.3.0.tgz#a62bf44922a2234a6c0b7499cf4237ca12eeb9de"
-  integrity sha512-/LZTuAj1Lhh7iXBhtWTWjPodtmOkg6HnhdWo+sl4JftJTAJqnxnHerOiFYjPeA5RIhcaFc2w2Sho1rGLJ7rLhw==
+tsup@5.4.0:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/tsup/-/tsup-5.4.0.tgz#6c68b1779053cfdc7349ccef3478e0c6b4ead61b"
+  integrity sha512-wm52TUJzDCvF9dJ3TxYtoJg8L7EjSYsOsH+jZhMMXfk1qZn6CdxFStwzMnwhyducdMBXHQNl7wZn+ioIhJoCHA==
   dependencies:
     cac "^6.7.2"
     chalk "^4.1.0"
     chokidar "^3.5.1"
     debug "^4.3.1"
-    esbuild "^0.12.28"
+    esbuild "^0.13.4"
     execa "^5.0.0"
     globby "^11.0.3"
     joycon "^3.0.1"
