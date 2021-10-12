@@ -45,7 +45,7 @@
     "@graphql-tools/schema": "8.2.0",
     "@types/benchmark": "2.1.1",
     "benchmark": "2.1.4",
-    "ts-node": "10.2.1",
+    "ts-node": "10.3.0",
     "patch-package": "6.4.7",
     "@changesets/cli": "2.17.0",
     "@typescript-eslint/eslint-plugin": "4.33.0",
