@@ -1,5 +1,13 @@
 # @envelop/prometheus
 
+## 4.0.0
+
+### Patch Changes
+
+- Updated dependencies [d65e35d]
+- Updated dependencies [26475c9]
+  - @envelop/core@1.3.0
+
 ## 3.0.0
 
 ### Patch Changes

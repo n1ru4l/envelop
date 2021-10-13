@@ -1,5 +1,18 @@
 # @envelop/core
 
+## 1.3.0
+
+### Minor Changes
+
+- d65e35d: add enableIf utility to enable plugins conditionally
+- 26475c9: useErrorHandler: Pass in the execution arguments to the error handler callbacks.
+
+### Patch Changes
+
+- Updated dependencies [d65e35d]
+- Updated dependencies [26475c9]
+  - @envelop/types@1.2.0
+
 ## 1.2.0
 
 ### Minor Changes
