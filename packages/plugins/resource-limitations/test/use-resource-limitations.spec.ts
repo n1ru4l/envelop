@@ -4,6 +4,8 @@ import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `
+    scalar ConnectionInt
+
     type Query {
       viewer: User
     }
@@ -11,6 +13,7 @@ const schema = makeExecutableSchema({
     type User {
       id: ID!
       repositories(first: Int, last: Int, after: String): RepositoryConnection!
+      repositoriesCustom(first: ConnectionInt, last: ConnectionInt, after: String): RepositoryConnection!
     }
 
     type Repository {
@@ -207,6 +210,29 @@ describe('useResourceLimitations', () => {
       },
     });
   });
+  it('calculates node cost on connections with custom argument types (single)', async () => {
+    const testkit = createTestkit([useResourceLimitations({ argumentTypes: ['ConnectionInt'], extensions: true })], schema);
+    const result = await testkit.execute(/* GraphQL */ `
+      query {
+        viewer {
+          repositoriesCustom(first: 100) {
+            edges {
+              node {
+                name
+              }
+            }
+          }
+        }
+      }
+    `);
+    assertSingleExecutionValue(result);
+    expect(result.errors).toBeUndefined();
+    expect(result.extensions).toEqual({
+      resourceLimitations: {
+        nodeCost: 100,
+      },
+    });
+  });
   it('calculates node cost (nested)', async () => {
     const testkit = createTestkit([useResourceLimitations({ extensions: true })], schema);
     const result = await testkit.execute(/* GraphQL */ `
@@ -273,6 +299,14 @@ describe('useResourceLimitations', () => {
               }
             }
           }
+          # These should not count towards the total due to invalid argument types
+          repositoriesCustom(first: 100) {
+            edges {
+              node {
+                name
+              }
+            }
+          }
         }
       }
     `);
@@ -280,7 +314,7 @@ describe('useResourceLimitations', () => {
     expect(result.errors).toBeUndefined();
     expect(result.extensions).toEqual({
       resourceLimitations: {
-        nodeCost: 1103,
+        nodeCost: 1104,
       },
     });
   });

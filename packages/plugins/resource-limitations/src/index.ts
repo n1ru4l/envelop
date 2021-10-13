@@ -6,11 +6,13 @@ import {
   FieldNode,
   GraphQLError,
   GraphQLField,
+  GraphQLInputType,
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLType,
+  isScalarType,
 } from 'graphql';
 import { getArgumentValues } from 'graphql/execution/values.js';
 
@@ -21,13 +23,16 @@ const getWrappedType = (graphqlType: GraphQLType): Exclude<GraphQLType, GraphQLL
   return graphqlType;
 };
 
-const hasFieldDefConnectionArgs = (field: GraphQLField<any, any>) => {
+const isValidArgType = (type: GraphQLInputType, argumentTypes?: string[]): boolean =>
+  type === GraphQLInt || (isScalarType(type) && !!argumentTypes && argumentTypes.includes(type.name));
+
+const hasFieldDefConnectionArgs = (field: GraphQLField<any, any>, argumentTypes?: string[]) => {
   let hasFirst = false;
   let hasLast = false;
   for (const arg of field.args) {
-    if (arg.name === 'first' && arg.type === GraphQLInt) {
+    if (arg.name === 'first' && isValidArgType(arg.type, argumentTypes)) {
       hasFirst = true;
-    } else if (arg.name === 'last' && arg.type === GraphQLInt) {
+    } else if (arg.name === 'last' && isValidArgType(arg.type, argumentTypes)) {
       hasLast = true;
     } else if (hasLast && hasFirst) {
       break;
@@ -49,6 +54,7 @@ const buildInvalidPaginationRangeErrorMessage = (params: { fieldName: string; ar
 export const defaultNodeCostLimit = 500000;
 
 export type ResourceLimitationValidationRuleParams = {
+  argumentTypes?: string[];
   nodeCostLimit: number;
   reportNodeCost?: (cost: number, executionArgs: ExecutionArgs) => void;
 };
@@ -77,7 +83,7 @@ export const ResourceLimitationValidationRule =
               let nodeCost = 1;
               connectionFieldMap.add(fieldNode);
 
-              const { hasFirst, hasLast } = hasFieldDefConnectionArgs(fieldDef);
+              const { hasFirst, hasLast } = hasFieldDefConnectionArgs(fieldDef, params.argumentTypes);
               if (hasFirst === false && hasLast === false) {
                 // eslint-disable-next-line no-console
                 console.warn('Encountered paginated field without pagination arguments.');
@@ -171,6 +177,10 @@ export const ResourceLimitationValidationRule =
 
 type UseResourceLimitationsParams = {
   /**
+   * The custom scalar types accepted for connection arguments.
+   */
+  argumentTypes?: string[];
+  /**
    * The node cost limit for rejecting a operation.
    * @default 500000
    */
@@ -205,6 +215,7 @@ export const useResourceLimitations = (params?: UseResourceLimitationsParams): P
         useExtendedValidation({
           rules: [
             ResourceLimitationValidationRule({
+              argumentTypes: params?.argumentTypes,
               nodeCostLimit,
               reportNodeCost: extensions
                 ? (nodeCost, ref) => {
