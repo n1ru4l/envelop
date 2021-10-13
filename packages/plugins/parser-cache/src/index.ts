@@ -11,8 +11,6 @@ export type DocumentCache = Cache<DocumentNode>;
 export type ErrorCache = Cache<Error>;
 
 export type ParserCacheOptions = {
-  max?: number;
-  ttl?: number;
   documentCache?: DocumentCache;
   errorCache?: ErrorCache;
 };
@@ -21,12 +19,12 @@ const DEFAULT_MAX = 1000;
 const DEFAULT_TTL = 3600000;
 
 export const useParserCache = (pluginOptions: ParserCacheOptions = {}): Plugin => {
-  const max = typeof pluginOptions.max === 'number' ? pluginOptions.max : DEFAULT_MAX;
-  const ttl = typeof pluginOptions.ttl === 'number' ? pluginOptions.ttl : DEFAULT_TTL;
-
   const documentCache =
-    typeof pluginOptions.documentCache !== 'undefined' ? pluginOptions.documentCache : lru<DocumentNode>(max, ttl);
-  const errorCache = typeof pluginOptions.errorCache !== 'undefined' ? pluginOptions.errorCache : lru<Error>(max, ttl);
+    typeof pluginOptions.documentCache !== 'undefined'
+      ? pluginOptions.documentCache
+      : lru<DocumentNode>(DEFAULT_MAX, DEFAULT_TTL);
+  const errorCache =
+    typeof pluginOptions.errorCache !== 'undefined' ? pluginOptions.errorCache : lru<Error>(DEFAULT_MAX, DEFAULT_TTL);
 
   return {
     onParse({ params, setParsedDocument }) {

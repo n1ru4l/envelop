@@ -9,8 +9,6 @@ export interface ValidationCache {
 }
 
 export type ValidationCacheOptions = {
-  max?: number;
-  ttl?: number;
   cache?: ValidationCache;
 };
 
@@ -18,9 +16,8 @@ const DEFAULT_MAX = 1000;
 const DEFAULT_TTL = 3600000;
 
 export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): Plugin => {
-  const max = typeof pluginOptions.max === 'number' ? pluginOptions.max : DEFAULT_MAX;
-  const ttl = typeof pluginOptions.ttl === 'number' ? pluginOptions.ttl : DEFAULT_TTL;
-  const resultCache = typeof pluginOptions.cache !== 'undefined' ? pluginOptions.cache : lru<readonly GraphQLError[]>(max, ttl);
+  const resultCache =
+    typeof pluginOptions.cache !== 'undefined' ? pluginOptions.cache : lru<readonly GraphQLError[]>(DEFAULT_MAX, DEFAULT_TTL);
 
   return {
     onSchemaChange() {
