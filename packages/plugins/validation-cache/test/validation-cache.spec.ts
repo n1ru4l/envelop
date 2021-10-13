@@ -58,11 +58,12 @@ describe('useValidationCache', () => {
   });
 
   it('should call validate multiple times when operation is invalidated', async () => {
+    const cache = lru<readonly GraphQLError[]>(100, 1);
     const testInstance = createTestkit(
       [
         useTestPlugin,
         useValidationCache({
-          ttl: 1,
+          cache,
         }),
       ],
       testSchema

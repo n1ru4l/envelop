@@ -1,4 +1,4 @@
-import { buildSchema, parse } from 'graphql';
+import { buildSchema, DocumentNode, parse } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useParserCache } from '../src';
 import { Plugin } from '@envelop/types';
@@ -62,11 +62,12 @@ describe('useParserCache', () => {
   });
 
   it('should call parse multiple times when operation is invalidated', async () => {
+    const cache = lru<DocumentNode>(100, 1);
     const testInstance = createTestkit(
       [
         useTestPlugin,
         useParserCache({
-          ttl: 1,
+          documentCache: cache,
         }),
       ],
       testSchema
