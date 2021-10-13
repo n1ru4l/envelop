@@ -7,6 +7,8 @@ const { useGraphQlJit } = require('../packages/plugins/graphql-jit');
 const { useValidationCache } = require('../packages/plugins/validation-cache');
 const { fastify } = require('fastify');
 const faker = require('faker');
+const { monitorEventLoopDelay } = require('perf_hooks');
+const eventLoopMonitor = monitorEventLoopDelay({ resolution: 20 });
 
 faker.seed(4321);
 
@@ -105,6 +107,7 @@ app.route({
   method: 'POST',
   url: '/graphql',
   async handler(req, res) {
+    eventLoopMonitor.enable();
     const getEnveloped = envelopsMap[req.headers['x-test-scenario']];
     const proxy = getEnveloped({ req });
     const document = proxy.parse(req.body.query);
@@ -115,15 +118,23 @@ app.route({
       return;
     }
 
-    res.send(
-      await proxy.execute({
-        schema: proxy.schema,
-        operationName: req.body.operationName,
-        document,
-        variableValues: req.body.variable,
-        contextValue: await proxy.contextFactory(),
-      })
-    );
+    const result = await proxy.execute({
+      schema: proxy.schema,
+      operationName: req.body.operationName,
+      document,
+      variableValues: req.body.variable,
+      contextValue: await proxy.contextFactory(),
+    });
+    eventLoopMonitor.disable();
+
+    result.extensions = {
+      ...(result.extensions || {}),
+      eventLoopLag: eventLoopMonitor.max,
+    };
+
+    eventLoopMonitor.reset();
+
+    res.send(result);
   },
 });
 
