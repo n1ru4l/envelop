@@ -1,6 +1,6 @@
 ---
 '@envelop/core': minor
-'@envelop/testing': minor
+'@envelop/testing': patch
 '@envelop/types': minor
 ---
 
