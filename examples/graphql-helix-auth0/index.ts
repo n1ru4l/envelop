@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import fastify from 'fastify';
-import { getGraphQLParameters, processRequest, renderGraphiQL, shouldRenderGraphiQL } from 'graphql-helix';
+import { getGraphQLParameters, processRequest, renderGraphiQL, sendResult, shouldRenderGraphiQL } from 'graphql-helix';
 import { envelop, useSchema } from '@envelop/core';
 import { useAuth0 } from '@envelop/auth0';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -110,14 +110,7 @@ app.route({
         contextFactory,
       });
 
-      if (result.type === 'RESPONSE') {
-        res.status(result.status);
-        res.send(result.payload);
-      } else {
-        // You can find a complete example with GraphQL Subscriptions and stream/defer here:
-        // https://github.com/contrawork/graphql-helix/blob/master/examples/fastify/server.ts
-        res.send({ errors: [{ message: 'Not Supported in this demo' }] });
-      }
+      sendResult(result, res.raw);
     }
   },
 });
