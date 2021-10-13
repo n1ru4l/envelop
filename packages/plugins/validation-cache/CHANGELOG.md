@@ -1,5 +1,15 @@
 # @envelop/validation-cache
 
+## 2.0.0
+
+### Major Changes
+
+- bcd23be: Remove `max` and `ttl` options. To customize these flags now, use a custom cache instance.
+
+### Minor Changes
+
+- bcd23be: Add option to pass in cache instances to useParserCache and useValidationCache plugins.
+
 ## 1.0.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @envelop/sentry
 
+## 1.2.0
+
+### Minor Changes
+
+- 1e2be95: Add configureScope option
+
 ## 1.1.0
 
 ### Minor Changes

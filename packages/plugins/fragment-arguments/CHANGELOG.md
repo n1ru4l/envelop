@@ -1,5 +1,13 @@
 # @envelop/fragment-arguments
 
+## 1.0.6
+
+### Patch Changes
+
+- Updated dependencies [d65e35d]
+- Updated dependencies [26475c9]
+  - @envelop/types@1.2.0
+
 ## 1.0.5
 
 ### Patch Changes

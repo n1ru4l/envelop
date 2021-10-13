@@ -1,5 +1,12 @@
 # @envelop/types
 
+## 1.2.0
+
+### Minor Changes
+
+- d65e35d: add enableIf utility to enable plugins conditionally
+- 26475c9: useErrorHandler: Pass in the execution arguments to the error handler callbacks.
+
 ## 1.1.0
 
 ### Minor Changes
