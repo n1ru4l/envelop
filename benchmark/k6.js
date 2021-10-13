@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { check } from 'k6';
 import { graphql, checkNoErrors } from './utils.js';
 import { Trend } from 'k6/metrics';
@@ -46,6 +47,8 @@ const trace = {
   total: new Trend('envelop_total', true),
 };
 
+const perfHooksTrace = new Trend('event_loop_lag', true);
+
 export const options = buildOptions({
   'graphql-js': {
     no_errors: ['rate=1.0'],
@@ -57,6 +60,7 @@ export const options = buildOptions({
     graphql_parse: ['p(95)<=1'],
     envelop_init: ['p(95)<=1'],
     envelop_total: ['p(95)<=2'],
+    event_loop_lag: ['avg==0', 'p(99)==0'],
   },
   'envelop-just-cache': {
     no_errors: ['rate=1.0'],
@@ -68,6 +72,7 @@ export const options = buildOptions({
     graphql_parse: ['p(95)<=1'],
     envelop_init: ['p(95)<=1'],
     envelop_total: ['p(95)<=1'],
+    event_loop_lag: ['avg==0', 'p(99)==0'],
   },
   'prom-tracing': {
     no_errors: ['rate=1.0'],
@@ -79,11 +84,13 @@ export const options = buildOptions({
     graphql_parse: ['p(95)<=1'],
     envelop_init: ['p(95)<=1'],
     envelop_total: ['p(95)<=6'],
+    event_loop_lag: ['avg==0', 'p(99)==0'],
   },
   'envelop-cache-and-no-internal-tracing': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
     http_req_duration: ['p(95)<=18'],
+    event_loop_lag: ['avg==0', 'p(99)==0'],
   },
   'envelop-cache-jit': {
     no_errors: ['rate=1.0'],
@@ -95,6 +102,7 @@ export const options = buildOptions({
     graphql_parse: ['p(95)<=1'],
     envelop_init: ['p(95)<=1'],
     envelop_total: ['p(95)<=1'],
+    event_loop_lag: ['avg==0', 'p(99)==0'],
   },
 });
 
@@ -154,13 +162,16 @@ export function run() {
     operationName: 'authors',
   });
 
-  const tracingData = (res.json().extensions || {}).envelopTracing || {};
+  const extensions = res.json().extensions || {};
+  const tracingData = extensions.envelopTracing || {};
   tracingData.parse && trace.parse.add(tracingData.parse);
   tracingData.validate && trace.validate.add(tracingData.validate);
   tracingData.contextFactory && trace.context.add(tracingData.contextFactory);
   tracingData.execute && trace.execute.add(tracingData.execute);
   tracingData.subscribe && trace.subscribe.add(tracingData.subscribe);
   tracingData.init && trace.init.add(tracingData.init);
+  const eventLoopLag = extensions.eventLoopLag;
+  perfHooksTrace.add(eventLoopLag);
 
   const total = [
     tracingData.parse,
