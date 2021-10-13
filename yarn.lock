@@ -2721,10 +2721,10 @@
   dependencies:
     i18next "^19.7.0"
 
-"@types/ioredis@4.27.6":
-  version "4.27.6"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.27.6.tgz#06f2826ca9bcf4e9c179cd11417a4d0413903cba"
-  integrity sha512-3FeeDlVQ2sdbvU436XnZzOiDMMgFbKfIsiUF2BnJnH7xxqCbJ1teJwfcu9fLwnfmV0qH2W1Vg3jFrtOehNIkMA==
+"@types/ioredis@4.27.7":
+  version "4.27.7"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.27.7.tgz#e28a09f5b83fc023ceef1fd8e38ccd052bb293bd"
+  integrity sha512-MT5pZFirjfZ1dfhWNQXEtc5sskau6qy0a2SbBpiHYJNJWMp/JJO2UJd8rqiwGc55J5V9OJe50mEtXuLMLu1YIw==
   dependencies:
     "@types/node" "*"
 
@@ -2923,10 +2923,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@17.0.28", "@types/react@^17.0.0":
-  version "17.0.28"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.28.tgz#b40967e79af8f32182c6f6f2655ba196bafc7202"
-  integrity sha512-6OmflHgk2DlnsFi49kBW3/Dql1GT32bYSk+A6tFBDAt0T0bxotBdQwXkm77lVlczHwY6+Wu6IfpsGqArjOYtaA==
+"@types/react@*", "@types/react@17.0.29", "@types/react@^17.0.0":
+  version "17.0.29"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.29.tgz#9535f3fc01a4981ce9cadcf0daa2593c0c2f2251"
+  integrity sha512-HSenIfBEBZ70BLrrVhtEtHpqaP79waauPtA8XKlczTxL3hXrW/ElGNLTpD1TmqkykgGlOAK55+D3SmUHEirpFw==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
