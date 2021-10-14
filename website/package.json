@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "concurrently -r \"next-remote-watch ./docs ./src/pages/_app.tsx\" \"wait-on -s 1 http://localhost:3000\"",
+    "dev": "concurrently -r \"next-remote-watch ./docs ./src/pages/_app.tsx\" \"wait-on -s 1 http://localhost:3000 && open-cli http://localhost:3000\"",
     "next": "next",
     "start": "next start"
   },
@@ -20,29 +20,20 @@
     "@emotion/react": "11.4.1",
     "@emotion/styled": "11.3.0",
     "@guild-docs/client": "1.1.1",
-    "@guild-docs/server": "1.0.6",
+    "@guild-docs/server": "2.0.1",
     "@mdx-js/react": "1.6.22",
     "@theguild/components": "1.6.0",
     "esbuild": "0.13.6",
     "framer-motion": "4.1.17",
-    "fs-extra": "10.0.0",
-    "globby": "11.0.4",
     "next": "11.1.2",
     "next-i18next": "8.9.0",
     "next-remote-watch": "1.0.0",
-    "npms.io": "2.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-icons": "4.3.1",
-    "react-markdown": "7.0.1",
     "react-use": "17.3.1",
     "remark-admonitions": "1.2.1",
-    "shiki": "0.9.12",
-    "tiny-lru": "7.0.6",
-    "undici": "4.7.2",
-    "use-http": "1.0.26",
-    "valtio": "1.2.4",
-    "zustand": "3.5.13"
+    "shiki": "0.9.12"
   },
   "babelMacros": {
     "twin": {
@@ -51,7 +42,6 @@
   },
   "devDependencies": {
     "@types/concurrently": "6.3.0",
-    "@types/fs-extra": "9.0.13",
     "@types/mdx-js__react": "1.5.4",
     "@types/node": "15.12.2",
     "@types/react": "17.0.29",
@@ -60,8 +50,6 @@
     "concurrently": "6.3.0",
     "esbuild-register": "3.0.0",
     "open-cli": "6.0.1",
-    "strict-npm-engines": "0.0.1",
-    "tsup": "5.4.0",
     "typescript": "4.4.4",
     "wait-on": "6.0.0"
   }
