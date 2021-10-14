@@ -71,7 +71,7 @@
   },
   "resolutions": {
     "@changesets/git": "1.1.2",
-    "esbuild": "^0.13.0",
+    "esbuild": "^0.13.6",
     "prettier": "2.4.1",
     "graphql": "15.6.1"
   },
