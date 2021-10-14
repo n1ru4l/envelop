@@ -23,8 +23,8 @@ const getWrappedType = (graphqlType: GraphQLType): Exclude<GraphQLType, GraphQLL
   return graphqlType;
 };
 
-const isValidArgType = (type: GraphQLInputType, argumentTypes?: string[]): boolean =>
-  type === GraphQLInt || (isScalarType(type) && !!argumentTypes && argumentTypes.includes(type.name));
+const isValidArgType = (type: GraphQLInputType, paginationArgumentTypes?: string[]): boolean =>
+  type === GraphQLInt || (isScalarType(type) && !!paginationArgumentTypes && paginationArgumentTypes.includes(type.name));
 
 const hasFieldDefConnectionArgs = (field: GraphQLField<any, any>, argumentTypes?: string[]) => {
   let hasFirst = false;
@@ -54,7 +54,7 @@ const buildInvalidPaginationRangeErrorMessage = (params: { fieldName: string; ar
 export const defaultNodeCostLimit = 500000;
 
 export type ResourceLimitationValidationRuleParams = {
-  argumentTypes?: string[];
+  paginationArgumentTypes?: string[];
   nodeCostLimit: number;
   reportNodeCost?: (cost: number, executionArgs: ExecutionArgs) => void;
 };
@@ -83,7 +83,7 @@ export const ResourceLimitationValidationRule =
               let nodeCost = 1;
               connectionFieldMap.add(fieldNode);
 
-              const { hasFirst, hasLast } = hasFieldDefConnectionArgs(fieldDef, params.argumentTypes);
+              const { hasFirst, hasLast } = hasFieldDefConnectionArgs(fieldDef, params.paginationArgumentTypes);
               if (hasFirst === false && hasLast === false) {
                 // eslint-disable-next-line no-console
                 console.warn('Encountered paginated field without pagination arguments.');
@@ -179,7 +179,7 @@ type UseResourceLimitationsParams = {
   /**
    * The custom scalar types accepted for connection arguments.
    */
-  argumentTypes?: string[];
+  paginationArgumentScalars?: string[];
   /**
    * The node cost limit for rejecting a operation.
    * @default 500000
@@ -215,7 +215,7 @@ export const useResourceLimitations = (params?: UseResourceLimitationsParams): P
         useExtendedValidation({
           rules: [
             ResourceLimitationValidationRule({
-              argumentTypes: params?.argumentTypes,
+              paginationArgumentTypes: params?.paginationArgumentScalars,
               nodeCostLimit,
               reportNodeCost: extensions
                 ? (nodeCost, ref) => {

@@ -211,7 +211,10 @@ describe('useResourceLimitations', () => {
     });
   });
   it('calculates node cost on connections with custom argument types (single)', async () => {
-    const testkit = createTestkit([useResourceLimitations({ argumentTypes: ['ConnectionInt'], extensions: true })], schema);
+    const testkit = createTestkit(
+      [useResourceLimitations({ paginationArgumentScalars: ['ConnectionInt'], extensions: true })],
+      schema
+    );
     const result = await testkit.execute(/* GraphQL */ `
       query {
         viewer {

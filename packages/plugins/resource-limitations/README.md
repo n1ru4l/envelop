@@ -18,7 +18,7 @@ const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useResourceLimitations({
-      argumentTypes: ['ConnectionInt'], // optional, use if connections use a different scalar type than `Int`
+      paginationArgumentScalars: ['ConnectionInt'], // optional, use if connections use a different scalar type as the argument instead of `Int`
       nodeCostLimit: 500000, // optional, default to 500000
       extensions: false, // set this to `true` in order to add the calculated const to the response of queries
     }),

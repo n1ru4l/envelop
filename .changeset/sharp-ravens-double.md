@@ -2,4 +2,4 @@
 '@envelop/resource-limitations': minor
 ---
 
-resource-limitations: Custom types for connection arguments
+Allow using custom scalars for connection arguments.
