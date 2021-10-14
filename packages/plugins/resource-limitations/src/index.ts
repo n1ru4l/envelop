@@ -47,15 +47,26 @@ const buildMissingPaginationFieldErrorMessage = (params: { fieldName: string; ha
   (params.hasFirst && params.hasLast ? "either the 'first' or 'last'" : params.hasFirst ? "the 'first'" : "the 'last'") +
   ' field argument.';
 
-const buildInvalidPaginationRangeErrorMessage = (params: { fieldName: string; argumentName: string }) =>
+const buildInvalidPaginationRangeErrorMessage = (params: {
+  fieldName: string;
+  argumentName: string;
+  paginationArgumentMaximum: number;
+  paginationArgumentMinimum: number;
+}) =>
   `Invalid pagination argument for field ${params.fieldName}. ` +
-  `The value for the '${params.argumentName}' argument must be an integer within 1-100.`;
+  `The value for the '${params.argumentName}' argument must be an integer within ${params.paginationArgumentMinimum}-${params.paginationArgumentMaximum}.`;
 
 export const defaultNodeCostLimit = 500000;
 
+export const defaultPaginationArgumentMaximum = 100;
+
+export const defaultPaginationArgumentMinimum = 1;
+
 export type ResourceLimitationValidationRuleParams = {
-  paginationArgumentTypes?: string[];
   nodeCostLimit: number;
+  paginationArgumentMaximum: number;
+  paginationArgumentMinimum: number;
+  paginationArgumentTypes?: string[];
   reportNodeCost?: (cost: number, executionArgs: ExecutionArgs) => void;
 };
 
@@ -65,6 +76,7 @@ export type ResourceLimitationValidationRuleParams = {
 export const ResourceLimitationValidationRule =
   (params: ResourceLimitationValidationRuleParams): ExtendedValidationRule =>
   (context, executionArgs) => {
+    const { paginationArgumentMaximum, paginationArgumentMinimum } = params;
     const nodeCostStack: Array<number> = [];
     let totalNodeCost = 0;
 
@@ -100,13 +112,14 @@ export const ResourceLimitationValidationRule =
                     )
                   );
                 } else if ('first' in argumentValues === true && 'last' in argumentValues === false) {
-                  // eslint-disable-next-line dot-notation
-                  if (argumentValues['first'] < 1 || argumentValues['first'] > 100) {
+                  if (argumentValues.first < paginationArgumentMinimum || argumentValues.first > paginationArgumentMaximum) {
                     context.reportError(
                       new GraphQLError(
                         buildInvalidPaginationRangeErrorMessage({
-                          fieldName: fieldDef.name,
+                          paginationArgumentMaximum,
+                          paginationArgumentMinimum,
                           argumentName: 'first',
+                          fieldName: fieldDef.name,
                         }),
                         fieldNode
                       )
@@ -116,13 +129,14 @@ export const ResourceLimitationValidationRule =
                     nodeCost = argumentValues['first'];
                   }
                 } else if ('last' in argumentValues === true && 'false' in argumentValues === false) {
-                  // eslint-disable-next-line dot-notation
-                  if (argumentValues['last'] < 1 || argumentValues['last'] > 100) {
+                  if (argumentValues.last < paginationArgumentMinimum || argumentValues.last > paginationArgumentMaximum) {
                     context.reportError(
                       new GraphQLError(
                         buildInvalidPaginationRangeErrorMessage({
-                          fieldName: fieldDef.name,
+                          paginationArgumentMaximum,
+                          paginationArgumentMinimum,
                           argumentName: 'last',
+                          fieldName: fieldDef.name,
                         }),
                         fieldNode
                       )
@@ -177,14 +191,24 @@ export const ResourceLimitationValidationRule =
 
 type UseResourceLimitationsParams = {
   /**
-   * The custom scalar types accepted for connection arguments.
-   */
-  paginationArgumentScalars?: string[];
-  /**
    * The node cost limit for rejecting a operation.
    * @default 500000
    */
   nodeCostLimit?: number;
+  /**
+   * The custom scalar types accepted for connection arguments.
+   */
+  paginationArgumentScalars?: string[];
+  /**
+   * The maximum value accepted for connection arguments.
+   * @default 100
+   */
+  paginationArgumentMaximum?: number;
+  /**
+   * The minimum value accepted for connection arguments.
+   * @default 1
+   */
+  paginationArgumentMinimum?: number;
   /**
    * Whether the resourceLimitations.nodeCost field should be included within the execution result extensions map.
    * @default false
@@ -193,6 +217,8 @@ type UseResourceLimitationsParams = {
 };
 
 export const useResourceLimitations = (params?: UseResourceLimitationsParams): Plugin => {
+  const paginationArgumentMaximum = params?.paginationArgumentMaximum ?? defaultPaginationArgumentMaximum;
+  const paginationArgumentMinimum = params?.paginationArgumentMinimum ?? defaultPaginationArgumentMinimum;
   const nodeCostLimit = params?.nodeCostLimit ?? defaultNodeCostLimit;
   const extensions = params?.extensions ?? false;
   const nodeCostMap = new WeakMap<object, number>();
@@ -215,8 +241,10 @@ export const useResourceLimitations = (params?: UseResourceLimitationsParams): P
         useExtendedValidation({
           rules: [
             ResourceLimitationValidationRule({
-              paginationArgumentTypes: params?.paginationArgumentScalars,
               nodeCostLimit,
+              paginationArgumentMaximum,
+              paginationArgumentMinimum,
+              paginationArgumentTypes: params?.paginationArgumentScalars,
               reportNodeCost: extensions
                 ? (nodeCost, ref) => {
                     nodeCostMap.set(ref, nodeCost);
