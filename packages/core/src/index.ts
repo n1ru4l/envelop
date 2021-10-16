@@ -9,3 +9,4 @@ export * from './plugins/use-error-handler';
 export * from './plugins/use-extend-context';
 export * from './plugins/use-payload-formatter';
 export * from './plugins/use-masked-errors';
+export * from './enable-if';

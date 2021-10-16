@@ -7,7 +7,6 @@ import { buildMultipleMDX, CompiledMDX } from '@guild-docs/server';
 import { getPackagesData, PackageWithStats } from '@guild-docs/server/npm';
 import { MarketplaceSearch } from '@theguild/components';
 import { IMarketplaceItemProps } from '@theguild/components/dist/types/components';
-import type { Package } from '@guild-docs/server/npm';
 
 import { Markdown } from '../../components/Markdown';
 import { ALL_TAGS, pluginsArr as packageList } from '../../lib/plugins';
@@ -25,8 +24,8 @@ export const getStaticProps: GetStaticProps<MarketplaceProps> = async () => {
   const data = await Promise.all(
     pluginsData.map(async plugin => {
       const [description, content] = await buildMultipleMDX([
-        `${plugin.stats?.collected?.metadata?.version || ''}\n\n${plugin.stats?.collected?.metadata?.description || ''}`,
-        plugin.readme || plugin.stats?.collected?.metadata?.readme || '',
+        `${plugin.stats?.version || ''}\n\n${plugin.stats?.description || ''}`,
+        plugin.readme || plugin.stats?.readme || '',
       ]);
 
       return {
@@ -81,14 +80,14 @@ export default function Marketplace({ data }: MarketplaceProps) {
               <>
                 <PackageInstall packages={rawPlugin.npmPackage} />
                 <RemoteGHMarkdown
-                  directory={rawPlugin.stats?.collected?.metadata?.repository?.directory}
-                  repo={rawPlugin.stats?.collected?.metadata?.links?.repository}
+                  directory={rawPlugin.stats?.repositoryDirectory}
+                  repo={rawPlugin.stats?.repositoryLink}
                   content={rawPlugin.content}
                 />
               </>
             ),
           },
-          update: rawPlugin.stats?.collected?.metadata?.date || new Date().toISOString(),
+          update: rawPlugin.stats?.modifiedDate || new Date().toISOString(),
           image: rawPlugin.iconUrl
             ? {
                 height: 60,
@@ -117,10 +116,10 @@ export default function Marketplace({ data }: MarketplaceProps) {
   const trendingItems = React.useMemo(() => {
     if (marketplaceItems && marketplaceItems.length > 0) {
       return [...marketplaceItems]
-        .filter(i => i.raw.stats?.collected?.npm.downloads && i.raw.npmPackage !== '@envelop/core')
+        .filter(i => i.raw.stats?.weeklyNPMDownloads && i.raw.npmPackage !== '@envelop/core')
         .sort((a, b) => {
-          const aMonthlyDownloads = a.raw.stats?.collected.npm.downloads[2].count || 0;
-          const bMonthlyDownloads = b.raw.stats?.collected.npm.downloads[2].count || 0;
+          const aMonthlyDownloads = a.raw.stats?.weeklyNPMDownloads || 0;
+          const bMonthlyDownloads = b.raw.stats?.weeklyNPMDownloads || 0;
 
           return bMonthlyDownloads - aMonthlyDownloads;
         });

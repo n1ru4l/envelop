@@ -1,6 +1,6 @@
 {
   "name": "@envelop/sentry",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -31,11 +31,11 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@sentry/node": "6.13.2",
-    "@sentry/tracing": "6.13.2",
+    "@sentry/node": "6.13.3",
+    "@sentry/tracing": "6.13.3",
     "bob-the-bundler": "1.5.1",
-    "graphql": "15.6.0",
-    "typescript": "4.4.3"
+    "graphql": "15.6.1",
+    "typescript": "4.4.4"
   },
   "peerDependencies": {
     "@sentry/node": "^6",

@@ -1,3 +1,4 @@
+import { enableIf } from '@envelop/core';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { Plugin } from '@envelop/types';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -86,6 +87,22 @@ describe('Test the testkit', () => {
     assertSingleExecutionValue(result);
     expect(addedPlugin.onParse).toBeCalled();
     expect(addedPlugin.onValidate).toBeCalled();
+    expect(result.data).toBeDefined();
+  });
+
+  it('Should use only 1 plugin', async () => {
+    const plugin1: Plugin<any> = {
+      onParse: jest.fn().mockReturnValue(undefined),
+    };
+    const plugin2: Plugin<any> = {
+      onValidate: jest.fn().mockReturnValue(undefined),
+    };
+
+    const testkit = createTestkit([plugin1, enableIf(false, plugin2)], createSchema());
+    const result = await testkit.execute('query test { foo }');
+    assertSingleExecutionValue(result);
+    expect(plugin1.onParse).toBeCalled();
+    expect(plugin2.onValidate).not.toBeCalled();
     expect(result.data).toBeDefined();
   });
 });

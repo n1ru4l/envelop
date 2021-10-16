@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
 import { Plugin } from '@envelop/types';
 import { DocumentNode, ExecutionArgs, getOperationAST, GraphQLResolveInfo, Source, SubscriptionArgs } from 'graphql';
-import { envelopIsIntrospectionSymbol } from '..';
-import { isIntrospectionOperationString } from '../utils';
+import { isIntrospectionOperationString, envelopIsIntrospectionSymbol } from '../utils';
 
 const HR_TO_NS = 1e9;
 const NS_TO_MS = 1e6;

@@ -1,5 +1,14 @@
 # @envelop/operation-field-permissions
 
+## 1.0.9
+
+### Patch Changes
+
+- 50f263f: Ignore introspection query
+- Updated dependencies [d65e35d]
+- Updated dependencies [26475c9]
+  - @envelop/core@1.3.0
+
 ## 1.0.8
 
 ### Patch Changes

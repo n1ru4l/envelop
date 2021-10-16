@@ -1,8 +1,10 @@
 import { getIntrospectionQuery } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { useValidationCache } from '@envelop/validation-cache';
 import { useResponseCache, createInMemoryCache } from '../src';
 import { useSchema } from '@envelop/core';
+import { useParserCache } from '@envelop/parser-cache';
 
 describe('useResponseCache', () => {
   beforeEach(() => jest.useRealTimers());
@@ -1453,5 +1455,43 @@ describe('useResponseCache', () => {
     const queryResult = await testInstance2.execute(query);
 
     expect(errorQueryResult).not.toEqual(queryResult);
+  });
+
+  test('response cache works with validation cache and parser cache', async () => {
+    jest.useFakeTimers();
+    const mockFn = jest.fn();
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          foo: String
+        }
+      `,
+      resolvers: { Query: { foo: () => void mockFn() || 'hi' } },
+    });
+    const testkit = createTestkit([useValidationCache(), useResponseCache(), useParserCache()], schema);
+
+    const document = /* GraphQL */ `
+      query {
+        foo
+      }
+    `;
+
+    let result = await testkit.execute(document);
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "foo": "hi",
+        },
+      }
+    `);
+    result = await testkit.execute(document);
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "foo": "hi",
+        },
+      }
+    `);
+    expect(mockFn).toHaveBeenCalledTimes(1);
   });
 });

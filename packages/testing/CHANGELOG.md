@@ -1,5 +1,14 @@
 # @envelop/testing
 
+## 2.0.0
+
+### Patch Changes
+
+- Updated dependencies [d65e35d]
+- Updated dependencies [26475c9]
+  - @envelop/core@1.3.0
+  - @envelop/types@1.2.0
+
 ## 1.1.1
 
 ### Patch Changes
