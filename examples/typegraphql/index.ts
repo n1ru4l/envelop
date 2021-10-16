@@ -85,6 +85,9 @@ app.route({
       });
 
       sendResult(result, res.raw);
+
+      // Tell fastify a response was sent
+      res.sent = true;
     }
   },
 });
