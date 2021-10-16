@@ -1395,128 +1395,63 @@ describe('useResponseCache', () => {
     expect(changedIntrospectionQuery).not.toEqual(introspectionQueryResult);
   });
 
-  it('Should not cache an introspection query if cacheIntrospections is false', async () => {
-    const query = getIntrospectionQuery();
-
-    const schema = makeExecutableSchema({
-      typeDefs: /* GraphQL */ `
-        type Query {
-          user: User!
+  it('Should not cache an introspection query if an error occurred in a prior query', async () => {
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
         }
+      }
+    `;
+
+    const schemaWithError = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
         type User {
           id: ID!
           name: String!
         }
+
+        type Query {
+          users: [User!]!
+        }
       `,
       resolvers: {
         Query: {
-          user: {
-            id: 1,
-            name: 'User 1',
-          },
+          users: () => null,
         },
       },
     });
 
     const cache = createInMemoryCache();
-    const testInstance = createTestkit([useResponseCache({ cache, cacheIntrospections: false })], schema);
-    const introspectionQueryResult = await testInstance.execute(query);
-
-    const changedSchema = makeExecutableSchema({
-      typeDefs: /* GraphQL */ `
-        type Query {
-          user: User!
-          users: [User]!
-        }
-        type User {
-          id: ID!
-          name: String!
-        }
-      `,
-      resolvers: {
-        Query: {
-          user: {
-            id: 1,
-            name: 'User 1',
-          },
-          users: [
-            { id: 1, name: 'User 1' },
-            { id: 2, name: 'User 2' },
-            { id: 3, name: 'User 3' },
-          ],
-        },
-      },
-    });
-
-    // we modify the schema, but use the same cache instance
-    const testInstanceWithChangedSchema = createTestkit([useResponseCache({ cache, cacheIntrospections: false })], changedSchema);
-
-    // subsequent introspection queries should return different results
-    // since the schema has been changed
-    const changedIntrospectionQuery = await testInstanceWithChangedSchema.execute(query);
-
-    expect(changedIntrospectionQuery).not.toEqual(introspectionQueryResult);
-  });
-  it('Should cache an introspection query if cacheIntrospections is true', async () => {
-    const query = getIntrospectionQuery();
+    const testInstance = createTestkit([useResponseCache({ cache })], schemaWithError);
+    const errorQueryResult = await testInstance.execute(query); // ?
 
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
-        type Query {
-          user: User!
-        }
         type User {
           id: ID!
           name: String!
         }
-      `,
-      resolvers: {
-        Query: {
-          user: {
-            id: 1,
-            name: 'User 1',
-          },
-        },
-      },
-    });
 
-    const cache = createInMemoryCache();
-    const testInstance = createTestkit([useResponseCache({ cache, cacheIntrospections: true })], schema);
-    const introspectionQueryResult = await testInstance.execute(query);
-
-    const changedSchema = makeExecutableSchema({
-      typeDefs: /* GraphQL */ `
         type Query {
-          user: User!
-          users: [User]!
-        }
-        type User {
-          id: ID!
-          name: String!
+          users: [User!]!
         }
       `,
       resolvers: {
         Query: {
-          user: {
-            id: 1,
-            name: 'User 1',
-          },
-          users: [
-            { id: 1, name: 'User 1' },
-            { id: 2, name: 'User 2' },
-            { id: 3, name: 'User 3' },
+          users: () => [
+            {
+              id: 1,
+              name: 'User 1',
+            },
           ],
         },
       },
     });
+    const testInstance2 = createTestkit([useResponseCache({ cache })], schema);
+    const queryResult = await testInstance2.execute(query);
 
-    // we modify the schema, but use the same cache instance
-    const testInstanceWithChangedSchema = createTestkit([useResponseCache({ cache, cacheIntrospections: true })], changedSchema);
-
-    // subsequent introspection queries should return the same result
-    // even though the schema has been changed because we elected to cacheIntrospections
-    const shouldBeCachedIntrospection = await testInstanceWithChangedSchema.execute(query);
-
-    expect(shouldBeCachedIntrospection).toEqual(introspectionQueryResult);
+    expect(errorQueryResult).not.toEqual(queryResult);
   });
 });
