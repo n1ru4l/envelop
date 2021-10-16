@@ -15,7 +15,6 @@ import {
 import jsonStableStringify from 'fast-json-stable-stringify';
 import type { Cache, CacheEntityRecord } from './cache';
 import { createInMemoryCache } from './in-memory-cache';
-import { isIntrospectionDocument } from '../../../core/src/utils';
 
 const contextSymbol = Symbol('responseCache');
 const rawDocumentStringSymbol = Symbol('rawDocumentString');
@@ -46,11 +45,7 @@ export type BuildResponseCacheKeyFunction = (params: {
 
 export type GetDocumentStringFromContextFunction = (params: DefaultContext) => Maybe<string>;
 
-export type ShouldCacheResultFunction = (params: {
-  cacheIntrospections?: Boolean;
-  documentNode?: DocumentNode;
-  result?: ExecutionResult;
-}) => Boolean;
+export type ShouldCacheResultFunction = (params: { result: ExecutionResult }) => Boolean;
 
 export type UseResponseCacheParameter<C = any> = {
   cache?: Cache;
@@ -97,11 +92,6 @@ export type UseResponseCacheParameter<C = any> = {
    */
   invalidateViaMutation?: boolean;
   /**
-   * Whether Introspection query results should be cached.
-   * Defaults to `false`
-   */
-  cacheIntrospections?: boolean;
-  /**
    * Customize the behavior how the response cache key is computed from the document, variable values and sessionId.
    * Defaults to `defaultBuildResponseCacheKey`
    */
@@ -144,37 +134,25 @@ export const defaultBuildResponseCacheKey: BuildResponseCacheKeyFunction = param
 
 /**
  * Default function used to check if the result should be cached.
- * It is exported here for advanced use-cases. E.g. if you want to
- * cache Introspection queries or choose if results with certain error types
- * should be cached.
  *
- * By default, introspection queries are not cached. Neither are any results
- * with errors (unexpected, EnvelopError or GraphQLError) or results will missing data.
+ * It is exported here for advanced use-cases. E.g. if you want to choose if
+ * results with certain error types should be cached.
+ *
+ * By default, results with errors (unexpected, EnvelopError or GraphQLError)
+ * or results with missing data are not cached.
  */
-export const defaultShouldCacheResult: ShouldCacheResultFunction = (params: {
-  cacheIntrospections?: Boolean;
-  documentNode?: DocumentNode;
-  result?: ExecutionResult;
-}): Boolean => {
-  if (params.documentNode) {
-    if (!params.cacheIntrospections && isIntrospectionDocument(params.documentNode)) {
+export const defaultShouldCacheResult: ShouldCacheResultFunction = (params: { result: ExecutionResult }): Boolean => {
+  if (params.result) {
+    if (params.result?.errors) {
       // eslint-disable-next-line no-console
-      console.warn('[useResponseCache] Did not cache IntrospectionQuery');
+      console.warn('[useResponseCache] Failed to cache or invalidate due to errors');
       return false;
     }
-  } else {
-    if (params.result) {
-      if (params.result?.errors) {
-        // eslint-disable-next-line no-console
-        console.warn('[useResponseCache] Failed to cache or invalidate due to errors');
-        return false;
-      }
 
-      if (params.result?.data === null || params.result?.data === undefined) {
-        // eslint-disable-next-line no-console
-        console.warn('[useResponseCache] Failed to cache due to missing data');
-        return false;
-      }
+    if (params.result?.data === null || params.result?.data === undefined) {
+      // eslint-disable-next-line no-console
+      console.warn('[useResponseCache] Failed to cache due to missing data');
+      return false;
     }
   }
 
@@ -191,10 +169,9 @@ export function useResponseCache({
   enabled,
   ignoredTypes = [],
   ttlPerType = {},
-  ttlPerSchemaCoordinate,
+  ttlPerSchemaCoordinate = {},
   idFields = ['id'],
   invalidateViaMutation = true,
-  cacheIntrospections = false,
   buildResponseCacheKey = defaultBuildResponseCacheKey,
   getDocumentStringFromContext = defaultGetDocumentStringFromContext,
   shouldCacheResult = defaultShouldCacheResult,
@@ -203,6 +180,9 @@ export function useResponseCache({
 }: UseResponseCacheParameter = {}): Plugin {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
   const schemaCache = new WeakMap<GraphQLSchema, GraphQLSchema>();
+
+  // never cache Introspections
+  ttlPerSchemaCoordinate = { ...ttlPerSchemaCoordinate, 'Query.__schema': 0 };
 
   return {
     onSchemaChange(ctx) {
@@ -228,10 +208,6 @@ export function useResponseCache({
     async onExecute(ctx) {
       const identifier = new Map<string, CacheEntityRecord>();
       const types = new Set<string>();
-
-      if (!shouldCacheResult({ cacheIntrospections, documentNode: ctx.args.document })) {
-        return;
-      }
 
       const context: Context = {
         identifier,
