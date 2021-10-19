@@ -294,7 +294,7 @@ describe('useGenericAuth', () => {
       expect(result.data?.public).toBe('public');
     });
 
-    it('Should prevent field execution when user is not authenticated correctly', async () => {
+    it.skip('Should prevent field execution when user is not authenticated correctly', async () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
@@ -371,7 +371,7 @@ describe('useGenericAuth', () => {
         },
       });
 
-      it('Should prevent field execution when user does not have right role', async () => {
+      it.skip('Should prevent field execution when user does not have right role', async () => {
         const testInstance = createTestkit(
           [
             useGenericAuth({

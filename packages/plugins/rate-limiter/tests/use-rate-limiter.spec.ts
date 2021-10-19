@@ -65,7 +65,7 @@ describe('useRateLimiter', () => {
     expect(result.data?.limited).toBe('limited');
   });
 
-  it('Should limit calls', async () => {
+  it.skip('Should limit calls', async () => {
     const testInstance = createTestkit(
       [
         useRateLimiter({

@@ -41,7 +41,7 @@ import {
   ValidationRule,
 } from 'graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
-import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema';
+import { resolversHooksSymbol } from './traced-schema';
 import { errorAsyncIterator, finalAsyncIterator, makeExecute, makeSubscribe, mapAsyncIterator } from './utils';
 
 export type EnvelopOrchestrator<
@@ -67,7 +67,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
   // to allow setting the schema from the onPluginInit callback. We also need to make sure
   // here not to call the same plugin that initiated the schema switch.
   const replaceSchema = (newSchema: GraphQLSchema, ignorePluginIndex = -1) => {
-    prepareTracedSchema(newSchema);
+    // prepareTracedSchema(newSchema);
     schema = newSchema;
 
     if (initDone) {

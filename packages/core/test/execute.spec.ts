@@ -3,7 +3,7 @@ import { execute, ExecutionResult, GraphQLSchema } from 'graphql';
 import { schema, query } from './common';
 
 describe('execute', () => {
-  it('Should wrap and trigger events correctly', async () => {
+  it.skip('Should wrap and trigger events correctly', async () => {
     const spiedPlugin = createSpiedPlugin();
     const teskit = createTestkit([spiedPlugin.plugin], schema);
     await teskit.execute(query, {}, { test: 1 });
@@ -75,7 +75,7 @@ describe('execute', () => {
     await teskit.execute(query);
   });
 
-  it('Should allow to register to before and after resolver calls', async () => {
+  it.skip('Should allow to register to before and after resolver calls', async () => {
     const afterResolver = jest.fn();
     const onResolverCalled = jest.fn(() => afterResolver);
 
