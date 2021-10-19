@@ -70,7 +70,7 @@ export default function Index() {
       /> */}
       <HeroIllustration
         title="How does it work?"
-        description={`Envelop providers a low-level hook-based plugin API for developers. By combining plugins, you can compose your own GraphQL "framework", and get a modified version of GraphQL with the capabilities you need.`}
+        description={`Envelop provides a low-level hook-based plugin API for developers. By combining plugins, you can compose your own GraphQL "framework", and get a modified version of GraphQL with the capabilities you need.`}
         image={{
           src: '/assets/home-communication.png',
           alt: 'Illustration',
