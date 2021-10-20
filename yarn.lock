@@ -2769,10 +2769,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/k6@0.34.1":
-  version "0.34.1"
-  resolved "https://registry.yarnpkg.com/@types/k6/-/k6-0.34.1.tgz#097bcc13d71e756025fbf85f55fb0fb1f73c8f83"
-  integrity sha512-bcxeok7rUxSRmzVWOeHqM/G2FxnHLis6RTPdvcjQdYxbiwky0oQRIbUiqsWHzreX4nr00+LF7R3AYE69MTfNvA==
+"@types/k6@0.34.2":
+  version "0.34.2"
+  resolved "https://registry.yarnpkg.com/@types/k6/-/k6-0.34.2.tgz#7d6621d969c2371af941cd74e55cddcb3eaa6b5c"
+  integrity sha512-W7N/KLE5geWgmQQ/18aCxP9vAXILpeXjjhL37q7EY78X/OLsDjiZV7sbPkiN7/c7a5xSil3641U07Sh9Fumm0Q==
 
 "@types/lodash.mergewith@4.6.6":
   version "4.6.6"
