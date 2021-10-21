@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-console */
 /* eslint-disable dot-notation */
+import { EnvelopError } from '@envelop/core';
 import { Plugin, OnResolverCalledHook, isAsyncIterable } from '@envelop/types';
 import * as Sentry from '@sentry/node';
 import { Span, Scope } from '@sentry/types';
@@ -163,7 +164,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
                   childSpan.setData('result', result);
                 }
 
-                if (result instanceof Error) {
+                if (result instanceof Error && !(result instanceof EnvelopError)) {
                   const errorPath = responsePathAsArray(info.path).join(' > ');
 
                   Sentry.captureException(result, {
