@@ -192,3 +192,23 @@ const getEnveloped = envelop({
   plugins: [useSchema(schema), useMaskedErrors()],
 });
 ```
+
+### Utilities
+
+#### enableIf
+
+This utility is helpful when you want to enable a plugin only when a certain condition is met.
+
+```ts
+import { envelop, useMaskedErrors, enableIf } from '@envelop/core';
+
+const isProd = process.env === 'production';
+
+const getEnveloped = envelop({
+  plugins: [
+    // This plugin is enabled only in production
+    enableIf(isProd, useMaskedErrors()),
+    // ... other plugins ...
+  ],
+});
+```
