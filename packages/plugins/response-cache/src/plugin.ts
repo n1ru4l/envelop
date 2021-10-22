@@ -145,7 +145,7 @@ export const defaultBuildResponseCacheKey: BuildResponseCacheKeyFunction = param
  * By default, results with errors (unexpected, EnvelopError or GraphQLError)
  * or results with missing data are not cached.
  */
-export const defaultShouldCacheResult: ShouldCacheResultFunction = (params: { result: ExecutionResult }): Boolean => {
+export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boolean => {
   if (params.result.errors) {
     // eslint-disable-next-line no-console
     console.warn('[useResponseCache] Failed to cache due to errors');
