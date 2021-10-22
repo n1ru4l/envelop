@@ -193,17 +193,13 @@ const getEnveloped = envelop({
 
 ### Customize if result should be cached
 
-You can define s custom function used to check if the result should be cached.
+You can define a custom function used to check if the result should be cached.
 
 This is useful for advanced use-cases. E.g. if you want to
-cache Introspection queries or choose if results with certain error types
-should be cached.
+cache results with certain error types.
 
-By default it used the `defaultShouldCacheResult` function:
+By default, it uses the `defaultShouldCacheResult` function which never caches any query operation execution results that include errors (unexpected, EnvelopError, or GraphQLError).
 
-- Introspection queries are not cached.
-- Neither are any results with errors (unexpected, EnvelopError or GraphQLError) or
-- Results will missing data
 
 The `ShouldCacheResultFunction` can access the `DocumentNode` during the Parse phase and
 the `ExecutionResult` before or after the Execution phase.
