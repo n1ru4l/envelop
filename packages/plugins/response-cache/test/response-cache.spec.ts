@@ -925,7 +925,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('the global ttl can be completely disabled which results in query operation execution results to be never cached', async () => {
+  test('global ttl is disabled when providing value 0, which results in query operation execution results to be never cached', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
