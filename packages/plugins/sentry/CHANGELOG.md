@@ -1,5 +1,11 @@
 # @envelop/sentry
 
+## 1.2.1
+
+### Patch Changes
+
+- 016bbe2: do not report Envelop Error to sentry
+
 ## 1.2.0
 
 ### Minor Changes
