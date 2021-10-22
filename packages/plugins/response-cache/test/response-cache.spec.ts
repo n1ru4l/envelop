@@ -8,7 +8,7 @@ import { useParserCache } from '@envelop/parser-cache';
 describe('useResponseCache', () => {
   beforeEach(() => jest.useRealTimers());
 
-  test('custom ttl per type is used instead of the global ttl - only enable caching for a specific type when global ttl = 0', async () => {
+  test('custom ttl per type is used instead of the global ttl - only enable caching for a specific type when the global ttl is 0', async () => {
     jest.useFakeTimers();
     const spy = jest.fn(() => [
       {
@@ -93,7 +93,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it('Should reuse cache', async () => {
+  it('reuses the cache if the same query operation is executed in sequence without a TTL', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -154,7 +154,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
-  it('Should purge cache on mutation', async () => {
+  it('purges the cached query operation execution result upon executing a mutation that invalidates resources', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -258,7 +258,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it('Should purge cache on demand (typename+id)', async () => {
+  it('purges cached query operation execution result via imperative cache.invalidate api using typename and id', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -343,7 +343,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it('Should purge cache on demand (typename)', async () => {
+  it('purges cached query operation execution result via imperative cache.invalidate api using typename', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -428,7 +428,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it('Should consider variables when saving response', async () => {
+  it('variables are used for constructing the cache key', async () => {
     const spy = jest.fn((_, { limit }: { limit: number }) =>
       [
         {
@@ -501,7 +501,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it('Should purge response after it expired', async () => {
+  it('cached query execution results are purged after the ttl expires', async () => {
     jest.useFakeTimers();
 
     const spy = jest.fn(() => [
@@ -585,7 +585,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it('Should cache responses based on session', async () => {
+  it('query execution results can be cached based on a session with the session parameter', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -683,7 +683,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it('Should skip cache of ignored types', async () => {
+  it('query operations including ignored types are never cached', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -759,7 +759,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('custom ttl per type', async () => {
+  test('custom ttl can be specified per object type and will be used over the default ttl for caching a query operation execution result if included in the operation document', async () => {
     jest.useFakeTimers();
     const spy = jest.fn(() => [
       {
@@ -842,7 +842,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('custom ttl per schema coordinate', async () => {
+  test('custom ttl can be specified per schema coordinate and will be used over the default ttl for caching a query operation execution result if included in the operation document', async () => {
     jest.useFakeTimers();
     const spy = jest.fn(() => [
       {
@@ -925,7 +925,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('disable global ttl', async () => {
+  test('the global ttl can be completely disabled which results in query operation execution results to be never cached', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -1001,7 +1001,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('prioritize schema coordinate over global ttl', async () => {
+  test('schema coordinate ttl is prioritized over global ttl', async () => {
     jest.useFakeTimers();
     const userSpy = jest.fn(() => [
       {
@@ -1151,7 +1151,7 @@ describe('useResponseCache', () => {
     expect(userSpy).toHaveBeenCalledTimes(2);
   });
 
-  it('Should not cache query when execution result includes errors and data is null', async () => {
+  it('execution results with errors are never cached by default', async () => {
     const spy = jest.fn(() => {
       throw new Error('Do not cache an error');
     });
@@ -1191,7 +1191,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(4);
   });
 
-  it('Custom shouldCache parameter can override the default behavior and cache execution results with errors', async () => {
+  it('custom shouldCache parameter can override the default behavior and cache execution results with errors', async () => {
     const spy = jest.fn(() => {
       throw new Error('Do not cache an error');
     });
@@ -1240,7 +1240,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
-  it('Purges cache on mutation even when error is included in the execution result', async () => {
+  it('cache is purged upon mutation even when error is included in the mutation execution result', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -1344,7 +1344,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it('Should not cache an introspection query operation with default options', async () => {
+  it('introspection query operation is not cached with default options', async () => {
     const introspectionQuery = getIntrospectionQuery();
 
     const schema = makeExecutableSchema({
@@ -1393,7 +1393,7 @@ describe('useResponseCache', () => {
     expect(introspectionCounter).toEqual(2);
   });
 
-  it("Introspection query operation can be cached via 'ttlPerSchemaCoordinate' option", async () => {
+  it("introspection query operation can be cached via 'ttlPerSchemaCoordinate' option", async () => {
     const introspectionQuery = getIntrospectionQuery();
 
     const schema = makeExecutableSchema({
@@ -1444,7 +1444,7 @@ describe('useResponseCache', () => {
     expect(introspectionCounter).toEqual(1);
   });
 
-  it('A query operation is not cached if an error occurs within a resolver', async () => {
+  it('query operation is not cached if an error occurs within a resolver', async () => {
     let usersResolverInvocationCount = 0;
 
     const schema = makeExecutableSchema({
@@ -1488,7 +1488,7 @@ describe('useResponseCache', () => {
     expect(usersResolverInvocationCount).toEqual(2);
   });
 
-  test('response cache works with validation cache and parser cache', async () => {
+  it('response cache works with validation cache and parser cache', async () => {
     jest.useFakeTimers();
     const mockFn = jest.fn();
     const schema = makeExecutableSchema({
