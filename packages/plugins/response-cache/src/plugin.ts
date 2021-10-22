@@ -146,12 +146,10 @@ export const defaultBuildResponseCacheKey: BuildResponseCacheKeyFunction = param
  * or results with missing data are not cached.
  */
 export const defaultShouldCacheResult: ShouldCacheResultFunction = (params: { result: ExecutionResult }): Boolean => {
-  if (params.result) {
-    if (params.result.errors) {
-      // eslint-disable-next-line no-console
-      console.warn('[useResponseCache] Failed to cache due to errors');
-      return false;
-    }
+  if (params.result.errors) {
+    // eslint-disable-next-line no-console
+    console.warn('[useResponseCache] Failed to cache due to errors');
+    return false;
   }
 
   return true;
