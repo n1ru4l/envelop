@@ -142,8 +142,7 @@ export const defaultBuildResponseCacheKey: BuildResponseCacheKeyFunction = param
  * It is exported here for advanced use-cases. E.g. if you want to choose if
  * results with certain error types should be cached.
  *
- * By default, results with errors (unexpected, EnvelopError or GraphQLError)
- * or results with missing data are not cached.
+ * By default, results with errors (unexpected, EnvelopError, or GraphQLError) are not cached.
  */
 export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boolean => {
   if (params.result.errors) {
