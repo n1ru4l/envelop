@@ -1191,6 +1191,55 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(4);
   });
 
+  it('Custom shouldCache parameter can override the default behavior and cache execution results with errors', async () => {
+    const spy = jest.fn(() => {
+      throw new Error('Do not cache an error');
+    });
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+      },
+    });
+
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          // cache any query execution result
+          shouldCacheResult: () => true,
+        }),
+      ],
+      schema
+    );
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+        }
+      }
+    `;
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    // the resolver is only called once as all following executions hit the cache
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
   it('Purges cache on mutation even when error is included in the execution result', async () => {
     const spy = jest.fn(() => [
       {
