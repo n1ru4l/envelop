@@ -143,15 +143,9 @@ export const defaultBuildResponseCacheKey: BuildResponseCacheKeyFunction = param
  */
 export const defaultShouldCacheResult: ShouldCacheResultFunction = (params: { result: ExecutionResult }): Boolean => {
   if (params.result) {
-    if (params.result?.errors) {
+    if (params.result.errors) {
       // eslint-disable-next-line no-console
       console.warn('[useResponseCache] Failed to cache or invalidate due to errors');
-      return false;
-    }
-
-    if (params.result?.data === null || params.result?.data === undefined) {
-      // eslint-disable-next-line no-console
-      console.warn('[useResponseCache] Failed to cache due to missing data');
       return false;
     }
   }
@@ -182,7 +176,7 @@ export function useResponseCache({
   const schemaCache = new WeakMap<GraphQLSchema, GraphQLSchema>();
 
   // never cache Introspections
-  ttlPerSchemaCoordinate = { ...ttlPerSchemaCoordinate, 'Query.__schema': 0 };
+  ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
 
   return {
     onSchemaChange(ctx) {
