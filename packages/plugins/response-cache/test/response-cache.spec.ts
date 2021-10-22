@@ -1230,7 +1230,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(4);
   });
 
-  it('Should not purge cache on mutation when error', async () => {
+  it('Purges cache on mutation when error is included in execution result', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -1331,7 +1331,7 @@ describe('useResponseCache', () => {
     expect(errorSpy).toHaveBeenCalledTimes(1);
 
     await testInstance.execute(query);
-    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('Should not cache an introspection query by default', async () => {

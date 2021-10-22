@@ -145,7 +145,7 @@ export const defaultShouldCacheResult: ShouldCacheResultFunction = (params: { re
   if (params.result) {
     if (params.result.errors) {
       // eslint-disable-next-line no-console
-      console.warn('[useResponseCache] Failed to cache or invalidate due to errors');
+      console.warn('[useResponseCache] Failed to cache due to errors');
       return false;
     }
   }
@@ -226,10 +226,6 @@ export function useResponseCache({
             if (isAsyncIterable(result)) {
               // eslint-disable-next-line no-console
               console.warn('[useResponseCache] AsyncIterable returned from execute is currently unsupported.');
-              return;
-            }
-
-            if (!shouldCacheResult({ result })) {
               return;
             }
 
