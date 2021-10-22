@@ -191,7 +191,44 @@ const getEnveloped = envelop({
 });
 ```
 
-### Prevent caching of sensitive information
+### Customize if result should be cached
+
+You can define a custom function used to check if a query operation execution result should be cached.
+
+```ts
+type ShouldCacheResultFunction = (params: { result: ExecutionResult }) => Boolean;
+```
+
+This is useful for advanced use-cases. E.g. if you want to
+cache results with certain error types.
+
+By default, the `defaultShouldCacheResult` function is used which never caches any query operation execution results that includes any errors (unexpected, EnvelopError, or GraphQLError).
+
+```ts
+import { envelop } from '@envelop/core';
+import { useResponseCache, ShouldCacheResultFunction } from '@envelop/response-cache';
+
+export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boolean => {
+  // cache any query operation execution result
+  // even if it includes errors
+  return true;
+};
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useResponseCache({
+      shouldCacheResult = myCustomShouldCacheResult,
+    }),
+  ],
+});
+```
+
+### Cache Introspection query operations
+
+By default introspection query operations are not cached. In case you want to cache them you can do so with the `ttlPerSchemaCoordinate` parameter.
+
+**Infinite caching**
 
 ```ts
 import { envelop } from '@envelop/core';
@@ -201,9 +238,43 @@ const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useResponseCache({
-      ttl: 2000,
-      // never cache responses that include a RefreshToken object type.
-      ignoredTypes: ['RefreshToken'],
+      ttlPerSchemaCoordinate: {
+        'Query.__schema': undefined, // cache infinitely
+      },
+    }),
+  ],
+});
+```
+
+**TTL caching**
+
+```ts
+import { envelop } from '@envelop/core';
+import { useResponseCache } from '@envelop/response-cache';
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useResponseCache({
+      ttlPerSchemaCoordinate: {
+        'Query.__schema': 10_000, // cache for 10 seconds
+      },
+    }),
+  ],
+});
+```
+
+### Cache with maximum TTL
+
+```ts
+import { envelop } from '@envelop/core';
+import { useResponseCache } from '@envelop/response-cache';
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useResponseCache({
+      ttl: 2000, // cached execution results become stale after 2 seconds
     }),
   ],
 });

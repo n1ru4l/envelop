@@ -1,3 +1,4 @@
+import { getIntrospectionQuery, GraphQLObjectType } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useValidationCache } from '@envelop/validation-cache';
@@ -7,7 +8,7 @@ import { useParserCache } from '@envelop/parser-cache';
 describe('useResponseCache', () => {
   beforeEach(() => jest.useRealTimers());
 
-  test('custom ttl per type is used instead of the global ttl - only enable caching for a specific type when global ttl = 0', async () => {
+  test('custom ttl per type is used instead of the global ttl - only enable caching for a specific type when the global ttl is 0', async () => {
     jest.useFakeTimers();
     const spy = jest.fn(() => [
       {
@@ -92,7 +93,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('should reuse cache', async () => {
+  it('reuses the cache if the same query operation is executed in sequence without a TTL', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -153,7 +154,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
-  test('should purge cache on mutation', async () => {
+  it('purges the cached query operation execution result upon executing a mutation that invalidates resources', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -176,6 +177,7 @@ describe('useResponseCache', () => {
         ],
       },
     ]);
+
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         type Query {
@@ -256,7 +258,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('should purge cache on demand (typename+id)', async () => {
+  it('purges cached query operation execution result via imperative cache.invalidate api using typename and id', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -341,7 +343,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('should purge cache on demand (typename)', async () => {
+  it('purges cached query operation execution result via imperative cache.invalidate api using typename', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -426,7 +428,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('should consider variables when saving response', async () => {
+  it('variables are used for constructing the cache key', async () => {
     const spy = jest.fn((_, { limit }: { limit: number }) =>
       [
         {
@@ -499,7 +501,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('should purge response after it expired', async () => {
+  it('cached query execution results are purged after the ttl expires', async () => {
     jest.useFakeTimers();
 
     const spy = jest.fn(() => [
@@ -583,7 +585,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('should cache responses based on session', async () => {
+  it('query execution results can be cached based on a session with the session parameter', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -681,7 +683,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('should skip cache of ignored types', async () => {
+  it('query operations including ignored types are never cached', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -757,7 +759,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('custom ttl per type', async () => {
+  test('custom ttl can be specified per object type and will be used over the default ttl for caching a query operation execution result if included in the operation document', async () => {
     jest.useFakeTimers();
     const spy = jest.fn(() => [
       {
@@ -840,7 +842,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('custom ttl per schema coordinate', async () => {
+  test('custom ttl can be specified per schema coordinate and will be used over the default ttl for caching a query operation execution result if included in the operation document', async () => {
     jest.useFakeTimers();
     const spy = jest.fn(() => [
       {
@@ -923,7 +925,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('disable global ttl', async () => {
+  test('global ttl is disabled when providing value 0, which results in query operation execution results to be never cached', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -999,7 +1001,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('prioritize schema coordinate over global ttl', async () => {
+  test('schema coordinate ttl is prioritized over global ttl', async () => {
     jest.useFakeTimers();
     const userSpy = jest.fn(() => [
       {
@@ -1149,7 +1151,344 @@ describe('useResponseCache', () => {
     expect(userSpy).toHaveBeenCalledTimes(2);
   });
 
-  test('response cache works with validation cache and parser cache', async () => {
+  it('execution results with errors are never cached by default', async () => {
+    const spy = jest.fn(() => {
+      throw new Error('Do not cache an error');
+    });
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+      },
+    });
+
+    const testInstance = createTestkit([useResponseCache({})], schema);
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+        }
+      }
+    `;
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(4);
+  });
+
+  it('custom shouldCache parameter can override the default behavior and cache execution results with errors', async () => {
+    const spy = jest.fn(() => {
+      throw new Error('Do not cache an error');
+    });
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+      },
+    });
+
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          // cache any query execution result
+          shouldCacheResult: () => true,
+        }),
+      ],
+      schema
+    );
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+        }
+      }
+    `;
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    // the resolver is only called once as all following executions hit the cache
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('cache is purged upon mutation even when error is included in the mutation execution result', async () => {
+    const spy = jest.fn(() => [
+      {
+        id: 1,
+        name: 'User 1',
+        comments: [
+          {
+            id: 1,
+            text: 'Comment 1 of User 1',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'User 2',
+        comments: [
+          {
+            id: 2,
+            text: 'Comment 2 of User 2',
+          },
+        ],
+      },
+    ]);
+
+    const errorSpy = jest.fn(() => {
+      throw new Error('could not get name');
+    });
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type Mutation {
+          updateUser(id: ID!): User!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+        Mutation: {
+          updateUser(_, { id }) {
+            return {
+              id,
+              name: errorSpy,
+            };
+          },
+        },
+      },
+    });
+
+    const testInstance = createTestkit([useResponseCache({ includeExtensionMetadata: true })], schema);
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+          comments {
+            id
+            text
+          }
+        }
+      }
+    `;
+
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    await testInstance.execute(
+      /* GraphQL */ `
+        mutation test($id: ID!) {
+          updateUser(id: $id) {
+            id
+            name
+          }
+        }
+      `,
+      {
+        id: 1,
+      }
+    );
+
+    expect(errorSpy).toHaveBeenCalledTimes(1);
+
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it('introspection query operation is not cached with default options', async () => {
+    const introspectionQuery = getIntrospectionQuery();
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          user: User!
+        }
+        type User {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          user: {
+            id: 1,
+            name: 'User 1',
+          },
+        },
+      },
+    });
+
+    // keeps track how often the '__Schema.queryType' resolver has been called
+    // aka a introspection query operation has been executed
+    // we wrap that field and increment the counter
+    let introspectionCounter = 0;
+
+    const schemaType = schema.getType('__Schema') as GraphQLObjectType;
+    const schemaTypeQueryTypeField = schemaType.getFields()['queryType'];
+    const originalResolve = schemaTypeQueryTypeField.resolve!;
+    schemaTypeQueryTypeField.resolve = (...args) => {
+      introspectionCounter++;
+      return originalResolve(...args);
+    };
+
+    const cache = createInMemoryCache();
+    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+
+    // after each execution the introspectionCounter should be incremented by 1
+    // as we never cache the introspection
+
+    await testInstance.execute(introspectionQuery);
+    expect(introspectionCounter).toEqual(1);
+
+    await testInstance.execute(introspectionQuery);
+    expect(introspectionCounter).toEqual(2);
+  });
+
+  it("introspection query operation can be cached via 'ttlPerSchemaCoordinate' option", async () => {
+    const introspectionQuery = getIntrospectionQuery();
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          user: User!
+        }
+        type User {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          user: {
+            id: 1,
+            name: 'User 1',
+          },
+        },
+      },
+    });
+
+    // keeps track how often the '__Schema.queryType' resolver has been called
+    // aka a introspection query operation has been executed
+    // we wrap that field and increment the counter
+    let introspectionCounter = 0;
+
+    const schemaType = schema.getType('__Schema') as GraphQLObjectType;
+    const schemaTypeQueryTypeField = schemaType.getFields()['queryType'];
+    const originalResolve = schemaTypeQueryTypeField.resolve!;
+    schemaTypeQueryTypeField.resolve = (...args) => {
+      introspectionCounter++;
+      return originalResolve(...args);
+    };
+
+    const cache = createInMemoryCache();
+    const testInstance = createTestkit(
+      [useResponseCache({ cache, ttlPerSchemaCoordinate: { 'Query.__schema': undefined } })],
+      schema
+    );
+
+    await testInstance.execute(introspectionQuery);
+    // after the first execution the introspectionCounter should be incremented by 1
+    expect(introspectionCounter).toEqual(1);
+
+    await testInstance.execute(introspectionQuery);
+    // as we now cache the introspection the resolver shall not be called for further introspections
+    expect(introspectionCounter).toEqual(1);
+  });
+
+  it('query operation is not cached if an error occurs within a resolver', async () => {
+    let usersResolverInvocationCount = 0;
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type User {
+          id: ID!
+          name: String!
+        }
+
+        type Query {
+          users: [User!]!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: () => {
+            usersResolverInvocationCount++;
+            return null;
+          },
+        },
+      },
+    });
+
+    const cache = createInMemoryCache();
+    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+        }
+      }
+    `;
+
+    await testInstance.execute(query);
+    expect(usersResolverInvocationCount).toEqual(1);
+
+    const testInstance2 = createTestkit([useResponseCache({ cache })], schema);
+    await testInstance2.execute(query);
+    expect(usersResolverInvocationCount).toEqual(2);
+  });
+
+  it('response cache works with validation cache and parser cache', async () => {
     jest.useFakeTimers();
     const mockFn = jest.fn();
     const schema = makeExecutableSchema({

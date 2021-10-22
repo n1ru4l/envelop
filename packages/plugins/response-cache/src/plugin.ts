@@ -10,6 +10,7 @@ import {
   GraphQLSchema,
   defaultFieldResolver,
   ExecutionArgs,
+  ExecutionResult,
 } from 'graphql';
 import jsonStableStringify from 'fast-json-stable-stringify';
 import type { Cache, CacheEntityRecord } from './cache';
@@ -44,6 +45,8 @@ export type BuildResponseCacheKeyFunction = (params: {
 
 export type GetDocumentStringFromContextFunction = (params: DefaultContext) => Maybe<string>;
 
+export type ShouldCacheResultFunction = (params: { result: ExecutionResult }) => Boolean;
+
 export type UseResponseCacheParameter<C = any> = {
   cache?: Cache;
   /**
@@ -59,8 +62,12 @@ export type UseResponseCacheParameter<C = any> = {
   /**
    * Overwrite the ttl for query operations whose selection contains a specific schema coordinate (e.g. Query.users).
    * Useful if the selection of a specific field should reduce the TTL of the query operation.
+   *
+   * The default value is `{}` and it will be merged with a `{ 'Query.__schema': 0 }` object.
+   * In the unusual case where you actually want to cache introspection query operations,
+   * you need to provide the value `{ 'Query.__schema': undefined }`.
    */
-  ttlPerSchemaCoordinate?: Record<string, number>;
+  ttlPerSchemaCoordinate?: Record<string, number | undefined>;
   /**
    * Allows to cache responses based on the resolved session id.
    * Return a unique value for each session.
@@ -105,6 +112,12 @@ export type UseResponseCacheParameter<C = any> = {
    * Defaults to `true` if `process.env["NODE_ENV"]` is set to `"development"`, otherwise `false`.
    */
   includeExtensionMetadata?: boolean;
+  /**
+   * Checks if the execution result should be cached or ignored. By default, any execution that
+   * raises any error, unexpected ot EnvelopError or GraphQLError are ignored.
+   * Use this function to customize the behavior, such as caching results that have an EnvelopError.
+   */
+  shouldCacheResult?: ShouldCacheResultFunction;
 };
 
 /**
@@ -123,6 +136,24 @@ export const defaultBuildResponseCacheKey: BuildResponseCacheKeyFunction = param
     )
     .digest('base64');
 
+/**
+ * Default function used to check if the result should be cached.
+ *
+ * It is exported here for advanced use-cases. E.g. if you want to choose if
+ * results with certain error types should be cached.
+ *
+ * By default, results with errors (unexpected, EnvelopError, or GraphQLError) are not cached.
+ */
+export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boolean => {
+  if (params.result.errors) {
+    // eslint-disable-next-line no-console
+    console.warn('[useResponseCache] Failed to cache due to errors');
+    return false;
+  }
+
+  return true;
+};
+
 export const defaultGetDocumentStringFromContext: GetDocumentStringFromContextFunction = context =>
   context[rawDocumentStringSymbol as any] as any;
 
@@ -133,16 +164,20 @@ export function useResponseCache({
   enabled,
   ignoredTypes = [],
   ttlPerType = {},
-  ttlPerSchemaCoordinate,
+  ttlPerSchemaCoordinate = {},
   idFields = ['id'],
   invalidateViaMutation = true,
   buildResponseCacheKey = defaultBuildResponseCacheKey,
   getDocumentStringFromContext = defaultGetDocumentStringFromContext,
+  shouldCacheResult = defaultShouldCacheResult,
   // eslint-disable-next-line dot-notation
   includeExtensionMetadata = typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false,
 }: UseResponseCacheParameter = {}): Plugin {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
   const schemaCache = new WeakMap<GraphQLSchema, GraphQLSchema>();
+
+  // never cache Introspections
+  ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
 
   return {
     onSchemaChange(ctx) {
@@ -157,6 +192,7 @@ export function useResponseCache({
       return function onParseEnd(ctx) {
         if (ctx.result && 'kind' in ctx.result) {
           const source = parseCtx.params.source;
+
           const rawDocumentString = typeof source === 'string' ? source : source.body;
           ctx.extendContext({
             [rawDocumentStringSymbol]: rawDocumentString,
@@ -247,8 +283,9 @@ export function useResponseCache({
                   const parentType = typeInfo.getParentType();
                   if (parentType) {
                     const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
-                    if (schemaCoordinate in ttlPerSchemaCoordinate) {
-                      context.currentTtl = calculateTtl(ttlPerSchemaCoordinate[schemaCoordinate], context.currentTtl);
+                    const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate];
+                    if (maybeTtl !== undefined) {
+                      context.currentTtl = calculateTtl(maybeTtl, context.currentTtl);
                     }
                   }
                 },
@@ -265,6 +302,10 @@ export function useResponseCache({
               }
 
               if (context.skip) {
+                return;
+              }
+
+              if (!shouldCacheResult({ result })) {
                 return;
               }
 
