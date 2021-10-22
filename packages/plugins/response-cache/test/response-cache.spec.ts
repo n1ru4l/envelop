@@ -1151,45 +1151,7 @@ describe('useResponseCache', () => {
     expect(userSpy).toHaveBeenCalledTimes(2);
   });
 
-  it('Should not cache query when data is null', async () => {
-    const spy = jest.fn(() => null);
-
-    const schema = makeExecutableSchema({
-      typeDefs: /* GraphQL */ `
-        type Query {
-          users: [User!]!
-        }
-
-        type User {
-          id: ID!
-          name: String!
-        }
-      `,
-      resolvers: {
-        Query: {
-          users: spy,
-        },
-      },
-    });
-
-    const testInstance = createTestkit([useResponseCache({})], schema);
-
-    const query = /* GraphQL */ `
-      query test {
-        users {
-          id
-          name
-        }
-      }
-    `;
-    await testInstance.execute(query);
-    await testInstance.execute(query);
-    await testInstance.execute(query);
-    await testInstance.execute(query);
-    expect(spy).toHaveBeenCalledTimes(4);
-  });
-
-  it('Should not cache query when errors', async () => {
+  it('Should not cache query when execution result includes errors and data is null', async () => {
     const spy = jest.fn(() => {
       throw new Error('Do not cache an error');
     });
