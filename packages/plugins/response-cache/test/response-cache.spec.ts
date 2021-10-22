@@ -1,4 +1,4 @@
-import { getIntrospectionQuery } from 'graphql';
+import { getIntrospectionQuery, GraphQLObjectType } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useValidationCache } from '@envelop/validation-cache';
@@ -1295,8 +1295,8 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it('Should not cache an introspection query by default', async () => {
-    const query = getIntrospectionQuery();
+  it('Should not cache an introspection query operation with default options', async () => {
+    const introspectionQuery = getIntrospectionQuery();
 
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
@@ -1318,44 +1318,30 @@ describe('useResponseCache', () => {
       },
     });
 
+    // keeps track how often the '__Schema.queryType' resolver has been called
+    // aka a introspection query operation has been executed
+    // we wrap that field and increment the counter
+    let introspectionCounter = 0;
+
+    const schemaType = schema.getType('__Schema') as GraphQLObjectType;
+    const schemaTypeQueryTypeField = schemaType.getFields()['queryType'];
+    const originalResolve = schemaTypeQueryTypeField.resolve!;
+    schemaTypeQueryTypeField.resolve = (...args) => {
+      introspectionCounter++;
+      return originalResolve(...args);
+    };
+
     const cache = createInMemoryCache();
     const testInstance = createTestkit([useResponseCache({ cache })], schema);
-    const introspectionQueryResult = await testInstance.execute(query);
 
-    const changedSchema = makeExecutableSchema({
-      typeDefs: /* GraphQL */ `
-        type Query {
-          user: User!
-          users: [User]!
-        }
-        type User {
-          id: ID!
-          name: String!
-        }
-      `,
-      resolvers: {
-        Query: {
-          user: {
-            id: 1,
-            name: 'User 1',
-          },
-          users: [
-            { id: 1, name: 'User 1' },
-            { id: 2, name: 'User 2' },
-            { id: 3, name: 'User 3' },
-          ],
-        },
-      },
-    });
+    // after each execution the introspectionCounter should be incremented by 1
+    // as we never cache the introspection
 
-    // we modify the schema, but use the same cache instance
-    const testInstanceWithChangedSchema = createTestkit([useResponseCache({ cache })], changedSchema);
+    await testInstance.execute(introspectionQuery);
+    expect(introspectionCounter).toEqual(1);
 
-    // subsequent introspection queries should return different results
-    // since the schema has been changed
-    const changedIntrospectionQuery = await testInstanceWithChangedSchema.execute(query);
-
-    expect(changedIntrospectionQuery).not.toEqual(introspectionQueryResult);
+    await testInstance.execute(introspectionQuery);
+    expect(introspectionCounter).toEqual(2);
   });
 
   it('Should not cache an introspection query if an error occurred in a prior query', async () => {
