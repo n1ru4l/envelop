@@ -1344,6 +1344,57 @@ describe('useResponseCache', () => {
     expect(introspectionCounter).toEqual(2);
   });
 
+  it("Introspection query operation can be cached via 'ttlPerSchemaCoordinate' option", async () => {
+    const introspectionQuery = getIntrospectionQuery();
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          user: User!
+        }
+        type User {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          user: {
+            id: 1,
+            name: 'User 1',
+          },
+        },
+      },
+    });
+
+    // keeps track how often the '__Schema.queryType' resolver has been called
+    // aka a introspection query operation has been executed
+    // we wrap that field and increment the counter
+    let introspectionCounter = 0;
+
+    const schemaType = schema.getType('__Schema') as GraphQLObjectType;
+    const schemaTypeQueryTypeField = schemaType.getFields()['queryType'];
+    const originalResolve = schemaTypeQueryTypeField.resolve!;
+    schemaTypeQueryTypeField.resolve = (...args) => {
+      introspectionCounter++;
+      return originalResolve(...args);
+    };
+
+    const cache = createInMemoryCache();
+    const testInstance = createTestkit(
+      [useResponseCache({ cache, ttlPerSchemaCoordinate: { 'Query.__schema': undefined } })],
+      schema
+    );
+
+    await testInstance.execute(introspectionQuery);
+    // after the first execution the introspectionCounter should be incremented by 1
+    expect(introspectionCounter).toEqual(1);
+
+    await testInstance.execute(introspectionQuery);
+    // as we now cache the introspection the resolver shall not be called for further introspections
+    expect(introspectionCounter).toEqual(1);
+  });
+
   it('A query operation is not cached if an error occurs within a resolver', async () => {
     let usersResolverInvocationCount = 0;
 

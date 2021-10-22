@@ -62,8 +62,12 @@ export type UseResponseCacheParameter<C = any> = {
   /**
    * Overwrite the ttl for query operations whose selection contains a specific schema coordinate (e.g. Query.users).
    * Useful if the selection of a specific field should reduce the TTL of the query operation.
+   *
+   * The default value is `{}` and it will be merged with a `{ 'Query.__schema': 0 }` object.
+   * In the unusual case where you actually want to cache introspection query operations,
+   * you need to provide the value `{ 'Query.__schema': undefined }`.
    */
-  ttlPerSchemaCoordinate?: Record<string, number>;
+  ttlPerSchemaCoordinate?: Record<string, number | undefined>;
   /**
    * Allows to cache responses based on the resolved session id.
    * Return a unique value for each session.
@@ -282,8 +286,9 @@ export function useResponseCache({
                   const parentType = typeInfo.getParentType();
                   if (parentType) {
                     const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
-                    if (schemaCoordinate in ttlPerSchemaCoordinate) {
-                      context.currentTtl = calculateTtl(ttlPerSchemaCoordinate[schemaCoordinate], context.currentTtl);
+                    const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate];
+                    if (maybeTtl !== undefined) {
+                      context.currentTtl = calculateTtl(maybeTtl, context.currentTtl);
                     }
                   }
                 },
