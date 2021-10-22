@@ -3,7 +3,6 @@ import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useValidationCache } from '@envelop/validation-cache';
 import { useResponseCache, createInMemoryCache } from '../src';
-import { useSchema } from '@envelop/core';
 import { useParserCache } from '@envelop/parser-cache';
 
 describe('useResponseCache', () => {
