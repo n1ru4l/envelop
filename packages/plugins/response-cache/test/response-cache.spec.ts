@@ -1344,37 +1344,8 @@ describe('useResponseCache', () => {
     expect(introspectionCounter).toEqual(2);
   });
 
-  it('Should not cache an introspection query if an error occurred in a prior query', async () => {
-    const query = /* GraphQL */ `
-      query test {
-        users {
-          id
-          name
-        }
-      }
-    `;
-
-    const schemaWithError = makeExecutableSchema({
-      typeDefs: /* GraphQL */ `
-        type User {
-          id: ID!
-          name: String!
-        }
-
-        type Query {
-          users: [User!]!
-        }
-      `,
-      resolvers: {
-        Query: {
-          users: () => null,
-        },
-      },
-    });
-
-    const cache = createInMemoryCache();
-    const testInstance = createTestkit([useResponseCache({ cache })], schemaWithError);
-    const errorQueryResult = await testInstance.execute(query); // ?
+  it('A query operation is not cached if an error occurs within a resolver', async () => {
+    let usersResolverInvocationCount = 0;
 
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
@@ -1389,19 +1360,32 @@ describe('useResponseCache', () => {
       `,
       resolvers: {
         Query: {
-          users: () => [
-            {
-              id: 1,
-              name: 'User 1',
-            },
-          ],
+          users: () => {
+            usersResolverInvocationCount++;
+            return null;
+          },
         },
       },
     });
-    const testInstance2 = createTestkit([useResponseCache({ cache })], schema);
-    const queryResult = await testInstance2.execute(query);
 
-    expect(errorQueryResult).not.toEqual(queryResult);
+    const cache = createInMemoryCache();
+    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+        }
+      }
+    `;
+
+    await testInstance.execute(query);
+    expect(usersResolverInvocationCount).toEqual(1);
+
+    const testInstance2 = createTestkit([useResponseCache({ cache })], schema);
+    await testInstance2.execute(query);
+    expect(usersResolverInvocationCount).toEqual(2);
   });
 
   test('response cache works with validation cache and parser cache', async () => {
