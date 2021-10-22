@@ -1191,7 +1191,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(4);
   });
 
-  it('Purges cache on mutation when error is included in execution result', async () => {
+  it('Purges cache on mutation even when error is included in the execution result', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
