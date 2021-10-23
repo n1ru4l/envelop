@@ -1,15 +1,18 @@
+const { resolve } = require('path');
 const { pathsToModuleNameMapper } = require('ts-jest/utils');
-const { compilerOptions } = require('./tsconfig.json');
+const CI = !!process.env.CI;
+
+const ROOT_DIR = __dirname;
+const TSCONFIG = resolve(ROOT_DIR, 'tsconfig.json');
+const tsconfig = require(TSCONFIG);
 
 module.exports = {
-  preset: 'ts-jest',
   testEnvironment: 'node',
-  modulePathIgnorePatterns: ['/dist/'],
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-  globals: {
-    'ts-jest': {
-      diagnostics: false,
-    },
-  },
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
+  rootDir: ROOT_DIR,
+  restoreMocks: true,
+  reporters: ['default'],
+  modulePathIgnorePatterns: ['dist', 'test-assets', 'test-files', 'fixtures'],
+  moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, { prefix: `${ROOT_DIR}/` }),
+  collectCoverage: false,
+  cacheDirectory: resolve(ROOT_DIR, `${CI ? '' : 'node_modules/'}.cache/jest`),
 };
