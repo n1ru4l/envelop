@@ -10,8 +10,7 @@ import type {
   SubscriptionArgs,
   ValidationRule,
 } from 'graphql';
-import { Maybe } from 'graphql/jsutils/Maybe';
-import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
+import { Maybe, PromiseOrValue } from './utils';
 import { DefaultContext } from './context-types';
 import { ExecuteFunction, ParseFunction, ValidateFunction, ValidateFunctionParameter } from '@envelop/core';
 import { SubscribeFunction } from './graphql';

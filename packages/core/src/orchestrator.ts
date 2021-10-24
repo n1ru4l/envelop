@@ -26,6 +26,7 @@ import {
   OnContextErrorHandler,
   SubscribeErrorHook,
   DefaultContext,
+  Maybe,
 } from '@envelop/types';
 import {
   DocumentNode,
@@ -39,7 +40,6 @@ import {
   validate,
   ValidationRule,
 } from 'graphql';
-import { Maybe } from 'graphql/jsutils/Maybe';
 import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema';
 import { errorAsyncIterator, finalAsyncIterator, makeExecute, makeSubscribe, mapAsyncIterator } from './utils';
 

@@ -1,8 +1,7 @@
 import { Plugin } from './plugin';
 import { GraphQLSchema } from 'graphql';
-import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { ExecuteFunction, ParseFunction, SubscribeFunction, ValidateFunction } from './graphql';
-import { ArbitraryObject, Spread } from './utils';
+import { ArbitraryObject, Spread, PromiseOrValue } from './utils';
 export { ArbitraryObject } from './utils';
 
 export type EnvelopContextFnWrapper<TFunction extends Function, ContextType = unknown> = (context: ContextType) => TFunction;

@@ -14,7 +14,7 @@ import {
   GraphQLType,
   isScalarType,
 } from 'graphql';
-import { getArgumentValues } from 'graphql/execution/values.js';
+import { getArgumentValues } from '@graphql-tools/utils';
 
 const getWrappedType = (graphqlType: GraphQLType): Exclude<GraphQLType, GraphQLList<any> | GraphQLNonNull<any>> => {
   if (graphqlType instanceof GraphQLList || graphqlType instanceof GraphQLNonNull) {
@@ -89,7 +89,7 @@ export const ResourceLimitationValidationRule =
 
             // if it is not found the query is invalid and graphql validation will complain
             if (fieldDef != null) {
-              const argumentValues = getArgumentValues(fieldDef, fieldNode, executionArgs.variableValues);
+              const argumentValues = getArgumentValues(fieldDef, fieldNode, executionArgs.variableValues || undefined);
               const type = getWrappedType(fieldDef.type);
               if (type instanceof GraphQLObjectType && type.name.endsWith('Connection')) {
                 let nodeCost = 1;

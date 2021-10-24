@@ -1,5 +1,5 @@
 import { ArgumentNode, GraphQLError, GraphQLInputObjectType, GraphQLInputType, isListType, ValidationContext } from 'graphql';
-import { getArgumentValues } from 'graphql/execution/values.js';
+import { getArgumentValues } from '@graphql-tools/utils';
 import { ExtendedValidationRule, getDirectiveFromAstNode, unwrapType } from '../common';
 
 export const ONE_OF_DIRECTIVE_SDL = /* GraphQL */ `
@@ -18,7 +18,7 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
           return;
         }
 
-        const values = getArgumentValues(fieldType, node, executionArgs.variableValues);
+        const values = getArgumentValues(fieldType, node, executionArgs.variableValues || undefined);
 
         if (fieldType) {
           const isOneOfFieldType =

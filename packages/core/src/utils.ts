@@ -16,8 +16,8 @@ import {
   PolymorphicExecuteArguments,
   PolymorphicSubscribeArguments,
   SubscribeFunction,
+  PromiseOrValue,
 } from '@envelop/types';
-import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 
 export const envelopIsIntrospectionSymbol = Symbol('ENVELOP_IS_INTROSPECTION');
 
