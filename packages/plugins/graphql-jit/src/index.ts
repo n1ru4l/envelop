@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-import { Plugin } from '@envelop/types';
-import { GraphQLError, DocumentNode, Source, ExecutionArgs } from 'graphql';
-import { compileQuery, isCompiledQuery, CompilerOptions } from 'graphql-jit';
+import { Plugin, TypedExecutionArgs } from '@envelop/types';
+import { DocumentNode, Source, ExecutionArgs } from 'graphql';
+import { compileQuery, isCompiledQuery, CompilerOptions, CompiledQuery } from 'graphql-jit';
 import lru from 'tiny-lru';
 
 const DEFAULT_MAX = 1000;
@@ -34,7 +34,42 @@ export const useGraphQlJit = (
   const ttl = typeof pluginOptions.ttl === 'number' ? pluginOptions.ttl : DEFAULT_TTL;
 
   const documentSourceMap = new WeakMap<DocumentNode, string>();
-  const jitCache = lru<ReturnType<typeof compileQuery>>(max, ttl);
+  type JITCacheEntry = {
+    query: CompiledQuery['query'];
+    subscribe?: CompiledQuery['subscribe'];
+  };
+  const jitCache = lru<JITCacheEntry>(max, ttl);
+
+  function getCacheEntry<T>(args: TypedExecutionArgs<T>): JITCacheEntry {
+    let cacheEntry: JITCacheEntry | undefined;
+    const documentSource = documentSourceMap.get(args.document);
+
+    if (documentSource) {
+      cacheEntry = jitCache.get(documentSource);
+    }
+
+    if (!cacheEntry) {
+      const compilationResult = compileQuery(args.schema, args.document, args.operationName ?? undefined, compilerOptions);
+
+      if (!isCompiledQuery(compilationResult)) {
+        if (pluginOptions?.onError) {
+          pluginOptions.onError(compilationResult);
+        } else {
+          console.error(compilationResult);
+        }
+        cacheEntry = {
+          query: () => compilationResult,
+        };
+      } else {
+        cacheEntry = compilationResult;
+      }
+
+      if (documentSource) {
+        jitCache.set(documentSource, cacheEntry);
+      }
+    }
+    return cacheEntry;
+  }
 
   return {
     onParse({ params: { source } }) {
@@ -49,36 +84,20 @@ export const useGraphQlJit = (
     async onExecute({ args, setExecuteFn }) {
       if (!pluginOptions.enableIf || (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))) {
         setExecuteFn(function jitExecutor() {
-          let compiledQuery: ReturnType<typeof compileQuery> | undefined;
-          const documentSource = documentSourceMap.get(args.document);
+          const cacheEntry = getCacheEntry(args);
 
-          if (documentSource) compiledQuery = jitCache.get(documentSource);
+          return cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
+        });
+      }
+    },
+    async onSubscribe({ args, setSubscribeFn }) {
+      if (!pluginOptions.enableIf || (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))) {
+        setSubscribeFn(async function jitSubscriber() {
+          const cacheEntry = getCacheEntry(args);
 
-          if (!compiledQuery) {
-            compiledQuery = compileQuery(args.schema, args.document, args.operationName ?? undefined, compilerOptions);
-
-            if (documentSource) jitCache.set(documentSource, compiledQuery);
-          }
-
-          if (!isCompiledQuery(compiledQuery)) {
-            if (pluginOptions?.onError) {
-              try {
-                pluginOptions.onError(compiledQuery);
-              } catch (e) {
-                return {
-                  errors: [e as GraphQLError],
-                };
-              }
-            } else {
-              console.error(compiledQuery);
-            }
-
-            return {
-              errors: [new GraphQLError('Error compiling query')],
-            };
-          } else {
-            return compiledQuery.query(args.rootValue, args.contextValue, args.variableValues);
-          }
+          return cacheEntry.subscribe
+            ? cacheEntry.subscribe(args.rootValue, args.contextValue, args.variableValues)
+            : cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
         });
       }
     },
