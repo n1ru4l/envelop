@@ -26,7 +26,8 @@
     "postinstall": "patch-package",
     "lint": "eslint --config .eslintrc.json --ext .ts .",
     "prebuild": "rimraf packages/*/dist packages/plugins/*/dist",
-    "build": "tsc --project tsconfig.json && bob build",
+    "build": "tsc --project tsconfig.build.json && bob build",
+    "ts:check": "tsc --noEmit",
     "test": "jest",
     "test:ci": "jest --coverage",
     "prerelease": "yarn build",
@@ -37,6 +38,11 @@
     "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\""
   },
   "devDependencies": {
+    "@babel/core": "7.15.8",
+    "@babel/plugin-proposal-class-properties": "7.14.5",
+    "@babel/plugin-proposal-decorators": "7.15.8",
+    "@babel/preset-env": "7.15.8",
+    "@babel/preset-typescript": "7.15.0",
     "faker": "5.5.3",
     "@types/k6": "0.34.3",
     "prettier": "2.4.1",
