@@ -467,7 +467,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
         const onEndHandler: OnExecuteDoneHookResultOnEndHook[] = [];
 
         for (const afterCb of afterCalls) {
-          const hookResult = afterCb({
+          const hookResult = await afterCb({
             args: args as TypedExecutionArgs<PluginsContext>,
             result,
             setResult: newResult => {

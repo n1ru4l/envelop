@@ -392,7 +392,7 @@ export type OnExecuteDoneEventPayload<ContextType> = {
  */
 export type OnExecuteDoneHook<ContextType> = (
   options: OnExecuteDoneEventPayload<ContextType>
-) => void | OnExecuteDoneHookResult<ContextType>;
+) => PromiseOrValue<void | OnExecuteDoneHookResult<ContextType>>;
 
 /**
  * Result returned from the onExecute hook result for hooking into subsequent phases.
