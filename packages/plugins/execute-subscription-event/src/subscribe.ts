@@ -1,4 +1,4 @@
-import { createSourceEventStream } from 'graphql';
+import { createSourceEventStream, ExecutionResult } from 'graphql';
 import { ExecuteFunction, makeSubscribe, mapAsyncIterator, SubscribeFunction } from '@envelop/core';
 import { isAsyncIterable } from '@envelop/types';
 
@@ -22,7 +22,7 @@ export const subscribe = (execute: ExecuteFunction): SubscribeFunction =>
     );
 
     if (!isAsyncIterable(resultOrStream)) {
-      return resultOrStream;
+      return resultOrStream as AsyncIterableIterator<ExecutionResult>;
     }
 
     // For each payload yielded from a subscription, map it over the normal

@@ -12,7 +12,7 @@ import {
  *
  * Source: https://github.com/graphql/graphql-js/blob/main/src/jsutils/isAsyncIterable.ts
  */
-export function isAsyncIterable(maybeAsyncIterable: any): maybeAsyncIterable is AsyncIterable<any> {
+export function isAsyncIterable<T = any>(maybeAsyncIterable: any): maybeAsyncIterable is AsyncIterable<T> {
   return typeof maybeAsyncIterable?.[Symbol.asyncIterator] === 'function';
 }
 

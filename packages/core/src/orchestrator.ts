@@ -22,7 +22,6 @@ import {
   OnExecuteDoneHookResultOnNextHook,
   OnExecuteDoneHookResultOnEndHook,
   ExecuteFunction,
-  AsyncGeneratorOrValue,
   isAsyncIterable,
   OnContextErrorHandler,
   SubscribeErrorHook,
@@ -47,15 +46,15 @@ import { errorAsyncIterator, finalAsyncIterator, makeExecute, makeSubscribe, map
 export type EnvelopOrchestrator<
   InitialContext extends ArbitraryObject = ArbitraryObject,
   PluginsContext extends ArbitraryObject = ArbitraryObject
-  > = {
-    init: (initialContext?: Maybe<InitialContext>) => void;
-    parse: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['parse'], InitialContext>;
-    validate: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['validate'], InitialContext>;
-    execute: ReturnType<GetEnvelopedFn<PluginsContext>>['execute'];
-    subscribe: ReturnType<GetEnvelopedFn<PluginsContext>>['subscribe'];
-    contextFactory: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['contextFactory'], PluginsContext>;
-    getCurrentSchema: () => Maybe<GraphQLSchema>;
-  };
+> = {
+  init: (initialContext?: Maybe<InitialContext>) => void;
+  parse: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['parse'], InitialContext>;
+  validate: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['validate'], InitialContext>;
+  execute: ReturnType<GetEnvelopedFn<PluginsContext>>['execute'];
+  subscribe: ReturnType<GetEnvelopedFn<PluginsContext>>['subscribe'];
+  contextFactory: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['contextFactory'], PluginsContext>;
+  getCurrentSchema: () => Maybe<GraphQLSchema>;
+};
 
 export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>(
   plugins: Plugin[]
@@ -137,142 +136,35 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
 
   const customParse: EnvelopContextFnWrapper<typeof parse, any> = beforeCallbacks.parse.length
     ? initialContext => (source, parseOptions) => {
-      let result: DocumentNode | Error | null = null;
-      let parseFn: typeof parse = parse;
-      const context = initialContext;
-      const afterCalls: AfterParseHook<any>[] = [];
+        let result: DocumentNode | Error | null = null;
+        let parseFn: typeof parse = parse;
+        const context = initialContext;
+        const afterCalls: AfterParseHook<any>[] = [];
 
-      for (const onParse of beforeCallbacks.parse) {
-        const afterFn = onParse({
-          context,
-          extendContext: extension => {
-            Object.assign(context, extension);
-          },
-          params: { source, options: parseOptions },
-          parseFn,
-          setParseFn: newFn => {
-            parseFn = newFn;
-          },
-          setParsedDocument: newDoc => {
-            result = newDoc;
-          },
-        });
-
-        afterFn && afterCalls.push(afterFn);
-      }
-
-      if (result === null) {
-        try {
-          result = parseFn(source, parseOptions);
-        } catch (e) {
-          result = e as Error;
-        }
-      }
-
-      for (const afterCb of afterCalls) {
-        afterCb({
-          context,
-          extendContext: extension => {
-            Object.assign(context, extension);
-          },
-          replaceParseResult: newResult => {
-            result = newResult;
-          },
-          result,
-        });
-      }
-
-      if (result === null) {
-        throw new Error(`Failed to parse document.`);
-      }
-
-      if (result instanceof Error) {
-        throw result;
-      }
-
-      return result;
-    }
-    : () => parse;
-
-  const customValidate: EnvelopContextFnWrapper<typeof validate, any> = beforeCallbacks.validate.length
-    ? initialContext => (schema, documentAST, rules, typeInfo, validationOptions) => {
-      let actualRules: undefined | ValidationRule[] = rules ? [...rules] : undefined;
-      let validateFn = validate;
-      let result: null | readonly GraphQLError[] = null;
-      const context = initialContext;
-
-      const afterCalls: AfterValidateHook<any>[] = [];
-
-      for (const onValidate of beforeCallbacks.validate) {
-        const afterFn = onValidate({
-          context,
-          extendContext: extension => {
-            Object.assign(context, extension);
-          },
-          params: {
-            schema,
-            documentAST,
-            rules: actualRules,
-            typeInfo,
-            options: validationOptions,
-          },
-          validateFn,
-          addValidationRule: rule => {
-            if (!actualRules) {
-              actualRules = [...specifiedRules];
-            }
-
-            actualRules.push(rule);
-          },
-          setValidationFn: newFn => {
-            validateFn = newFn;
-          },
-          setResult: newResults => {
-            result = newResults;
-          },
-        });
-
-        afterFn && afterCalls.push(afterFn);
-      }
-
-      if (!result) {
-        result = validateFn(schema, documentAST, actualRules, typeInfo, validationOptions);
-      }
-
-      const valid = result.length === 0;
-
-      for (const afterCb of afterCalls) {
-        afterCb({
-          valid,
-          result,
-          context,
-          extendContext: extension => {
-            Object.assign(context, extension);
-          },
-        });
-      }
-
-      return result;
-    }
-    : () => validate;
-
-  const customContextFactory: EnvelopContextFnWrapper<(orchestratorCtx?: any) => any, any> = beforeCallbacks.context.length
-    ? initialContext => async orchestratorCtx => {
-      const afterCalls: OnContextBuildingHook<any>[] = [];
-
-      try {
-        let context = orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
-
-        for (const onContext of beforeCallbacks.context) {
-          const afterHookResult = await onContext({
+        for (const onParse of beforeCallbacks.parse) {
+          const afterFn = onParse({
             context,
             extendContext: extension => {
-              context = { ...context, ...extension };
+              Object.assign(context, extension);
+            },
+            params: { source, options: parseOptions },
+            parseFn,
+            setParseFn: newFn => {
+              parseFn = newFn;
+            },
+            setParsedDocument: newDoc => {
+              result = newDoc;
             },
           });
 
-          if (typeof afterHookResult === 'function') {
-            afterCalls.push(afterHookResult);
+          afterFn && afterCalls.push(afterFn);
+        }
+
+        if (result === null) {
+          try {
+            result = parseFn(source, parseOptions);
+          } catch (e) {
+            result = e as Error;
           }
         }
 
@@ -280,27 +172,134 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
           afterCb({
             context,
             extendContext: extension => {
-              context = { ...context, ...extension };
+              Object.assign(context, extension);
             },
+            replaceParseResult: newResult => {
+              result = newResult;
+            },
+            result,
           });
         }
-        return context;
-      } catch (err) {
-        let error: unknown = err;
-        for (const errorCb of contextErrorHandlers) {
-          errorCb({
-            error,
-            setError: err => {
-              error = err;
-            },
-          });
+
+        if (result === null) {
+          throw new Error(`Failed to parse document.`);
         }
-        throw error;
+
+        if (result instanceof Error) {
+          throw result;
+        }
+
+        return result;
       }
-    }
+    : () => parse;
+
+  const customValidate: EnvelopContextFnWrapper<typeof validate, any> = beforeCallbacks.validate.length
+    ? initialContext => (schema, documentAST, rules, typeInfo, validationOptions) => {
+        let actualRules: undefined | ValidationRule[] = rules ? [...rules] : undefined;
+        let validateFn = validate;
+        let result: null | readonly GraphQLError[] = null;
+        const context = initialContext;
+
+        const afterCalls: AfterValidateHook<any>[] = [];
+
+        for (const onValidate of beforeCallbacks.validate) {
+          const afterFn = onValidate({
+            context,
+            extendContext: extension => {
+              Object.assign(context, extension);
+            },
+            params: {
+              schema,
+              documentAST,
+              rules: actualRules,
+              typeInfo,
+              options: validationOptions,
+            },
+            validateFn,
+            addValidationRule: rule => {
+              if (!actualRules) {
+                actualRules = [...specifiedRules];
+              }
+
+              actualRules.push(rule);
+            },
+            setValidationFn: newFn => {
+              validateFn = newFn;
+            },
+            setResult: newResults => {
+              result = newResults;
+            },
+          });
+
+          afterFn && afterCalls.push(afterFn);
+        }
+
+        if (!result) {
+          result = validateFn(schema, documentAST, actualRules, typeInfo, validationOptions);
+        }
+
+        const valid = result.length === 0;
+
+        for (const afterCb of afterCalls) {
+          afterCb({
+            valid,
+            result,
+            context,
+            extendContext: extension => {
+              Object.assign(context, extension);
+            },
+          });
+        }
+
+        return result;
+      }
+    : () => validate;
+
+  const customContextFactory: EnvelopContextFnWrapper<(orchestratorCtx?: any) => any, any> = beforeCallbacks.context.length
+    ? initialContext => async orchestratorCtx => {
+        const afterCalls: OnContextBuildingHook<any>[] = [];
+
+        try {
+          let context = orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
+
+          for (const onContext of beforeCallbacks.context) {
+            const afterHookResult = await onContext({
+              context,
+              extendContext: extension => {
+                context = { ...context, ...extension };
+              },
+            });
+
+            if (typeof afterHookResult === 'function') {
+              afterCalls.push(afterHookResult);
+            }
+          }
+
+          for (const afterCb of afterCalls) {
+            afterCb({
+              context,
+              extendContext: extension => {
+                context = { ...context, ...extension };
+              },
+            });
+          }
+          return context;
+        } catch (err) {
+          let error: unknown = err;
+          for (const errorCb of contextErrorHandlers) {
+            errorCb({
+              error,
+              setError: err => {
+                error = err;
+              },
+            });
+          }
+          throw error;
+        }
+      }
     : initialContext => orchestratorCtx => orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
 
-  const customSubscribe: typeof subscribe = makeSubscribe(async args => {
+  const customSubscribe: SubscribeFunction = makeSubscribe(async args => {
     const onResolversHandlers: OnResolverCalledHook[] = [];
     let subscribeFn = subscribe as SubscribeFunction;
 
@@ -338,12 +337,12 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
       context[resolversHooksSymbol] = onResolversHandlers;
     }
 
-    let result = (await subscribeFn({
+    let result = await subscribeFn({
       ...args,
       contextValue: context,
       // Casted for GraphQL.js 15 compatibility
       // Can be removed once we drop support for GraphQL.js 15
-    })) as AsyncGenerator<ExecutionResult, void, void> | ExecutionResult;
+    });
 
     const onNextHandler: OnSubscribeResultResultOnNextHook<PluginsContext>[] = [];
     const onEndHandler: OnSubscribeResultResultOnEndHook[] = [];
@@ -401,113 +400,113 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
       });
     }
 
-    return result;
+    return result as AsyncIterableIterator<ExecutionResult>;
   });
 
   const customExecute = beforeCallbacks.execute.length
     ? makeExecute(async args => {
-      const onResolversHandlers: OnResolverCalledHook[] = [];
-      let executeFn = execute as ExecuteFunction;
-      let result: AsyncGeneratorOrValue<ExecutionResult>;
+        const onResolversHandlers: OnResolverCalledHook[] = [];
+        let executeFn = execute as ExecuteFunction;
+        let result: AsyncIterableIterator<ExecutionResult> | ExecutionResult;
 
-      const afterCalls: OnExecuteDoneHook<PluginsContext>[] = [];
-      let context = args.contextValue || {};
+        const afterCalls: OnExecuteDoneHook<PluginsContext>[] = [];
+        let context = args.contextValue || {};
 
-      for (const onExecute of beforeCallbacks.execute) {
-        let stopCalled = false;
+        for (const onExecute of beforeCallbacks.execute) {
+          let stopCalled = false;
 
-        const after = await onExecute({
-          executeFn,
-          setExecuteFn: newExecuteFn => {
-            executeFn = newExecuteFn;
-          },
-          setResultAndStopExecution: stopResult => {
-            stopCalled = true;
-            result = stopResult;
-          },
-          extendContext: extension => {
-            if (typeof extension === 'object') {
-              context = {
-                ...(context || {}),
-                ...extension,
-              };
-            } else {
-              throw new Error(
-                `Invalid context extension provided! Expected "object", got: "${JSON.stringify(
-                  extension
-                )}" (${typeof extension})`
-              );
+          const after = await onExecute({
+            executeFn,
+            setExecuteFn: newExecuteFn => {
+              executeFn = newExecuteFn;
+            },
+            setResultAndStopExecution: stopResult => {
+              stopCalled = true;
+              result = stopResult;
+            },
+            extendContext: extension => {
+              if (typeof extension === 'object') {
+                context = {
+                  ...(context || {}),
+                  ...extension,
+                };
+              } else {
+                throw new Error(
+                  `Invalid context extension provided! Expected "object", got: "${JSON.stringify(
+                    extension
+                  )}" (${typeof extension})`
+                );
+              }
+            },
+            args: args as TypedExecutionArgs<PluginsContext>,
+          });
+
+          if (stopCalled) {
+            return result!;
+          }
+
+          if (after) {
+            if (after.onExecuteDone) {
+              afterCalls.push(after.onExecuteDone);
             }
-          },
-          args: args as TypedExecutionArgs<PluginsContext>,
-        });
-
-        if (stopCalled) {
-          return result!;
-        }
-
-        if (after) {
-          if (after.onExecuteDone) {
-            afterCalls.push(after.onExecuteDone);
-          }
-          if (after.onResolverCalled) {
-            onResolversHandlers.push(after.onResolverCalled);
+            if (after.onResolverCalled) {
+              onResolversHandlers.push(after.onResolverCalled);
+            }
           }
         }
-      }
 
-      if (onResolversHandlers.length) {
-        context[resolversHooksSymbol] = onResolversHandlers;
-      }
+        if (onResolversHandlers.length) {
+          context[resolversHooksSymbol] = onResolversHandlers;
+        }
 
-      result = await executeFn({
-        ...args,
-        contextValue: context,
-      });
-
-      const onNextHandler: OnExecuteDoneHookResultOnNextHook<PluginsContext>[] = [];
-      const onEndHandler: OnExecuteDoneHookResultOnEndHook[] = [];
-
-      for (const afterCb of afterCalls) {
-        const hookResult = afterCb({
-          args: args as TypedExecutionArgs<PluginsContext>,
-          result,
-          setResult: newResult => {
-            result = newResult;
-          },
+        result = await executeFn({
+          ...args,
+          contextValue: context,
         });
-        if (hookResult) {
-          if (hookResult.onNext) {
-            onNextHandler.push(hookResult.onNext);
-          }
-          if (hookResult.onEnd) {
-            onEndHandler.push(hookResult.onEnd);
+
+        const onNextHandler: OnExecuteDoneHookResultOnNextHook<PluginsContext>[] = [];
+        const onEndHandler: OnExecuteDoneHookResultOnEndHook[] = [];
+
+        for (const afterCb of afterCalls) {
+          const hookResult = afterCb({
+            args: args as TypedExecutionArgs<PluginsContext>,
+            result,
+            setResult: newResult => {
+              result = newResult;
+            },
+          });
+          if (hookResult) {
+            if (hookResult.onNext) {
+              onNextHandler.push(hookResult.onNext);
+            }
+            if (hookResult.onEnd) {
+              onEndHandler.push(hookResult.onEnd);
+            }
           }
         }
-      }
 
-      if (onNextHandler.length && isAsyncIterable(result)) {
-        result = mapAsyncIterator(result as AsyncGenerator<ExecutionResult, void, void>, async result => {
-          for (const onNext of onNextHandler) {
-            await onNext({
-              args: args as TypedExecutionArgs<PluginsContext>,
-              result,
-              setResult: newResult => (result = newResult),
-            });
-          }
-          return result;
-        });
-      }
-      if (onEndHandler.length && isAsyncIterable(result)) {
-        result = finalAsyncIterator(result, () => {
-          for (const onEnd of onEndHandler) {
-            onEnd();
-          }
-        });
-      }
+        if (onNextHandler.length && isAsyncIterable(result)) {
+          result = mapAsyncIterator(result, async result => {
+            for (const onNext of onNextHandler) {
+              await onNext({
+                args: args as TypedExecutionArgs<PluginsContext>,
+                result,
+                setResult: newResult => (result = newResult),
+              });
+            }
+            return result;
+          });
+        }
+        if (onEndHandler.length && isAsyncIterable(result)) {
+          result = finalAsyncIterator(result, () => {
+            for (const onEnd of onEndHandler) {
+              onEnd();
+            }
+          });
+        }
 
-      return result;
-    })
+        return result;
+      })
     : makeExecute(execute);
 
   initDone = true;
