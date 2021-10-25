@@ -3,7 +3,7 @@ name: Tests
 on:
   push:
     branches:
-      - master
+      - main
   pull_request: {}
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Master
+      - name: Checkout
         uses: actions/checkout@v2
       - name: Use Node
         uses: actions/setup-node@master
