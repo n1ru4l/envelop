@@ -1,5 +1,11 @@
 # @envelop/types
 
+## 1.3.0
+
+### Minor Changes
+
+- 365a982: Allow async OnExecuteDone hook
+
 ## 1.2.0
 
 ### Minor Changes
