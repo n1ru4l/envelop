@@ -38,9 +38,9 @@
     "typescript": "4.4.4"
   },
   "dependencies": {
-    "lru-cache": "^6.0.0",
     "fast-json-stable-stringify": "^2.1.0",
-    "ioredis": "^4.27.9"
+    "ioredis": "^4.27.9",
+    "lru-cache": "^6.0.0"
   },
   "peerDependencies": {
     "graphql": "^14.0.0 || ^15.0.0"

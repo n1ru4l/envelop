@@ -29,7 +29,6 @@
     "test": "jest",
     "prepack": "bob prepack"
   },
-  "dependencies": {},
   "devDependencies": {
     "@sentry/node": "6.13.3",
     "@sentry/tracing": "6.13.3",

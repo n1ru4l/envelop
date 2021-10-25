@@ -8,6 +8,7 @@
   "dependencies": {
     "@envelop/core": "*",
     "@graphql-tools/schema": "8.0.1",
+    "graphql": "^15.6.1",
     "graphql-ws": "^4.4.2",
     "ws": "7.4.5"
   },

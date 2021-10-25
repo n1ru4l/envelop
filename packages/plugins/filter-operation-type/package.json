@@ -29,7 +29,6 @@
     "test": "jest",
     "prepack": "bob prepack"
   },
-  "dependencies": {},
   "devDependencies": {
     "bob-the-bundler": "1.5.1",
     "graphql": "15.6.1",

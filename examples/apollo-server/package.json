@@ -7,8 +7,9 @@
   "license": "MIT",
   "dependencies": {
     "@envelop/core": "*",
+    "@graphql-tools/schema": "8.0.1",
     "apollo-server": "3.3.0",
-    "@graphql-tools/schema": "8.0.1"
+    "graphql": "^15.6.1"
   },
   "devDependencies": {
     "@types/node": "15.6.1",

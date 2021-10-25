@@ -39,7 +39,6 @@
     "@envelop/response-cache": "^0.3.0",
     "ioredis": "^4.27.9"
   },
-  "peerDependencies": {},
   "buildOptions": {
     "input": "./src/index.ts"
   },

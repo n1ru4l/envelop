@@ -6,10 +6,11 @@
   "author": "Dotan Simha",
   "license": "MIT",
   "dependencies": {
-    "graphql-helix": "1.8.3",
     "@envelop/core": "*",
     "@graphql-tools/schema": "8.0.1",
-    "aws-sdk": "2.918.0"
+    "aws-sdk": "2.918.0",
+    "graphql": "^15.6.1",
+    "graphql-helix": "1.8.3"
   },
   "devDependencies": {
     "@types/aws-lambda": "8.10.76",

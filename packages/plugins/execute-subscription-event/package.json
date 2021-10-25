@@ -29,7 +29,6 @@
     "test": "jest",
     "prepack": "bob prepack"
   },
-  "dependencies": {},
   "devDependencies": {
     "@n1ru4l/push-pull-async-iterable-iterator": "3.0.0",
     "bob-the-bundler": "1.5.1",

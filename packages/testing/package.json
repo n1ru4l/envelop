@@ -29,7 +29,6 @@
     "test": "jest",
     "prepack": "bob prepack"
   },
-  "dependencies": {},
   "devDependencies": {
     "@graphql-tools/utils": "8.5.0",
     "graphql": "15.6.1",

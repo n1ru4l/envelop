@@ -6,11 +6,12 @@
   "author": "Laurin Quast <laurinquast@googlemail.com>",
   "license": "MIT",
   "dependencies": {
-    "fastify": "3.14.0",
-    "@envelop/core": "*",
     "@envelop/auth0": "*",
-    "graphql-helix": "1.8.3",
-    "@graphql-tools/schema": "8.0.1"
+    "@envelop/core": "*",
+    "@graphql-tools/schema": "8.0.1",
+    "fastify": "3.14.0",
+    "graphql": "^15.6.1",
+    "graphql-helix": "1.8.3"
   },
   "devDependencies": {
     "@types/node": "15.6.1",

@@ -6,10 +6,11 @@
   "author": "Dotan Simha",
   "license": "MIT",
   "dependencies": {
-    "fastify": "3.14.0",
     "@envelop/core": "*",
-    "graphql-helix": "1.8.3",
-    "@graphql-tools/schema": "8.0.1"
+    "@graphql-tools/schema": "8.0.1",
+    "fastify": "3.14.0",
+    "graphql": "^15.6.1",
+    "graphql-helix": "1.8.3"
   },
   "devDependencies": {
     "@types/node": "15.6.1",
