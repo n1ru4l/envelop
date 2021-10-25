@@ -30,7 +30,7 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "graphql-rate-limit": "3.1.0"
+    "graphql-rate-limit": "3.3.0"
   },
   "devDependencies": {
     "bob-the-bundler": "1.5.1",
