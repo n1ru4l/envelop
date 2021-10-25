@@ -269,4 +269,26 @@ describe('execute', () => {
     await instance.next();
     await instance.return!();
   });
+
+  it('should allow to use an async function for the done hook', async () => {
+    const executeMock = jest.fn();
+    const testkit = createTestkit(
+      [
+        {
+          onExecute({ setExecuteFn }) {
+            setExecuteFn(executeMock as any);
+
+            return {
+              onExecuteDone: async ({ setResult }) => {
+                setResult({ data: { test: await Promise.resolve('test') } });
+              },
+            };
+          },
+        },
+      ],
+      schema
+    );
+
+    expect(await testkit.execute(query)).toEqual({ data: { test: 'test' } });
+  });
 });
