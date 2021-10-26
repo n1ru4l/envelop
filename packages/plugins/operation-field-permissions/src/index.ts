@@ -1,4 +1,4 @@
-import { Plugin, useExtendContext, isIntrospectionDocument } from '@envelop/core';
+import { Plugin, useExtendContext } from '@envelop/core';
 import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
 import {
   GraphQLType,
@@ -10,6 +10,7 @@ import {
   GraphQLObjectType,
   isObjectType,
   isInterfaceType,
+  isIntrospectionType,
 } from 'graphql';
 
 type PromiseOrValue<T> = T | Promise<T>;
@@ -59,10 +60,6 @@ type OperationScopeRuleOptions = {
 const OperationScopeRule =
   (options: OperationScopeRuleOptions): ExtendedValidationRule =>
   (context, executionArgs) => {
-    if (isIntrospectionDocument(executionArgs.document)) {
-      return {};
-    }
-
     const permissionContext = getContext(executionArgs.contextValue);
 
     const handleField = (node: FieldNode, objectType: GraphQLObjectType) => {
@@ -79,9 +76,22 @@ const OperationScopeRule =
 
     return {
       Field(node) {
+        const type = context.getType();
+        if (type) {
+          const wrappedType = getWrappedType(type);
+
+          if (isIntrospectionType(wrappedType)) {
+            return false;
+          }
+        }
+
         const parentType = context.getParentType();
         if (parentType) {
           const wrappedType = getWrappedType(parentType);
+
+          if (isIntrospectionType(wrappedType)) {
+            return false;
+          }
 
           if (isObjectType(wrappedType)) {
             handleField(node, wrappedType);
@@ -95,6 +105,8 @@ const OperationScopeRule =
             }
           }
         }
+
+        return undefined;
       },
     };
   };
