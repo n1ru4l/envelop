@@ -1,7 +1,7 @@
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { EnumValueNode } from 'graphql';
-import { DIRECTIVE_SDL, ResolveUserFn, useGenericAuth, ValidateUserFn } from '../src';
+import { DIRECTIVE_SDL, ResolveUserFn, SKIP_AUTH_DIRECTIVE_SDL, useGenericAuth, ValidateUserFn } from '../src';
 
 type UserType = {
   id: number;
@@ -30,6 +30,23 @@ describe('useGenericAuth', () => {
   };
 
   describe('protect-all', () => {
+    const schemaWithDirective = makeExecutableSchema({
+      typeDefs: `
+      ${SKIP_AUTH_DIRECTIVE_SDL}
+      
+      type Query {
+        test: String!
+        public: String @skipAuth
+      }
+      `,
+      resolvers: {
+        Query: {
+          test: (root, args, context) => context.currentUser?.name || '',
+          public: (root, args, context) => 'public',
+        },
+      },
+    });
+
     it('Should allow execution when user is authenticated correctly', async () => {
       const testInstance = createTestkit(
         [
@@ -38,7 +55,7 @@ describe('useGenericAuth', () => {
             resolveUserFn: validresolveUserFn,
           }),
         ],
-        schema
+        schemaWithDirective
       );
 
       const result = await testInstance.execute(`query { test }`);
@@ -48,7 +65,6 @@ describe('useGenericAuth', () => {
     });
 
     it('Should prevent execution when user is not authenticated correctly', async () => {
-      expect.assertions(1);
       const testInstance = createTestkit(
         [
           useGenericAuth({
@@ -56,7 +72,7 @@ describe('useGenericAuth', () => {
             resolveUserFn: invalidresolveUserFn,
           }),
         ],
-        schema
+        schemaWithDirective
       );
 
       try {
@@ -78,7 +94,7 @@ describe('useGenericAuth', () => {
             onExecute: spyFn,
           },
         ],
-        schema
+        schemaWithDirective
       );
 
       const result = await testInstance.execute(`query { test }`);
@@ -96,6 +112,40 @@ describe('useGenericAuth', () => {
           }),
         })
       );
+    });
+
+    it('Should allow execution when user is authenticated correctly and directive is set', async () => {
+      const testInstance = createTestkit(
+        [
+          useGenericAuth({
+            mode: 'protect-all',
+            resolveUserFn: validresolveUserFn,
+          }),
+        ],
+        schemaWithDirective
+      );
+
+      const result = await testInstance.execute(`query { public }`);
+      assertSingleExecutionValue(result);
+      expect(result.errors).toBeUndefined();
+      expect(result.data?.public).toBe('public');
+    });
+
+    it('Should allow execution for public field when user is not authenticated', async () => {
+      const testInstance = createTestkit(
+        [
+          useGenericAuth({
+            mode: 'protect-all',
+            resolveUserFn: invalidresolveUserFn,
+          }),
+        ],
+        schemaWithDirective
+      );
+
+      const result = await testInstance.execute(`query { public }`);
+      assertSingleExecutionValue(result);
+      expect(result.errors).toBeUndefined();
+      expect(result.data?.public).toBe('public');
     });
   });
 
