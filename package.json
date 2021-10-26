@@ -59,7 +59,7 @@
     "eslint": "7.32.0",
     "husky": "7.0.4",
     "lint-staged": "11.2.4",
-    "@types/node": "15.6.1",
+    "@types/node": "16.11.6",
     "bob-the-bundler": "1.5.1",
     "eslint-config-standard": "16.0.3",
     "eslint-plugin-import": "2.25.2",
