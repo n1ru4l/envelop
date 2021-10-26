@@ -72,7 +72,7 @@ Now, configure your plugin based on the mode you wish to use:
 
 #### Option #1 - `protect-all`
 
-This mode offers complete protection for the entire API. It protects your entire GraphQL schema by validating the user before executing the request.
+This mode offers complete protection for the entire API. It protects your entire GraphQL schema by validating the user before executing the request. You can optionally skip auth validation for specific GraphQL fields by using the `@skipAuth` directive.
 
 To setup this mode, use the following config:
 
@@ -101,6 +101,22 @@ const getEnveloped = envelop({
   ],
 });
 ```
+
+> By default, we assume that you have the GraphQL directive definition as part of your GraphQL schema (`directive @skipAuth on FIELD_DEFINITION`).
+
+Then, in your GraphQL schema SDL, you can add `@skipAuth` directive to your fields, and the `validateUser` will not get called while resolving that specific field:
+
+```graphql
+type Query {
+  me: User!
+  protectedField: String
+  publicField: String @skipAuth
+}
+```
+
+> You can apply that directive to any GraphQL `field` definition, not only to root fields.
+
+> If you are using a different directive for authentication, you can pass `authDirectiveName` configuration to customize it.
 
 #### Option #2 - `resolve-only`
 
