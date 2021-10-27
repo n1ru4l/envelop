@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { ParseOptions, Parser } from 'graphql/language/parser.js';
 import type { Lexer } from 'graphql/language/lexer.js';
-import { TokenKind, Kind, Token, Location } from 'graphql';
+import { TokenKind, Kind, Token, Location, FragmentDefinitionNode, FragmentSpreadNode, InlineFragmentNode } from 'graphql';
 
 export class FragmentArgumentCompatibleParser extends Parser {
   // see https://github.com/graphql/graphql-js/pull/3248
@@ -35,27 +35,27 @@ export class FragmentArgumentCompatibleParser extends Parser {
         return {
           kind: Kind.FRAGMENT_SPREAD,
           name,
-          arguments: this.parseArguments(),
-          directives: this.parseDirectives(),
+          arguments: (this as any).parseArguments(),
+          directives: (this as any).parseDirectives(),
           loc: this.loc(start),
-        };
+        } as FragmentSpreadNode;
       }
 
       return {
         kind: Kind.FRAGMENT_SPREAD,
         name: this.parseFragmentName(),
-        directives: this.parseDirectives(),
+        directives: (this as any).parseDirectives(),
         loc: this.loc(start),
-      };
+      } as FragmentSpreadNode;
     }
 
     return {
       kind: Kind.INLINE_FRAGMENT,
       typeCondition: hasTypeCondition ? this.parseNamedType() : undefined,
-      directives: this.parseDirectives(),
+      directives: (this as any).parseDirectives(),
       selectionSet: this.parseSelectionSet(),
       loc: this.loc(start),
-    };
+    } as InlineFragmentNode;
   }
 
   parseFragmentDefinition() {
@@ -64,24 +64,26 @@ export class FragmentArgumentCompatibleParser extends Parser {
     const name = this.parseFragmentName();
 
     if (this.peek(TokenKind.PAREN_L)) {
-      return {
+      const fragmentDefinition: FragmentDefinitionNode = {
         kind: Kind.FRAGMENT_DEFINITION,
         name,
         variableDefinitions: this.parseVariableDefinitions(),
         typeCondition: (this.expectKeyword('on'), this.parseNamedType()),
-        directives: this.parseDirectives(),
+        directives: (this as any).parseDirectives(),
         selectionSet: this.parseSelectionSet(),
         loc: this.loc(start),
       };
+      return fragmentDefinition;
     }
 
-    return {
+    const fragmentDefinition: FragmentDefinitionNode = {
       kind: Kind.FRAGMENT_DEFINITION,
       name,
       typeCondition: (this.expectKeyword('on'), this.parseNamedType()),
-      directives: this.parseDirectives(),
+      directives: (this as any).parseDirectives(),
       selectionSet: this.parseSelectionSet(),
       loc: this.loc(start),
     };
+    return fragmentDefinition;
   }
 }
