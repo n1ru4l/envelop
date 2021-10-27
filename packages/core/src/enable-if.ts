@@ -18,7 +18,7 @@ export function isPluginEnabled(t: PluginOrDisabledPlugin): t is Plugin {
  */
 export function enableIf(condition: boolean, plugin: Plugin | (() => Plugin)): PluginOrDisabledPlugin {
   if (condition) {
-    return plugin instanceof Function ? plugin() : plugin;
+    return typeof plugin === 'function' ? plugin() : plugin;
   } else {
     return EnableIfBranded.DisabledPlugin;
   }

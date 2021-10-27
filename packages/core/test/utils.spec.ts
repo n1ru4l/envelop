@@ -1,6 +1,8 @@
 import { useLogger, enableIf } from '@envelop/core';
+import { createTestkit, createSpiedPlugin } from '@envelop/testing';
 import { getIntrospectionQuery, parse } from 'graphql';
 import { isIntrospectionDocument } from '../src/utils';
+import { query, schema } from './common';
 
 describe('Utils', () => {
   describe('isIntrospectionDocument', () => {
@@ -38,6 +40,20 @@ describe('Utils', () => {
     it('Should return null', () => {
       const plugin = enableIf(false, useLogger());
       expect(plugin).toBeFalsy();
+    });
+
+    it('Should not init plugin', async () => {
+      const spiedPlugin = createSpiedPlugin();
+      const testkit = createTestkit([enableIf(false, spiedPlugin.plugin)], schema);
+      await testkit.execute(query);
+      expect(spiedPlugin.spies.beforeExecute).not.toHaveBeenCalled();
+    });
+
+    it('Should init plugin', async () => {
+      const spiedPlugin = createSpiedPlugin();
+      const testkit = createTestkit([enableIf(true, spiedPlugin.plugin)], schema);
+      await testkit.execute(query);
+      expect(spiedPlugin.spies.beforeExecute).toHaveBeenCalled();
     });
   });
 });
