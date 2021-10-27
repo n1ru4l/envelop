@@ -208,6 +208,8 @@ const getEnveloped = envelop({
   plugins: [
     // This plugin is enabled only in production
     enableIf(isProd, useMaskedErrors()),
+    // you can also pass function
+    enableIf(isProd, () => useMaskedErrors()),
     // ... other plugins ...
   ],
 });
