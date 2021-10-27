@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "bob-the-bundler": "1.5.1",
-    "graphql": "15.6.1",
+    "graphql": "15.7.0",
     "typescript": "4.4.4",
     "@apollo/gateway": "0.42.3",
     "@apollo/federation": "0.33.3",
