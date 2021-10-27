@@ -125,19 +125,21 @@ describe('useGraphQlJit', () => {
     expect(onSubscribeSpy.mock.calls[0][0].subscribeFn.name).not.toBe('jitSubscriber');
   });
 
-  it('Should execute correctly', async () => {
-    const testInstance = createTestkit([useGraphQlJit()], schema);
-    const result = await testInstance.execute(`query { test }`);
-    assertSingleExecutionValue(result);
-    expect(result.data?.test).toBe('boop');
-  });
-  it('Should subscribe correctly', async () => {
-    const testInstance = createTestkit([useGraphQlJit()], schema);
-    const result = await testInstance.execute(`subscription { count }`);
-    assertStreamExecutionValue(result);
-    const values = await collectAsyncIteratorValues(result);
-    for (let i = 0; i < 10; i++) {
-      expect(values[i].data?.count).toBe(i);
-    }
-  });
+  if (versionInfo.major < 16) {
+    it('Should execute correctly', async () => {
+      const testInstance = createTestkit([useGraphQlJit()], schema);
+      const result = await testInstance.execute(`query { test }`);
+      assertSingleExecutionValue(result);
+      expect(result.data?.test).toBe('boop');
+    });
+    it('Should subscribe correctly', async () => {
+      const testInstance = createTestkit([useGraphQlJit()], schema);
+      const result = await testInstance.execute(`subscription { count }`);
+      assertStreamExecutionValue(result);
+      const values = await collectAsyncIteratorValues(result);
+      for (let i = 0; i < 10; i++) {
+        expect(values[i].data?.count).toBe(i);
+      }
+    });
+  }
 });

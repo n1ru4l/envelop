@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { Plugin, TypedExecutionArgs } from '@envelop/types';
-import { DocumentNode, Source, ExecutionArgs } from 'graphql';
+import { DocumentNode, Source, ExecutionArgs, ExecutionResult } from 'graphql';
 import { compileQuery, isCompiledQuery, CompilerOptions, CompiledQuery } from 'graphql-jit';
 import lru from 'tiny-lru';
 
@@ -17,7 +17,7 @@ export const useGraphQlJit = (
     /**
      * Callback triggered in case of GraphQL Jit compilation error.
      */
-    onError?: (r: ReturnType<typeof compileQuery>) => void;
+    onError?: (r: ExecutionResult) => void;
     /**
      * Maximum size of LRU Cache
      * @default 1000
@@ -96,7 +96,7 @@ export const useGraphQlJit = (
           const cacheEntry = getCacheEntry(args);
 
           return cacheEntry.subscribe
-            ? cacheEntry.subscribe(args.rootValue, args.contextValue, args.variableValues)
+            ? (cacheEntry.subscribe(args.rootValue, args.contextValue, args.variableValues) as any)
             : cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
         });
       }

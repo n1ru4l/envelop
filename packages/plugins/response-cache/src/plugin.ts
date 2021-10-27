@@ -1,4 +1,4 @@
-import { Plugin, isAsyncIterable, Maybe, DefaultContext } from '@envelop/types';
+import { Plugin, isAsyncIterable, Maybe, DefaultContext, PromiseOrValue } from '@envelop/types';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import { createHash } from 'crypto';
 import {
@@ -385,7 +385,7 @@ function applyResponseCacheLogic(schema: GraphQLSchema, idFieldNames: Array<stri
         return {
           ...fieldConfig,
           resolve(src, args, context, info) {
-            const result = (fieldConfig.resolve ?? defaultFieldResolver)(src, args, context, info);
+            const result = (fieldConfig.resolve ?? defaultFieldResolver)(src, args, context, info) as PromiseOrValue<string>;
             runWith(result, (id: string) => {
               const ctx: Context | undefined = context[contextSymbol];
               if (ctx !== undefined) {
@@ -396,6 +396,8 @@ function applyResponseCacheLogic(schema: GraphQLSchema, idFieldNames: Array<stri
                   ctx.skip = true;
                   return;
                 }
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore  TODO: investigate what to do if id is something unexpected
                 ctx.identifier.set(`${typename}:${id}`, { typename, id });
                 ctx.types.add(typename);
                 if (typename in ctx.ttlPerType) {

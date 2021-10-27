@@ -1,7 +1,6 @@
 import { SubscriptionArgs, execute } from 'graphql';
-import { Plugin } from '@envelop/types';
+import { Plugin, PromiseOrValue } from '@envelop/types';
 import { makeExecute, DefaultContext } from '@envelop/core';
-import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { subscribe } from './subscribe';
 
 export type ContextFactoryOptions = {
@@ -30,6 +29,9 @@ export const useExtendContextValuePerExecuteSubscriptionEvent = <TContextValue =
         try {
           return await execute({
             ...executionArgs,
+            // GraphQL.js 16 changed the type of contextValue to unknown
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             contextValue: { ...executionArgs.contextValue, ...context?.contextPartial },
           });
         } finally {

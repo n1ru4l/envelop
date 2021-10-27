@@ -9,6 +9,7 @@ import type {
   execute,
   parse,
   validate,
+  GraphQLResolveInfo,
 } from 'graphql';
 import type { Maybe } from './utils';
 
@@ -68,3 +69,5 @@ export type ValidateFunctionParameter = {
   typeInfo?: Parameters<ValidateFunction>[3];
   options?: Parameters<ValidateFunction>[4];
 };
+
+export type Path = GraphQLResolveInfo['path'];

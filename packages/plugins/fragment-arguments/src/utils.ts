@@ -1,4 +1,4 @@
-import { InlineFragmentNode, ArgumentNode, DocumentNode, FragmentDefinitionNode, visit } from 'graphql';
+import { InlineFragmentNode, ArgumentNode, DocumentNode, FragmentDefinitionNode, visit, Kind } from 'graphql';
 
 export function applySelectionSetFragmentArguments(document: DocumentNode): DocumentNode | Error {
   const fragmentList = new Map<string, FragmentDefinitionNode>();
@@ -38,7 +38,7 @@ export function applySelectionSetFragmentArguments(document: DocumentNode): Docu
         });
 
         const inlineFragment: InlineFragmentNode = {
-          kind: 'InlineFragment',
+          kind: Kind.INLINE_FRAGMENT,
           typeCondition: fragmentDef.typeCondition,
           selectionSet,
         };
