@@ -34,7 +34,7 @@
     "reflect-metadata": "0.1.13",
     "graphql-modules": "1.4.4",
     "bob-the-bundler": "1.5.1",
-    "graphql": "15.7.0",
+    "graphql": "15.7.1",
     "typescript": "4.4.4"
   },
   "peerDependencies": {
