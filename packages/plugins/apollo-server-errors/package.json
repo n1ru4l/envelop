@@ -35,7 +35,7 @@
   "devDependencies": {
     "apollo-server-core": "3.4.0",
     "bob-the-bundler": "1.5.1",
-    "graphql": "15.7.1",
+    "graphql": "15.7.2",
     "typescript": "4.4.4"
   },
   "peerDependencies": {
