@@ -1151,6 +1151,114 @@ describe('useResponseCache', () => {
     expect(userSpy).toHaveBeenCalledTimes(2);
   });
 
+  test('ttl=0 and ttlPerType should cache correctly', async () => {
+    jest.useFakeTimers();
+    const userSpy = jest.fn(() => [
+      {
+        id: 1,
+        name: 'User 1',
+        comments: [
+          {
+            id: 1,
+            text: 'Comment 1 of User 1',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'User 2',
+        comments: [
+          {
+            id: 2,
+            text: 'Comment 2 of User 2',
+          },
+        ],
+      },
+    ]);
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: userSpy,
+        },
+      },
+    });
+
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          ttl: 0,
+          ttlPerType: {
+            User: 200,
+          },
+          includeExtensionMetadata: true,
+        }),
+      ],
+      schema
+    );
+
+    const userQuery = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+          comments {
+            id
+            text
+          }
+        }
+      }
+    `;
+
+    let result = await testInstance.execute(userQuery);
+    assertSingleExecutionValue(result);
+    expect(result.extensions).toEqual({
+      responseCache: {
+        didCache: true,
+        hit: false,
+        ttl: 200,
+      },
+    });
+
+    jest.advanceTimersByTime(2);
+    result = await testInstance.execute(userQuery);
+    assertSingleExecutionValue(result);
+    expect(result.extensions).toEqual({
+      responseCache: {
+        hit: true,
+      },
+    });
+
+    jest.advanceTimersByTime(200);
+
+    result = await testInstance.execute(userQuery);
+    assertSingleExecutionValue(result);
+    expect(result.extensions).toEqual({
+      responseCache: {
+        didCache: true,
+        hit: false,
+        ttl: 200,
+      },
+    });
+  });
+
   it('execution results with errors are never cached by default', async () => {
     const spy = jest.fn(() => {
       throw new Error('Do not cache an error');
