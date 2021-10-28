@@ -20,6 +20,10 @@ export const DIRECTIVE_SDL = /* GraphQL */ `
   directive @auth on FIELD_DEFINITION
 `;
 
+export const SKIP_AUTH_DIRECTIVE_SDL = /* GraphQL */ `
+  directive @skipAuth on FIELD_DEFINITION
+`;
+
 export type GenericAuthPluginOptions<UserType extends {} = {}, ContextType extends DefaultContext = DefaultContext> = {
   /**
    * Here you can implement any custom sync/async code, and use the context built so far in Envelop and the HTTP request
@@ -43,8 +47,14 @@ export type GenericAuthPluginOptions<UserType extends {} = {}, ContextType exten
       /**
        * This mode offers complete protection for the entire API.
        * It protects your entire GraphQL schema, by validating the user before executing the request.
+       * You can skip the validation using `@skipAuth` directive on a specific field.
        */
       mode: 'protect-all';
+      /**
+       * Overrides the default directive name
+       * @default skipAuth
+       */
+      authDirectiveName?: 'skipAuth' | string;
     }
   | {
       /**
@@ -85,11 +95,22 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
     return {
       async onContextBuilding({ context, extendContext }) {
         const user = await options.resolveUserFn(context as unknown as ContextType);
-        await validateUser(user!, context as unknown as ContextType);
 
         extendContext({
           [fieldName]: user,
+          validateUser,
         } as unknown as ContextType);
+      },
+      onExecute() {
+        return {
+          async onResolverCalled({ args, root, context, info }) {
+            const authDirectiveNode = getDirective(info, options.authDirectiveName || 'skipAuth');
+
+            if (authDirectiveNode) return;
+
+            await context.validateUser(context[fieldName], context as unknown as ContextType);
+          },
+        };
       },
     };
   } else if (options.mode === 'resolve-only') {
