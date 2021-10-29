@@ -87,20 +87,18 @@ const OperationScopeRule =
 
         const parentType = context.getParentType();
         if (parentType) {
-          const wrappedType = getWrappedType(parentType);
-
-          if (isIntrospectionType(wrappedType)) {
+          if (isIntrospectionType(parentType)) {
             return false;
           }
 
-          if (isObjectType(wrappedType)) {
-            handleField(node, wrappedType);
-          } else if (isUnionType(wrappedType)) {
-            for (const objectType of wrappedType.getTypes()) {
+          if (isObjectType(parentType)) {
+            handleField(node, parentType);
+          } else if (isUnionType(parentType)) {
+            for (const objectType of parentType.getTypes()) {
               handleField(node, objectType);
             }
-          } else if (isInterfaceType(wrappedType)) {
-            for (const objectType of executionArgs.schema.getImplementations(wrappedType).objects) {
+          } else if (isInterfaceType(parentType)) {
+            for (const objectType of executionArgs.schema.getImplementations(parentType).objects) {
               handleField(node, objectType);
             }
           }
