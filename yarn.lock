@@ -2764,10 +2764,10 @@
     "@n1ru4l/graphql-live-query" "0.8.0"
     "@n1ru4l/push-pull-async-iterable-iterator" "^3.0.0"
 
-"@n1ru4l/push-pull-async-iterable-iterator@3.0.0", "@n1ru4l/push-pull-async-iterable-iterator@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@n1ru4l/push-pull-async-iterable-iterator/-/push-pull-async-iterable-iterator-3.0.0.tgz#22dc34094c2de5f21b9a798d0ffab16b45de0eb7"
-  integrity sha512-gwoIwo/Dt1GOI+lbcG1G7IeRM2K+Fo0op3OGyFJ4tXUCf2a3Q8lUCm81aoevrXC0nu4gbAXeOWy7wWxjpSvZUw==
+"@n1ru4l/push-pull-async-iterable-iterator@3.1.0", "@n1ru4l/push-pull-async-iterable-iterator@^3.0.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@n1ru4l/push-pull-async-iterable-iterator/-/push-pull-async-iterable-iterator-3.1.0.tgz#be450c97d1c7cd6af1a992d53232704454345df9"
+  integrity sha512-K4scWxGhdQM0masHHy4gIQs2iGiLEXCrXttumknyPJqtdl4J179BjpibWSSQ1fxKdCcHgIlCTKXJU6cMM6D6Wg==
 
 "@n1ru4l/push-pull-async-iterable-iterator@^2.1.4":
   version "2.1.4"
