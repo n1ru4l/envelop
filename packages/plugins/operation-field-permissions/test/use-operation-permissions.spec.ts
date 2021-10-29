@@ -57,6 +57,32 @@ describe('useOperationPermissions', () => {
     expect(result.errors).toBeUndefined();
   });
 
+  it('should not skip for extended introspection query', async () => {
+    const kit = createTestkit(
+      [
+        useOperationFieldPermissions({
+          getPermissions: () => 'boop',
+        }),
+      ],
+      schema
+    );
+
+    const result = await kit.execute(/* GraphQL */ `
+      query {
+        __schema {
+          __typename
+        }
+        greetings
+      }
+    `);
+    assertSingleExecutionValue(result);
+    expect(result.errors).toMatchInlineSnapshot(`
+Array [
+  [GraphQLError: Insufficient permissions for selecting 'Query.greetings'.],
+]
+`);
+  });
+
   it('allow everything', async () => {
     const kit = createTestkit(
       [

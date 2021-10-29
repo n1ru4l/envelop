@@ -48,10 +48,6 @@ export const useExtendedValidation = (options: {
       const visitor = visitInParallel(rules.map(rule => rule(validationContext, args)));
       visit(args.document, visitWithTypeInfo(typeInfo, visitor));
 
-      for (const rule of rules) {
-        rule(validationContext, args);
-      }
-
       if (errors.length > 0) {
         let result: ExecutionResult = {
           data: null,

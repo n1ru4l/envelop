@@ -1,4 +1,4 @@
-import { Plugin, useExtendContext, isIntrospectionDocument } from '@envelop/core';
+import { Plugin, useExtendContext } from '@envelop/core';
 import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
 import {
   GraphQLType,
@@ -10,6 +10,7 @@ import {
   GraphQLObjectType,
   isObjectType,
   isInterfaceType,
+  isIntrospectionType,
 } from 'graphql';
 
 type PromiseOrValue<T> = T | Promise<T>;
@@ -59,10 +60,6 @@ type OperationScopeRuleOptions = {
 const OperationScopeRule =
   (options: OperationScopeRuleOptions): ExtendedValidationRule =>
   (context, executionArgs) => {
-    if (isIntrospectionDocument(executionArgs.document)) {
-      return {};
-    }
-
     const permissionContext = getContext(executionArgs.contextValue);
 
     const handleField = (node: FieldNode, objectType: GraphQLObjectType) => {
@@ -79,22 +76,35 @@ const OperationScopeRule =
 
     return {
       Field(node) {
+        const type = context.getType();
+        if (type) {
+          const wrappedType = getWrappedType(type);
+
+          if (isIntrospectionType(wrappedType)) {
+            return false;
+          }
+        }
+
         const parentType = context.getParentType();
         if (parentType) {
-          const wrappedType = getWrappedType(parentType);
+          if (isIntrospectionType(parentType)) {
+            return false;
+          }
 
-          if (isObjectType(wrappedType)) {
-            handleField(node, wrappedType);
-          } else if (isUnionType(wrappedType)) {
-            for (const objectType of wrappedType.getTypes()) {
+          if (isObjectType(parentType)) {
+            handleField(node, parentType);
+          } else if (isUnionType(parentType)) {
+            for (const objectType of parentType.getTypes()) {
               handleField(node, objectType);
             }
-          } else if (isInterfaceType(wrappedType)) {
-            for (const objectType of executionArgs.schema.getImplementations(wrappedType).objects) {
+          } else if (isInterfaceType(parentType)) {
+            for (const objectType of executionArgs.schema.getImplementations(parentType).objects) {
               handleField(node, objectType);
             }
           }
         }
+
+        return undefined;
       },
     };
   };
