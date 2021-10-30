@@ -1,5 +1,11 @@
 # @envelop/resource-limitations
 
+## 0.3.0
+
+### Minor Changes
+
+- 04120de: add support for GraphQL.js 16
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @envelop/types
 
+## 1.4.0
+
+### Minor Changes
+
+- 04120de: add support for GraphQL.js 16
+
 ## 1.3.0
 
 ### Minor Changes

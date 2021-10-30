@@ -1,5 +1,12 @@
 # @envelop/graphql-jit
 
+## 1.2.0
+
+### Minor Changes
+
+- 04120de: add support for GraphQL.js 16
+- 3bb3df0: feat(graphql-jit): subscription support
+
 ## 1.1.1
 
 ### Patch Changes

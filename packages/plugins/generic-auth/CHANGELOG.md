@@ -1,5 +1,15 @@
 # @envelop/generic-auth
 
+## 1.1.0
+
+### Minor Changes
+
+- 04120de: add support for GraphQL.js 16
+
+### Patch Changes
+
+- 9f63dac: Add `skipAuth` directive to `protect-all` auth option
+
 ## 1.0.1
 
 ### Patch Changes
