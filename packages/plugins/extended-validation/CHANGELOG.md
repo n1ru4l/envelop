@@ -1,5 +1,15 @@
 # @envelop/extended-validation
 
+## 1.2.0
+
+### Minor Changes
+
+- 04120de: add support for GraphQL.js 16
+
+### Patch Changes
+
+- a0b2da3: Fix handling of introspection queries and disallow authorization bypassing. Previously, it was possible to bypass authorization by adding `\_\_schema` to query
+
 ## 1.1.1
 
 ### Patch Changes

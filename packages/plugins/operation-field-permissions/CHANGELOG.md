@@ -1,5 +1,20 @@
 # @envelop/operation-field-permissions
 
+## 1.1.0
+
+### Minor Changes
+
+- 04120de: add support for GraphQL.js 16
+
+### Patch Changes
+
+- a0b2da3: Fix handling of introspection queries and disallow authorization bypassing. Previously, it was possible to bypass authorization by adding `\_\_schema` to query
+- Updated dependencies [a0b2da3]
+- Updated dependencies [3458917]
+- Updated dependencies [04120de]
+  - @envelop/extended-validation@1.2.0
+  - @envelop/core@1.5.0
+
 ## 1.0.10
 
 ### Patch Changes

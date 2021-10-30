@@ -1,5 +1,16 @@
 # @envelop/fragment-arguments
 
+## 1.1.0
+
+### Minor Changes
+
+- 04120de: add support for GraphQL.js 16
+
+### Patch Changes
+
+- Updated dependencies [04120de]
+  - @envelop/types@1.4.0
+
 ## 1.0.7
 
 ### Patch Changes

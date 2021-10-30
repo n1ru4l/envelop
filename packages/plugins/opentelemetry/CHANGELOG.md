@@ -1,5 +1,11 @@
 # @envelop/opentelemetry
 
+## 1.1.0
+
+### Minor Changes
+
+- 04120de: add support for GraphQL.js 16
+
 ## 1.0.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @envelop/testing
 
+## 2.1.0
+
+### Minor Changes
+
+- 04120de: add support for GraphQL.js 16
+
 ## 2.0.0
 
 ### Patch Changes
