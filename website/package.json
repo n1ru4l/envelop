@@ -24,7 +24,7 @@
     "@mdx-js/react": "1.6.22",
     "@theguild/components": "1.7.0",
     "esbuild": "0.13.12",
-    "framer-motion": "5.0.0",
+    "framer-motion": "5.0.1",
     "next": "11.1.2",
     "next-i18next": "8.9.0",
     "next-remote-watch": "1.0.0",
