@@ -200,4 +200,84 @@ describe('usePersistedOperations', () => {
     assertSingleExecutionValue(result);
     expect(result.data?.foo).toBe('test');
   });
+
+  it('Should execute `onMissingMatch` callback when operation Id is not matched and `onlyPersisted` is true', async () => {
+    const initialContext = { storeId: 'custom' };
+    const store = new Map();
+    const mockOnMissingMatch = jest.fn();
+    const testInstance = createTestkit(
+      [
+        usePersistedOperations({
+          onlyPersisted: true,
+          store,
+          onMissingMatch: mockOnMissingMatch,
+        }),
+      ],
+      testSchema
+    );
+
+    const result = await testInstance.execute('persisted_1', {}, initialContext);
+    assertSingleExecutionValue(result);
+    expect(mockOnMissingMatch).toHaveBeenCalledTimes(1);
+    expect(mockOnMissingMatch).toHaveBeenCalledWith(initialContext, 'persisted_1');
+  });
+
+  it('Should execute `onMissingMatch` callback when operation Id is not matched and `onlyPersisted` is false', async () => {
+    const initialContext = { storeId: 'custom' };
+    const store = new Map();
+    const mockOnMissingMatch = jest.fn();
+    const testInstance = createTestkit(
+      [
+        usePersistedOperations({
+          onlyPersisted: false,
+          store,
+          onMissingMatch: mockOnMissingMatch,
+        }),
+      ],
+      testSchema
+    );
+
+    const result = await testInstance.execute('persisted_1', {}, initialContext);
+    assertSingleExecutionValue(result);
+    expect(mockOnMissingMatch).toHaveBeenCalledTimes(1);
+    expect(mockOnMissingMatch).toHaveBeenCalledWith(initialContext, 'persisted_1');
+  });
+
+  it('Should not execute `onMissingMatch` callback when operation Id is matched and `onlyPersisted` is true', async () => {
+    const store = new Map([['persisted_1', `query { foo }`]]);
+    const mockOnMissingMatch = jest.fn();
+    const testInstance = createTestkit(
+      [
+        usePersistedOperations({
+          onlyPersisted: true,
+          store,
+          onMissingMatch: mockOnMissingMatch,
+        }),
+      ],
+      testSchema
+    );
+
+    const result = await testInstance.execute('persisted_1');
+    assertSingleExecutionValue(result);
+    expect(mockOnMissingMatch).not.toHaveBeenCalled();
+  });
+
+  it('Should not execute `onMissingMatch` callback when operation Id is matched and `onlyPersisted` is false', async () => {
+    const store = new Map([['persisted_1', `query { foo }`]]);
+    const mockOnMissingMatch = jest.fn();
+    const testInstance = createTestkit(
+      [
+        usePersistedOperations({
+          onlyPersisted: false,
+          store,
+          onMissingMatch: mockOnMissingMatch,
+        }),
+      ],
+      testSchema
+    );
+
+    const result = await testInstance.execute('persisted_1');
+    assertSingleExecutionValue(result);
+    expect(mockOnMissingMatch).not.toHaveBeenCalled();
+  });
 });

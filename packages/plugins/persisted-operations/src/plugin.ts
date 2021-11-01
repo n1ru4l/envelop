@@ -18,6 +18,10 @@ export type UsePersistedOperationsOptions<ContextType = DefaultContext> = {
    * Function that returns the operation id, e.g. by retrieving it from cusotm properties within context
    */
   extractOperationId?: (context: Readonly<ContextType>) => string | undefined;
+  /**
+   * Callback function to notify consumer of missing hash match, f.i. to log, monitor and/or analise these events
+   */
+  onMissingMatch?: (context: Readonly<ContextType>, operationId: string) => void;
 };
 
 const DEFAULT_OPTIONS: Omit<UsePersistedOperationsOptions, 'store'> = {
@@ -69,12 +73,15 @@ export const usePersistedOperations = (rawOptions: UsePersistedOperationsOptions
       }
 
       if (options.onlyPersisted) {
+        if (options.onMissingMatch) options.onMissingMatch(context, operationId);
+
         // we want to throw an error only when "onlyPersisted" is true, otherwise we let execution continue normally
         throw new GraphQLError(`Unable to match operation with id '${operationId}'`);
       }
 
       // if we reach this stage we could not retrieve a persisted operation and we didn't throw any error as onlyPersisted is false
       // hence we let operation continue assuming consumer is not passing an operation id, but a plain query string, with current request.
+      if (options.onMissingMatch) options.onMissingMatch(context, operationId);
     },
   };
 };

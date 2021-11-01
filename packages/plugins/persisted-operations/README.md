@@ -103,6 +103,23 @@ const getEnveloped = envelop({
 const proxyFns = getEnveloped({ req });
 ```
 
+## Additional options
+
+### onlyPersisted
+
+You can pass `onlyPersisted: true` when you want to allow persisted operations only in your server. In this case the plugin will issue a GraphQL error when it does not receive an operation Id, or when the received operation id is not available in your store/s.
+
+### onMissingMatch
+
+You might want to perform some actions, such as logging custom events, when your operation Id is not matched in your store/s; in this case you can use the `onMissingMatch` callback function.  
+The function receives the context and operationId as arguments, so you can use it like so:
+
+```js
+onMissingMatch: (context, operationId) => {
+  myEventPool.add(`Missing match for operation "${operationId}" from agent "${context.req.headers['user-agent']}"`);
+};
+```
+
 ## With Relay
 
 If you are using Relay, you can leverage `relay-compiler` feature for hashing and and creating the store for you, during build.
