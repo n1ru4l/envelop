@@ -72,16 +72,15 @@ export const usePersistedOperations = (rawOptions: UsePersistedOperationsOptions
         return;
       }
 
-      if (options.onlyPersisted) {
-        if (options.onMissingMatch) options.onMissingMatch(context, operationId);
+      if (options.onMissingMatch) options.onMissingMatch(context, operationId);
 
+      if (options.onlyPersisted) {
         // we want to throw an error only when "onlyPersisted" is true, otherwise we let execution continue normally
         throw new GraphQLError(`Unable to match operation with id '${operationId}'`);
       }
 
       // if we reach this stage we could not retrieve a persisted operation and we didn't throw any error as onlyPersisted is false
       // hence we let operation continue assuming consumer is not passing an operation id, but a plain query string, with current request.
-      if (options.onMissingMatch) options.onMissingMatch(context, operationId);
     },
   };
 };
