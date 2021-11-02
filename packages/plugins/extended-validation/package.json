@@ -30,7 +30,7 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "@graphql-tools/utils": "8.5.1"
+    "@graphql-tools/utils": "8.5.2"
   },
   "devDependencies": {
     "bob-the-bundler": "1.5.1",
