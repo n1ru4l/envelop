@@ -7294,10 +7294,10 @@ graphql-ws@^4.4.2:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-4.4.2.tgz#f2d83f1863ba3069117199311d664fd28f4aaa8e"
   integrity sha512-Cz+t1w+8+tiHIKzcz45tMwrxJpPSQ7KNjQrfN8ADAELECkkBB7aSvAgpShWz0Tne8teH/UxzJsULObLVq5eMvQ==
 
-graphql@15.5.1, graphql@15.7.2, graphql@^14.5.3:
-  version "15.7.2"
-  resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.7.2.tgz#85ab0eeb83722977151b3feb4d631b5f2ab287ef"
-  integrity sha512-AnnKk7hFQFmU/2I9YSQf3xw44ctnSFCfp3zE0N6W174gqe9fWG/2rKaKxROK7CcI3XtERpjEKFqts8o319Kf7A==
+graphql@15.5.1, graphql@16.0.1, graphql@^14.5.3:
+  version "16.0.1"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.0.1.tgz#93a13cd4e0e38ca8d0832e79614c8578bfd34f10"
+  integrity sha512-oPvCuu6dlLdiz8gZupJ47o1clgb72r1u8NDBcQYjcV6G/iEdmE11B1bBlkhXRvV0LisP/SXRFP7tT6AgaTjpzg==
 
 gray-matter@^4.0.3:
   version "4.0.3"
