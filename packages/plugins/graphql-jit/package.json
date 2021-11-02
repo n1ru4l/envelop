@@ -30,11 +30,11 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "graphql-jit": "^0.6.0",
+    "graphql-jit": "^0.7.0",
     "tiny-lru": "7.0.6"
   },
   "devDependencies": {
-    "graphql-jit": "0.6.0",
+    "graphql-jit": "0.7.0",
     "reflect-metadata": "0.1.13",
     "bob-the-bundler": "1.5.1",
     "graphql": "15.7.2",
