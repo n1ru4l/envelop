@@ -23,10 +23,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@envelop/response-cache@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-0.2.1.tgz#6cf84b155443884739c76ca4808333989d4b5ce8"
-  integrity sha512-y8M8oYe8/346eb6xZQAJ1E0zUmOSEHB+wOVDBiD4bAgb3RXVdLzC1rVZ/0JPyeHDA9l0F/sV5WeoXv5W3+xI5w==
+"@envelop/response-cache@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-0.4.0.tgz#013b6ea2e8429032f3958c7cc2b23751b326a16a"
+  integrity sha512-AnNLTmaOhscmDot2m/9Ynp+CXMvoneeAtrzMBDewbHFljmrieKFppiAVbO6yo2PSMgAZIwF5W/sP2Io4s1e/MA==
   dependencies:
     fast-json-stable-stringify "^2.1.0"
     ioredis "^4.27.9"
@@ -78,10 +78,10 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
   integrity sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
 
-"@types/ioredis@4.27.8":
-  version "4.27.8"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.27.8.tgz#c2e113e4f0b6834062f155eaac27fa78d38e0790"
-  integrity sha512-THsyghYuFI6h/UzwEaeSeagRxiDG1P/NIiL5uTjN7bcbQHwDP6nMWJfEmY0iuu3pOzl1j0FgRpAYz7WWX2eW0Q==
+"@types/ioredis@4.28.0":
+  version "4.28.0"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.28.0.tgz#609b2ea0d91231df2dd7f67dd77436bc72584911"
+  integrity sha512-HSA/JQivJgV0e+353gvgu6WVoWvGRe0HyHOnAN2AvbVIhUlJBhNnnkP8gEEokrDWrxywrBkwo8NuDZ6TVPL9XA==
   dependencies:
     "@types/node" "*"
 
