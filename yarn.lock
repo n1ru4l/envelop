@@ -7516,10 +7516,10 @@ hosted-git-info@^2.1.4:
   resolved "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-2.8.8.tgz#7539bd4bc1e0e0a895815a2e0262420b12858488"
   integrity sha512-f/wzC2QaWBs7t9IYqB4T3sR1xviIViXJRJTWBlx2Gf3g0Xi5vI7Yy4koXQ1c9OYDGHN9sBy1DQ2AB8fqZBWhUg==
 
-hot-shots@8.5.2:
-  version "8.5.2"
-  resolved "https://registry.yarnpkg.com/hot-shots/-/hot-shots-8.5.2.tgz#5940b419e1203616823380053bf2068cf43399cb"
-  integrity sha512-1CKCtbYU28KtRriRW+mdOZzKce0WPqU0FOYE4bYs3gD1bFpOrYzQDXfQ09Qz9dJPEltasDOGhFKiYaiuW/j9Dg==
+hot-shots@9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/hot-shots/-/hot-shots-9.0.0.tgz#b88421aa81c1ef37f4cc53ade7f1e3daaa584b5e"
+  integrity sha512-fpljto22PvfzDGznnzUpWgFMgccyZRtWo+fY8R4ktwipkv3ywDyeaTLijYaM629DEZvtnEDAN00yV6zxzivnpQ==
   optionalDependencies:
     unix-dgram "2.0.x"
 
