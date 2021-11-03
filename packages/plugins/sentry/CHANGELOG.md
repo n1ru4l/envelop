@@ -1,5 +1,11 @@
 # @envelop/sentry
 
+## 1.4.0
+
+### Minor Changes
+
+- 090cae4: GraphQL v16 support
+
 ## 1.3.0
 
 ### Minor Changes

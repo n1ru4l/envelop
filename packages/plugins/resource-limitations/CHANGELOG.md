@@ -1,5 +1,11 @@
 # @envelop/resource-limitations
 
+## 0.4.0
+
+### Minor Changes
+
+- 090cae4: GraphQL v16 support
+
 ## 0.3.0
 
 ### Minor Changes

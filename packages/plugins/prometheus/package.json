@@ -1,6 +1,6 @@
 {
   "name": "@envelop/prometheus",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "repository": {
@@ -30,7 +30,7 @@
     "prepack": "bob prepack"
   },
   "devDependencies": {
-    "@envelop/core": "1.5.0",
+    "@envelop/core": "1.6.0",
     "prom-client": "14.0.1",
     "@graphql-tools/schema": "8.3.1",
     "bob-the-bundler": "1.5.1",

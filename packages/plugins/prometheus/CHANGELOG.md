@@ -1,5 +1,11 @@
 # @envelop/prometheus
 
+## 4.2.0
+
+### Minor Changes
+
+- 090cae4: GraphQL v16 support
+
 ## 4.1.0
 
 ### Minor Changes
