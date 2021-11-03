@@ -1,5 +1,12 @@
 # @envelop/persisted-operations
 
+## 2.2.0
+
+### Minor Changes
+
+- 0759d4a: Add `onMissingMatch` option to allow custom handling of missing operation Ids in store/s
+- 090cae4: GraphQL v16 support
+
 ## 2.1.0
 
 ### Minor Changes

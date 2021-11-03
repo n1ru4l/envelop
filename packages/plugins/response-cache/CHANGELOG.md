@@ -1,5 +1,11 @@
 # @envelop/response-cache
 
+## 0.5.0
+
+### Minor Changes
+
+- 090cae4: GraphQL v16 support
+
 ## 0.4.0
 
 ### Minor Changes

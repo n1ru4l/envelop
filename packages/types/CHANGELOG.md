@@ -1,5 +1,11 @@
 # @envelop/types
 
+## 1.5.0
+
+### Minor Changes
+
+- 090cae4: GraphQL v16 support
+
 ## 1.4.0
 
 ### Minor Changes

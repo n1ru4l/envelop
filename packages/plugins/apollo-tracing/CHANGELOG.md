@@ -1,5 +1,11 @@
 # @envelop/apollo-tracing
 
+## 1.2.0
+
+### Minor Changes
+
+- 090cae4: GraphQL v16 support
+
 ## 1.1.0
 
 ### Minor Changes
