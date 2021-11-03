@@ -18,6 +18,10 @@ export type UsePersistedOperationsOptions<ContextType = DefaultContext> = {
    * Function that returns the operation id, e.g. by retrieving it from cusotm properties within context
    */
   extractOperationId?: (context: Readonly<ContextType>) => string | undefined;
+  /**
+   * Callback function to notify consumer of missing hash match, f.i. to log, monitor and/or analise these events
+   */
+  onMissingMatch?: (context: Readonly<ContextType>, operationId: string) => void;
 };
 
 const DEFAULT_OPTIONS: Omit<UsePersistedOperationsOptions, 'store'> = {
@@ -67,6 +71,8 @@ export const usePersistedOperations = (rawOptions: UsePersistedOperationsOptions
 
         return;
       }
+
+      if (options.onMissingMatch) options.onMissingMatch(context, operationId);
 
       if (options.onlyPersisted) {
         // we want to throw an error only when "onlyPersisted" is true, otherwise we let execution continue normally
