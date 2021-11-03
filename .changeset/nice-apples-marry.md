@@ -29,9 +29,7 @@
 '@envelop/sentry': minor
 '@envelop/statsd': minor
 '@envelop/validation-cache': minor
-'@envelop/testing': minor
 '@envelop/types': minor
-'@envelop/website': minor
 ---
 
 GraphQL v16 support
