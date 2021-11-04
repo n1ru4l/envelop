@@ -33,7 +33,7 @@
     "apollo-server-errors": "3.2.0"
   },
   "devDependencies": {
-    "apollo-server-core": "3.4.0",
+    "apollo-server-core": "3.4.1",
     "bob-the-bundler": "1.5.1",
     "graphql": "16.0.1",
     "typescript": "4.4.4"
