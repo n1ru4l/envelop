@@ -2736,10 +2736,15 @@
   resolved "https://registry.npmjs.org/@mdx-js/util/-/util-1.6.22.tgz#219dfd89ae5b97a8801f015323ffa4b62f45718b"
   integrity sha512-H1rQc1ZOHANWBvPcW+JpGwr+juXSxM8Q8YCkm3GhZd8REu1fHR3z99CErO1p9pkcfcxZnMdIZdIsXkOHY0NilA==
 
-"@n1ru4l/graphql-live-query@0.8.0", "@n1ru4l/graphql-live-query@^0.8.0":
+"@n1ru4l/graphql-live-query@0.8.0":
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query/-/graphql-live-query-0.8.0.tgz#1f95bffc02d9b59616bfbeafa67cf405a2c20482"
   integrity sha512-Ib/oC2R+fHoAe1op47T2yGRmtDqZpnUy63oNz+jW1BQwMSkgF8YrLpkeb5DkaK3pDPOHO8cFNrWR3fPN3DFc+w==
+
+"@n1ru4l/graphql-live-query@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query/-/graphql-live-query-0.9.0.tgz#defaebdd31f625bee49e6745934f36312532b2bc"
+  integrity sha512-BTpWy1e+FxN82RnLz4x1+JcEewVdfmUhV1C6/XYD5AjS7PQp9QFF7K8bCD6gzPTr2l+prvqOyVueQhFJxB1vfg==
 
 "@n1ru4l/in-memory-live-query-store@^0.7.0":
   version "0.7.0"
