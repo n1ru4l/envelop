@@ -7792,10 +7792,10 @@ invariant@^2.2.4:
   dependencies:
     loose-envify "^1.0.0"
 
-ioredis-mock@5.6.0:
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-5.6.0.tgz#f60f9fbc3a53b50f567be9369e2b211ed52c0653"
-  integrity sha512-Ow+tyKdijg/gA2gSEv7lq8dLp6bO7FnwDXbJ9as37NF23XNRGMLzBc7ITaqMydfrbTodWnLcE2lKEaBs7SBpyA==
+ioredis-mock@5.6.1:
+  version "5.6.1"
+  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-5.6.1.tgz#c12c7a0156abac7de37d7cc22ac142f14bf77a9e"
+  integrity sha512-y04QhRa77ODKc/qwTr4GZ7xzLeJDMRRJPj0jslbcQpsh/OubQKe/FxeZ+nwakj1gWMke23H8QBICOCgTfuSP0A==
   dependencies:
     fengari "^0.1.4"
     fengari-interop "^0.1.2"
