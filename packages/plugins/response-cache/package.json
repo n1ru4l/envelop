@@ -40,8 +40,7 @@
   "dependencies": {
     "@graphql-tools/utils": "^8.5.2",
     "lru-cache": "^6.0.0",
-    "fast-json-stable-stringify": "^2.1.0",
-    "ioredis": "^4.27.9"
+    "fast-json-stable-stringify": "^2.1.0"
   },
   "peerDependencies": {
     "@envelop/core": "^1.6.0",
