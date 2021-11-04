@@ -1,4 +1,4 @@
-import { Plugin } from '@envelop/types';
+import { Plugin } from '@envelop/core';
 import { Application } from 'graphql-modules';
 
 const graphqlModulesControllerSymbol = Symbol('GRAPHQL_MODULES');

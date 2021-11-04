@@ -1,5 +1,6 @@
-import { Plugin, handleStreamOrSingleExecutionResult, DefaultContext, TypedExecutionArgs } from '@envelop/types';
+import { Plugin, DefaultContext, TypedExecutionArgs } from '@envelop/types';
 import { ExecutionResult, GraphQLError } from 'graphql';
+import { handleStreamOrSingleExecutionResult } from '../utils';
 
 export type ErrorHandler = (errors: readonly GraphQLError[], context: Readonly<DefaultContext>) => void;
 

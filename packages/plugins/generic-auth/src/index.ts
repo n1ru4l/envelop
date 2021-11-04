@@ -1,4 +1,4 @@
-import { DefaultContext, Plugin } from '@envelop/types';
+import { DefaultContext, Plugin } from '@envelop/core';
 import { DirectiveNode, GraphQLError, GraphQLResolveInfo } from 'graphql';
 import { getDirective } from './utils';
 export * from './utils';

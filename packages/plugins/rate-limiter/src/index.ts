@@ -1,4 +1,4 @@
-import { Plugin } from '@envelop/types';
+import { Plugin } from '@envelop/core';
 import { IntValueNode, StringValueNode } from 'graphql';
 import { getDirective } from './utils';
 import { getGraphQLRateLimiter } from 'graphql-rate-limit';

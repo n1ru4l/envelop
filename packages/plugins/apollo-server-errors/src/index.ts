@@ -1,4 +1,4 @@
-import { handleStreamOrSingleExecutionResult, Plugin } from '@envelop/types';
+import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/core';
 import { formatApolloErrors } from 'apollo-server-errors';
 import type { ExecutionResult, GraphQLError } from 'graphql';
 

@@ -1,5 +1,4 @@
-import { isIntrospectionOperationString } from '@envelop/core';
-import { Plugin, isAsyncIterable, AfterParseEventPayload } from '@envelop/types';
+import { Plugin, AfterParseEventPayload, isIntrospectionOperationString, isAsyncIterable } from '@envelop/core';
 import { DocumentNode, Kind, OperationDefinitionNode } from 'graphql';
 import type { StatsD } from 'hot-shots';
 

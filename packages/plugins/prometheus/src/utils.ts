@@ -8,7 +8,7 @@ import {
   ASTNode,
   visitWithTypeInfo,
 } from 'graphql';
-import { AfterParseEventPayload } from '@envelop/types';
+import { AfterParseEventPayload } from '@envelop/core';
 import { PrometheusTracingPluginConfig } from './config';
 import { Counter, Histogram, register as defaultRegistry, Summary } from 'prom-client';
 

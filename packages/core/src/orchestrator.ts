@@ -23,7 +23,6 @@ import {
   OnExecuteDoneHookResultOnEndHook,
   ExecuteFunction,
   AsyncIterableIteratorOrValue,
-  isAsyncIterable,
   OnContextErrorHandler,
   SubscribeErrorHook,
   DefaultContext,
@@ -42,7 +41,7 @@ import {
   ValidationRule,
 } from 'graphql';
 import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema';
-import { errorAsyncIterator, finalAsyncIterator, makeExecute, makeSubscribe, mapAsyncIterator } from './utils';
+import { errorAsyncIterator, finalAsyncIterator, makeExecute, makeSubscribe, mapAsyncIterator, isAsyncIterable } from './utils';
 
 export type EnvelopOrchestrator<
   InitialContext extends ArbitraryObject = ArbitraryObject,

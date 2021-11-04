@@ -1,4 +1,4 @@
-import { Plugin, OnExecuteHookResult, isAsyncIterable } from '@envelop/types';
+import { Plugin, OnExecuteHookResult, isAsyncIterable } from '@envelop/core';
 import { SpanAttributes, SpanKind } from '@opentelemetry/api';
 import * as opentelemetry from '@opentelemetry/api';
 import { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/tracing';

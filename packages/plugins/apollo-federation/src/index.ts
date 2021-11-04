@@ -1,4 +1,4 @@
-import { Plugin } from '@envelop/types';
+import { Plugin } from '@envelop/core';
 import { ApolloGateway } from '@apollo/gateway';
 import { DocumentNode, getOperationAST, printSchema, Source } from 'graphql';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';

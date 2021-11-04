@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-console */
 /* eslint-disable dot-notation */
-import { EnvelopError } from '@envelop/core';
-import { Plugin, OnResolverCalledHook, isAsyncIterable } from '@envelop/types';
+import { Plugin, OnResolverCalledHook, EnvelopError, isAsyncIterable } from '@envelop/core';
 import * as Sentry from '@sentry/node';
-import { Span, Scope } from '@sentry/types';
+import type { Span } from '@sentry/types';
 import { ExecutionArgs, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
 
 export type SentryPluginOptions = {

@@ -8,6 +8,7 @@
   "dependencies": {
     "@envelop/core": "*",
     "apollo-server": "3.3.0",
+    "apollo-server-core": "3.3.0",
     "@graphql-tools/schema": "8.0.1"
   },
   "devDependencies": {

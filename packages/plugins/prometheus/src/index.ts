@@ -6,8 +6,10 @@ import {
   OnValidateHook,
   OnContextBuildingHook,
   OnExecuteHook,
+  isIntrospectionOperationString,
   isAsyncIterable,
-} from '@envelop/types';
+} from '@envelop/core';
+import { TypeInfo } from 'graphql';
 import { Summary, Counter, Histogram, register as defaultRegistry } from 'prom-client';
 import {
   getHistogramFromConfig,
@@ -20,8 +22,6 @@ import {
   createSummary,
 } from './utils';
 import { PrometheusTracingPluginConfig } from './config';
-import { TypeInfo } from 'graphql';
-import { isIntrospectionOperationString } from '@envelop/core';
 
 export { PrometheusTracingPluginConfig, createCounter, createHistogram, createSummary, FillLabelsFnParams };
 

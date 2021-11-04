@@ -1,5 +1,5 @@
-import { OnEnvelopedHook } from '@envelop/core';
 import {
+  OnEnvelopedHook,
   OnContextBuildingHook,
   OnExecuteHook,
   OnParseHook,

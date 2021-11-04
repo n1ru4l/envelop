@@ -17,6 +17,10 @@ import {
   PolymorphicSubscribeArguments,
   SubscribeFunction,
   PromiseOrValue,
+  DefaultContext,
+  OnExecuteDoneEventPayload,
+  OnExecuteDoneHookResult,
+  OnExecuteDoneHookResultOnNextHook,
 } from '@envelop/types';
 
 export const envelopIsIntrospectionSymbol = Symbol('ENVELOP_IS_INTROSPECTION');
@@ -110,6 +114,44 @@ export const makeExecute = (
 ): ExecuteFunction =>
   ((...polyArgs: PolymorphicExecuteArguments): PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>> =>
     executeFn(getExecuteArgs(polyArgs))) as unknown as ExecuteFunction;
+
+/**
+ * Returns true if the provided object implements the AsyncIterator protocol via
+ * implementing a `Symbol.asyncIterator` method.
+ *
+ * Source: https://github.com/graphql/graphql-js/blob/main/src/jsutils/isAsyncIterable.ts
+ */
+export function isAsyncIterable<T = any>(maybeAsyncIterable: any): maybeAsyncIterable is AsyncIterable<T> {
+  return (
+    maybeAsyncIterable != null &&
+    typeof maybeAsyncIterable === 'object' &&
+    typeof maybeAsyncIterable[Symbol.asyncIterator] === 'function'
+  );
+}
+
+/**
+ * A utility function for handling `onExecuteDone` hook result, for simplifying the handling of AsyncIterable returned from `execute`.
+ *
+ * @param payload The payload send to `onExecuteDone` hook function
+ * @param fn The handler to be executed on each result
+ * @returns a subscription for streamed results, or undefined in case of an non-async
+ */
+export function handleStreamOrSingleExecutionResult<ContextType = DefaultContext>(
+  payload: OnExecuteDoneEventPayload<ContextType>,
+  fn: OnExecuteDoneHookResultOnNextHook<ContextType>
+): void | OnExecuteDoneHookResult<ContextType> {
+  if (isAsyncIterable(payload.result)) {
+    return { onNext: fn };
+  } else {
+    fn({
+      args: payload.args,
+      result: payload.result,
+      setResult: payload.setResult,
+    });
+
+    return undefined;
+  }
+}
 
 export async function* finalAsyncIterator<TInput>(
   asyncIterable: AsyncIterable<TInput>,

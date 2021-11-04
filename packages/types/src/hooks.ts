@@ -10,16 +10,9 @@ import type {
   SubscriptionArgs,
   ValidationRule,
 } from 'graphql';
-import { Maybe, PromiseOrValue } from './utils';
+import { Maybe, PromiseOrValue, AsyncIterableIteratorOrValue } from './utils';
 import { DefaultContext } from './context-types';
-import {
-  AsyncIterableIteratorOrValue,
-  ExecuteFunction,
-  ParseFunction,
-  ValidateFunction,
-  ValidateFunctionParameter,
-} from '@envelop/core';
-import { SubscribeFunction } from './graphql';
+import { ExecuteFunction, ParseFunction, ValidateFunction, ValidateFunctionParameter, SubscribeFunction } from './graphql';
 import { Plugin } from './plugin';
 
 export type DefaultArgs = Record<string, unknown>;
