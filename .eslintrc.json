@@ -1,18 +1,13 @@
 {
   "parser": "@typescript-eslint/parser",
-  "extends": [
-    "eslint:recommended",
-    "standard",
-    "prettier",
-    "plugin:@typescript-eslint/recommended"
-  ],
+  "extends": ["eslint:recommended", "standard", "prettier", "plugin:@typescript-eslint/recommended"],
   "plugins": ["@typescript-eslint"],
   "rules": {
     "no-empty": "off",
     "no-console": "error",
     "no-prototype-builtins": "off",
     "no-useless-constructor": "off",
-    "@typescript-eslint/no-unused-vars": ["warn", {"args":  "none"}],
+    "@typescript-eslint/no-unused-vars": ["warn", { "args": "none" }],
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/no-empty-interface": "off",
@@ -22,7 +17,8 @@
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/ban-ts-ignore": "off",
-    "@typescript-eslint/ban-types": "off"
+    "@typescript-eslint/ban-types": "off",
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/*.test.ts", "**/*.spec.ts", "**/test/**/*.ts"] }]
   },
   "env": {
     "es6": true,
@@ -30,16 +26,13 @@
   },
   "overrides": [
     {
-      "files": [
-        "**/tests/**/*.ts",
-        "**/graphql-codegen-testing/**/*.ts",
-        "*.spec.ts"
-      ],
+      "files": ["**/tests/**/*.ts", "**/graphql-codegen-testing/**/*.ts", "*.spec.ts"],
       "env": {
         "jest": true
       },
       "rules": {
-        "@typescript-eslint/no-unused-vars": "off"
+        "@typescript-eslint/no-unused-vars": "off",
+        "import/no-extraneous-dependencies": "off"
       }
     }
   ],
