@@ -39,7 +39,7 @@
     "typescript": "4.4.4",
     "@apollo/gateway": "0.43.1",
     "@apollo/federation": "0.33.6",
-    "graphql-tag": "2.12.5"
+    "graphql-tag": "2.12.6"
   },
   "peerDependencies": {
     "@apollo/gateway": "^0.41.0 || ^0.42.0 || ^0.43.0",
