@@ -60,13 +60,13 @@ export type SentryPluginOptions = {
    */
   operationName?: (args: ExecutionArgs) => string;
   /**
-   * Indicates whether or not to skip the entire Sentry flow for given GraphQL operation
+   * Indicates whether or not to ignore the entire Sentry flow for given GraphQL operation
    */
-  skipOperation?: (args: ExecutionArgs) => boolean;
+  ignoreOperation?: (args: ExecutionArgs) => boolean;
   /**
-   * Indicates whether or not to skip the entire Sentry flow for given error
+   * Indicates whether or not to ignore the entire Sentry flow for given error
    */
-  skipError?: (args: Error) => boolean;
+  ignoreError?: (args: Error) => boolean;
 };
 
 export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
@@ -80,12 +80,12 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const includeRawResult = pick('includeRawResult', false);
   const includeExecuteVariables = pick('includeExecuteVariables', false);
   const renameTransaction = pick('renameTransaction', false);
-  const skipOperation = pick('skipOperation', () => false);
-  const skipError = pick('skipError', () => false);
+  const ignoreOperation = pick('ignoreOperation', () => false);
+  const ignoreError = pick('ignoreError', () => false);
 
   return {
     onExecute({ args }) {
-      if (skipOperation(args)) {
+      if (ignoreOperation(args)) {
         return;
       }
 
@@ -168,7 +168,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
                   childSpan.setData('result', result);
                 }
 
-                if (result instanceof Error && !(result instanceof EnvelopError) && !skipError(result)) {
+                if (result instanceof Error && !(result instanceof EnvelopError) && !ignoreError(result)) {
                   const errorPath = responsePathAsArray(info.path).join(' > ');
 
                   Sentry.captureException(result, {
