@@ -62,7 +62,7 @@ export type SentryPluginOptions = {
   /**
    * Indicates whether or not to skip the entire Sentry flow for given GraphQL operation
    */
-  skip?: (args: ExecutionArgs) => boolean;
+  skipOperation?: (args: ExecutionArgs) => boolean;
   /**
    * Indicates whether or not to skip the entire Sentry flow for given error
    */
@@ -80,12 +80,12 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const includeRawResult = pick('includeRawResult', false);
   const includeExecuteVariables = pick('includeExecuteVariables', false);
   const renameTransaction = pick('renameTransaction', false);
-  const skip = pick('skip', () => false);
+  const skipOperation = pick('skipOperation', () => false);
   const skipError = pick('skipError', () => false);
 
   return {
     onExecute({ args }) {
-      if (skip(args)) {
+      if (skipOperation(args)) {
         return;
       }
 
