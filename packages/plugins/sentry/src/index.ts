@@ -64,7 +64,7 @@ export type SentryPluginOptions = {
    */
   ignoreOperation?: (args: ExecutionArgs) => boolean;
   /**
-   * Indicates whether or not to ignore the entire Sentry flow for given error
+   * Indicates whether or not to ignore Sentry exception reporting for a given error,
    */
   ignoreError?: (args: Error) => boolean;
 };
