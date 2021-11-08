@@ -1,4 +1,4 @@
-import { Plugin, isAsyncIterable, Maybe, DefaultContext, PromiseOrValue } from '@envelop/types';
+import { Plugin, Maybe, DefaultContext, PromiseOrValue, isAsyncIterable } from '@envelop/core';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import { createHash } from 'crypto';
 import {

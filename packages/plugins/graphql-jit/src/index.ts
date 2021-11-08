@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Plugin, TypedExecutionArgs } from '@envelop/types';
+import { Plugin, TypedExecutionArgs } from '@envelop/core';
 import { DocumentNode, Source, ExecutionArgs, ExecutionResult } from 'graphql';
 import { compileQuery, isCompiledQuery, CompilerOptions, CompiledQuery } from 'graphql-jit';
 import lru from 'tiny-lru';

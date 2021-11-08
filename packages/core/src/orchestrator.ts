@@ -23,7 +23,6 @@ import {
   OnExecuteDoneHookResultOnEndHook,
   ExecuteFunction,
   AsyncIterableIteratorOrValue,
-  isAsyncIterable,
   OnContextErrorHandler,
   SubscribeErrorHook,
   DefaultContext,
@@ -42,7 +41,7 @@ import {
   ValidationRule,
 } from 'graphql';
 import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema';
-import { errorAsyncIterator, finalAsyncIterator, makeExecute, makeSubscribe, mapAsyncIterator } from './utils';
+import { errorAsyncIterator, finalAsyncIterator, makeExecute, makeSubscribe, mapAsyncIterator, isAsyncIterable } from './utils';
 
 export type EnvelopOrchestrator<
   InitialContext extends ArbitraryObject = ArbitraryObject,
@@ -460,10 +459,10 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
           context[resolversHooksSymbol] = onResolversHandlers;
         }
 
-        result = await executeFn({
+        result = (await executeFn({
           ...args,
           contextValue: context,
-        });
+        })) as AsyncIterableIteratorOrValue<ExecutionResult>;
 
         const onNextHandler: OnExecuteDoneHookResultOnNextHook<PluginsContext>[] = [];
         const onEndHandler: OnExecuteDoneHookResultOnEndHook[] = [];
@@ -492,7 +491,9 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
               await onNext({
                 args: args as TypedExecutionArgs<PluginsContext>,
                 result,
-                setResult: newResult => (result = newResult),
+                setResult: newResult => {
+                  result = newResult;
+                },
               });
             }
             return result;

@@ -1,4 +1,4 @@
-import { handleStreamOrSingleExecutionResult, Plugin } from '@envelop/types';
+import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/core';
 
 export type UsePreloadAssetsOpts = {
   shouldPreloadAssets?: (context: unknown) => boolean;

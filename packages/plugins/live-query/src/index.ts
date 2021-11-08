@@ -1,4 +1,4 @@
-import { Plugin } from '@envelop/types';
+import { Plugin } from '@envelop/core';
 import { print } from 'graphql';
 import { NoLiveMixedWithDeferStreamRule, GraphQLLiveDirective } from '@n1ru4l/graphql-live-query';
 import type { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';

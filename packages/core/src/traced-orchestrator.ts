@@ -1,6 +1,7 @@
 import { DocumentNode, ExecutionArgs, GraphQLFieldResolver, GraphQLSchema, GraphQLTypeResolver, SubscriptionArgs } from 'graphql';
-import { ArbitraryObject, isAsyncIterable, Maybe } from '@envelop/types';
+import { ArbitraryObject, Maybe } from '@envelop/types';
 import { EnvelopOrchestrator } from './orchestrator';
+import { isAsyncIterable } from './utils';
 
 const HR_TO_NS = 1e9;
 const NS_TO_MS = 1e6;

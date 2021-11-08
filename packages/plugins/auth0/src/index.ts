@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable dot-notation */
-import { Plugin } from '@envelop/types';
+import { Plugin } from '@envelop/core';
 import * as JwksRsa from 'jwks-rsa';
 import jwtPkg, { VerifyOptions, DecodeOptions } from 'jsonwebtoken';
 import { GraphQLError } from 'graphql';

@@ -1,4 +1,4 @@
-import { Plugin } from '@envelop/types';
+import { Plugin } from '@envelop/core';
 import { IMiddlewareGenerator, IMiddleware, applyMiddleware } from 'graphql-middleware';
 
 const middlewaresAppliedSymbol = Symbol('SCHEMA_WITH_MIDDLEWARES');

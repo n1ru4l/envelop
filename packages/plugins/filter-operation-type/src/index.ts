@@ -1,4 +1,4 @@
-import { Plugin } from '@envelop/types';
+import { Plugin } from '@envelop/core';
 import { createFilterOperationTypeRule, AllowedOperations } from './filter-operation-type-rule';
 
 export { AllowedOperations };

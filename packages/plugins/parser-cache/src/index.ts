@@ -1,4 +1,4 @@
-import { Plugin } from '@envelop/types';
+import { Plugin } from '@envelop/core';
 import { DocumentNode, Source } from 'graphql';
 import lru from 'tiny-lru';
 

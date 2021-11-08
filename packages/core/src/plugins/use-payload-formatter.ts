@@ -1,4 +1,5 @@
-import { handleStreamOrSingleExecutionResult, Plugin } from '@envelop/types';
+import { Plugin } from '@envelop/types';
+import { handleStreamOrSingleExecutionResult } from '../utils';
 import { ExecutionResult } from 'graphql';
 
 export type FormatterFunction = (result: ExecutionResult<any, any>) => false | ExecutionResult<any, any>;

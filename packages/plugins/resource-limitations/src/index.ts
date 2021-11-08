@@ -1,4 +1,4 @@
-import { handleStreamOrSingleExecutionResult, Plugin } from '@envelop/types';
+import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/core';
 import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
 import {
   ExecutionArgs,
@@ -75,119 +75,119 @@ export type ResourceLimitationValidationRuleParams = {
  */
 export const ResourceLimitationValidationRule =
   (params: ResourceLimitationValidationRuleParams): ExtendedValidationRule =>
-    (context, executionArgs) => {
-      const { paginationArgumentMaximum, paginationArgumentMinimum } = params;
-      const nodeCostStack: Array<number> = [];
-      let totalNodeCost = 0;
+  (context, executionArgs) => {
+    const { paginationArgumentMaximum, paginationArgumentMinimum } = params;
+    const nodeCostStack: Array<number> = [];
+    let totalNodeCost = 0;
 
-      const connectionFieldMap = new WeakSet<FieldNode>();
+    const connectionFieldMap = new WeakSet<FieldNode>();
 
-      return {
-        Field: {
-          enter(fieldNode) {
-            const fieldDef = context.getFieldDef();
+    return {
+      Field: {
+        enter(fieldNode) {
+          const fieldDef = context.getFieldDef();
 
-            // if it is not found the query is invalid and graphql validation will complain
-            if (fieldDef != null) {
-              const argumentValues = getArgumentValues(fieldDef, fieldNode, executionArgs.variableValues || undefined);
-              const type = getWrappedType(fieldDef.type);
-              if (type instanceof GraphQLObjectType && type.name.endsWith('Connection')) {
-                let nodeCost = 1;
-                connectionFieldMap.add(fieldNode);
+          // if it is not found the query is invalid and graphql validation will complain
+          if (fieldDef != null) {
+            const argumentValues = getArgumentValues(fieldDef, fieldNode, executionArgs.variableValues || undefined);
+            const type = getWrappedType(fieldDef.type);
+            if (type instanceof GraphQLObjectType && type.name.endsWith('Connection')) {
+              let nodeCost = 1;
+              connectionFieldMap.add(fieldNode);
 
-                const { hasFirst, hasLast } = hasFieldDefConnectionArgs(fieldDef, params.paginationArgumentTypes);
-                if (hasFirst === false && hasLast === false) {
-                  // eslint-disable-next-line no-console
-                  console.warn('Encountered paginated field without pagination arguments.');
-                } else if (hasFirst === true || hasLast === true) {
-                  if ('first' in argumentValues === false && 'last' in argumentValues === false) {
+              const { hasFirst, hasLast } = hasFieldDefConnectionArgs(fieldDef, params.paginationArgumentTypes);
+              if (hasFirst === false && hasLast === false) {
+                // eslint-disable-next-line no-console
+                console.warn('Encountered paginated field without pagination arguments.');
+              } else if (hasFirst === true || hasLast === true) {
+                if ('first' in argumentValues === false && 'last' in argumentValues === false) {
+                  context.reportError(
+                    new GraphQLError(
+                      buildMissingPaginationFieldErrorMessage({
+                        fieldName: fieldDef.name,
+                        hasFirst,
+                        hasLast,
+                      }),
+                      fieldNode
+                    )
+                  );
+                } else if ('first' in argumentValues === true && 'last' in argumentValues === false) {
+                  if (argumentValues.first < paginationArgumentMinimum || argumentValues.first > paginationArgumentMaximum) {
                     context.reportError(
                       new GraphQLError(
-                        buildMissingPaginationFieldErrorMessage({
+                        buildInvalidPaginationRangeErrorMessage({
+                          paginationArgumentMaximum,
+                          paginationArgumentMinimum,
+                          argumentName: 'first',
                           fieldName: fieldDef.name,
-                          hasFirst,
-                          hasLast,
                         }),
                         fieldNode
                       )
                     );
-                  } else if ('first' in argumentValues === true && 'last' in argumentValues === false) {
-                    if (argumentValues.first < paginationArgumentMinimum || argumentValues.first > paginationArgumentMaximum) {
-                      context.reportError(
-                        new GraphQLError(
-                          buildInvalidPaginationRangeErrorMessage({
-                            paginationArgumentMaximum,
-                            paginationArgumentMinimum,
-                            argumentName: 'first',
-                            fieldName: fieldDef.name,
-                          }),
-                          fieldNode
-                        )
-                      );
-                    } else {
-                      // eslint-disable-next-line dot-notation
-                      nodeCost = argumentValues['first'] as number;
-                    }
-                  } else if ('last' in argumentValues === true && 'false' in argumentValues === false) {
-                    if (argumentValues.last < paginationArgumentMinimum || argumentValues.last > paginationArgumentMaximum) {
-                      context.reportError(
-                        new GraphQLError(
-                          buildInvalidPaginationRangeErrorMessage({
-                            paginationArgumentMaximum,
-                            paginationArgumentMinimum,
-                            argumentName: 'last',
-                            fieldName: fieldDef.name,
-                          }),
-                          fieldNode
-                        )
-                      );
-                    } else {
-                      // eslint-disable-next-line dot-notation
-                      nodeCost = argumentValues['last'] as number;
-                    }
                   } else {
+                    // eslint-disable-next-line dot-notation
+                    nodeCost = argumentValues['first'] as number;
+                  }
+                } else if ('last' in argumentValues === true && 'false' in argumentValues === false) {
+                  if (argumentValues.last < paginationArgumentMinimum || argumentValues.last > paginationArgumentMaximum) {
                     context.reportError(
                       new GraphQLError(
-                        buildMissingPaginationFieldErrorMessage({
+                        buildInvalidPaginationRangeErrorMessage({
+                          paginationArgumentMaximum,
+                          paginationArgumentMinimum,
+                          argumentName: 'last',
                           fieldName: fieldDef.name,
-                          hasFirst,
-                          hasLast,
                         }),
                         fieldNode
                       )
                     );
+                  } else {
+                    // eslint-disable-next-line dot-notation
+                    nodeCost = argumentValues['last'] as number;
                   }
+                } else {
+                  context.reportError(
+                    new GraphQLError(
+                      buildMissingPaginationFieldErrorMessage({
+                        fieldName: fieldDef.name,
+                        hasFirst,
+                        hasLast,
+                      }),
+                      fieldNode
+                    )
+                  );
                 }
-
-                nodeCostStack.push(nodeCost);
               }
+
+              nodeCostStack.push(nodeCost);
             }
-          },
-          leave(node) {
-            if (connectionFieldMap.delete(node)) {
-              totalNodeCost = totalNodeCost + nodeCostStack.reduce((a, b) => a * b, 1);
-              nodeCostStack.pop();
-            }
-          },
+          }
         },
-        Document: {
-          leave(documentNode) {
-            if (totalNodeCost === 0) {
-              totalNodeCost = 1;
-            }
-            if (totalNodeCost > params.nodeCostLimit) {
-              context.reportError(
-                new GraphQLError(
-                  `Cannot request more than ${params.nodeCostLimit} nodes in a single document. Please split your operation into multiple sub operations or reduce the amount of requested nodes.`,
-                  documentNode
-                )
-              );
-            }
-            params.reportNodeCost?.(totalNodeCost, executionArgs);
-          },
+        leave(node) {
+          if (connectionFieldMap.delete(node)) {
+            totalNodeCost = totalNodeCost + nodeCostStack.reduce((a, b) => a * b, 1);
+            nodeCostStack.pop();
+          }
         },
-      };
+      },
+      Document: {
+        leave(documentNode) {
+          if (totalNodeCost === 0) {
+            totalNodeCost = 1;
+          }
+          if (totalNodeCost > params.nodeCostLimit) {
+            context.reportError(
+              new GraphQLError(
+                `Cannot request more than ${params.nodeCostLimit} nodes in a single document. Please split your operation into multiple sub operations or reduce the amount of requested nodes.`,
+                documentNode
+              )
+            );
+          }
+          params.reportNodeCost?.(totalNodeCost, executionArgs);
+        },
+      },
     };
+  };
 
 type UseResourceLimitationsParams = {
   /**
@@ -247,8 +247,8 @@ export const useResourceLimitations = (params?: UseResourceLimitationsParams): P
               paginationArgumentTypes: params?.paginationArgumentScalars,
               reportNodeCost: extensions
                 ? (nodeCost, ref) => {
-                  nodeCostMap.set(ref, nodeCost);
-                }
+                    nodeCostMap.set(ref, nodeCost);
+                  }
                 : undefined,
             }),
           ],
