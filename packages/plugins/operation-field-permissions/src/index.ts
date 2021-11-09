@@ -1,9 +1,6 @@
 import { Plugin, useExtendContext } from '@envelop/core';
 import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
 import {
-  GraphQLType,
-  GraphQLList,
-  GraphQLNonNull,
   GraphQLError,
   isUnionType,
   FieldNode,
@@ -11,19 +8,16 @@ import {
   isObjectType,
   isInterfaceType,
   isIntrospectionType,
+  getNamedType,
 } from 'graphql';
 
 type PromiseOrValue<T> = T | Promise<T>;
 
-const getWrappedType = (graphqlType: GraphQLType): Exclude<GraphQLType, GraphQLList<any> | GraphQLNonNull<any>> => {
-  if (graphqlType instanceof GraphQLList || graphqlType instanceof GraphQLNonNull) {
-    return getWrappedType(graphqlType.ofType);
-  }
-  return graphqlType;
-};
-
 const OPERATION_PERMISSIONS_SYMBOL = Symbol('OPERATION_PERMISSIONS_SYMBOL');
 
+/**
+ * Returns a set of type names that allow access to all fields in the type.
+ */
 const getWildcardTypes = (scope: Set<string>): Set<string> => {
   const wildcardTypes = new Set<string>();
   for (const item of scope) {
@@ -78,9 +72,8 @@ const OperationScopeRule =
       Field(node) {
         const type = context.getType();
         if (type) {
-          const wrappedType = getWrappedType(type);
-
-          if (isIntrospectionType(wrappedType)) {
+          const namedType = getNamedType(type);
+          if (isIntrospectionType(namedType)) {
             return false;
           }
         }
@@ -91,13 +84,23 @@ const OperationScopeRule =
             return false;
           }
 
+          // We handle objects, interface and union permissions differently.
+          // When accessing an an object field, we check simply run the check.
           if (isObjectType(parentType)) {
             handleField(node, parentType);
-          } else if (isUnionType(parentType)) {
+          }
+
+          // To allow a union case, every type in the union has to be allowed/
+          // If one of the types doesn't permit access we should throw a validation error.
+          if (isUnionType(parentType)) {
             for (const objectType of parentType.getTypes()) {
               handleField(node, objectType);
             }
-          } else if (isInterfaceType(parentType)) {
+          }
+
+          // Same goes for interfaces. Every implementation should allow the access of the given
+          // field to pass the validation rule.
+          if (isInterfaceType(parentType)) {
             for (const objectType of executionArgs.schema.getImplementations(parentType).objects) {
               handleField(node, objectType);
             }
@@ -133,6 +136,8 @@ export const useOperationFieldPermissions = <TContext>(opts: OperationScopeOptio
         useExtendContext(async context => {
           const permissions = await opts.getPermissions(context as TContext);
 
+          // Schema coordinates is a set of type-name field-name strings that
+          // describe the position of a field in the schema.
           const schemaCoordinates = toSet(permissions);
           const wildcardTypes = getWildcardTypes(schemaCoordinates);
 
