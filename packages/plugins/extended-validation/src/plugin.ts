@@ -38,8 +38,14 @@ export const useExtendedValidation = (options: {
       });
     },
     onExecute({ args, setResultAndStopExecution }) {
+      // We hook into onExecute even though this is a validation pattern. The reasoning behind
+      // it is that hooking right after validation and before execution has started is the
+      // same as hooking into the validation step. The benefit of this approach is that
+      // we may use execution context in the validation rules.
       const rules: ExtendedValidationRule[] = args.contextValue[SYMBOL_EXTENDED_VALIDATION_RULES];
       const errors: GraphQLError[] = [];
+
+      // We replicate the default validation step manually before execution starts.
       const typeInfo = schemaTypeInfo || new TypeInfo(args.schema);
       const validationContext = new ValidationContext(args.schema, args.document, typeInfo, e => {
         errors.push(e);
