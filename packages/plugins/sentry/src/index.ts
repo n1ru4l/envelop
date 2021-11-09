@@ -64,7 +64,7 @@ export type SentryPluginOptions = {
    */
   skipOperation?: (args: ExecutionArgs) => boolean;
   /**
-   * Indicates whether or not to skip Sentry exception reporting for a given error,
+   * Indicates whether or not to skip Sentry exception reporting for a given error.
    */
   skipError?: (args: Error) => boolean;
 };
