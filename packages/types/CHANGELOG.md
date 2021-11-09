@@ -1,5 +1,13 @@
 # @envelop/types
 
+## 1.5.1
+
+### Patch Changes
+
+- b1a0331: Properly list `@envelop/core` as a `peerDependency` in plugins.
+
+  This resolves issues where the bundled envelop plugins published to npm had logic inlined from the `@envelop/core` package, causing `instanceof` check of `EnvelopError` to fail.
+
 ## 1.5.0
 
 ### Minor Changes

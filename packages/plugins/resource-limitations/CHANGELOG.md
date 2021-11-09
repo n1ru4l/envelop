@@ -1,5 +1,18 @@
 # @envelop/resource-limitations
 
+## 0.4.1
+
+### Patch Changes
+
+- b1a0331: Properly list `@envelop/core` as a `peerDependency` in plugins.
+
+  This resolves issues where the bundled envelop plugins published to npm had logic inlined from the `@envelop/core` package, causing `instanceof` check of `EnvelopError` to fail.
+
+- Updated dependencies [b1a0331]
+- Updated dependencies [07c39b5]
+  - @envelop/core@1.6.1
+  - @envelop/extended-validation@1.3.1
+
 ## 0.4.0
 
 ### Minor Changes

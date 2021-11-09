@@ -1,5 +1,17 @@
 # @envelop/extended-validation
 
+## 1.3.1
+
+### Patch Changes
+
+- b1a0331: Properly list `@envelop/core` as a `peerDependency` in plugins.
+
+  This resolves issues where the bundled envelop plugins published to npm had logic inlined from the `@envelop/core` package, causing `instanceof` check of `EnvelopError` to fail.
+
+- 07c39b5: Simplify code and add comments to the code.
+- Updated dependencies [b1a0331]
+  - @envelop/core@1.6.1
+
 ## 1.3.0
 
 ### Minor Changes
