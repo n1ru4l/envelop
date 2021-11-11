@@ -31,8 +31,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@sentry/node": "6.14.1",
-    "@sentry/tracing": "6.14.1",
+    "@sentry/node": "6.14.2",
+    "@sentry/tracing": "6.14.2",
     "bob-the-bundler": "1.5.1",
     "graphql": "16.0.1",
     "typescript": "4.4.4"
