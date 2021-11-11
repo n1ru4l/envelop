@@ -37,7 +37,7 @@
     "graphql": "16.0.1",
     "typescript": "4.4.4",
     "oneline": "1.0.3",
-    "common-tags": "1.8.0"
+    "common-tags": "1.8.1"
   },
   "peerDependencies": {
     "@envelop/core": "^1.6.1",
