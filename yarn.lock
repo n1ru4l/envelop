@@ -2386,12 +2386,12 @@
     protobufjs "^6.10.0"
     yargs "^16.1.1"
 
-"@guild-docs/client@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-1.2.0.tgz#f5292a39817b78bb768834ac04e1fcf973c6b1b2"
-  integrity sha512-PIclS6Fssv2vXXHtiuGhexmJgDQ1eihfy/+bLkdvS1WSjqykX99gwU0eXiWwLe5QxB0jfHMv9AmE7Ii78Mjmvg==
+"@guild-docs/client@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-1.2.2.tgz#1c3a0b11e06de4b86867be25aab1f271f7c823d9"
+  integrity sha512-rH2osnI3DkLH4qZLwbw2O9cJVs8J8SVdyP57WTX0RFHaY7nvgS01znADrmRnV7oUBq7bEZ4UWkhlIH4a4jzl+g==
   dependencies:
-    "@guild-docs/mdx-remote" "^1.0.0"
+    "@guild-docs/mdx-remote" "^1.0.1"
     "@guild-docs/types" "^1.0.3"
     immer "^9.0.6"
     next-seo "^4.28.1"
@@ -2401,12 +2401,12 @@
     react-use "^17.3.1"
     remove-markdown "^0.3.0"
     use-immer "^0.6.0"
-    zustand "^3.6.1"
+    zustand "^3.6.5"
 
-"@guild-docs/mdx-remote@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@guild-docs/mdx-remote/-/mdx-remote-1.0.0.tgz#d6f4fad1f8a85b77867d9ef6a5d40c2d3400f480"
-  integrity sha512-Z10QkYXkYfkXJpTaPfsLZ2yqQWAeyeIiuygXtUTcKm0vJwMRhvfJOwbcfam+1Xjz76oCrg8c83egudjO1AewAg==
+"@guild-docs/mdx-remote@^1.0.0", "@guild-docs/mdx-remote@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@guild-docs/mdx-remote/-/mdx-remote-1.0.1.tgz#e5db16b20550fbbba74423d077bbf3ecf13733ce"
+  integrity sha512-x5AMrnbGRRbTsju3FEyi6jzLDHwFhoAzef3fTNVFU442XDkB5JMwi7yA5Q52yaFur+l6LFYjkeT2hHfjSZn5EA==
   dependencies:
     "@guild-docs/types" "^1.0.3"
     "@mdx-js/mdx" "^1.6.22"
@@ -13551,10 +13551,10 @@ yup@^0.31.0:
     property-expr "^2.0.4"
     toposort "^2.0.2"
 
-zustand@^3.6.1:
-  version "3.6.1"
-  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.6.1.tgz#d309074dd632ca7b14e20353e5c55274e3d72eda"
-  integrity sha512-2ghTWZhOx3xUK7drIa/1fVbuzyG70XKfCXIATrRBFDPcRRV4V/9uptNOKgyCvPwCDYgLpla4EtFbXNbdLpfPcw==
+zustand@^3.6.5:
+  version "3.6.5"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.6.5.tgz#42a459397907d6bf0e2375351394733b2f83ee44"
+  integrity sha512-/WfLJuXiEJimt61KGMHebrFBwckkCHGhAgVXTgPQHl6IMzjqm6MREb1OnDSnCRiSmRdhgdFCctceg6tSm79hiw==
 
 zwitch@^1.0.0:
   version "1.0.5"
