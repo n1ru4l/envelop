@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /// @ts-check
 import http from 'k6/http';
 
@@ -18,6 +19,7 @@ export function graphql({ query, operationName, variables }) {
     {
       headers: {
         'Content-Type': 'application/json',
+        // eslint-disable-next-line no-undef
         'X-Test-Scenario': __ENV.MODE,
       },
     }
