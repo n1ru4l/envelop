@@ -490,10 +490,10 @@ imurmurhash@^0.1.4:
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
   integrity sha1-khi5srkoojixPcT7a21XbyMUU+o=
 
-ioredis-mock@5.7.0:
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-5.7.0.tgz#c2f2464313b0c8592cf096d84b0ef4019813fc22"
-  integrity sha512-Z3U7SoDoLP+LeljcNWWGuldbZKzjzbyBrVa1/j0+GurFIgZlT4Ij+/6IqQlTDwZZkss/Prp3UaOdvr5e0Iow5g==
+ioredis-mock@5.8.0:
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-5.8.0.tgz#99d3f0fe58419c2ff15c81cb4e13709aff8f2a44"
+  integrity sha512-PokVyNC/d3qaAyHAdf+Ex4HHBe7GdaSGrcn8pP7ran+pVmSrJ6Aofwm7Od5bQ5JtjDSiylEtIoZzEPYIjUKMHA==
   dependencies:
     fengari "^0.1.4"
     fengari-interop "^0.1.2"
