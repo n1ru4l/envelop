@@ -1,5 +1,12 @@
 # @envelop/operation-field-permissions
 
+## 1.2.2
+
+### Patch Changes
+
+- Updated dependencies [f272b28]
+  - @envelop/core@1.6.2
+
 ## 1.2.1
 
 ### Patch Changes
