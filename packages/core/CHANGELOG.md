@@ -1,5 +1,11 @@
 # @envelop/core
 
+## 1.6.2
+
+### Patch Changes
+
+- f272b28: useTiming: Fix a typo in onSubscriptionMeasurement
+
 ## 1.6.1
 
 ### Patch Changes
