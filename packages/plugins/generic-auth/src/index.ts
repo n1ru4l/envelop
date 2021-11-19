@@ -145,9 +145,13 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
                 const user = (args.contextValue as any)[contextFieldName];
 
                 const handleField = (fieldNode: FieldNode, objectType: GraphQLObjectType) => {
-                  const { fieldAuthExtension, fieldAuthDirectiveNode } = extractAuthMeta(
-                    objectType.getFields()[fieldNode.name.value]
-                  );
+                  const field = objectType.getFields()[fieldNode.name.value];
+                  if (field == null) {
+                    // field is null/undefined if this is an introspection field
+                    return;
+                  }
+
+                  const { fieldAuthExtension, fieldAuthDirectiveNode } = extractAuthMeta(field);
                   const error = validateUser({
                     user,
                     fieldNode,

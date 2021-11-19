@@ -1,6 +1,6 @@
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { EnumValueNode } from 'graphql';
+import { EnumValueNode, getIntrospectionQuery } from 'graphql';
 import {
   DIRECTIVE_SDL,
   ResolveUserFn,
@@ -52,6 +52,22 @@ describe('useGenericAuth', () => {
           public: (root, args, context) => 'public',
         },
       },
+    });
+
+    it('handles introspection query operations', async () => {
+      const testInstance = createTestkit(
+        [
+          useGenericAuth({
+            mode: 'protect-all',
+            resolveUserFn: validresolveUserFn,
+          }),
+        ],
+        schemaWithDirective
+      );
+
+      const result = await testInstance.execute(getIntrospectionQuery());
+      assertSingleExecutionValue(result);
+      expect(result.errors).toBeUndefined();
     });
 
     it('Should allow execution when user is authenticated correctly', async () => {
