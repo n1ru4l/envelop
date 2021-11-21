@@ -69,6 +69,10 @@ export type SentryPluginOptions = {
   skipError?: (args: Error) => boolean;
 };
 
+export function defaultSkipError(error: Error): boolean {
+  return !(error instanceof EnvelopError);
+}
+
 export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   function pick<K extends keyof SentryPluginOptions>(key: K, defaultValue: NonNullable<SentryPluginOptions[K]>) {
     return options[key] ?? defaultValue;
@@ -81,7 +85,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const includeExecuteVariables = pick('includeExecuteVariables', false);
   const renameTransaction = pick('renameTransaction', false);
   const skipOperation = pick('skipOperation', () => false);
-  const skipError = pick('skipError', () => false);
+  const skipError = pick('skipError', defaultSkipError);
 
   return {
     onExecute({ args }) {
@@ -168,7 +172,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
                   childSpan.setData('result', result);
                 }
 
-                if (result instanceof Error && !(result instanceof EnvelopError) && !skipError(result)) {
+                if (result instanceof Error && !skipError(result)) {
                   const errorPath = responsePathAsArray(info.path).join(' > ');
 
                   Sentry.captureException(result, {
