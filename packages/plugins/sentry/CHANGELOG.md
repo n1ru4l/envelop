@@ -1,5 +1,13 @@
 # @envelop/sentry
 
+## 1.5.0
+
+### Minor Changes
+
+- 450abd4: Adds a new `skipError` option, which allows users to skip certain errors.
+
+  It's useful in the case where a user has defined custom error types, such as `ValidationError` which may be used to validate resolver arguments.
+
 ## 1.4.1
 
 ### Patch Changes
