@@ -41,7 +41,24 @@ const getEnveloped = envelop({
       includeResolverArgs: false, // set to `true` in order to include the args passed to resolvers
       includeExecuteVariables: false, // set to `true` in order to include the operation variables values
       appendTags: (args) => { return { ... }} // if you wish to add custom "tags" to the Sentry transaction created per operation
+      configureScope: (args, scope) => { return { ... }} // if you wish to modify the Sentry scope
+      skip: (executionArgs) => { return { ... }} // if you wish to modify the skip specific operations
     }),
   ],
 });
 ```
+
+### Configuration
+
+- `startTransaction` (default: `true`) - Starts a new transaction for every GraphQL Operation. When disabled, an already existing Transaction will be used.
+- `renameTransaction` (default: `false`) - Creates a Span for every resolve function.
+- `trackResolvers` (default: `true`) - Wraps resolvers with tracing functionality, and creates a Span for every resolve function.
+- `includeRawResult` (default: `false`) - Adds result of each resolver and operation to Span's data (available under "result")
+- `includeResolverArgs` (default: `false`) - Adds arguments of each resolver to Span's tag called "args"
+- `includeExecuteVariables` (default: `false`) - Adds operation's variables to a Scope (only in case of errors)
+- `appendTags` - See example above. Allow you to manipulate the tags reports on the Sentry transaction.
+- `configureScope` - See example above. Allow you to manipulate the tags reports on the Sentry transaction.
+- `transactionName` (default: operation name) - Produces a name of Transaction (only when "renameTransaction" or "startTransaction" are enabled) and description of created Span.
+- `operationName` - Produces a "op" (operation) of created Span.
+- `skip` (default: none) - Produces a "op" (operation) of created Span.
+- `skipError` (default: ignored `EnvelopError`) - Indicates whether or not to skip Sentry exception reporting for a given error. By default, this plugin skips all `EnvelopError` errors and does not report it to Sentry.
