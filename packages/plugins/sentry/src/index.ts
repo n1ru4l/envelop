@@ -72,7 +72,7 @@ export type SentryPluginOptions = {
 };
 
 export function defaultSkipError(error: Error): boolean {
-  return !(error instanceof EnvelopError);
+  return error instanceof EnvelopError;
 }
 
 export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
