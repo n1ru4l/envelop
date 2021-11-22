@@ -1,6 +1,6 @@
 {
   "name": "@envelop/sentry",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
