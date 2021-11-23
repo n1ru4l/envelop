@@ -47,7 +47,7 @@
     "@graphql-tools/schema": "8.3.1",
     "@types/benchmark": "2.1.1",
     "@types/jest": "27.0.3",
-    "@types/k6": "0.35.0",
+    "@types/k6": "0.35.1",
     "@types/node": "16.11.9",
     "@typescript-eslint/eslint-plugin": "4.33.0",
     "@typescript-eslint/parser": "4.33.0",
