@@ -1,5 +1,11 @@
 # @envelop/sentry
 
+## 1.5.1
+
+### Patch Changes
+
+- ccd86fe: Patch for defaultSkipError, which should return true if the error is an EnvelopError instance.
+
 ## 1.5.0
 
 ### Minor Changes
