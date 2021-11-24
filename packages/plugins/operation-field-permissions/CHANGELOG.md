@@ -1,5 +1,12 @@
 # @envelop/operation-field-permissions
 
+## 1.2.3
+
+### Patch Changes
+
+- 9d5ae8a: make `@envelop/core` a peer dependency.
+- 0bdd63f: use caret version range for `@envelop/extended-validation`
+
 ## 1.2.2
 
 ### Patch Changes

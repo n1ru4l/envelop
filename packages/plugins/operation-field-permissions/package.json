@@ -1,6 +1,6 @@
 {
   "name": "@envelop/operation-field-permissions",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "author": "Laurin Quast <laurinquast@googlemail.com.com>",
   "license": "MIT",
   "sideEffects": false,
