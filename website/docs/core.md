@@ -1,9 +1,6 @@
 ---
-title: Envelop Core
-sidebar_label: '@envelop/core'
+title: '@envelop/core'
 ---
-
-## @envelop/core
 
 This is the core package for `envelop`, it comes with the execution pipeline wrapper, and some basic core plugins you can use for creating your initial Envelop instance.
 
