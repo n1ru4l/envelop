@@ -9,7 +9,8 @@ import { PackageInstall, RemoteGHMarkdown } from '@guild-docs/client';
 import { buildMDX, CompiledMDX } from '@guild-docs/server';
 import { getPackagesData, PackageWithStats } from '@guild-docs/server/npm';
 
-import { pluginsArr as packageList } from '../../lib/plugins';
+import { getPluginDemos, pluginsArr as packageList } from '../../lib/plugins';
+import { Playground } from '../../components/playground';
 
 export const SubTitle = styled.h2(() => [tw`mt-0 mb-4 font-bold text-lg md:text-xl`]);
 export const Title = styled.h2(() => [tw`mt-0 mb-4 font-bold text-xl md:text-2xl`]);
@@ -82,6 +83,8 @@ export default function PluginPageContent({ data }: PluginPageProps) {
   }
 
   const pluginData = data[0];
+  const pluginDemos = getPluginDemos(pluginData.identifier);
+  console.log(pluginData.identifier, pluginDemos);
 
   return (
     <section>
@@ -92,6 +95,7 @@ export default function PluginPageContent({ data }: PluginPageProps) {
           </Link>
           {' >'} {pluginData.title}
         </Title>
+        {pluginDemos[0] ? <Playground demo={pluginDemos[0]} /> : null}
         <Grid templateColumns={['1fr', '1fr', '1fr 350px']} gap={4}>
           <Box>
             <PackageInstall packages={pluginData.npmPackage} />

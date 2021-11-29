@@ -1,4 +1,5 @@
 import type { Package } from '@guild-docs/server/npm';
+import { Demo, DEMO_QUERY, DEMO_SCHEMA } from './demos';
 
 export const ALL_TAGS = [
   'tracing',
@@ -18,7 +19,11 @@ export const ALL_TAGS = [
 
 export type Tags = typeof ALL_TAGS[number];
 
-export const pluginsArr: Package<Tags>[] = [
+export const pluginsArrWithDemos: Array<
+  Package<Tags> & {
+    demos?: Demo[];
+  }
+> = [
   {
     identifier: 'use-sentry',
     title: 'useSentry',
@@ -145,6 +150,14 @@ export const pluginsArr: Package<Tags>[] = [
     npmPackage: '@envelop/parser-cache',
     iconUrl: '/logo.png',
     tags: ['performance', 'caching'],
+    demos: [
+      {
+        schema: DEMO_SCHEMA,
+        query: DEMO_QUERY,
+        requestHeaders: {},
+        code: `useTest`,
+      },
+    ],
   },
   {
     identifier: 'use-validation-cache',
@@ -326,3 +339,9 @@ export const pluginsArr: Package<Tags>[] = [
     tags: ['schema', 'utilities'],
   },
 ];
+
+export function getPluginDemos(identifier: string) {
+  return pluginsArrWithDemos.find(p => p.identifier === identifier)?.demos || [];
+}
+
+export const pluginsArr: Array<Package<Tags>> = pluginsArrWithDemos.map(({ demos, ...rest }) => rest);

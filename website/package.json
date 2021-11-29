@@ -11,6 +11,10 @@
     "start": "next start"
   },
   "dependencies": {
+    "@monaco-editor/react": "4.3.1",
+    "graphql": "16.0.1",
+    "@graphql-tools/schema": "8.3.1",
+    "@envelop/core": "*",
     "date-fns": "2.26.0",
     "@chakra-ui/icons": "1.1.1",
     "@chakra-ui/react": "1.7.2",
