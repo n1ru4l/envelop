@@ -1,90 +1,156 @@
 ---
-title: Getting Started
+title: First Steps
 ---
 
-### Installation
+## Installation
 
-Start by adding the core of `envelop` to your codebase:
+Start by adding the core of `envelop` and `graphql` to your codebase:
 
 <PackageInstall packages="graphql @envelop/core" />
 
-### Create your Envelop
+## Create your first envelop
 
-Then, create a simple Envelop based on your GraphQL schema:
+After installing the `@envelop/core` package, you can use the `envelop` function for creating your `getEnveloped` function. We use a simple GraphQL schema that we build with the `buildSchema` function from `graphql`.
 
 ```ts
 import { envelop, useSchema } from '@envelop/core';
 import { buildSchema } from 'graphql';
 
-const mySchema = buildSchema(/* GraphQL */ `
+const schema = buildSchema(/* GraphQL */ `
   type Query {
     hello: String
   }
 `);
 
 export const getEnveloped = envelop({
-  plugins: [useSchema(mySchema)],
+  plugins: [useSchema(schema)],
 });
 ```
 
-### Use your Envelop
+## Use your envelop
 
-The result of `envelop` is a function that allows you to get everything you need for the GraphQL execution: `parse`, `validate`, `contextBuilder` and `execute`. Use that to run the client's GraphQL queries.
+The result of `envelop` is a factory function that allows you to get everything you need for the GraphQL execution: `parse`, `validate`, `contextBuilder` and `execute`. It is usually named `getEnveloped`.
 
-Here is the most basic example of a GraphQL server using envelop with the `http` module.
+By calling the `getEnveloped` function you will get all the primitive functions required for the GraphQL execution layer.
+
+```ts
+// prettier-ignore
+const {
+  contextFactory,
+  parse,
+  validate,
+  execute,
+  subscribe,
+  schema,
+} = getEnveloped()
+```
+
+## Add plugins to your envelop
+
+After you set up your base envelop, you can start customizing your GraphQL server. Adding new functionality is as easy as adding a new envelop plugin to your base envelop setup.
+
+Let's add a parser and validation cache, so sending the same operation string sent to our server is cached using a LRU cache, allowing to improve the overall performance of the GraphQL execution layer.
+
+<PackageInstall packages="@envelop/parser-cache @envelop/validation-cache" />
+
+```ts
+import { envelop, useSchema } from '@envelop/core';
+import { buildSchema } from 'graphql';
+import { useParserCache } from '@envelop/parser-cache';
+import { useValidationCache } from '@envelop/validation-cache';
+
+const schema = buildSchema(/* GraphQL */ `
+  type Query {
+    hello: String
+  }
+`);
+
+export const getEnveloped = envelop({
+  plugins: [useSchema(schema)],
+});
+
+const getEnveloped = envelop({
+  plugins: [
+    // all enabled plugins
+    useSchema(schema),
+    useParserCache(),
+    useValidationCache(),
+  ],
+});
+```
+
+> A list of all available plugins can be found on the [Envelop Plugin Hub](/plugins).
+
+## Use your envelop with an HTTP server
+
+you can build a very simple GraphQL HTTP server from scratch, by using the Node.js `http` module and only these functions.
 
 ```ts
 import { createServer } from 'http';
+import { GraphQLError } from 'graphql';
 import { getEnveloped } from './envelop';
 
-const httpServer = createServer();
+const httpServer = http.createServer(async (req, res) => {
+  try {
+    // body parsing
+    req.body = await new Promise((resolve, reject) => {
+      let data = '';
+      req.on('data', chunk => {
+        data += String(chunk);
+      });
+      req.on('end', () => {
+        resolve(data);
+      });
+      req.on('error', err => reject(err));
+    });
 
-httpServer.on('request', async (req, res) => {
-  // Here you get the alternative methods that are bundled with your plugins
-  // You can pass anything from your incoming request to make it available
-  // for Envelop plugins, and to make it available as part of your
-  // GQL execution context
-  const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req });
+    const {
+      // Get the GraphQL execution functions with attached plugin handlers
+      parse,
+      validate,
+      contextFactory,
+      execute,
+      schema,
+    } = getEnveloped({ req });
 
-  // Parse the initial request and validate it
-  const { query, variables } = JSON.parse(req.payload);
-  const document = parse(query);
-  const validationErrors = validate(schema, document);
+    // Parse request body JSON
+    const { query, variables } = JSON.parse(req.body);
+    const document = parse(query);
+    const validationErrors = validate(schema, document);
 
-  if (validationErrors.length > 0) {
-    return res.end(JSON.stringify({ errors: validationErrors }));
+    if (validationErrors.length > 0) {
+      return res.end(JSON.stringify({ errors: validationErrors }));
+    }
+
+    // Build the context and execute
+    const contextValue = await contextFactory();
+    const result = await execute({
+      document,
+      schema,
+      variableValues: variables,
+      contextValue,
+    });
+
+    // Send the response
+    res.end(JSON.stringify(result));
+  } catch (err) {
+    if (err instanceof GraphQLError === false) {
+      err = new GraphQLError(err.message);
+    }
+    res.end(JSON.stringify({ errors: [err] }));
   }
-
-  // Build the context and execute
-  const contextValue = await contextFactory();
-  const result = await execute({
-    document,
-    schema,
-    variableValues: variables,
-    contextValue,
-  });
-
-  // Send the response
-  res.end(JSON.stringify(result));
 });
 
 httpServer.listen(3000);
 ```
 
-> The example above uses Node.js `http` module, but you can use `envelop` with all popular frameworks and servers. Check the examples on our [Integrations page](/docs/integrations).
+After starting this server we can send a GraphQL operation using `curl`, yielding a response of `{"data":{"__typename":"Query"}}`.
 
-## Add your plugins
-
-Adding new functionality is as easy as adding a new envelop plugin to your base envelop setup.
-
-Here's a simple example for collecting metrics and log all incoming requests, using the built-in plugins:
-
-```ts
-import { envelop, useSchema, useLogger, useTiming } from '@envelop/core';
-
-const getEnveloped = envelop({
-  plugins: [useSchema(schema), useLogger(), useTiming()],
-});
+```bash
+curl \
+  -X POST \
+  -d '{"query":"{__typename}"}' \
+  http://localhost:3000
 ```
 
-> A list of all available plugins can be found on our [Plugin Hub](/plugins)!
+> This example uses the Node.js `http` module and is a very simplified handler that does not strictly follow the [GraphQL over HTTP specification](https://github.com/graphql/graphql-over-http) as it does not handle headers or respect HTTP methods. For actual production usage we recommend using Envelop with one of the popular and battle-tested HTTP frameworks and servers. Check the examples on our [Integrations page](/docs/integrations).

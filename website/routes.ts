@@ -7,7 +7,7 @@ export function getRoutes(): IRoutes {
         $name: 'Getting Started',
         $routes: [
           ['README', 'Introduction'],
-          ['getting-started', 'Installation'],
+          ['getting-started', 'First Steps'],
           ['integrations', 'Integrations and Examples'],
           ['core', '@envelop/core'],
           ['composing-envelop', 'Sharing Envelops'],
