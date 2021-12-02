@@ -81,4 +81,44 @@ describe('useRateLimiter', () => {
     expect(result.errors![0].message).toBe('too many calls');
     expect(result.errors![0].path).toEqual(['limited']);
   });
+
+  it('Should interpolate {{ id }}', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: `
+      ${DIRECTIVE_SDL}
+      
+      type Query {
+        limited: String @rateLimit(
+          max: 1,
+          window: "0.1s",
+          message: "too many calls for {{ id }}"
+        ),
+        unlimited: String
+      }
+      `,
+      resolvers: {
+        Query: {
+          limited: (root, args, context) => 'limited',
+          unlimited: (root, args, context) => 'unlimited',
+        },
+      },
+    });
+
+    const testInstance = createTestkit(
+      [
+        useRateLimiter({
+          identifyFn,
+        }),
+      ],
+      schema
+    );
+    await testInstance.execute(`query { limited }`);
+    const result = await testInstance.execute(`query { limited }`);
+
+    assertSingleExecutionValue(result);
+
+    expect(result.errors!.length).toBe(1);
+    expect(result.errors![0].message).toBe(`too many calls for ${identifyFn({})}`);
+    expect(result.errors![0].path).toEqual(['limited']);
+  });
 });

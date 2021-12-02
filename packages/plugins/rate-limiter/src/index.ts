@@ -1,5 +1,5 @@
 import { Plugin } from '@envelop/core';
-import { IntValueNode, StringValueNode } from 'graphql';
+import { IntValueNode, StringValueNode, GraphQLResolveInfo } from 'graphql';
 import { getDirective } from './utils';
 import { getGraphQLRateLimiter } from 'graphql-rate-limit';
 export * from './utils';
@@ -15,6 +15,7 @@ export const DIRECTIVE_SDL = /* GraphQL */ `
 export type RateLimiterPluginOptions = {
   identifyFn: IdentifyFn;
   rateLimitDirectiveName?: 'rateLimit' | string;
+  onRateLimitError?: (event: { error: string; identifier: string; context: unknown; info: GraphQLResolveInfo }) => void;
 };
 
 export const useRateLimiter = (
@@ -25,7 +26,7 @@ export const useRateLimiter = (
   const rateLimiterFn = getGraphQLRateLimiter({ identifyContext: options.identifyFn });
 
   return {
-    async onContextBuilding({ context, extendContext }) {
+    async onContextBuilding({ extendContext }) {
       extendContext({
         rateLimiterFn,
       });
@@ -44,8 +45,18 @@ export const useRateLimiter = (
             const message = messageNode.value;
             const max = parseInt(maxNode.value);
             const window = windowNode.value;
+            const id = options.identifyFn(context);
 
-            const errorMessage = await context.rateLimiterFn({ parent: root, args, context, info }, { max, window, message });
+            const errorMessage = await context.rateLimiterFn(
+              { parent: root, args, context, info },
+              {
+                max,
+                window,
+                message: interpolate(message, {
+                  id,
+                }),
+              }
+            );
             if (errorMessage) throw new Error(errorMessage);
           }
         },
@@ -53,3 +64,7 @@ export const useRateLimiter = (
     },
   };
 };
+
+function interpolate(message: string, args: { [key: string]: string }) {
+  return message.replace(/\{{([^)]*)\}}/g, (_, key) => args[key.trim()]);
+}
