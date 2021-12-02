@@ -59,6 +59,15 @@ export const useRateLimiter = (
               }
             );
             if (errorMessage) {
+              if (options.onRateLimitError) {
+                options.onRateLimitError({
+                  error: errorMessage,
+                  identifier: id,
+                  context,
+                  info,
+                });
+              }
+
               if (options.transformError) {
                 throw options.transformError(errorMessage);
               }
