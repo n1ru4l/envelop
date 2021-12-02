@@ -15,6 +15,7 @@ export const DIRECTIVE_SDL = /* GraphQL */ `
 export type RateLimiterPluginOptions = {
   identifyFn: IdentifyFn;
   rateLimitDirectiveName?: 'rateLimit' | string;
+  transformError?: (message: string) => Error;
   onRateLimitError?: (event: { error: string; identifier: string; context: unknown; info: GraphQLResolveInfo }) => void;
 };
 
@@ -57,7 +58,13 @@ export const useRateLimiter = (
                 }),
               }
             );
-            if (errorMessage) throw new Error(errorMessage);
+            if (errorMessage) {
+              if (options.transformError) {
+                throw options.transformError(errorMessage);
+              }
+
+              throw new Error(errorMessage);
+            }
           }
         },
       };
