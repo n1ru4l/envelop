@@ -78,10 +78,10 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
   integrity sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
 
-"@types/ioredis@4.28.1":
-  version "4.28.1"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.28.1.tgz#27d66f4c0540145826d984b6d0a5b54bbb88c32a"
-  integrity sha512-raYHPqRWrfnEoym94BY28mG1+tcZqh3dsp2q7x5IyMAAEvIdu+H0X8diASMpncIm+oHyH9dalOeOnGOL/YnuOA==
+"@types/ioredis@4.28.2":
+  version "4.28.2"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.28.2.tgz#7ff68944cbb58afefb2a1d8b250ebf48760e93c9"
+  integrity sha512-kOCG4ExodOAoslFjsUzwAK1fxqVRx3JX5m7lm3MkWf5WkDwNTtXBtlBig6cQyFwS7P7TPaTWRreQaMwl7e1FFA==
   dependencies:
     "@types/node" "*"
 
