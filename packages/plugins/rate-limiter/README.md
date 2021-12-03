@@ -45,6 +45,18 @@ type Query {
 
 > You can apply that directive to any GraphQL `field` definition, not only to root fields.
 
+### Error message interpolation
+
+The `message` argument of the `@rateLimit` directive can be dynamic. You `{{var}}` or `{{ var }}` syntax to interpolate variables.
+
+```graphql
+type Query {
+  posts: [Post]! @rateLimit(window: "5s", max: 10, message: "Too many calls made by {{ id }}")
+}
+```
+
+> The only available variable so far is `id`.
+
 ## Notes
 
 You can find more details here: hhttps://github.com/teamplanes/graphql-rate-limit#readme
