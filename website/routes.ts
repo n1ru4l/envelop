@@ -13,6 +13,15 @@ export function getRoutes(): IRoutes {
           ['composing-envelop', 'Sharing Envelops'],
         ],
       },
+      'docs/plugins': {
+        $name: 'Plugins',
+        $routes: [
+          ['README', 'Introduction'],
+          ['custom-plugin', 'Building Plugins'],
+          ['lifecycle', 'Lifecycle'],
+          ['testing', 'Testing'],
+        ],
+      },
       'docs/guides': {
         $name: 'Guides',
         $routes: [
@@ -22,15 +31,6 @@ export function getRoutes(): IRoutes {
           ['using-graphql-features-from-the-future', 'GraphQL Features from the Future'],
           ['resolving-subscription-data-loader-caching-issues', 'Resolving subscription DataLoader Cache Issues'],
           ['adding-a-graphql-response-cache', 'GraphQL Response Caching'],
-        ],
-      },
-      'docs/plugins': {
-        $name: 'Plugins',
-        $routes: [
-          ['README', 'Introduction'],
-          ['custom-plugin', 'Building Plugins'],
-          ['lifecycle', 'Lifecycle'],
-          ['testing', 'Testing'],
         ],
       },
     },

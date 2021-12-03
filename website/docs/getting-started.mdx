@@ -2,9 +2,13 @@
 title: First Steps
 ---
 
+Using Envelop is straight-forward and intuitive, in this section you will lean how to install and set up an GraphQL server using Envelop from scratch.
+
+> In case you are being referred to the Envelop documentation from a framework or library that implements envelop, you can straight dive into the [Plugin Hub](/plugins) or head over to the [Plugin Tutorial](/docs/plugins) for learning how to write your own plugins.
+
 ## Installation
 
-Start by adding the core of `envelop` and `graphql` to your codebase:
+Start by adding the core of `envelop` and `graphql` to your codebase.
 
 <PackageInstall packages="graphql @envelop/core" />
 
@@ -29,7 +33,7 @@ export const getEnveloped = envelop({
 
 ## Use your envelop
 
-The result of `envelop` is a factory function that allows you to get everything you need for the GraphQL execution: `parse`, `validate`, `contextBuilder` and `execute`. It is usually named `getEnveloped`.
+The result of `envelop` is a factory function that allows you to get everything you need for the GraphQL execution: `parse`, `validate`, `contextBuilder`, `execute` and `subscribe`. It is usually named `getEnveloped`.
 
 By calling the `getEnveloped` function you will get all the primitive functions required for the GraphQL execution layer.
 
@@ -111,6 +115,7 @@ const httpServer = http.createServer(async (req, res) => {
       contextFactory,
       execute,
       schema,
+      // pass in an initial context that all plugins can consume and extend
     } = getEnveloped({ req });
 
     // Parse request body JSON
