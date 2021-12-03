@@ -69,10 +69,6 @@ const schema = buildSchema(/* GraphQL */ `
   }
 `);
 
-export const getEnveloped = envelop({
-  plugins: [useSchema(schema)],
-});
-
 const getEnveloped = envelop({
   plugins: [
     // all enabled plugins
