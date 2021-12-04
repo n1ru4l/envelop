@@ -1,5 +1,12 @@
 # @envelop/rate-limiter
 
+## 1.3.0
+
+### Minor Changes
+
+- b343f4a: Support {{id}} interpolation and onRateLimitError callback
+- b343f4a: Introduce transformError to modify the error
+
 ## 1.2.1
 
 ### Patch Changes
