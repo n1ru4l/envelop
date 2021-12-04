@@ -7,10 +7,19 @@ export function getRoutes(): IRoutes {
         $name: 'Getting Started',
         $routes: [
           ['README', 'Introduction'],
-          ['getting-started', 'Installation'],
+          ['getting-started', 'First Steps'],
           ['integrations', 'Integrations and Examples'],
           ['core', '@envelop/core'],
           ['composing-envelop', 'Sharing Envelops'],
+        ],
+      },
+      'docs/plugins': {
+        $name: 'Plugins',
+        $routes: [
+          ['README', 'Introduction'],
+          ['custom-plugin', 'Building Plugins'],
+          ['lifecycle', 'Lifecycle'],
+          ['testing', 'Testing'],
         ],
       },
       'docs/guides': {
@@ -22,15 +31,6 @@ export function getRoutes(): IRoutes {
           ['using-graphql-features-from-the-future', 'GraphQL Features from the Future'],
           ['resolving-subscription-data-loader-caching-issues', 'Resolving subscription DataLoader Cache Issues'],
           ['adding-a-graphql-response-cache', 'GraphQL Response Caching'],
-        ],
-      },
-      'docs/plugins': {
-        $name: 'Plugins',
-        $routes: [
-          ['README', 'Introduction'],
-          ['custom-plugin', 'Building Plugins'],
-          ['lifecycle', 'Lifecycle'],
-          ['testing', 'Testing'],
         ],
       },
     },

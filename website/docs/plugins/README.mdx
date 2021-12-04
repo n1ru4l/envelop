@@ -1,28 +1,24 @@
 ---
-title: Introduction Plugins
+title: Introduction
 sidebar_label: Introduction
 ---
 
-## Plugins
+Plugins are the hearth of Envelop. Without adding any plugins, the GraphQL execution layer provided by Envelop does not differ from the core GraphQL execution layer as provided by GraphQL.js.
 
-`envelop` plugins are based on a simple event-based contact that allows you to add more logic to your app.
+## How do Envelop plugins work?
 
-You can easily share and collaborate on plugins that you find generic.
+Envelop plugins are based on a simple event-based contract that allows extending and overwriting the GraphQL execution logic, by wrapping the functions `parse`, `validate`, `execute` and `subscribe` from GraphQL.js.
 
-By extending the GraphQL execution pipeline, we allow developers to write reusable plugins that can be shared with others easily, as NPM packages.
+![Envelop Plugin](/assets/home-communication.png)
 
-So instead of delivering a bloated GraphQL server with tons of features, we allow you to choose the HTTP server you prefer, the request pipeline you like, and the features you want.
+Generic logic can be shared as a plugin, that can be distributed via npm.
 
-### Available Plugins
+## What can plugins can do?
 
-You can find a list of all plugins, their documentation and installation instructions in our [Plugin Hub](/plugins)!
+Plugins are capable of modifying and altering every aspect of the GraphQL execution flow, allowing to hook into the phases before and after `parse`, `validate`, `execute`, `subscribe`, as well as building your GraphQL context.
 
-### The plugin interface
+Plugins can also change the GraphQL schema during execution - so if your server has a schema that could change dynamically, you can constantly update it. Plugins can listen to schema changes and run logic accordingly.
 
-You can find it here: https://github.com/dotansimha/envelop/blob/main/packages/types/src/plugin.ts#L12
+## What plugins are available?
 
-### What plugins can do?
-
-Plugins are capable to modify/alter evert aspect of the GraphQL execution flow, including the way you do `parse`, `validate`, `execute`, `subscribe` and build your GraphQL context.
-
-We also allow you to change the GraphQL schema during execution - so if your server has a schema that could change dynamically, you can constantly update it. As a result, we trigger a `schemaChange` event that allows plugins to respond accordingly.
+You can find a list of all plugins, their documentation and installation instructions on the [Envelop Plugin Hub](/plugins).

@@ -36,6 +36,11 @@ ExtendComponents({
   },
   Text,
   ul: UnorderedList,
+  PluginTableColumnSpace: chakra('div', {
+    baseStyle: {
+      minWidth: 135,
+    },
+  }),
 });
 
 const styles: typeof chakraTheme['styles'] = {

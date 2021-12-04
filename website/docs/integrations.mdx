@@ -2,27 +2,27 @@
 title: Integrations and Examples
 ---
 
-Envelop provides a low-level API for integrating it with your server of choice, but a rich API for plugins. Because of the low-level API, it's possible to integrate Envelop with almost any http server or framework.
+Envelop provides a low-level API for integrating it with your server of choice, but a rich API for building plugins. It is possible to integrate Envelop with any HTTP server framework and almost any GraphQL Server Framework.
 
-Our personal recommendation for the request pipeline orchestrator is [`graphql-helix`](https://github.com/contrawork/graphql-helix), as it allows maximum flexibility and a seamless integration with envelop.
+> Our personal recommendation for the request pipeline orchestration is [`graphql-helix`](https://graphql-helix.com/) together with [`fastify`](https://www.fastify.io/), as this combination allows maximum flexibility and a seamless integration with envelop, in addition you can leverage also the fastify plugin eco-system.
 
-### Compatibility Table
+## Compatibility Table
 
-Here's a list of integrations and examples. This list here includes integrations with different GraphQL servers, different HTTP servers and different GraphQL schema builders.
+Here's a list of integrations and examples. This list here includes integrations with different GraphQL servers, different HTTP servers and different GraphQL schema builders. In case you are missing you favorite server, feel free to add it!
 
-| Server/Framework                            | Fully supported?                                                                                | Example                                                                                                     |
-| ------------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| _GraphQL-Helix_                             | Yes                                                                                             | [`graphql-helix`](https://github.com/dotansimha/envelop/tree/main/examples/graphql-helix)                   |
-| Node.js HTTP                                | Yes                                                                                             | [`basic-http`](https://github.com/dotansimha/envelop/tree/main/examples/simple-http)                        |
-| GraphQL-Helix (with `@defer` and `@stream`) | Yes                                                                                             | [`graphql-helix`](https://github.com/dotansimha/envelop/tree/main/examples/graphql-helix-defer-stream)      |
-| Apollo-Server                               | <Tooltip label="Apollo-Server v2 doesn't allow to customize `parse` function.">Almost</Tooltip> | [`apollo-server`](https://github.com/dotansimha/envelop/tree/main/examples/apollo-server)                   |
-| GraphQL-WS                                  | Yes                                                                                             | [`graphql-ws`](https://github.com/dotansimha/envelop/tree/main/examples/graphql-ws)                         |
-| GraphQL-SSE                                 | Yes                                                                                             | [`graphql-sse`](https://github.com/dotansimha/envelop/tree/main/examples/graphql-sse)                       |
-| Azure Functions                             | Yes                                                                                             | [`azure-functions`](https://github.com/dotansimha/envelop/tree/main/examples/azure-functions)               |
-| Cloudflare Workers                          | Yes                                                                                             | [`cloudflare-workers`](https://github.com/dotansimha/envelop/tree/main/examples/cloudflare-workers)         |
-| Google Cloud Functions                      | Yes                                                                                             | [`google-cloud-functions`](https://github.com/dotansimha/envelop/tree/main/examples/google-cloud-functions) |
-| Lambda AWS                                  | Yes                                                                                             | [`lambda-aws`](https://github.com/dotansimha/envelop/tree/main/examples/lambda-aws)                         |
-| type-graphql                                | Yes                                                                                             | [`type-graphql`](https://github.com/dotansimha/envelop/tree/main/examples/typegraphql)                      |
-| nexus                                       | Yes                                                                                             | [`nexus`](https://github.com/dotansimha/envelop/tree/main/examples/nexus)                                   |
+> Since Envelop is not a HTTP server, and just a wrapper around the GraphQL request pipeline - it's possible to integrate it with almost any server/framework.å
 
-> Since Envelop is not a HTTP server, and just a wrapper around the GraphQL request pipeline - it's possible to integrate it with any server/framework, if it's flexible enough and allows you to specify the pipeline methods.
+| Server/Framework                            | Fully supported?                                                                                    | Example                                                                                                     |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| _GraphQL-Helix_                             | Yes                                                                                                 | [`graphql-helix`](https://github.com/dotansimha/envelop/tree/main/examples/graphql-helix)                   |
+| Node.js HTTP                                | Yes                                                                                                 | [`basic-http`](https://github.com/dotansimha/envelop/tree/main/examples/simple-http)                        |
+| GraphQL-Helix (with `@defer` and `@stream`) | Yes                                                                                                 | [`graphql-helix`](https://github.com/dotansimha/envelop/tree/main/examples/graphql-helix-defer-stream)      |
+| Apollo-Server                               | <Tooltip label="Apollo-Server v2 doesn't allow to customize the `parse` function.">Almost</Tooltip> | [`apollo-server`](https://github.com/dotansimha/envelop/tree/main/examples/apollo-server)                   |
+| GraphQL-WS                                  | Yes                                                                                                 | [`graphql-ws`](https://github.com/dotansimha/envelop/tree/main/examples/graphql-ws)                         |
+| GraphQL-SSE                                 | Yes                                                                                                 | [`graphql-sse`](https://github.com/dotansimha/envelop/tree/main/examples/graphql-sse)                       |
+| Azure Functions                             | Yes                                                                                                 | [`azure-functions`](https://github.com/dotansimha/envelop/tree/main/examples/azure-functions)               |
+| Cloudflare Workers                          | Yes                                                                                                 | [`cloudflare-workers`](https://github.com/dotansimha/envelop/tree/main/examples/cloudflare-workers)         |
+| Google Cloud Functions                      | Yes                                                                                                 | [`google-cloud-functions`](https://github.com/dotansimha/envelop/tree/main/examples/google-cloud-functions) |
+| Lambda AWS                                  | Yes                                                                                                 | [`lambda-aws`](https://github.com/dotansimha/envelop/tree/main/examples/lambda-aws)                         |
+| type-graphql                                | Yes                                                                                                 | [`type-graphql`](https://github.com/dotansimha/envelop/tree/main/examples/typegraphql)                      |
+| nexus                                       | Yes                                                                                                 | [`nexus`](https://github.com/dotansimha/envelop/tree/main/examples/nexus)                                   |
