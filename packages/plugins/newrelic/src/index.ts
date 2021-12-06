@@ -1,5 +1,5 @@
 import newRelic from 'newrelic';
-import { Plugin, OnResolverCalledHook, Path, isAsyncIterable } from '@envelop/core';
+import { Plugin, OnResolverCalledHook, Path, isAsyncIterable, EnvelopError } from '@envelop/core';
 import { print, FieldNode, Kind, OperationDefinitionNode } from 'graphql';
 
 const { shim: instrumentationApi } = newRelic;
@@ -27,6 +27,11 @@ export type UseNewRelicOptions = {
   includeResolverArgs?: boolean | RegExp;
   rootFieldsNaming?: boolean;
   operationNameProperty?: string;
+  /**
+   * Indicates whether or not to skip Sentry exception reporting for a given error.
+   * By default, this plugin skips all `EnvelopError` errors and does not report it to Sentry.
+   */
+  skipError?: (args: Error) => boolean;
 };
 
 interface InternalOptions extends UseNewRelicOptions {
@@ -42,7 +47,12 @@ const DEFAULT_OPTIONS: UseNewRelicOptions = {
   includeResolverArgs: false,
   rootFieldsNaming: false,
   operationNameProperty: '',
+  skipError: defaultSkipError,
 };
+
+export function defaultSkipError(error: Error): boolean {
+  return error instanceof EnvelopError;
+}
 
 export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
   const options: InternalOptions = {
@@ -146,7 +156,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
                 resolverSegment.addAttribute(AttributeName.RESOLVER_RESULT, JSON.stringify(result));
               }
 
-              if (result instanceof Error) {
+              if (result instanceof Error && !options.skipError?.(result)) {
                 const transaction = instrumentationApi.tracer.getTransaction();
                 instrumentationApi.agent.errors.add(transaction, JSON.stringify(result));
               }
