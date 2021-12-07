@@ -1,5 +1,11 @@
 # @envelop/newrelic
 
+## 1.3.0
+
+### Minor Changes
+
+- 5679a70: Respect Envelop errors in NewRelic plugin
+
 ## 1.2.1
 
 ### Patch Changes
