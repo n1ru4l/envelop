@@ -3,32 +3,34 @@ import { ArbitraryObject, Maybe } from '@envelop/types';
 import { EnvelopOrchestrator } from './orchestrator';
 import { isAsyncIterable } from './utils';
 
-const HR_TO_NS = 1e9;
-const NS_TO_MS = 1e6;
+const getTimestamp =
+  typeof globalThis !== 'undefined' && globalThis?.performance?.now ? () => performance.now() : () => Date.now();
 
-const deltaFrom = (hrtime: [number, number]) => {
-  const delta = process.hrtime(hrtime);
-  const ns = delta[0] * HR_TO_NS + delta[1];
-
-  return ns / NS_TO_MS;
+const measure = () => {
+  const start = getTimestamp();
+  return () => {
+    const end = getTimestamp();
+    return start - end;
+  };
 };
+
+const tracingSymbol = Symbol('envelopTracing');
 
 export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPluginsContext extends ArbitraryObject>(
   orchestrator: EnvelopOrchestrator<TInitialContext, TPluginsContext>
-): EnvelopOrchestrator<TInitialContext & { _envelopTracing?: {} }, TPluginsContext> {
-  const createTracer = (name: string, ctx: Record<string, any>) => {
-    const hrtime = process.hrtime();
+): EnvelopOrchestrator<TInitialContext & { [tracingSymbol]?: {} }, TPluginsContext> {
+  const createTracer = (name: string, ctx: Record<string | symbol, any>) => {
+    const end = measure();
 
     return () => {
-      const time = deltaFrom(hrtime);
-      ctx._envelopTracing[name] = time;
+      ctx[tracingSymbol][name] = end();
     };
   };
 
   return {
     ...orchestrator,
     init: (ctx = {} as TInitialContext) => {
-      ctx!._envelopTracing = ctx!._envelopTracing || {};
+      ctx![tracingSymbol] = ctx![tracingSymbol] || {};
       const done = createTracer('init', ctx || {});
 
       try {
@@ -38,7 +40,7 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
       }
     },
     parse: (ctx = {} as TInitialContext) => {
-      ctx._envelopTracing = ctx._envelopTracing || {};
+      ctx[tracingSymbol] = ctx[tracingSymbol] || {};
       const actualFn = orchestrator.parse(ctx);
 
       return (...args) => {
@@ -52,7 +54,7 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
       };
     },
     validate: (ctx = {} as TInitialContext) => {
-      ctx._envelopTracing = ctx._envelopTracing || {};
+      ctx[tracingSymbol] = ctx[tracingSymbol] || {};
       const actualFn = orchestrator.validate(ctx);
 
       return (...args) => {
@@ -100,7 +102,7 @@ export function traceOrchestrator<TInitialContext extends ArbitraryObject, TPlug
           result.extensions = result.extensions || {};
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore GraphQL.js types contextValue as unknown
-          result.extensions.envelopTracing = args.contextValue._envelopTracing;
+          result.extensions.envelopTracing = args.contextValue[tracingSymbol];
         } else {
           // eslint-disable-next-line no-console
           console.warn(
