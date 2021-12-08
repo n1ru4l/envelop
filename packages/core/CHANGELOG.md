@@ -1,5 +1,13 @@
 # @envelop/core
 
+## 1.6.3
+
+### Patch Changes
+
+- 521ecb8: Prefer `globalThis.performance.now` for tracing if available. Fallback to `Date.now`.
+
+  Using tracing no longer raises an error on browser, deno and cloudflare worker environments.
+
 ## 1.6.2
 
 ### Patch Changes
