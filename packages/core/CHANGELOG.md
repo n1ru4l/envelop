@@ -1,5 +1,11 @@
 # @envelop/core
 
+## 1.6.4
+
+### Patch Changes
+
+- d30ef6a: fix issue that caused calculating negative tracing durations
+
 ## 1.6.3
 
 ### Patch Changes
