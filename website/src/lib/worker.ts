@@ -1,4 +1,4 @@
-import { compileMemfs } from 'browser-bundler';
+import { compileMemfs } from '@n1ru4l/bundle-anywhere';
 
 const schemaFile = `
 import { buildSchema } from "graphql";
@@ -70,7 +70,6 @@ addEventListener('message', async event => {
       },
       {
         input: 'index.ts',
-        output: 'bundle.js',
       }
     );
 

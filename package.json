@@ -45,6 +45,7 @@
     "@babel/preset-typescript": "7.16.0",
     "@changesets/cli": "2.17.0",
     "@graphql-tools/schema": "8.3.1",
+    "@n1ru4l/bundle-anywhere": "0.0.1-alpha-502b8bf.0",
     "@types/benchmark": "2.1.1",
     "@types/jest": "27.0.3",
     "@types/k6": "0.35.2",
