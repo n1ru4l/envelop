@@ -86,8 +86,15 @@ addEventListener('message', async event => {
       }
     );
 
-    await compiler.build();
-    if (compiler.result?.errors.length) {
+    try {
+      await compiler.build();
+    } catch (err: any) {
+      console.log(err);
+      postMessage({ id: event.data.id, type: 'code-error', errors: [err] });
+      return;
+    }
+
+    if (compiler.result?.errors?.length) {
       postMessage({ id: event.data.id, type: 'code-error', errors: compiler.result.errors });
       return;
     }

@@ -11,7 +11,6 @@ export function getRoutes(): IRoutes {
           ['integrations', 'Integrations and Examples'],
           ['core', '@envelop/core'],
           ['composing-envelop', 'Sharing Envelops'],
-          ['envelop-playground', 'Envelop Playground'],
         ],
       },
       'docs/guides': {
