@@ -10,7 +10,7 @@ const measure = () => {
   const start = getTimestamp();
   return () => {
     const end = getTimestamp();
-    return start - end;
+    return end - start;
   };
 };
 
