@@ -326,3 +326,5 @@ export const pluginsArr: Package<Tags>[] = [
     tags: ['schema', 'utilities'],
   },
 ];
+
+export const allPackages = Object.fromEntries(pluginsArr.map(record => [record.npmPackage, '*']));

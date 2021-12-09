@@ -1,10 +1,6 @@
 import { compileMemfs } from '@n1ru4l/bundle-anywhere';
 
-import { pluginsArr } from './plugins';
-
-const deps = Object.fromEntries(pluginsArr.map(record => [record.npmPackage, '*']));
-
-console.log(deps);
+import { allPackages } from './plugins';
 
 const schemaFile = `
 import { buildSchema } from "graphql";
@@ -76,7 +72,7 @@ addEventListener('message', async event => {
           name: 'envelop-worker',
           dependencies: {
             // list of all envelop plugin packages
-            ...deps,
+            ...allPackages,
             '@envelop/core': '^1.6.3',
             graphql: '^16.0.0',
           },
@@ -91,6 +87,7 @@ addEventListener('message', async event => {
     );
 
     await compiler.build();
+    console.log(compiler.result);
     if (compiler.result?.errors.length) {
       postMessage({ id: event.data.id, type: 'code-error', errors: compiler.result.errors });
       return;
@@ -101,6 +98,10 @@ addEventListener('message', async event => {
     envelopWorker = new Worker(url);
     envelopWorker.onmessage = event => {
       postMessage(event.data);
+    };
+
+    envelopWorker.onerror = errorEvent => {
+      postMessage({ id: event.data.id, type: 'run-error', message: errorEvent.message });
     };
 
     postMessage({ id: event.data.id, type: 'code-success' });
