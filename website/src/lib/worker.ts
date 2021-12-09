@@ -1,5 +1,11 @@
 import { compileMemfs } from '@n1ru4l/bundle-anywhere';
 
+import { pluginsArr } from './plugins';
+
+const deps = Object.fromEntries(pluginsArr.map(record => [record.npmPackage, '*']));
+
+console.log(deps);
+
 const schemaFile = `
 import { buildSchema } from "graphql";
 
@@ -69,9 +75,10 @@ addEventListener('message', async event => {
         '/package.json': JSON.stringify({
           name: 'envelop-worker',
           dependencies: {
+            // list of all envelop plugin packages
+            ...deps,
             '@envelop/core': '^1.6.3',
             graphql: '^16.0.0',
-            // TODO: allow list all envelop plugins
           },
         }),
         '/index.ts': indexFile,
