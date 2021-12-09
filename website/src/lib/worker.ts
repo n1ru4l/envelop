@@ -35,9 +35,11 @@ addEventListener('message', async event => {
       postMessage({ ...event.data, type: "execute-result", result: JSON.stringify({ errors: validationErrors }) })
       return
     }
+    const contextValue = await proxy.contextFactory()
     const result = await proxy.execute({
       document,
       schema: proxy.schema,
+      contextValue,
     })
     postMessage({ ...event.data, type: "execute-result", result: JSON.stringify(result) })
   } catch (err) {
@@ -64,9 +66,17 @@ addEventListener('message', async event => {
 
     const compiler = compileMemfs(
       {
-        'index.ts': indexFile,
-        'envelop.ts': event.data.code ?? envelopFile,
-        'schema.ts': schemaFile,
+        '/package.json': JSON.stringify({
+          name: 'envelop-worker',
+          dependencies: {
+            '@envelop/core': '^1.6.3',
+            graphql: '^16.0.0',
+            // TODO: allow list all envelop plugins
+          },
+        }),
+        '/index.ts': indexFile,
+        '/envelop.ts': event.data.code ?? envelopFile,
+        '/schema.ts': schemaFile,
       },
       {
         input: 'index.ts',
