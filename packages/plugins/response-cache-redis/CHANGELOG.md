@@ -1,5 +1,11 @@
 # @envelop/response-cache-redis
 
+## 0.1.4
+
+### Patch Changes
+
+- 7f72996: Delete keys only if there are keys since calling del on empty causes errors and server to halt. See https://github.com/dotansimha/envelop/issues/1090
+
 ## 0.1.3
 
 ### Patch Changes
