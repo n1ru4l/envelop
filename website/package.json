@@ -23,7 +23,7 @@
     "@guild-docs/server": "2.1.5",
     "@mdx-js/react": "1.6.22",
     "@theguild/components": "1.8.3",
-    "esbuild": "0.14.3",
+    "esbuild": "0.14.5",
     "framer-motion": "5.5.1",
     "next": "12.0.7",
     "next-i18next": "9.2.0",
