@@ -102,7 +102,10 @@ export const createRedisCache = (params: RedisCacheParameter): Cache => {
         invalidationKeys.push(await buildEntityInvalidationsKeys(id != null ? buildRedisEntityId(typename, id) : typename));
       }
 
-      await store.del(invalidationKeys.flat());
+      const keys = invalidationKeys.flat();
+      if (keys.length > 0) {
+        await store.del(keys);
+      }
     },
   };
 };
