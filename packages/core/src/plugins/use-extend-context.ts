@@ -1,6 +1,6 @@
 import { Plugin } from '@envelop/types';
 
-export type ContextFactoryFn<TResult = unknown> = (currentContext: unknown) => TResult | Promise<TResult>;
+export type ContextFactoryFn<TResult = unknown, TCurrent = unknown> = (currentContext: TCurrent) => TResult | Promise<TResult>;
 
 type UnwrapAsync<T> = T extends Promise<infer U> ? U : T;
 
