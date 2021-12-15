@@ -1,5 +1,11 @@
 # @envelop/core
 
+## 1.6.5
+
+### Patch Changes
+
+- d1a0e4e: Allow userland code to specify type of currentContext in ContextFactoryFn
+
 ## 1.6.4
 
 ### Patch Changes
