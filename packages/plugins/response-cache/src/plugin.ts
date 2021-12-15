@@ -1,6 +1,5 @@
 import { Plugin, Maybe, DefaultContext, PromiseOrValue, isAsyncIterable } from '@envelop/core';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
-import { createHash } from 'crypto';
 import {
   DocumentNode,
   OperationDefinitionNode,
@@ -15,6 +14,7 @@ import {
 import jsonStableStringify from 'fast-json-stable-stringify';
 import type { Cache, CacheEntityRecord } from './cache';
 import { createInMemoryCache } from './in-memory-cache';
+import { hashSHA256 } from './hashSHA256';
 
 const contextSymbol = Symbol('responseCache');
 const rawDocumentStringSymbol = Symbol('rawDocumentString');
@@ -41,7 +41,7 @@ export type BuildResponseCacheKeyFunction = (params: {
   operationName?: Maybe<string>;
   /** optional sessionId for make unique cache keys based on the session.  */
   sessionId?: Maybe<string>;
-}) => string;
+}) => Promise<string>;
 
 export type GetDocumentStringFromContextFunction = (params: DefaultContext) => Maybe<string>;
 
@@ -125,16 +125,14 @@ export type UseResponseCacheParameter<C = any> = {
  * It is exported here for advanced use-cases. E.g. if you want to short circuit and serve responses from the cache on a global level in order to completely by-pass the GraphQL flow.
  */
 export const defaultBuildResponseCacheKey: BuildResponseCacheKeyFunction = params =>
-  createHash('sha1')
-    .update(
-      [
-        params.documentString,
-        params.operationName ?? '',
-        jsonStableStringify(params.variableValues ?? {}),
-        params.sessionId ?? '',
-      ].join('|')
-    )
-    .digest('base64');
+  hashSHA256(
+    [
+      params.documentString,
+      params.operationName ?? '',
+      jsonStableStringify(params.variableValues ?? {}),
+      params.sessionId ?? '',
+    ].join('|')
+  );
 
 /**
  * Default function used to check if the result should be cached.
@@ -247,7 +245,7 @@ export function useResponseCache({
       } else {
         const documentString = getDocumentStringFromContext(ctx.args.contextValue);
         if (documentString != null) {
-          const operationId = buildResponseCacheKey({
+          const operationId = await buildResponseCacheKey({
             documentString,
             variableValues: ctx.args.variableValues,
             operationName: ctx.args.operationName,
