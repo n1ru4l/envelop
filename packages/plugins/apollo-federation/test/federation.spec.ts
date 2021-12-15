@@ -1,5 +1,5 @@
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { execute } from 'graphql';
+import { execute, parse } from 'graphql';
 import { useApolloFederation } from '../src';
 
 describe('useApolloFederation', () => {
@@ -43,7 +43,9 @@ describe('useApolloFederation', () => {
     },
   });
 
-  gateway.load();
+  beforeAll(async () => {
+    await gateway.load();
+  });
 
   const useTestFederation = () =>
     useApolloFederation({
@@ -67,7 +69,7 @@ describe('useApolloFederation', () => {
     expect(onExecuteSpy.mock.calls[0][0].executeFn.name).toBe('federationExecutor');
   });
 
-  it('Should execute correctly', async () => {
+  it('Should execute document string correctly', async () => {
     const testInstance = createTestkit([useTestFederation()]);
     const result = await testInstance.execute(query);
     assertSingleExecutionValue(result);
@@ -95,5 +97,39 @@ Object {
   },
 }
 `);
+  });
+
+  it('Should execute parsed document correctly', async () => {
+    const testInstance = createTestkit([useTestFederation()]);
+    const result = await testInstance.execute(parse(query));
+    assertSingleExecutionValue(result);
+    expect(result.errors).toBeFalsy();
+    expect(result.data).toMatchInlineSnapshot(`
+Object {
+  "me": Object {
+    "reviews": Array [
+      Object {
+        "body": "Love it!",
+        "product": Object {
+          "name": "Table",
+          "upc": "1",
+        },
+      },
+      Object {
+        "body": "Too expensive.",
+        "product": Object {
+          "name": "Couch",
+          "upc": "2",
+        },
+      },
+    ],
+    "username": "@ada",
+  },
+}
+`);
+  });
+
+  afterAll(async () => {
+    await gateway.stop();
   });
 });

@@ -1,6 +1,6 @@
 import { Plugin } from '@envelop/core';
 import { ApolloGateway } from '@apollo/gateway';
-import { DocumentNode, getOperationAST, printSchema, Source } from 'graphql';
+import { DocumentNode, getOperationAST, print, printSchema, Source } from 'graphql';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { CachePolicy, GraphQLRequestMetrics, Logger, SchemaHash } from 'apollo-server-types';
 import { newCachePolicy } from './newCachePolicy';
@@ -25,16 +25,18 @@ export const useApolloFederation = (options: ApolloFederationPluginConfig): Plug
   const documentSourceMap = new WeakMap<DocumentNode, string>();
   return {
     onPluginInit({ setSchema }) {
-      if (!gateway.schema) {
-        throw new Error(
-          `ApolloGateway doesn't have the schema loaded. Please make sure ApolloGateway is loaded with .load() method.`
+      if (gateway.schema) {
+        setSchema(gateway.schema);
+      } else {
+        logger.warn(
+          `ApolloGateway doesn't have the schema loaded. Please make sure ApolloGateway is loaded with .load() method. Otherwise this plugin might not work consistently, especially if you are using ApolloServer.`
         );
+        gateway.load();
       }
-      setSchema(gateway.schema);
-      gateway.onSchemaLoadOrUpdate(({ apiSchema }) => setSchema(apiSchema));
-    },
-    onSchemaChange({ schema }) {
-      schemaHash = printSchema(schema) as SchemaHash;
+      gateway.onSchemaLoadOrUpdate(({ apiSchema, coreSupergraphSdl = printSchema(apiSchema) }) => {
+        setSchema(apiSchema);
+        schemaHash = (coreSupergraphSdl || printSchema(apiSchema)) as SchemaHash;
+      });
     },
     onParse({ params: { source } }) {
       const key = source instanceof Source ? source.body : source;
@@ -46,15 +48,16 @@ export const useApolloFederation = (options: ApolloFederationPluginConfig): Plug
       };
     },
     onExecute({ args, setExecuteFn }) {
+      let documentStr = documentSourceMap.get(args.document)!;
+      if (documentStr == null) {
+        documentStr = print(args.document);
+        documentSourceMap.set(args.document, documentStr);
+      }
+      const operation = getOperationAST(args.document, args.operationName ?? undefined);
+      if (!operation) {
+        throw new Error(`Operation ${args.operationName || ''} cannot be found in ${documentStr}`);
+      }
       setExecuteFn(function federationExecutor() {
-        const documentStr = documentSourceMap.get(args.document);
-        if (!documentStr) {
-          throw new Error(`Parse error!`);
-        }
-        const operation = getOperationAST(args.document, args.operationName ?? undefined);
-        if (!operation) {
-          throw new Error(`Operation ${args.operationName || ''} cannot be found in ${documentStr}`);
-        }
         return gateway.executor({
           document: args.document,
           request: {
