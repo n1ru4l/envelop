@@ -23,14 +23,21 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@envelop/response-cache@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-0.5.0.tgz#1f0fa9873021577855e3ae285b5b3045c5c88c26"
-  integrity sha512-hjlb63zxECJfgkn2vyh+7tzp8AmQpGGK0SgdoXftzEyaiw/haZ84oQdwteWAymNDq5DlIf+keRPzP9W8GV7aQQ==
+"@envelop/response-cache@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-0.6.0.tgz#9180ef73bfe09a8d2766739afb0225fb8c7b8700"
+  integrity sha512-suQtHSBm5dVA/eu3hNlF2H6pJbOiDMFQ98FbLisiEszp16Ku5utb6AVAg08JhKuRFde8XdEv4N3tG8D3Uhk4mA==
   dependencies:
+    "@graphql-tools/utils" "^8.5.2"
     fast-json-stable-stringify "^2.1.0"
-    ioredis "^4.27.9"
     lru-cache "^6.0.0"
+
+"@graphql-tools/utils@^8.5.2":
+  version "8.5.5"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-8.5.5.tgz#019ddb99719feb19602afdb537c06e463df674a9"
+  integrity sha512-y7zRXWIUI73X+9/rf/0KzrNFMlpRKFfzLiwdbIeWwgLs+NV9vfUOoVkX8luXX6LwQxhSypHATMiwZGM2ro/wJA==
+  dependencies:
+    tslib "~2.3.0"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -85,10 +92,10 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
   integrity sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
 
-"@types/ioredis@4.28.4":
-  version "4.28.4"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.28.4.tgz#a69a4045aadd89b5098c065626360b72ea43a4ee"
-  integrity sha512-pIIR1f1HmtbSMiQkMBoJwi7ZFj00OmxLwlZ3cuvgqc9m61+q7cVN3uAsYIZu07pmXw8A8V+apLvkd+ckgGdxwg==
+"@types/ioredis@4.28.5":
+  version "4.28.5"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.28.5.tgz#933aa76dd0b66147be48f94967e2571ff848408e"
+  integrity sha512-bp5mdpzscWZMEE/jLvvzze5TZFYGhynB1am69l/a0XPqZRXWpbswY6lb5buEht57jOnw5pPG5zL9pFUWw1nggw==
   dependencies:
     "@types/node" "*"
 
@@ -1438,7 +1445,7 @@ tslib@1.11.1, tslib@^1.11.1:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.11.1.tgz#eb15d128827fbee2841549e171f45ed338ac7e35"
   integrity sha512-aZW88SY8kQbU7gpV19lN24LtXh/yD4ZZg6qieAJDDg+YBsJcSmLGK9QpnUjAKVG/xefmvJGd1WUmfpT/g6AJGA==
 
-tslib@^2.0.3:
+tslib@^2.0.3, tslib@~2.3.0:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
   integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
