@@ -11,7 +11,7 @@ export type SpreadTwo<L, R> = Id<
     SpreadProperties<L, R, OptionalPropertyNames<R> & keyof L>
 >;
 
-export type Spread<A extends readonly [...any]> = A extends [infer L, ...infer R] ? SpreadTwo<L, Spread<R>> : {};
+export type Spread<A extends readonly [...any]> = A extends [infer L, ...infer R] ? SpreadTwo<L, R> : {};
 
 export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
 
