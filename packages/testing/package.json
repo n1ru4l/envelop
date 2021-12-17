@@ -33,7 +33,7 @@
     "@graphql-tools/utils": "^8.5.3"
   },
   "devDependencies": {
-    "graphql": "16.1.0",
+    "graphql": "16.2.0",
     "typescript": "4.4.4"
   },
   "peerDependencies": {
