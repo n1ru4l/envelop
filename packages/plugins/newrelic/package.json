@@ -31,7 +31,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@types/newrelic": "7.0.2",
+    "@types/newrelic": "7.0.3",
     "bob-the-bundler": "1.6.0",
     "graphql": "16.1.0",
     "newrelic": "8.6.0",
