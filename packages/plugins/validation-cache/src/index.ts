@@ -15,6 +15,8 @@ export type ValidationCacheOptions = {
 const DEFAULT_MAX = 1000;
 const DEFAULT_TTL = 3600000;
 
+const rawDocumentSymbol = Symbol('rawDocument');
+
 export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): Plugin => {
   const resultCache =
     typeof pluginOptions.cache !== 'undefined' ? pluginOptions.cache : lru<readonly GraphQLError[]>(DEFAULT_MAX, DEFAULT_TTL);
@@ -23,8 +25,11 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
     onSchemaChange() {
       resultCache.clear();
     },
-    onValidate({ params, setResult }) {
-      const key = print(params.documentAST);
+    onParse({ params, extendContext }) {
+      extendContext({ [rawDocumentSymbol]: params.source.toString() });
+    },
+    onValidate({ params, context, setResult }) {
+      const key: string = context[rawDocumentSymbol] ?? print(params.documentAST);
       const cachedResult = resultCache.get(key);
 
       if (cachedResult !== undefined) {
