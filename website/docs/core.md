@@ -111,13 +111,15 @@ const getEnveloped = envelop({
 
 Allow you to format/modify the execution result payload before returning it to your consumer.
 
+The second argument `executionArgs` provides additional information for your formatter. It consists of contextValue, variableValues, document, operationName, and other properties.
+
 ```ts
 import { envelop, usePayloadFormatter } from '@envelop/core';
 import { buildSchema } from 'graphql';
 
 const getEnveloped = envelop({
   plugins: [
-    usePayloadFormatter(result => {
+    usePayloadFormatter((result, executionArgs) => {
       // Return a modified result here,
       // Or `false`y value to keep it as-is.
     }),

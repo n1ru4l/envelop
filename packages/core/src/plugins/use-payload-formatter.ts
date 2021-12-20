@@ -1,13 +1,24 @@
-import { Plugin } from '@envelop/types';
+import { Plugin, TypedExecutionArgs } from '@envelop/types';
 import { handleStreamOrSingleExecutionResult } from '../utils';
 import { ExecutionResult } from 'graphql';
 
-export type FormatterFunction = (result: ExecutionResult<any, any>) => false | ExecutionResult<any, any>;
+export type FormatterFunction = (
+  result: ExecutionResult<any, any>,
+  args: TypedExecutionArgs<any>
+) => false | ExecutionResult<any, any>;
 
 const makeHandleResult =
   (formatter: FormatterFunction) =>
-  ({ result, setResult }: { result: ExecutionResult; setResult: (result: ExecutionResult) => void }) => {
-    const modified = formatter(result);
+  ({
+    args,
+    result,
+    setResult,
+  }: {
+    args: TypedExecutionArgs<any>;
+    result: ExecutionResult;
+    setResult: (result: ExecutionResult) => void;
+  }) => {
+    const modified = formatter(result, args);
     if (modified !== false) {
       setResult(modified);
     }
