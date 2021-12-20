@@ -1,5 +1,11 @@
 # @envelop/validation-cache
 
+## 2.3.0
+
+### Minor Changes
+
+- 305f03c: Improve performance, by using the raw document string as sent by the user instead of printing the document AST as the cache key.
+
 ## 2.2.1
 
 ### Patch Changes
