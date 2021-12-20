@@ -1,5 +1,11 @@
 # @envelop/apollo-federation
 
+## 0.2.2
+
+### Patch Changes
+
+- 25b8ae8: fix(federation): do not cache parse if document is already parsed
+
 ## 0.2.1
 
 ### Patch Changes
