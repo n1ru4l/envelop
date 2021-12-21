@@ -11,12 +11,12 @@ export const useGraphQLExecutor = <TOptions extends GraphQLExecutorOptions>(opti
   return {
     onExecute: async ({ args, setExecuteFn }) => {
       setExecuteFn(function executorExecute() {
-        return executor.executeQueryOrMutation(args);
+        return executor.execute(args);
       });
     },
     onSubscribe: async ({ args, setSubscribeFn }) => {
       setSubscribeFn(function executorSubscriber() {
-        return executor.executeSubscription(args);
+        return executor.execute(args);
       });
     },
   };
