@@ -82,13 +82,31 @@ export const makeSubscribe = (
   ((...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<ExecutionResult>> =>
     subscribeFn(getSubscribeArgs(polyArgs))) as SubscribeFunction;
 
-export async function* mapAsyncIterator<TInput, TOutput = TInput>(
-  asyncIterable: AsyncIterable<TInput>,
-  map: (input: TInput) => Promise<TOutput> | TOutput
-): AsyncIterableIterator<TOutput> {
-  for await (const value of asyncIterable) {
-    yield map(value);
-  }
+export function mapAsyncIterator<T, O>(source: AsyncIterable<T>, mapper: (input: T) => Promise<O> | O): AsyncGenerator<O> {
+  const iterable = source[Symbol.asyncIterator]();
+
+  const stream: AsyncGenerator<O> = {
+    [Symbol.asyncIterator]() {
+      return stream;
+    },
+    async next() {
+      const value = await iterable.next();
+      if (value.done) {
+        return value;
+      }
+      return { done: false, value: await mapper(value.value) };
+    },
+    async return() {
+      iterable.return?.();
+      return { done: true, value: undefined };
+    },
+    async throw(error: unknown) {
+      iterable.throw?.(error);
+      return { done: true, value: undefined };
+    },
+  };
+
+  return stream;
 }
 
 function getExecuteArgs(args: PolymorphicExecuteArguments): ExecutionArgs {
@@ -153,24 +171,64 @@ export function handleStreamOrSingleExecutionResult<ContextType = DefaultContext
   }
 }
 
-export async function* finalAsyncIterator<TInput>(
-  asyncIterable: AsyncIterable<TInput>,
-  onFinal: () => void
-): AsyncIterableIterator<TInput> {
-  try {
-    yield* asyncIterable;
-  } finally {
-    onFinal();
-  }
+export function finalAsyncIterator<TInput>(source: AsyncIterable<TInput>, onFinal: () => void): AsyncGenerator<TInput> {
+  const iterable = source[Symbol.asyncIterator]();
+  let isDone = false;
+  const stream: AsyncGenerator<TInput> = {
+    [Symbol.asyncIterator]() {
+      return stream;
+    },
+    async next() {
+      const result = await iterable.next();
+      if (result.done && isDone === false) {
+        isDone = true;
+        onFinal();
+      }
+      return result;
+    },
+    async return() {
+      iterable.return?.();
+      if (isDone === false) {
+        isDone = true;
+        onFinal();
+      }
+      return { done: true, value: undefined };
+    },
+    async throw(error: unknown) {
+      iterable.throw?.(error);
+      return { done: true, value: undefined };
+    },
+  };
+
+  return stream;
 }
 
-export async function* errorAsyncIterator<TInput>(
-  asyncIterable: AsyncIterable<TInput>,
+export function errorAsyncIterator<TInput>(
+  source: AsyncIterable<TInput>,
   onError: (err: unknown) => void
-): AsyncIterableIterator<TInput> {
-  try {
-    yield* asyncIterable;
-  } catch (err: unknown) {
-    onError(err);
-  }
+): AsyncGenerator<TInput> {
+  const iterable = source[Symbol.asyncIterator]();
+  const stream: AsyncGenerator<TInput> = {
+    [Symbol.asyncIterator]() {
+      return stream;
+    },
+    async next() {
+      try {
+        return await iterable.next();
+      } catch (error) {
+        onError(error);
+        throw error;
+      }
+    },
+    async return() {
+      iterable.return?.();
+      return { done: true, value: undefined };
+    },
+    async throw(error: unknown) {
+      iterable.throw?.(error);
+      return { done: true, value: undefined };
+    },
+  };
+
+  return stream;
 }
