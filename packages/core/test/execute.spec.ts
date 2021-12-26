@@ -1,4 +1,5 @@
 import { assertStreamExecutionValue, collectAsyncIteratorValues, createSpiedPlugin, createTestkit } from '@envelop/testing';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import { execute, ExecutionResult, GraphQLSchema } from 'graphql';
 import { schema, query } from './common';
 
@@ -226,13 +227,29 @@ describe('execute', () => {
     await collectAsyncIteratorValues(result);
   });
 
-  it('Should be able to invoke something after the stream has ended (manual return).', async () => {
-    expect.assertions(1);
-    const streamExecuteFn = async function* () {
-      for (const value of ['a', 'b', 'c', 'd']) {
-        yield { data: { alphabet: value } };
-      }
-    };
+  it('hook into execute stream phases with proper cleanup on the source.', async () => {
+    expect.assertions(2);
+    let isReturnCalled = false;
+    const values = ['a', 'b', 'c', 'd'];
+    const streamExecuteFn = (): AsyncGenerator => ({
+      [Symbol.asyncIterator]() {
+        return this;
+      },
+      async next() {
+        const value = values.shift();
+        if (value === undefined || isReturnCalled) {
+          return { done: true, value: undefined };
+        }
+        return { done: false, value: { data: { alphabet: value } } };
+      },
+      async return() {
+        isReturnCalled = true;
+        return { done: true, value: undefined };
+      },
+      async throw() {
+        throw new Error('Noop.');
+      },
+    });
 
     const teskit = createTestkit(
       [
@@ -265,9 +282,10 @@ describe('execute', () => {
       }
     `);
     assertStreamExecutionValue(result);
-    const instance = result[Symbol.asyncIterator]();
-    await instance.next();
-    await instance.return!();
+    const iterator = result[Symbol.asyncIterator]();
+    await iterator.next();
+    await iterator.return!();
+    expect(isReturnCalled).toEqual(true);
   });
 
   it('should allow to use an async function for the done hook', async () => {
@@ -290,5 +308,86 @@ describe('execute', () => {
     );
 
     expect(await testkit.execute(query)).toEqual({ data: { test: 'test' } });
+  });
+
+  it('hook into subscription phases with proper cleanup on the source', async () => {
+    expect.assertions(2);
+    let isReturnCalled = false;
+    const values = ['a', 'b', 'c', 'd'];
+    const source: AsyncGenerator = {
+      [Symbol.asyncIterator]() {
+        return this;
+      },
+      async next() {
+        const value = values.shift();
+        if (value === undefined || isReturnCalled) {
+          return { done: true, value: undefined };
+        }
+        return { done: false, value };
+      },
+      async return() {
+        isReturnCalled = true;
+        return { done: true, value: undefined };
+      },
+      async throw() {
+        throw new Error('Noop.');
+      },
+    };
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          hello: String
+        }
+
+        type Subscription {
+          alphabet: String
+        }
+      `,
+      resolvers: {
+        Subscription: {
+          alphabet: {
+            subscribe: () => source,
+            resolve: value => value,
+          },
+        },
+      },
+    });
+
+    const testkit = createTestkit(
+      [
+        {
+          onSubscribe() {
+            return {
+              onSubscribeResult() {
+                let latestResult: ExecutionResult;
+                return {
+                  onNext: ({ result }) => {
+                    latestResult = result;
+                  },
+                  onEnd: () => {
+                    expect(latestResult).toEqual({ data: { alphabet: 'b' } });
+                  },
+                };
+              },
+            };
+          },
+        },
+      ],
+      schema
+    );
+
+    const document = /* GraphQL */ `
+      subscription {
+        alphabet
+      }
+    `;
+
+    const result = await testkit.execute(document);
+    assertStreamExecutionValue(result);
+    await result.next();
+    await result.next();
+    await result.return!();
+    expect(isReturnCalled).toEqual(true);
   });
 });
