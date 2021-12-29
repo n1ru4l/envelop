@@ -1,6 +1,43 @@
 import { assertStreamExecutionValue, collectAsyncIteratorValues, createSpiedPlugin, createTestkit } from '@envelop/testing';
+import { OnExecuteDoneHookResult, OnSubscribeResultResult } from '@envelop/types';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import { execute, ExecutionResult, GraphQLSchema } from 'graphql';
 import { schema, query } from './common';
+
+type Deferred<T = void> = {
+  promise: Promise<T>;
+  state: 'pending' | 'resolved' | 'rejected';
+  resolve: (value: T) => void;
+  reject: (error: unknown) => void;
+};
+
+function createDeferred<T = void>(): Deferred<T> {
+  const deferred = {
+    state: 'pending',
+    reject: () => undefined,
+    resolve: () => undefined,
+  } as any as Deferred<T>;
+
+  deferred.promise = new Promise<T>((res, rej) => {
+    deferred.reject = error => {
+      if (deferred.state !== 'pending') {
+        throw new Error(`Cannot reject deferred in state '${deferred.state}'.`);
+      }
+      deferred.state = 'rejected';
+      rej(error);
+    };
+    deferred.resolve = value => {
+      if (deferred.state !== 'pending') {
+        throw new Error(`Cannot resolve deferred in state '${deferred.state}'.`);
+      }
+      deferred.state = 'resolved';
+
+      res(value);
+    };
+  });
+
+  return deferred;
+}
 
 describe('execute', () => {
   it('Should wrap and trigger events correctly', async () => {
@@ -226,13 +263,29 @@ describe('execute', () => {
     await collectAsyncIteratorValues(result);
   });
 
-  it('Should be able to invoke something after the stream has ended (manual return).', async () => {
-    expect.assertions(1);
-    const streamExecuteFn = async function* () {
-      for (const value of ['a', 'b', 'c', 'd']) {
-        yield { data: { alphabet: value } };
-      }
-    };
+  it('hook into execute stream phases with proper cleanup on the source.', async () => {
+    expect.assertions(2);
+    let isReturnCalled = false;
+    const values = ['a', 'b', 'c', 'd'];
+    const streamExecuteFn = (): AsyncGenerator => ({
+      [Symbol.asyncIterator]() {
+        return this;
+      },
+      async next() {
+        const value = values.shift();
+        if (value === undefined || isReturnCalled) {
+          return { done: true, value: undefined };
+        }
+        return { done: false, value: { data: { alphabet: value } } };
+      },
+      async return() {
+        isReturnCalled = true;
+        return { done: true, value: undefined };
+      },
+      async throw() {
+        throw new Error('Noop.');
+      },
+    });
 
     const teskit = createTestkit(
       [
@@ -265,10 +318,81 @@ describe('execute', () => {
       }
     `);
     assertStreamExecutionValue(result);
-    const instance = result[Symbol.asyncIterator]();
-    await instance.next();
-    await instance.return!();
+    const iterator = result[Symbol.asyncIterator]();
+    await iterator.next();
+    await iterator.return!();
+    expect(isReturnCalled).toEqual(true);
   });
+
+  it.each([
+    {
+      onNext: () => {},
+    } as OnExecuteDoneHookResult<unknown>,
+    {
+      onEnd: () => {},
+    } as OnExecuteDoneHookResult<unknown>,
+    {
+      onNext: () => {},
+      onEnd: () => {},
+    } as OnExecuteDoneHookResult<unknown>,
+  ])(
+    "hook into execute stream is not prone to 'block return until next stream value is published' issues",
+    async onExecuteDoneHookResult => {
+      const delayNextDeferred = createDeferred();
+      let isReturnCalled = false;
+
+      const streamExecuteFn = (): AsyncGenerator => ({
+        [Symbol.asyncIterator]() {
+          return this;
+        },
+        async next() {
+          return delayNextDeferred.promise.then(() => ({ value: { data: { alphabet: 'a' } }, done: false }));
+        },
+        async return() {
+          isReturnCalled = true;
+          return { done: true, value: undefined };
+        },
+        async throw() {
+          throw new Error('Noop.');
+        },
+      });
+
+      const teskit = createTestkit(
+        [
+          {
+            onExecute({ setExecuteFn }) {
+              setExecuteFn(streamExecuteFn as any);
+
+              return {
+                onExecuteDone: () => {
+                  return onExecuteDoneHookResult;
+                },
+              };
+            },
+          },
+        ],
+        schema
+      );
+
+      const result = await teskit.execute(/* GraphQL */ `
+        query {
+          alphabet
+        }
+      `);
+      assertStreamExecutionValue(result);
+      const iterator = result[Symbol.asyncIterator]();
+      const nextPromise = iterator.next();
+      const returnPromise = iterator.return!();
+      // This should be true because the AsyncIterable.return calls should not be blocked until
+      // delayNextDeferred.promise resolves
+      expect(isReturnCalled).toEqual(true);
+
+      // cleanup of pending promises :)
+      delayNextDeferred.resolve();
+
+      await Promise.all([nextPromise, returnPromise, delayNextDeferred.promise]);
+    }
+  );
 
   it('should allow to use an async function for the done hook', async () => {
     const executeMock = jest.fn();
@@ -291,4 +415,173 @@ describe('execute', () => {
 
     expect(await testkit.execute(query)).toEqual({ data: { test: 'test' } });
   });
+
+  it('hook into subscription phases with proper cleanup on the source', async () => {
+    expect.assertions(2);
+    let isReturnCalled = false;
+    const values = ['a', 'b', 'c', 'd'];
+    const source: AsyncGenerator = {
+      [Symbol.asyncIterator]() {
+        return this;
+      },
+      async next() {
+        const value = values.shift();
+        if (value === undefined || isReturnCalled) {
+          return { done: true, value: undefined };
+        }
+        return { done: false, value };
+      },
+      async return() {
+        isReturnCalled = true;
+        return { done: true, value: undefined };
+      },
+      async throw() {
+        throw new Error('Noop.');
+      },
+    };
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          hello: String
+        }
+
+        type Subscription {
+          alphabet: String
+        }
+      `,
+      resolvers: {
+        Subscription: {
+          alphabet: {
+            subscribe: () => source,
+            resolve: value => value,
+          },
+        },
+      },
+    });
+
+    const testkit = createTestkit(
+      [
+        {
+          onSubscribe() {
+            return {
+              onSubscribeResult() {
+                let latestResult: ExecutionResult;
+                return {
+                  onNext: ({ result }) => {
+                    latestResult = result;
+                  },
+                  onEnd: () => {
+                    expect(latestResult).toEqual({ data: { alphabet: 'b' } });
+                  },
+                };
+              },
+            };
+          },
+        },
+      ],
+      schema
+    );
+
+    const document = /* GraphQL */ `
+      subscription {
+        alphabet
+      }
+    `;
+
+    const result = await testkit.execute(document);
+    assertStreamExecutionValue(result);
+    await result.next();
+    await result.next();
+    await result.return!();
+    expect(isReturnCalled).toEqual(true);
+  });
 });
+
+it.each([
+  {
+    onNext: () => {},
+  } as OnSubscribeResultResult<unknown>,
+  {
+    onEnd: () => {},
+  } as OnSubscribeResultResult<unknown>,
+  {
+    onNext: () => {},
+    onEnd: () => {},
+  } as OnSubscribeResultResult<unknown>,
+])(
+  "hook into subscribe result stream is not prone to 'block return until next stream value is published' issues",
+  async onSubscribeResultResultHook => {
+    const delayNextDeferred = createDeferred();
+    let isReturnCalled = false;
+
+    const source: AsyncGenerator = {
+      [Symbol.asyncIterator]() {
+        return this;
+      },
+      async next() {
+        return delayNextDeferred.promise.then(() => ({ value: { data: { alphabet: 'a' } }, done: false }));
+      },
+      async return() {
+        isReturnCalled = true;
+        return { done: true, value: undefined };
+      },
+      async throw() {
+        throw new Error('Noop.');
+      },
+    };
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          hello: String
+        }
+
+        type Subscription {
+          alphabet: String
+        }
+      `,
+      resolvers: {
+        Subscription: {
+          alphabet: {
+            subscribe: () => source,
+            resolve: value => value,
+          },
+        },
+      },
+    });
+
+    const teskit = createTestkit(
+      [
+        {
+          onSubscribe() {
+            return {
+              onSubscribeResult() {
+                return onSubscribeResultResultHook;
+              },
+            };
+          },
+        },
+      ],
+      schema
+    );
+
+    const result = await teskit.execute(/* GraphQL */ `
+      subscription {
+        alphabet
+      }
+    `);
+    assertStreamExecutionValue(result);
+    const iterator = result[Symbol.asyncIterator]();
+    const nextPromise = iterator.next();
+    const returnPromise = iterator.return!();
+    // This should be true because the AsyncIterable.return calls should not be blocked until
+    // delayNextDeferred.promise resolves
+    expect(isReturnCalled).toEqual(true);
+
+    // cleanup of pending promises :)
+    delayNextDeferred.resolve();
+
+    await Promise.all([nextPromise, returnPromise, delayNextDeferred.promise]);
+  }
+);

@@ -82,13 +82,48 @@ export const makeSubscribe = (
   ((...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<ExecutionResult>> =>
     subscribeFn(getSubscribeArgs(polyArgs))) as SubscribeFunction;
 
-export async function* mapAsyncIterator<TInput, TOutput = TInput>(
-  asyncIterable: AsyncIterable<TInput>,
-  map: (input: TInput) => Promise<TOutput> | TOutput
-): AsyncIterableIterator<TOutput> {
-  for await (const value of asyncIterable) {
-    yield map(value);
+export function mapAsyncIterator<T, O>(source: AsyncIterable<T>, mapper: (input: T) => Promise<O> | O): AsyncGenerator<O> {
+  const iterator = source[Symbol.asyncIterator]();
+
+  async function mapResult(result: IteratorResult<T, O>): Promise<IteratorResult<O>> {
+    if (result.done) {
+      return result;
+    }
+    try {
+      return { value: await mapper(result.value), done: false };
+    } catch (error) {
+      try {
+        await iterator.return?.();
+      } catch (_error) {
+        /* ignore error */
+      }
+      throw error;
+    }
   }
+
+  const stream: AsyncGenerator<O> = {
+    [Symbol.asyncIterator]() {
+      return stream;
+    },
+    async next() {
+      return await mapResult(await iterator.next());
+    },
+    async return() {
+      const promise = iterator.return?.();
+      return promise ? await mapResult(await promise) : { value: undefined as any, done: true };
+    },
+    async throw(error: unknown) {
+      const promise = iterator.throw?.();
+      if (promise) {
+        return await mapResult(await promise);
+      }
+      // if the source has no throw method we just re-throw error
+      // usually throw is not called anyways
+      throw error;
+    },
+  };
+
+  return stream;
 }
 
 function getExecuteArgs(args: PolymorphicExecuteArguments): ExecutionArgs {
@@ -153,24 +188,74 @@ export function handleStreamOrSingleExecutionResult<ContextType = DefaultContext
   }
 }
 
-export async function* finalAsyncIterator<TInput>(
-  asyncIterable: AsyncIterable<TInput>,
-  onFinal: () => void
-): AsyncIterableIterator<TInput> {
-  try {
-    yield* asyncIterable;
-  } finally {
-    onFinal();
-  }
+export function finalAsyncIterator<TInput>(source: AsyncIterable<TInput>, onFinal: () => void): AsyncGenerator<TInput> {
+  const iterator = source[Symbol.asyncIterator]();
+  let isDone = false;
+  const stream: AsyncGenerator<TInput> = {
+    [Symbol.asyncIterator]() {
+      return stream;
+    },
+    async next() {
+      const result = await iterator.next();
+      if (result.done && isDone === false) {
+        isDone = true;
+        onFinal();
+      }
+      return result;
+    },
+    async return() {
+      const promise = iterator.return?.();
+      if (isDone === false) {
+        isDone = true;
+        onFinal();
+      }
+      return promise ? await promise : { done: true, value: undefined };
+    },
+    async throw(error: unknown) {
+      const promise = iterator.throw?.();
+      if (promise) {
+        return await promise;
+      }
+      // if the source has no throw method we just re-throw error
+      // usually throw is not called anyways
+      throw error;
+    },
+  };
+
+  return stream;
 }
 
-export async function* errorAsyncIterator<TInput>(
-  asyncIterable: AsyncIterable<TInput>,
+export function errorAsyncIterator<TInput>(
+  source: AsyncIterable<TInput>,
   onError: (err: unknown) => void
-): AsyncIterableIterator<TInput> {
-  try {
-    yield* asyncIterable;
-  } catch (err: unknown) {
-    onError(err);
-  }
+): AsyncGenerator<TInput> {
+  const iterator = source[Symbol.asyncIterator]();
+  const stream: AsyncGenerator<TInput> = {
+    [Symbol.asyncIterator]() {
+      return stream;
+    },
+    async next() {
+      try {
+        return await iterator.next();
+      } catch (error) {
+        onError(error);
+        return { done: true, value: undefined };
+      }
+    },
+    async return() {
+      const promise = iterator.return?.();
+      return promise ? await promise : { done: true, value: undefined };
+    },
+    async throw(error: unknown) {
+      const promise = iterator.throw?.();
+      if (promise) {
+        return await promise;
+      }
+      // if the source has no throw method we just re-throw error
+      // usually throw is not called anyways
+      throw error;
+    },
+  };
+
+  return stream;
 }
