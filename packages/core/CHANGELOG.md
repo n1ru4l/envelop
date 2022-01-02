@@ -1,5 +1,16 @@
 # @envelop/core
 
+## 1.6.6
+
+### Patch Changes
+
+- 8e365c2: fix potential memory leak when using `onEnd` and `onNext` stream handlers for hooking into `subscribe` and `execute`.
+
+  This has been caused by AsyncGenerators being blocked until the next value is published. Now disposed result streams (AsyncIterables) will properly cleanup the underlying stream source.
+
+- fd14339: feat(usePayloadFormatter): add second argument with execution arguments
+- 128c5d3: Fix context type inference with enableIf helper
+
 ## 1.6.5
 
 ### Patch Changes
