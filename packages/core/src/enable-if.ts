@@ -16,7 +16,10 @@ export function isPluginEnabled(t: PluginOrDisabledPlugin): t is Plugin {
 /**
  * Utility function to enable a plugin.
  */
-export function enableIf(condition: boolean, plugin: Plugin | (() => Plugin)): PluginOrDisabledPlugin {
+export function enableIf<PluginContextType = {}>(
+  condition: boolean,
+  plugin: Plugin<PluginContextType> | (() => Plugin<PluginContextType>)
+): PluginOrDisabledPlugin {
   if (condition) {
     return typeof plugin === 'function' ? plugin() : plugin;
   } else {
