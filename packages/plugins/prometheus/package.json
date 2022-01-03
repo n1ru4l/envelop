@@ -33,7 +33,7 @@
     "@envelop/core": "1.6.6",
     "prom-client": "14.0.1",
     "@graphql-tools/schema": "8.3.1",
-    "bob-the-bundler": "1.6.0",
+    "bob-the-bundler": "1.6.1",
     "graphql": "16.2.0",
     "typescript": "4.4.4"
   },
