@@ -48,7 +48,7 @@ const getEnveloped = envelop({
 Or provide a custom formatter when masking the output:
 
 ```ts
-export const customFormatError: FormatErrorHandler = (err: any) => {
+export const customFormatError: FormatErrorHandler = err => {
   if (err.originalError && err.originalError instanceof EnvelopError === false) {
     return new GraphQLError('Sorry, something went wrong.');
   }
