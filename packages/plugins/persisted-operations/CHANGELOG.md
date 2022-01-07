@@ -1,5 +1,12 @@
 # @envelop/persisted-operations
 
+## 3.0.0
+
+### Patch Changes
+
+- Updated dependencies [d9cfb7c]
+  - @envelop/core@1.7.0
+
 ## 2.2.1
 
 ### Patch Changes

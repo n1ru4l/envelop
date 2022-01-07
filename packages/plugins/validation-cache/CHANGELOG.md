@@ -1,5 +1,12 @@
 # @envelop/validation-cache
 
+## 3.0.0
+
+### Patch Changes
+
+- Updated dependencies [d9cfb7c]
+  - @envelop/core@1.7.0
+
 ## 2.3.0
 
 ### Minor Changes
