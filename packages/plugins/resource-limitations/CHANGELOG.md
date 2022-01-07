@@ -1,5 +1,12 @@
 # @envelop/resource-limitations
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies [d9cfb7c]
+  - @envelop/core@1.7.0
+
 ## 0.4.1
 
 ### Patch Changes
