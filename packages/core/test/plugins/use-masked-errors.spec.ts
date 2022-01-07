@@ -105,6 +105,31 @@ describe('useMaskedErrors', () => {
     expect(error.message).toEqual('This message goes to all the clients out there!');
   });
 
+  it('Should include the original error within the error extensions when `isDev` is set to `true`', async () => {
+    const testInstance = createTestkit([useMaskedErrors({ isDev: true })], schema);
+    const result = await testInstance.execute(`query { secret }`);
+    assertSingleExecutionValue(result);
+    expect(result.errors).toBeDefined();
+    expect(result.errors).toHaveLength(1);
+    const [error] = result.errors!;
+    expect(error.extensions).toEqual({
+      originalError: {
+        message: 'Secret sauce that should not leak.',
+        stack: expect.stringContaining('Error: Secret sauce that should not leak.'),
+      },
+    });
+  });
+
+  it('Should not include the original error within the error extensions when `isDev` is set to `false`', async () => {
+    const testInstance = createTestkit([useMaskedErrors({ isDev: false })], schema);
+    const result = await testInstance.execute(`query { secret }`);
+    assertSingleExecutionValue(result);
+    expect(result.errors).toBeDefined();
+    expect(result.errors).toHaveLength(1);
+    const [error] = result.errors!;
+    expect(error.extensions).toEqual({});
+  });
+
   it('Should not mask GraphQL operation syntax errors (of course it does not since we are only hooking in after execute, but just to be sure)', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
     const result = await testInstance.execute(`query { idonotexist }`);
