@@ -11,8 +11,8 @@ yarn add @envelop/disable-introspection
 ## Usage Example
 
 ```ts
-import { value envelop } from '@envelop/core';
-import { value useDisableIntrospection } from '@envelop/disable-introspection';
+import { envelop } from '@envelop/core';
+import { useDisableIntrospection } from '@envelop/disable-introspection';
 
 const getEnveloped = envelop({
   plugins: [useDisableIntrospection()],
