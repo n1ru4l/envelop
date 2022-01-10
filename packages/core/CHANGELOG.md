@@ -1,5 +1,11 @@
 # @envelop/core
 
+## 1.7.1
+
+### Patch Changes
+
+- 3dfddb5: Bump graphql-tools/utils to v8.6.1 to address a bug in getArgumentsValues
+
 ## 1.7.0
 
 ### Minor Changes

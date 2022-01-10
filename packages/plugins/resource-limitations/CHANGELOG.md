@@ -1,5 +1,14 @@
 # @envelop/resource-limitations
 
+## 1.0.1
+
+### Patch Changes
+
+- 3dfddb5: Bump graphql-tools/utils to v8.6.1 to address a bug in getArgumentsValues
+- Updated dependencies [3dfddb5]
+  - @envelop/core@1.7.1
+  - @envelop/extended-validation@1.3.2
+
 ## 1.0.0
 
 ### Patch Changes
