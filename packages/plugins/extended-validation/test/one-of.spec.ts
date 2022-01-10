@@ -38,6 +38,10 @@ describe('oneOf', () => {
       inputFieldOneOfList(input: ListOneOfInput): Boolean
     }
 
+    type Mutation {
+      test(b: Boolean!): String
+    }
+
     type User {
       id: ID!
     }
@@ -94,6 +98,20 @@ describe('oneOf', () => {
       },
     },
   });
+  const GraphQLMutation = new GraphQLObjectType({
+    name: 'Mutation',
+    fields: {
+      test: {
+        type: GraphQLString,
+        args: {
+          b: {
+            type: new GraphQLNonNull(GraphQLBoolean),
+          },
+        },
+      },
+    },
+  });
+
   const GraphQLQuery = new GraphQLObjectType({
     name: 'Query',
     fields: {
@@ -159,7 +177,7 @@ describe('oneOf', () => {
       },
     },
   });
-  const programmaticSchema = new GraphQLSchema({ query: GraphQLQuery });
+  const programmaticSchema = new GraphQLSchema({ query: GraphQLQuery, mutation: GraphQLMutation });
 
   describe.each([
     ['AST via Directive', astSchema],
@@ -269,6 +287,16 @@ describe('oneOf', () => {
                   id: 1,
                 },
               ],
+            },
+            expectedError: null,
+          },
+        ],
+        [
+          'Valid: "false" as boolean value',
+          {
+            document: `mutation test($v: Boolean!) { test(b: $v) }`,
+            variables: {
+              v: false,
             },
             expectedError: null,
           },

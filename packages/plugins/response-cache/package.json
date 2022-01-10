@@ -38,7 +38,7 @@
     "typescript": "4.4.4"
   },
   "dependencies": {
-    "@graphql-tools/utils": "^8.5.2",
+    "@graphql-tools/utils": "^8.6.1",
     "lru-cache": "^6.0.0",
     "fast-json-stable-stringify": "^2.1.0"
   },
