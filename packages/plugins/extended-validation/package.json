@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@envelop/core": "^1.6.1",
-    "@graphql-tools/utils": "^8.5.3"
+    "@graphql-tools/utils": "^8.6.1"
   },
   "devDependencies": {
     "bob-the-bundler": "1.6.1",

@@ -30,7 +30,7 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "@graphql-tools/utils": "^8.5.3"
+    "@graphql-tools/utils": "^8.6.1"
   },
   "devDependencies": {
     "graphql": "16.2.0",
