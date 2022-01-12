@@ -122,7 +122,7 @@ export const useOpenTelemetry = (
         };
       }
 
-      return {};
+      return resultCbs;
     },
   };
 };
