@@ -1,5 +1,11 @@
 # @envelop/auth0
 
+## 2.0.1
+
+### Patch Changes
+
+- 6d030c9: Handle Fetch API requests/headers
+
 ## 2.0.0
 
 ### Patch Changes
