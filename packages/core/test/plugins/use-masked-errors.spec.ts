@@ -331,7 +331,7 @@ Array [
       extendContextField: 'auth0',
       tokenType: 'Bearer',
     };
-    const testInstance = createTestkit([useAuth0(auto0Options)], schema);
+    const testInstance = createTestkit([useMaskedErrors(), useAuth0(auto0Options)], schema);
     try {
       await testInstance.execute(`query { secret }`, {}, { request: { headers: { authorization: 'Something' } } });
     } catch (err) {
