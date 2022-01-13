@@ -58,13 +58,13 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
           `useAuth0 plugin unable to locate your request or headers on the execution context. Please make sure to pass that, or provide custom "extractTokenFn" function.`
         );
       } else {
-        let authHeader = '';
+        let authHeader: string | null = null;
         if (headers[headerName] && typeof headers[headerName] === 'string') {
-          authHeader = headers[headerName] || '';
-        } else if (headers.get && headers.get(headerName)) {
-          authHeader = headers.get(headerName) || '';
+          authHeader = headers[headerName] || null;
+        } else if (headers.get && headers.has(headerName)) {
+          authHeader = headers.get(headerName) || null;
         }
-        if (authHeader === '') {
+        if (authHeader === null) {
           return null;
         }
 
