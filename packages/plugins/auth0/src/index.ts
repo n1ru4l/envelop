@@ -58,20 +58,27 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
           `useAuth0 plugin unable to locate your request or headers on the execution context. Please make sure to pass that, or provide custom "extractTokenFn" function.`
         );
       } else {
+        let authHeader = '';
         if (headers[headerName] && typeof headers[headerName] === 'string') {
-          const authHeader = headers[headerName] || '';
-          const split = authHeader.split(' ');
+          authHeader = headers[headerName] || '';
+        } else if (headers.get && headers.get(headerName)) {
+          authHeader = headers.get(headerName) || '';
+        }
+        if (authHeader === '') {
+          return null;
+        }
 
-          if (split.length !== 2) {
-            throw new Error(`Invalid value provided for header "${headerName}"!`);
+        const split = authHeader.split(' ');
+
+        if (split.length !== 2) {
+          throw new Error(`Invalid value provided for header "${headerName}"!`);
+        } else {
+          const [type, value] = split;
+
+          if (type !== tokenType) {
+            throw new Error(`Unsupported token type provided: ${type}!`);
           } else {
-            const [type, value] = split;
-
-            if (type !== tokenType) {
-              throw new Error(`Unsupported token type provided: ${type}!`);
-            } else {
-              return value;
-            }
+            return value;
           }
         }
       }
