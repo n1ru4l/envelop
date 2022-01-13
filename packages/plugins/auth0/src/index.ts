@@ -76,7 +76,7 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
           const [type, value] = split;
 
           if (type !== tokenType) {
-            throw new EnvelopError(`Unsupported token type provided: ${type}!`);
+            throw new EnvelopError(`Unsupported token type provided: "${type}"!`);
           } else {
             return value;
           }
