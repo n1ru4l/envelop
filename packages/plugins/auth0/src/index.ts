@@ -61,7 +61,7 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
         let authHeader: string | null = null;
         if (headers[headerName] && typeof headers[headerName] === 'string') {
           authHeader = headers[headerName] || null;
-        } else if (headers.get && headers.has(headerName)) {
+        } else if (headers.get && headers.has && headers.has(headerName)) {
           authHeader = headers.get(headerName) || null;
         }
         if (authHeader === null) {
