@@ -7,6 +7,7 @@ import {
 } from '@envelop/testing';
 import { EnvelopError, useMaskedErrors, DEFAULT_ERROR_MESSAGE } from '../../src/plugins/use-masked-errors';
 import { useExtendContext } from '@envelop/core';
+import { useAuth0 } from '../../../plugins/auth0/src';
 
 describe('useMaskedErrors', () => {
   const schema = makeExecutableSchema({
@@ -318,5 +319,29 @@ Array [
   [GraphQLError: Noop],
 ]
 `);
+  });
+
+  it('Should not mask auth0 header errors', async () => {
+    expect.assertions(2);
+    const auto0Options = {
+      domain: 'domain.com',
+      audience: 'audience',
+      headerName: 'authorization',
+      preventUnauthenticatedAccess: false,
+      extendContextField: 'auth0',
+      tokenType: 'Bearer',
+    };
+    const testInstance = createTestkit([useMaskedErrors(), useAuth0(auto0Options)], schema);
+    try {
+      await testInstance.execute(`query { secret }`, {}, { request: { headers: { authorization: 'Something' } } });
+    } catch (err) {
+      expect(err).toMatchInlineSnapshot(`[GraphQLError: Invalid value provided for header "authorization"!]`);
+    }
+
+    try {
+      await testInstance.execute(`query { secret }`, {}, { request: { headers: { authorization: 'Something else' } } });
+    } catch (err) {
+      expect(err).toMatchInlineSnapshot(`[GraphQLError: Unsupported token type provided: "Something"!]`);
+    }
   });
 });
