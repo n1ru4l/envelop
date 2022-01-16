@@ -1,5 +1,11 @@
 # @envelop/opentelemetry
 
+## 2.0.1
+
+### Patch Changes
+
+- 556b4ea: Ensure plug-in correctly ends spans after execution.
+
 ## 2.0.0
 
 ### Patch Changes
