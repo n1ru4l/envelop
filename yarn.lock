@@ -2795,10 +2795,12 @@
   resolved "https://registry.yarnpkg.com/@n1ru4l/socket-io-graphql-server/-/socket-io-graphql-server-0.9.2.tgz#082e58e249893cf6483c4c74aa1a2931bbd1e458"
   integrity sha512-HodRe0SRDXGdnVEBRCHnblnGeM2ArybjsTuW560FW9eK/OdONJRXwVIpxHrjBlmsHwmEqVuw4eGjlErot9FNvw==
 
-"@newrelic/aws-sdk@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@newrelic/aws-sdk/-/aws-sdk-4.0.1.tgz#8a4051a316c19172a3cc80511c2c7265e3f068e6"
-  integrity sha512-6pjPHKODTMItaO6zHDSR3HH7ohvUP9zzQf2pKMKdU4lB/1HV2+Xf6r92X96zPmGQsAnCP9xhgbseUklHD00a1Q==
+"@newrelic/aws-sdk@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@newrelic/aws-sdk/-/aws-sdk-4.1.1.tgz#e96dab44912f6cf661fce60d0c3f8ea4e691f086"
+  integrity sha512-HojNFnxf8psbpf7hlQmIeDR6d8pWYU1ZQR3lpDJtecFZYX5/LKIKRayuunw9ORCjIcf6MZNTnhmdhdeGb7LKrw==
+  dependencies:
+    semver "^7.3.5"
 
 "@newrelic/koa@^6.0.1":
   version "6.0.1"
@@ -9236,14 +9238,14 @@ negotiator@0.6.2:
   resolved "https://registry.npmjs.org/negotiator/-/negotiator-0.6.2.tgz#feacf7ccf525a77ae9634436a64883ffeca346fb"
   integrity sha512-hZXc7K2e+PgeI1eDBe/10Ard4ekbfrrqG8Ep+8Jmf4JID2bNg7NvCPOZN+kfF574pFQI7mum2AUqDidoKqcTOw==
 
-newrelic@8.7.0:
-  version "8.7.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-8.7.0.tgz#3683c6a8b16ef1fdce96b0257218950c80c2b073"
-  integrity sha512-lGTgfLvipr6QDum4f7P2BjwC3Cx9t7mvZVam/iQga/nd1723nz3fNGNnE/6Sceoye6PgXiSkLIeVOzvYGduz7w==
+newrelic@8.7.1:
+  version "8.7.1"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-8.7.1.tgz#bf7f7e7870228248f005851e79b27d7ecfd77a45"
+  integrity sha512-tPHEQx92b0bSPJx36UPAHAQUUD+U053XcVoZq72CncW2W4sQETnZgOnobLmmZbmCYwUrdSZKE3H8qsNb5S4yTQ==
   dependencies:
     "@grpc/grpc-js" "^1.2.11"
     "@grpc/proto-loader" "^0.5.6"
-    "@newrelic/aws-sdk" "^4.0.1"
+    "@newrelic/aws-sdk" "^4.1.1"
     "@newrelic/koa" "^6.0.1"
     "@newrelic/superagent" "^5.0.1"
     "@tyriar/fibonacci-heap" "^2.0.7"
