@@ -23,19 +23,19 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@envelop/response-cache@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-0.6.0.tgz#9180ef73bfe09a8d2766739afb0225fb8c7b8700"
-  integrity sha512-suQtHSBm5dVA/eu3hNlF2H6pJbOiDMFQ98FbLisiEszp16Ku5utb6AVAg08JhKuRFde8XdEv4N3tG8D3Uhk4mA==
+"@envelop/response-cache@^1.0.0":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-1.0.1.tgz#934ad099636298eb34d4508b26cf8ec943c4e820"
+  integrity sha512-vlCGHSLDdsSUSERNL+e6L1vcoJhggtD6+5V6wNbC0/LVXa7/COyUGJEMTO/cvia9uK9YCclvwArpXhRmfXdbSQ==
   dependencies:
-    "@graphql-tools/utils" "^8.5.2"
+    "@graphql-tools/utils" "^8.6.1"
     fast-json-stable-stringify "^2.1.0"
     lru-cache "^6.0.0"
 
-"@graphql-tools/utils@^8.5.2":
-  version "8.5.5"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-8.5.5.tgz#019ddb99719feb19602afdb537c06e463df674a9"
-  integrity sha512-y7zRXWIUI73X+9/rf/0KzrNFMlpRKFfzLiwdbIeWwgLs+NV9vfUOoVkX8luXX6LwQxhSypHATMiwZGM2ro/wJA==
+"@graphql-tools/utils@^8.6.1":
+  version "8.6.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-8.6.1.tgz#52c7eb108f2ca2fd01bdba8eef85077ead1bf882"
+  integrity sha512-uxcfHCocp4ENoIiovPxUWZEHOnbXqj3ekWc0rm7fUhW93a1xheARNHcNKhwMTR+UKXVJbTFQdGI1Rl5XdyvDBg==
   dependencies:
     tslib "~2.3.0"
 
@@ -763,10 +763,10 @@ inherits@2:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
-ioredis-mock@5.8.1:
-  version "5.8.1"
-  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-5.8.1.tgz#5221260a7165c1d0a6db40f7245d7eb8996cd9d2"
-  integrity sha512-YWUoE7ZZLzo2fJMWLjeh3F/TkgHqeazdOeExZskit+/2ZSA0bsFPkXiKMOUHZxjOk2JskOP9iuYvf/iO3mhMZg==
+ioredis-mock@5.8.3:
+  version "5.8.3"
+  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-5.8.3.tgz#8dd09ded1ff34fb323fc79053d8cd366c2a56e93"
+  integrity sha512-daK8fabJFdFUDHa1K7R/FcoD5FbH4wkc1lHbDZlNRentMOpjQsp8d9br6xPyhE4ipW+BKb9h+Hi298RjMQhBlQ==
   dependencies:
     fengari "^0.1.4"
     fengari-interop "^0.1.2"
