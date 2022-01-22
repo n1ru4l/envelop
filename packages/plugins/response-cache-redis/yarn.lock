@@ -763,10 +763,10 @@ inherits@2:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
-ioredis-mock@5.8.4:
-  version "5.8.4"
-  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-5.8.4.tgz#49081551172bb0178c59867d77e51a8ecc312f0e"
-  integrity sha512-dIw8DTHJ5iZQJda2NuxFuRlLZEZX4D30rFXUNJ5oMuln+02Vhnwm7FMBzXiccua8JefWL3u+HyhYYP2yVu/PDg==
+ioredis-mock@5.9.0:
+  version "5.9.0"
+  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-5.9.0.tgz#70b0d5bfbd3efb14536143c787f7a5e93d9dee1d"
+  integrity sha512-AU5kVOrv7G8Nml9PxWf8urwckBvMqvmeR14Du9+poW2+jsIOoLz7TxU1uIUVJlr5+3ztYKkEFxsZ/Q56DIuxDA==
   dependencies:
     fengari "^0.1.4"
     fengari-interop "^0.1.2"
