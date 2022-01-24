@@ -76,7 +76,7 @@
     "typescript": "4.4.4"
   },
   "resolutions": {
-    "@changesets/git": "1.2.1",
+    "@changesets/git": "1.3.0",
     "esbuild": "^0.14.0",
     "prettier": "2.5.1",
     "graphql": "16.2.0"
