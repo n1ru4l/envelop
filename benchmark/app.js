@@ -142,3 +142,7 @@ app.listen(5000, () => {
   // eslint-disable-next-line no-console
   console.log(`GraphQL Test Server is running... Ready for K6!`);
 });
+
+setTimeout(() => {
+  process.exit(1);
+}, 5000);
