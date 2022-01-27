@@ -5,7 +5,12 @@ import http from 'k6/http';
 const graphqlEndpoint = `http://${__ENV.GRAPHQL_HOSTNAME || 'localhost'}:5000/graphql`;
 
 export function checkNoErrors(resp) {
-  return !('errors' in resp.json());
+  try {
+    return !('errors' in resp.json());
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 }
 
 export function graphql({ query, operationName, variables }) {
