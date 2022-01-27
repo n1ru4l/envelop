@@ -5,7 +5,7 @@
 Move `onResolversCalled` from within `OnExecuteHookResult` and `OnSubscribeHookResult` to the `Plugin` type.
 
 ```diff
-import type { Plugin } from "@envlop/core";
+import type { Plugin } from "@envelop/core";
 
 const plugin: Plugin = {
   onExecute() {
