@@ -134,8 +134,6 @@ app.route({
 
     eventLoopMonitor.reset();
 
-    console.log(result);
-
     res.send(result);
   },
 });
