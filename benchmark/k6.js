@@ -53,7 +53,7 @@ export const options = buildOptions({
   'graphql-js': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: ['p(95)<=35'],
+    http_req_duration: ['p(95)<=20'],
     graphql_execute: ['p(95)<=2'],
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
@@ -65,7 +65,7 @@ export const options = buildOptions({
   'envelop-just-cache': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: ['p(95)<=23'],
+    http_req_duration: ['p(95)<=17'],
     graphql_execute: ['p(95)<=1'],
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
@@ -77,7 +77,7 @@ export const options = buildOptions({
   'prom-tracing': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: ['p(95)<=52'],
+    http_req_duration: ['p(95)<=40'],
     graphql_execute: ['p(95)<=6'],
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
@@ -89,13 +89,13 @@ export const options = buildOptions({
   'envelop-cache-and-no-internal-tracing': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: ['p(95)<=18'],
+    http_req_duration: ['p(95)<=14'],
     event_loop_lag: ['avg==0', 'p(99)==0'],
   },
   'envelop-cache-jit': {
     no_errors: ['rate=1.0'],
     expected_result: ['rate=1.0'],
-    http_req_duration: ['p(95)<=16'],
+    http_req_duration: ['p(95)<=13'],
     graphql_execute: ['p(95)<=1'],
     graphql_context: ['p(95)<=1'],
     graphql_validate: ['p(95)<=1'],
