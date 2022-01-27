@@ -143,7 +143,11 @@ app.route({
   },
 });
 
-app.listen(3000, () => {
+app.listen(3000, (error, address) => {
+  if (error) {
+    console.error(error);
+    process.exit(1);
+  }
   // eslint-disable-next-line no-console
-  console.log(`GraphQL Test Server is running... Ready for K6!`);
+  console.log(`GraphQL Test Server is running... Ready for K6! - ${address}`);
 });
