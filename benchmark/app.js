@@ -107,34 +107,39 @@ app.route({
   method: 'POST',
   url: '/graphql',
   async handler(req, res) {
-    eventLoopMonitor.enable();
-    const getEnveloped = envelopsMap[req.headers['x-test-scenario']];
-    const proxy = getEnveloped({ req });
-    const document = proxy.parse(req.body.query);
-    const errors = proxy.validate(proxy.schema, document);
+    try {
+      eventLoopMonitor.enable();
+      const getEnveloped = envelopsMap[req.headers['x-test-scenario']];
+      const proxy = getEnveloped({ req });
+      const document = proxy.parse(req.body.query);
+      const errors = proxy.validate(proxy.schema, document);
 
-    if (errors.length) {
-      res.send({ errors });
-      return;
+      if (errors.length) {
+        res.send({ errors });
+        return;
+      }
+
+      const result = await proxy.execute({
+        schema: proxy.schema,
+        operationName: req.body.operationName,
+        document,
+        variableValues: req.body.variable,
+        contextValue: await proxy.contextFactory(),
+      });
+      eventLoopMonitor.disable();
+
+      result.extensions = {
+        ...(result.extensions || {}),
+        eventLoopLag: eventLoopMonitor.max,
+      };
+
+      eventLoopMonitor.reset();
+
+      res.status(200).send(result);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send(error);
     }
-
-    const result = await proxy.execute({
-      schema: proxy.schema,
-      operationName: req.body.operationName,
-      document,
-      variableValues: req.body.variable,
-      contextValue: await proxy.contextFactory(),
-    });
-    eventLoopMonitor.disable();
-
-    result.extensions = {
-      ...(result.extensions || {}),
-      eventLoopLag: eventLoopMonitor.max,
-    };
-
-    eventLoopMonitor.reset();
-
-    res.send(result);
   },
 });
 
