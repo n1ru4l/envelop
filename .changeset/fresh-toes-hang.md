@@ -25,7 +25,7 @@ The schema resolver functions are now ONLY wrapped if any plugin in your envelop
 If you need any shared state between `onExecute` and `onResolversCalled` you can share it by extending the context object.
 
 ```ts
-import type { Plugin } from '@envlop/core';
+import type { Plugin } from '@envelop/core';
 
 const sharedStateSymbol = Symbol('sharedState');
 
