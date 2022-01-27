@@ -2,7 +2,7 @@
 /// @ts-check
 import http from 'k6/http';
 
-const graphqlEndpoint = `http://${__ENV.GRAPHQL_HOSTNAME || 'localhost'}:5000/graphql`;
+const graphqlEndpoint = `http://${__ENV.GRAPHQL_HOSTNAME || 'localhost'}:3000/graphql`;
 
 export function checkNoErrors(resp) {
   try {

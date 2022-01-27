@@ -35,6 +35,6 @@ jobs:
           sudo apt-get install k6
       - name: Run Benchmark
         run: |
-          yarn loadtest:start-server
-          yarn wait-on tcp:5000
-          k6 -e GITHUB_PR=${{ github.event.number }} -e GITHUB_SHA=${{ github.sha }} -e GITHUB_TOKEN=${{secrets.GH_API_TOKEN}} -e GRAPHQL_HOSTNAME=0.0.0.0 run ./benchmark/k6.js
+          yarn loadtest:start-server &
+          yarn wait-on tcp:3000
+          k6 -e GITHUB_PR=${{ github.event.number }} -e GITHUB_SHA=${{ github.sha }} -e GITHUB_TOKEN=${{secrets.GH_API_TOKEN}} -e GRAPHQL_HOSTNAME="0.0.0.0" run ./benchmark/k6.js
