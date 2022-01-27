@@ -119,11 +119,7 @@ describe('execute', () => {
     const teskit = createTestkit(
       [
         {
-          onExecute() {
-            return {
-              onResolverCalled,
-            };
-          },
+          onResolverCalled,
         },
       ],
       schema

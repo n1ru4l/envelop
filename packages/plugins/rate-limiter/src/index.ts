@@ -32,51 +32,46 @@ export const useRateLimiter = (
         rateLimiterFn,
       });
     },
-    onExecute() {
-      return {
-        async onResolverCalled({ args, root, context, info }) {
-          const rateLimitDirectiveNode = getDirective(info, options.rateLimitDirectiveName || 'rateLimit');
+    async onResolverCalled({ args, root, context, info }) {
+      const rateLimitDirectiveNode = getDirective(info, options.rateLimitDirectiveName || 'rateLimit');
 
-          if (rateLimitDirectiveNode && rateLimitDirectiveNode.arguments) {
-            const maxNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'max')?.value as IntValueNode;
-            const windowNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'window')
-              ?.value as StringValueNode;
-            const messageNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'message')?.value as IntValueNode;
+      if (rateLimitDirectiveNode && rateLimitDirectiveNode.arguments) {
+        const maxNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'max')?.value as IntValueNode;
+        const windowNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'window')?.value as StringValueNode;
+        const messageNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'message')?.value as IntValueNode;
 
-            const message = messageNode.value;
-            const max = parseInt(maxNode.value);
-            const window = windowNode.value;
-            const id = options.identifyFn(context);
+        const message = messageNode.value;
+        const max = parseInt(maxNode.value);
+        const window = windowNode.value;
+        const id = options.identifyFn(context);
 
-            const errorMessage = await context.rateLimiterFn(
-              { parent: root, args, context, info },
-              {
-                max,
-                window,
-                message: interpolate(message, {
-                  id,
-                }),
-              }
-            );
-            if (errorMessage) {
-              if (options.onRateLimitError) {
-                options.onRateLimitError({
-                  error: errorMessage,
-                  identifier: id,
-                  context,
-                  info,
-                });
-              }
-
-              if (options.transformError) {
-                throw options.transformError(errorMessage);
-              }
-
-              throw new Error(errorMessage);
-            }
+        const errorMessage = await context.rateLimiterFn(
+          { parent: root, args, context, info },
+          {
+            max,
+            window,
+            message: interpolate(message, {
+              id,
+            }),
           }
-        },
-      };
+        );
+        if (errorMessage) {
+          if (options.onRateLimitError) {
+            options.onRateLimitError({
+              error: errorMessage,
+              identifier: id,
+              context,
+              info,
+            });
+          }
+
+          if (options.transformError) {
+            throw options.transformError(errorMessage);
+          }
+
+          throw new Error(errorMessage);
+        }
+      }
     },
   };
 };

@@ -113,13 +113,14 @@ export const useTiming = (rawOptions?: TimingPluginOptions): Plugin<InternalPlug
           onExecuteDone: () => {
             options.onExecutionMeasurement!(args, deltaFrom(executeStartTime));
           },
-          onResolverCalled: ({ info }) => {
-            const resolverStartTime = process.hrtime();
+        };
+      };
 
-            return () => {
-              options.onResolverMeasurement!(info, deltaFrom(resolverStartTime));
-            };
-          },
+      result.onResolverCalled = ({ info }) => {
+        const resolverStartTime = process.hrtime();
+
+        return () => {
+          options.onResolverMeasurement!(info, deltaFrom(resolverStartTime));
         };
       };
     } else {
@@ -152,13 +153,14 @@ export const useTiming = (rawOptions?: TimingPluginOptions): Plugin<InternalPlug
           onSubscribeResult: () => {
             options.onSubscriptionMeasurement && options.onSubscriptionMeasurement(args, deltaFrom(subscribeStartTime));
           },
-          onResolverCalled: ({ info }) => {
-            const resolverStartTime = process.hrtime();
+        };
+      };
 
-            return () => {
-              options.onResolverMeasurement && options.onResolverMeasurement(info, deltaFrom(resolverStartTime));
-            };
-          },
+      result.onResolverCalled = ({ info }) => {
+        const resolverStartTime = process.hrtime();
+
+        return () => {
+          options.onResolverMeasurement && options.onResolverMeasurement(info, deltaFrom(resolverStartTime));
         };
       };
     } else {

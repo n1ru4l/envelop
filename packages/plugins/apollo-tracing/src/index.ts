@@ -31,39 +31,52 @@ const deltaFrom = (hrtime: [number, number]): { ms: number; ns: number } => {
   };
 };
 
+const apolloTracingSymbol = Symbol('apolloTracing');
+
+type TracingContextObject = {
+  startTime: Date;
+  resolversTiming: ResolverCall[];
+  hrtime: [number, number];
+};
+
 export const useApolloTracing = (): Plugin => {
   return {
-    onExecute() {
-      const startTime = new Date();
-      const hrtime = process.hrtime();
-      const resolversTiming: ResolverCall[] = [];
+    onResolverCalled: ({ info, context }) => {
+      const ctx = context[apolloTracingSymbol] as TracingContextObject;
+      // Taken from https://github.com/apollographql/apollo-server/blob/main/packages/apollo-tracing/src/index.ts
+      const resolverCall: ResolverCall = {
+        path: info.path,
+        fieldName: info.fieldName,
+        parentType: info.parentType,
+        returnType: info.returnType,
+        startOffset: process.hrtime(ctx.hrtime),
+      };
+
+      return () => {
+        resolverCall.endOffset = process.hrtime(ctx.hrtime);
+        ctx.resolversTiming.push(resolverCall);
+      };
+    },
+    onExecute(onExecuteContext) {
+      const ctx: TracingContextObject = {
+        startTime: new Date(),
+        resolversTiming: [],
+        hrtime: process.hrtime(),
+      };
+
+      onExecuteContext.extendContext({ [apolloTracingSymbol]: ctx });
 
       return {
-        onResolverCalled: ({ info }) => {
-          // Taken from https://github.com/apollographql/apollo-server/blob/main/packages/apollo-tracing/src/index.ts
-          const resolverCall: ResolverCall = {
-            path: info.path,
-            fieldName: info.fieldName,
-            parentType: info.parentType,
-            returnType: info.returnType,
-            startOffset: process.hrtime(hrtime),
-          };
-
-          return () => {
-            resolverCall.endOffset = process.hrtime(hrtime);
-            resolversTiming.push(resolverCall);
-          };
-        },
         onExecuteDone(payload) {
           const endTime = new Date();
 
           const tracing: TracingFormat = {
             version: 1,
-            startTime: startTime.toISOString(),
+            startTime: ctx.startTime.toISOString(),
             endTime: endTime.toISOString(),
-            duration: deltaFrom(hrtime).ns,
+            duration: deltaFrom(ctx.hrtime).ns,
             execution: {
-              resolvers: resolversTiming.map(resolverCall => {
+              resolvers: ctx.resolversTiming.map(resolverCall => {
                 const startOffset = durationHrTimeToNanos(resolverCall.startOffset);
                 const duration = resolverCall.endOffset ? durationHrTimeToNanos(resolverCall.endOffset) - startOffset : 0;
 

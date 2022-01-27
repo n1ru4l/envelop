@@ -75,6 +75,14 @@ export function defaultSkipError(error: Error): boolean {
   return error instanceof EnvelopError;
 }
 
+const sentryTracingSymbol = Symbol('sentryTracing');
+
+type SentryTracingContext = {
+  rootSpan: Span | undefined;
+  opName: string;
+  operationType: string;
+};
+
 export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   function pick<K extends keyof SentryPluginOptions>(key: K, defaultValue: NonNullable<SentryPluginOptions[K]>) {
     return options[key] ?? defaultValue;
@@ -89,8 +97,51 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const skipOperation = pick('skip', () => false);
   const skipError = pick('skipError', defaultSkipError);
 
+  const onResolverCalled: OnResolverCalledHook | undefined = trackResolvers
+    ? ({ args: resolversArgs, info, context }) => {
+        const { rootSpan, opName, operationType } = context[sentryTracingSymbol] as SentryTracingContext;
+        if (rootSpan) {
+          const { fieldName, returnType, parentType } = info;
+          const parent = rootSpan;
+          const tags: Record<string, string> = {
+            fieldName,
+            parentType: parentType.toString(),
+            returnType: returnType.toString(),
+          };
+
+          if (includeResolverArgs) {
+            tags.args = JSON.stringify(resolversArgs || {});
+          }
+
+          const childSpan = parent.startChild({
+            op: `${parentType.name}.${fieldName}`,
+            tags,
+          });
+
+          return ({ result }) => {
+            if (includeRawResult) {
+              childSpan.setData('result', result);
+            }
+
+            if (result instanceof Error && !skipError(result)) {
+              const errorPath = responsePathAsArray(info.path).join(' > ');
+
+              Sentry.captureException(result, {
+                fingerprint: ['graphql', errorPath, opName, operationType],
+              });
+            }
+
+            childSpan.finish();
+          };
+        }
+
+        return () => {};
+      }
+    : undefined;
+
   return {
-    onExecute({ args }) {
+    onResolverCalled,
+    onExecute({ args, extendContext }) {
       if (skipOperation(args)) {
         return;
       }
@@ -149,49 +200,16 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
         Sentry.configureScope(scope => options.configureScope!(args, scope));
       }
 
-      const onResolverCalled: OnResolverCalledHook | undefined = trackResolvers
-        ? ({ args: resolversArgs, info }) => {
-            if (rootSpan) {
-              const { fieldName, returnType, parentType } = info;
-              const parent = rootSpan;
-              const tags: Record<string, string> = {
-                fieldName,
-                parentType: parentType.toString(),
-                returnType: returnType.toString(),
-              };
-
-              if (includeResolverArgs) {
-                tags.args = JSON.stringify(resolversArgs || {});
-              }
-
-              const childSpan = parent.startChild({
-                op: `${parentType.name}.${fieldName}`,
-                tags,
-              });
-
-              return ({ result }) => {
-                if (includeRawResult) {
-                  childSpan.setData('result', result);
-                }
-
-                if (result instanceof Error && !skipError(result)) {
-                  const errorPath = responsePathAsArray(info.path).join(' > ');
-
-                  Sentry.captureException(result, {
-                    fingerprint: ['graphql', errorPath, opName, operationType],
-                  });
-                }
-
-                childSpan.finish();
-              };
-            }
-
-            return () => {};
-          }
-        : undefined;
+      if (onResolverCalled) {
+        const sentryContext: SentryTracingContext = {
+          rootSpan,
+          opName,
+          operationType,
+        };
+        extendContext({ [sentryTracingSymbol]: sentryContext });
+      }
 
       return {
-        onResolverCalled,
         onExecuteDone({ result }) {
           if (isAsyncIterable(result)) {
             rootSpan.finish();
