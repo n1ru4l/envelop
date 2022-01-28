@@ -220,7 +220,7 @@ export type OnContextBuildingEventPayload<ContextType> = {
    */
   extendContext: (contextExtension: Partial<ContextType>) => void;
   /**
-   * Aborts any further context builds and replaces the original context with this one.
+   * Prevent calls on any further context building hooks.
    */
   breakContextBuilding: () => void;
 };
