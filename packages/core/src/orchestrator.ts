@@ -5,6 +5,7 @@ import {
   EnvelopContextFnWrapper,
   GetEnvelopedFn,
   OnContextBuildingHook,
+  AfterContextBuildingHook,
   OnEnvelopedHook,
   OnExecuteDoneHook,
   OnExecuteHook,
@@ -257,10 +258,11 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
 
   const customContextFactory: EnvelopContextFnWrapper<(orchestratorCtx?: any) => any, any> = beforeCallbacks.context.length
     ? initialContext => async orchestratorCtx => {
-        const afterCalls: OnContextBuildingHook<any>[] = [];
+        const afterCalls: AfterContextBuildingHook<any>[] = [];
 
         try {
           let context = orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
+          let shortCircuitContext: any;
 
           for (const onContext of beforeCallbacks.context) {
             const afterHookResult = await onContext({
@@ -268,7 +270,14 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
               extendContext: extension => {
                 context = { ...context, ...extension };
               },
+              shortCircuitContext: value => {
+                shortCircuitContext = value;
+              },
             });
+
+            if (shortCircuitContext !== undefined) {
+              break;
+            }
 
             if (typeof afterHookResult === 'function') {
               afterCalls.push(afterHookResult);

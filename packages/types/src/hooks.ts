@@ -219,6 +219,10 @@ export type OnContextBuildingEventPayload<ContextType> = {
    * Extend the context object with a partial.
    */
   extendContext: (contextExtension: Partial<ContextType>) => void;
+  /**
+   * Aborts any further context builds and replaces the original context with this one.
+   */
+  shortCircuitContext: (context: any) => void;
 };
 
 /**

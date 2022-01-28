@@ -1,6 +1,5 @@
 import { useErrorHandler } from '../../src/plugins/use-error-handler';
 import { createTestkit } from '@envelop/testing';
-import { buildSchema } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 describe('useErrorHandler', () => {
