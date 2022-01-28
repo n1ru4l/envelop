@@ -3,4 +3,4 @@
 '@envelop/types': minor
 ---
 
-add shortCircuitContext
+add breakContextBuilding

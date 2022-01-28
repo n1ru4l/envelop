@@ -262,7 +262,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
 
         try {
           let context = orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
-          let shortCircuitContext: any;
+          let isBreakingContextBuilding = false;
 
           for (const onContext of beforeCallbacks.context) {
             const afterHookResult = await onContext({
@@ -270,17 +270,17 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
               extendContext: extension => {
                 context = { ...context, ...extension };
               },
-              shortCircuitContext: value => {
-                shortCircuitContext = value;
+              breakContextBuilding: () => {
+                isBreakingContextBuilding = true;
               },
             });
 
-            if (shortCircuitContext !== undefined) {
-              break;
-            }
-
             if (typeof afterHookResult === 'function') {
               afterCalls.push(afterHookResult);
+            }
+
+            if ((isBreakingContextBuilding as boolean) === true) {
+              break;
             }
           }
 
@@ -292,6 +292,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
               },
             });
           }
+
           return context;
         } catch (err) {
           let error: unknown = err;

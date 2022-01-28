@@ -222,7 +222,7 @@ export type OnContextBuildingEventPayload<ContextType> = {
   /**
    * Aborts any further context builds and replaces the original context with this one.
    */
-  shortCircuitContext: (context: any) => void;
+  breakContextBuilding: () => void;
 };
 
 /**
