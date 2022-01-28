@@ -1,12 +1,12 @@
 import { createTestkit } from '@envelop/testing';
-import { useFastIntrospection } from '../../src/plugins/use-fast-introspection';
+import { useImmediateIntrospection } from '../../src/plugins/use-immediate-introspection';
 import { useExtendContext } from '../../src/plugins/use-extend-context';
 import { schema } from '../common';
 
-describe('useFastIntrospection', () => {
+describe('useImmediateIntrospection', () => {
   it('skips context building for introspection only operation', async () => {
     const testInstance = createTestkit(
-      [useFastIntrospection(), useExtendContext<() => Promise<{}>>(() => Promise.reject('EHHH'))],
+      [useImmediateIntrospection(), useExtendContext<() => Promise<{}>>(() => Promise.reject('EHHH'))],
       schema
     );
 
@@ -18,7 +18,7 @@ describe('useFastIntrospection', () => {
   });
   it('skips context building for introspection only operation (alias)', async () => {
     const testInstance = createTestkit(
-      [useFastIntrospection(), useExtendContext<() => Promise<{}>>(() => Promise.reject('EHHH'))],
+      [useImmediateIntrospection(), useExtendContext<() => Promise<{}>>(() => Promise.reject('EHHH'))],
       schema
     );
 
@@ -30,7 +30,7 @@ describe('useFastIntrospection', () => {
   });
   it('runs context building for operation containing non introspection fields', async () => {
     const testInstance = createTestkit(
-      [useFastIntrospection(), useExtendContext<() => Promise<{}>>(() => Promise.reject('This should reject'))],
+      [useImmediateIntrospection(), useExtendContext<() => Promise<{}>>(() => Promise.reject('This should reject'))],
       schema
     );
 

@@ -1,7 +1,7 @@
 import type { Plugin } from '@envelop/types';
-import { ValidationRule } from 'graphql';
+import type { ValidationRule } from 'graphql';
 
-const IsIntrospectionOnlyOperation =
+const OnNonIntrospectionFieldReachedValidationRule =
   (onNonIntrospectionField: () => void): ValidationRule =>
   () => {
     return {
@@ -15,12 +15,16 @@ const IsIntrospectionOnlyOperation =
 
 const fastIntroSpectionSymbol = Symbol('fastIntrospection');
 
-export const useFastIntrospection = (): Plugin => {
+/**
+ * In case a GraphQL operation only contains introspection fields the context building can be skipped completely.
+ * With this plugin any further context extensions will be skipped.
+ */
+export const useImmediateIntrospection = (): Plugin => {
   return {
     onValidate({ addValidationRule }) {
       let isIntrospectionOnly = true;
       addValidationRule(
-        IsIntrospectionOnlyOperation(() => {
+        OnNonIntrospectionFieldReachedValidationRule(() => {
           isIntrospectionOnly = false;
         })
       );
