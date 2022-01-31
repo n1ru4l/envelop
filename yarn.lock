@@ -4223,6 +4223,15 @@ array.prototype.flat@^1.2.5:
     define-properties "^1.1.3"
     es-abstract "^1.19.0"
 
+array.prototype.flatmap@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/array.prototype.flatmap/-/array.prototype.flatmap-1.2.5.tgz#908dc82d8a406930fdf38598d51e7411d18d4446"
+  integrity sha512-08u6rVyi1Lj7oqWbS9nUxliETrtIROT4XGTA4D/LWGten6E3ocm7cy9SIrmNHOL5XVbVuckUp3X6Xyg8/zpvHA==
+  dependencies:
+    call-bind "^1.0.0"
+    define-properties "^1.1.3"
+    es-abstract "^1.19.0"
+
 arrify@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/arrify/-/arrify-1.0.1.tgz#898508da2226f380df904728456849c1501a4b0d"
@@ -6383,10 +6392,10 @@ fb-watchman@^2.0.0:
   dependencies:
     bser "2.1.1"
 
-fengari-interop@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/fengari-interop/-/fengari-interop-0.1.2.tgz#f7731dcdd2ff4449073fb7ac3c451a8841ce1e87"
-  integrity sha512-8iTvaByZVoi+lQJhHH9vC+c/Yaok9CwOqNQZN6JrVpjmWwW4dDkeblBXhnHC+BoI6eF4Cy5NKW3z6ICEjvgywQ==
+fengari-interop@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/fengari-interop/-/fengari-interop-0.1.3.tgz#3ad37a90e7430b69b365441e9fc0ba168942a146"
+  integrity sha512-EtZ+oTu3kEwVJnoymFPBVLIbQcCoy9uWCVnMA6h3M/RqHkUBsLYp29+RRHf9rKr6GwjubWREU1O7RretFIXjHw==
 
 fengari@^0.1.4:
   version "0.1.4"
@@ -7486,14 +7495,15 @@ invariant@^2.2.4:
   dependencies:
     loose-envify "^1.0.0"
 
-ioredis-mock@5.9.0:
-  version "5.9.0"
-  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-5.9.0.tgz#70b0d5bfbd3efb14536143c787f7a5e93d9dee1d"
-  integrity sha512-AU5kVOrv7G8Nml9PxWf8urwckBvMqvmeR14Du9+poW2+jsIOoLz7TxU1uIUVJlr5+3ztYKkEFxsZ/Q56DIuxDA==
+ioredis-mock@6.12.0:
+  version "6.12.0"
+  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-6.12.0.tgz#bc835f5f6a4c18a6ace1c107f802c9a5e8dd6fb2"
+  integrity sha512-d+D1K4spXmxyn8y5nexhcAofTTUcYJYekTF+6aJhl5DIDTYwEgAPd+vs7n0tMwJ6OLa+dA4aICBL3/eELK/5Jg==
   dependencies:
+    array.prototype.flatmap "^1.2.5"
     fengari "^0.1.4"
-    fengari-interop "^0.1.2"
-    lodash "^4.17.21"
+    fengari-interop "^0.1.3"
+    redis-commands "^1.7.0"
     standard-as-callback "^2.1.0"
 
 ioredis@^4.27.9:
@@ -10375,7 +10385,7 @@ redent@^3.0.0:
     indent-string "^4.0.0"
     strip-indent "^3.0.0"
 
-redis-commands@1.7.0:
+redis-commands@1.7.0, redis-commands@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/redis-commands/-/redis-commands-1.7.0.tgz#15a6fea2d58281e27b1cd1acfb4b293e278c3a89"
   integrity sha512-nJWqw3bTFy21hX/CPKHth6sfhZbdiHP6bTawSgQBlKOVRG7EZkfHbbHwQJnrE4vsQf0CMNE+3gJ4Fmm16vdVlQ==
