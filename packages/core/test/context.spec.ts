@@ -10,6 +10,7 @@ describe('contextFactory', () => {
     expect(spiedPlugin.spies.beforeContextBuilding).toHaveBeenCalledWith({
       context: expect.any(Object),
       extendContext: expect.any(Function),
+      breakContextBuilding: expect.any(Function),
     });
 
     expect(spiedPlugin.spies.afterContextBuilding).toHaveBeenCalledTimes(1);
@@ -29,6 +30,7 @@ describe('contextFactory', () => {
         test: true,
       }),
       extendContext: expect.any(Function),
+      breakContextBuilding: expect.any(Function),
     });
   });
 

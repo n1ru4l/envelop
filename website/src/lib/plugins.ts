@@ -100,6 +100,17 @@ export const pluginsArr: Package<Tags>[] = [
     tags: ['core', 'utilities'],
   },
   {
+    identifier: 'use-immediate-introspection',
+    title: 'useImmediateIntrospection',
+    githubReadme: {
+      repo: 'dotansimha/envelop',
+      path: 'packages/core/docs/use-immediate-introspection.md',
+    },
+    npmPackage: '@envelop/core',
+    iconUrl: '/logo.png',
+    tags: ['core', 'utilities', 'performance'],
+  },
+  {
     identifier: 'use-logger',
     title: 'useLogger',
     githubReadme: {

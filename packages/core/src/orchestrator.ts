@@ -5,6 +5,7 @@ import {
   EnvelopContextFnWrapper,
   GetEnvelopedFn,
   OnContextBuildingHook,
+  AfterContextBuildingHook,
   OnEnvelopedHook,
   OnExecuteDoneHook,
   OnExecuteHook,
@@ -257,10 +258,11 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
 
   const customContextFactory: EnvelopContextFnWrapper<(orchestratorCtx?: any) => any, any> = beforeCallbacks.context.length
     ? initialContext => async orchestratorCtx => {
-        const afterCalls: OnContextBuildingHook<any>[] = [];
+        const afterCalls: AfterContextBuildingHook<any>[] = [];
 
         try {
           let context = orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
+          let isBreakingContextBuilding = false;
 
           for (const onContext of beforeCallbacks.context) {
             const afterHookResult = await onContext({
@@ -268,10 +270,17 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
               extendContext: extension => {
                 context = { ...context, ...extension };
               },
+              breakContextBuilding: () => {
+                isBreakingContextBuilding = true;
+              },
             });
 
             if (typeof afterHookResult === 'function') {
               afterCalls.push(afterHookResult);
+            }
+
+            if ((isBreakingContextBuilding as boolean) === true) {
+              break;
             }
           }
 
@@ -283,6 +292,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
               },
             });
           }
+
           return context;
         } catch (err) {
           let error: unknown = err;
