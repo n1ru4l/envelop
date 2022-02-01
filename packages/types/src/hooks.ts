@@ -398,10 +398,6 @@ export type OnExecuteHookResult<ContextType> = {
    * Invoked with the execution result returned from execute.
    */
   onExecuteDone?: OnExecuteDoneHook<ContextType>;
-  /**
-   * Invoked before each resolver has been invoked during the execution phase.
-   */
-  onResolverCalled?: OnResolverCalledHook<any, DefaultArgs, ContextType>;
 };
 
 /**
@@ -518,10 +514,6 @@ export type OnSubscribeHookResult<ContextType> = {
    * Invoked if the source stream returned from subscribe throws an error.
    */
   onSubscribeError?: SubscribeErrorHook;
-  /**
-   * Invoked before each resolver has been invoked during the execution phase.
-   */
-  onResolverCalled?: OnResolverCalledHook<ContextType>;
 };
 
 /**

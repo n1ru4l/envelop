@@ -101,16 +101,12 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
           validateUser,
         } as unknown as ContextType);
       },
-      onExecute() {
-        return {
-          async onResolverCalled({ args, root, context, info }) {
-            const authDirectiveNode = getDirective(info, options.authDirectiveName || 'skipAuth');
+      async onResolverCalled({ args, root, context, info }) {
+        const authDirectiveNode = getDirective(info, options.authDirectiveName || 'skipAuth');
 
-            if (authDirectiveNode) return;
+        if (authDirectiveNode) return;
 
-            await context.validateUser(context[fieldName], context as unknown as ContextType);
-          },
-        };
+        await context.validateUser(context[fieldName], context as unknown as ContextType);
       },
     };
   } else if (options.mode === 'resolve-only') {
@@ -134,26 +130,22 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
           validateUser,
         } as unknown as ContextType);
       },
-      onExecute() {
-        return {
-          async onResolverCalled({ args, root, context, info }) {
-            const authDirectiveNode = getDirective(info, options.authDirectiveName || 'auth');
+      async onResolverCalled({ args, root, context, info }) {
+        const authDirectiveNode = getDirective(info, options.authDirectiveName || 'auth');
 
-            if (authDirectiveNode) {
-              await context.validateUser(
-                context[fieldName],
-                context as unknown as ContextType,
-                {
-                  info,
-                  context: context as unknown as ContextType,
-                  args,
-                  root,
-                },
-                authDirectiveNode
-              );
-            }
-          },
-        };
+        if (authDirectiveNode) {
+          await context.validateUser(
+            context[fieldName],
+            context as unknown as ContextType,
+            {
+              info,
+              context: context as unknown as ContextType,
+              args,
+              root,
+            },
+            authDirectiveNode
+          );
+        }
       },
     };
   }

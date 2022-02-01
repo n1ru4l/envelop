@@ -208,17 +208,6 @@ const myPlugin = (): Plugin => {
 };
 ```
 
-**`onResolverCalled` API**:
-
-Triggered when a resolver is called during the execution of the operation.
-
-- `params` - an object with `{ root, args, context, info }` that was originally passed to the resolver.
-
-You can also return a function to run after the resolver is done, with the following API:
-
-- `result` - the resolver return value.
-- `setResult` - replaces the resolver return value.
-
 ### `onSubscribe(api)`
 
 Called every time a `subscription` operation is being executed. The return value of this function is extended, and allow you to hooks into resolver calls if needed.
@@ -239,17 +228,6 @@ Triggered when subscription result is being emitted from a `subscription` execut
 - `result` - the subscription result.
 - `setResult` - replaces the result. can either be with data or errors.
 
-**`onResolverCalled` API**:
-
-Triggered when a resolver is called during the execution of the operation.
-
-- `params` - an object with `{ root, args, context, info }` that was originally passed to the resolver.
-
-You can also return a function to run after the resolver is done, with the following API:
-
-- `result` - the resolver return value.
-- `setResult` - replaces the resolver return value.
-
 ### `onSchemaChange(api)`
 
 `envelop` allow you to manage a reference to a schema, that you can later access and use within your server.
@@ -260,3 +238,14 @@ Some plugins (like gateway implementations) could potentially change the schema 
 
 - `schema` - the `GraphQLSchema`
 - `replaceSchema` - replaces the schema. Calling this will trigger `onSchemaChange` for all other plugins (except for the one that initiated the change);
+
+### `onResolverCalled(api)`
+
+Triggered when a resolver is called during the execution of the operation.
+
+- `params` - an object with `{ root, args, context, info }` that was originally passed to the resolver.
+
+You can also return a function to run after the resolver is done, with the following API:
+
+- `result` - the resolver return value.
+- `setResult` - replaces the resolver return value.

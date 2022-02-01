@@ -62,12 +62,20 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
 ): EnvelopOrchestrator<any, PluginsContext> {
   let schema: GraphQLSchema | undefined | null = null;
   let initDone = false;
+  const onResolversHandlers: OnResolverCalledHook[] = [];
+  for (const plugin of plugins) {
+    if (plugin.onResolverCalled) {
+      onResolversHandlers.push(plugin.onResolverCalled);
+    }
+  }
 
   // Define the initial method for replacing the GraphQL schema, this is needed in order
   // to allow setting the schema from the onPluginInit callback. We also need to make sure
   // here not to call the same plugin that initiated the schema switch.
   const replaceSchema = (newSchema: GraphQLSchema, ignorePluginIndex = -1) => {
-    prepareTracedSchema(newSchema);
+    if (onResolversHandlers.length) {
+      prepareTracedSchema(newSchema);
+    }
     schema = newSchema;
 
     if (initDone) {
@@ -309,113 +317,114 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
       }
     : initialContext => orchestratorCtx => orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
 
-  const customSubscribe = makeSubscribe(async args => {
-    const onResolversHandlers: OnResolverCalledHook[] = [];
-    let subscribeFn = subscribe as SubscribeFunction;
+  const useCustomSubscribe = beforeCallbacks.subscribe.length || onResolversHandlers.length;
 
-    const afterCalls: SubscribeResultHook<PluginsContext>[] = [];
-    const subscribeErrorHandlers: SubscribeErrorHook[] = [];
+  const customSubscribe = useCustomSubscribe
+    ? makeSubscribe(async args => {
+        let subscribeFn = subscribe as SubscribeFunction;
 
-    let context = (args.contextValue as {}) || {};
+        const afterCalls: SubscribeResultHook<PluginsContext>[] = [];
+        const subscribeErrorHandlers: SubscribeErrorHook[] = [];
 
-    for (const onSubscribe of beforeCallbacks.subscribe) {
-      const after = await onSubscribe({
-        subscribeFn,
-        setSubscribeFn: newSubscribeFn => {
-          subscribeFn = newSubscribeFn;
-        },
-        extendContext: extension => {
-          context = { ...context, ...extension };
-        },
-        args: args as TypedSubscriptionArgs<PluginsContext>,
-      });
+        let context = (args.contextValue as {}) || {};
 
-      if (after) {
-        if (after.onSubscribeResult) {
-          afterCalls.push(after.onSubscribeResult);
+        for (const onSubscribe of beforeCallbacks.subscribe) {
+          const after = await onSubscribe({
+            subscribeFn,
+            setSubscribeFn: newSubscribeFn => {
+              subscribeFn = newSubscribeFn;
+            },
+            extendContext: extension => {
+              context = { ...context, ...extension };
+            },
+            args: args as TypedSubscriptionArgs<PluginsContext>,
+          });
+
+          if (after) {
+            if (after.onSubscribeResult) {
+              afterCalls.push(after.onSubscribeResult);
+            }
+            if (after.onSubscribeError) {
+              subscribeErrorHandlers.push(after.onSubscribeError);
+            }
+          }
         }
-        if (after.onSubscribeError) {
-          subscribeErrorHandlers.push(after.onSubscribeError);
+
+        if (onResolversHandlers.length) {
+          context[resolversHooksSymbol] = onResolversHandlers;
         }
-        if (after.onResolverCalled) {
-          onResolversHandlers.push(after.onResolverCalled);
-        }
-      }
-    }
 
-    if (onResolversHandlers.length) {
-      context[resolversHooksSymbol] = onResolversHandlers;
-    }
+        let result: AsyncIterableIteratorOrValue<ExecutionResult> = await subscribeFn({
+          ...args,
+          contextValue: context,
+          // Casted for GraphQL.js 15 compatibility
+          // Can be removed once we drop support for GraphQL.js 15
+        });
 
-    let result: AsyncIterableIteratorOrValue<ExecutionResult> = await subscribeFn({
-      ...args,
-      contextValue: context,
-      // Casted for GraphQL.js 15 compatibility
-      // Can be removed once we drop support for GraphQL.js 15
-    });
+        const onNextHandler: OnSubscribeResultResultOnNextHook<PluginsContext>[] = [];
+        const onEndHandler: OnSubscribeResultResultOnEndHook[] = [];
 
-    const onNextHandler: OnSubscribeResultResultOnNextHook<PluginsContext>[] = [];
-    const onEndHandler: OnSubscribeResultResultOnEndHook[] = [];
-
-    for (const afterCb of afterCalls) {
-      const hookResult = afterCb({
-        args: args as TypedSubscriptionArgs<PluginsContext>,
-        result,
-        setResult: newResult => {
-          result = newResult;
-        },
-      });
-      if (hookResult) {
-        if (hookResult.onNext) {
-          onNextHandler.push(hookResult.onNext);
-        }
-        if (hookResult.onEnd) {
-          onEndHandler.push(hookResult.onEnd);
-        }
-      }
-    }
-
-    if (onNextHandler.length && isAsyncIterable(result)) {
-      result = mapAsyncIterator(result, async result => {
-        for (const onNext of onNextHandler) {
-          await onNext({
+        for (const afterCb of afterCalls) {
+          const hookResult = afterCb({
             args: args as TypedSubscriptionArgs<PluginsContext>,
             result,
-            setResult: newResult => (result = newResult),
-          });
-        }
-        return result;
-      });
-    }
-    if (onEndHandler.length && isAsyncIterable(result)) {
-      result = finalAsyncIterator(result, () => {
-        for (const onEnd of onEndHandler) {
-          onEnd();
-        }
-      });
-    }
-
-    if (subscribeErrorHandlers.length && isAsyncIterable(result)) {
-      result = errorAsyncIterator(result, err => {
-        let error = err;
-        for (const handler of subscribeErrorHandlers) {
-          handler({
-            error,
-            setError: err => {
-              error = err;
+            setResult: newResult => {
+              result = newResult;
             },
           });
+          if (hookResult) {
+            if (hookResult.onNext) {
+              onNextHandler.push(hookResult.onNext);
+            }
+            if (hookResult.onEnd) {
+              onEndHandler.push(hookResult.onEnd);
+            }
+          }
         }
-        throw error;
-      });
-    }
 
-    return result as AsyncIterableIterator<ExecutionResult>;
-  });
+        if (onNextHandler.length && isAsyncIterable(result)) {
+          result = mapAsyncIterator(result, async result => {
+            for (const onNext of onNextHandler) {
+              await onNext({
+                args: args as TypedSubscriptionArgs<PluginsContext>,
+                result,
+                setResult: newResult => (result = newResult),
+              });
+            }
+            return result;
+          });
+        }
+        if (onEndHandler.length && isAsyncIterable(result)) {
+          result = finalAsyncIterator(result, () => {
+            for (const onEnd of onEndHandler) {
+              onEnd();
+            }
+          });
+        }
 
-  const customExecute = beforeCallbacks.execute.length
+        if (subscribeErrorHandlers.length && isAsyncIterable(result)) {
+          result = errorAsyncIterator(result, err => {
+            let error = err;
+            for (const handler of subscribeErrorHandlers) {
+              handler({
+                error,
+                setError: err => {
+                  error = err;
+                },
+              });
+            }
+            throw error;
+          });
+        }
+
+        return result as AsyncIterableIterator<ExecutionResult>;
+      })
+    : makeSubscribe(subscribe as any);
+
+  const useCustomExecute = beforeCallbacks.execute.length || onResolversHandlers.length;
+
+  const customExecute = useCustomExecute
     ? makeExecute(async args => {
-        const onResolversHandlers: OnResolverCalledHook[] = [];
         let executeFn = execute as ExecuteFunction;
         let result: AsyncIterableIteratorOrValue<ExecutionResult>;
 
@@ -458,9 +467,6 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
           if (after) {
             if (after.onExecuteDone) {
               afterCalls.push(after.onExecuteDone);
-            }
-            if (after.onResolverCalled) {
-              onResolversHandlers.push(after.onResolverCalled);
             }
           }
         }
