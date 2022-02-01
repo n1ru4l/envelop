@@ -1,5 +1,15 @@
 # @envelop/resource-limitations
 
+## 2.0.0
+
+### Patch Changes
+
+- Updated dependencies [4106e08]
+- Updated dependencies [aac65ef]
+- Updated dependencies [4106e08]
+  - @envelop/core@2.0.0
+  - @envelop/extended-validation@1.3.3
+
 ## 1.0.1
 
 ### Patch Changes
