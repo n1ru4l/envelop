@@ -1,6 +1,6 @@
 ---
 '@envelop/core': major
-'@envelop/core': major
+'@envelop/types': major
 ---
 
 Move `onResolversCalled` from within `OnExecuteHookResult` and `OnSubscribeHookResult` to the `Plugin` type.
