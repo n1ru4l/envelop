@@ -1,5 +1,14 @@
 # @envelop/apollo-federation
 
+## 2.0.0
+
+### Patch Changes
+
+- Updated dependencies [4106e08]
+- Updated dependencies [aac65ef]
+- Updated dependencies [4106e08]
+  - @envelop/core@2.0.0
+
 ## 1.0.0
 
 ### Patch Changes

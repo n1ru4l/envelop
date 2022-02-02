@@ -1,6 +1,6 @@
 {
   "name": "@envelop/depth-limit",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -30,7 +30,7 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "@envelop/core": "^1.6.1",
+    "@envelop/core": "^2.0.0",
     "graphql-depth-limit": "^1.1.0"
   },
   "devDependencies": {

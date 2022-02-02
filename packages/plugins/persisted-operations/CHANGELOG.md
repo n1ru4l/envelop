@@ -1,5 +1,14 @@
 # @envelop/persisted-operations
 
+## 4.0.0
+
+### Patch Changes
+
+- Updated dependencies [4106e08]
+- Updated dependencies [aac65ef]
+- Updated dependencies [4106e08]
+  - @envelop/core@2.0.0
+
 ## 3.0.0
 
 ### Patch Changes
