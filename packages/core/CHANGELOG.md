@@ -4,7 +4,7 @@
 
 ### Major Changes
 
-- aac65ef: Move `onResolversCalled` from within `OnExecuteHookResult` and `OnSubscribeHookResult` to the `Plugin` type.
+- aac65ef: Move `onResolverCalled` from within `OnExecuteHookResult` and `OnSubscribeHookResult` to the `Plugin` type.
 
   ```diff
   import type { Plugin } from "@envelop/core";
@@ -12,19 +12,19 @@
   const plugin: Plugin = {
     onExecute() {
   -    return {
-  -      onResolversCalled() {}
+  -      onResolverCalled() {}
   -    }
   -  }
   +  },
-  +  onResolversCalled() {},
+  +  onResolverCalled() {},
   }
   ```
 
-  We highly recommend avoiding to use any plugins that use `onResolversCalled` within your production environment as it has severe impact on the performance of the individual resolver functions within your schema.
+  We highly recommend avoiding to use any plugins that use `onResolverCalled` within your production environment as it has severe impact on the performance of the individual resolver functions within your schema.
 
-  The schema resolver functions are now ONLY wrapped if any plugin in your envelop setup uses the `onResolversCalled` hook.
+  The schema resolver functions are now ONLY wrapped if any plugin in your envelop setup uses the `onResolverCalled` hook.
 
-  If you need any shared state between `onExecute` and `onResolversCalled` you can share it by extending the context object.
+  If you need any shared state between `onExecute` and `onResolverCalled` you can share it by extending the context object.
 
   ```ts
   import type { Plugin } from '@envelop/core';
@@ -35,7 +35,7 @@
     onExecute({ extendContext }) {
       extendContext({ [sharedStateSymbol]: { value: 1 } });
     },
-    onResolversCalled({ context }) {
+    onResolverCalled({ context }) {
       const sharedState = context[sharedStateSymbol];
       // logs 1
       console.log(sharedState.value);
