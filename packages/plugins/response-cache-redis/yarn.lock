@@ -23,10 +23,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@envelop/response-cache@^1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-1.0.1.tgz#934ad099636298eb34d4508b26cf8ec943c4e820"
-  integrity sha512-vlCGHSLDdsSUSERNL+e6L1vcoJhggtD6+5V6wNbC0/LVXa7/COyUGJEMTO/cvia9uK9YCclvwArpXhRmfXdbSQ==
+"@envelop/response-cache@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-2.0.0.tgz#18e551eb1cf19f7b3bb7f4e80461f2e5f77acc6b"
+  integrity sha512-SbucUGSmLGlBOxqgBq6gaSz07BZ+BJPnJZGFdoLxlpR+PSY+8uVdTb+zLUzgG12JMyJE7s5brw3zVj3s7Xpw4w==
   dependencies:
     "@graphql-tools/utils" "^8.6.1"
     fast-json-stable-stringify "^2.1.0"
@@ -92,10 +92,10 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
   integrity sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
 
-"@types/ioredis@4.28.7":
-  version "4.28.7"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.28.7.tgz#ee79987ef80597ba8c17cfbf9345859ff9233c2d"
-  integrity sha512-jnSGCD2/TPk02j6v6CGqaCEl0LbmLgK6jUuk/AFaSNUBV+SCHiG7E7fnwJreN6hw9GqtLAFkJs4zFbkJrz11mQ==
+"@types/ioredis@4.28.8":
+  version "4.28.8"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.28.8.tgz#a181d6eb70e402a6db670fe54b9c5bb66c0fac17"
+  integrity sha512-mULOyO2smtvkE1zmzRRA4P0+1UjEqusi014kXOL1q3CY0RgqkR5/wKvv+vAJbPw2Q66wPyylKeevUy+m/FaRMg==
   dependencies:
     "@types/node" "*"
 
