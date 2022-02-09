@@ -30,7 +30,6 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "@envelop/core": "^2.0.0",
     "@graphql-tools/utils": "^8.6.1"
   },
   "devDependencies": {
@@ -39,6 +38,7 @@
     "typescript": "4.4.4"
   },
   "peerDependencies": {
+    "@envelop/core": "^2.0.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {
