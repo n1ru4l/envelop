@@ -1,5 +1,11 @@
 # @envelop/extended-validation
 
+## 1.3.4
+
+### Patch Changes
+
+- f102d38: move `@envelop/core` dependency to peerDependencies
+
 ## 1.3.3
 
 ### Patch Changes

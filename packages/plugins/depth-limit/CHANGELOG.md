@@ -1,5 +1,11 @@
 # @envelop/depth-limit
 
+## 1.2.3
+
+### Patch Changes
+
+- f102d38: move `@envelop/core` dependency to peerDependencies
+
 ## 1.2.2
 
 ### Patch Changes

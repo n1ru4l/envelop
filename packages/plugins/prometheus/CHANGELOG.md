@@ -1,5 +1,11 @@
 # @envelop/prometheus
 
+## 6.0.1
+
+### Patch Changes
+
+- f102d38: move `@envelop/core` dependency to peerDependencies
+
 ## 6.0.0
 
 ### Patch Changes
