@@ -30,7 +30,6 @@
     "prepack": "bob prepack"
   },
   "devDependencies": {
-    "@envelop/core": "2.0.0",
     "prom-client": "14.0.1",
     "@graphql-tools/schema": "8.3.1",
     "bob-the-bundler": "1.6.1",
