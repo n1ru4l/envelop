@@ -2392,15 +2392,15 @@
     protobufjs "^6.10.0"
     yargs "^16.1.1"
 
-"@guild-docs/client@1.5.0-alpha-e902571.0":
-  version "1.5.0-alpha-e902571.0"
-  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-1.5.0-alpha-e902571.0.tgz#c9e142de1a86e49f1b07afccf235dfa8ee9e52ee"
-  integrity sha512-G+ZPRDRNUxtWQRKIMHFsZkRGLMwL0rk01oXW3xGDrYnHnkxd/Iogx2ACde5nq7HioQKk9I1gf95FrToXHAHd0g==
+"@guild-docs/client@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-1.4.0.tgz#da852d87315fe9ae4708f934823b4c39db7816ff"
+  integrity sha512-xDkFoT5dbTUQodSpNP4IMRhv7HHcN2bhig5HGu61H3khKEo5Pjdyyhu/w3QdQjVQGfDZQoU7ceiyxrKGXa9+hQ==
   dependencies:
     "@guild-docs/mdx-remote" "^1.0.2"
     "@guild-docs/types" "^1.1.0"
     immer "^9.0.12"
-    next-seo "^5.1.0"
+    next-seo "^5.0.0"
     nprogress "^0.2.0"
     react-icons "4.3.1"
     react-intersection-observer "^8.33.1"
@@ -2408,7 +2408,7 @@
     react-use "^17.3.2"
     remove-markdown "^0.3.0"
     use-immer "^0.6.0"
-    zustand "^3.7.0"
+    zustand "^3.6.9"
 
 "@guild-docs/mdx-remote@^1.0.2":
   version "1.0.2"
@@ -9238,7 +9238,7 @@ next-remote-watch@1.0.0:
     commander "^5.0.0"
     express "^4.17.1"
 
-next-seo@^5.1.0:
+next-seo@^5.0.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/next-seo/-/next-seo-5.1.0.tgz#aa9fd6249a11bf93e6da06fa2a6bc89268936edf"
   integrity sha512-ampuQfNTOi1x+xtRIb6CZGunIo6rQXtMo2Tyu861d5GjJFIwfOXsA4lzCa4+e2rLkyXDyVpavNNUZWa3US9ELw==
@@ -12760,10 +12760,10 @@ yup@^0.31.0:
     property-expr "^2.0.4"
     toposort "^2.0.2"
 
-zustand@^3.7.0:
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.7.0.tgz#a5c68fb06bdee9c63ad829de2432635be6d0ce69"
-  integrity sha512-USzVzLGrvZ8VK1/sEsOAmeqa8N7D3OBdZskVaL7DL89Q4QLTYD053iIlZ5KDidyZ+Od80Dttin/f8ZulOLFFDQ==
+zustand@^3.6.9:
+  version "3.6.9"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.6.9.tgz#f61a756ddea9f95c7ee7cfd3af2f88c10078afbc"
+  integrity sha512-OvDNu/jEWpRnEC7k8xh8GKjqYog7td6FZrLMuHs/IeI8WhrCwV+FngVuwMIFhp5kysZXr6emaeReMqjLGaldAQ==
 
 zwitch@^1.0.0:
   version "1.0.5"
