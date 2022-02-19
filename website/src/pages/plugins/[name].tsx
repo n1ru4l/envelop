@@ -3,7 +3,6 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Link from 'next/link';
 import React from 'react';
 import tw, { styled } from 'twin.macro';
-import { cleanMarkdown } from '@guild-docs/client/utils';
 import { Box, Center, Code, Container, Grid, SimpleGrid } from '@chakra-ui/react';
 import { PackageInstall, RemoteGHMarkdown } from '@guild-docs/client';
 import { buildMDX, CompiledMDX } from '@guild-docs/server';
@@ -85,7 +84,6 @@ export default function PluginPageContent({ data }: PluginPageProps) {
   const pluginData = data[0];
 
   const description = pluginData.stats?.description ? pluginData.stats.description : null;
-
   const title = `${pluginData.title} | Envelop Plugin Hub`;
 
   return (
