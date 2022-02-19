@@ -84,18 +84,7 @@ export default function PluginPageContent({ data }: PluginPageProps) {
 
   const pluginData = data[0];
 
-  const description = pluginData.readme
-    ? // remove all markdown
-      cleanMarkdown(pluginData.readme)
-        // we need description and it is after the package name
-        .split(pluginData.npmPackage)
-        .filter(Boolean)[0]
-        // and before getting started section
-        .split('Getting Started')[0]
-        .split('\n')
-        .filter(Boolean)
-        .join(' ')
-    : null;
+  const description = pluginData.stats?.description ? pluginData.stats.description : null;
 
   const title = `${pluginData.title} | Envelop Plugin Hub`;
 
