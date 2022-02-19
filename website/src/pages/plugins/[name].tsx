@@ -8,7 +8,7 @@ import { Box, Center, Code, Container, Grid, SimpleGrid } from '@chakra-ui/react
 import { PackageInstall, RemoteGHMarkdown } from '@guild-docs/client';
 import { buildMDX, CompiledMDX } from '@guild-docs/server';
 import { getPackagesData, PackageWithStats } from '@guild-docs/server/npm';
-
+import { useSeo } from '@guild-docs/client/Seo';
 import { pluginsArr as packageList } from '../../lib/plugins';
 import Head from 'next/head';
 
@@ -81,6 +81,10 @@ export default function PluginPageContent({ data }: PluginPageProps) {
       </Center>
     );
   }
+
+  const { disableDefault } = useSeo();
+
+  if (disableDefault) disableDefault(true);
 
   const pluginData = data[0];
 
