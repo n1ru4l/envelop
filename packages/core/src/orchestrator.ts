@@ -426,21 +426,18 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
   const customExecute = useCustomExecute
     ? makeExecute(async args => {
         let executeFn = execute as ExecuteFunction;
-        let result: AsyncIterableIteratorOrValue<ExecutionResult>;
+        let result: AsyncIterableIteratorOrValue<ExecutionResult> | undefined;
 
         const afterCalls: OnExecuteDoneHook<PluginsContext>[] = [];
         let context = (args.contextValue as {}) || {};
 
         for (const onExecute of beforeCallbacks.execute) {
-          let stopCalled = false;
-
           const after = await onExecute({
             executeFn,
             setExecuteFn: newExecuteFn => {
               executeFn = newExecuteFn;
             },
             setResultAndStopExecution: stopResult => {
-              stopCalled = true;
               result = stopResult;
             },
             extendContext: extension => {
@@ -460,14 +457,12 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
             args: args as TypedExecutionArgs<PluginsContext>,
           });
 
-          if (stopCalled) {
-            return result!;
+          if (after?.onExecuteDone) {
+            afterCalls.push(after.onExecuteDone);
           }
 
-          if (after) {
-            if (after.onExecuteDone) {
-              afterCalls.push(after.onExecuteDone);
-            }
+          if (result !== undefined) {
+            break;
           }
         }
 
@@ -475,10 +470,12 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
           context[resolversHooksSymbol] = onResolversHandlers;
         }
 
-        result = (await executeFn({
-          ...args,
-          contextValue: context,
-        })) as AsyncIterableIteratorOrValue<ExecutionResult>;
+        if (result === undefined) {
+          result = (await executeFn({
+            ...args,
+            contextValue: context,
+          })) as AsyncIterableIteratorOrValue<ExecutionResult>;
+        }
 
         const onNextHandler: OnExecuteDoneHookResultOnNextHook<PluginsContext>[] = [];
         const onEndHandler: OnExecuteDoneHookResultOnEndHook[] = [];
