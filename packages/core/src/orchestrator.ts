@@ -327,6 +327,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
         const subscribeErrorHandlers: SubscribeErrorHook[] = [];
 
         let context = (args.contextValue as {}) || {};
+        let result: AsyncIterableIteratorOrValue<ExecutionResult> | undefined;
 
         for (const onSubscribe of beforeCallbacks.subscribe) {
           const after = await onSubscribe({
@@ -338,6 +339,9 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
               context = { ...context, ...extension };
             },
             args: args as TypedSubscriptionArgs<PluginsContext>,
+            setResultAndStopExecution: stopResult => {
+              result = stopResult;
+            },
           });
 
           if (after) {
@@ -348,18 +352,24 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
               subscribeErrorHandlers.push(after.onSubscribeError);
             }
           }
+
+          if (result !== undefined) {
+            break;
+          }
         }
 
         if (onResolversHandlers.length) {
           context[resolversHooksSymbol] = onResolversHandlers;
         }
 
-        let result: AsyncIterableIteratorOrValue<ExecutionResult> = await subscribeFn({
-          ...args,
-          contextValue: context,
-          // Casted for GraphQL.js 15 compatibility
-          // Can be removed once we drop support for GraphQL.js 15
-        });
+        if (result === undefined) {
+          result = await subscribeFn({
+            ...args,
+            contextValue: context,
+            // Casted for GraphQL.js 15 compatibility
+            // Can be removed once we drop support for GraphQL.js 15
+          });
+        }
 
         const onNextHandler: OnSubscribeResultResultOnNextHook<PluginsContext>[] = [];
         const onEndHandler: OnSubscribeResultResultOnEndHook[] = [];
