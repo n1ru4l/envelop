@@ -1,5 +1,6 @@
+import { envelop, useSchema } from '@envelop/core';
 import { createTestkit } from '@envelop/testing';
-import { buildSchema, GraphQLError } from 'graphql';
+import { buildSchema, GraphQLError, parse } from 'graphql';
 import { useExtendedValidation } from '../src';
 
 describe('useExtendedValidation', () => {
@@ -52,5 +53,75 @@ describe('useExtendedValidation', () => {
       ],
     }
     `);
+  });
+  it('run extended validation phase exactly once if no validation error occurs', async () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        foo: String!
+      }
+    `);
+    const operation = /* GraphQL */ `
+      {
+        foo
+      }
+    `;
+    let extendedValidationRunCount = 0;
+    const testInstance = createTestkit(
+      [
+        useExtendedValidation({
+          rules: [
+            () => {
+              return {
+                OperationDefinition() {
+                  extendedValidationRunCount = extendedValidationRunCount + 1;
+                },
+              };
+            },
+          ],
+        }),
+        useExtendedValidation({
+          rules: [
+            () => {
+              return {
+                OperationDefinition() {},
+              };
+            },
+          ],
+        }),
+      ],
+      schema
+    );
+
+    await testInstance.execute(operation);
+    expect(extendedValidationRunCount).toEqual(1);
+  });
+  it('execute throws an error if "contextFactory" has not been invoked', async () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        foo: String!
+      }
+    `);
+    const operation = /* GraphQL */ `
+      {
+        foo
+      }
+    `;
+    const { execute } = envelop({
+      plugins: [
+        useSchema(schema),
+        useExtendedValidation({
+          rules: [() => ({})],
+        }),
+      ],
+    })();
+    await expect(
+      execute({
+        document: parse(operation),
+        contextValue: {},
+        schema,
+      })
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `"Plugin has not been properly set up. The 'contextFactory' function is not invoked and the result has not been passed to 'execute'."`
+    );
   });
 });
