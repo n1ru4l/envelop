@@ -17,7 +17,11 @@ type UserType = {
 
 describe('useGenericAuth', () => {
   const schema = makeExecutableSchema({
-    typeDefs: `type Query { test: String! }`,
+    typeDefs: /* GraphQL */ `
+      type Query {
+        test: String!
+      }
+    `,
     resolvers: {
       Query: {
         test: (root, args, context) => context.currentUser?.name || '',
@@ -38,14 +42,15 @@ describe('useGenericAuth', () => {
 
   describe('protect-all', () => {
     const schemaWithDirective = makeExecutableSchema({
-      typeDefs: `
-      ${SKIP_AUTH_DIRECTIVE_SDL}
-      
-      type Query {
-        test: String!
-        public: String @skipAuth
-      }
-      `,
+      typeDefs: [
+        SKIP_AUTH_DIRECTIVE_SDL,
+        /* GraphQL */ `
+          type Query {
+            test: String!
+            public: String @skipAuth
+          }
+        `,
+      ],
       resolvers: {
         Query: {
           test: (root, args, context) => context.currentUser?.name || '',
@@ -271,14 +276,15 @@ describe('useGenericAuth', () => {
 
   describe('auth-directive', () => {
     const schemaWithDirective = makeExecutableSchema({
-      typeDefs: `
-      ${DIRECTIVE_SDL}
-      
-      type Query {
-        protected: String @auth
-        public: String
-      }
-      `,
+      typeDefs: [
+        DIRECTIVE_SDL,
+        /* GraphQL */ `
+          type Query {
+            protected: String @auth
+            public: String
+          }
+        `,
+      ],
       resolvers: {
         Query: {
           protected: (root, args, context) => context.currentUser.name,
@@ -291,7 +297,7 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'protect-single',
+            mode: 'protect-granular',
             resolveUserFn: validresolveUserFn,
           }),
         ],
@@ -308,7 +314,7 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'protect-single',
+            mode: 'protect-granular',
             resolveUserFn: validresolveUserFn,
           }),
         ],
@@ -325,7 +331,7 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'protect-single',
+            mode: 'protect-granular',
             resolveUserFn: invalidresolveUserFn,
           }),
         ],
@@ -342,7 +348,7 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'protect-single',
+            mode: 'protect-granular',
             resolveUserFn: invalidresolveUserFn,
           }),
         ],
@@ -399,19 +405,19 @@ describe('useGenericAuth', () => {
       };
 
       const schemaWithDirectiveWithRole = makeExecutableSchema({
-        typeDefs: `
-        enum Role {
-          ADMIN
-          USER
-        }
-      
-        directive @auth(role: Role! = USER) on FIELD_DEFINITION
-        
-        type Query {
-          protected: String @auth
-          admin: String @auth(role: ADMIN)
-          public: String
-        }
+        typeDefs: /* GraphQL */ `
+          enum Role {
+            ADMIN
+            USER
+          }
+
+          directive @auth(role: Role! = USER) on FIELD_DEFINITION
+
+          type Query {
+            protected: String @auth
+            admin: String @auth(role: ADMIN)
+            public: String
+          }
         `,
         resolvers: {
           Query: {
@@ -426,7 +432,7 @@ describe('useGenericAuth', () => {
         const testInstance = createTestkit(
           [
             useGenericAuth({
-              mode: 'protect-single',
+              mode: 'protect-granular',
               resolveUserFn: invalidRoleResolveUserFn,
               validateUser: validateUserFn,
             }),
@@ -446,7 +452,7 @@ describe('useGenericAuth', () => {
         const testInstance = createTestkit(
           [
             useGenericAuth({
-              mode: 'protect-single',
+              mode: 'protect-granular',
               resolveUserFn: validRoleResolveUserFn,
               validateUser: validateUserFn,
             }),

@@ -64,10 +64,10 @@ export type GenericAuthPluginOptions<UserType extends {} = {}, ContextType exten
        */
       mode: 'protect-all';
       /**
-       * Overrides the default directive name
+       * Overrides the default directive name or extension field for marking a field available for unauthorized users.
        * @default skipAuth
        */
-      authDirectiveName?: 'skipAuth' | string;
+      directiveOrExtensionFieldName?: 'skipAuth' | string;
       /**
        * Customize how the user is validated. E.g. apply authorization role based validation.
        * The validation is applied during the extended validation phase.
@@ -87,12 +87,12 @@ export type GenericAuthPluginOptions<UserType extends {} = {}, ContextType exten
        * resolves the user and inject to authenticated user into the `context`.
        * And checks for `@auth` directives usages to run validation automatically.
        */
-      mode: 'protect-single';
+      mode: 'protect-granular';
       /**
-       * Overrides the default directive name
+       * Overrides the default directive name or extension field for marking a field available only for authorized users.
        * @default auth
        */
-      authDirectiveName?: 'auth' | string;
+      directiveOrExtensionFieldName?: 'auth' | string;
       /**
        * Customize how the user is validated. E.g. apply authorization role based validation.
        * The validation is applied during the extended validation phase.
@@ -123,16 +123,19 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
 }> => {
   const contextFieldName = options.contextFieldName || 'currentUser';
 
-  if (options.mode === 'protect-all' || options.mode === 'protect-single') {
-    const directiveName = options.authDirectiveName ?? (options.mode === 'protect-all' ? 'skipAuth' : 'auth');
+  if (options.mode === 'protect-all' || options.mode === 'protect-granular') {
+    const directiveOrExtensionFieldName =
+      options.directiveOrExtensionFieldName ?? (options.mode === 'protect-all' ? 'skipAuth' : 'auth');
     const validateUser =
       options.validateUser ?? (options.mode === 'protect-all' ? defaultProtectAllValidateFn : defaultProtectSingleValidateFn);
     const extractAuthMeta = (
       input: GraphQLField<any, any>
     ): { fieldAuthDirectiveNode: DirectiveNode | undefined; fieldAuthExtension: unknown } => {
       return {
-        fieldAuthExtension: input.extensions?.[directiveName],
-        fieldAuthDirectiveNode: input.astNode?.directives?.find(directive => directive.name.value === directiveName),
+        fieldAuthExtension: input.extensions?.[directiveOrExtensionFieldName],
+        fieldAuthDirectiveNode: input.astNode?.directives?.find(
+          directive => directive.name.value === directiveOrExtensionFieldName
+        ),
       };
     };
 
