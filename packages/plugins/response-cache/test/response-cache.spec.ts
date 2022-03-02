@@ -4,6 +4,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useValidationCache } from '@envelop/validation-cache';
 import { useResponseCache, createInMemoryCache } from '../src';
 import { useParserCache } from '@envelop/parser-cache';
+import { useLogger } from '@envelop/core';
 
 describe('useResponseCache', () => {
   beforeEach(() => jest.useRealTimers());
@@ -1632,5 +1633,39 @@ describe('useResponseCache', () => {
       }
     `);
     expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not stop other plugins from hooking into "onExecute" and "onExecuteDone"', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          foo: String
+        }
+      `,
+      resolvers: { Query: { foo: () => 'hi' } },
+    });
+    const logs: Array<unknown> = [];
+    const testkit = createTestkit(
+      [
+        useLogger({
+          logFn: eventName => void logs.push(eventName),
+        }),
+        useResponseCache({ ttlPerSchemaCoordinate: { 'Query.foo': Infinity } }),
+      ],
+      schema
+    );
+    const operation = /* GraphQL */ `
+      {
+        foo
+      }
+    `;
+    const result1 = await testkit.execute(operation);
+    assertSingleExecutionValue(result1);
+    const result2 = await testkit.execute(operation);
+    assertSingleExecutionValue(result2);
+    // ensure the response is served from the cache
+    expect(result1).toBe(result2);
+    // we had two invocations.
+    expect(logs).toEqual(['execute-start', 'execute-end', 'execute-start', 'execute-end']);
   });
 });
