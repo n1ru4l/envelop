@@ -1,7 +1,13 @@
-import { assertStreamExecutionValue, collectAsyncIteratorValues, createSpiedPlugin, createTestkit } from '@envelop/testing';
+import {
+  assertSingleExecutionValue,
+  assertStreamExecutionValue,
+  collectAsyncIteratorValues,
+  createSpiedPlugin,
+  createTestkit,
+} from '@envelop/testing';
 import { OnExecuteDoneHookResult, OnSubscribeResultResult } from '@envelop/types';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { execute, ExecutionResult, GraphQLSchema } from 'graphql';
+import { execute, ExecutionResult, GraphQLError, GraphQLSchema } from 'graphql';
 import { schema, query } from './common';
 
 type Deferred<T = void> = {
@@ -110,6 +116,98 @@ describe('execute', () => {
       schema
     );
     await teskit.execute(query);
+  });
+
+  describe('setResultAndStopExecution', () => {
+    it('invoke "onExecuteDone" handlers of already invoked "onExecute" hooks.', async () => {
+      let onExecuteCalled = false;
+      let onExecuteDoneCalled = false;
+      let onExecuteDone2Called = false;
+      const teskit = createTestkit(
+        [
+          {
+            onExecute() {
+              onExecuteCalled = true;
+              return {
+                onExecuteDone: () => {
+                  onExecuteDoneCalled = true;
+                },
+              };
+            },
+          },
+          {
+            onExecute({ setResultAndStopExecution }) {
+              setResultAndStopExecution({ data: null, errors: [new GraphQLError('setResultAndStopExecution.')] });
+
+              return {
+                onExecuteDone() {
+                  onExecuteDone2Called = true;
+                },
+              };
+            },
+          },
+        ],
+        schema
+      );
+      const result = await teskit.execute(query);
+      assertSingleExecutionValue(result);
+      expect(onExecuteCalled).toEqual(true);
+      expect(onExecuteDoneCalled).toEqual(true);
+      expect(onExecuteDone2Called).toEqual(true);
+      expect(result).toMatchInlineSnapshot(`
+        Object {
+          "data": null,
+          "errors": Array [
+            [GraphQLError: setResultAndStopExecution.],
+          ],
+        }
+      `);
+    });
+
+    it('skip invoking "onExecute" and "onExecuteDone" handlers of plugins after a plugin that calls "setResultAndStopExecution".', async () => {
+      let onExecuteCalled = false;
+      let onExecuteDoneCalled = false;
+      let onExecuteDone2Called = false;
+      const teskit = createTestkit(
+        [
+          {
+            onExecute({ setResultAndStopExecution }) {
+              setResultAndStopExecution({ data: null, errors: [new GraphQLError('setResultAndStopExecution.')] });
+
+              return {
+                onExecuteDone() {
+                  onExecuteDone2Called = true;
+                },
+              };
+            },
+          },
+          {
+            onExecute() {
+              onExecuteCalled = true;
+              return {
+                onExecuteDone: () => {
+                  onExecuteDoneCalled = true;
+                },
+              };
+            },
+          },
+        ],
+        schema
+      );
+      const result = await teskit.execute(query);
+      assertSingleExecutionValue(result);
+      expect(onExecuteCalled).toEqual(false);
+      expect(onExecuteDoneCalled).toEqual(false);
+      expect(onExecuteDone2Called).toEqual(true);
+      expect(result).toMatchInlineSnapshot(`
+        Object {
+          "data": null,
+          "errors": Array [
+            [GraphQLError: setResultAndStopExecution.],
+          ],
+        }
+      `);
+    });
   });
 
   it('Should allow to register to before and after resolver calls', async () => {
