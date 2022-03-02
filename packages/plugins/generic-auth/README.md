@@ -6,9 +6,9 @@ This plugin allows you to implement custom authentication flow by providing a cu
 
 There are several possible flows for using this plugin (see below for setup examples):
 
-- **Option #1 - Complete Protection**: protected the entire GraphQL schema from unauthenticated access.
-- **Option #2 - Manual Validation**: the plugin will just resolve the user and injects it into the `context` without validating the user.
-- **Option #3 - Automatic validation using GraphQL directives**: Look for `@auth` directive and automatically protect specific GraphQL fields.
+- **Option #1 - Complete Protection**: protected the entire GraphQL schema from unauthenticated access. Allow unauthenticated access for certain fields by annotating them with a `@skipAuth` directive or `skipAuth` field extension.
+- **Option #2 - Manual Validation**: the plugin will just resolve the user and injects it into the `context` without validating access to schema field.
+- **Option #3 - Granular field access by using schema field directives or field extensions**: Look for an `@auth` directive or `auth` extension field and automatically protect those specific GraphQL fields.
 
 ## Getting Started
 
@@ -102,6 +102,8 @@ const getEnveloped = envelop({
 });
 ```
 
+##### Allow unauthenticated access for specific fields using a field `directive`
+
 > By default, we assume that you have the GraphQL directive definition as part of your GraphQL schema (`directive @skipAuth on FIELD_DEFINITION`).
 
 Then, in your GraphQL schema SDL, you can add `@skipAuth` directive to your fields, and the `validateUser` will not get called while resolving that specific field:
@@ -116,7 +118,28 @@ type Query {
 
 > You can apply that directive to any GraphQL `field` definition, not only to root fields.
 
-> If you are using a different directive for authentication, you can pass `authDirectiveName` configuration to customize it.
+> If you are using a different directive for authentication, you can pass `directiveOrExtensionFieldName` configuration to customize it.
+
+##### Allow unauthenticated access for specific fields using a field extension
+
+```typescript
+import { GraphQLObjectType, GraphQLInt } from 'graphql';
+
+const GraphQLQueryType = new GraphQLObjectType({
+  name: 'Query',
+  fields: {
+    foo: {
+      type: GraphQLInt,
+      resolve: () => 1,
+      extensions: {
+        skipAuth: true,
+      },
+    },
+  },
+});
+```
+
+> If you want to use a different directive for authentication, you can use the `directiveOrExtensionFieldName` configuration to customize it.
 
 #### Option #2 - `resolve-only`
 
@@ -163,9 +186,9 @@ const resolvers = {
 };
 ```
 
-#### Option #3 - `protect-auth-directive`
+#### Option #3 - `protect-granular`
 
-This mode is similar to option #2, but it uses `@auth` SDL directive to automatically protect specific GraphQL fields.
+This mode is similar to option #2, but it uses the `@auth` SDL directive or `auth` field extension for protecting specific GraphQL fields.
 
 ```ts
 import { envelop } from '@envelop/core';
@@ -187,11 +210,13 @@ const getEnveloped = envelop({
     useGenericAuth({
       resolveUserFn,
       validateUser,
-      mode: 'protect-auth-directive',
+      mode: 'protect-granular',
     }),
   ],
 });
 ```
+
+##### Protect a field using a field `directive`
 
 > By default, we assume that you have the GraphQL directive definition as part of your GraphQL schema (`directive @auth on FIELD_DEFINITION`).
 
@@ -207,21 +232,43 @@ type Query {
 
 > You can apply that directive to any GraphQL `field` definition, not only to root fields.
 
-> If you are using a different directive for authentication, you can pass `authDirectiveName` configuration to customize it.
+> If you are using a different directive for authentication, you can pass `directiveOrExtensionFieldName` configuration to customize it.
+
+##### Protect a field using a field extension
+
+```typescript
+import { GraphQLObjectType, GraphQLInt } from 'graphql';
+
+const GraphQLQueryType = new GraphQLObjectType({
+  name: 'Query',
+  fields: {
+    foo: {
+      type: GraphQLInt,
+      resolve: () => 1,
+      extensions: {
+        auth: true,
+      },
+    },
+  },
+});
+```
+
+> If you are using a different field extension for authentication, you can pass `directiveOrExtensionFieldName` configuration to customize it.
 
 ##### Extend authentication with custom directive logic
 
-You can also specify a custom `validateUser` function and get access to the `GraphQLResolveInfo` object while using the `protect-auth-directive` mode:
+You can also specify a custom `validateUser` function and get access to a handy object while using the `protect-all` and `protect-granular` mode:
 
 ```ts
+import { GraphQLError } from 'graphql';
 import { ValidateUserFn } from '@envelop/generic-auth';
 
-const validateUser: ValidateUserFn<UserType> = async (user, context, { root, args, context, info }) => {
+const validateUser: ValidateUserFn<UserType> = async ({ user }) => {
   // Now you can use the 3rd parameter to implement custom logic for user validation, with access
   // to the resolver data and information.
 
   if (!user) {
-    throw new Error(`Unauthenticated!`);
+    return new GraphQLError(`Unauthenticated.`);
   }
 };
 ```
@@ -242,7 +289,7 @@ Then, you use the `directiveNode` parameter to check the arguments:
 ```ts
 import { ValidateUserFn } from '@envelop/generic-auth';
 
-const validateUser: ValidateUserFn<UserType> = async (user, context, { root, args, context, info }, directiveNode) => {
+const validateUser: ValidateUserFn<UserType> = async ({ user, fieldAuthDirectiveNode }) => {
   // Now you can use the 3rd parameter to implement custom logic for user validation, with access
   // to the resolver data and information.
 
@@ -250,7 +297,7 @@ const validateUser: ValidateUserFn<UserType> = async (user, context, { root, arg
     throw new Error(`Unauthenticated!`);
   }
 
-  const valueNode = directiveNode.arguments.find(arg => arg.name.value === 'role').value as EnumValueNode;
+  const valueNode = fieldAuthDirectiveNode.arguments.find(arg => arg.name.value === 'role').value as EnumValueNode;
   const role = valueNode.value;
 
   if (role !== user.role) {
