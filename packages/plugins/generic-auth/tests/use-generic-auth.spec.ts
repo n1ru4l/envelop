@@ -1,7 +1,14 @@
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { EnumValueNode } from 'graphql';
-import { DIRECTIVE_SDL, ResolveUserFn, SKIP_AUTH_DIRECTIVE_SDL, useGenericAuth, ValidateUserFn } from '../src';
+import { EnumValueNode, getIntrospectionQuery } from 'graphql';
+import {
+  DIRECTIVE_SDL,
+  ResolveUserFn,
+  SKIP_AUTH_DIRECTIVE_SDL,
+  useGenericAuth,
+  ValidateUserFn,
+  UnauthenticatedError,
+} from '../src';
 
 type UserType = {
   id: number;
@@ -10,7 +17,11 @@ type UserType = {
 
 describe('useGenericAuth', () => {
   const schema = makeExecutableSchema({
-    typeDefs: `type Query { test: String! }`,
+    typeDefs: /* GraphQL */ `
+      type Query {
+        test: String!
+      }
+    `,
     resolvers: {
       Query: {
         test: (root, args, context) => context.currentUser?.name || '',
@@ -31,20 +42,37 @@ describe('useGenericAuth', () => {
 
   describe('protect-all', () => {
     const schemaWithDirective = makeExecutableSchema({
-      typeDefs: `
-      ${SKIP_AUTH_DIRECTIVE_SDL}
-      
-      type Query {
-        test: String!
-        public: String @skipAuth
-      }
-      `,
+      typeDefs: [
+        SKIP_AUTH_DIRECTIVE_SDL,
+        /* GraphQL */ `
+          type Query {
+            test: String!
+            public: String @skipAuth
+          }
+        `,
+      ],
       resolvers: {
         Query: {
           test: (root, args, context) => context.currentUser?.name || '',
           public: (root, args, context) => 'public',
         },
       },
+    });
+
+    it('handles introspection query operations', async () => {
+      const testInstance = createTestkit(
+        [
+          useGenericAuth({
+            mode: 'protect-all',
+            resolveUserFn: validresolveUserFn,
+          }),
+        ],
+        schemaWithDirective
+      );
+
+      const result = await testInstance.execute(getIntrospectionQuery());
+      assertSingleExecutionValue(result);
+      expect(result.errors).toBeUndefined();
     });
 
     it('Should allow execution when user is authenticated correctly', async () => {
@@ -244,47 +272,19 @@ describe('useGenericAuth', () => {
         })
       );
     });
-
-    it('Should inject validateUser and make it available for the resolver', async () => {
-      const spyFn = jest.fn();
-      const testInstance = createTestkit(
-        [
-          useGenericAuth({
-            mode: 'resolve-only',
-            resolveUserFn: validresolveUserFn,
-          }),
-          {
-            onExecute: spyFn,
-          },
-        ],
-        schema
-      );
-
-      const result = await testInstance.execute(`query { test }`);
-      assertSingleExecutionValue(result);
-      expect(result.errors).toBeUndefined();
-      expect(spyFn).toHaveBeenCalledWith(
-        expect.objectContaining({
-          args: expect.objectContaining({
-            contextValue: expect.objectContaining({
-              validateUser: expect.any(Function),
-            }),
-          }),
-        })
-      );
-    });
   });
 
   describe('auth-directive', () => {
     const schemaWithDirective = makeExecutableSchema({
-      typeDefs: `
-      ${DIRECTIVE_SDL}
-      
-      type Query {
-        protected: String @auth
-        public: String
-      }
-      `,
+      typeDefs: [
+        DIRECTIVE_SDL,
+        /* GraphQL */ `
+          type Query {
+            protected: String @auth
+            public: String
+          }
+        `,
+      ],
       resolvers: {
         Query: {
           protected: (root, args, context) => context.currentUser.name,
@@ -297,7 +297,7 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'protect-auth-directive',
+            mode: 'protect-granular',
             resolveUserFn: validresolveUserFn,
           }),
         ],
@@ -314,7 +314,7 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'protect-auth-directive',
+            mode: 'protect-granular',
             resolveUserFn: validresolveUserFn,
           }),
         ],
@@ -331,7 +331,7 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'protect-auth-directive',
+            mode: 'protect-granular',
             resolveUserFn: invalidresolveUserFn,
           }),
         ],
@@ -348,7 +348,7 @@ describe('useGenericAuth', () => {
       const testInstance = createTestkit(
         [
           useGenericAuth({
-            mode: 'protect-auth-directive',
+            mode: 'protect-granular',
             resolveUserFn: invalidresolveUserFn,
           }),
         ],
@@ -358,27 +358,34 @@ describe('useGenericAuth', () => {
       const result = await testInstance.execute(`query { protected }`);
       assertSingleExecutionValue(result);
       expect(result.errors?.length).toBe(1);
-      expect(result.errors?.[0].message).toBe('Unauthenticated!');
-      expect(result.errors?.[0].path).toEqual(['protected']);
+      expect(result.errors?.[0].message).toBe(`Accessing 'Query.protected' requires authentication.`);
     });
 
     describe('auth directive with role', () => {
       type UserTypeWithRole = UserType & { role: 'ADMIN' | 'USER' };
-      const validateUserFn: ValidateUserFn<UserTypeWithRole> = async (user, _context, _ctx, directiveNode) => {
-        if (!user) {
-          throw new Error(`Unauthenticated!`);
+      const validateUserFn: ValidateUserFn<UserTypeWithRole> = params => {
+        const schemaCoordinate = `${params.objectType.name}.${params.fieldNode.name.value}`;
+        if (!params.user) {
+          return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [params.fieldNode]);
         }
 
-        if (directiveNode?.arguments) {
-          const valueNode = directiveNode.arguments.find(arg => arg.name.value === 'role')?.value as EnumValueNode | undefined;
+        if (params.fieldAuthDirectiveNode?.arguments) {
+          const valueNode = params.fieldAuthDirectiveNode.arguments.find(arg => arg.name.value === 'role')?.value as
+            | EnumValueNode
+            | undefined;
           if (valueNode) {
             const role = valueNode.value;
 
-            if (role !== user.role) {
-              throw new Error('Unauthorized!');
+            if (role !== params.user.role) {
+              return new UnauthenticatedError(
+                `Missing permissions for accessing field '${schemaCoordinate}'. Requires role '${role}'. Request is authenticated with role '${params.user.role}'.`,
+                [params.fieldNode]
+              );
             }
           }
         }
+
+        return undefined;
       };
 
       const invalidRoleResolveUserFn: ResolveUserFn<UserTypeWithRole> = async context => {
@@ -398,19 +405,19 @@ describe('useGenericAuth', () => {
       };
 
       const schemaWithDirectiveWithRole = makeExecutableSchema({
-        typeDefs: `
-        enum Role {
-          ADMIN
-          USER
-        }
-      
-        directive @auth(role: Role! = USER) on FIELD_DEFINITION
-        
-        type Query {
-          protected: String @auth
-          admin: String @auth(role: ADMIN)
-          public: String
-        }
+        typeDefs: /* GraphQL */ `
+          enum Role {
+            ADMIN
+            USER
+          }
+
+          directive @auth(role: Role! = USER) on FIELD_DEFINITION
+
+          type Query {
+            protected: String @auth
+            admin: String @auth(role: ADMIN)
+            public: String
+          }
         `,
         resolvers: {
           Query: {
@@ -425,7 +432,7 @@ describe('useGenericAuth', () => {
         const testInstance = createTestkit(
           [
             useGenericAuth({
-              mode: 'protect-auth-directive',
+              mode: 'protect-granular',
               resolveUserFn: invalidRoleResolveUserFn,
               validateUser: validateUserFn,
             }),
@@ -436,15 +443,16 @@ describe('useGenericAuth', () => {
         const result = await testInstance.execute(`query { admin }`);
         assertSingleExecutionValue(result);
         expect(result.errors?.length).toBe(1);
-        expect(result.errors?.[0].message).toBe('Unauthorized!');
-        expect(result.errors?.[0].path).toEqual(['admin']);
+        expect(result.errors?.[0].message).toBe(
+          `Missing permissions for accessing field 'Query.admin'. Requires role 'ADMIN'. Request is authenticated with role 'USER'.`
+        );
       });
 
       it('Should allow execution when user has right role', async () => {
         const testInstance = createTestkit(
           [
             useGenericAuth({
-              mode: 'protect-auth-directive',
+              mode: 'protect-granular',
               resolveUserFn: validRoleResolveUserFn,
               validateUser: validateUserFn,
             }),
