@@ -34,7 +34,7 @@
     "tiny-lru": "7.0.6"
   },
   "devDependencies": {
-    "graphql-jit": "0.7.2",
+    "graphql-jit": "0.7.3",
     "reflect-metadata": "0.1.13",
     "bob-the-bundler": "1.6.1",
     "graphql": "16.3.0",
