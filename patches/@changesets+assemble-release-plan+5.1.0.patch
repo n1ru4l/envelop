@@ -1,0 +1,36 @@
+diff --git a/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.dev.js b/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.dev.js
+index d2d6b1a..28b20f8 100644
+--- a/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.dev.js
++++ b/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.dev.js
+@@ -130,16 +130,8 @@ function determineDependents({
+           depType,
+           versionRange
+         } of dependencyVersionRanges) {
+-          if (shouldBumpMajor({
+-            dependent,
+-            depType,
+-            versionRange,
+-            releases,
+-            nextRelease,
+-            preInfo,
+-            onlyUpdatePeerDependentsWhenOutOfRange: config.___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH.onlyUpdatePeerDependentsWhenOutOfRange
+-          })) {
+-            type = "major";
++          if (depType === 'peerDependencies' && ['minor', 'major', 'patch'].includes(nextRelease.type)) {
++            type = nextRelease.type
+           } else {
+             if ( // TODO validate this - I don't think it's right anymore
+             (!releases.has(dependent) || releases.get(dependent).type === "none") && (config.___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH.updateInternalDependents === "always" || !semver__default['default'].satisfies(incrementVersion(nextRelease, preInfo), versionRange))) {
+diff --git a/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.js b/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.js
+index f3beb31..04c332f 100644
+--- a/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.js
++++ b/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.js
+@@ -1,7 +1,3 @@
+ 'use strict';
+ 
+-if (process.env.NODE_ENV === "production") {
+-  module.exports = require("./assemble-release-plan.cjs.prod.js");
+-} else {
+-  module.exports = require("./assemble-release-plan.cjs.dev.js");
+-}
++module.exports = require('./assemble-release-plan.cjs.dev.js');
