@@ -218,6 +218,7 @@ Called every time a `subscription` operation is being executed. The return value
 - `subscribeFn` - the `subscribe` function to use, by default it's the one from `graphql` package.
 - `setSubscribeFn` - replaces the `subscribe` function.
 - `extendContext` - allow you to extend the context before executing the operation.
+- `setResultAndStopExecution` - sets the result of the execution immediately. Calling this function will stop execution.
 
 You can return an `object` from that function, with the following fields:
 

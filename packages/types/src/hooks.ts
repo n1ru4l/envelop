@@ -432,6 +432,10 @@ export type OnSubscribeEventPayload<ContextType> = {
    * Extend the context object with a partial.
    */
   extendContext: (contextExtension: Partial<ContextType>) => void;
+  /**
+   * Set a subscribe result and skip calling the subscribe function.
+   */
+  setResultAndStopExecution: (newResult: AsyncIterableIteratorOrValue<ExecutionResult>) => void;
 };
 
 /**
