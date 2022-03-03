@@ -1,5 +1,20 @@
 # @envelop/extended-validation
 
+## 1.4.0
+
+### Minor Changes
+
+- Updated dependencies [78b3db2]
+- Updated dependencies [f5eb436]
+  - @envelop/core@2.1.0
+
+### Patch Changes
+
+- 78b3db2: Run extended validation phase for subscription operations.
+- 8030244: Ensure the extended validation phase only runs once.
+
+  Move shared extended validation rules context instantiation to the `onContextFactory` phase and raise an error when `execute` is invoked without building and passing the `contextValue` returned from `contextFactory`.
+
 ## 1.3.4
 
 ### Patch Changes
