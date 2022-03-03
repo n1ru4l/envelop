@@ -1,5 +1,13 @@
 # @envelop/depth-limit
 
+## 1.3.0
+
+### Minor Changes
+
+- Updated dependencies [78b3db2]
+- Updated dependencies [f5eb436]
+  - @envelop/core@2.1.0
+
 ## 1.2.3
 
 ### Patch Changes

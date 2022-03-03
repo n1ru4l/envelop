@@ -1,5 +1,15 @@
 # @envelop/core
 
+## 2.1.0
+
+### Minor Changes
+
+- 78b3db2: Add `setResultAndStopExecution` to the `onSubscribe` context.
+
+### Patch Changes
+
+- f5eb436: always invoke `onExecutDone` hooks
+
 ## 2.0.0
 
 ### Major Changes
