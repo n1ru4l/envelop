@@ -1,5 +1,15 @@
 # @envelop/newrelic
 
+## 3.2.0
+
+### Minor Changes
+
+- 64d83a2: feat(newrelic): support async iterable results
+
+### Patch Changes
+
+- 64d83a2: enhance(newrelic): import newrelic only if plugin is enabled
+
 ## 3.1.0
 
 ### Minor Changes
