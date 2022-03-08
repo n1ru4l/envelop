@@ -34,6 +34,18 @@
     },
   });
   ```
+  
+  The `validateUser` function is no longer attached to the `context` object passed to the resolvers. You can add your own `validateUser` function to the context using `useExtendContext`.
+  
+  ```typescript
+  const getEnveloped = envelop({
+    plugins: [
+      useSchema(schema),
+      useGenericAuth(options),
+      useExtendContext(() => ({ validateUser })),
+    ],
+  });
+  ```
 
 ### Minor Changes
 
