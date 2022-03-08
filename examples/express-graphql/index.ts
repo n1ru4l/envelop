@@ -22,32 +22,22 @@ const getEnveloped = envelop({
 
 const app = express();
 
-/**
- * Because all functions are executed in sync order within express-graphql,
- * we can use this hack for ensuring the same scope across all three functions.
- * @source https://github.com/graphql/express-graphql/blob/f4414b44996f25a5328e523d9a4b213fd1d70b16/src/index.ts#L267-L323
- */
-let latestEnvelop: ReturnType<typeof getEnveloped>;
-
 app.use(
   '/graphql',
-  graphqlHTTP({
-    schema,
-    graphiql: true,
-    customParseFn: source => {
-      latestEnvelop = getEnveloped();
-      return latestEnvelop.parse(source);
-    },
-    customValidateFn: (...args) => {
-      return latestEnvelop.validate(...args);
-    },
-    customExecuteFn: async args => {
-      const { execute, contextFactory } = latestEnvelop;
-      return execute({
-        ...args,
-        contextValue: await contextFactory(),
-      });
-    },
+  graphqlHTTP(async (req, res) => {
+    const { parse, validate, contextFactory, execute } = getEnveloped({ req, res });
+    return {
+      schema,
+      graphiql: true,
+      customParseFn: parse,
+      customValidateFn: validate,
+      customExecuteFn: async args => {
+        return execute({
+          ...args,
+          contextValue: await contextFactory(),
+        });
+      },
+    };
   })
 );
 
