@@ -19,7 +19,8 @@
     "./examples/cloudflare-workers",
     "./examples/with-esm",
     "./examples/typegraphql",
-    "./examples/nexus"
+    "./examples/nexus",
+    "./examples/express-graphql"
   ],
   "scripts": {
     "prepare": "husky install",
