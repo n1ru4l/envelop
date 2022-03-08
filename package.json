@@ -55,7 +55,7 @@
     "apollo-server": "3.5.0",
     "benchmark": "2.1.4",
     "bob-the-bundler": "1.6.1",
-    "chalk": "5.0.0",
+    "chalk": "5.0.1",
     "eslint": "7.32.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-config-standard": "16.0.3",
