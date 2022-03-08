@@ -1,8 +1,5 @@
-import newRelic from 'newrelic';
 import { Plugin, OnResolverCalledHook, Path, isAsyncIterable, EnvelopError } from '@envelop/core';
-import { print, FieldNode, Kind, OperationDefinitionNode } from 'graphql';
-
-const { shim: instrumentationApi } = newRelic;
+import { print, FieldNode, Kind, OperationDefinitionNode, ExecutionResult } from 'graphql';
 
 enum AttributeName {
   COMPONENT_NAME = 'Envelop_NewRelic_Plugin',
@@ -61,15 +58,22 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
   };
   options.isExecuteVariablesRegex = options.includeExecuteVariables instanceof RegExp;
   options.isResolverArgsRegex = options.includeResolverArgs instanceof RegExp;
-  const logger = instrumentationApi.logger.child({ component: AttributeName.COMPONENT_NAME });
-  logger.info(`${AttributeName.COMPONENT_NAME} registered`);
+  const instrumentationApi$ = import('newrelic')
+    .then(m => m.default || m)
+    .then(({ shim }) => {
+      shim.agent.metrics.getOrCreateMetric(`Supportability/ExternalModules/${AttributeName.COMPONENT_NAME}`).incrementCallCount();
+      return shim;
+    });
 
-  instrumentationApi.agent.metrics
-    .getOrCreateMetric(`Supportability/ExternalModules/${AttributeName.COMPONENT_NAME}`)
-    .incrementCallCount();
+  const logger$ = instrumentationApi$.then(({ logger }) => {
+    const childLogger = logger.child({ component: AttributeName.COMPONENT_NAME });
+    childLogger.info(`${AttributeName.COMPONENT_NAME} registered`);
+    return childLogger;
+  });
 
   return {
-    onExecute({ args }) {
+    async onExecute({ args }) {
+      const instrumentationApi = await instrumentationApi$;
       const transactionNameState = instrumentationApi.agent.tracer.getTransaction().nameState;
       const spanContext = instrumentationApi.agent.tracer.getSpanContext();
       const delimiter = transactionNameState.delimiter;
@@ -115,7 +119,8 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
       const operationSegment = instrumentationApi.getActiveSegment();
 
       const onResolverCalled: OnResolverCalledHook | undefined = options.trackResolvers
-        ? ({ args: resolversArgs, info }) => {
+        ? async ({ args: resolversArgs, info }) => {
+            const logger = await logger$;
             const { returnType, path, parentType } = info;
             const formattedPath = flattenPath(path, delimiter);
             const currentSegment = instrumentationApi.getActiveSegment();
@@ -169,30 +174,33 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
       return {
         onResolverCalled,
         onExecuteDone({ result }) {
-          if (isAsyncIterable(result)) {
-            operationSegment.end();
-            // eslint-disable-next-line no-console
-            console.warn(
-              `Plugin "newrelic" encountered a AsyncIterator which is not supported yet, so tracing data is not available for the operation.`
-            );
-
-            return;
-          }
-
-          if (result.data && options.includeRawResult) {
-            spanContext.addCustomAttribute(AttributeName.EXECUTION_RESULT, JSON.stringify(result));
-          }
-
-          if (result.errors && result.errors.length > 0) {
-            const agent = instrumentationApi.agent;
-            const transaction = instrumentationApi.tracer.getTransaction();
-
-            for (const error of result.errors) {
-              agent.errors.add(transaction, JSON.stringify(error));
+          const sendResult = (singularResult: ExecutionResult) => {
+            if (singularResult.data && options.includeRawResult) {
+              spanContext.addCustomAttribute(AttributeName.EXECUTION_RESULT, JSON.stringify(singularResult));
             }
-          }
 
+            if (singularResult.errors && singularResult.errors.length > 0) {
+              const agent = instrumentationApi.agent;
+              const transaction = instrumentationApi.tracer.getTransaction();
+
+              for (const error of singularResult.errors) {
+                agent.errors.add(transaction, JSON.stringify(error));
+              }
+            }
+          };
+          if (isAsyncIterable(result)) {
+            return {
+              onNext: ({ result: singularResult }) => {
+                sendResult(singularResult);
+              },
+              onEnd: () => {
+                operationSegment.end();
+              },
+            };
+          }
+          sendResult(result);
           operationSegment.end();
+          return {};
         },
       };
     },
