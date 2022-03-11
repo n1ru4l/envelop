@@ -7,6 +7,7 @@ import {
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { execute, subscribe } from 'graphql';
 import { useGraphQlJit } from '../src';
+import lru from 'tiny-lru';
 
 describe('useGraphQlJit', () => {
   const schema = makeExecutableSchema({
@@ -130,6 +131,7 @@ describe('useGraphQlJit', () => {
     assertSingleExecutionValue(result);
     expect(result.data?.test).toBe('boop');
   });
+
   it('Should subscribe correctly', async () => {
     const testInstance = createTestkit([useGraphQlJit()], schema);
     const result = await testInstance.execute(`subscription { count }`);
@@ -138,5 +140,27 @@ describe('useGraphQlJit', () => {
     for (let i = 0; i < 10; i++) {
       expect(values[i].data?.count).toBe(i);
     }
+  });
+
+  it('Should use the provided cache instance', async () => {
+    const cache = lru();
+    jest.spyOn(cache, 'set');
+    jest.spyOn(cache, 'get');
+
+    const testInstance = createTestkit(
+      [
+        useGraphQlJit(
+          {},
+          {
+            cache,
+          }
+        ),
+      ],
+      schema
+    );
+
+    await testInstance.execute(`query { test }`);
+    expect(cache.get).toHaveBeenCalled();
+    expect(cache.set).toHaveBeenCalled();
   });
 });
