@@ -68,8 +68,6 @@ const getEnveloped = envelop({
         // your compiler options here
       },
       {
-        max: 1000, // Number of items to keep in cache (defaults to 1000)
-        ttl: 3600000, // Time to live for items in cache (defaults to 3600000 - one hour)
         cache: lru(), // Pass in a custom cache instance, by default a new LRU cache is created which uses the default `max` and `ttl` settings
       }
     ),

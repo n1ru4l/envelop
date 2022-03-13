@@ -29,26 +29,14 @@ export const useGraphQlJit = (
      */
     onError?: (r: ExecutionResult) => void;
     /**
-     * Maximum size of LRU Cache
-     * @default 1000
-     */
-    max?: number;
-    /**
-     * TTL in milliseconds
-     * @default 3600000
-     */
-    ttl?: number;
-    /**
      * Custom cache instance
      */
     cache?: JITCache;
   } = {}
 ): Plugin => {
-  const max = typeof pluginOptions.max === 'number' ? pluginOptions.max : DEFAULT_MAX;
-  const ttl = typeof pluginOptions.ttl === 'number' ? pluginOptions.ttl : DEFAULT_TTL;
-
   const documentSourceMap = new WeakMap<DocumentNode, string>();
-  const jitCache = typeof pluginOptions.cache !== 'undefined' ? pluginOptions.cache : lru<JITCacheEntry>(max, ttl);
+  const jitCache =
+    typeof pluginOptions.cache !== 'undefined' ? pluginOptions.cache : lru<JITCacheEntry>(DEFAULT_MAX, DEFAULT_TTL);
 
   function getCacheEntry<T>(args: TypedExecutionArgs<T>): JITCacheEntry {
     let cacheEntry: JITCacheEntry | undefined;
