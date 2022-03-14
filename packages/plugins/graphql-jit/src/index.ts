@@ -7,6 +7,16 @@ import lru from 'tiny-lru';
 const DEFAULT_MAX = 1000;
 const DEFAULT_TTL = 3600000;
 
+type JITCacheEntry = {
+  query: CompiledQuery['query'];
+  subscribe?: CompiledQuery['subscribe'];
+};
+
+export interface JITCache {
+  get(key: string): JITCacheEntry | undefined;
+  set(key: string, value: JITCacheEntry): void;
+}
+
 export const useGraphQlJit = (
   compilerOptions: Partial<CompilerOptions> = {},
   pluginOptions: {
@@ -19,26 +29,14 @@ export const useGraphQlJit = (
      */
     onError?: (r: ExecutionResult) => void;
     /**
-     * Maximum size of LRU Cache
-     * @default 1000
+     * Custom cache instance
      */
-    max?: number;
-    /**
-     * TTL in milliseconds
-     * @default 3600000
-     */
-    ttl?: number;
+    cache?: JITCache;
   } = {}
 ): Plugin => {
-  const max = typeof pluginOptions.max === 'number' ? pluginOptions.max : DEFAULT_MAX;
-  const ttl = typeof pluginOptions.ttl === 'number' ? pluginOptions.ttl : DEFAULT_TTL;
-
   const documentSourceMap = new WeakMap<DocumentNode, string>();
-  type JITCacheEntry = {
-    query: CompiledQuery['query'];
-    subscribe?: CompiledQuery['subscribe'];
-  };
-  const jitCache = lru<JITCacheEntry>(max, ttl);
+  const jitCache =
+    typeof pluginOptions.cache !== 'undefined' ? pluginOptions.cache : lru<JITCacheEntry>(DEFAULT_MAX, DEFAULT_TTL);
 
   function getCacheEntry<T>(args: TypedExecutionArgs<T>): JITCacheEntry {
     let cacheEntry: JITCacheEntry | undefined;
