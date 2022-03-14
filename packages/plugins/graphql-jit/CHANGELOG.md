@@ -1,5 +1,11 @@
 # @envelop/graphql-jit
 
+## 4.0.0
+
+### Major Changes
+
+- f8f8189: useGraphQlJit plugin: Remove `max` and `ttl` options, adding support for passing in a cache instance instead.
+
 ## 3.1.0
 
 ### Minor Changes
