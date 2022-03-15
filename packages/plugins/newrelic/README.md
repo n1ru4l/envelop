@@ -45,7 +45,7 @@ const getEnveloped = envelop({
       includeResolverArgs: false, // default `false`. When set to `true`, includes all the arguments passed to resolvers with their values
       rootFieldsNaming: true, // default `false`. When set to `true` append the names of operation root fields to the transaction name
       skipError: error => { ... return true; }, // a function that allows you to skip reporting a given error to NewRelic. By default custom `EnvelopError`s will be skipped
-      operationNameProperty: 'id', // default empty. When passed will check for the property name passed, within the document object. Will eventually use its value as operation name. Useful for custom document properties (e.g. queryId/hash)
+      extractOperationName: (context) => context.request.body.customOperationName, // Allows to set a custom operation name to be used as transaction name and attribute
     }),
   ],
 });
