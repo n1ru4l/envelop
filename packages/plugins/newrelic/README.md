@@ -44,6 +44,7 @@ const getEnveloped = envelop({
       trackResolvers: true, // default `false`. When set to `true`, track resolvers as segments to monitor their performance
       includeResolverArgs: false, // default `false`. When set to `true`, includes all the arguments passed to resolvers with their values
       rootFieldsNaming: true, // default `false`. When set to `true` append the names of operation root fields to the transaction name
+      skipError: error => { ... return true; }, // a function that allows you to skip reporting a given error to NewRelic. By default custom `EnvelopError`s will be skipped
       operationNameProperty: 'id', // default empty. When passed will check for the property name passed, within the document object. Will eventually use its value as operation name. Useful for custom document properties (e.g. queryId/hash)
     }),
   ],
@@ -62,9 +63,9 @@ Below is a quick example of how you can use RegEx to set up white/black listing 
 
 ```ts
 useNewRelic({
-  includeExecuteVariables: /^(client.*|application.*)$.*$/i, // whitelist, track only variables whose name starts with client or application (e.g. clientName, applicationId)
+  includeExecuteVariables: /client|application/i, // whitelist, track only variables whose name contains "client" or "application" (e.g. clientName, applicationId, xApplicationId)
   trackResolvers: true, // track resolvers, since we also want to track resolvers' arguments
-  includeResolverArgs: /^(?!(name|email|password)$).*$/, // blacklist, track all arguments whose name does not match 'name', 'email' nor 'password'
+  includeResolverArgs: /^(?!name|email|password).*/i, // blacklist, track all arguments whose name does not match 'name', 'email' nor 'password'
 }),
 ```
 

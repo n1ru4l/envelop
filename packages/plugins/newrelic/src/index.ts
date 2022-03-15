@@ -1,5 +1,5 @@
 import { Plugin, OnResolverCalledHook, Path, isAsyncIterable, EnvelopError } from '@envelop/core';
-import { print, FieldNode, Kind, OperationDefinitionNode, ExecutionResult } from 'graphql';
+import { print, FieldNode, Kind, OperationDefinitionNode, ExecutionResult, GraphQLError } from 'graphql';
 
 enum AttributeName {
   COMPONENT_NAME = 'Envelop_NewRelic_Plugin',
@@ -25,10 +25,10 @@ export type UseNewRelicOptions = {
   rootFieldsNaming?: boolean;
   operationNameProperty?: string;
   /**
-   * Indicates whether or not to skip Sentry exception reporting for a given error.
-   * By default, this plugin skips all `EnvelopError` errors and does not report it to Sentry.
+   * Indicates whether or not to skip reporting a given error to NewRelic.
+   * By default, this plugin skips all `EnvelopError` errors and does not report them to NewRelic.
    */
-  skipError?: (args: Error) => boolean;
+  skipError?: (error: GraphQLError) => boolean;
 };
 
 interface InternalOptions extends UseNewRelicOptions {
@@ -47,8 +47,8 @@ const DEFAULT_OPTIONS: UseNewRelicOptions = {
   skipError: defaultSkipError,
 };
 
-export function defaultSkipError(error: Error): boolean {
-  return error instanceof EnvelopError;
+export function defaultSkipError(error: GraphQLError): boolean {
+  return error.originalError instanceof EnvelopError;
 }
 
 export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
@@ -161,11 +161,6 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
                 resolverSegment.addAttribute(AttributeName.RESOLVER_RESULT, JSON.stringify(result));
               }
 
-              if (result instanceof Error && !options.skipError?.(result)) {
-                const transaction = instrumentationApi.tracer.getTransaction();
-                instrumentationApi.agent.errors.add(transaction, JSON.stringify(result));
-              }
-
               resolverSegment.end();
             };
           }
@@ -184,6 +179,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
               const transaction = instrumentationApi.tracer.getTransaction();
 
               for (const error of singularResult.errors) {
+                if (options.skipError?.(error)) continue;
                 agent.errors.add(transaction, JSON.stringify(error));
               }
             }
