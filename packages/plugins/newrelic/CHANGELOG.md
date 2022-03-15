@@ -1,5 +1,11 @@
 # @envelop/newrelic
 
+## 3.2.1
+
+### Patch Changes
+
+- cfd45e1: Fix skipError function implementation by applying it to onExecuteDone
+
 ## 3.2.0
 
 ### Minor Changes
