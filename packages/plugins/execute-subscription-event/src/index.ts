@@ -20,7 +20,7 @@ export type ContextFactoryType<TContextValue = DefaultContext> = (
 
 export const useExtendContextValuePerExecuteSubscriptionEvent = <TContextValue = unknown>(
   createContext: ContextFactoryType<TContextValue>
-): Plugin<TContextValue> => {
+): Plugin<{}, TContextValue> => {
   return {
     onSubscribe({ args, setSubscribeFn }) {
       const executeNew = makeExecute(async executionArgs => {

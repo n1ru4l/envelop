@@ -8,7 +8,7 @@ export const ONE_OF_DIRECTIVE_SDL = /* GraphQL */ `
 
 type VariableValue = null | undefined | string | number | VariableValue[] | { [key: string]: VariableValue };
 
-export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext, executionArgs) => {
+export const OneOfInputObjectsRule: ExtendedValidationRule<unknown> = (validationContext, executionArgs) => {
   return {
     Field: node => {
       if (node.arguments?.length) {

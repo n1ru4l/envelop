@@ -12,7 +12,14 @@ export { GraphQLLiveDirective };
 export const GraphQLLiveDirectiveAST = astFromDirective(GraphQLLiveDirective);
 export const GraphQLLiveDirectiveSDL = print(GraphQLLiveDirectiveAST);
 
-export const useLiveQuery = (opts: UseLiveQueryOptions): Plugin => {
+export const useLiveQuery = (
+  opts: UseLiveQueryOptions
+): Plugin<
+  {},
+  {
+    liveQueryStore: InMemoryLiveQueryStore;
+  }
+> => {
   return {
     onExecute: ({ executeFn, setExecuteFn }) => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

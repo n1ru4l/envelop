@@ -43,7 +43,7 @@ function getOperation(document: DocumentNode): OperationDefinitionNode {
   return document.definitions[0] as OperationDefinitionNode;
 }
 
-export function createInternalContext(parseResult: AfterParseEventPayload<any>['result']): FillLabelsFnParams | null {
+export function createInternalContext(parseResult: AfterParseEventPayload<any, any>['result']): FillLabelsFnParams | null {
   if (parseResult === null) {
     return null;
   } else if (parseResult instanceof Error) {

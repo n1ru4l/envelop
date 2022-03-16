@@ -74,7 +74,7 @@ export type ResourceLimitationValidationRuleParams = {
  * Validate whether a user is allowed to execute a certain GraphQL operation.
  */
 export const ResourceLimitationValidationRule =
-  (params: ResourceLimitationValidationRuleParams): ExtendedValidationRule =>
+  (params: ResourceLimitationValidationRuleParams): ExtendedValidationRule<unknown> =>
   (context, executionArgs) => {
     const { paginationArgumentMaximum, paginationArgumentMinimum } = params;
     const nodeCostStack: Array<number> = [];

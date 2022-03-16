@@ -37,6 +37,10 @@ type ScopeContext = {
   schemaCoordinates: Set<string>;
 };
 
+type PluginContext = {
+  [OPERATION_PERMISSIONS_SYMBOL]: ScopeContext;
+};
+
 const getContext = (input: unknown): ScopeContext => {
   if (typeof input !== 'object' || !input || !(OPERATION_PERMISSIONS_SYMBOL in input)) {
     throw new Error('OperationScopeRule was used without context.');
@@ -52,7 +56,7 @@ type OperationScopeRuleOptions = {
  * Validate whether a user is allowed to execute a certain GraphQL operation.
  */
 const OperationScopeRule =
-  (options: OperationScopeRuleOptions): ExtendedValidationRule =>
+  (options: OperationScopeRuleOptions): ExtendedValidationRule<PluginContext> =>
   (context, executionArgs) => {
     const permissionContext = getContext(executionArgs.contextValue);
 
@@ -119,7 +123,7 @@ type OperationScopeOptions<TContext> = {
 
 const defaultFormatError = (schemaCoordinate: string) => `Insufficient permissions for selecting '${schemaCoordinate}'.`;
 
-export const useOperationFieldPermissions = <TContext>(opts: OperationScopeOptions<TContext>): Plugin => {
+export const useOperationFieldPermissions = <TContext>(opts: OperationScopeOptions<TContext>): Plugin<{}, PluginContext> => {
   return {
     onPluginInit({ addPlugin }) {
       addPlugin(

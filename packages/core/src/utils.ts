@@ -171,10 +171,10 @@ export function isAsyncIterable<TType>(maybeAsyncIterable: unknown): maybeAsyncI
  * @param fn The handler to be executed on each result
  * @returns a subscription for streamed results, or undefined in case of an non-async
  */
-export function handleStreamOrSingleExecutionResult<ContextType = DefaultContext>(
-  payload: OnExecuteDoneEventPayload<ContextType>,
-  fn: OnExecuteDoneHookResultOnNextHook<ContextType>
-): void | OnExecuteDoneHookResult<ContextType> {
+export function handleStreamOrSingleExecutionResult<TInputContext = DefaultContext, TOutputContext = TInputContext>(
+  payload: OnExecuteDoneEventPayload<TInputContext, TOutputContext>,
+  fn: OnExecuteDoneHookResultOnNextHook<TInputContext, TOutputContext>
+): void | OnExecuteDoneHookResult<TInputContext, TOutputContext> {
   if (isAsyncIterable(payload.result)) {
     return { onNext: fn };
   } else {

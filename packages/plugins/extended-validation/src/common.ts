@@ -1,15 +1,10 @@
-import {
-  ASTVisitor,
-  DirectiveNode,
-  ExecutionArgs,
-  GraphQLNamedType,
-  GraphQLType,
-  isListType,
-  isNonNullType,
-  ValidationContext,
-} from 'graphql';
+import { TypedExecutionArgs } from '@envelop/core';
+import { ASTVisitor, DirectiveNode, GraphQLNamedType, GraphQLType, isListType, isNonNullType, ValidationContext } from 'graphql';
 
-export type ExtendedValidationRule = (context: ValidationContext, executionArgs: ExecutionArgs) => ASTVisitor;
+export type ExtendedValidationRule<ContextType> = (
+  context: ValidationContext,
+  executionArgs: TypedExecutionArgs<ContextType>
+) => ASTVisitor;
 
 export function getDirectiveFromAstNode(
   astNode: { directives?: ReadonlyArray<DirectiveNode> },

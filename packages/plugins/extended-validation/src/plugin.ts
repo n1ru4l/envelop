@@ -1,4 +1,4 @@
-import { Plugin, TypedSubscriptionArgs } from '@envelop/core';
+import { Plugin, TypedSubscriptionArgs, OnExecuteHook, OnSubscribeHook } from '@envelop/core';
 import {
   ExecutionArgs,
   ExecutionResult,
@@ -13,8 +13,8 @@ import { ExtendedValidationRule } from './common';
 
 const symbolExtendedValidationRules = Symbol('extendedValidationContext');
 
-type ExtendedValidationContext = {
-  rules: Array<ExtendedValidationRule>;
+type ExtendedValidationContext<ContextType> = {
+  rules: Array<ExtendedValidationRule<ContextType>>;
   didRun: boolean;
 };
 
@@ -24,13 +24,15 @@ type OnValidationFailedCallback = (params: {
   setResult: (result: ExecutionResult) => void;
 }) => void;
 
-export const useExtendedValidation = (options: {
-  rules: Array<ExtendedValidationRule>;
+type PluginContext<TContextValue> = { [symbolExtendedValidationRules]: ExtendedValidationContext<TContextValue> };
+
+export const useExtendedValidation = <TContextValue = unknown>(options: {
+  rules: Array<ExtendedValidationRule<TContextValue>>;
   /**
    * Callback that is invoked if the extended validation yields any errors.
    */
   onValidationFailed?: OnValidationFailedCallback;
-}): Plugin => {
+}): Plugin<PluginContext<TContextValue>, PluginContext<TContextValue>> => {
   let schemaTypeInfo: TypeInfo;
 
   function getTypeInfo(): TypeInfo | undefined {
@@ -43,7 +45,7 @@ export const useExtendedValidation = (options: {
     },
     onContextBuilding({ context, extendContext }) {
       // We initialize the validationRules context in onContextBuilding as onExecute is already too late!
-      let validationRulesContext: undefined | ExtendedValidationContext = context[symbolExtendedValidationRules];
+      let validationRulesContext = context[symbolExtendedValidationRules];
       if (validationRulesContext === undefined) {
         validationRulesContext = {
           rules: [],
@@ -55,8 +57,14 @@ export const useExtendedValidation = (options: {
       }
       validationRulesContext.rules.push(...options.rules);
     },
-    onSubscribe: buildHandler('subscribe', getTypeInfo, options.onValidationFailed),
-    onExecute: buildHandler('execute', getTypeInfo, options.onValidationFailed),
+    onSubscribe: buildHandler('subscribe', getTypeInfo, options.onValidationFailed) as OnSubscribeHook<
+      PluginContext<TContextValue>,
+      PluginContext<TContextValue>
+    >,
+    onExecute: buildHandler('execute', getTypeInfo, options.onValidationFailed) as OnExecuteHook<
+      PluginContext<TContextValue>,
+      PluginContext<TContextValue>
+    >,
   };
 };
 
@@ -69,14 +77,14 @@ function buildHandler(
     args,
     setResultAndStopExecution,
   }: {
-    args: TypedSubscriptionArgs<any>;
+    args: TypedSubscriptionArgs<PluginContext<unknown>>;
     setResultAndStopExecution: (newResult: ExecutionResult) => void;
   }) {
     // We hook into onExecute/onSubscribe even though this is a validation pattern. The reasoning behind
     // it is that hooking right after validation and before execution has started is the
     // same as hooking into the validation step. The benefit of this approach is that
     // we may use execution context in the validation rules.
-    const validationRulesContext: ExtendedValidationContext | undefined = args.contextValue[symbolExtendedValidationRules];
+    const validationRulesContext = args.contextValue[symbolExtendedValidationRules];
     if (validationRulesContext === undefined) {
       throw new Error(
         'Plugin has not been properly set up. ' +

@@ -1,4 +1,4 @@
-import { DefaultContext, Plugin } from '@envelop/core';
+import { DefaultContext, Plugin, TypedExecutionArgs } from '@envelop/core';
 import {
   DirectiveNode,
   FieldNode,
@@ -116,11 +116,13 @@ export function defaultProtectSingleValidateFn<UserType>(params: ValidateUserFnP
   }
 }
 
+type PluginContext<UserType> = {
+  validateUser: ValidateUserFn<UserType>;
+};
+
 export const useGenericAuth = <UserType extends {} = {}, ContextType extends DefaultContext = DefaultContext>(
   options: GenericAuthPluginOptions<UserType, ContextType>
-): Plugin<{
-  validateUser: ValidateUserFn<UserType>;
-}> => {
+): Plugin<{}, PluginContext<UserType>> => {
   const contextFieldName = options.contextFieldName || 'currentUser';
 
   if (options.mode === 'protect-all' || options.mode === 'protect-granular') {
@@ -144,8 +146,8 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
         addPlugin(
           useExtendedValidation({
             rules: [
-              function AuthorizationExtendedValidationRule(context, args) {
-                const user = (args.contextValue as any)[contextFieldName];
+              function AuthorizationExtendedValidationRule(context, args: TypedExecutionArgs<PluginContext<UserType>>) {
+                const user = args.contextValue[contextFieldName];
 
                 const handleField = (fieldNode: FieldNode, objectType: GraphQLObjectType) => {
                   const field = objectType.getFields()[fieldNode.name.value];

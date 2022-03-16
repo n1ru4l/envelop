@@ -33,7 +33,7 @@ type PluginInternalContext = {
   [promPluginExecutionStartTimeSymbol]: number;
 };
 
-export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugin<PluginInternalContext> => {
+export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugin<{}, PluginInternalContext> => {
   let typeInfo: TypeInfo | null = null;
 
   const parseHistogram = getHistogramFromConfig(
@@ -176,7 +176,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
         })
       : undefined;
 
-  const onParse: OnParseHook<PluginInternalContext> = ({ context, extendContext, params }) => {
+  const onParse: OnParseHook<{}, PluginInternalContext> = ({ context, extendContext, params }) => {
     if (config.skipIntrospection && isIntrospectionOperationString(params.source)) {
       return;
     }
@@ -224,7 +224,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
     };
   };
 
-  const onValidate: OnValidateHook<PluginInternalContext> | undefined = validateHistogram
+  const onValidate: OnValidateHook<{}, PluginInternalContext> | undefined = validateHistogram
     ? ({ context }) => {
         if (!context[promPluginContext]) {
           return undefined;
@@ -234,7 +234,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
 
         return ({ valid }) => {
           const totalTime = (Date.now() - startTime) / 1000;
-          const labels = validateHistogram.fillLabelsFn(context[promPluginContext], context);
+          const labels = validateHistogram.fillLabelsFn(context[promPluginContext]!, context);
           validateHistogram.histogram.observe(labels, totalTime);
 
           if (!valid) {
@@ -249,7 +249,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
       }
     : undefined;
 
-  const onContextBuilding: OnContextBuildingHook<PluginInternalContext> | undefined = contextBuildingHistogram
+  const onContextBuilding: OnContextBuildingHook<{}, PluginInternalContext> | undefined = contextBuildingHistogram
     ? ({ context }) => {
         if (!context[promPluginContext]) {
           return undefined;
@@ -259,15 +259,18 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
 
         return () => {
           const totalTime = (Date.now() - startTime) / 1000;
-          contextBuildingHistogram.histogram.observe(
-            contextBuildingHistogram.fillLabelsFn(context[promPluginContext], context),
-            totalTime
-          );
+
+          if (context[promPluginContext]) {
+            contextBuildingHistogram.histogram.observe(
+              contextBuildingHistogram.fillLabelsFn(context[promPluginContext]!, context),
+              totalTime
+            );
+          }
         };
       }
     : undefined;
 
-  const onExecute: OnExecuteHook<PluginInternalContext> | undefined = executeHistogram
+  const onExecute: OnExecuteHook<{}, PluginInternalContext> | undefined = executeHistogram
     ? ({ args }) => {
         if (!args.contextValue[promPluginContext]) {
           return undefined;
@@ -276,7 +279,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
         const startTime = Date.now();
         reqCounter?.counter.labels(reqCounter.fillLabelsFn(args.contextValue[promPluginContext], args.contextValue)).inc();
 
-        const result: OnExecuteHookResult<PluginInternalContext> = {
+        const result: OnExecuteHookResult<{}, PluginInternalContext> = {
           onExecuteDone: ({ result }) => {
             const totalTime = (Date.now() - startTime) / 1000;
             executeHistogram.histogram.observe(

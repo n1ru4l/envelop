@@ -30,11 +30,15 @@ export type UserPayload = {
   [key: string]: any;
 };
 
+type InputContext = { req?: Request; request?: Request; headers?: Headers };
+
 type BuildContext<TOptions extends Auth0PluginOptions> = TOptions['extendContextField'] extends string
   ? { [TName in TOptions['extendContextField'] as TOptions['extendContextField']]: UserPayload }
   : { _auth0: UserPayload };
 
-export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions): Plugin<BuildContext<TOptions>> => {
+export const useAuth0 = <TOptions extends Auth0PluginOptions>(
+  options: TOptions
+): Plugin<InputContext, BuildContext<TOptions>> => {
   const jkwsClient = new JwksRsa.JwksClient({
     cache: true,
     rateLimit: true,
@@ -49,9 +53,9 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
 
   const extractFn =
     options.extractTokenFn ||
-    ((ctx: Record<string, any> = {}): string | null => {
-      const req = ctx['req'] || ctx['request'] || {};
-      const headers = req.headers || ctx['headers'] || null;
+    ((ctx: InputContext): string | null => {
+      const req = ctx.req || ctx.request || ({} as Record<string, any>);
+      const headers = req.headers || ctx.headers || null;
 
       if (!headers) {
         console.warn(
@@ -61,7 +65,7 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
         let authHeader: string | null = null;
         if (headers[headerName] && typeof headers[headerName] === 'string') {
           authHeader = headers[headerName] || null;
-        } else if (headers.get && headers.has && headers.has(headerName)) {
+        } else if ('get' in headers && headers.has && headers.has(headerName)) {
           authHeader = headers.get(headerName) || null;
         }
         if (authHeader === null) {

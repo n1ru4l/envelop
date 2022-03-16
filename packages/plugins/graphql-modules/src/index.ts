@@ -1,9 +1,14 @@
 import { Plugin } from '@envelop/core';
-import { Application } from 'graphql-modules';
+import { Application, OperationController } from 'graphql-modules';
+import { InternalAppContext } from 'graphql-modules/application/application';
 
 const graphqlModulesControllerSymbol = Symbol('GRAPHQL_MODULES');
 
-export const useGraphQLModules = (app: Application): Plugin => {
+type PluginContext = InternalAppContext & {
+  [graphqlModulesControllerSymbol]: OperationController;
+};
+
+export const useGraphQLModules = (app: Application): Plugin<{}, PluginContext> => {
   return {
     onPluginInit({ setSchema }) {
       setSchema(app.schema);

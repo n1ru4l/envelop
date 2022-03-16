@@ -170,7 +170,13 @@ export function useResponseCache({
   shouldCacheResult = defaultShouldCacheResult,
   // eslint-disable-next-line dot-notation
   includeExtensionMetadata = typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false,
-}: UseResponseCacheParameter = {}): Plugin {
+}: UseResponseCacheParameter = {}): Plugin<
+  {},
+  {
+    [rawDocumentStringSymbol]: string;
+    [contextSymbol]: Context;
+  }
+> {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
   const schemaCache = new WeakMap<GraphQLSchema, GraphQLSchema>();
 

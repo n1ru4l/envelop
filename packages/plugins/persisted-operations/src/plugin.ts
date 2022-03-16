@@ -38,7 +38,9 @@ export function readOperationId(context: PersistedOperationPluginContext): strin
   return context[contextProperty];
 }
 
-export const usePersistedOperations = (rawOptions: UsePersistedOperationsOptions): Plugin<PersistedOperationPluginContext> => {
+export const usePersistedOperations = (
+  rawOptions: UsePersistedOperationsOptions
+): Plugin<{}, PersistedOperationPluginContext> => {
   const options: UsePersistedOperationsOptions = {
     ...DEFAULT_OPTIONS,
     ...(rawOptions || {}),

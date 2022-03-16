@@ -21,9 +21,12 @@ export type RateLimiterPluginOptions = {
 
 export const useRateLimiter = (
   options: RateLimiterPluginOptions
-): Plugin<{
-  rateLimiterFn: ReturnType<typeof getGraphQLRateLimiter>;
-}> => {
+): Plugin<
+  {},
+  {
+    rateLimiterFn: ReturnType<typeof getGraphQLRateLimiter>;
+  }
+> => {
   const rateLimiterFn = getGraphQLRateLimiter({ identifyContext: options.identifyFn });
 
   return {

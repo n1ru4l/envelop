@@ -421,14 +421,14 @@ describe('execute', () => {
   it.each([
     {
       onNext: () => {},
-    } as OnExecuteDoneHookResult<unknown>,
+    } as OnExecuteDoneHookResult<unknown, unknown>,
     {
       onEnd: () => {},
-    } as OnExecuteDoneHookResult<unknown>,
+    } as OnExecuteDoneHookResult<unknown, unknown>,
     {
       onNext: () => {},
       onEnd: () => {},
-    } as OnExecuteDoneHookResult<unknown>,
+    } as OnExecuteDoneHookResult<unknown, unknown>,
   ])(
     "hook into execute stream is not prone to 'block return until next stream value is published' issues",
     async onExecuteDoneHookResult => {
@@ -595,14 +595,14 @@ describe('execute', () => {
 it.each([
   {
     onNext: () => {},
-  } as OnSubscribeResultResult<unknown>,
+  } as OnSubscribeResultResult<unknown, unknown>,
   {
     onEnd: () => {},
-  } as OnSubscribeResultResult<unknown>,
+  } as OnSubscribeResultResult<unknown, unknown>,
   {
     onNext: () => {},
     onEnd: () => {},
-  } as OnSubscribeResultResult<unknown>,
+  } as OnSubscribeResultResult<unknown, unknown>,
 ])(
   "hook into subscribe result stream is not prone to 'block return until next stream value is published' issues",
   async onSubscribeResultResultHook => {

@@ -110,12 +110,12 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
 
   // A set of before callbacks defined here in order to allow it to be used later
   const beforeCallbacks = {
-    init: [] as OnEnvelopedHook<any>[],
-    parse: [] as OnParseHook<any>[],
-    validate: [] as OnValidateHook<any>[],
-    subscribe: [] as OnSubscribeHook<any>[],
-    execute: [] as OnExecuteHook<any>[],
-    context: [] as OnContextBuildingHook<any>[],
+    init: [] as OnEnvelopedHook<any, any>[],
+    parse: [] as OnParseHook<any, any>[],
+    validate: [] as OnValidateHook<any, any>[],
+    subscribe: [] as OnSubscribeHook<any, any>[],
+    execute: [] as OnExecuteHook<any, any>[],
+    context: [] as OnContextBuildingHook<any, any>[],
   };
 
   for (const { onContextBuilding, onExecute, onParse, onSubscribe, onValidate, onEnveloped } of plugins) {
@@ -148,7 +148,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
         let result: DocumentNode | Error | null = null;
         let parseFn: typeof parse = parse;
         const context = initialContext;
-        const afterCalls: AfterParseHook<any>[] = [];
+        const afterCalls: AfterParseHook<any, any>[] = [];
 
         for (const onParse of beforeCallbacks.parse) {
           const afterFn = onParse({
@@ -209,7 +209,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
         let result: null | readonly GraphQLError[] = null;
         const context = initialContext;
 
-        const afterCalls: AfterValidateHook<any>[] = [];
+        const afterCalls: AfterValidateHook<any, any>[] = [];
 
         for (const onValidate of beforeCallbacks.validate) {
           const afterFn = onValidate({
@@ -266,7 +266,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
 
   const customContextFactory: EnvelopContextFnWrapper<(orchestratorCtx?: any) => any, any> = beforeCallbacks.context.length
     ? initialContext => async orchestratorCtx => {
-        const afterCalls: AfterContextBuildingHook<any>[] = [];
+        const afterCalls: AfterContextBuildingHook<any, any>[] = [];
 
         try {
           let context = orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
@@ -323,7 +323,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     ? makeSubscribe(async args => {
         let subscribeFn = subscribe as SubscribeFunction;
 
-        const afterCalls: SubscribeResultHook<PluginsContext>[] = [];
+        const afterCalls: SubscribeResultHook<any, any>[] = [];
         const subscribeErrorHandlers: SubscribeErrorHook[] = [];
 
         let context = (args.contextValue as {}) || {};
@@ -371,7 +371,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
           });
         }
 
-        const onNextHandler: OnSubscribeResultResultOnNextHook<PluginsContext>[] = [];
+        const onNextHandler: OnSubscribeResultResultOnNextHook<any, any>[] = [];
         const onEndHandler: OnSubscribeResultResultOnEndHook[] = [];
 
         for (const afterCb of afterCalls) {
@@ -438,7 +438,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
         let executeFn = execute as ExecuteFunction;
         let result: AsyncIterableIteratorOrValue<ExecutionResult> | undefined;
 
-        const afterCalls: OnExecuteDoneHook<PluginsContext>[] = [];
+        const afterCalls: OnExecuteDoneHook<any, any>[] = [];
         let context = (args.contextValue as {}) || {};
 
         for (const onExecute of beforeCallbacks.execute) {
@@ -487,7 +487,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
           })) as AsyncIterableIteratorOrValue<ExecutionResult>;
         }
 
-        const onNextHandler: OnExecuteDoneHookResultOnNextHook<PluginsContext>[] = [];
+        const onNextHandler: OnExecuteDoneHookResultOnNextHook<any, any>[] = [];
         const onEndHandler: OnExecuteDoneHookResultOnEndHook[] = [];
 
         for (const afterCb of afterCalls) {

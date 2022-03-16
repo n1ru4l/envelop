@@ -17,7 +17,11 @@ const DEFAULT_TTL = 3600000;
 
 const rawDocumentSymbol = Symbol('rawDocument');
 
-export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): Plugin => {
+type PluginContext = {
+  [rawDocumentSymbol]: string;
+};
+
+export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): Plugin<{}, PluginContext> => {
   const resultCache =
     typeof pluginOptions.cache !== 'undefined' ? pluginOptions.cache : lru<readonly GraphQLError[]>(DEFAULT_MAX, DEFAULT_TTL);
 
@@ -29,7 +33,7 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
       extendContext({ [rawDocumentSymbol]: params.source.toString() });
     },
     onValidate({ params, context, setResult }) {
-      const key: string = context[rawDocumentSymbol] ?? print(params.documentAST);
+      const key = context[rawDocumentSymbol] ?? print(params.documentAST);
       const cachedResult = resultCache.get(key);
 
       if (cachedResult !== undefined) {

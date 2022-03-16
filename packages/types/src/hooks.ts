@@ -68,7 +68,7 @@ export type OnPluginInitEventPayload = {
 export type OnPluginInitHook = (options: OnPluginInitEventPayload) => void;
 
 /** onPluginInit */
-export type OnEnvelopedHookEventPayload<ContextType> = {
+export type OnEnvelopedHookEventPayload<TInputContext, TOutputContext> = {
   /**
    * Set the schema that should be used for execution.
    */
@@ -76,24 +76,26 @@ export type OnEnvelopedHookEventPayload<ContextType> = {
   /**
    * The context object.
    */
-  context: Readonly<Maybe<ContextType>>;
+  context: Readonly<Maybe<TInputContext>>;
   /**
    * Extend the context object with a partial.
    */
-  extendContext: (contextExtension: Partial<ContextType>) => void;
+  extendContext: (contextExtension: Partial<TOutputContext>) => void;
 };
 
-export type OnEnvelopedHook<ContextType> = (options: OnEnvelopedHookEventPayload<ContextType>) => void;
+export type OnEnvelopedHook<TInputContext, TOutputContext> = (
+  options: OnEnvelopedHookEventPayload<TInputContext, TOutputContext>
+) => void;
 
-export type OnParseEventPayload<ContextType> = {
+export type OnParseEventPayload<TInputContext, TOutputContext> = {
   /**
    * The current context object.
    */
-  context: Readonly<ContextType>;
+  context: Readonly<TInputContext>;
   /**
    * Extend the context object with a partial.
    */
-  extendContext: (contextExtension: Partial<ContextType>) => void;
+  extendContext: (contextExtension: Partial<TOutputContext>) => void;
   /**
    * The parameters that are passed to the parse call.
    */
@@ -113,15 +115,15 @@ export type OnParseEventPayload<ContextType> = {
   setParsedDocument: (doc: DocumentNode) => void;
 };
 
-export type AfterParseEventPayload<ContextType> = {
+export type AfterParseEventPayload<TInputContext, TOutputContext> = {
   /**
    * The current context object.
    */
-  context: Readonly<ContextType>;
+  context: Readonly<TInputContext>;
   /**
    * Extend the context object with a partial.
    */
-  extendContext: (contextExtension: Partial<ContextType>) => void;
+  extendContext: (contextExtension: Partial<TOutputContext>) => void;
   /**
    * The result of the parse phase.
    */
@@ -135,23 +137,27 @@ export type AfterParseEventPayload<ContextType> = {
 /**
  * Hook that is invoked after the parse function has been invoked.
  */
-export type AfterParseHook<ContextType> = (options: AfterParseEventPayload<ContextType>) => void;
+export type AfterParseHook<TInputContext, TOutputContext> = (
+  options: AfterParseEventPayload<TInputContext, TOutputContext>
+) => void;
 /**
  * Hook that is invoked before the parse function is invoked.
  */
-export type OnParseHook<ContextType> = (options: OnParseEventPayload<ContextType>) => void | AfterParseHook<ContextType>;
+export type OnParseHook<TInputContext, TOutputContext> = (
+  options: OnParseEventPayload<TInputContext, TOutputContext>
+) => void | AfterParseHook<TInputContext, TOutputContext>;
 /**
  * Payload forwarded to the onValidate hook.
  */
-export type OnValidateEventPayload<ContextType> = {
+export type OnValidateEventPayload<TInputContext, TOutputContext> = {
   /**
    * The current context object.
    */
-  context: Readonly<ContextType>;
+  context: Readonly<TInputContext & Partial<TOutputContext>>;
   /**
    * Extend the context object with a partial.
    */
-  extendContext: (contextExtension: Partial<ContextType>) => void;
+  extendContext: (contextExtension: Partial<TOutputContext>) => void;
   /**
    * The parameters with which the validate function will be invoked.
    */
@@ -177,15 +183,15 @@ export type OnValidateEventPayload<ContextType> = {
 /**
  * Payload forwarded to the afterValidate hook.
  */
-export type AfterValidateEventPayload<ContextType> = {
+export type AfterValidateEventPayload<TInputContext, TOutputContext> = {
   /**
    * The current context object.
    */
-  context: Readonly<ContextType>;
+  context: Readonly<TInputContext>;
   /**
    * Extend the context object with a partial.
    */
-  extendContext: (contextExtension: Partial<ContextType>) => void;
+  extendContext: (contextExtension: Partial<TOutputContext>) => void;
   /**
    * Whether the validation raised any errors or not.
    */
@@ -200,25 +206,29 @@ export type AfterValidateEventPayload<ContextType> = {
 /**
  * AfterValidateHook is invoked after the validate function has been invoked.
  */
-export type AfterValidateHook<ContextType> = (options: AfterValidateEventPayload<ContextType>) => void;
+export type AfterValidateHook<TInputContext, TOutputContext> = (
+  options: AfterValidateEventPayload<TInputContext, TOutputContext>
+) => void;
 
 /**
  * The OnValidateHook is invoked before the validate function has been invoked.
  */
-export type OnValidateHook<ContextType> = (options: OnValidateEventPayload<ContextType>) => void | AfterValidateHook<ContextType>;
+export type OnValidateHook<TInputContext, TOutputContext> = (
+  options: OnValidateEventPayload<TInputContext, TOutputContext>
+) => void | AfterValidateHook<TInputContext, TOutputContext>;
 
 /**
  * The payload forwarded to the onContextBuilding hook.
  */
-export type OnContextBuildingEventPayload<ContextType> = {
+export type OnContextBuildingEventPayload<TInputContext, TOutputContext> = {
   /**
    * The current context object.
    */
-  context: Readonly<ContextType>;
+  context: Readonly<TInputContext & Partial<TOutputContext>>;
   /**
    * Extend the context object with a partial.
    */
-  extendContext: (contextExtension: Partial<ContextType>) => void;
+  extendContext: (contextExtension: Partial<TOutputContext>) => void;
   /**
    * Prevent calls on any further context building hooks.
    */
@@ -228,31 +238,31 @@ export type OnContextBuildingEventPayload<ContextType> = {
 /**
  * The payload forwarded to the afterContextBuilding hook.
  */
-export type AfterContextBuildingEventPayload<ContextType> = {
+export type AfterContextBuildingEventPayload<TInputContext, TOutputContext> = {
   /**
    * The current context object.
    */
-  context: ContextType;
+  context: Readonly<TInputContext>;
   /**
    * Extend the context object with a partial.
    */
-  extendContext: (contextExtension: Partial<ContextType>) => void;
+  extendContext: (contextExtension: Partial<TOutputContext>) => void;
 };
 
 /**
  * Invoked after the context has been builded.
  */
-export type AfterContextBuildingHook<ContextType> = (
-  options: AfterContextBuildingEventPayload<ContextType>
+export type AfterContextBuildingHook<TInputContext, TOutputContext> = (
+  options: AfterContextBuildingEventPayload<TInputContext, TOutputContext>
 ) => PromiseOrValue<void>;
 
 /**
  * Invoked before the context has been builded.
  * Return a AfterContextBuildingHook, which is invoked after the context building has been finished.
  */
-export type OnContextBuildingHook<ContextType> = (
-  options: OnContextBuildingEventPayload<ContextType>
-) => PromiseOrValue<void | AfterContextBuildingHook<ContextType>>;
+export type OnContextBuildingHook<TInputContext, TOutputContext> = (
+  options: OnContextBuildingEventPayload<TInputContext, TOutputContext>
+) => PromiseOrValue<void | AfterContextBuildingHook<TInputContext, TOutputContext>>;
 
 export type ResolverFn<ParentType = unknown, ArgsType = DefaultArgs, ContextType = unknown, ResultType = unknown> = (
   root: ParentType,
@@ -296,7 +306,7 @@ export type TypedExecutionArgs<ContextType> = Omit<ExecutionArgs, 'contextValue'
 /**
  * Payload that is passed to the onExecute hook.
  */
-export type OnExecuteEventPayload<ContextType> = {
+export type OnExecuteEventPayload<TInputContext, TOutputContext> = {
   /**
    * Current execute function that will be used for execution.
    */
@@ -304,7 +314,7 @@ export type OnExecuteEventPayload<ContextType> = {
   /**
    * Arguments the execute function will be invoked with.
    */
-  args: TypedExecutionArgs<ContextType>;
+  args: TypedExecutionArgs<TInputContext>;
   /**
    * Replace the current execute function with a new one.
    */
@@ -316,17 +326,17 @@ export type OnExecuteEventPayload<ContextType> = {
   /**
    * Extend the context object with a partial.
    */
-  extendContext: (contextExtension: Partial<ContextType>) => void;
+  extendContext: (contextExtension: Partial<TOutputContext>) => void;
 };
 
 /**
  * Payload that is passed to the onExecuteDone hook.
  */
-export type OnExecuteDoneHookResultOnNextHookPayload<ContextType> = {
+export type OnExecuteDoneHookResultOnNextHookPayload<TInputContext, TOutputContext> = {
   /**
    * The execution arguments.
    */
-  args: TypedExecutionArgs<ContextType>;
+  args: TypedExecutionArgs<TInputContext & TOutputContext>;
   /**
    * The execution result.
    */
@@ -340,8 +350,8 @@ export type OnExecuteDoneHookResultOnNextHookPayload<ContextType> = {
 /**
  * Hook that is invoked for each value a AsyncIterable returned from execute publishes.
  */
-export type OnExecuteDoneHookResultOnNextHook<ContextType> = (
-  payload: OnExecuteDoneHookResultOnNextHookPayload<ContextType>
+export type OnExecuteDoneHookResultOnNextHook<TInputContext, TOutputContext> = (
+  payload: OnExecuteDoneHookResultOnNextHookPayload<TInputContext, TOutputContext>
 ) => void | Promise<void>;
 
 /**
@@ -352,11 +362,11 @@ export type OnExecuteDoneHookResultOnEndHook = () => void;
 /**
  * Hook for hooking into AsyncIterables returned from execute.
  */
-export type OnExecuteDoneHookResult<ContextType> = {
+export type OnExecuteDoneHookResult<TInputContext, TOutputContext> = {
   /**
    * Hook that is invoked for each value a AsyncIterable returned from execute publishes.
    */
-  onNext?: OnExecuteDoneHookResultOnNextHook<ContextType>;
+  onNext?: OnExecuteDoneHookResultOnNextHook<TInputContext, TOutputContext>;
   /**
    * Hook that is invoked after a AsyncIterable returned from execute completes.
    */
@@ -366,11 +376,11 @@ export type OnExecuteDoneHookResult<ContextType> = {
 /**
  * Payload with which the onExecuteDone hook is invoked.
  */
-export type OnExecuteDoneEventPayload<ContextType> = {
+export type OnExecuteDoneEventPayload<TInputContext, TOutputContext> = {
   /**
    * The execution arguments.
    */
-  args: TypedExecutionArgs<ContextType>;
+  args: TypedExecutionArgs<TInputContext & TOutputContext>;
   /**
    * The execution result returned from the execute function.
    * Can return an AsyncIterable if a graphql.js that has defer/stream implemented is used.
@@ -386,26 +396,26 @@ export type OnExecuteDoneEventPayload<ContextType> = {
  * Hook that is invoked after the execute function has been invoked.
  * Allows returning a OnExecuteDoneHookResult for hooking into stream values if execute returned an AsyncIterable.
  */
-export type OnExecuteDoneHook<ContextType> = (
-  options: OnExecuteDoneEventPayload<ContextType>
-) => PromiseOrValue<void | OnExecuteDoneHookResult<ContextType>>;
+export type OnExecuteDoneHook<TInputContext, TOutputContext> = (
+  options: OnExecuteDoneEventPayload<TInputContext, TOutputContext>
+) => PromiseOrValue<void | OnExecuteDoneHookResult<TInputContext, TOutputContext>>;
 
 /**
  * Result returned from the onExecute hook result for hooking into subsequent phases.
  */
-export type OnExecuteHookResult<ContextType> = {
+export type OnExecuteHookResult<TInputContext, TOutputContext> = {
   /**
    * Invoked with the execution result returned from execute.
    */
-  onExecuteDone?: OnExecuteDoneHook<ContextType>;
+  onExecuteDone?: OnExecuteDoneHook<TInputContext, TOutputContext>;
 };
 
 /**
  * onExecute hook that is invoked before the execute function is invoked.
  */
-export type OnExecuteHook<ContextType> = (
-  options: OnExecuteEventPayload<ContextType>
-) => PromiseOrValue<void | OnExecuteHookResult<ContextType>>;
+export type OnExecuteHook<TInputContext, TOutputContext> = (
+  options: OnExecuteEventPayload<TInputContext, TOutputContext>
+) => PromiseOrValue<void | OnExecuteHookResult<TInputContext, TOutputContext>>;
 
 /**
  * Subscription arguments with inferred context value type.
@@ -415,7 +425,7 @@ export type TypedSubscriptionArgs<ContextType> = Omit<SubscriptionArgs, 'context
 /**
  * Payload with which the onSubscribe hook is invoked.
  */
-export type OnSubscribeEventPayload<ContextType> = {
+export type OnSubscribeEventPayload<TInputContext, TOutputContext> = {
   /**
    * Current subscribe function that will be used for setting up the subscription.
    */
@@ -423,7 +433,7 @@ export type OnSubscribeEventPayload<ContextType> = {
   /**
    * Current arguments with which the subscribe function will be invoked.
    */
-  args: TypedSubscriptionArgs<ContextType>;
+  args: TypedSubscriptionArgs<TInputContext & Partial<TOutputContext>>;
   /**
    * Replace the current subscribe function with a new one that will be used for setting up the subscription.
    */
@@ -431,7 +441,7 @@ export type OnSubscribeEventPayload<ContextType> = {
   /**
    * Extend the context object with a partial.
    */
-  extendContext: (contextExtension: Partial<ContextType>) => void;
+  extendContext: (contextExtension: Partial<TOutputContext>) => void;
   /**
    * Set a subscribe result and skip calling the subscribe function.
    */
@@ -441,11 +451,11 @@ export type OnSubscribeEventPayload<ContextType> = {
 /**
  * Payload with which the onSubscribeResult hook is invoked.
  */
-export type OnSubscribeResultEventPayload<ContextType> = {
+export type OnSubscribeResultEventPayload<TInputContext, TOutputContext> = {
   /**
    * The execution arguments.
    */
-  args: TypedExecutionArgs<ContextType>;
+  args: TypedExecutionArgs<TInputContext & TOutputContext>;
   /**
    * The current execution result.
    */
@@ -456,11 +466,11 @@ export type OnSubscribeResultEventPayload<ContextType> = {
   setResult: (newResult: AsyncIterableIteratorOrValue<ExecutionResult>) => void;
 };
 
-export type OnSubscribeResultResultOnNextHookPayload<ContextType> = {
+export type OnSubscribeResultResultOnNextHookPayload<TInputContext, TOutputContext> = {
   /**
    * The execution arguments.
    */
-  args: TypedExecutionArgs<ContextType>;
+  args: TypedExecutionArgs<TInputContext & TOutputContext>;
   /**
    * The current execution result.
    */
@@ -474,8 +484,8 @@ export type OnSubscribeResultResultOnNextHookPayload<ContextType> = {
 /**
  * Hook invoked for each value published by the AsyncIterable returned from subscribe.
  */
-export type OnSubscribeResultResultOnNextHook<ContextType> = (
-  payload: OnSubscribeResultResultOnNextHookPayload<ContextType>
+export type OnSubscribeResultResultOnNextHook<TInputContext, TOutputContext> = (
+  payload: OnSubscribeResultResultOnNextHookPayload<TInputContext, TOutputContext>
 ) => void | Promise<void>;
 
 /**
@@ -483,11 +493,11 @@ export type OnSubscribeResultResultOnNextHook<ContextType> = (
  */
 export type OnSubscribeResultResultOnEndHook = () => void;
 
-export type OnSubscribeResultResult<ContextType> = {
+export type OnSubscribeResultResult<TInputContext, TOutputContext> = {
   /**
    * Invoked for each value published by the AsyncIterable returned from subscribe.
    */
-  onNext?: OnSubscribeResultResultOnNextHook<ContextType>;
+  onNext?: OnSubscribeResultResultOnNextHook<TInputContext, TOutputContext>;
   /**
    * Invoked after the AsyncIterable returned from subscribe completes.
    */
@@ -498,9 +508,9 @@ export type OnSubscribeResultResult<ContextType> = {
  * Hook that is invoked with the result of the subscribe call.
  * Return a OnSubscribeResultResult for hooking into the AsyncIterable returned from subscribe.
  */
-export type SubscribeResultHook<ContextType> = (
-  options: OnSubscribeResultEventPayload<ContextType>
-) => void | OnSubscribeResultResult<ContextType>;
+export type SubscribeResultHook<TInputContext, TOutputContext> = (
+  options: OnSubscribeResultEventPayload<TInputContext, TOutputContext>
+) => void | OnSubscribeResultResult<TInputContext, TOutputContext>;
 
 export type SubscribeErrorHookPayload = {
   error: unknown;
@@ -509,11 +519,11 @@ export type SubscribeErrorHookPayload = {
 
 export type SubscribeErrorHook = (payload: SubscribeErrorHookPayload) => void;
 
-export type OnSubscribeHookResult<ContextType> = {
+export type OnSubscribeHookResult<TInputContext, TOutputContext> = {
   /**
    * Invoked with the result returned from subscribe.
    */
-  onSubscribeResult?: SubscribeResultHook<ContextType>;
+  onSubscribeResult?: SubscribeResultHook<TInputContext, TOutputContext>;
   /**
    * Invoked if the source stream returned from subscribe throws an error.
    */
@@ -524,6 +534,6 @@ export type OnSubscribeHookResult<ContextType> = {
  * onSubscribe hook that is invoked before the subscribe function is called.
  * Return a OnSubscribeHookResult for hooking into phase after the subscribe function has been called.
  */
-export type OnSubscribeHook<ContextType> = (
-  options: OnSubscribeEventPayload<ContextType>
-) => PromiseOrValue<void | OnSubscribeHookResult<ContextType>>;
+export type OnSubscribeHook<TInputContext, TOutputContext> = (
+  options: OnSubscribeEventPayload<TInputContext, TOutputContext>
+) => PromiseOrValue<void | OnSubscribeHookResult<TInputContext, TOutputContext>>;

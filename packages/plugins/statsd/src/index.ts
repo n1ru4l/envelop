@@ -35,7 +35,7 @@ function getOperation(document: DocumentNode) {
   return document.definitions.find(def => def.kind === Kind.OPERATION_DEFINITION) as OperationDefinitionNode;
 }
 
-function isParseFailure(parseResult: AfterParseEventPayload<any>['result']): parseResult is Error | null {
+function isParseFailure(parseResult: AfterParseEventPayload<any, any>['result']): parseResult is Error | null {
   return parseResult === null || parseResult instanceof Error;
 }
 
@@ -43,7 +43,7 @@ function getTags(context: PluginInternalContext) {
   return context[statsDPluginTagsSymbol];
 }
 
-export const useStatsD = (options: StatsDPluginOptions): Plugin<PluginInternalContext> => {
+export const useStatsD = (options: StatsDPluginOptions): Plugin<{}, PluginInternalContext> => {
   const { client, prefix = 'graphql', skipIntrospection = false } = options;
 
   function createMetricName(name: string) {
@@ -85,7 +85,7 @@ export const useStatsD = (options: StatsDPluginOptions): Plugin<PluginInternalCo
       };
     },
     onValidate({ context }) {
-      const tags = getTags(context);
+      const tags = getTags(context as PluginInternalContext);
 
       if (!tags) {
         return undefined;
@@ -99,7 +99,7 @@ export const useStatsD = (options: StatsDPluginOptions): Plugin<PluginInternalCo
       };
     },
     onExecute({ args }) {
-      const tags = getTags(args.contextValue);
+      const tags = getTags(args.contextValue as PluginInternalContext);
 
       if (!tags) {
         return undefined;
