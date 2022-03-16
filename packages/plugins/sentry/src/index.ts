@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-console */
 /* eslint-disable dot-notation */
-import { Plugin, OnResolverCalledHook, EnvelopError, isAsyncIterable } from '@envelop/core';
+import {
+  Plugin,
+  OnResolverCalledHook,
+  EnvelopError,
+  handleStreamOrSingleExecutionResult,
+  OnExecuteDoneHookResultOnNextHook,
+} from '@envelop/core';
 import * as Sentry from '@sentry/node';
 import type { Span } from '@sentry/types';
 import { ExecutionArgs, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
@@ -124,7 +130,10 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
             }
 
             if (result instanceof Error && !skipError(result)) {
-              const errorPath = responsePathAsArray(info.path).join(' > ');
+              // Map index values in list to $index for better grouping of events.
+              const errorPath = responsePathAsArray(info.path)
+                .map(v => (typeof v === 'number' ? '$index' : v))
+                .join(' > ');
 
               Sentry.captureException(result, {
                 fingerprint: ['graphql', errorPath, opName, operationType],
@@ -210,63 +219,59 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
       }
 
       return {
-        onExecuteDone({ result }) {
-          if (isAsyncIterable(result)) {
-            rootSpan.finish();
-            // eslint-disable-next-line no-console
-            console.warn(
-              `Plugin "sentry" encountered a AsyncIterator which is not supported yet, so tracing data is not available for the operation.`
-            );
-            return;
-          }
-
-          if (includeRawResult) {
-            rootSpan.setData('result', result);
-          }
-
-          if (result.errors && result.errors.length > 0) {
-            for (const err of result.errors) {
-              Sentry.withScope(scope => {
-                scope.setTransactionName(opName);
-                scope.setTag('operation', operationType);
-                scope.setTag('operationName', opName);
-                scope.setExtra('document', document);
-
-                scope.setTags(addedTags || {});
-
-                if (includeRawResult) {
-                  scope.setExtra('result', result);
-                }
-
-                if (includeExecuteVariables) {
-                  scope.setExtra('variables', args.variableValues);
-                }
-
-                const errorPath = (err.path || []).join(' > ');
-
-                if (errorPath) {
-                  scope.addBreadcrumb({
-                    category: 'execution-path',
-                    message: errorPath,
-                    level: Sentry.Severity.Debug,
-                  });
-                }
-
-                Sentry.captureException(err, {
-                  fingerprint: ['graphql', errorPath, opName, operationType],
-                  contexts: {
-                    GraphQL: {
-                      operationName: opName,
-                      operationType: operationType,
-                      variables: args.variableValues,
-                    },
-                  },
-                });
-              });
+        onExecuteDone(payload) {
+          const handleResult: OnExecuteDoneHookResultOnNextHook<{}> = ({ result }) => {
+            if (includeRawResult) {
+              rootSpan.setData('result', result);
             }
-          }
 
-          rootSpan.finish();
+            if (result.errors && result.errors.length > 0) {
+              for (const err of result.errors) {
+                Sentry.withScope(scope => {
+                  scope.setTransactionName(opName);
+                  scope.setTag('operation', operationType);
+                  scope.setTag('operationName', opName);
+                  scope.setExtra('document', document);
+
+                  scope.setTags(addedTags || {});
+
+                  if (includeRawResult) {
+                    scope.setExtra('result', result);
+                  }
+
+                  if (includeExecuteVariables) {
+                    scope.setExtra('variables', args.variableValues);
+                  }
+
+                  const errorPath = (err.path ?? []).join(' > ');
+                  if (errorPath) {
+                    scope.addBreadcrumb({
+                      category: 'execution-path',
+                      message: errorPath,
+                      level: Sentry.Severity.Debug,
+                    });
+                  }
+
+                  // Map index values in list to $index for better grouping of events.
+                  const errorPathWithIndex = (err.path ?? []).map(v => (typeof v === 'number' ? '$index' : v)).join(' > ');
+
+                  Sentry.captureException(err, {
+                    fingerprint: ['graphql', errorPathWithIndex, opName, operationType],
+                    contexts: {
+                      GraphQL: {
+                        operationName: opName,
+                        operationType: operationType,
+                        variables: args.variableValues,
+                      },
+                    },
+                  });
+                });
+              }
+            }
+
+            rootSpan.finish();
+          };
+          return handleStreamOrSingleExecutionResult(payload, handleResult);
         },
       };
     },
