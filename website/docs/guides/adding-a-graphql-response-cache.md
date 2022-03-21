@@ -19,7 +19,7 @@ In a strict REST API environment, caching entities is significantly easier, as e
 
 With GraphQL such things become much harder and complicated. First of all, we usually only have a single HTTP endpoint `/graphql` that only accepts `POST` requests. A query operation execution result could contain many different types of entities, thus, we need different strategies for caching GraphQL APIs.
 
-SaaS services like FastQL and GraphCDN started popping providing proxies for your existing GraphQL API, that magically add response based caching. But how does this even work?
+SaaS services like GraphCDN started popping up providing proxies for your existing GraphQL API, that magically add response based caching. But how does this even work?
 
 ## How does GraphQL Response Caching work?
 
@@ -194,6 +194,18 @@ Such an implementation makes the assumption that all mutations by default select
 The envelop response cache plugin now provides primitives and a reference in memory store implementation for adopting such a cache with all the features mentioned above with any GraphQL server.
 
 The goal of the response cache plugin is to educate how such mechanisms are implemented and furthermore give developers the building blocks for constructing their own global cache with their cloud provider of choice.
+
+> Watch [Episode #34 of `graphql.wtf`](https://graphql.wtf/episodes/34-response-cache-plugin-with-envelop) for a quick introduction to using Response Cache plugin with Envelop:
+
+<iframe
+  width="100%"
+  height="400"
+  src="https://www.youtube.com/embed/1EBphPltkA4"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
 
 Adding a response cache to an existing envelop GraphQL server setup is as easy as adding the plugin:
 
