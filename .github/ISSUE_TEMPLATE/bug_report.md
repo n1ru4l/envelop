@@ -3,25 +3,37 @@ name: Bug report
 about: Create a bug report to help us improve
 ---
 
-**Describe the bug**
+### Issue workflow progress
 
+_Progress of the issue based on the [Contributor Workflow](https://github.com/the-guild-org/Stack/blob/master/CONTRIBUTING.md#a-typical-contributor-workflow)_
+
+- [ ] 1. The issue provides a [minimal reproduction](https://en.wikipedia.org/wiki/Minimal_reproducible_example) available on [Stackblitz](https://stackblitz.com/fork/node).
+  - _Please install the latest `@envelop/*` packages that you are using._
+  - _Please makee sure the reproduction is as small as possible._
+- [ ] 2. A failing test has been provided
+- [ ] 3. A local solution has been provided
+- [ ] 4. A pull request is pending review
+
+
+
+---
+
+
+**Describe the bug**
 <!-- A clear and concise description of what the bug is. -->
 
 **To Reproduce**
 Steps to reproduce the behavior:
 
-<!-- A clear and concise description of the steps needed to reproduce. -->
-
 **Expected behavior**
-
 <!-- A clear and concise description of what you expected to happen. -->
 
 **Environment:**
 
 - OS:
-- `@envelop/...`:
 - NodeJS:
+- `@envelop/*` versions:
+  - `@envelop/core`: `???`
 
 **Additional context**
-
 <!-- Add any other context about the problem here. -->
