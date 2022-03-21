@@ -8,6 +8,18 @@
 
 [Check out the GraphQL Response Cache Guide for more information](https://envelop.dev/docs/guides/adding-a-graphql-response-cache)
 
+> Watch [Episode #34 of `graphql.wtf`](https://graphql.wtf/episodes/34-response-cache-plugin-with-envelop) for a quick introduction to using Response Cache plugin with Envelop:
+
+<iframe
+  width="100%"
+  height="400"
+  src="https://www.youtube.com/embed/1EBphPltkA4"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
+
 ## Getting Started
 
 ```bash
