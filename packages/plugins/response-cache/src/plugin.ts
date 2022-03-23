@@ -171,20 +171,25 @@ export function useResponseCache({
   // eslint-disable-next-line dot-notation
   includeExtensionMetadata = typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false,
 }: UseResponseCacheParameter = {}): Plugin {
+  const appliedTransform = Symbol('responseCache.appliedTransform');
   const ignoredTypesMap = new Set<string>(ignoredTypes);
-  const schemaCache = new WeakMap<GraphQLSchema, GraphQLSchema>();
 
   // never cache Introspections
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
 
   return {
-    onSchemaChange(ctx) {
-      let schema = schemaCache.get(ctx.schema);
-      if (schema == null) {
-        schema = applyResponseCacheLogic(ctx.schema, idFields);
-        schemaCache.set(ctx.schema, schema);
+    onSchemaChange({ schema, replaceSchema }) {
+      // @ts-expect-error See https://github.com/graphql/graphql-js/pull/3511 - remove this comments once merged
+      if (schema.extensions?.[appliedTransform] === true) {
+        return;
       }
-      ctx.replaceSchema(schema);
+
+      const patchedSchema = applyResponseCacheLogic(schema, idFields);
+      patchedSchema.extensions = {
+        ...patchedSchema.extensions,
+        [appliedTransform]: true,
+      };
+      replaceSchema(patchedSchema);
     },
     onParse(parseCtx) {
       return function onParseEnd(ctx) {

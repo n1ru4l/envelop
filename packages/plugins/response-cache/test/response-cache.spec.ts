@@ -9,7 +9,40 @@ import { useLogger } from '@envelop/core';
 describe('useResponseCache', () => {
   beforeEach(() => jest.useRealTimers());
 
-  test('custom ttl per type is used instead of the global ttl - only enable caching for a specific type when the global ttl is 0', async () => {
+  it('applies schema transforms only once', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          a: String
+        }
+      `,
+    });
+    let replaceCounter = 0;
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          ttl: 0,
+          ttlPerType: {
+            User: 200,
+          },
+        }),
+        {
+          onSchemaChange({ schema, replaceSchema }) {
+            if (replaceCounter > 1) {
+              throw new Error('There is an infinite loop happening. Please fix it.');
+            }
+            replaceCounter = replaceCounter + 1;
+            replaceSchema(schema);
+          },
+        },
+      ],
+      schema
+    );
+
+    testInstance.execute;
+  });
+
+  it('custom ttl per type is used instead of the global ttl - only enable caching for a specific type when the global ttl is 0', async () => {
     jest.useFakeTimers();
     const spy = jest.fn(() => [
       {
@@ -240,7 +273,7 @@ describe('useResponseCache', () => {
 
     result = await testInstance.execute(
       /* GraphQL */ `
-        mutation test($id: ID!) {
+        mutation it($id: ID!) {
           updateUser(id: $id) {
             id
           }
@@ -483,7 +516,7 @@ describe('useResponseCache', () => {
     const testInstance = createTestkit([useResponseCache({})], schema);
 
     const query = /* GraphQL */ `
-      query test($limit: Int!) {
+      query it($limit: Int!) {
         users(limit: $limit) {
           id
           name
@@ -760,7 +793,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('custom ttl can be specified per object type and will be used over the default ttl for caching a query operation execution result if included in the operation document', async () => {
+  it('custom ttl can be specified per object type and will be used over the default ttl for caching a query operation execution result if included in the operation document', async () => {
     jest.useFakeTimers();
     const spy = jest.fn(() => [
       {
@@ -843,7 +876,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('custom ttl can be specified per schema coordinate and will be used over the default ttl for caching a query operation execution result if included in the operation document', async () => {
+  it('custom ttl can be specified per schema coordinate and will be used over the default ttl for caching a query operation execution result if included in the operation document', async () => {
     jest.useFakeTimers();
     const spy = jest.fn(() => [
       {
@@ -926,7 +959,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('global ttl is disabled when providing value 0, which results in query operation execution results to be never cached', async () => {
+  it('global ttl is disabled when providing value 0, which results in query operation execution results to be never cached', async () => {
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -1002,7 +1035,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  test('schema coordinate ttl is prioritized over global ttl', async () => {
+  it('schema coordinate ttl is prioritized over global ttl', async () => {
     jest.useFakeTimers();
     const userSpy = jest.fn(() => [
       {
@@ -1152,7 +1185,7 @@ describe('useResponseCache', () => {
     expect(userSpy).toHaveBeenCalledTimes(2);
   });
 
-  test('ttl=0 and ttlPerType should cache correctly', async () => {
+  it('ttl=0 and ttlPerType should cache correctly', async () => {
     jest.useFakeTimers();
     const userSpy = jest.fn(() => [
       {
@@ -1435,7 +1468,7 @@ describe('useResponseCache', () => {
 
     await testInstance.execute(
       /* GraphQL */ `
-        mutation test($id: ID!) {
+        mutation it($id: ID!) {
           updateUser(id: $id) {
             id
             name
