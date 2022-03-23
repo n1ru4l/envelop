@@ -1,5 +1,12 @@
 # @envelop/sentry
 
+## 3.1.1
+
+### Patch Changes
+
+- b96ca65: Handle errors in async iterables, defer and stream queries.
+  Better grouping of errors in lists by mapping the index number to a constant: `$index`
+
 ## 3.1.0
 
 ### Minor Changes
