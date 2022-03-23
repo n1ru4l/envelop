@@ -35,6 +35,7 @@ describe('oneOf', () => {
       nestedOneOf(input: NestedOneOfFieldInput!): Boolean
       deeplyNestedOneOf(input: DeeplyNestedOneOfFieldInput): Boolean
       listOneOf(input: [UserUniqueCondition!]): Boolean
+      listNonNullOneOf(input: [UserUniqueCondition!]!): Boolean
       inputFieldOneOfList(input: ListOneOfInput): Boolean
     }
 
@@ -167,6 +168,14 @@ describe('oneOf', () => {
           },
         },
       },
+      listNonNullOneOf: {
+        type: GraphQLBoolean,
+        args: {
+          input: {
+            type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLUserUniqueCondition))),
+          },
+        },
+      },
       inputFieldOneOfList: {
         type: GraphQLBoolean,
         args: {
@@ -287,6 +296,40 @@ describe('oneOf', () => {
                   id: 1,
                 },
               ],
+            },
+            expectedError: null,
+          },
+        ],
+        [
+          'Valid: oneOf input list (empty)',
+          {
+            document: `query user($input: [UserUniqueCondition!]) { listOneOf(input: $input) }`,
+            variables: {
+              input: [],
+            },
+            expectedError: null,
+          },
+        ],
+        [
+          'Valid: oneOf input list (non null)',
+          {
+            document: `query user($input: [UserUniqueCondition!]!) { listNonNullOneOf(input: $input) }`,
+            variables: {
+              input: [
+                {
+                  id: 1,
+                },
+              ],
+            },
+            expectedError: null,
+          },
+        ],
+        [
+          'Valid: oneOf input list (non null + empty list)',
+          {
+            document: `query user($input: [UserUniqueCondition!]!) { listNonNullOneOf(input: $input) }`,
+            variables: {
+              input: [],
             },
             expectedError: null,
           },

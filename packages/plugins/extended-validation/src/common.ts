@@ -1,13 +1,4 @@
-import {
-  ASTVisitor,
-  DirectiveNode,
-  ExecutionArgs,
-  GraphQLNamedType,
-  GraphQLType,
-  isListType,
-  isNonNullType,
-  ValidationContext,
-} from 'graphql';
+import { ASTVisitor, DirectiveNode, ExecutionArgs, ValidationContext } from 'graphql';
 
 export type ExtendedValidationRule = (context: ValidationContext, executionArgs: ExecutionArgs) => ASTVisitor;
 
@@ -20,12 +11,4 @@ export function getDirectiveFromAstNode(
   const authDirective = directives.find(d => namesArr.includes(d.name.value));
 
   return authDirective || null;
-}
-
-export function unwrapType(type: GraphQLType): GraphQLNamedType {
-  if (isNonNullType(type) || isListType(type)) {
-    return unwrapType(type.ofType);
-  }
-
-  return type;
 }
