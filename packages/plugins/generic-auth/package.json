@@ -1,6 +1,6 @@
 {
   "name": "@envelop/generic-auth",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -30,7 +30,7 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "@envelop/extended-validation": "^1.4.0"
+    "@envelop/extended-validation": "^1.4.1"
   },
   "devDependencies": {
     "bob-the-bundler": "1.6.1",

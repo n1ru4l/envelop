@@ -1,5 +1,12 @@
 # @envelop/generic-auth
 
+## 4.0.1
+
+### Patch Changes
+
+- Updated dependencies [01c8dd6]
+  - @envelop/extended-validation@1.4.1
+
 ## 4.0.0
 
 ### Major Changes
@@ -34,16 +41,12 @@
     },
   });
   ```
-  
+
   The `validateUser` function is no longer attached to the `context` object passed to the resolvers. You can add your own `validateUser` function to the context using `useExtendContext`.
-  
+
   ```typescript
   const getEnveloped = envelop({
-    plugins: [
-      useSchema(schema),
-      useGenericAuth(options),
-      useExtendContext(() => ({ validateUser })),
-    ],
+    plugins: [useSchema(schema), useGenericAuth(options), useExtendContext(() => ({ validateUser }))],
   });
   ```
 

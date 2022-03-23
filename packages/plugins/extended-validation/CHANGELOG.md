@@ -1,5 +1,11 @@
 # @envelop/extended-validation
 
+## 1.4.1
+
+### Patch Changes
+
+- 01c8dd6: fix handling of array input (list)
+
 ## 1.4.0
 
 ### Minor Changes
