@@ -1,5 +1,12 @@
 # @envelop/response-cache-redis
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [5400c3f]
+  - @envelop/response-cache@2.1.1
+
 ## 0.2.0
 
 ### Patch Changes
