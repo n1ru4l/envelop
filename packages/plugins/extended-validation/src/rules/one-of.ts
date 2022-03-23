@@ -1,6 +1,15 @@
-import { ArgumentNode, GraphQLError, GraphQLInputObjectType, GraphQLInputType, isListType, ValidationContext } from 'graphql';
+import {
+  ArgumentNode,
+  GraphQLError,
+  GraphQLInputObjectType,
+  GraphQLNonNull,
+  GraphQLType,
+  isListType,
+  ValidationContext,
+  getNamedType,
+} from 'graphql';
 import { getArgumentValues } from '@graphql-tools/utils';
-import { ExtendedValidationRule, getDirectiveFromAstNode, unwrapType } from '../common';
+import { ExtendedValidationRule, getDirectiveFromAstNode } from '../common';
 
 export const ONE_OF_DIRECTIVE_SDL = /* GraphQL */ `
   directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
@@ -20,25 +29,22 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
 
         const values = getArgumentValues(fieldType, node, executionArgs.variableValues || undefined);
 
-        if (fieldType) {
-          const isOneOfFieldType =
-            fieldType.extensions?.oneOf || (fieldType.astNode && getDirectiveFromAstNode(fieldType.astNode, 'oneOf'));
+        const isOneOfFieldType =
+          fieldType.extensions?.oneOf || (fieldType.astNode && getDirectiveFromAstNode(fieldType.astNode, 'oneOf'));
 
-          if (isOneOfFieldType) {
-            if (Object.keys(values).length !== 1) {
-              validationContext.reportError(
-                new GraphQLError(
-                  `Exactly one key must be specified for input for field "${fieldType.type.toString()}.${node.name.value}"`,
-                  [node]
-                )
-              );
-            }
+        if (isOneOfFieldType) {
+          if (Object.keys(values).length !== 1) {
+            validationContext.reportError(
+              new GraphQLError(
+                `Exactly one key must be specified for input for field "${fieldType.type.toString()}.${node.name.value}"`,
+                [node]
+              )
+            );
           }
         }
 
         for (const arg of node.arguments) {
           const argType = fieldType.args.find(typeArg => typeArg.name === arg.name.value);
-
           if (argType) {
             traverseVariables(validationContext, arg, argType.type, values[arg.name.value] as VariableValue);
           }
@@ -48,10 +54,17 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
   };
 };
 
+function getNonNullType(ttype: GraphQLType) {
+  if (ttype instanceof GraphQLNonNull) {
+    return ttype.ofType;
+  }
+  return ttype;
+}
+
 function traverseVariables(
   validationContext: ValidationContext,
   arg: ArgumentNode,
-  graphqlType: GraphQLInputType,
+  graphqlType: GraphQLType,
   currentValue: VariableValue
 ) {
   // if the current value is empty we don't need to traverse deeper
@@ -60,13 +73,15 @@ function traverseVariables(
     return;
   }
 
-  if (isListType(graphqlType)) {
+  const unwrappedType = getNonNullType(graphqlType);
+
+  if (isListType(unwrappedType)) {
     if (!Array.isArray(currentValue)) {
       // because of graphql type coercion a single object should be treated as an array of one object
       currentValue = [currentValue];
     }
     currentValue.forEach(value => {
-      traverseVariables(validationContext, arg, graphqlType.ofType, value);
+      traverseVariables(validationContext, arg, unwrappedType.ofType, value);
     });
     return;
   }
@@ -76,7 +91,7 @@ function traverseVariables(
     return;
   }
 
-  const inputType = unwrapType(graphqlType);
+  const inputType = getNamedType(graphqlType);
   const isOneOfInputType =
     inputType.extensions?.oneOf || (inputType.astNode && getDirectiveFromAstNode(inputType.astNode, 'oneOf'));
 
