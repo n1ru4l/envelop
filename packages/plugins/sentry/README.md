@@ -62,3 +62,4 @@ const getEnveloped = envelop({
 - `operationName` - Produces a "op" (operation) of created Span.
 - `skip` (default: none) - Produces a "op" (operation) of created Span.
 - `skipError` (default: ignored `EnvelopError`) - Indicates whether or not to skip Sentry exception reporting for a given error. By default, this plugin skips all `EnvelopError` errors and does not report it to Sentry.
+- `eventIdKey` (default: `'sentryEventId'`) - The key in the error's extensions field used to expose the generated Sentry event id. Set to `null` to disable.
