@@ -43,10 +43,10 @@ export type SentryPluginOptions = {
    */
   includeExecuteVariables?: boolean;
   /**
-   * The key of the event id in the error's extension
+   * The key of the event id in the error's extension. `null` to disable.
    * @default sentryEventId
    */
-  eventIdKey?: string;
+  eventIdKey?: string | null;
   /**
    * Adds custom tags to every Transaction.
    */
@@ -104,9 +104,13 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const renameTransaction = pick('renameTransaction', false);
   const skipOperation = pick('skip', () => false);
   const skipError = pick('skipError', defaultSkipError);
-  const eventIdKey = pick('eventIdKey', 'sentryEventId');
 
   function addEventId(err: GraphQLError, eventId: string): GraphQLError {
+    if (options.eventIdKey === null) {
+      return err;
+    }
+    const eventIdKey = options.eventIdKey ?? 'sentryEventId';
+
     return new GraphQLError(err.message, {
       ...err,
       extensions: {
