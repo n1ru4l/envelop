@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-console */
-/* eslint-disable dot-notation */
 import {
   Plugin,
   OnResolverCalledHook,
@@ -10,7 +7,7 @@ import {
 } from '@envelop/core';
 import * as Sentry from '@sentry/node';
 import type { Span } from '@sentry/types';
-import { ExecutionArgs, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
+import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
 
 export type SentryPluginOptions = {
   /**
@@ -45,6 +42,11 @@ export type SentryPluginOptions = {
    * @default false
    */
   includeExecuteVariables?: boolean;
+  /**
+   * The key of the event id in the error's extension
+   * @default sentryEventId
+   */
+  eventIdKey?: string;
   /**
    * Adds custom tags to every Transaction.
    */
@@ -102,6 +104,17 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const renameTransaction = pick('renameTransaction', false);
   const skipOperation = pick('skip', () => false);
   const skipError = pick('skipError', defaultSkipError);
+  const eventIdKey = pick('eventIdKey', 'sentryEventId');
+
+  function addEventId(err: GraphQLError, eventId: string): GraphQLError {
+    return new GraphQLError(err.message, {
+      ...err,
+      extensions: {
+        ...err.extensions,
+        [eventIdKey]: eventId,
+      },
+    });
+  }
 
   const onResolverCalled: OnResolverCalledHook | undefined = trackResolvers
     ? ({ args: resolversArgs, info, context }) => {
@@ -220,13 +233,15 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
 
       return {
         onExecuteDone(payload) {
-          const handleResult: OnExecuteDoneHookResultOnNextHook<{}> = ({ result }) => {
+          const handleResult: OnExecuteDoneHookResultOnNextHook<{}> = ({ result, setResult }) => {
             if (includeRawResult) {
               rootSpan.setData('result', result);
             }
 
             if (result.errors && result.errors.length > 0) {
-              for (const err of result.errors) {
+              for (let errorIndex = 0; errorIndex < result.errors.length; ++errorIndex) {
+                const err = result.errors[errorIndex];
+
                 Sentry.withScope(scope => {
                   scope.setTransactionName(opName);
                   scope.setTag('operation', operationType);
@@ -255,7 +270,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
                   // Map index values in list to $index for better grouping of events.
                   const errorPathWithIndex = (err.path ?? []).map(v => (typeof v === 'number' ? '$index' : v)).join(' > ');
 
-                  Sentry.captureException(err, {
+                  const eventId = Sentry.captureException(err, {
                     fingerprint: ['graphql', errorPathWithIndex, opName, operationType],
                     contexts: {
                       GraphQL: {
@@ -264,6 +279,10 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
                         variables: args.variableValues,
                       },
                     },
+                  });
+                  setResult({
+                    ...result,
+                    errors: result.errors?.map((err, i) => (i !== errorIndex ? err : addEventId(err, eventId))),
                   });
                 });
               }
