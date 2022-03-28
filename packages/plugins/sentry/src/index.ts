@@ -111,12 +111,9 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
     }
     const eventIdKey = options.eventIdKey ?? 'sentryEventId';
 
-    return new GraphQLError(err.message, {
-      ...err,
-      extensions: {
-        ...err.extensions,
-        [eventIdKey]: eventId,
-      },
+    return new GraphQLError(err.message, err.nodes, err.source, err.positions, err.path, undefined, {
+      ...err.extensions,
+      [eventIdKey]: eventId,
     });
   }
 
@@ -204,6 +201,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
         });
 
         if (!span) {
+          // eslint-disable-next-line no-console
           console.warn(
             [
               `Flag "startTransaction" is enabled but Sentry failed to find a transaction.`,
