@@ -306,6 +306,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
           let error: unknown = err;
           for (const errorCb of contextErrorHandlers) {
             errorCb({
+              initialContext,
               error,
               setError: err => {
                 error = err;

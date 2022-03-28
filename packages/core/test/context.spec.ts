@@ -1,3 +1,4 @@
+import { ContextFactoryFn, EnvelopError, useExtendContext } from '@envelop/core';
 import { createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { schema, query } from './common';
 
@@ -110,5 +111,51 @@ describe('contextFactory', () => {
         }),
       })
     );
+  });
+
+  it('Should yield initial context to context error handlers', async () => {
+    const errorSpy = jest.fn();
+    const registerContextErrorHandlerSpy = jest.fn();
+    const throwingContextFactory: ContextFactoryFn = () => {
+      throw new EnvelopError('The server was about to step on a turtle');
+    };
+
+    const teskit = createTestkit(
+      [
+        useExtendContext(throwingContextFactory),
+        {
+          onPluginInit({ registerContextErrorHandler }) {
+            registerContextErrorHandler(args => {
+              registerContextErrorHandlerSpy(args);
+            });
+          },
+        },
+      ],
+      schema
+    );
+
+    const execution = teskit.execute(query, {}, { test: true });
+    return new Promise<void>((resolve, reject) => {
+      if (execution instanceof Promise) {
+        return execution.then().catch(() => {
+          try {
+            expect(registerContextErrorHandlerSpy).toHaveBeenCalledWith(
+              expect.objectContaining({
+                initialContext: expect.objectContaining({
+                  test: true,
+                }),
+                error: new EnvelopError('The server was about to step on a turtle'),
+                setError: expect.any(Function),
+              })
+            );
+          } catch (e) {
+            reject(e);
+          }
+          return resolve();
+        });
+      } else {
+        return reject('Expected result of testkit.execute to return a promise');
+      }
+    });
   });
 });
