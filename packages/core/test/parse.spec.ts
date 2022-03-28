@@ -1,6 +1,7 @@
 import { assertSingleExecutionValue, createSpiedPlugin, createTestkit } from '@envelop/testing';
-import { FieldNode, parse, visit } from 'graphql';
+import { FieldNode, GraphQLError, parse, visit } from 'graphql';
 import { schema, query } from './common';
+import { Plugin } from '../src/index';
 
 describe('parse', () => {
   it('Should call before parse and after parse correctly', async () => {
@@ -44,6 +45,32 @@ describe('parse', () => {
     await teskit.execute(query);
     expect(replacementFn).toHaveBeenCalledTimes(1);
     expect(replacementFn).toHaveBeenCalledWith(query, undefined);
+  });
+
+  it('Should not yield app context during onParse', async () => {
+    const favoritePetSpy = jest.fn((_args: any) => {});
+    interface AppContext {
+      favoritePet: string;
+    }
+    const useFavoritePet: Plugin<AppContext> = {
+      onContextBuilding({ extendContext }) {
+        extendContext({
+          favoritePet: 'turtle',
+        });
+      },
+    };
+    const useOnParse: Plugin<AppContext> = {
+      onParse: () => {
+        return ({ context }) => {
+          // @ts-expect-error favoritePet is not available during onParse
+          favoritePetSpy(context.favoritePet);
+        };
+      },
+    };
+    const teskit = createTestkit([useFavoritePet, useOnParse], schema);
+    await teskit.execute(query);
+    expect(favoritePetSpy).toHaveBeenCalledTimes(1);
+    expect(favoritePetSpy).toHaveBeenCalledWith(undefined);
   });
 
   it('Should allow to set parsed document before actual parsing, and avoid running parseFn', async () => {
