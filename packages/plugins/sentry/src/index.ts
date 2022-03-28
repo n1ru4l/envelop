@@ -243,25 +243,23 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
             }
 
             if (result.errors && result.errors.length > 0) {
-              for (let errorIndex = 0; errorIndex < result.errors.length; ++errorIndex) {
-                const err = result.errors[errorIndex];
+              Sentry.withScope(scope => {
+                scope.setTransactionName(opName);
+                scope.setTag('operation', operationType);
+                scope.setTag('operationName', opName);
+                scope.setExtra('document', document);
 
-                Sentry.withScope(scope => {
-                  scope.setTransactionName(opName);
-                  scope.setTag('operation', operationType);
-                  scope.setTag('operationName', opName);
-                  scope.setExtra('document', document);
+                scope.setTags(addedTags || {});
 
-                  scope.setTags(addedTags || {});
+                if (includeRawResult) {
+                  scope.setExtra('result', result);
+                }
 
-                  if (includeRawResult) {
-                    scope.setExtra('result', result);
-                  }
+                if (includeExecuteVariables) {
+                  scope.setExtra('variables', args.variableValues);
+                }
 
-                  if (includeExecuteVariables) {
-                    scope.setExtra('variables', args.variableValues);
-                  }
-
+                const errors = result.errors?.map(err => {
                   const errorPath = (err.path ?? []).join(' > ');
                   if (errorPath) {
                     scope.addBreadcrumb({
@@ -284,12 +282,15 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
                       },
                     },
                   });
-                  setResult({
-                    ...result,
-                    errors: result.errors?.map((err, i) => (i !== errorIndex ? err : addEventId(err, eventId))),
-                  });
+
+                  return addEventId(err, eventId);
                 });
-              }
+
+                setResult({
+                  ...result,
+                  errors,
+                });
+              });
             }
 
             rootSpan.finish();
