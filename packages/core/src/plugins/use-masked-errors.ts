@@ -14,7 +14,12 @@ export type FormatErrorHandler = (error: GraphQLError | unknown, message: string
 
 export const formatError: FormatErrorHandler = (err, message, isDev) => {
   if (err instanceof GraphQLError) {
-    if (err.originalError && err.originalError instanceof EnvelopError === false) {
+    if (
+      /** execution error */
+      (err.originalError && err.originalError instanceof EnvelopError === false) ||
+      /** validate and parse errors */
+      (err.originalError === undefined && err instanceof EnvelopError === false)
+    ) {
       return new GraphQLError(
         message,
         err.nodes,
@@ -25,8 +30,8 @@ export const formatError: FormatErrorHandler = (err, message, isDev) => {
         isDev
           ? {
               originalError: {
-                message: err.originalError.message,
-                stack: err.originalError.stack,
+                message: err.originalError?.message ?? err.message,
+                stack: err.originalError?.stack ?? err.stack,
               },
             }
           : undefined
@@ -47,6 +52,16 @@ export type UseMaskedErrorsOpts = {
    * The default value is `process.env['NODE_ENV'] === 'development'`
    */
   isDev?: boolean;
+  /**
+   * Whether parse errors should be masked.
+   * @default false
+   */
+  onParse?: boolean;
+  /**
+   * Whether validation errors should be masked.
+   * @default false
+   */
+  onValidate?: boolean;
 };
 
 const makeHandleResult =
@@ -65,6 +80,26 @@ export const useMaskedErrors = (opts?: UseMaskedErrorsOpts): Plugin => {
   const handleResult = makeHandleResult(format, message, isDev);
 
   return {
+    onParse:
+      opts?.onParse === true
+        ? function onParse() {
+            return function onParseEnd({ result, replaceParseResult }) {
+              if (result instanceof Error) {
+                replaceParseResult(format(result, message, isDev));
+              }
+            };
+          }
+        : undefined,
+    onValidate:
+      opts?.onValidate === true
+        ? function onValidate() {
+            return function onValidateEnd({ valid, result, setResult }) {
+              if (valid === false) {
+                setResult(result.map(error => format(error, message, isDev)));
+              }
+            };
+          }
+        : undefined,
     onPluginInit(context) {
       context.registerContextErrorHandler(({ error, setError }) => {
         setError(formatError(error, message, isDev));

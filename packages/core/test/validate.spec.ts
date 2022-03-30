@@ -29,6 +29,7 @@ describe('validate', () => {
       context: expect.any(Object),
       extendContext: expect.any(Function),
       result: [],
+      setResult: expect.any(Function),
       valid: true,
     });
   });
@@ -90,6 +91,7 @@ describe('validate', () => {
     expect(after).toHaveBeenCalledWith({
       valid: false,
       result: [e],
+      setResult: expect.any(Function),
       context: expect.any(Object),
       extendContext: expect.any(Function),
     });
