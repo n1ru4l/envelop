@@ -1,5 +1,5 @@
 import type { Plugin } from '@envelop/types';
-import { Kind, OperationDefinitionNode, OperationTypeNode } from 'graphql';
+import { Kind, OperationDefinitionNode } from 'graphql';
 
 const fastIntroSpectionSymbol = Symbol('fastIntrospection');
 
@@ -16,7 +16,7 @@ export const useImmediateIntrospection = (): Plugin<{
       setValidationFn((schema, node, ...args) => {
         const operations = node.definitions.filter((n): n is OperationDefinitionNode => n.kind === Kind.OPERATION_DEFINITION);
 
-        if (operations.some(operation => operation.operation !== OperationTypeNode.QUERY)) {
+        if (operations.some(operation => operation.operation !== 'query')) {
           return validateFn(schema, node, ...args);
         }
 
