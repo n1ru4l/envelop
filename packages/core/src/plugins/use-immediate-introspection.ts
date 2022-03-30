@@ -1,17 +1,5 @@
 import type { Plugin } from '@envelop/types';
-import type { ValidationRule } from 'graphql';
-
-const OnNonIntrospectionFieldReachedValidationRule =
-  (onNonIntrospectionField: () => void): ValidationRule =>
-  () => {
-    return {
-      Field(field) {
-        if (!field.name.value.startsWith('__')) {
-          onNonIntrospectionField();
-        }
-      },
-    };
-  };
+import { Kind, OperationDefinitionNode, OperationTypeNode } from 'graphql';
 
 const fastIntroSpectionSymbol = Symbol('fastIntrospection');
 
@@ -19,15 +7,26 @@ const fastIntroSpectionSymbol = Symbol('fastIntrospection');
  * In case a GraphQL operation only contains introspection fields the context building can be skipped completely.
  * With this plugin any further context extensions will be skipped.
  */
-export const useImmediateIntrospection = (): Plugin => {
+export const useImmediateIntrospection = (): Plugin<{
+  [fastIntroSpectionSymbol]?: boolean;
+}> => {
   return {
-    onValidate({ addValidationRule }) {
-      let isIntrospectionOnly = true;
-      addValidationRule(
-        OnNonIntrospectionFieldReachedValidationRule(() => {
-          isIntrospectionOnly = false;
-        })
-      );
+    onValidate({ setValidationFn, validateFn }) {
+      let isIntrospectionOnly = false;
+      setValidationFn((schema, node, ...args) => {
+        const operations = node.definitions.filter((n): n is OperationDefinitionNode => n.kind === Kind.OPERATION_DEFINITION);
+
+        if (operations.some(operation => operation.operation !== OperationTypeNode.QUERY)) {
+          return validateFn(schema, node, ...args);
+        }
+
+        const query = operations[0];
+        const selections = query.selectionSet.selections.map(node => (node.kind === Kind.FIELD ? node.name.value : 'fragment'));
+        if (selections.every(node => node.startsWith('__'))) {
+          isIntrospectionOnly = true;
+        }
+        return validateFn(schema, node, ...args);
+      });
 
       return function afterValidate({ extendContext }) {
         if (isIntrospectionOnly) {
