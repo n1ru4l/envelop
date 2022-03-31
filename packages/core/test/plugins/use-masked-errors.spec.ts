@@ -353,8 +353,8 @@ describe('useMaskedErrors', () => {
       }
     `);
   });
-  it('should mask parse errors with onParse option', async () => {
-    const testInstance = createTestkit([useMaskedErrors({ onParse: true })], schema);
+  it('should mask parse errors with handleParseErrors option', async () => {
+    const testInstance = createTestkit([useMaskedErrors({ handleParseErrors: true })], schema);
     const result = await testInstance.execute(`query { a `, {});
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
@@ -373,8 +373,8 @@ describe('useMaskedErrors', () => {
       }
     `);
   });
-  it('should mask validation errors with onValidate option', async () => {
-    const testInstance = createTestkit([useMaskedErrors({ onValidate: true })], schema);
+  it('should mask validation errors with handleValidationErrors option', async () => {
+    const testInstance = createTestkit([useMaskedErrors({ handleValidationErrors: true })], schema);
     const result = await testInstance.execute(`query { iDoNotExistsMyGuy }`, {});
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();

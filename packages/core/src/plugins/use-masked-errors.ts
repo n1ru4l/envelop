@@ -53,15 +53,24 @@ export type UseMaskedErrorsOpts = {
    */
   isDev?: boolean;
   /**
-   * Whether parse errors should be masked.
+   * Whether parse errors should be processed by this plugin.
+   * In general it is not recommend to set this flag to `true`
+   * as a `parse` error contains useful information for debugging a GraphQL operation.
+   * A `parse` error never contains any sensitive information.
    * @default false
    */
-  onParse?: boolean;
+  handleParseErrors?: boolean;
   /**
-   * Whether validation errors should be masked.
+   * Whether validation errors should processed by this plugin.
+   * In general we recommend against setting this flag to `true`
+   * as a `validate` error contains useful information for debugging a GraphQL operation.
+   * A `validate` error contains "did you mean x" suggestions that make it easier
+   * to reverse-introspect a GraphQL schema whose introspection capabilities got disabled.
+   * Instead of disabling introspection and masking validation errors, using persisted operations
+   * is a safer solution for avoiding the execution of unwanted/arbitrary operations.
    * @default false
    */
-  onValidate?: boolean;
+  handleValidationErrors?: boolean;
 };
 
 const makeHandleResult =
@@ -81,7 +90,7 @@ export const useMaskedErrors = (opts?: UseMaskedErrorsOpts): Plugin => {
 
   return {
     onParse:
-      opts?.onParse === true
+      opts?.handleParseErrors === true
         ? function onParse() {
             return function onParseEnd({ result, replaceParseResult }) {
               if (result instanceof Error) {
@@ -91,7 +100,7 @@ export const useMaskedErrors = (opts?: UseMaskedErrorsOpts): Plugin => {
           }
         : undefined,
     onValidate:
-      opts?.onValidate === true
+      opts?.handleValidationErrors === true
         ? function onValidate() {
             return function onValidateEnd({ valid, result, setResult }) {
               if (valid === false) {
