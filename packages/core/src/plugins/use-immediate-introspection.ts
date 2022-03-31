@@ -1,14 +1,19 @@
 import type { Plugin } from '@envelop/types';
-import type { ValidationRule } from 'graphql';
+import { BREAK, ValidationRule } from 'graphql';
 
 const OnNonIntrospectionFieldReachedValidationRule =
   (onNonIntrospectionField: () => void): ValidationRule =>
-  () => {
+  ctx => {
+    const rootQueryType = ctx.getSchema().getQueryType();
+
     return {
       Field(field) {
-        if (!field.name.value.startsWith('__')) {
+        if (ctx.getParentType() === rootQueryType && !field.name.value.startsWith('__')) {
           onNonIntrospectionField();
+          return BREAK;
         }
+
+        return undefined;
       },
     };
   };
