@@ -510,6 +510,36 @@ describe('Prom Metrics plugin', () => {
       expect(await metricCount('graphql_envelop_request')).toBe(1);
     });
 
+    it('Should trace request that fail in parse', async () => {
+      const { execute, metricCount } = prepare({ requestCount: true, execute: true });
+      const result = await execute('query {');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors?.length).toBe(1);
+      expect(await metricCount('graphql_envelop_request')).toBe(1);
+      expect(await metricCount('graphql_envelop_phase_parse', 'count')).toBe(0);
+    });
+
+    it('Should trace request that fail in validate', async () => {
+      const { execute, metricCount } = prepare({ requestCount: true, execute: true });
+      const result = await execute('query test($v: String!) { regularField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors?.length).toBe(1);
+      expect(await metricCount('graphql_envelop_request')).toBe(1);
+      expect(await metricCount('graphql_envelop_phase_validate', 'count')).toBe(1);
+    });
+
+    it('Should trace request that fail in execute', async () => {
+      const { execute, metricCount } = prepare({ requestCount: true, execute: true });
+      const result = await execute('query { errorField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors?.length).toBe(1);
+      expect(await metricCount('graphql_envelop_request')).toBe(1);
+      expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
+    });
+
     it('Should trace all sucessfull requests, with multiple req', async () => {
       const { execute, metricValue } = prepare({ requestCount: true, execute: true });
       const result1 = await execute('query { regularField }');
