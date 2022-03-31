@@ -1,5 +1,11 @@
 # @envelop/response-cache-redis
 
+## 0.3.0
+
+### Patch Changes
+
+- @envelop/response-cache@2.2.0
+
 ## 0.2.1
 
 ### Patch Changes

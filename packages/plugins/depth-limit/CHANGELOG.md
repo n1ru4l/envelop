@@ -1,5 +1,14 @@
 # @envelop/depth-limit
 
+## 1.4.0
+
+### Minor Changes
+
+- Updated dependencies [ada7fb0]
+- Updated dependencies [d5115b4]
+- Updated dependencies [d5115b4]
+  - @envelop/core@2.2.0
+
 ## 1.3.0
 
 ### Minor Changes

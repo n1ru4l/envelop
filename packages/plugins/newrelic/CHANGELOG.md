@@ -1,5 +1,14 @@
 # @envelop/newrelic
 
+## 3.3.0
+
+### Minor Changes
+
+- Updated dependencies [ada7fb0]
+- Updated dependencies [d5115b4]
+- Updated dependencies [d5115b4]
+  - @envelop/core@2.2.0
+
 ## 3.2.1
 
 ### Patch Changes
