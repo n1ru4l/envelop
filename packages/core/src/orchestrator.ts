@@ -257,6 +257,9 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
             extendContext: extension => {
               Object.assign(context, extension);
             },
+            setResult: newResult => {
+              result = newResult;
+            },
           });
         }
 

@@ -195,6 +195,10 @@ export type AfterValidateEventPayload<ContextType> = {
    * The array is empty if no errors were raised.
    */
   result: readonly GraphQLError[];
+  /**
+   * Replace the current error result with a new one.
+   */
+  setResult: (errors: GraphQLError[]) => void;
 };
 
 /**

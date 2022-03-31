@@ -184,8 +184,8 @@ describe('useMaskedErrors', () => {
     );
     try {
       await testInstance.execute(`query { secretWithExtensions }`);
-    } catch (err) {
-      expect(err).toMatchInlineSnapshot(`[GraphQLError: ${DEFAULT_ERROR_MESSAGE}]`);
+    } catch (err: any) {
+      expect(err.message).toEqual(DEFAULT_ERROR_MESSAGE);
     }
   });
 
@@ -211,11 +211,9 @@ describe('useMaskedErrors', () => {
     const result = await testInstance.execute(`subscription { instantError }`);
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
-    expect(result.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: ${DEFAULT_ERROR_MESSAGE}],
-]
-`);
+    expect(result.errors).toHaveLength(1);
+    const [error] = result.errors!;
+    expect(error.message).toEqual(DEFAULT_ERROR_MESSAGE);
   });
 
   it('Should mask subscribe (sync/promise) subscription errors with a custom error message', async () => {
@@ -224,10 +222,10 @@ Array [
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: My Custom subscription error message.],
-]
-`);
+      Array [
+        [GraphQLError: My Custom subscription error message.],
+      ]
+    `);
   });
 
   it('Should not mask subscribe (sync/promise) subscription envelop errors', async () => {
@@ -236,10 +234,10 @@ Array [
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: Noop],
-]
-`);
+      Array [
+        [GraphQLError: Noop],
+      ]
+    `);
   });
 
   it('Should mask subscribe (AsyncIterable) subscription errors', async () => {
@@ -249,8 +247,8 @@ Array [
     assertStreamExecutionValue(resultStream);
     try {
       await collectAsyncIteratorValues(resultStream);
-    } catch (err) {
-      expect(err).toMatchInlineSnapshot(`[GraphQLError: ${DEFAULT_ERROR_MESSAGE}]`);
+    } catch (err: any) {
+      expect(err.message).toEqual(DEFAULT_ERROR_MESSAGE);
     }
   });
 
@@ -285,11 +283,9 @@ Array [
     expect(allResults).toHaveLength(1);
     const [result] = allResults;
     expect(result.errors).toBeDefined();
-    expect(result.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: ${DEFAULT_ERROR_MESSAGE}],
-]
-`);
+    expect(result.errors).toHaveLength(1);
+    const [error] = result.errors!;
+    expect(error.message).toEqual(DEFAULT_ERROR_MESSAGE);
   });
   it('Should mask resolve subscription errors with a custom error message', async () => {
     const testInstance = createTestkit([useMaskedErrors({ errorMessage: 'Custom resolve subscription errors.' })], schema);
@@ -300,10 +296,10 @@ Array [
     const [result] = allResults;
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: Custom resolve subscription errors.],
-]
-`);
+      Array [
+        [GraphQLError: Custom resolve subscription errors.],
+      ]
+    `);
   });
 
   it('Should not mask resolve subscription envelop errors', async () => {
@@ -315,10 +311,10 @@ Array [
     const [result] = allResults;
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: Noop],
-]
-`);
+      Array [
+        [GraphQLError: Noop],
+      ]
+    `);
   });
 
   it('Should not mask auth0 header errors', async () => {
@@ -343,5 +339,46 @@ Array [
     } catch (err) {
       expect(err).toMatchInlineSnapshot(`[GraphQLError: Unsupported token type provided: "Something"!]`);
     }
+  });
+
+  it('should not mask parse errors', async () => {
+    const testInstance = createTestkit([useMaskedErrors()], schema);
+    const result = await testInstance.execute(`query { a `, {});
+    assertSingleExecutionValue(result);
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "errors": Array [
+          [GraphQLError: Syntax Error: Expected Name, found <EOF>.],
+        ],
+      }
+    `);
+  });
+  it('should mask parse errors with handleParseErrors option', async () => {
+    const testInstance = createTestkit([useMaskedErrors({ handleParseErrors: true })], schema);
+    const result = await testInstance.execute(`query { a `, {});
+    assertSingleExecutionValue(result);
+    expect(result.errors).toBeDefined();
+    const [error] = result.errors!;
+    expect(error.message).toEqual(DEFAULT_ERROR_MESSAGE);
+  });
+  it('should not mask validation errors', async () => {
+    const testInstance = createTestkit([useMaskedErrors()], schema);
+    const result = await testInstance.execute(`query { iDoNotExistsMyGuy }`, {});
+    assertSingleExecutionValue(result);
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "errors": Array [
+          [GraphQLError: Cannot query field "iDoNotExistsMyGuy" on type "Query".],
+        ],
+      }
+    `);
+  });
+  it('should mask validation errors with handleValidationErrors option', async () => {
+    const testInstance = createTestkit([useMaskedErrors({ handleValidationErrors: true })], schema);
+    const result = await testInstance.execute(`query { iDoNotExistsMyGuy }`, {});
+    assertSingleExecutionValue(result);
+    expect(result.errors).toBeDefined();
+    const [error] = result.errors!;
+    expect(error.message).toEqual(DEFAULT_ERROR_MESSAGE);
   });
 });
