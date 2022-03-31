@@ -1,5 +1,11 @@
 # @envelop/types
 
+## 2.1.0
+
+### Minor Changes
+
+- d5115b4: add `setResult` to `AfterValidateEventPayload` for altering the validation errors.
+
 ## 2.0.0
 
 ### Major Changes
