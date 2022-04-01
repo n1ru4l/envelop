@@ -9,7 +9,7 @@ _Progress of the issue based on the [Contributor Workflow](https://github.com/th
 
 - [ ] 1. The issue provides a [minimal reproduction](https://en.wikipedia.org/wiki/Minimal_reproducible_example) available on [Stackblitz](https://stackblitz.com/fork/node).
   - _Please install the latest `@envelop/*` packages that you are using._
-  - _Please makee sure the reproduction is as small as possible._
+  - _Please make sure the reproduction is as small as possible._
 - [ ] 2. A failing test has been provided
 - [ ] 3. A local solution has been provided
 - [ ] 4. A pull request is pending review
