@@ -47,7 +47,7 @@
     "@types/react": "17.0.39",
     "@types/react-dom": "17.0.13",
     "@types/wait-on": "5.3.1",
-    "concurrently": "6.5.1",
+    "concurrently": "7.1.0",
     "esbuild-register": "3.3.2",
     "open-cli": "6.0.1",
     "typescript": "4.4.4",
