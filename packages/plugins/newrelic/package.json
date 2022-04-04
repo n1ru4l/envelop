@@ -35,7 +35,7 @@
     "bob-the-bundler": "1.6.1",
     "graphql": "16.3.0",
     "newrelic": "8.8.0",
-    "typescript": "4.4.4"
+    "typescript": "4.6.3"
   },
   "peerDependencies": {
     "@envelop/core": "^2.3.0",
