@@ -268,8 +268,10 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     ? initialContext => async orchestratorCtx => {
         const afterCalls: AfterContextBuildingHook<any>[] = [];
 
+        // In order to have access to the "last working" context object we keep this outside of the try block:
+        let context = orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
+
         try {
-          let context = orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
           let isBreakingContextBuilding = false;
 
           for (const onContext of beforeCallbacks.context) {
@@ -306,7 +308,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
           let error: unknown = err;
           for (const errorCb of contextErrorHandlers) {
             errorCb({
-              initialContext,
+              context,
               error,
               setError: err => {
                 error = err;

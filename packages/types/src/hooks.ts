@@ -31,9 +31,9 @@ export type OnSchemaChangeHook = (options: OnSchemaChangeEventPayload) => void;
 
 export type OnContextErrorHandlerPayload = {
   /**
-   * The initial context object.
+   * The context object at the "last working" state
    */
-  initialContext: Readonly<Record<string, unknown>>;
+  context: Readonly<Record<string, unknown>>;
   /** The error or thing that got rejected or thrown */
   error: unknown;
   /** Overwrite the error or thing that got rejected or thrown. */

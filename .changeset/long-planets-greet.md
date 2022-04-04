@@ -3,14 +3,14 @@
 '@envelop/types': minor
 ---
 
-Pass inital context to registerContextErrorHandler
+Pass context to registerContextErrorHandler
 
 ```ts
 export const useMyHook = (): Plugin => {
   return {
     onPluginInit(context) {
-      context.registerContextErrorHandler(({ initialContext }) => {
-        console.error('Error occurred during context creation but at least I have the initial context', initialContext);
+      context.registerContextErrorHandler(({ context }) => {
+        console.error('Error occurred during context creation but at least I have the  context so far', context);
       });
     },
   };

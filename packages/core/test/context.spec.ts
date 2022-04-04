@@ -114,14 +114,20 @@ describe('contextFactory', () => {
   });
 
   it('Should yield initial context to context error handlers', async () => {
-    const errorSpy = jest.fn();
     const registerContextErrorHandlerSpy = jest.fn();
+    const contextFactory: ContextFactoryFn = () => {
+      return {
+        contextSoFar: 'all good',
+      };
+    };
+
     const throwingContextFactory: ContextFactoryFn = () => {
       throw new EnvelopError('The server was about to step on a turtle');
     };
 
     const teskit = createTestkit(
       [
+        useExtendContext(contextFactory),
         useExtendContext(throwingContextFactory),
         {
           onPluginInit({ registerContextErrorHandler }) {
@@ -141,8 +147,13 @@ describe('contextFactory', () => {
           try {
             expect(registerContextErrorHandlerSpy).toHaveBeenCalledWith(
               expect.objectContaining({
-                initialContext: expect.objectContaining({
+                context: expect.objectContaining({
+                  contextSoFar: 'all good',
+                  document: expect.any(Object),
+                  operation: expect.any(String),
+                  request: expect.any(Object),
                   test: true,
+                  variables: expect.any(Object),
                 }),
                 error: new EnvelopError('The server was about to step on a turtle'),
                 setError: expect.any(Function),
