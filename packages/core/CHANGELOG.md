@@ -1,5 +1,28 @@
 # @envelop/core
 
+## 2.3.0
+
+### Minor Changes
+
+- af23408: Pass context to registerContextErrorHandler
+
+  ```ts
+  export const useMyHook = (): Plugin => {
+    return {
+      onPluginInit(context) {
+        context.registerContextErrorHandler(({ context }) => {
+          console.error('Error occurred during context creation but at least I have the  context so far', context);
+        });
+      },
+    };
+  };
+  ```
+
+### Patch Changes
+
+- Updated dependencies [af23408]
+  - @envelop/types@2.2.0
+
 ## 2.2.0
 
 ### Minor Changes

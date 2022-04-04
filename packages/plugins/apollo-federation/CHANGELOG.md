@@ -1,5 +1,12 @@
 # @envelop/apollo-federation
 
+## 2.3.0
+
+### Minor Changes
+
+- Updated dependencies [af23408]
+  - @envelop/core@2.3.0
+
 ## 2.2.0
 
 ### Minor Changes
