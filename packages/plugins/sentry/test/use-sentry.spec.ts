@@ -1,4 +1,5 @@
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import '@sentry/tracing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useSentry } from '../src';
 
