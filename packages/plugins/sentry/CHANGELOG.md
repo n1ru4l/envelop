@@ -1,5 +1,16 @@
 # @envelop/sentry
 
+## 3.4.0
+
+### Minor Changes
+
+- 0be88fe: Expose sentry event id in error extensions
+
+### Patch Changes
+
+- Updated dependencies [d5c2c9a]
+  - @envelop/core@2.3.1
+
 ## 3.3.0
 
 ### Minor Changes
