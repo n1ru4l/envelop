@@ -1,4 +1,4 @@
-import { Plugin, OnResolverCalledHook, Path, isAsyncIterable, EnvelopError } from '@envelop/core';
+import { Plugin, OnResolverCalledHook, Path, isAsyncIterable, EnvelopError, DefaultContext } from '@envelop/core';
 import { print, FieldNode, Kind, OperationDefinitionNode, ExecutionResult, GraphQLError } from 'graphql';
 
 enum AttributeName {
@@ -23,7 +23,10 @@ export type UseNewRelicOptions = {
   trackResolvers?: boolean;
   includeResolverArgs?: boolean | RegExp;
   rootFieldsNaming?: boolean;
-  operationNameProperty?: string;
+  /**
+   * Function that returns a custom operation name to be used as transaction name and attribute
+   */
+  extractOperationName?: (context: DefaultContext) => string | undefined;
   /**
    * Indicates whether or not to skip reporting a given error to NewRelic.
    * By default, this plugin skips all `EnvelopError` errors and does not report them to NewRelic.
@@ -43,7 +46,6 @@ const DEFAULT_OPTIONS: UseNewRelicOptions = {
   trackResolvers: false,
   includeResolverArgs: false,
   rootFieldsNaming: false,
-  operationNameProperty: '',
   skipError: defaultSkipError,
 };
 
@@ -83,7 +85,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
       const operationType = rootOperation.operation;
       const document = print(args.document);
       const operationName =
-        args.document[options.operationNameProperty as string] ||
+        options.extractOperationName?.(args.contextValue) ||
         args.operationName ||
         rootOperation.name?.value ||
         AttributeName.ANONYMOUS_OPERATION;
