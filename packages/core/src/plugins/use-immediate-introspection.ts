@@ -10,9 +10,10 @@ const OnNonIntrospectionFieldReachedValidationRule =
 
     return {
       Field(field) {
-        const isQuery = ctx.getParentType() === rootQueryType;
-        const isMutation = ctx.getParentType() === rootMutationType;
-        const isSubscription = ctx.getParentType() === rootSubscriptionType;
+        const parentType = ctx.getParentType();
+        const isQuery = parentType === rootQueryType;
+        const isMutation = parentType === rootMutationType;
+        const isSubscription = parentType === rootSubscriptionType;
 
         if ((isQuery && !field.name.value.startsWith('__')) || isMutation || isSubscription) {
           onNonIntrospectionField();
