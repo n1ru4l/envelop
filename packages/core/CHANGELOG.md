@@ -1,5 +1,11 @@
 # @envelop/core
 
+## 2.3.1
+
+### Patch Changes
+
+- d5c2c9a: fix immediate introspection for subscription and mutation
+
 ## 2.3.0
 
 ### Minor Changes
