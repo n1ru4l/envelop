@@ -1,9 +1,10 @@
-import { Plugin } from '@envelop/core';
-import { ApolloGateway } from '@apollo/gateway';
+import type { Plugin } from '@envelop/core';
 import { DocumentNode, getOperationAST, print, printSchema, Source } from 'graphql';
-import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
-import { CachePolicy, GraphQLRequestMetrics, Logger, SchemaHash } from 'apollo-server-types';
 import { newCachePolicy } from './newCachePolicy';
+import type { ApolloGateway } from '@apollo/gateway';
+import type { KeyValueCache } from 'apollo-server-caching';
+import type { CachePolicy, GraphQLRequestMetrics, Logger, SchemaHash } from 'apollo-server-types';
+import { getInMemoryLRUCache } from '@envelop/core';
 
 export interface ApolloFederationPluginConfig {
   gateway: ApolloGateway;
@@ -13,10 +14,19 @@ export interface ApolloFederationPluginConfig {
   overallCachePolicy?: CachePolicy;
 }
 
+function getDefaultCache(): KeyValueCache {
+  const lruCache = getInMemoryLRUCache<any>();
+  return {
+    get: async (key: string) => lruCache.get(key),
+    set: async (key: string, value: any) => lruCache.set(key, value),
+    delete: async (key: string) => lruCache.delete(key),
+  };
+}
+
 export const useApolloFederation = (options: ApolloFederationPluginConfig): Plugin => {
   const {
     gateway,
-    cache = new InMemoryLRUCache(),
+    cache = getDefaultCache(),
     logger = console,
     metrics = Object.create(null),
     overallCachePolicy = newCachePolicy(),

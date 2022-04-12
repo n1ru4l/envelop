@@ -1,5 +1,5 @@
 // Taken from https://github.com/apollographql/apollo-server/blob/main/packages/apollo-server-core/src/cachePolicy.ts
-import { CacheHint, CachePolicy, CacheScope } from 'apollo-server-types';
+import type { CacheHint, CachePolicy, CacheScope } from 'apollo-server-types';
 
 export function newCachePolicy(): CachePolicy {
   return {
@@ -9,7 +9,7 @@ export function newCachePolicy(): CachePolicy {
       if (hint.maxAge !== undefined && (this.maxAge === undefined || hint.maxAge < this.maxAge)) {
         this.maxAge = hint.maxAge;
       }
-      if (hint.scope !== undefined && this.scope !== CacheScope.Private) {
+      if (hint.scope !== undefined && this.scope !== 'PRIVATE') {
         this.scope = hint.scope;
       }
     },
@@ -25,7 +25,7 @@ export function newCachePolicy(): CachePolicy {
       if (this.maxAge === undefined || this.maxAge === 0) {
         return null;
       }
-      return { maxAge: this.maxAge, scope: this.scope ?? CacheScope.Public };
+      return { maxAge: this.maxAge, scope: this.scope ?? ('PUBLIC' as CacheScope) };
     },
   };
 }
