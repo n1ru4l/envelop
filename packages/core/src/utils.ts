@@ -315,3 +315,8 @@ export function getInMemoryLRUCache<V>({
     },
   };
 }
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function isSourceObject(maybeSource: any): maybeSource is Source {
+  return maybeSource != null && maybeSource.body != null;
+}

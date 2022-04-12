@@ -1,4 +1,4 @@
-import { BasicCache, getInMemoryLRUCache, Plugin } from '@envelop/core';
+import { BasicCache, getInMemoryLRUCache, isSourceObject, Plugin } from '@envelop/core';
 import { GraphQLError, print } from 'graphql';
 
 export type ValidationCache = BasicCache<readonly GraphQLError[]> & { clear(): void };
@@ -18,7 +18,7 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
       resultCache.clear();
     },
     onParse({ params, context }) {
-      rawDocumentMap.set(context, params.source.toString());
+      rawDocumentMap.set(context, isSourceObject(params.source) ? params.source.body : params.source?.toString());
     },
     onValidate({ params, context, setResult }) {
       const key: string = rawDocumentMap.get(context) ?? print(params.documentAST);

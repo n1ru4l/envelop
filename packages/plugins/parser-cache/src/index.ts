@@ -1,5 +1,5 @@
-import { Plugin, getInMemoryLRUCache, BasicCache } from '@envelop/core';
-import { DocumentNode, Source } from 'graphql';
+import { Plugin, getInMemoryLRUCache, BasicCache, isSourceObject } from '@envelop/core';
+import { DocumentNode } from 'graphql';
 
 export type DocumentCache = BasicCache<DocumentNode>;
 export type ErrorCache = BasicCache<Error>;
@@ -18,7 +18,7 @@ export const useParserCache = (pluginOptions: ParserCacheOptions = {}): Plugin =
   return {
     onParse({ params, setParsedDocument }) {
       const { source } = params;
-      const key = source instanceof Source ? source.body : source;
+      const key = isSourceObject(source) ? source.body : params.source?.toString();
 
       const cachedError = errorCache.get(key);
 
