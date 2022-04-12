@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Plugin, TypedExecutionArgs, getInMemoryLRUCache } from '@envelop/core';
+import { Plugin, TypedExecutionArgs, getInMemoryLRUCache, BasicCache } from '@envelop/core';
 import { DocumentNode, Source, ExecutionArgs, ExecutionResult } from 'graphql';
 import { compileQuery, isCompiledQuery, CompilerOptions, CompiledQuery } from 'graphql-jit';
 
@@ -8,10 +8,7 @@ type JITCacheEntry = {
   subscribe?: CompiledQuery['subscribe'];
 };
 
-export interface JITCache {
-  get(key: string): JITCacheEntry | undefined;
-  set(key: string, value: JITCacheEntry): void;
-}
+export type JITCache = BasicCache<JITCacheEntry>;
 
 export const useGraphQlJit = (
   compilerOptions: Partial<CompilerOptions> = {},

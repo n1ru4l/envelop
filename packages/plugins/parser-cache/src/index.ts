@@ -1,13 +1,8 @@
-import { Plugin, getInMemoryLRUCache } from '@envelop/core';
+import { Plugin, getInMemoryLRUCache, BasicCache } from '@envelop/core';
 import { DocumentNode, Source } from 'graphql';
 
-interface Cache<T> {
-  get(key: string): T | undefined;
-  set(key: string, value: T): void;
-}
-
-export type DocumentCache = Cache<DocumentNode>;
-export type ErrorCache = Cache<Error>;
+export type DocumentCache = BasicCache<DocumentNode>;
+export type ErrorCache = BasicCache<Error>;
 
 export type ParserCacheOptions = {
   documentCache?: DocumentCache;
@@ -35,6 +30,7 @@ export const useParserCache = (pluginOptions: ParserCacheOptions = {}): Plugin =
 
       if (cachedDocument !== undefined) {
         setParsedDocument(cachedDocument);
+        return;
       }
 
       return ({ result }) => {

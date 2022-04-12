@@ -260,14 +260,20 @@ export function errorAsyncIterator<TInput>(
   return stream;
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export interface BasicCache<V> {
+  get(key: string): V | undefined;
+  set(key: string, value: V): void;
+  delete(key: string): void;
+  clear?: () => void;
+}
+
 export function getInMemoryLRUCache<V>({
   max = 1000,
   onDelete = () => {},
 }: {
   max?: number;
   onDelete?: (key: string, value: V) => void;
-} = {}) {
+} = {}): BasicCache<V> & { clear(): void } {
   let storage: Record<string, V> = {};
   let keys: string[] = [];
   return {
