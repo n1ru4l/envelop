@@ -49,7 +49,7 @@
     "@types/wait-on": "5.3.1",
     "concurrently": "6.5.1",
     "esbuild-register": "3.3.2",
-    "open-cli": "6.0.1",
+    "open-cli": "7.0.1",
     "typescript": "4.4.4",
     "wait-on": "6.0.1"
   }
