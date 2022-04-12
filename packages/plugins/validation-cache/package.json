@@ -29,9 +29,6 @@
     "test": "jest",
     "prepack": "bob prepack"
   },
-  "dependencies": {
-    "tiny-lru": "7.0.6"
-  },
   "devDependencies": {
     "bob-the-bundler": "1.6.1",
     "graphql": "16.3.0",

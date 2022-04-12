@@ -259,3 +259,53 @@ export function errorAsyncIterator<TInput>(
 
   return stream;
 }
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function getInMemoryLRUCache<V>({
+  max = 1000,
+  onDelete = () => {},
+}: {
+  max?: number;
+  onDelete?: (key: string, value: V) => void;
+} = {}) {
+  let storage: Record<string, V> = {};
+  let keys: string[] = [];
+  return {
+    get(key: string): V | undefined {
+      return storage[key];
+    },
+    set(key: string, value: V) {
+      queueMicrotask(() => {
+        if (storage[key] != null) {
+          if (keys.indexOf(key)) {
+            keys.splice(keys.indexOf(key), 1);
+          }
+        }
+        keys.push(key);
+        storage[key] = value;
+        while (keys.length > max) {
+          const key = keys.shift();
+          if (key != null) {
+            onDelete(key, storage[key]);
+            delete storage[key];
+          }
+        }
+      });
+    },
+    delete(key: string) {
+      queueMicrotask(() => {
+        if (storage[key] != null) {
+          keys.splice(keys.indexOf(key), 1);
+          onDelete(key, storage[key]);
+          delete storage[key];
+        }
+      });
+    },
+    clear() {
+      queueMicrotask(() => {
+        storage = {};
+        keys = [];
+      });
+    },
+  };
+}

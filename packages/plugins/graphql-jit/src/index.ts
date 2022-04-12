@@ -1,11 +1,7 @@
 /* eslint-disable no-console */
-import { Plugin, TypedExecutionArgs } from '@envelop/core';
+import { Plugin, TypedExecutionArgs, getInMemoryLRUCache } from '@envelop/core';
 import { DocumentNode, Source, ExecutionArgs, ExecutionResult } from 'graphql';
 import { compileQuery, isCompiledQuery, CompilerOptions, CompiledQuery } from 'graphql-jit';
-import lru from 'tiny-lru';
-
-const DEFAULT_MAX = 1000;
-const DEFAULT_TTL = 3600000;
 
 type JITCacheEntry = {
   query: CompiledQuery['query'];
@@ -35,8 +31,7 @@ export const useGraphQlJit = (
   } = {}
 ): Plugin => {
   const documentSourceMap = new WeakMap<DocumentNode, string>();
-  const jitCache =
-    typeof pluginOptions.cache !== 'undefined' ? pluginOptions.cache : lru<JITCacheEntry>(DEFAULT_MAX, DEFAULT_TTL);
+  const jitCache = typeof pluginOptions.cache !== 'undefined' ? pluginOptions.cache : getInMemoryLRUCache<JITCacheEntry>();
 
   function getCacheEntry<T>(args: TypedExecutionArgs<T>): JITCacheEntry {
     let cacheEntry: JITCacheEntry | undefined;

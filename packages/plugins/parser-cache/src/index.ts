@@ -1,6 +1,5 @@
-import { Plugin } from '@envelop/core';
+import { Plugin, getInMemoryLRUCache } from '@envelop/core';
 import { DocumentNode, Source } from 'graphql';
-import lru from 'tiny-lru';
 
 interface Cache<T> {
   get(key: string): T | undefined;
@@ -15,16 +14,11 @@ export type ParserCacheOptions = {
   errorCache?: ErrorCache;
 };
 
-const DEFAULT_MAX = 1000;
-const DEFAULT_TTL = 3600000;
-
 export const useParserCache = (pluginOptions: ParserCacheOptions = {}): Plugin => {
-  const documentCache =
-    typeof pluginOptions.documentCache !== 'undefined'
-      ? pluginOptions.documentCache
-      : lru<DocumentNode>(DEFAULT_MAX, DEFAULT_TTL);
-  const errorCache =
-    typeof pluginOptions.errorCache !== 'undefined' ? pluginOptions.errorCache : lru<Error>(DEFAULT_MAX, DEFAULT_TTL);
+  const documentCache: DocumentCache =
+    typeof pluginOptions.documentCache !== 'undefined' ? pluginOptions.documentCache : getInMemoryLRUCache();
+  const errorCache: ErrorCache =
+    typeof pluginOptions.errorCache !== 'undefined' ? pluginOptions.errorCache : getInMemoryLRUCache();
 
   return {
     onParse({ params, setParsedDocument }) {
