@@ -1,14 +1,14 @@
-const { register } = require('esbuild-register/dist/node');
+import { createRequire } from 'module';
+import { withGuildDocs } from '@guild-docs/server';
+import { register } from 'esbuild-register/dist/node.js';
+import { i18n } from './next-i18next.config.js';
 
-register({
-  extensions: ['.ts', '.tsx'],
-});
+const require = createRequire(import.meta.url);
+register({ extensions: ['.ts', '.tsx'] });
 
-const { i18n } = require('./next-i18next.config');
-const { withGuildDocs } = require('@guild-docs/server');
 const { getRoutes } = require('./routes.ts');
 
-module.exports = withGuildDocs({
+export default withGuildDocs({
   i18n,
   getRoutes,
   eslint: {
@@ -48,7 +48,5 @@ module.exports = withGuildDocs({
         permanent: true,
       },
     ];
-  }
+  },
 });
-
-
