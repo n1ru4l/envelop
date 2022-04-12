@@ -28,7 +28,7 @@ export const useGraphQlJit = (
   } = {}
 ): Plugin => {
   const documentSourceMap = new WeakMap<DocumentNode, string>();
-  const jitCache = typeof pluginOptions.cache !== 'undefined' ? pluginOptions.cache : getInMemoryLRUCache<JITCacheEntry>();
+  const jitCache = pluginOptions.cache != null ? pluginOptions.cache : getInMemoryLRUCache<JITCacheEntry>();
 
   function getCacheEntry<T>(args: TypedExecutionArgs<T>): JITCacheEntry {
     let cacheEntry: JITCacheEntry | undefined;

@@ -10,10 +10,8 @@ export type ParserCacheOptions = {
 };
 
 export const useParserCache = (pluginOptions: ParserCacheOptions = {}): Plugin => {
-  const documentCache: DocumentCache =
-    typeof pluginOptions.documentCache !== 'undefined' ? pluginOptions.documentCache : getInMemoryLRUCache();
-  const errorCache: ErrorCache =
-    typeof pluginOptions.errorCache !== 'undefined' ? pluginOptions.errorCache : getInMemoryLRUCache();
+  const documentCache: DocumentCache = pluginOptions.documentCache != null ? pluginOptions.documentCache : getInMemoryLRUCache();
+  const errorCache: ErrorCache = pluginOptions.errorCache != null ? pluginOptions.errorCache : getInMemoryLRUCache();
 
   return {
     onParse({ params, setParsedDocument }) {
@@ -36,7 +34,7 @@ export const useParserCache = (pluginOptions: ParserCacheOptions = {}): Plugin =
       return ({ result }) => {
         if (result instanceof Error) {
           errorCache.set(key, result);
-        } else if (result !== null) {
+        } else if (result != null) {
           documentCache.set(key, result);
         }
       };

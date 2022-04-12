@@ -11,7 +11,7 @@ const rawDocumentMap = new WeakMap<any, string>();
 
 export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): Plugin => {
   const resultCache: ValidationCache =
-    typeof pluginOptions.cache !== 'undefined' ? pluginOptions.cache : getInMemoryLRUCache<readonly GraphQLError[]>();
+    pluginOptions.cache != null ? pluginOptions.cache : getInMemoryLRUCache<readonly GraphQLError[]>();
 
   return {
     onSchemaChange() {
