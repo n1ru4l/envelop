@@ -1,11 +1,18 @@
-import 'remark-admonitions/styles/infima.css';
 import '../../public/style.css';
 import '../../public/admonitions.css';
 
 import { appWithTranslation } from 'next-i18next';
+import Script from 'next/script';
 import { chakra, Code, extendTheme, Text, theme as chakraTheme, UnorderedList, useColorModeValue } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
-import { AppSeoProps, CombinedThemeProvider, DocsPage, ExtendComponents, handlePushRoute } from '@guild-docs/client';
+import {
+  AppSeoProps,
+  CombinedThemeProvider,
+  DocsPage,
+  ExtendComponents,
+  handlePushRoute,
+  useGoogleAnalytics,
+} from '@guild-docs/client';
 import { Footer, Header, Subheader } from '@theguild/components';
 
 import type { AppProps } from 'next/app';
@@ -85,6 +92,7 @@ const mdxRoutes = { data: serializedMdx && JSON.parse(serializedMdx) };
 
 function AppContent(appProps: AppProps) {
   const { Component, pageProps, router } = appProps;
+  const analytics = useGoogleAnalytics({ router, trackingId: 'G-VKRRCD6WRS' });
   const isDocs = router.asPath.startsWith('/docs');
 
   return (
@@ -135,6 +143,8 @@ function AppContent(appProps: AppProps) {
           onClick: e => handlePushRoute('/docs', e),
         }}
       />
+      <Script {...analytics.loadScriptProps} />
+      <Script {...analytics.configScriptProps} />
       {isDocs ? (
         <DocsPage
           accentColor={accentColor}
