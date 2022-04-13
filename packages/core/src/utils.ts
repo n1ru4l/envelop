@@ -283,8 +283,9 @@ export function getInMemoryLRUCache<V>({
     set(key: string, value: V) {
       queueMicrotask(() => {
         if (storage[key] != null) {
-          if (keys.indexOf(key)) {
-            keys.splice(keys.indexOf(key), 1);
+          const keyIndex = keys.indexOf(key);
+          if (keyIndex > -1) {
+            keys.splice(keyIndex, 1);
           }
         }
         keys.push(key);
@@ -301,7 +302,10 @@ export function getInMemoryLRUCache<V>({
     delete(key: string) {
       queueMicrotask(() => {
         if (storage[key] != null) {
-          keys.splice(keys.indexOf(key), 1);
+          const keyIndex = keys.indexOf(key);
+          if (keyIndex > -1) {
+            keys.splice(keyIndex, 1);
+          }
           onDelete(key, storage[key]);
           delete storage[key];
         }
