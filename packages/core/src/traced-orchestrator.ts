@@ -3,7 +3,7 @@ import { ArbitraryObject, Maybe } from '@envelop/types';
 import { EnvelopOrchestrator } from './orchestrator';
 import { isAsyncIterable } from './utils';
 
-const getTimestamp = typeof performance !== 'undefined' && performance.now ? () => performance.now() : () => Date.now();
+const getTimestamp = globalThis?.performance?.now ? () => performance.now() : () => Date.now();
 
 const measure = () => {
   const start = getTimestamp();
