@@ -1,5 +1,6 @@
 import { GraphQLSchema } from 'graphql';
-import { DefaultContext, Maybe, Plugin } from '@envelop/types';
+import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/types';
+import { isPromise } from '../utils';
 
 export const useSchema = (schema: GraphQLSchema): Plugin => {
   return {
@@ -9,20 +10,47 @@ export const useSchema = (schema: GraphQLSchema): Plugin => {
   };
 };
 
-export const useLazyLoadedSchema = (schemaLoader: (context: Maybe<DefaultContext>) => GraphQLSchema): Plugin => {
+export const useLazyLoadedSchema = (schemaLoader: (context: Maybe<DefaultContext>) => PromiseOrValue<GraphQLSchema>): Plugin => {
+  let schemaSet$: PromiseOrValue<void>;
   return {
     onEnveloped({ setSchema, context }) {
-      setSchema(schemaLoader(context));
+      const schema$ = schemaLoader(context);
+      if (isPromise(schema$)) {
+        schemaSet$ = schema$.then(schemaObj => {
+          setSchema(schemaObj);
+        });
+      } else {
+        setSchema(schema$);
+      }
+    },
+    onExecute() {
+      if (schemaSet$) {
+        return schemaSet$;
+      }
+      return undefined;
     },
   };
 };
 
-export const useAsyncSchema = (schemaPromise: Promise<GraphQLSchema>): Plugin => {
+export const useAsyncSchema = (schema$: PromiseOrValue<GraphQLSchema>): Plugin => {
+  let schemaSet$: PromiseOrValue<void>;
   return {
     onPluginInit({ setSchema }) {
-      schemaPromise.then(schemaObj => {
-        setSchema(schemaObj);
-      });
+      if (isPromise(schema$)) {
+        schemaSet$ = schema$.then(schemaObj => {
+          setSchema(schemaObj);
+        });
+      } else {
+        setSchema(schema$);
+      }
+    },
+    onContextBuilding() {
+      return () => {
+        if (schemaSet$) {
+          return schemaSet$;
+        }
+        return undefined;
+      };
     },
   };
 };

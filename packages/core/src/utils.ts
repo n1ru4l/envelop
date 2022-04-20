@@ -259,3 +259,8 @@ export function errorAsyncIterator<TInput>(
 
   return stream;
 }
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function isPromise<T>(obj: any): obj is Promise<T> {
+  return obj != null && obj.then;
+}
