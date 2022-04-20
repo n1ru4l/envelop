@@ -72,13 +72,13 @@ export const useGraphQlJit = (
     return compiledQuery;
   }
 
-  function execute(args: ExecutionArgs) {
+  function jitExecute(args: ExecutionArgs) {
     const cacheEntry = getCacheEntry(args);
 
     return cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
   }
 
-  function subscribe(args: ExecutionArgs) {
+  function jitSubscribe(args: ExecutionArgs) {
     const cacheEntry = getCacheEntry(args);
 
     return cacheEntry.subscribe
@@ -98,12 +98,12 @@ export const useGraphQlJit = (
     },
     async onExecute({ args, setExecuteFn }) {
       if (!pluginOptions.enableIf || (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))) {
-        setExecuteFn(execute);
+        setExecuteFn(jitExecute);
       }
     },
     async onSubscribe({ args, setSubscribeFn }) {
       if (!pluginOptions.enableIf || (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))) {
-        setSubscribeFn(subscribe);
+        setSubscribeFn(jitSubscribe);
       }
     },
   };

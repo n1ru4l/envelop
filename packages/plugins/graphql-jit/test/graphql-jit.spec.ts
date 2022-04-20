@@ -52,7 +52,7 @@ describe('useGraphQlJit', () => {
 
     expect(onExecuteSpy).toHaveBeenCalledTimes(1);
     expect(onExecuteSpy.mock.calls[0][0].executeFn).not.toBe(execute);
-    expect(onExecuteSpy.mock.calls[0][0].executeFn.name).toBe('jitExecutor');
+    expect(onExecuteSpy.mock.calls[0][0].executeFn.name).toBe('jitExecute');
   });
 
   it('Should override subscribe function', async () => {
@@ -72,7 +72,7 @@ describe('useGraphQlJit', () => {
 
     expect(onSubscribeSpy).toHaveBeenCalledTimes(1);
     expect(onSubscribeSpy.mock.calls[0][0].subscribeFn).not.toBe(subscribe);
-    expect(onSubscribeSpy.mock.calls[0][0].subscribeFn.name).toBe('jitSubscriber');
+    expect(onSubscribeSpy.mock.calls[0][0].subscribeFn.name).toBe('jitSubscribe');
   });
 
   it('Should not override execute function when enableIf returns false', async () => {
@@ -97,7 +97,7 @@ describe('useGraphQlJit', () => {
 
     expect(onExecuteSpy).toHaveBeenCalledTimes(1);
     expect(onExecuteSpy.mock.calls[0][0].executeFn).toBe(execute);
-    expect(onExecuteSpy.mock.calls[0][0].executeFn.name).not.toBe('jitExecutor');
+    expect(onExecuteSpy.mock.calls[0][0].executeFn.name).not.toBe('jitExecute');
   });
 
   it('Should not override subscribe function when enableIf returns false', async () => {
@@ -122,7 +122,7 @@ describe('useGraphQlJit', () => {
 
     expect(onSubscribeSpy).toHaveBeenCalledTimes(1);
     expect(onSubscribeSpy.mock.calls[0][0].subscribeFn).toBe(subscribe);
-    expect(onSubscribeSpy.mock.calls[0][0].subscribeFn.name).not.toBe('jitSubscriber');
+    expect(onSubscribeSpy.mock.calls[0][0].subscribeFn.name).not.toBe('jitSubscribe');
   });
 
   it('Should execute correctly', async () => {
