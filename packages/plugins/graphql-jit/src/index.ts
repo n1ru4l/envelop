@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Plugin, TypedExecutionArgs } from '@envelop/core';
+import { Plugin } from '@envelop/core';
 import { DocumentNode, Source, ExecutionArgs, ExecutionResult } from 'graphql';
 import { compileQuery, isCompiledQuery, CompilerOptions, CompiledQuery } from 'graphql-jit';
 import lru from 'tiny-lru';
@@ -38,35 +38,52 @@ export const useGraphQlJit = (
   const jitCache =
     typeof pluginOptions.cache !== 'undefined' ? pluginOptions.cache : lru<JITCacheEntry>(DEFAULT_MAX, DEFAULT_TTL);
 
-  function getCacheEntry<T>(args: TypedExecutionArgs<T>): JITCacheEntry {
-    let cacheEntry: JITCacheEntry | undefined;
+  function compile(args: ExecutionArgs) {
+    const compilationResult = compileQuery(args.schema, args.document, args.operationName ?? undefined, compilerOptions);
+
+    if (isCompiledQuery(compilationResult)) {
+      return compilationResult;
+    } else {
+      if (pluginOptions?.onError) {
+        pluginOptions.onError(compilationResult);
+      } else {
+        console.error(compilationResult);
+      }
+      return {
+        query: () => compilationResult,
+      };
+    }
+  }
+
+  function getCacheEntry(args: ExecutionArgs): JITCacheEntry {
     const documentSource = documentSourceMap.get(args.document);
 
-    if (documentSource) {
-      cacheEntry = jitCache.get(documentSource);
+    if (!documentSource) {
+      return compile(args);
     }
 
-    if (!cacheEntry) {
-      const compilationResult = compileQuery(args.schema, args.document, args.operationName ?? undefined, compilerOptions);
+    let compiledQuery = jitCache.get(documentSource);
 
-      if (!isCompiledQuery(compilationResult)) {
-        if (pluginOptions?.onError) {
-          pluginOptions.onError(compilationResult);
-        } else {
-          console.error(compilationResult);
-        }
-        cacheEntry = {
-          query: () => compilationResult,
-        };
-      } else {
-        cacheEntry = compilationResult;
-      }
-
-      if (documentSource) {
-        jitCache.set(documentSource, cacheEntry);
-      }
+    if (!compiledQuery) {
+      compiledQuery = compile(args);
+      jitCache.set(documentSource, compiledQuery);
     }
-    return cacheEntry;
+
+    return compiledQuery;
+  }
+
+  function execute(args: ExecutionArgs) {
+    const cacheEntry = getCacheEntry(args);
+
+    return cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
+  }
+
+  function subscribe(args: ExecutionArgs) {
+    const cacheEntry = getCacheEntry(args);
+
+    return cacheEntry.subscribe
+      ? (cacheEntry.subscribe(args.rootValue, args.contextValue, args.variableValues) as any)
+      : cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
   }
 
   return {
@@ -81,22 +98,12 @@ export const useGraphQlJit = (
     },
     async onExecute({ args, setExecuteFn }) {
       if (!pluginOptions.enableIf || (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))) {
-        setExecuteFn(function jitExecutor() {
-          const cacheEntry = getCacheEntry(args);
-
-          return cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
-        });
+        setExecuteFn(execute);
       }
     },
     async onSubscribe({ args, setSubscribeFn }) {
       if (!pluginOptions.enableIf || (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))) {
-        setSubscribeFn(async function jitSubscriber() {
-          const cacheEntry = getCacheEntry(args);
-
-          return cacheEntry.subscribe
-            ? (cacheEntry.subscribe(args.rootValue, args.contextValue, args.variableValues) as any)
-            : cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
-        });
+        setSubscribeFn(subscribe);
       }
     },
   };
