@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-console */
-/* eslint-disable dot-notation */
 import {
   Plugin,
   OnResolverCalledHook,
@@ -10,7 +7,7 @@ import {
 } from '@envelop/core';
 import * as Sentry from '@sentry/node';
 import type { Span } from '@sentry/types';
-import { ExecutionArgs, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
+import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
 
 export type SentryPluginOptions = {
   /**
@@ -45,6 +42,11 @@ export type SentryPluginOptions = {
    * @default false
    */
   includeExecuteVariables?: boolean;
+  /**
+   * The key of the event id in the error's extension. `null` to disable.
+   * @default sentryEventId
+   */
+  eventIdKey?: string | null;
   /**
    * Adds custom tags to every Transaction.
    */
@@ -102,6 +104,18 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const renameTransaction = pick('renameTransaction', false);
   const skipOperation = pick('skip', () => false);
   const skipError = pick('skipError', defaultSkipError);
+
+  function addEventId(err: GraphQLError, eventId: string): GraphQLError {
+    if (options.eventIdKey === null) {
+      return err;
+    }
+    const eventIdKey = options.eventIdKey ?? 'sentryEventId';
+
+    return new GraphQLError(err.message, err.nodes, err.source, err.positions, err.path, undefined, {
+      ...err.extensions,
+      [eventIdKey]: eventId,
+    });
+  }
 
   const onResolverCalled: OnResolverCalledHook | undefined = trackResolvers
     ? ({ args: resolversArgs, info, context }) => {
@@ -187,6 +201,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
         });
 
         if (!span) {
+          // eslint-disable-next-line no-console
           console.warn(
             [
               `Flag "startTransaction" is enabled but Sentry failed to find a transaction.`,
@@ -220,29 +235,29 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
 
       return {
         onExecuteDone(payload) {
-          const handleResult: OnExecuteDoneHookResultOnNextHook<{}> = ({ result }) => {
+          const handleResult: OnExecuteDoneHookResultOnNextHook<{}> = ({ result, setResult }) => {
             if (includeRawResult) {
               rootSpan.setData('result', result);
             }
 
             if (result.errors && result.errors.length > 0) {
-              for (const err of result.errors) {
-                Sentry.withScope(scope => {
-                  scope.setTransactionName(opName);
-                  scope.setTag('operation', operationType);
-                  scope.setTag('operationName', opName);
-                  scope.setExtra('document', document);
+              Sentry.withScope(scope => {
+                scope.setTransactionName(opName);
+                scope.setTag('operation', operationType);
+                scope.setTag('operationName', opName);
+                scope.setExtra('document', document);
 
-                  scope.setTags(addedTags || {});
+                scope.setTags(addedTags || {});
 
-                  if (includeRawResult) {
-                    scope.setExtra('result', result);
-                  }
+                if (includeRawResult) {
+                  scope.setExtra('result', result);
+                }
 
-                  if (includeExecuteVariables) {
-                    scope.setExtra('variables', args.variableValues);
-                  }
+                if (includeExecuteVariables) {
+                  scope.setExtra('variables', args.variableValues);
+                }
 
+                const errors = result.errors?.map(err => {
                   const errorPath = (err.path ?? []).join(' > ');
                   if (errorPath) {
                     scope.addBreadcrumb({
@@ -255,7 +270,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
                   // Map index values in list to $index for better grouping of events.
                   const errorPathWithIndex = (err.path ?? []).map(v => (typeof v === 'number' ? '$index' : v)).join(' > ');
 
-                  Sentry.captureException(err, {
+                  const eventId = Sentry.captureException(err, {
                     fingerprint: ['graphql', errorPathWithIndex, opName, operationType],
                     contexts: {
                       GraphQL: {
@@ -265,8 +280,15 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
                       },
                     },
                   });
+
+                  return addEventId(err, eventId);
                 });
-              }
+
+                setResult({
+                  ...result,
+                  errors,
+                });
+              });
             }
 
             rootSpan.finish();

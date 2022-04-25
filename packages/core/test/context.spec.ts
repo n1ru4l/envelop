@@ -1,3 +1,4 @@
+import { ContextFactoryFn, EnvelopError, useExtendContext } from '@envelop/core';
 import { createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { schema, query } from './common';
 
@@ -110,5 +111,62 @@ describe('contextFactory', () => {
         }),
       })
     );
+  });
+
+  it('Should yield initial context to context error handlers', async () => {
+    const registerContextErrorHandlerSpy = jest.fn();
+    const contextFactory: ContextFactoryFn = () => {
+      return {
+        contextSoFar: 'all good',
+      };
+    };
+
+    const throwingContextFactory: ContextFactoryFn = () => {
+      throw new EnvelopError('The server was about to step on a turtle');
+    };
+
+    const teskit = createTestkit(
+      [
+        useExtendContext(contextFactory),
+        useExtendContext(throwingContextFactory),
+        {
+          onPluginInit({ registerContextErrorHandler }) {
+            registerContextErrorHandler(args => {
+              registerContextErrorHandlerSpy(args);
+            });
+          },
+        },
+      ],
+      schema
+    );
+
+    const execution = teskit.execute(query, {}, { test: true });
+    return new Promise<void>((resolve, reject) => {
+      if (execution instanceof Promise) {
+        return execution.then().catch(() => {
+          try {
+            expect(registerContextErrorHandlerSpy).toHaveBeenCalledWith(
+              expect.objectContaining({
+                context: expect.objectContaining({
+                  contextSoFar: 'all good',
+                  document: expect.any(Object),
+                  operation: expect.any(String),
+                  request: expect.any(Object),
+                  test: true,
+                  variables: expect.any(Object),
+                }),
+                error: new EnvelopError('The server was about to step on a turtle'),
+                setError: expect.any(Function),
+              })
+            );
+          } catch (e) {
+            reject(e);
+          }
+          return resolve();
+        });
+      } else {
+        return reject('Expected result of testkit.execute to return a promise');
+      }
+    });
   });
 });

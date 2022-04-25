@@ -33,21 +33,32 @@ const getEnveloped = envelop({
   plugins: [useSchema(schema), useLogger(), useTiming()],
 });
 
-const { execute, subscribe, validate } = getEnveloped();
-
 const handler = createHandler({
-  execute,
-  subscribe,
-  validate,
-  onSubscribe: async (req, _res, params) => {
-    const { schema, parse, contextFactory } = getEnveloped({ req });
-    return {
+  execute: (args: any) => args.rootValue.execute(args),
+  subscribe: (args: any) => args.rootValue.subscribe(args),
+  onSubscribe: async (req, res, params) => {
+    const { schema, execute, subscribe, contextFactory, parse, validate } = getEnveloped({
+      req,
+      res,
+      params,
+    });
+
+    const args = {
       schema,
       operationName: params.operationName,
       document: typeof params.query === 'string' ? parse(params.query) : params.query,
       variableValues: params.variables,
-      contextValue: await contextFactory(req),
+      contextValue: await contextFactory(),
+      rootValue: {
+        execute,
+        subscribe,
+      },
     };
+
+    const errors = validate(args.schema, args.document);
+    if (errors.length) throw errors[0];
+
+    return args;
   },
 });
 

@@ -5,10 +5,17 @@ const OnNonIntrospectionFieldReachedValidationRule =
   (onNonIntrospectionField: () => void): ValidationRule =>
   ctx => {
     const rootQueryType = ctx.getSchema().getQueryType();
+    const rootMutationType = ctx.getSchema().getMutationType();
+    const rootSubscriptionType = ctx.getSchema().getSubscriptionType();
 
     return {
       Field(field) {
-        if (ctx.getParentType() === rootQueryType && !field.name.value.startsWith('__')) {
+        const parentType = ctx.getParentType();
+        const isQuery = parentType === rootQueryType;
+        const isMutation = parentType === rootMutationType;
+        const isSubscription = parentType === rootSubscriptionType;
+
+        if ((isQuery && !field.name.value.startsWith('__')) || isMutation || isSubscription) {
           onNonIntrospectionField();
           return BREAK;
         }

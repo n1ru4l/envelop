@@ -51,8 +51,8 @@ const perfHooksTrace = new Trend('event_loop_lag', true);
 
 export const options = buildOptions({
   'graphql-js': {
-    no_errors: ['rate=1.0'],
-    expected_result: ['rate=1.0'],
+    no_errors: ['rate>0.98'],
+    expected_result: ['rate>0.98'],
     http_req_duration: ['p(95)<=20'],
     graphql_execute: ['p(95)<=2'],
     graphql_context: ['p(95)<=1'],
@@ -63,8 +63,8 @@ export const options = buildOptions({
     event_loop_lag: ['avg==0', 'p(99)==0'],
   },
   'envelop-just-cache': {
-    no_errors: ['rate=1.0'],
-    expected_result: ['rate=1.0'],
+    no_errors: ['rate>0.98'],
+    expected_result: ['rate>0.98'],
     http_req_duration: ['p(95)<=12'],
     graphql_execute: ['p(95)<=1'],
     graphql_context: ['p(95)<=1'],
@@ -75,8 +75,8 @@ export const options = buildOptions({
     event_loop_lag: ['avg==0', 'p(99)==0'],
   },
   'prom-tracing': {
-    no_errors: ['rate=1.0'],
-    expected_result: ['rate=1.0'],
+    no_errors: ['rate>0.98'],
+    expected_result: ['rate>0.98'],
     http_req_duration: ['p(95)<=40'],
     graphql_execute: ['p(95)<=6'],
     graphql_context: ['p(95)<=1'],
@@ -87,14 +87,14 @@ export const options = buildOptions({
     event_loop_lag: ['avg==0', 'p(99)==0'],
   },
   'envelop-cache-and-no-internal-tracing': {
-    no_errors: ['rate=1.0'],
-    expected_result: ['rate=1.0'],
+    no_errors: ['rate>0.98'],
+    expected_result: ['rate>0.98'],
     http_req_duration: ['p(95)<=12'],
     event_loop_lag: ['avg==0', 'p(99)==0'],
   },
   'envelop-cache-jit': {
-    no_errors: ['rate=1.0'],
-    expected_result: ['rate=1.0'],
+    no_errors: ['rate>0.98'],
+    expected_result: ['rate>0.98'],
     http_req_duration: ['p(95)<=11'],
     graphql_execute: ['p(95)<=1'],
     graphql_context: ['p(95)<=1'],

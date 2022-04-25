@@ -33,14 +33,12 @@ const getEnveloped = envelop({
   plugins: [useSchema(schema), useLogger(), useTiming()],
 });
 
-const { execute, subscribe } = getEnveloped({});
-
 useServer(
   {
-    execute,
-    subscribe,
+    execute: (args: any) => args.rootValue.execute(args),
+    subscribe: (args: any) => args.rootValue.subscribe(args),
     onSubscribe: async (ctx, msg) => {
-      const { schema, contextFactory, parse, validate } = getEnveloped({
+      const { schema, execute, subscribe, contextFactory, parse, validate } = getEnveloped({
         connectionParams: ctx.connectionParams,
         socket: ctx.extra.socket,
         request: ctx.extra.request,
@@ -52,6 +50,10 @@ useServer(
         document: parse(msg.payload.query),
         variableValues: msg.payload.variables,
         contextValue: await contextFactory(),
+        rootValue: {
+          execute,
+          subscribe,
+        },
       };
 
       const errors = validate(args.schema, args.document);

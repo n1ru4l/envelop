@@ -1,5 +1,19 @@
 # @envelop/preload-assets
 
+## 3.3.1
+
+### Patch Changes
+
+- Updated dependencies [d5c2c9a]
+  - @envelop/core@2.3.1
+
+## 3.3.0
+
+### Minor Changes
+
+- Updated dependencies [af23408]
+  - @envelop/core@2.3.0
+
 ## 3.2.0
 
 ### Minor Changes
