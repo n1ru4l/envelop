@@ -26,7 +26,7 @@ import type { Plugin } from '@envelop/core';
 
 const myPlugin: Plugin = {
   onParse({ params }) {
-    console.log('Parse started!', { args });
+    console.log('Parse started!', { params });
 
     return result => {
       console.log('Parse done!', { result });
