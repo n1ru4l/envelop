@@ -1,4 +1,4 @@
-import { GraphQLSchema } from 'graphql';
+import { GraphQLSchema, validate } from 'graphql';
 import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/types';
 import { isPromise } from '../utils';
 
@@ -9,6 +9,8 @@ export const useSchema = (schema: GraphQLSchema): Plugin => {
     },
   };
 };
+
+const VALIDATE_FN = Symbol('VALIDATE_FN');
 
 export const useLazyLoadedSchema = (schemaLoader: (context: Maybe<DefaultContext>) => PromiseOrValue<GraphQLSchema>): Plugin => {
   let schemaSet$: PromiseOrValue<void>;
@@ -23,9 +25,25 @@ export const useLazyLoadedSchema = (schemaLoader: (context: Maybe<DefaultContext
         setSchema(schema$);
       }
     },
-    onExecute() {
+    onValidate({ validateFn, setValidationFn, extendContext }) {
       if (schemaSet$) {
-        return schemaSet$;
+        extendContext({
+          [VALIDATE_FN]: validateFn,
+        });
+        setValidationFn(() => []);
+      }
+    },
+    onExecute({ args: { schema, document, contextValue }, setResultAndStopExecution }) {
+      if (schemaSet$) {
+        const validateFn: typeof validate = contextValue[VALIDATE_FN];
+        const errors = validateFn(schema, document);
+        if (errors?.length) {
+          setResultAndStopExecution({
+            errors,
+          });
+        } else {
+          return schemaSet$;
+        }
       }
       return undefined;
     },
@@ -44,13 +62,27 @@ export const useAsyncSchema = (schema$: PromiseOrValue<GraphQLSchema>): Plugin =
         setSchema(schema$);
       }
     },
-    onContextBuilding() {
-      return () => {
-        if (schemaSet$) {
+    onValidate({ validateFn, setValidationFn, extendContext }) {
+      if (schemaSet$) {
+        extendContext({
+          [VALIDATE_FN]: validateFn,
+        });
+        setValidationFn(() => []);
+      }
+    },
+    onExecute({ args: { schema, document, contextValue }, setResultAndStopExecution }) {
+      if (schemaSet$) {
+        const validateFn: typeof validate = contextValue[VALIDATE_FN];
+        const errors = validateFn(schema, document);
+        if (errors?.length) {
+          setResultAndStopExecution({
+            errors,
+          });
+        } else {
           return schemaSet$;
         }
-        return undefined;
-      };
+      }
+      return undefined;
     },
   };
 };
