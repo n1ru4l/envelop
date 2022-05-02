@@ -65,7 +65,7 @@ export const useLazyLoadedSchema = (
 };
 
 export const useAsyncSchema = (schema$: PromiseOrValue<GraphQLSchema>, validateSchema = true): Plugin => {
-  let schemaSet$: PromiseOrValue<void>;
+  let schemaSet$: PromiseOrValue<GraphQLSchema> | undefined;
   return {
     onPluginInit({ setSchema }) {
       if (isPromise(schema$)) {
@@ -73,6 +73,7 @@ export const useAsyncSchema = (schema$: PromiseOrValue<GraphQLSchema>, validateS
           setSchema(schemaObj);
           // Once the schema is completely resolved, we don't need to keep the logic below.
           schemaSet$ = undefined;
+          return schemaObj;
         });
       } else {
         setSchema(schema$);
