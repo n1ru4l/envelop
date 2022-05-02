@@ -1,4 +1,4 @@
-import { GraphQLSchema } from 'graphql';
+import { GraphQLError, GraphQLSchema } from 'graphql';
 import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/types';
 import { isPromise } from '../utils';
 
@@ -31,7 +31,6 @@ export const useLazyLoadedSchema = (
       }
     },
     onValidate({ validateFn, params, setValidationFn, extendContext }) {
-      // If schemaSet promise is still ongoing
       if (schemaSet$ != null) {
         if (validateSchema) {
           extendContext({
@@ -42,18 +41,15 @@ export const useLazyLoadedSchema = (
         setValidationFn(() => []);
       }
     },
-    async onContextBuilding({ context, extendContext, breakContextBuilding }) {
-      // If schemaSet promise is still ongoing
-      if (context[VALIDATE_FN]) {
-        const validateFn = context[VALIDATE_FN];
-        const errors = validateFn?.();
+    onContextBuilding({ context, extendContext, breakContextBuilding }) {
+      context[VALIDATE_FN]?.().then((errors: GraphQLError[]) => {
         if (errors?.length) {
           extendContext({
             [VALIDATION_ERRORS]: errors,
           });
           breakContextBuilding();
         }
-      }
+      });
     },
     onExecute({ args: { contextValue }, setResultAndStopExecution }) {
       // If validation errors are set in context
@@ -90,18 +86,15 @@ export const useAsyncSchema = (schema$: PromiseOrValue<GraphQLSchema>, validateS
         setValidationFn(() => []);
       }
     },
-    async onContextBuilding({ context, extendContext, breakContextBuilding }) {
-      // If schemaSet promise is still ongoing
-      if (context[VALIDATE_FN]) {
-        const validateFn = context[VALIDATE_FN];
-        const errors = validateFn?.();
+    onContextBuilding({ context, extendContext, breakContextBuilding }) {
+      context[VALIDATE_FN]?.().then((errors: GraphQLError[]) => {
         if (errors?.length) {
           extendContext({
             [VALIDATION_ERRORS]: errors,
           });
           breakContextBuilding();
         }
-      }
+      });
     },
     onExecute({ args: { contextValue }, setResultAndStopExecution }) {
       // If validation errors are set in context
