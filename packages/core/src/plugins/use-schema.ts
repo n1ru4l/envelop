@@ -17,35 +17,36 @@ export const useLazyLoadedSchema = (
   schemaLoader: (context: Maybe<DefaultContext>) => PromiseOrValue<GraphQLSchema>,
   validateSchema = true
 ): Plugin => {
-  let schemaSet$: PromiseOrValue<void>;
+  let schemaSet$: Promise<GraphQLSchema>;
   return {
     onEnveloped({ setSchema, context }) {
       const schema$ = schemaLoader(context);
       if (isPromise(schema$)) {
         schemaSet$ = schema$.then(schemaObj => {
           setSchema(schemaObj);
-          schemaSet$ = undefined;
+          return schemaObj;
         });
       } else {
         setSchema(schema$);
       }
     },
     onValidate({ validateFn, params, setValidationFn, extendContext }) {
-      if (schemaSet$) {
+      // If schemaSet promise is still ongoing
+      if (schemaSet$ != null) {
         if (validateSchema) {
           extendContext({
-            [VALIDATE_FN]: (schema: GraphQLSchema) =>
-              validateFn(schema, params.documentAST, params.rules, params.typeInfo, params.options),
+            [VALIDATE_FN]: () =>
+              schemaSet$.then(schema => validateFn(schema, params.documentAST, params.rules, params.typeInfo, params.options)),
           });
         }
         setValidationFn(() => []);
       }
     },
     async onContextBuilding({ context, extendContext, breakContextBuilding }) {
+      // If schemaSet promise is still ongoing
       if (context[VALIDATE_FN]) {
-        const schema = await schemaSet$;
         const validateFn = context[VALIDATE_FN];
-        const errors = validateFn?.(schema);
+        const errors = validateFn?.();
         if (errors?.length) {
           extendContext({
             [VALIDATION_ERRORS]: errors,
@@ -55,6 +56,7 @@ export const useLazyLoadedSchema = (
       }
     },
     onExecute({ args: { contextValue }, setResultAndStopExecution }) {
+      // If validation errors are set in context
       if (contextValue[VALIDATION_ERRORS]) {
         setResultAndStopExecution({
           errors: contextValue[VALIDATION_ERRORS],
@@ -65,14 +67,12 @@ export const useLazyLoadedSchema = (
 };
 
 export const useAsyncSchema = (schema$: PromiseOrValue<GraphQLSchema>, validateSchema = true): Plugin => {
-  let schemaSet$: PromiseOrValue<GraphQLSchema> | undefined;
+  let schemaSet$: Promise<GraphQLSchema>;
   return {
     onPluginInit({ setSchema }) {
       if (isPromise(schema$)) {
         schemaSet$ = schema$.then(schemaObj => {
           setSchema(schemaObj);
-          // Once the schema is completely resolved, we don't need to keep the logic below.
-          schemaSet$ = undefined;
           return schemaObj;
         });
       } else {
@@ -80,12 +80,11 @@ export const useAsyncSchema = (schema$: PromiseOrValue<GraphQLSchema>, validateS
       }
     },
     onValidate({ validateFn, params, setValidationFn, extendContext }) {
-      // If schemaSet promise is still ongoing
-      if (schemaSet$) {
+      if (schemaSet$ != null) {
         if (validateSchema) {
           extendContext({
-            [VALIDATE_FN]: (schema: GraphQLSchema) =>
-              validateFn(schema, params.documentAST, params.rules, params.typeInfo, params.options),
+            [VALIDATE_FN]: () =>
+              schemaSet$.then(schema => validateFn(schema, params.documentAST, params.rules, params.typeInfo, params.options)),
           });
         }
         setValidationFn(() => []);
@@ -93,10 +92,9 @@ export const useAsyncSchema = (schema$: PromiseOrValue<GraphQLSchema>, validateS
     },
     async onContextBuilding({ context, extendContext, breakContextBuilding }) {
       // If schemaSet promise is still ongoing
-      if (schemaSet$) {
-        const schema = await schemaSet$;
+      if (context[VALIDATE_FN]) {
         const validateFn = context[VALIDATE_FN];
-        const errors = validateFn?.(schema);
+        const errors = validateFn?.();
         if (errors?.length) {
           extendContext({
             [VALIDATION_ERRORS]: errors,
