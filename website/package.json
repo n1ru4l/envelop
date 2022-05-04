@@ -5,6 +5,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "algolia-sync": "ts-node --esm scripts/algolia-ci.ts",
     "build": "next build",
     "dev": "concurrently -r \"next-remote-watch ./docs ./src/pages/_app.tsx\" \"wait-on -s 1 http://localhost:3000 && open-cli http://localhost:3000\"",
     "next": "next",
@@ -41,6 +42,8 @@
     }
   },
   "devDependencies": {
+    "ts-node": "^10.7.0",
+    "@guild-docs/algolia": "0.0.2-alpha-b736bdc.0",
     "@types/concurrently": "6.4.0",
     "@types/mdx-js__react": "1.5.5",
     "@types/node": "16.11.26",
