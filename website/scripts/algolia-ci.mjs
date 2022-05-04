@@ -15,5 +15,6 @@ indexToAlgolia({
   routes: [getRoutes()],
   source: 'Envelop',
   dryMode: process.env.ALGOLIA_DRY_RUN === 'true',
+  domain: process.env.SITE_URL,
   lockfilePath: resolve(__dirname, '../algolia-lockfile.txt'),
 });

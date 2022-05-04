@@ -39,7 +39,8 @@
       }
     ],
     "content": "-",
-    "url": "undefined/docs/README",
+    "url": "https://envelop.dev//docs/README",
+    "domain": "https://envelop.dev/",
     "hierarchy": [
       "Envelop",
       "Getting Started",
@@ -74,7 +75,8 @@
       }
     ],
     "content": "-",
-    "url": "undefined/docs/plugins/README",
+    "url": "https://envelop.dev//docs/plugins/README",
+    "domain": "https://envelop.dev/",
     "hierarchy": [
       "Envelop",
       "Plugins",
@@ -121,7 +123,8 @@
       }
     ],
     "content": "-",
-    "url": "undefined/docs/guides/adding-a-graphql-response-cache",
+    "url": "https://envelop.dev//docs/guides/adding-a-graphql-response-cache",
+    "domain": "https://envelop.dev/",
     "hierarchy": [
       "Envelop",
       "Guides",
@@ -186,7 +189,8 @@
       }
     ],
     "content": "-",
-    "url": "undefined/docs/guides/adding-authentication-with-auth0",
+    "url": "https://envelop.dev//docs/guides/adding-authentication-with-auth0",
+    "domain": "https://envelop.dev/",
     "hierarchy": [
       "Envelop",
       "Guides",
@@ -209,7 +213,8 @@
       }
     ],
     "content": "-",
-    "url": "undefined/docs/composing-envelop",
+    "url": "https://envelop.dev//docs/composing-envelop",
+    "domain": "https://envelop.dev/",
     "hierarchy": [
       "Envelop",
       "Getting Started",
@@ -224,7 +229,8 @@
     "headings": [],
     "toc": [],
     "content": "-",
-    "url": "undefined/docs/core",
+    "url": "https://envelop.dev//docs/core",
+    "domain": "https://envelop.dev/",
     "hierarchy": [
       "Envelop",
       "Getting Started",
@@ -265,7 +271,8 @@
       }
     ],
     "content": "-",
-    "url": "undefined/docs/plugins/custom-plugin",
+    "url": "https://envelop.dev//docs/plugins/custom-plugin",
+    "domain": "https://envelop.dev/",
     "hierarchy": [
       "Envelop",
       "Plugins",
@@ -312,7 +319,8 @@
       }
     ],
     "content": "-",
-    "url": "undefined/docs/getting-started",
+    "url": "https://envelop.dev//docs/getting-started",
+    "domain": "https://envelop.dev/",
     "hierarchy": [
       "Envelop",
       "Getting Started",
@@ -335,7 +343,8 @@
       }
     ],
     "content": "-",
-    "url": "undefined/docs/integrations",
+    "url": "https://envelop.dev//docs/integrations",
+    "domain": "https://envelop.dev/",
     "hierarchy": [
       "Envelop",
       "Getting Started",
@@ -417,7 +426,8 @@
       }
     ],
     "content": "-",
-    "url": "undefined/docs/plugins/lifecycle",
+    "url": "https://envelop.dev//docs/plugins/lifecycle",
+    "domain": "https://envelop.dev/",
     "hierarchy": [
       "Envelop",
       "Plugins",
@@ -472,7 +482,8 @@
       }
     ],
     "content": "-",
-    "url": "undefined/docs/guides/monitoring-and-tracing",
+    "url": "https://envelop.dev//docs/guides/monitoring-and-tracing",
+    "domain": "https://envelop.dev/",
     "hierarchy": [
       "Envelop",
       "Guides",
@@ -487,7 +498,8 @@
     "headings": [],
     "toc": [],
     "content": "-",
-    "url": "undefined/docs/guides/resolving-subscription-data-loader-caching-issues",
+    "url": "https://envelop.dev//docs/guides/resolving-subscription-data-loader-caching-issues",
+    "domain": "https://envelop.dev/",
     "hierarchy": [
       "Envelop",
       "Guides",
@@ -581,7 +593,8 @@
       }
     ],
     "content": "-",
-    "url": "undefined/docs/guides/securing-your-graphql-api",
+    "url": "https://envelop.dev//docs/guides/securing-your-graphql-api",
+    "domain": "https://envelop.dev/",
     "hierarchy": [
       "Envelop",
       "Guides",
@@ -633,7 +646,8 @@
       }
     ],
     "content": "-",
-    "url": "undefined/docs/plugins/testing",
+    "url": "https://envelop.dev//docs/plugins/testing",
+    "domain": "https://envelop.dev/",
     "hierarchy": [
       "Envelop",
       "Plugins",
@@ -662,7 +676,8 @@
       }
     ],
     "content": "-",
-    "url": "undefined/docs/guides/using-graphql-features-from-the-future",
+    "url": "https://envelop.dev//docs/guides/using-graphql-features-from-the-future",
+    "domain": "https://envelop.dev/",
     "hierarchy": [
       "Envelop",
       "Guides",
