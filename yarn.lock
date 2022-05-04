@@ -2540,13 +2540,14 @@
     protobufjs "^6.10.0"
     yargs "^16.2.0"
 
-"@guild-docs/algolia@0.0.2-alpha-b736bdc.0":
-  version "0.0.2-alpha-b736bdc.0"
-  resolved "https://registry.yarnpkg.com/@guild-docs/algolia/-/algolia-0.0.2-alpha-b736bdc.0.tgz#5b3823b65eec0db2c39095d481e6a1d8a904f986"
-  integrity sha512-3p0JGysmwPRyTJmnODD9MFLEY71u2GCFZXNVcw3BqGZ8m1vJXhDqNFvvxkyl2Z7WkDnb7U98sFLdeO5bXiKgOg==
+"@guild-docs/algolia@0.0.2-alpha-155a850.0":
+  version "0.0.2-alpha-155a850.0"
+  resolved "https://registry.yarnpkg.com/@guild-docs/algolia/-/algolia-0.0.2-alpha-155a850.0.tgz#eb8368c7ee051b6b4a7c8bd5f0bc4afe0fe5f144"
+  integrity sha512-f87ynbPpWobhrJ5ajYqMdyGwGp9RSdeEtk2VStF2PvUGHKy7AWj+d32aIGeY0wGTBMq3idj4ZH35gJjAVTEXtA==
   dependencies:
     algoliasearch "^4.13.0"
     github-slugger "^1.4.0"
+    gray-matter "^4.0.3"
     lodash "^4.17.21"
     remove-markdown "0.5.0"
 
@@ -8431,7 +8432,7 @@ graphql@15.5.1, graphql@16.3.0, graphql@^14.5.3:
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.3.0.tgz#a91e24d10babf9e60c706919bb182b53ccdffc05"
   integrity sha512-xm+ANmA16BzCT5pLjuXySbQVFwH3oJctUVdy81w1sV0vBU0KgDdBGtxQOUd5zqOBk/JayAFeG8Dlmeq74rjm/A==
 
-gray-matter@4.0.3:
+gray-matter@4.0.3, gray-matter@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/gray-matter/-/gray-matter-4.0.3.tgz#e893c064825de73ea1f5f7d88c7a9f7274288798"
   integrity sha512-5v6yZd4JK3eMI3FqqCouswVqwugaA9r4dNZB1wwcmrD02QkV5H0y7XBQW8QwQqEaZY1pM9aqORSORhJRdNK44Q==

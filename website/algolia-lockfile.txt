@@ -1,0 +1,675 @@
+[
+  {
+    "objectID": "envelop-README",
+    "headings": [
+      "Key Concepts"
+    ],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Community",
+                "anchor": "community"
+              },
+              {
+                "children": [],
+                "title": "Adoption",
+                "anchor": "adoption"
+              },
+              {
+                "children": [],
+                "title": "Lightweight and Flexible",
+                "anchor": "lightweight-and-flexible"
+              },
+              {
+                "children": [],
+                "title": "No Vendor Lock-In",
+                "anchor": "no-vendor-lock-in"
+              }
+            ],
+            "title": "Plugins",
+            "anchor": "plugins"
+          }
+        ],
+        "title": "Key Concepts",
+        "anchor": "key-concepts"
+      }
+    ],
+    "content": "-",
+    "url": "undefined/docs/README",
+    "hierarchy": [
+      "Envelop",
+      "Getting Started",
+      "Introduction"
+    ],
+    "source": "Envelop",
+    "title": "Introduction",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-README",
+    "headings": [
+      "How do Envelop plugins work?",
+      "What can plugins can do?",
+      "What plugins are available?"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "How do Envelop plugins work?",
+        "anchor": "how-do-envelop-plugins-work"
+      },
+      {
+        "children": [],
+        "title": "What can plugins can do?",
+        "anchor": "what-can-plugins-can-do"
+      },
+      {
+        "children": [],
+        "title": "What plugins are available?",
+        "anchor": "what-plugins-are-available"
+      }
+    ],
+    "content": "-",
+    "url": "undefined/docs/plugins/README",
+    "hierarchy": [
+      "Envelop",
+      "Plugins",
+      "Introduction"
+    ],
+    "source": "Envelop",
+    "title": "Introduction",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-adding-a-graphql-response-cache",
+    "headings": [
+      "A brief Introduction to Caching",
+      "How does GraphQL Response Caching work?",
+      "Envelop Response Cache"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "A brief Introduction to Caching",
+        "anchor": "a-brief-introduction-to-caching"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Invalidating cached GraphQL Query Operations",
+                "anchor": "invalidating-cached-graphql-query-operations"
+              }
+            ],
+            "title": "Caching Query Operations",
+            "anchor": "caching-query-operations"
+          }
+        ],
+        "title": "How does GraphQL Response Caching work?",
+        "anchor": "how-does-graphql-response-caching-work"
+      },
+      {
+        "children": [],
+        "title": "Envelop Response Cache",
+        "anchor": "envelop-response-cache"
+      }
+    ],
+    "content": "-",
+    "url": "undefined/docs/guides/adding-a-graphql-response-cache",
+    "hierarchy": [
+      "Envelop",
+      "Guides",
+      "GraphQL Response Caching"
+    ],
+    "source": "Envelop",
+    "title": "GraphQL Response Caching",
+    "type": "Guide"
+  },
+  {
+    "objectID": "envelop-adding-authentication-with-auth0",
+    "headings": [
+      "Prerequisites",
+      "Installing dependencies",
+      "Adding the Auth0 Plugin to the Envelop setup",
+      "Setting up the Auth0 API",
+      "Expose authentication information via GraphQL schema",
+      "Generating an Auth0 Access Token",
+      "Sending an Authenticated Request",
+      "Next Steps"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "Prerequisites",
+        "anchor": "prerequisites"
+      },
+      {
+        "children": [],
+        "title": "Installing dependencies",
+        "anchor": "installing-dependencies"
+      },
+      {
+        "children": [],
+        "title": "Adding the Auth0 Plugin to the Envelop setup",
+        "anchor": "adding-the-auth0-plugin-to-the-envelop-setup"
+      },
+      {
+        "children": [],
+        "title": "Setting up the Auth0 API",
+        "anchor": "setting-up-the-auth0-api"
+      },
+      {
+        "children": [],
+        "title": "Expose authentication information via GraphQL schema",
+        "anchor": "expose-authentication-information-via-graphql-schema"
+      },
+      {
+        "children": [],
+        "title": "Generating an Auth0 Access Token",
+        "anchor": "generating-an-auth0-access-token"
+      },
+      {
+        "children": [],
+        "title": "Sending an Authenticated Request",
+        "anchor": "sending-an-authenticated-request"
+      },
+      {
+        "children": [],
+        "title": "Next Steps",
+        "anchor": "next-steps"
+      }
+    ],
+    "content": "-",
+    "url": "undefined/docs/guides/adding-authentication-with-auth0",
+    "hierarchy": [
+      "Envelop",
+      "Guides",
+      "Authentication with Auth0"
+    ],
+    "source": "Envelop",
+    "title": "Authentication with Auth0",
+    "type": "Guide"
+  },
+  {
+    "objectID": "envelop-composing-envelop",
+    "headings": [
+      "Sharing / Composing `envelop` instances"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "Sharing / Composing `envelop` instances",
+        "anchor": "sharing--composing-envelop-instances"
+      }
+    ],
+    "content": "-",
+    "url": "undefined/docs/composing-envelop",
+    "hierarchy": [
+      "Envelop",
+      "Getting Started",
+      "Sharing Envelops"
+    ],
+    "source": "Envelop",
+    "title": "Sharing Envelops",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-core",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "undefined/docs/core",
+    "hierarchy": [
+      "Envelop",
+      "Getting Started",
+      "@envelop/core"
+    ],
+    "source": "Envelop",
+    "title": "@envelop/core",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-custom-plugin",
+    "headings": [
+      "The plugin interface",
+      "Building your first plugin",
+      "Adding config options to your plugin",
+      "Sharing Envelop plugins"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "The plugin interface",
+        "anchor": "the-plugin-interface"
+      },
+      {
+        "children": [],
+        "title": "Building your first plugin",
+        "anchor": "building-your-first-plugin"
+      },
+      {
+        "children": [],
+        "title": "Adding config options to your plugin",
+        "anchor": "adding-config-options-to-your-plugin"
+      },
+      {
+        "children": [],
+        "title": "Sharing Envelop plugins",
+        "anchor": "sharing-envelop-plugins"
+      }
+    ],
+    "content": "-",
+    "url": "undefined/docs/plugins/custom-plugin",
+    "hierarchy": [
+      "Envelop",
+      "Plugins",
+      "Building Plugins"
+    ],
+    "source": "Envelop",
+    "title": "Building Plugins",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-getting-started",
+    "headings": [
+      "Installation",
+      "Create your first envelop",
+      "Use your envelop",
+      "Add plugins to your envelop",
+      "Use your envelop with an HTTP server"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "Installation",
+        "anchor": "installation"
+      },
+      {
+        "children": [],
+        "title": "Create your first envelop",
+        "anchor": "create-your-first-envelop"
+      },
+      {
+        "children": [],
+        "title": "Use your envelop",
+        "anchor": "use-your-envelop"
+      },
+      {
+        "children": [],
+        "title": "Add plugins to your envelop",
+        "anchor": "add-plugins-to-your-envelop"
+      },
+      {
+        "children": [],
+        "title": "Use your envelop with an HTTP server",
+        "anchor": "use-your-envelop-with-an-http-server"
+      }
+    ],
+    "content": "-",
+    "url": "undefined/docs/getting-started",
+    "hierarchy": [
+      "Envelop",
+      "Getting Started",
+      "First Steps"
+    ],
+    "source": "Envelop",
+    "title": "First Steps",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-integrations",
+    "headings": [
+      "Compatibility Table"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "Compatibility Table",
+        "anchor": "compatibility-table"
+      }
+    ],
+    "content": "-",
+    "url": "undefined/docs/integrations",
+    "hierarchy": [
+      "Envelop",
+      "Getting Started",
+      "Integrations and Examples"
+    ],
+    "source": "Envelop",
+    "title": "Integrations and Examples",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-lifecycle",
+    "headings": [
+      "Plugins Lifecycle",
+      "Plugins API"
+    ],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "The improved `context`",
+            "anchor": "the-improved-context"
+          }
+        ],
+        "title": "Plugins Lifecycle",
+        "anchor": "plugins-lifecycle"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "`onEnveloped(api)`",
+                "anchor": "onenvelopedapi"
+              },
+              {
+                "children": [],
+                "title": "`onParse(api)`",
+                "anchor": "onparseapi"
+              },
+              {
+                "children": [],
+                "title": "`onValidate(api)`",
+                "anchor": "onvalidateapi"
+              },
+              {
+                "children": [],
+                "title": "`onContext(api)`",
+                "anchor": "oncontextapi"
+              },
+              {
+                "children": [],
+                "title": "`onExecute(api)`",
+                "anchor": "onexecuteapi"
+              },
+              {
+                "children": [],
+                "title": "`onSubscribe(api)`",
+                "anchor": "onsubscribeapi"
+              },
+              {
+                "children": [],
+                "title": "`onSchemaChange(api)`",
+                "anchor": "onschemachangeapi"
+              },
+              {
+                "children": [],
+                "title": "`onResolverCalled(api)`",
+                "anchor": "onresolvercalledapi"
+              }
+            ],
+            "title": "`onPluginInit(api)`",
+            "anchor": "onplugininitapi"
+          }
+        ],
+        "title": "Plugins API",
+        "anchor": "plugins-api"
+      }
+    ],
+    "content": "-",
+    "url": "undefined/docs/plugins/lifecycle",
+    "hierarchy": [
+      "Envelop",
+      "Plugins",
+      "Lifecycle"
+    ],
+    "source": "Envelop",
+    "title": "Lifecycle",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-monitoring-and-tracing",
+    "headings": [
+      "Monitoring and Tracing"
+    ],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "DataDog, InfluxDB, Telegraf, StatsD",
+                "anchor": "datadog-influxdb-telegraf-statsd"
+              },
+              {
+                "children": [],
+                "title": "OpenTelemetry",
+                "anchor": "opentelemetry"
+              },
+              {
+                "children": [],
+                "title": "Prometheus",
+                "anchor": "prometheus"
+              },
+              {
+                "children": [],
+                "title": "New Relic",
+                "anchor": "new-relic"
+              },
+              {
+                "children": [],
+                "title": "Apollo-Tracing",
+                "anchor": "apollo-tracing"
+              }
+            ],
+            "title": "Sentry",
+            "anchor": "sentry"
+          }
+        ],
+        "title": "Monitoring and Tracing",
+        "anchor": "monitoring-and-tracing"
+      }
+    ],
+    "content": "-",
+    "url": "undefined/docs/guides/monitoring-and-tracing",
+    "hierarchy": [
+      "Envelop",
+      "Guides",
+      "Monitoring and Tracing"
+    ],
+    "source": "Envelop",
+    "title": "Monitoring and Tracing",
+    "type": "Guide"
+  },
+  {
+    "objectID": "envelop-resolving-subscription-data-loader-caching-issues",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "undefined/docs/guides/resolving-subscription-data-loader-caching-issues",
+    "hierarchy": [
+      "Envelop",
+      "Guides",
+      "Resolving subscription DataLoader Cache Issues"
+    ],
+    "source": "Envelop",
+    "title": "Resolving subscription DataLoader Cache Issues",
+    "type": "Guide"
+  },
+  {
+    "objectID": "envelop-securing-your-graphql-api",
+    "headings": [
+      "Authentication",
+      "Authorization",
+      "Prevent leaking sensitive Information",
+      "Protection against malicious GraphQL operations"
+    ],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Generic Auth",
+                "anchor": "generic-auth"
+              }
+            ],
+            "title": "Auth0",
+            "anchor": "auth0"
+          }
+        ],
+        "title": "Authentication",
+        "anchor": "authentication"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Allow-list operation fields",
+                "anchor": "allow-list-operation-fields"
+              }
+            ],
+            "title": "Schema based on context",
+            "anchor": "schema-based-on-context"
+          }
+        ],
+        "title": "Authorization",
+        "anchor": "authorization"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Disable Schema Introspection",
+                "anchor": "disable-schema-introspection"
+              }
+            ],
+            "title": "Error Masking",
+            "anchor": "error-masking"
+          }
+        ],
+        "title": "Prevent leaking sensitive Information",
+        "anchor": "prevent-leaking-sensitive-information"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Query Depth Limiting",
+                "anchor": "query-depth-limiting"
+              },
+              {
+                "children": [],
+                "title": "Rate Limiting",
+                "anchor": "rate-limiting"
+              }
+            ],
+            "title": "Persisted Operations",
+            "anchor": "persisted-operations"
+          }
+        ],
+        "title": "Protection against malicious GraphQL operations",
+        "anchor": "protection-against-malicious-graphql-operations"
+      }
+    ],
+    "content": "-",
+    "url": "undefined/docs/guides/securing-your-graphql-api",
+    "hierarchy": [
+      "Envelop",
+      "Guides",
+      "Securing Your GraphQL API"
+    ],
+    "source": "Envelop",
+    "title": "Securing Your GraphQL API",
+    "type": "Guide"
+  },
+  {
+    "objectID": "envelop-testing",
+    "headings": [
+      "Testing a plugin",
+      "Testing Envelop instance",
+      "Additional Resources"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "Testing a plugin",
+        "anchor": "testing-a-plugin"
+      },
+      {
+        "children": [],
+        "title": "Testing Envelop instance",
+        "anchor": "testing-envelop-instance"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Mocking Phases",
+                "anchor": "mocking-phases"
+              },
+              {
+                "children": [],
+                "title": "Spying On Phases",
+                "anchor": "spying-on-phases"
+              }
+            ],
+            "title": "Manipulating Envelops",
+            "anchor": "manipulating-envelops"
+          }
+        ],
+        "title": "Additional Resources",
+        "anchor": "additional-resources"
+      }
+    ],
+    "content": "-",
+    "url": "undefined/docs/plugins/testing",
+    "hierarchy": [
+      "Envelop",
+      "Plugins",
+      "Testing"
+    ],
+    "source": "Envelop",
+    "title": "Testing",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-using-graphql-features-from-the-future",
+    "headings": [
+      "OneOf Input Objects and OneOf Fields",
+      "Fragment Arguments"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "OneOf Input Objects and OneOf Fields",
+        "anchor": "oneof-input-objects-and-oneof-fields"
+      },
+      {
+        "children": [],
+        "title": "Fragment Arguments",
+        "anchor": "fragment-arguments"
+      }
+    ],
+    "content": "-",
+    "url": "undefined/docs/guides/using-graphql-features-from-the-future",
+    "hierarchy": [
+      "Envelop",
+      "Guides",
+      "GraphQL Features from the Future"
+    ],
+    "source": "Envelop",
+    "title": "GraphQL Features from the Future",
+    "type": "Guide"
+  }
+]
