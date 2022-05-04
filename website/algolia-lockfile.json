@@ -1,9 +1,7 @@
 [
   {
     "objectID": "envelop-README",
-    "headings": [
-      "Key Concepts"
-    ],
+    "headings": ["Key Concepts"],
     "toc": [
       {
         "children": [
@@ -39,24 +37,15 @@
       }
     ],
     "content": "-",
-    "url": "https://envelop.dev//docs/README",
-    "domain": "https://envelop.dev/",
-    "hierarchy": [
-      "Envelop",
-      "Getting Started",
-      "Introduction"
-    ],
+    "url": "undefined/docs/README",
+    "hierarchy": ["Envelop", "Getting Started", "Introduction"],
     "source": "Envelop",
     "title": "Introduction",
     "type": "Documentation"
   },
   {
     "objectID": "envelop-README",
-    "headings": [
-      "How do Envelop plugins work?",
-      "What can plugins can do?",
-      "What plugins are available?"
-    ],
+    "headings": ["How do Envelop plugins work?", "What can plugins can do?", "What plugins are available?"],
     "toc": [
       {
         "children": [],
@@ -75,24 +64,15 @@
       }
     ],
     "content": "-",
-    "url": "https://envelop.dev//docs/plugins/README",
-    "domain": "https://envelop.dev/",
-    "hierarchy": [
-      "Envelop",
-      "Plugins",
-      "Introduction"
-    ],
+    "url": "undefined/docs/plugins/README",
+    "hierarchy": ["Envelop", "Plugins", "Introduction"],
     "source": "Envelop",
     "title": "Introduction",
     "type": "Documentation"
   },
   {
     "objectID": "envelop-adding-a-graphql-response-cache",
-    "headings": [
-      "A brief Introduction to Caching",
-      "How does GraphQL Response Caching work?",
-      "Envelop Response Cache"
-    ],
+    "headings": ["A brief Introduction to Caching", "How does GraphQL Response Caching work?", "Envelop Response Cache"],
     "toc": [
       {
         "children": [],
@@ -123,13 +103,8 @@
       }
     ],
     "content": "-",
-    "url": "https://envelop.dev//docs/guides/adding-a-graphql-response-cache",
-    "domain": "https://envelop.dev/",
-    "hierarchy": [
-      "Envelop",
-      "Guides",
-      "GraphQL Response Caching"
-    ],
+    "url": "undefined/docs/guides/adding-a-graphql-response-cache",
+    "hierarchy": ["Envelop", "Guides", "GraphQL Response Caching"],
     "source": "Envelop",
     "title": "GraphQL Response Caching",
     "type": "Guide"
@@ -189,22 +164,15 @@
       }
     ],
     "content": "-",
-    "url": "https://envelop.dev//docs/guides/adding-authentication-with-auth0",
-    "domain": "https://envelop.dev/",
-    "hierarchy": [
-      "Envelop",
-      "Guides",
-      "Authentication with Auth0"
-    ],
+    "url": "undefined/docs/guides/adding-authentication-with-auth0",
+    "hierarchy": ["Envelop", "Guides", "Authentication with Auth0"],
     "source": "Envelop",
     "title": "Authentication with Auth0",
     "type": "Guide"
   },
   {
     "objectID": "envelop-composing-envelop",
-    "headings": [
-      "Sharing / Composing `envelop` instances"
-    ],
+    "headings": ["Sharing / Composing `envelop` instances"],
     "toc": [
       {
         "children": [],
@@ -213,13 +181,8 @@
       }
     ],
     "content": "-",
-    "url": "https://envelop.dev//docs/composing-envelop",
-    "domain": "https://envelop.dev/",
-    "hierarchy": [
-      "Envelop",
-      "Getting Started",
-      "Sharing Envelops"
-    ],
+    "url": "undefined/docs/composing-envelop",
+    "hierarchy": ["Envelop", "Getting Started", "Sharing Envelops"],
     "source": "Envelop",
     "title": "Sharing Envelops",
     "type": "Documentation"
@@ -229,13 +192,8 @@
     "headings": [],
     "toc": [],
     "content": "-",
-    "url": "https://envelop.dev//docs/core",
-    "domain": "https://envelop.dev/",
-    "hierarchy": [
-      "Envelop",
-      "Getting Started",
-      "@envelop/core"
-    ],
+    "url": "undefined/docs/core",
+    "hierarchy": ["Envelop", "Getting Started", "@envelop/core"],
     "source": "Envelop",
     "title": "@envelop/core",
     "type": "Documentation"
@@ -271,13 +229,8 @@
       }
     ],
     "content": "-",
-    "url": "https://envelop.dev//docs/plugins/custom-plugin",
-    "domain": "https://envelop.dev/",
-    "hierarchy": [
-      "Envelop",
-      "Plugins",
-      "Building Plugins"
-    ],
+    "url": "undefined/docs/plugins/custom-plugin",
+    "hierarchy": ["Envelop", "Plugins", "Building Plugins"],
     "source": "Envelop",
     "title": "Building Plugins",
     "type": "Documentation"
@@ -319,22 +272,15 @@
       }
     ],
     "content": "-",
-    "url": "https://envelop.dev//docs/getting-started",
-    "domain": "https://envelop.dev/",
-    "hierarchy": [
-      "Envelop",
-      "Getting Started",
-      "First Steps"
-    ],
+    "url": "undefined/docs/getting-started",
+    "hierarchy": ["Envelop", "Getting Started", "First Steps"],
     "source": "Envelop",
     "title": "First Steps",
     "type": "Documentation"
   },
   {
     "objectID": "envelop-integrations",
-    "headings": [
-      "Compatibility Table"
-    ],
+    "headings": ["Compatibility Table"],
     "toc": [
       {
         "children": [],
@@ -343,23 +289,15 @@
       }
     ],
     "content": "-",
-    "url": "https://envelop.dev//docs/integrations",
-    "domain": "https://envelop.dev/",
-    "hierarchy": [
-      "Envelop",
-      "Getting Started",
-      "Integrations and Examples"
-    ],
+    "url": "undefined/docs/integrations",
+    "hierarchy": ["Envelop", "Getting Started", "Integrations and Examples"],
     "source": "Envelop",
     "title": "Integrations and Examples",
     "type": "Documentation"
   },
   {
     "objectID": "envelop-lifecycle",
-    "headings": [
-      "Plugins Lifecycle",
-      "Plugins API"
-    ],
+    "headings": ["Plugins Lifecycle", "Plugins API"],
     "toc": [
       {
         "children": [
@@ -426,22 +364,15 @@
       }
     ],
     "content": "-",
-    "url": "https://envelop.dev//docs/plugins/lifecycle",
-    "domain": "https://envelop.dev/",
-    "hierarchy": [
-      "Envelop",
-      "Plugins",
-      "Lifecycle"
-    ],
+    "url": "undefined/docs/plugins/lifecycle",
+    "hierarchy": ["Envelop", "Plugins", "Lifecycle"],
     "source": "Envelop",
     "title": "Lifecycle",
     "type": "Documentation"
   },
   {
     "objectID": "envelop-monitoring-and-tracing",
-    "headings": [
-      "Monitoring and Tracing"
-    ],
+    "headings": ["Monitoring and Tracing"],
     "toc": [
       {
         "children": [
@@ -482,13 +413,8 @@
       }
     ],
     "content": "-",
-    "url": "https://envelop.dev//docs/guides/monitoring-and-tracing",
-    "domain": "https://envelop.dev/",
-    "hierarchy": [
-      "Envelop",
-      "Guides",
-      "Monitoring and Tracing"
-    ],
+    "url": "undefined/docs/guides/monitoring-and-tracing",
+    "hierarchy": ["Envelop", "Guides", "Monitoring and Tracing"],
     "source": "Envelop",
     "title": "Monitoring and Tracing",
     "type": "Guide"
@@ -498,13 +424,8 @@
     "headings": [],
     "toc": [],
     "content": "-",
-    "url": "https://envelop.dev//docs/guides/resolving-subscription-data-loader-caching-issues",
-    "domain": "https://envelop.dev/",
-    "hierarchy": [
-      "Envelop",
-      "Guides",
-      "Resolving subscription DataLoader Cache Issues"
-    ],
+    "url": "undefined/docs/guides/resolving-subscription-data-loader-caching-issues",
+    "hierarchy": ["Envelop", "Guides", "Resolving subscription DataLoader Cache Issues"],
     "source": "Envelop",
     "title": "Resolving subscription DataLoader Cache Issues",
     "type": "Guide"
@@ -593,24 +514,15 @@
       }
     ],
     "content": "-",
-    "url": "https://envelop.dev//docs/guides/securing-your-graphql-api",
-    "domain": "https://envelop.dev/",
-    "hierarchy": [
-      "Envelop",
-      "Guides",
-      "Securing Your GraphQL API"
-    ],
+    "url": "undefined/docs/guides/securing-your-graphql-api",
+    "hierarchy": ["Envelop", "Guides", "Securing Your GraphQL API"],
     "source": "Envelop",
     "title": "Securing Your GraphQL API",
     "type": "Guide"
   },
   {
     "objectID": "envelop-testing",
-    "headings": [
-      "Testing a plugin",
-      "Testing Envelop instance",
-      "Additional Resources"
-    ],
+    "headings": ["Testing a plugin", "Testing Envelop instance", "Additional Resources"],
     "toc": [
       {
         "children": [],
@@ -646,23 +558,15 @@
       }
     ],
     "content": "-",
-    "url": "https://envelop.dev//docs/plugins/testing",
-    "domain": "https://envelop.dev/",
-    "hierarchy": [
-      "Envelop",
-      "Plugins",
-      "Testing"
-    ],
+    "url": "undefined/docs/plugins/testing",
+    "hierarchy": ["Envelop", "Plugins", "Testing"],
     "source": "Envelop",
     "title": "Testing",
     "type": "Documentation"
   },
   {
     "objectID": "envelop-using-graphql-features-from-the-future",
-    "headings": [
-      "OneOf Input Objects and OneOf Fields",
-      "Fragment Arguments"
-    ],
+    "headings": ["OneOf Input Objects and OneOf Fields", "Fragment Arguments"],
     "toc": [
       {
         "children": [],
@@ -676,13 +580,8 @@
       }
     ],
     "content": "-",
-    "url": "https://envelop.dev//docs/guides/using-graphql-features-from-the-future",
-    "domain": "https://envelop.dev/",
-    "hierarchy": [
-      "Envelop",
-      "Guides",
-      "GraphQL Features from the Future"
-    ],
+    "url": "undefined/docs/guides/using-graphql-features-from-the-future",
+    "hierarchy": ["Envelop", "Guides", "GraphQL Features from the Future"],
     "source": "Envelop",
     "title": "GraphQL Features from the Future",
     "type": "Guide"
