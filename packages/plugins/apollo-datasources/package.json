@@ -1,0 +1,53 @@
+{
+  "name": "@envelop/apollo-datasources",
+  "version": "0.0.0",
+  "author": "Kamil Kisiela <kamil.kisiela@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dotansimha/envelop.git",
+    "directory": "packages/plugins/apollo-datasources"
+  },
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
+  },
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "scripts": {
+    "test": "jest",
+    "prepack": "bob prepack"
+  },
+  "devDependencies": {
+    "@graphql-tools/schema": "8.3.2",
+    "apollo-server-caching": "3.3.0",
+    "apollo-datasource": "3.3.1",
+    "bob-the-bundler": "1.6.1",
+    "graphql": "16.3.0",
+    "typescript": "4.4.4"
+  },
+  "peerDependencies": {
+    "@envelop/core": "^2.3.1",
+    "apollo-datasource": "^3",
+    "apollo-server-caching": "^3",
+    "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
+  },
+  "buildOptions": {
+    "input": "./src/index.ts"
+  },
+  "publishConfig": {
+    "directory": "dist",
+    "access": "public"
+  }
+}
