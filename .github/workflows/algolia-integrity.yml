@@ -31,8 +31,8 @@ jobs:
           ALGOLIA_DRY_RUN: true
           SITE_URL: https://envelop.dev/
 
-      - name: Format
-        run: yarn format
+      - name: Prettier
+        run: yarn prettier
 
       - name: Diff
         run: git diff --exit-code -- website/algolia-lockfile.json

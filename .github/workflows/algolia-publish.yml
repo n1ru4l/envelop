@@ -36,8 +36,8 @@ jobs:
           ALGOLIA_INDEX_NAME: ${{ secrets.ALGOLIA_INDEX_NAME }}
           SITE_URL: https://envelop.dev/
 
-      - name: Format
-        run: yarn format
+      - name: Prettier
+        run: yarn prettier
 
       - name: Compare
         run: git diff website/algolia-lockfile.json
