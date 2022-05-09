@@ -186,6 +186,13 @@ export const pluginsArr: Package<Tags>[] = [
     tags: ['devtool', 'metrics'],
   },
   {
+    identifier: 'use-apollo-datasources',
+    title: 'useApolloDataSources',
+    npmPackage: '@envelop/apollo-datasources',
+    iconUrl: '/assets/logos/apollo.png',
+    tags: ['devtool', 'utilities']
+  },
+  {
     identifier: 'use-open-telemetry',
     title: 'useOpenTelemetry',
     npmPackage: '@envelop/opentelemetry',
