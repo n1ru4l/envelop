@@ -64,7 +64,7 @@
     "eslint-plugin-promise": "6.0.0",
     "eslint-plugin-standard": "5.0.0",
     "faker": "5.5.3",
-    "globby": "11.1.0",
+    "globby": "13.1.1",
     "husky": "7.0.4",
     "jest": "27.5.1",
     "lint-staged": "12.3.5",
