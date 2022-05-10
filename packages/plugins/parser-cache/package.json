@@ -30,7 +30,7 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "tiny-lru": "7.0.6"
+    "tiny-lru": "8.0.2"
   },
   "devDependencies": {
     "bob-the-bundler": "1.6.1",
