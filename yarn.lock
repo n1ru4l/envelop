@@ -3579,10 +3579,10 @@
     unified "^10.1.0"
     unist-util-visit "^4.0.0"
 
-"@theguild/components@1.11.5":
-  version "1.11.5"
-  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-1.11.5.tgz#6ea799a3f3bc336e36aff75a0ac1766060836592"
-  integrity sha512-c4foG04ttBUiuc74sK9MkmyilQu7B2FP+7E+PdD7BcsZwStGSRw+wn8Sq7VHemdVlr6o4MYmfqIUTTOgTcIunw==
+"@theguild/components@1.11.6":
+  version "1.11.6"
+  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-1.11.6.tgz#6eb16fa52e66836d8810b1c70e1b9311620152be"
+  integrity sha512-37PXhBsVlO0He1Z8iyIjT2X7eMCLSlDHtBCxKKft2sHbayTGhftccLYGJgcQ6yJiUg7Hjc6/K0WHPHSKdkQFCA==
   dependencies:
     "@algolia/autocomplete-js" "^1.6.2"
     "@algolia/autocomplete-plugin-algolia-insights" "^1.6.2"
