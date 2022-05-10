@@ -2470,10 +2470,10 @@
     protobufjs "^6.10.0"
     yargs "^16.2.0"
 
-"@guild-docs/algolia@0.0.4-alpha-93a7537.0":
-  version "0.0.4-alpha-93a7537.0"
-  resolved "https://registry.yarnpkg.com/@guild-docs/algolia/-/algolia-0.0.4-alpha-93a7537.0.tgz#b147811d6bd8367e5e92f0c99833a54ed4e9c689"
-  integrity sha512-hXns7GIZpdfrYftN8rPwqb5R0cu0lzbFIdez52afxKpjHJGhWQVe7a4fs+/xBeI6T5RJwe7Pk5zpyKEb8DZ0QA==
+"@guild-docs/algolia@0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@guild-docs/algolia/-/algolia-0.0.4.tgz#944f9652475cf5513fa32daaa2996dce5fc7f234"
+  integrity sha512-+fuR3iLvo/M5yZUCnz71K3PnQvUJMoicZgC54x7uXh/Pe64DdpAdi2G7kV+ojLuSZ2KdX/AxMZ4i3f9m5eMoEw==
   dependencies:
     algoliasearch "^4.13.0"
     github-slugger "^1.4.0"
