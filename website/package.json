@@ -42,7 +42,7 @@
     }
   },
   "devDependencies": {
-    "@guild-docs/algolia": "0.0.3",
+    "@guild-docs/algolia": "0.0.4-alpha-93a7537.0",
     "@types/concurrently": "7.0.0",
     "@types/mdx-js__react": "1.5.5",
     "@types/node": "16.11.26",

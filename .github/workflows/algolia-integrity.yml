@@ -29,7 +29,7 @@ jobs:
         run: yarn workspace website algolia-sync
         env:
           ALGOLIA_DRY_RUN: true
-          SITE_URL: https://envelop.dev/
+          SITE_URL: https://www.envelop.dev/
 
       - name: Prettier
         run: yarn prettier
