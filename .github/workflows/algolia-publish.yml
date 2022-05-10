@@ -3,7 +3,7 @@ name: Algolia Publish
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   algolia-push-records:
