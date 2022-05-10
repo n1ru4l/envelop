@@ -4,9 +4,9 @@ import Link from 'next/link';
 import React from 'react';
 import tw, { styled } from 'twin.macro';
 import { Box, Center, Code, Container, Grid, SimpleGrid } from '@chakra-ui/react';
-import { PackageInstall, RemoteGHMarkdown } from '@guild-docs/client';
+import { EditOnGitHubButton, PackageInstall, RemoteGHMarkdown } from '@guild-docs/client';
 import { buildMDX, CompiledMDX } from '@guild-docs/server';
-import { getPackagesData, PackageWithStats } from '@guild-docs/server/npm';
+import { getPackagesData, PackageInfo, PackageWithStats } from '@guild-docs/server/npm';
 
 import { pluginsArr as packageList } from '../../lib/plugins';
 import Head from 'next/head';
@@ -86,6 +86,8 @@ export default function PluginPageContent({ data }: PluginPageProps) {
   const description = pluginData.stats?.description ? pluginData.stats.description : null;
   const title = `${pluginData.title} | Envelop Plugin Hub`;
 
+  const repoInfo = extractRepositoryInformation(pluginData.stats);
+
   return (
     <>
       <Head>
@@ -150,19 +152,46 @@ export default function PluginPageContent({ data }: PluginPageProps) {
                     </div>
                   </>
                 ) : null}
-                {/* {pluginData.stats?.collected?.github?.starsCount ? (
-                <>
-                  <div>Stars</div>
-                  <div>
-                    <Code>{pluginData.stats.collected.github?.starsCount}</Code>
-                  </div>
-                </>
-              ) : null} */}
               </SimpleGrid>
+              {repoInfo ? (
+                <EditOnGitHubButton
+                  repo={repoInfo.repo}
+                  branch={repoInfo.branch}
+                  baseDir={repoInfo.baseDir}
+                  sourceFilePath={repoInfo.sourceFilePath}
+                />
+              ) : null}
             </Box>
           </Grid>
         </Container>
       </section>
     </>
   );
+}
+
+/**
+ * TODO: document how people can configure their yoga plugin package.json so it properly processed.
+ */
+function extractRepositoryInformation(stats: PackageInfo | null | undefined) {
+  if (stats?.repository == null || typeof stats.repository !== 'object' || !stats.repository.directory || !stats.repository.url) {
+    return null;
+  }
+
+  const parseRepoURLRegex = /git\+https:\/\/github\.com\/([A-Za-z0-9-]+\/[A-Za-z0-9-]+)\.git/;
+  const result = stats.repository.url.match(parseRepoURLRegex);
+
+  if (result === null) {
+    return null;
+  }
+
+  const [, repo] = result;
+
+  return {
+    repo,
+    baseDir: stats.repository.directory,
+    /** TODO: this should probably be more flexible. */
+    sourceFilePath: 'README.md',
+    /** TODO: this should probably be more flexible. */
+    branch: 'main',
+  };
 }
