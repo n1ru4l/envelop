@@ -1,11 +1,11 @@
 import { Plugin } from '@envelop/types';
-import { ExecutionResult, GraphQLError } from 'graphql';
+import { ExecutionResult, GraphQLError, GraphQLErrorExtensions } from 'graphql';
 import { handleStreamOrSingleExecutionResult } from '../utils';
 
 export const DEFAULT_ERROR_MESSAGE = 'Unexpected error.';
 
 export class EnvelopError extends GraphQLError {
-  constructor(message: string, extensions?: Record<string, any>) {
+  constructor(message: string, extensions?: GraphQLErrorExtensions) {
     super(message, undefined, undefined, undefined, undefined, undefined, extensions);
   }
 }
