@@ -1,5 +1,12 @@
 # @envelop/graphql-jit
 
+## 4.2.2
+
+### Patch Changes
+
+- Updated dependencies [07d029b]
+  - @envelop/core@2.3.2
+
 ## 4.2.1
 
 ### Patch Changes

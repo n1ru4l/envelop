@@ -1,5 +1,13 @@
 # @envelop/operation-field-permissions
 
+## 3.3.2
+
+### Patch Changes
+
+- Updated dependencies [07d029b]
+  - @envelop/core@2.3.2
+  - @envelop/extended-validation@1.6.2
+
 ## 3.3.1
 
 ### Patch Changes

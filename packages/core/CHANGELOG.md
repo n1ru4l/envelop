@@ -1,5 +1,11 @@
 # @envelop/core
 
+## 2.3.2
+
+### Patch Changes
+
+- 07d029b: use the correct `GraphQLErrorExtensions` interface for the `extensions` constructor option on `EnvelopError`.
+
 ## 2.3.1
 
 ### Patch Changes
