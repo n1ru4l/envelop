@@ -1,5 +1,12 @@
 # @envelop/extended-validation
 
+## 1.6.2
+
+### Patch Changes
+
+- Updated dependencies [07d029b]
+  - @envelop/core@2.3.2
+
 ## 1.6.1
 
 ### Patch Changes

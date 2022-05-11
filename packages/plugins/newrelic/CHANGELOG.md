@@ -1,5 +1,12 @@
 # @envelop/newrelic
 
+## 4.0.1
+
+### Patch Changes
+
+- Updated dependencies [07d029b]
+  - @envelop/core@2.3.2
+
 ## 4.0.0
 
 ### Major Changes
