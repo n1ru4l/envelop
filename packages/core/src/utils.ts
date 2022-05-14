@@ -177,15 +177,14 @@ export function handleStreamOrSingleExecutionResult<ContextType = DefaultContext
 ): void | OnExecuteDoneHookResult<ContextType> {
   if (isAsyncIterable(payload.result)) {
     return { onNext: fn };
-  } else {
-    fn({
-      args: payload.args,
-      result: payload.result,
-      setResult: payload.setResult,
-    });
-
-    return undefined;
   }
+  fn({
+    args: payload.args,
+    result: payload.result,
+    setResult: payload.setResult,
+  });
+
+  return undefined;
 }
 
 export function finalAsyncIterator<TInput>(source: AsyncIterable<TInput>, onFinal: () => void): AsyncGenerator<TInput> {

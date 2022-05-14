@@ -200,7 +200,8 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
         } as unknown as ContextType);
       },
     };
-  } else if (options.mode === 'resolve-only') {
+  }
+  if (options.mode === 'resolve-only') {
     return {
       async onContextBuilding({ context, extendContext }) {
         const user = await options.resolveUserFn(context as unknown as ContextType);
