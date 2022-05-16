@@ -46,16 +46,16 @@ function getOperation(document: DocumentNode): OperationDefinitionNode {
 export function createInternalContext(parseResult: AfterParseEventPayload<any>['result']): FillLabelsFnParams | null {
   if (parseResult === null) {
     return null;
-  } else if (parseResult instanceof Error) {
-    return null;
-  } else {
-    const operation = getOperation(parseResult);
-    return {
-      document: parseResult,
-      operationName: operation.name?.value || 'Anonymous',
-      operationType: operation.operation,
-    };
   }
+  if (parseResult instanceof Error) {
+    return null;
+  }
+  const operation = getOperation(parseResult);
+  return {
+    document: parseResult,
+    operationName: operation.name?.value || 'Anonymous',
+    operationType: operation.operation,
+  };
 }
 
 export type FillLabelsFn<LabelNames extends string> = (params: FillLabelsFnParams, rawContext: any) => Record<LabelNames, string>;
