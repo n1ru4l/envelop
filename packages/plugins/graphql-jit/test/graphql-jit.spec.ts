@@ -144,7 +144,7 @@ describe('useGraphQlJit', () => {
   });
 
   it('Should use the provided cache instance', async () => {
-    const cache = lru();
+    const cache = new Map();
     jest.spyOn(cache, 'set');
     jest.spyOn(cache, 'get');
 
@@ -161,8 +161,9 @@ describe('useGraphQlJit', () => {
     );
 
     await testInstance.execute(`query { test }`);
-    expect(cache.get).toHaveBeenCalled();
-    expect(cache.set).toHaveBeenCalled();
+    await testInstance.execute(`query { test }`);
+    expect(cache.get).toHaveBeenCalledTimes(4);
+    expect(cache.set).toHaveBeenCalledTimes(1);
   });
 
   it('Should throw validation errors if compilation fails', async () => {

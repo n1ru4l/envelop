@@ -34,7 +34,7 @@ export const useGraphQlJit = (
     /**
      * Callback triggered in case of GraphQL Jit compilation error.
      */
-    onError?: (r: ExecutionResult) => void;
+    onError?: (r: ExecutionResult<any>) => void;
     /**
      * Custom cache instance
      */
@@ -73,6 +73,9 @@ export const useGraphQlJit = (
 
     if (!compiledQuery) {
       compiledQuery = compileQuery(schema, document, operationName, compilerOptions);
+      if (!isCompiledQuery(compiledQuery)) {
+        pluginOptions?.onError?.(compiledQuery);
+      }
       jitCache.set(cacheKey, compiledQuery);
     }
 
