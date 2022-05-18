@@ -1,20 +1,23 @@
 import { Plugin } from '@envelop/core';
 import { IMiddlewareGenerator, IMiddleware, applyMiddleware } from 'graphql-middleware';
 
-const middlewaresAppliedSymbol = Symbol('SCHEMA_WITH_MIDDLEWARES');
+const graphqlMiddlewareAppliedTransformSymbol = Symbol('graphqlMiddleware.appliedTransform');
 
 export const useGraphQLMiddleware = <TSource = any, TContext = any, TArgs = any>(
   middlewares: (IMiddleware<TSource, TContext, TArgs> | IMiddlewareGenerator<TSource, TContext, TArgs>)[]
 ): Plugin => {
   return {
     onSchemaChange({ schema, replaceSchema }) {
-      if (schema[middlewaresAppliedSymbol]) {
+      if (graphqlMiddlewareAppliedTransformSymbol in schema.extensions) {
         return;
       }
 
       if (middlewares.length > 0) {
         const wrappedSchema = applyMiddleware(schema, ...middlewares);
-        wrappedSchema[middlewaresAppliedSymbol] = true;
+        wrappedSchema.extensions = {
+          ...schema.extensions,
+          [graphqlMiddlewareAppliedTransformSymbol]: true,
+        };
         replaceSchema(wrappedSchema);
       }
     },

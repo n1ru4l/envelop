@@ -34,6 +34,7 @@
     "graphql-middleware": "6.1.15",
     "bob-the-bundler": "1.6.1",
     "graphql": "16.3.0",
+    "graphql-shield": "7.5.0",
     "typescript": "4.4.4"
   },
   "peerDependencies": {
