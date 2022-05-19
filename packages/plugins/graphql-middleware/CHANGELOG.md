@@ -1,5 +1,11 @@
 # @envelop/graphql-middleware
 
+## 3.3.3
+
+### Patch Changes
+
+- af4f877: fix infinite loop caused when applying middleware schema transform with other plugins that transform the schema
+
 ## 3.3.2
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@envelop/graphql-middleware",
-  "version": "3.3.2",
+  "version": "3.3.3",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
