@@ -37,9 +37,9 @@ jobs:
     strategy:
       matrix:
         graphql_version:
-          # - 14
           - 15
           - 16
+          - '17.0.0-alpha.1'
     steps:
       - name: Checkout Master
         uses: actions/checkout@v2
