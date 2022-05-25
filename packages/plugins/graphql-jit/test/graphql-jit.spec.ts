@@ -8,6 +8,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { execute, subscribe } from 'graphql';
 import { useGraphQlJit } from '../src';
 import lru from 'tiny-lru';
+import { GraphQLError } from 'graphql';
 
 describe('useGraphQlJit', () => {
   const schema = makeExecutableSchema({
@@ -52,7 +53,7 @@ describe('useGraphQlJit', () => {
 
     expect(onExecuteSpy).toHaveBeenCalledTimes(1);
     expect(onExecuteSpy.mock.calls[0][0].executeFn).not.toBe(execute);
-    expect(onExecuteSpy.mock.calls[0][0].executeFn.name).toBe('jitExecutor');
+    expect(onExecuteSpy.mock.calls[0][0].executeFn.name).toBe('jitExecute');
   });
 
   it('Should override subscribe function', async () => {
@@ -72,7 +73,7 @@ describe('useGraphQlJit', () => {
 
     expect(onSubscribeSpy).toHaveBeenCalledTimes(1);
     expect(onSubscribeSpy.mock.calls[0][0].subscribeFn).not.toBe(subscribe);
-    expect(onSubscribeSpy.mock.calls[0][0].subscribeFn.name).toBe('jitSubscriber');
+    expect(onSubscribeSpy.mock.calls[0][0].subscribeFn.name).toBe('jitSubscribe');
   });
 
   it('Should not override execute function when enableIf returns false', async () => {
@@ -97,7 +98,7 @@ describe('useGraphQlJit', () => {
 
     expect(onExecuteSpy).toHaveBeenCalledTimes(1);
     expect(onExecuteSpy.mock.calls[0][0].executeFn).toBe(execute);
-    expect(onExecuteSpy.mock.calls[0][0].executeFn.name).not.toBe('jitExecutor');
+    expect(onExecuteSpy.mock.calls[0][0].executeFn.name).not.toBe('jitExecute');
   });
 
   it('Should not override subscribe function when enableIf returns false', async () => {
@@ -122,7 +123,7 @@ describe('useGraphQlJit', () => {
 
     expect(onSubscribeSpy).toHaveBeenCalledTimes(1);
     expect(onSubscribeSpy.mock.calls[0][0].subscribeFn).toBe(subscribe);
-    expect(onSubscribeSpy.mock.calls[0][0].subscribeFn.name).not.toBe('jitSubscriber');
+    expect(onSubscribeSpy.mock.calls[0][0].subscribeFn.name).not.toBe('jitSubscribe');
   });
 
   it('Should execute correctly', async () => {
@@ -143,7 +144,7 @@ describe('useGraphQlJit', () => {
   });
 
   it('Should use the provided cache instance', async () => {
-    const cache = lru();
+    const cache = new Map();
     jest.spyOn(cache, 'set');
     jest.spyOn(cache, 'get');
 
@@ -160,7 +161,32 @@ describe('useGraphQlJit', () => {
     );
 
     await testInstance.execute(`query { test }`);
-    expect(cache.get).toHaveBeenCalled();
-    expect(cache.set).toHaveBeenCalled();
+    await testInstance.execute(`query { test }`);
+    expect(cache.get).toHaveBeenCalledTimes(4);
+    expect(cache.set).toHaveBeenCalledTimes(1);
+  });
+
+  it('Should throw validation errors if compilation fails', async () => {
+    const plugin = useGraphQlJit(
+      {},
+      {
+        cache: {
+          get() {
+            return {
+              errors: [new GraphQLError('Some random error')],
+            };
+          },
+          set() {},
+        },
+      }
+    );
+    jest.spyOn(plugin, 'onValidate');
+    jest.spyOn(plugin, 'onExecute');
+    const testInstance = createTestkit([plugin], schema);
+
+    const result = await testInstance.execute(`query Foo { test }`);
+    expect(result['errors']).toBeTruthy();
+    expect(plugin.onValidate).toHaveBeenCalled();
+    expect(plugin.onExecute).not.toHaveBeenCalled();
   });
 });
