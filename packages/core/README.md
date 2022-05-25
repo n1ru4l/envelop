@@ -1,6 +1,6 @@
 ## `@envelop/core`
 
-This is the core package for Envelop. You can find a complete documentation here: https://github.com/dotansimha/envelop
+This is the core package for Envelop. You can find a complete documentation here: https://github.com/n1ru4l/envelop
 
 ### Built-in plugins
 

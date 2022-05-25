@@ -6,7 +6,7 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/dotansimha/envelop.git",
+    "url": "https://github.com/n1ru4l/envelop.git",
     "directory": "packages/plugins/apollo-federation"
   },
   "main": "dist/index.js",
