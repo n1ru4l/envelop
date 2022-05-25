@@ -133,7 +133,7 @@ function AppContent(appProps: AppProps) {
           },
           {
             children: 'GitHub',
-            href: 'https://github.com/dotansimha/envelop',
+            href: 'https://github.com/n1ru4l/envelop',
             target: '_blank',
             rel: 'noopener norefereer',
             title: "Head to the project's GitHub",

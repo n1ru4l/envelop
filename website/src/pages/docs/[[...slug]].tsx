@@ -19,7 +19,7 @@ export default MDXPage(
               paddingRight: '0.5em',
             }}
           />
-          <EditOnGitHubButton repo="dotansimha/envelop" branch="main" baseDir="website" sourceFilePath={sourceFilePath} />
+          <EditOnGitHubButton repo="n1ru4l/envelop" branch="main" baseDir="website" sourceFilePath={sourceFilePath} />
         </DocsTOC>
       </>
     );
