@@ -22,7 +22,6 @@ export function enableIf<PluginContextType = {}>(
 ): PluginOrDisabledPlugin {
   if (condition) {
     return typeof plugin === 'function' ? plugin() : plugin;
-  } else {
-    return EnableIfBranded.DisabledPlugin;
   }
+  return EnableIfBranded.DisabledPlugin;
 }

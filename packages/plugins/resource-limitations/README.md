@@ -1,6 +1,6 @@
 ## `@envelop/resource-limitations`
 
-This plugins uses `extended-valiations` concept ([details here](https://github.com/dotansimha/envelop/tree/main/packages/plugins/extended-validation#envelopextended-validation)) for implemeting a resource-limitations rate-limit similar to GitHub GraphQL API (see https://docs.github.com/en/graphql/overview/resource-limitations for more details)
+This plugins uses `extended-valiations` concept ([details here](https://github.com/n1ru4l/envelop/tree/main/packages/plugins/extended-validation#envelopextended-validation)) for implemeting a resource-limitations rate-limit similar to GitHub GraphQL API (see https://docs.github.com/en/graphql/overview/resource-limitations for more details)
 
 ## Getting Started
 

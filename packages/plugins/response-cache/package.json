@@ -1,12 +1,12 @@
 {
   "name": "@envelop/response-cache",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "author": "Kamil Kisiela <kamilkisiela@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/dotansimha/envelop.git",
+    "url": "https://github.com/n1ru4l/envelop.git",
     "directory": "packages/plugins/response-cache"
   },
   "main": "dist/index.js",
@@ -43,7 +43,7 @@
     "fast-json-stable-stringify": "^2.1.0"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.3.1",
+    "@envelop/core": "^2.3.2",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {

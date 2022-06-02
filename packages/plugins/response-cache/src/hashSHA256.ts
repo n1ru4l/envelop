@@ -32,7 +32,8 @@ export const hashSHA256 = async (text: string): Promise<string> => {
   // Node.js support
   if (nodeCrypto) {
     return nodeCrypto.then(crypto => crypto.createHash('sha256').update(text).digest('hex'));
-  } else if (webCrypto) {
+  }
+  if (webCrypto) {
     let buf: Uint8Array;
     if (typeof TextEncoder !== 'undefined') {
       buf = new TextEncoder().encode(text);

@@ -1,0 +1,1785 @@
+[
+  {
+    "objectID": "envelop-README",
+    "headings": ["Key Concepts"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Community",
+                "anchor": "community"
+              },
+              {
+                "children": [],
+                "title": "Adoption",
+                "anchor": "adoption"
+              },
+              {
+                "children": [],
+                "title": "Lightweight and Flexible",
+                "anchor": "lightweight-and-flexible"
+              },
+              {
+                "children": [],
+                "title": "No Vendor Lock-In",
+                "anchor": "no-vendor-lock-in"
+              }
+            ],
+            "title": "Plugins",
+            "anchor": "plugins"
+          }
+        ],
+        "title": "Key Concepts",
+        "anchor": "key-concepts"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/docs/README",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Getting Started", "Introduction"],
+    "source": "Envelop",
+    "title": "Introduction",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-README",
+    "headings": ["How do Envelop plugins work?", "What can plugins can do?", "What plugins are available?"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How do Envelop plugins work?",
+        "anchor": "how-do-envelop-plugins-work"
+      },
+      {
+        "children": [],
+        "title": "What can plugins can do?",
+        "anchor": "what-can-plugins-can-do"
+      },
+      {
+        "children": [],
+        "title": "What plugins are available?",
+        "anchor": "what-plugins-are-available"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/docs/plugins/README",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins", "Introduction"],
+    "source": "Envelop",
+    "title": "Introduction",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-adding-a-graphql-response-cache",
+    "headings": ["A brief Introduction to Caching", "How does GraphQL Response Caching work?", "Envelop Response Cache"],
+    "toc": [
+      {
+        "children": [],
+        "title": "A brief Introduction to Caching",
+        "anchor": "a-brief-introduction-to-caching"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Invalidating cached GraphQL Query Operations",
+                "anchor": "invalidating-cached-graphql-query-operations"
+              }
+            ],
+            "title": "Caching Query Operations",
+            "anchor": "caching-query-operations"
+          }
+        ],
+        "title": "How does GraphQL Response Caching work?",
+        "anchor": "how-does-graphql-response-caching-work"
+      },
+      {
+        "children": [],
+        "title": "Envelop Response Cache",
+        "anchor": "envelop-response-cache"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/docs/guides/adding-a-graphql-response-cache",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Guides", "GraphQL Response Caching"],
+    "source": "Envelop",
+    "title": "GraphQL Response Caching",
+    "type": "Guide"
+  },
+  {
+    "objectID": "envelop-adding-authentication-with-auth0",
+    "headings": [
+      "Prerequisites",
+      "Installing dependencies",
+      "Adding the Auth0 Plugin to the Envelop setup",
+      "Setting up the Auth0 API",
+      "Expose authentication information via GraphQL schema",
+      "Generating an Auth0 Access Token",
+      "Sending an Authenticated Request",
+      "Next Steps"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "Prerequisites",
+        "anchor": "prerequisites"
+      },
+      {
+        "children": [],
+        "title": "Installing dependencies",
+        "anchor": "installing-dependencies"
+      },
+      {
+        "children": [],
+        "title": "Adding the Auth0 Plugin to the Envelop setup",
+        "anchor": "adding-the-auth0-plugin-to-the-envelop-setup"
+      },
+      {
+        "children": [],
+        "title": "Setting up the Auth0 API",
+        "anchor": "setting-up-the-auth0-api"
+      },
+      {
+        "children": [],
+        "title": "Expose authentication information via GraphQL schema",
+        "anchor": "expose-authentication-information-via-graphql-schema"
+      },
+      {
+        "children": [],
+        "title": "Generating an Auth0 Access Token",
+        "anchor": "generating-an-auth0-access-token"
+      },
+      {
+        "children": [],
+        "title": "Sending an Authenticated Request",
+        "anchor": "sending-an-authenticated-request"
+      },
+      {
+        "children": [],
+        "title": "Next Steps",
+        "anchor": "next-steps"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/docs/guides/adding-authentication-with-auth0",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Guides", "Authentication with Auth0"],
+    "source": "Envelop",
+    "title": "Authentication with Auth0",
+    "type": "Guide"
+  },
+  {
+    "objectID": "envelop-composing-envelop",
+    "headings": ["Sharing / Composing `envelop` instances"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Sharing / Composing `envelop` instances",
+        "anchor": "sharing--composing-envelop-instances"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/docs/composing-envelop",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Getting Started", "Sharing Envelops"],
+    "source": "Envelop",
+    "title": "Sharing Envelops",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-core",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.envelop.dev/docs/core",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Getting Started", "@envelop/core"],
+    "source": "Envelop",
+    "title": "@envelop/core",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-custom-plugin",
+    "headings": [
+      "The plugin interface",
+      "Building your first plugin",
+      "Adding config options to your plugin",
+      "Sharing Envelop plugins"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "The plugin interface",
+        "anchor": "the-plugin-interface"
+      },
+      {
+        "children": [],
+        "title": "Building your first plugin",
+        "anchor": "building-your-first-plugin"
+      },
+      {
+        "children": [],
+        "title": "Adding config options to your plugin",
+        "anchor": "adding-config-options-to-your-plugin"
+      },
+      {
+        "children": [],
+        "title": "Sharing Envelop plugins",
+        "anchor": "sharing-envelop-plugins"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/docs/plugins/custom-plugin",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins", "Building Plugins"],
+    "source": "Envelop",
+    "title": "Building Plugins",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-getting-started",
+    "headings": [
+      "Installation",
+      "Create your first envelop",
+      "Use your envelop",
+      "Add plugins to your envelop",
+      "Use your envelop with an HTTP server"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "Installation",
+        "anchor": "installation"
+      },
+      {
+        "children": [],
+        "title": "Create your first envelop",
+        "anchor": "create-your-first-envelop"
+      },
+      {
+        "children": [],
+        "title": "Use your envelop",
+        "anchor": "use-your-envelop"
+      },
+      {
+        "children": [],
+        "title": "Add plugins to your envelop",
+        "anchor": "add-plugins-to-your-envelop"
+      },
+      {
+        "children": [],
+        "title": "Use your envelop with an HTTP server",
+        "anchor": "use-your-envelop-with-an-http-server"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/docs/getting-started",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Getting Started", "First Steps"],
+    "source": "Envelop",
+    "title": "First Steps",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-integrations",
+    "headings": ["Compatibility Table"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Compatibility Table",
+        "anchor": "compatibility-table"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/docs/integrations",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Getting Started", "Integrations and Examples"],
+    "source": "Envelop",
+    "title": "Integrations and Examples",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-lifecycle",
+    "headings": ["Plugins Lifecycle", "Plugins API"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "The improved `context`",
+            "anchor": "the-improved-context"
+          }
+        ],
+        "title": "Plugins Lifecycle",
+        "anchor": "plugins-lifecycle"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "`onEnveloped(api)`",
+                "anchor": "onenvelopedapi"
+              },
+              {
+                "children": [],
+                "title": "`onParse(api)`",
+                "anchor": "onparseapi"
+              },
+              {
+                "children": [],
+                "title": "`onValidate(api)`",
+                "anchor": "onvalidateapi"
+              },
+              {
+                "children": [],
+                "title": "`onContext(api)`",
+                "anchor": "oncontextapi"
+              },
+              {
+                "children": [],
+                "title": "`onExecute(api)`",
+                "anchor": "onexecuteapi"
+              },
+              {
+                "children": [],
+                "title": "`onSubscribe(api)`",
+                "anchor": "onsubscribeapi"
+              },
+              {
+                "children": [],
+                "title": "`onSchemaChange(api)`",
+                "anchor": "onschemachangeapi"
+              },
+              {
+                "children": [],
+                "title": "`onResolverCalled(api)`",
+                "anchor": "onresolvercalledapi"
+              }
+            ],
+            "title": "`onPluginInit(api)`",
+            "anchor": "onplugininitapi"
+          }
+        ],
+        "title": "Plugins API",
+        "anchor": "plugins-api"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/docs/plugins/lifecycle",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins", "Lifecycle"],
+    "source": "Envelop",
+    "title": "Lifecycle",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-monitoring-and-tracing",
+    "headings": ["Monitoring and Tracing"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "DataDog, InfluxDB, Telegraf, StatsD",
+                "anchor": "datadog-influxdb-telegraf-statsd"
+              },
+              {
+                "children": [],
+                "title": "OpenTelemetry",
+                "anchor": "opentelemetry"
+              },
+              {
+                "children": [],
+                "title": "Prometheus",
+                "anchor": "prometheus"
+              },
+              {
+                "children": [],
+                "title": "New Relic",
+                "anchor": "new-relic"
+              },
+              {
+                "children": [],
+                "title": "Apollo-Tracing",
+                "anchor": "apollo-tracing"
+              }
+            ],
+            "title": "Sentry",
+            "anchor": "sentry"
+          }
+        ],
+        "title": "Monitoring and Tracing",
+        "anchor": "monitoring-and-tracing"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/docs/guides/monitoring-and-tracing",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Guides", "Monitoring and Tracing"],
+    "source": "Envelop",
+    "title": "Monitoring and Tracing",
+    "type": "Guide"
+  },
+  {
+    "objectID": "envelop-resolving-subscription-data-loader-caching-issues",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.envelop.dev/docs/guides/resolving-subscription-data-loader-caching-issues",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Guides", "Resolving subscription DataLoader Cache Issues"],
+    "source": "Envelop",
+    "title": "Resolving subscription DataLoader Cache Issues",
+    "type": "Guide"
+  },
+  {
+    "objectID": "envelop-securing-your-graphql-api",
+    "headings": [
+      "Authentication",
+      "Authorization",
+      "Prevent leaking sensitive Information",
+      "Protection against malicious GraphQL operations"
+    ],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Generic Auth",
+                "anchor": "generic-auth"
+              }
+            ],
+            "title": "Auth0",
+            "anchor": "auth0"
+          }
+        ],
+        "title": "Authentication",
+        "anchor": "authentication"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Allow-list operation fields",
+                "anchor": "allow-list-operation-fields"
+              }
+            ],
+            "title": "Schema based on context",
+            "anchor": "schema-based-on-context"
+          }
+        ],
+        "title": "Authorization",
+        "anchor": "authorization"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Disable Schema Introspection",
+                "anchor": "disable-schema-introspection"
+              }
+            ],
+            "title": "Error Masking",
+            "anchor": "error-masking"
+          }
+        ],
+        "title": "Prevent leaking sensitive Information",
+        "anchor": "prevent-leaking-sensitive-information"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Query Depth Limiting",
+                "anchor": "query-depth-limiting"
+              },
+              {
+                "children": [],
+                "title": "Rate Limiting",
+                "anchor": "rate-limiting"
+              }
+            ],
+            "title": "Persisted Operations",
+            "anchor": "persisted-operations"
+          }
+        ],
+        "title": "Protection against malicious GraphQL operations",
+        "anchor": "protection-against-malicious-graphql-operations"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/docs/guides/securing-your-graphql-api",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Guides", "Securing Your GraphQL API"],
+    "source": "Envelop",
+    "title": "Securing Your GraphQL API",
+    "type": "Guide"
+  },
+  {
+    "objectID": "envelop-testing",
+    "headings": ["Testing a plugin", "Testing Envelop instance", "Additional Resources"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Testing a plugin",
+        "anchor": "testing-a-plugin"
+      },
+      {
+        "children": [],
+        "title": "Testing Envelop instance",
+        "anchor": "testing-envelop-instance"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Mocking Phases",
+                "anchor": "mocking-phases"
+              },
+              {
+                "children": [],
+                "title": "Spying On Phases",
+                "anchor": "spying-on-phases"
+              }
+            ],
+            "title": "Manipulating Envelops",
+            "anchor": "manipulating-envelops"
+          }
+        ],
+        "title": "Additional Resources",
+        "anchor": "additional-resources"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/docs/plugins/testing",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins", "Testing"],
+    "source": "Envelop",
+    "title": "Testing",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-useapollodatasources",
+    "headings": ["`@envelop/apollo-datasources`", "Getting Started", "Usage Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/apollo-datasources`",
+        "anchor": "envelopapollo-datasources"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-apollo-datasources",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useApolloDataSources",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useapollofederation",
+    "headings": ["`@envelop/apollo-federation`", "Getting Started", "Usage Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/apollo-federation`",
+        "anchor": "envelopapollo-federation"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-apollo-federation",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useApolloFederation",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useapolloservererrors",
+    "headings": ["`@envelop/apollo-server-errors`", "Getting Started", "Usage Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/apollo-server-errors`",
+        "anchor": "envelopapollo-server-errors"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-apollo-server-errors",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useApolloServerErrors",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useapollotracing",
+    "headings": ["`@envelop/apollo-tracing`", "Getting Started", "Usage Example", "Notes"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/apollo-tracing`",
+        "anchor": "envelopapollo-tracing"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      },
+      {
+        "children": [],
+        "title": "Notes",
+        "anchor": "notes"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-apollo-tracing",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useApolloTracing",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useasyncschema",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-async-schema",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useAsyncSchema",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useauth0",
+    "headings": ["`@envelop/auth0`", "Getting Started", "Notes"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/auth0`",
+        "anchor": "envelopauth0"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "API Reference",
+            "anchor": "api-reference"
+          }
+        ],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Notes",
+        "anchor": "notes"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-auth0",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useAuth0",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usecontextvalueperexecutesubscriptionevent",
+    "headings": ["`@envelop/execute-subscription-event`"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "`useContextValuePerExecuteSubscriptionEvent`",
+            "anchor": "usecontextvalueperexecutesubscriptionevent"
+          }
+        ],
+        "title": "`@envelop/execute-subscription-event`",
+        "anchor": "envelopexecute-subscription-event"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-context-value-per-execute-subscription-event",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useContextValuePerExecuteSubscriptionEvent",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usedataloader",
+    "headings": ["`@envelop/dataloader`", "Getting Started", "Usage Example", "Notes"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/dataloader`",
+        "anchor": "envelopdataloader"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      },
+      {
+        "children": [],
+        "title": "Notes",
+        "anchor": "notes"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-data-loader",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useDataLoader",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usedepthlimit",
+    "headings": ["`@envelop/depth-limit`", "Getting Started", "Usage Example", "Notes"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/depth-limit`",
+        "anchor": "envelopdepth-limit"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      },
+      {
+        "children": [],
+        "title": "Notes",
+        "anchor": "notes"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-depth-limit",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useDepthLimit",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usedisableintrospection",
+    "headings": ["`@envelop/disable-introspection`", "Getting Started", "Usage Example", "Optional configuration"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/disable-introspection`",
+        "anchor": "envelopdisable-introspection"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      },
+      {
+        "children": [],
+        "title": "Optional configuration",
+        "anchor": "optional-configuration"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-disable-introspection",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useDisableIntrospection",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useerrorhandler",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-error-handler",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useErrorHandler",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useextendcontext",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-extend-context",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useExtendContext",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useextendedvalidation",
+    "headings": ["`@envelop/extended-validation`", "Getting Started", "Built-in Rules"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/extended-validation`",
+        "anchor": "envelopextended-validation"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "Union Inputs: `@oneOf`",
+            "anchor": "union-inputs-oneof"
+          }
+        ],
+        "title": "Built-in Rules",
+        "anchor": "built-in-rules"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-extended-validation",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useExtendedValidation",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usefilterallowedoperations",
+    "headings": ["`@envelop/filter-operation-type`", "Getting Started", "Usage Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/filter-operation-type`",
+        "anchor": "envelopfilter-operation-type"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-filter-allowed-operations",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useFilterAllowedOperations",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usefragmentarguments",
+    "headings": ["`@envelop/fragment-arguments`", "Getting Started", "Usage Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/fragment-arguments`",
+        "anchor": "envelopfragment-arguments"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-fragment-arguments",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useFragmentArguments",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usegenericauth",
+    "headings": ["`@envelop/generic-auth`", "Getting Started"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/generic-auth`",
+        "anchor": "envelopgeneric-auth"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-generic-auth",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useGenericAuth",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usegraphqljit",
+    "headings": ["`@envelop/graphql-jit`", "Getting Started", "Usage Example", "Conditional Execution", "Notes"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/graphql-jit`",
+        "anchor": "envelopgraphql-jit"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      },
+      {
+        "children": [],
+        "title": "Conditional Execution",
+        "anchor": "conditional-execution"
+      },
+      {
+        "children": [],
+        "title": "Notes",
+        "anchor": "notes"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-graphql-jit",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useGraphQLJit",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usegraphqlmodules",
+    "headings": ["`@envelop/graphql-modules`", "Getting Started", "Usage Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/graphql-modules`",
+        "anchor": "envelopgraphql-modules"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-graphql-modules",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useGraphQLModules",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usehive",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-graphql-hive",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useHive",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useimmediateintrospection",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-immediate-introspection",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useImmediateIntrospection",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-uselazyloadedschema",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-lazy-loaded-schema",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useLazyLoadedSchema",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-uselivequery",
+    "headings": ["`@envelop/live-query`", "Installation", "Usage Example", "Further information"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/live-query`",
+        "anchor": "enveloplive-query"
+      },
+      {
+        "children": [],
+        "title": "Installation",
+        "anchor": "installation"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "`GraphQLSchema` from `graphql`",
+                "anchor": "graphqlschema-from-graphql"
+              }
+            ],
+            "title": "`makeExecutableSchema` from `graphql-tools`",
+            "anchor": "makeexecutableschema-from-graphql-tools"
+          }
+        ],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      },
+      {
+        "children": [],
+        "title": "Further information",
+        "anchor": "further-information"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-live-query",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useLiveQuery",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-uselogger",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-logger",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useLogger",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usemaskederrors",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-masked-errors",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useMaskedErrors",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usenewrelic",
+    "headings": [
+      "`@envelop/newrelic`",
+      "Getting Started",
+      "Installation",
+      "Basic usage Example",
+      "Advanced usage",
+      "Agent Configuration"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/newrelic`",
+        "anchor": "envelopnewrelic"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Installation",
+        "anchor": "installation"
+      },
+      {
+        "children": [],
+        "title": "Basic usage Example",
+        "anchor": "basic-usage-example"
+      },
+      {
+        "children": [],
+        "title": "Advanced usage",
+        "anchor": "advanced-usage"
+      },
+      {
+        "children": [],
+        "title": "Agent Configuration",
+        "anchor": "agent-configuration"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-newrelic",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useNewRelic",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useopentelemetry",
+    "headings": ["`@envelop/opentelemetry`", "Getting Started", "Usage Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/opentelemetry`",
+        "anchor": "envelopopentelemetry"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-open-telemetry",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useOpenTelemetry",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useoperationfieldpermissions",
+    "headings": ["`@envelop/operation-field-permissions`", "Installation", "Usage Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/operation-field-permissions`",
+        "anchor": "envelopoperation-field-permissions"
+      },
+      {
+        "children": [],
+        "title": "Installation",
+        "anchor": "installation"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-operation-field-permissions",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useOperationFieldPermissions",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useparsercache",
+    "headings": ["`@envelop/parser-cache`", "Getting Started", "Usage Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/parser-cache`",
+        "anchor": "envelopparser-cache"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "API Reference",
+            "anchor": "api-reference"
+          }
+        ],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-parser-cache",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useParserCache",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usepayloadformatter",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-payload-formatter",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "usePayloadFormatter",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usepersistedoperations",
+    "headings": [
+      "`@envelop/persisted-operations`",
+      "Getting Started",
+      "Usage Example",
+      "Usage Example with built-in JsonFileStore",
+      "Multiple Stores",
+      "Additional options",
+      "With Relay"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/persisted-operations`",
+        "anchor": "enveloppersisted-operations"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      },
+      {
+        "children": [],
+        "title": "Usage Example with built-in JsonFileStore",
+        "anchor": "usage-example-with-built-in-jsonfilestore"
+      },
+      {
+        "children": [],
+        "title": "Multiple Stores",
+        "anchor": "multiple-stores"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "onMissingMatch",
+                "anchor": "onmissingmatch"
+              }
+            ],
+            "title": "onlyPersisted",
+            "anchor": "onlypersisted"
+          }
+        ],
+        "title": "Additional options",
+        "anchor": "additional-options"
+      },
+      {
+        "children": [],
+        "title": "With Relay",
+        "anchor": "with-relay"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-persisted-operations",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "usePersistedOperations",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usepreloadassets",
+    "headings": ["`@envelop/preload-assets`", "Getting Started"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/preload-assets`",
+        "anchor": "enveloppreload-assets"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-preload-assets",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "usePreloadAssets",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useprometheus",
+    "headings": ["`@envelop/prometheus`", "Getting Started", "Usage Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/prometheus`",
+        "anchor": "envelopprometheus"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Introspection",
+                "anchor": "introspection"
+              },
+              {
+                "children": [],
+                "title": "Custom `prom-client` instances",
+                "anchor": "custom-prom-client-instances"
+              }
+            ],
+            "title": "Custom registry",
+            "anchor": "custom-registry"
+          }
+        ],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-prometheus",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "usePrometheus",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useratelimiter",
+    "headings": ["`@envelop/rate-limiter`", "Getting Started", "Usage Example", "Notes"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/rate-limiter`",
+        "anchor": "enveloprate-limiter"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "Error message interpolation",
+            "anchor": "error-message-interpolation"
+          }
+        ],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      },
+      {
+        "children": [],
+        "title": "Notes",
+        "anchor": "notes"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-rate-limiter",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useRateLimiter",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useresourcelimitations",
+    "headings": ["`@envelop/resource-limitations`", "Getting Started", "Usage Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/resource-limitations`",
+        "anchor": "envelopresource-limitations"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-resource-limitations",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useResourceLimitations",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useresponsecache",
+    "headings": ["`@envelop/response-cache`", "Getting Started", "Usage Example", "Recipes"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/response-cache`",
+        "anchor": "envelopresponse-cache"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Redis Cache",
+                "anchor": "redis-cache"
+              }
+            ],
+            "title": "In-Memory Cache",
+            "anchor": "in-memory-cache"
+          }
+        ],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Cache with custom TTL per object type",
+                "anchor": "cache-with-custom-ttl-per-object-type"
+              },
+              {
+                "children": [],
+                "title": "Cache with custom TTL per schema coordinate",
+                "anchor": "cache-with-custom-ttl-per-schema-coordinate"
+              },
+              {
+                "children": [],
+                "title": "Cache based on session/user",
+                "anchor": "cache-based-on-sessionuser"
+              },
+              {
+                "children": [],
+                "title": "Disable cache based on session/user",
+                "anchor": "disable-cache-based-on-sessionuser"
+              },
+              {
+                "children": [],
+                "title": "Customize if result should be cached",
+                "anchor": "customize-if-result-should-be-cached"
+              },
+              {
+                "children": [],
+                "title": "Cache Introspection query operations",
+                "anchor": "cache-introspection-query-operations"
+              },
+              {
+                "children": [],
+                "title": "Cache with maximum TTL",
+                "anchor": "cache-with-maximum-ttl-1"
+              },
+              {
+                "children": [],
+                "title": "Customize the fields that are used for building the cache ID",
+                "anchor": "customize-the-fields-that-are-used-for-building-the-cache-id"
+              },
+              {
+                "children": [],
+                "title": "Disable automatic cache invalidation via mutations",
+                "anchor": "disable-automatic-cache-invalidation-via-mutations"
+              },
+              {
+                "children": [],
+                "title": "Invalidate Cache based on custom logic",
+                "anchor": "invalidate-cache-based-on-custom-logic"
+              },
+              {
+                "children": [],
+                "title": "Customize how cache ids are built",
+                "anchor": "customize-how-cache-ids-are-built"
+              },
+              {
+                "children": [],
+                "title": "Expose cache metadata via extensions",
+                "anchor": "expose-cache-metadata-via-extensions"
+              }
+            ],
+            "title": "Cache with maximum TTL",
+            "anchor": "cache-with-maximum-ttl"
+          }
+        ],
+        "title": "Recipes",
+        "anchor": "recipes"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-response-cache",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useResponseCache",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-useschema",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-schema",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useSchema",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usesentry",
+    "headings": ["`@envelop/sentry`", "Getting Started", "Usage Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/sentry`",
+        "anchor": "envelopsentry"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "Configuration",
+            "anchor": "configuration"
+          }
+        ],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-sentry",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useSentry",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usestatsd",
+    "headings": ["`@envelop/statsd`", "Getting Started", "Usage Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/statsd`",
+        "anchor": "envelopstatsd"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-statsd",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useStatsD",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usetiming",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-timing",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useTiming",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-usevalidationcache",
+    "headings": ["`@envelop/validation-cache`", "Getting Started", "Usage Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`@envelop/validation-cache`",
+        "anchor": "envelopvalidation-cache"
+      },
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "API Reference",
+            "anchor": "api-reference"
+          }
+        ],
+        "title": "Usage Example",
+        "anchor": "usage-example"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/plugins/use-validation-cache",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Plugins"],
+    "source": "Envelop",
+    "title": "useValidationCache",
+    "type": "Plugin"
+  },
+  {
+    "objectID": "envelop-using-graphql-features-from-the-future",
+    "headings": ["OneOf Input Objects and OneOf Fields", "Fragment Arguments"],
+    "toc": [
+      {
+        "children": [],
+        "title": "OneOf Input Objects and OneOf Fields",
+        "anchor": "oneof-input-objects-and-oneof-fields"
+      },
+      {
+        "children": [],
+        "title": "Fragment Arguments",
+        "anchor": "fragment-arguments"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.envelop.dev/docs/guides/using-graphql-features-from-the-future",
+    "domain": "https://www.envelop.dev/",
+    "hierarchy": ["Envelop", "Guides", "GraphQL Features from the Future"],
+    "source": "Envelop",
+    "title": "GraphQL Features from the Future",
+    "type": "Guide"
+  }
+]

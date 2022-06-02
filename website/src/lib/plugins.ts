@@ -37,7 +37,7 @@ export const pluginsArr: Package<Tags>[] = [
     identifier: 'use-schema',
     title: 'useSchema',
     githubReadme: {
-      repo: 'dotansimha/envelop',
+      repo: 'n1ru4l/envelop',
       path: 'packages/core/docs/use-schema.md',
     },
     npmPackage: '@envelop/core',
@@ -48,7 +48,7 @@ export const pluginsArr: Package<Tags>[] = [
     identifier: 'use-async-schema',
     title: 'useAsyncSchema',
     githubReadme: {
-      repo: 'dotansimha/envelop',
+      repo: 'n1ru4l/envelop',
       path: 'packages/core/docs/use-async-schema.md',
     },
     npmPackage: '@envelop/core',
@@ -59,7 +59,7 @@ export const pluginsArr: Package<Tags>[] = [
     identifier: 'use-lazy-loaded-schema',
     title: 'useLazyLoadedSchema',
     githubReadme: {
-      repo: 'dotansimha/envelop',
+      repo: 'n1ru4l/envelop',
       path: 'packages/core/docs/use-lazy-loaded-schema.md',
     },
     npmPackage: '@envelop/core',
@@ -70,7 +70,7 @@ export const pluginsArr: Package<Tags>[] = [
     identifier: 'use-error-handler',
     title: 'useErrorHandler',
     githubReadme: {
-      repo: 'dotansimha/envelop',
+      repo: 'n1ru4l/envelop',
       path: 'packages/core/docs/use-error-handler.md',
     },
     npmPackage: '@envelop/core',
@@ -81,7 +81,7 @@ export const pluginsArr: Package<Tags>[] = [
     identifier: 'use-masked-errors',
     title: 'useMaskedErrors',
     githubReadme: {
-      repo: 'dotansimha/envelop',
+      repo: 'n1ru4l/envelop',
       path: 'packages/core/docs/use-masked-errors.md',
     },
     npmPackage: '@envelop/core',
@@ -92,7 +92,7 @@ export const pluginsArr: Package<Tags>[] = [
     identifier: 'use-extend-context',
     title: 'useExtendContext',
     githubReadme: {
-      repo: 'dotansimha/envelop',
+      repo: 'n1ru4l/envelop',
       path: 'packages/core/docs/use-extend-context.md',
     },
     npmPackage: '@envelop/core',
@@ -103,7 +103,7 @@ export const pluginsArr: Package<Tags>[] = [
     identifier: 'use-immediate-introspection',
     title: 'useImmediateIntrospection',
     githubReadme: {
-      repo: 'dotansimha/envelop',
+      repo: 'n1ru4l/envelop',
       path: 'packages/core/docs/use-immediate-introspection.md',
     },
     npmPackage: '@envelop/core',
@@ -114,7 +114,7 @@ export const pluginsArr: Package<Tags>[] = [
     identifier: 'use-logger',
     title: 'useLogger',
     githubReadme: {
-      repo: 'dotansimha/envelop',
+      repo: 'n1ru4l/envelop',
       path: 'packages/core/docs/use-logger.md',
     },
     npmPackage: '@envelop/core',
@@ -125,7 +125,7 @@ export const pluginsArr: Package<Tags>[] = [
     identifier: 'use-payload-formatter',
     title: 'usePayloadFormatter',
     githubReadme: {
-      repo: 'dotansimha/envelop',
+      repo: 'n1ru4l/envelop',
       path: 'packages/core/docs/use-payload-formatter.md',
     },
     npmPackage: '@envelop/core',
@@ -136,7 +136,7 @@ export const pluginsArr: Package<Tags>[] = [
     identifier: 'use-timing',
     title: 'useTiming',
     githubReadme: {
-      repo: 'dotansimha/envelop',
+      repo: 'n1ru4l/envelop',
       path: 'packages/core/docs/use-timing.md',
     },
     npmPackage: '@envelop/core',
@@ -184,6 +184,13 @@ export const pluginsArr: Package<Tags>[] = [
     npmPackage: '@envelop/apollo-tracing',
     iconUrl: '/assets/logos/apollo.png',
     tags: ['devtool', 'metrics'],
+  },
+  {
+    identifier: 'use-apollo-datasources',
+    title: 'useApolloDataSources',
+    npmPackage: '@envelop/apollo-datasources',
+    iconUrl: '/assets/logos/apollo.png',
+    tags: ['devtool', 'utilities'],
   },
   {
     identifier: 'use-open-telemetry',
@@ -311,7 +318,7 @@ export const pluginsArr: Package<Tags>[] = [
     iconUrl: '/assets/logos/graphql.png',
     tags: ['utilities', 'subscription'],
     githubReadme: {
-      repo: 'dotansimha/envelop',
+      repo: 'n1ru4l/envelop',
       path: '/packages/plugins/execute-subscription-event/README.md',
     },
   },

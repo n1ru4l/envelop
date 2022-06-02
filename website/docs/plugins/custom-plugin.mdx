@@ -15,7 +15,7 @@ If you are using TypeScript, you can import the `Plugin` interface from `@envelo
 
 All plugins share the common plugin interface that can be found on GitHub.
 
-https://github.com/dotansimha/envelop/blob/main/packages/types/src/plugin.ts
+https://github.com/n1ru4l/envelop/blob/main/packages/types/src/plugin.ts
 
 ## Building your first plugin
 
@@ -26,7 +26,7 @@ import type { Plugin } from '@envelop/core';
 
 const myPlugin: Plugin = {
   onParse({ params }) {
-    console.log('Parse started!', { args });
+    console.log('Parse started!', { params });
 
     return result => {
       console.log('Parse done!', { result });
@@ -84,4 +84,4 @@ const getEnveloped = envelop({
 
 In case you want to publish a standalone envelop plugin as a npm package we recommend using `@envelop/core` as a `peerDependency`. By doing so we can reduce the likelyhood of `@envelop/core` being instanciated multiple times due a version mismatch and leading to unexpected behaviours.
 
-The existing envelop plugins within the envelop monorepo serve as a good example. [The `@envelop/preload-assets` plugin is a simple example on how to setup a plugin package](https://github.com/dotansimha/envelop/tree/main/packages/plugins/preload-assets).
+The existing envelop plugins within the envelop monorepo serve as a good example. [The `@envelop/preload-assets` plugin is a simple example on how to setup a plugin package](https://github.com/n1ru4l/envelop/tree/main/packages/plugins/preload-assets).

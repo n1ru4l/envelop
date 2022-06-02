@@ -1,12 +1,12 @@
 {
   "name": "@envelop/statsd",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "author": "Kamil Kisiela <kamil.kisiela@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/dotansimha/envelop.git",
+    "url": "https://github.com/n1ru4l/envelop.git",
     "directory": "packages/plugins/statsd"
   },
   "keywords": [
@@ -44,7 +44,7 @@
     "typescript": "4.4.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.3.1",
+    "@envelop/core": "^2.3.2",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0",
     "hot-shots": "^8.0.0 || ^9.0.0"
   },

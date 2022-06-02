@@ -101,9 +101,8 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
       }) as { sub: string };
 
       return decoded;
-    } else {
-      throw new Error(`Failed to decode authentication token!`);
     }
+    throw new Error(`Failed to decode authentication token!`);
   };
 
   return {

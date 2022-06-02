@@ -1,6 +1,6 @@
 import Head from 'next/head';
 
-import { DocsContent, DocsTOC, MDXPage } from '@guild-docs/client';
+import { DocsContent, DocsTOC, EditOnGitHubButton, MDXPage } from '@guild-docs/client';
 import { MDXPaths, MDXProps } from '@guild-docs/server';
 
 import { getRoutes } from '../../../routes';
@@ -8,7 +8,7 @@ import { getRoutes } from '../../../routes';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 
 export default MDXPage(
-  function PostPage({ content, TOC, MetaHead, BottomNavigation }) {
+  function PostPage({ content, TOC, MetaHead, sourceFilePath }) {
     return (
       <>
         <Head>{MetaHead}</Head>
@@ -19,7 +19,7 @@ export default MDXPage(
               paddingRight: '0.5em',
             }}
           />
-          <BottomNavigation />
+          <EditOnGitHubButton repo="n1ru4l/envelop" branch="main" baseDir="website" sourceFilePath={sourceFilePath} />
         </DocsTOC>
       </>
     );

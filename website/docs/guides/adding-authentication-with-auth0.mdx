@@ -1,6 +1,7 @@
 ---
 title: Adding Authentication with Auth0
 sidebar_label: Adding Authentication with Auth0
+type: Guide
 ---
 
 Authentication in the process of identifying who is trying to access our API. Building our own solution can be hard and cause severe security issue if done wrong. In recent years third-party authentication providers became quite popular. One of those is Auth0, which comes with an exceptional free plan allowing up to 7.000 active users and unlimited logins, making it one of the best available solutions for getting started.
@@ -9,7 +10,7 @@ In this guide we will go through all the steps required for integrating authenti
 
 ## Prerequisites
 
-Ideally, you already have your basic envelop setup with your http framework of choice. This guide we will be based on the [`graphql-helix` fastify example](https://github.com/dotansimha/envelop/tree/main/examples/graphql-helix), but the code can be easily transferred to any other example as listed on our [Integrations and Examples documentation](/docs/integrations). In case you are hitting any roadblocks feel free to reach out to us via the chat box on this page! The full code of the end-result is also available in our examples [`graphql-helix-auth0` fastify example](https://github.com/dotansimha/envelop/tree/main/examples/graphql-helix-auth0).
+Ideally, you already have your basic envelop setup with your http framework of choice. This guide we will be based on the [`graphql-helix` fastify example](https://github.com/n1ru4l/envelop/tree/main/examples/graphql-helix), but the code can be easily transferred to any other example as listed on our [Integrations and Examples documentation](/docs/integrations). In case you are hitting any roadblocks feel free to reach out to us via the chat box on this page! The full code of the end-result is also available in our examples [`graphql-helix-auth0` fastify example](https://github.com/n1ru4l/envelop/tree/main/examples/graphql-helix-auth0).
 
 ## Installing dependencies
 
@@ -258,7 +259,7 @@ Then after re-executing the operation we see that the result now contains our au
 
 Congratulations on successfully implementing authentication for your GraphQL API with Envelop and Auth0!
 
-The full code of this guide can be found in our [Envelop examples](https://github.com/dotansimha/envelop/tree/main/examples/graphql-helix).
+The full code of this guide can be found in our [Envelop examples](https://github.com/n1ru4l/envelop/tree/main/examples/graphql-helix).
 
 More information about advanced configuration options can be found on the [`useAuth0` PluginHub page](/plugins/use-auth0).
 

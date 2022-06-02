@@ -17,6 +17,9 @@ import { Footer, Header, Subheader } from '@theguild/components';
 
 import type { AppProps } from 'next/app';
 
+import '@algolia/autocomplete-theme-classic';
+import '@theguild/components/dist/static/css/SearchBarV2.css';
+
 ExtendComponents({
   a: chakra('a', {
     baseStyle: {
@@ -97,7 +100,7 @@ function AppContent(appProps: AppProps) {
 
   return (
     <>
-      <Header accentColor={accentColor} activeLink="/open-source" themeSwitch />
+      <Header accentColor={accentColor} activeLink="/open-source" themeSwitch searchBarProps={{ version: 'v2' }} />
       <Subheader
         activeLink={router.asPath}
         product={{
@@ -130,7 +133,7 @@ function AppContent(appProps: AppProps) {
           },
           {
             children: 'GitHub',
-            href: 'https://github.com/dotansimha/envelop',
+            href: 'https://github.com/n1ru4l/envelop',
             target: '_blank',
             rel: 'noopener norefereer',
             title: "Head to the project's GitHub",
