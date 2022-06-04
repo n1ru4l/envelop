@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Plugin, TypedExecutionArgs } from '@envelop/core';
+import { makeExecute, makeSubscribe, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { DocumentNode, Source, ExecutionArgs, ExecutionResult } from 'graphql';
 import { compileQuery, isCompiledQuery, CompilerOptions, CompiledQuery } from 'graphql-jit';
 import lru from 'tiny-lru';
@@ -81,22 +81,26 @@ export const useGraphQlJit = (
     },
     async onExecute({ args, setExecuteFn }) {
       if (!pluginOptions.enableIf || (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))) {
-        setExecuteFn(function jitExecutor(args) {
-          const cacheEntry = getCacheEntry(args as TypedExecutionArgs<unknown>);
+        setExecuteFn(
+          makeExecute(function jitExecutor(args) {
+            const cacheEntry = getCacheEntry(args as TypedExecutionArgs<unknown>);
 
-          return cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
-        });
+            return cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
+          })
+        );
       }
     },
     async onSubscribe({ args, setSubscribeFn }) {
       if (!pluginOptions.enableIf || (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))) {
-        setSubscribeFn(async function jitSubscriber(args) {
-          const cacheEntry = getCacheEntry(args as TypedExecutionArgs<unknown>);
+        setSubscribeFn(
+          makeSubscribe(async function jitSubscriber(args) {
+            const cacheEntry = getCacheEntry(args as TypedExecutionArgs<unknown>);
 
-          return cacheEntry.subscribe
-            ? (cacheEntry.subscribe(args.rootValue, args.contextValue, args.variableValues) as any)
-            : cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
-        });
+            return cacheEntry.subscribe
+              ? (cacheEntry.subscribe(args.rootValue, args.contextValue, args.variableValues) as any)
+              : cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
+          })
+        );
       }
     },
   };
