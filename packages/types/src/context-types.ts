@@ -5,7 +5,7 @@ import { Spread, TuplifyUnion, Unarray } from './utils';
 // We are using `interface` instead of `type` in order to allow type augmentation
 export interface DefaultContext extends Record<string | symbol | number, unknown> {}
 
-export type ComposeContextArray<V extends unknown> = V extends []
+export type ComposeContextArray<V> = V extends []
   ? []
   : V extends [Plugin<infer Ctx>]
   ? [Ctx]

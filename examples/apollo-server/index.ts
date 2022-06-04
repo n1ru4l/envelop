@@ -27,7 +27,7 @@ const server = new ApolloServer({
     const { schema, execute, contextFactory } = getEnveloped({ req: requestContext.request.http });
 
     return execute({
-      schema: schema,
+      schema,
       document: requestContext.document,
       contextValue: await contextFactory(),
       variableValues: requestContext.request.variables,
