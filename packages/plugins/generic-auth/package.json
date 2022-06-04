@@ -1,6 +1,6 @@
 {
   "name": "@envelop/generic-auth",
-  "version": "4.2.2",
+  "version": "4.2.3",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -30,7 +30,7 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "@envelop/extended-validation": "^1.6.2"
+    "@envelop/extended-validation": "^1.6.3"
   },
   "devDependencies": {
     "bob-the-bundler": "1.6.1",
@@ -38,7 +38,7 @@
     "typescript": "4.4.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.3.2",
+    "@envelop/core": "^2.3.3",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {

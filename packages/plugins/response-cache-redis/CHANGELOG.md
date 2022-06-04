@@ -1,5 +1,13 @@
 # @envelop/response-cache-redis
 
+## 0.4.3
+
+### Patch Changes
+
+- fbf6155: update package.json repository links to point to the new home
+- Updated dependencies [fbf6155]
+  - @envelop/response-cache@2.3.3
+
 ## 0.4.2
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@envelop/apollo-tracing",
-  "version": "3.3.2",
+  "version": "3.3.3",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "repository": {
@@ -39,7 +39,7 @@
     "typescript": "4.4.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.3.2",
+    "@envelop/core": "^2.3.3",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {

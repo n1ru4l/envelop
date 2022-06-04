@@ -1,5 +1,14 @@
 # @envelop/graphql-jit
 
+## 4.2.3
+
+### Patch Changes
+
+- 0f56966: fix compatibility with other plugins that extend the context by using the correct execution args within the execute/subscribe implementation.
+- fbf6155: update package.json repository links to point to the new home
+- Updated dependencies [fbf6155]
+  - @envelop/core@2.3.3
+
 ## 4.2.2
 
 ### Patch Changes

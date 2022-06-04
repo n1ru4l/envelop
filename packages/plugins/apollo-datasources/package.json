@@ -1,6 +1,6 @@
 {
   "name": "@envelop/apollo-datasources",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Kamil Kisiela <kamil.kisiela@gmail.com>",
   "license": "MIT",
   "repository": {
@@ -38,7 +38,7 @@
     "typescript": "4.4.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.3.2",
+    "@envelop/core": "^2.3.3",
     "apollo-datasource": "^3",
     "apollo-server-caching": "^3",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"

@@ -1,6 +1,6 @@
 {
   "name": "@envelop/execute-subscription-event",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "author": "Laurin Quast <laurinquast@googlemail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -37,7 +37,7 @@
     "typescript": "4.4.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.3.2",
+    "@envelop/core": "^2.3.3",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {
