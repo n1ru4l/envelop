@@ -56,7 +56,7 @@ This method is optional; the default method will just verify the value returned 
 ```ts
 import { ValidateUserFn } from '@envelop/generic-auth';
 
-const validateUser: ValidateUserFn<UserType> = (params) => {
+const validateUser: ValidateUserFn<UserType> = params => {
   // Here you can implement any custom to check if the user is valid and have access to the server.
   // This method is being triggered in different flows, based on the mode you chose to implement.
 
@@ -86,7 +86,7 @@ type UserType = {
 const resolveUserFn: ResolveUserFn<UserType> = async context => {
   /* ... */
 };
-const validateUser: ValidateUserFn<UserType> = (params) => {
+const validateUser: ValidateUserFn<UserType> = params => {
   /* ... */
 };
 
@@ -155,7 +155,7 @@ type UserType = {
 const resolveUserFn: ResolveUserFn<UserType> = async context => {
   /* ... */
 };
-const validateUser: ValidateUserFn<UserType> = async (params) => {
+const validateUser: ValidateUserFn<UserType> = async params => {
   /* ... */
 };
 
@@ -200,7 +200,7 @@ type UserType = {
 const resolveUserFn: ResolveUserFn<UserType> = async context => {
   /* ... */
 };
-const validateUser: ValidateUserFn<UserType> = (params) => {
+const validateUser: ValidateUserFn<UserType> = params => {
   /* ... */
 };
 

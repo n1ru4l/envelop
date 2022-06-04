@@ -93,7 +93,7 @@ const redis = new Redis({
   password: '1234567890',
 });
 
-const redis = new Redis("rediss://:1234567890@my-redis-db.example.com:30652");
+const redis = new Redis('redis://:1234567890@my-redis-db.example.com:30652');
 
 const cache = createRedisCache({ redis });
 

@@ -18,7 +18,7 @@ const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useApolloServerErrors({ // All fields are optional, and should match what you pass today to ApolloServer
-      debug: true, // 
+      debug: true, //
       formatError: () => ...
     }),
   ],
