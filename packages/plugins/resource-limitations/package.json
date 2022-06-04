@@ -1,7 +1,7 @@
 {
   "name": "@envelop/resource-limitations",
   "description": "A rate-limit implementation based on resource limitations and static calculation of the score (similar to GitHub GraphQL API)",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "author": "Laurin Quast <laurinquast@googlemail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -31,7 +31,7 @@
     "prepack": "bob prepack"
   },
   "dependencies": {
-    "@envelop/extended-validation": "^1.6.2",
+    "@envelop/extended-validation": "^1.6.3",
     "@graphql-tools/utils": "^8.6.1"
   },
   "devDependencies": {
@@ -40,7 +40,7 @@
     "typescript": "4.4.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.3.2",
+    "@envelop/core": "^2.3.3",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {

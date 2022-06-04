@@ -1,5 +1,14 @@
 # @envelop/sentry
 
+## 3.4.2
+
+### Patch Changes
+
+- 3612010: supporting sentry v7.0.0
+- fbf6155: update package.json repository links to point to the new home
+- Updated dependencies [fbf6155]
+  - @envelop/core@2.3.3
+
 ## 3.4.1
 
 ### Patch Changes

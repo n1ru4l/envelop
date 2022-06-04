@@ -1,6 +1,6 @@
 {
   "name": "@envelop/response-cache-redis",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "author": "David Thyresson <dthyresson@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -36,7 +36,7 @@
     "typescript": "4.4.4"
   },
   "dependencies": {
-    "@envelop/response-cache": "^2.3.2",
+    "@envelop/response-cache": "^2.3.3",
     "ioredis": "^4.27.9"
   },
   "peerDependencies": {},

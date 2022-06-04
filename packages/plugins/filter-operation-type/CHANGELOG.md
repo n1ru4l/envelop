@@ -1,5 +1,13 @@
 # @envelop/filter-operation-type
 
+## 3.3.3
+
+### Patch Changes
+
+- fbf6155: update package.json repository links to point to the new home
+- Updated dependencies [fbf6155]
+  - @envelop/core@2.3.3
+
 ## 3.3.2
 
 ### Patch Changes

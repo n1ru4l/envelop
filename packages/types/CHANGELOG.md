@@ -1,5 +1,11 @@
 # @envelop/types
 
+## 2.2.1
+
+### Patch Changes
+
+- fbf6155: update package.json repository links to point to the new home
+
 ## 2.2.0
 
 ### Minor Changes

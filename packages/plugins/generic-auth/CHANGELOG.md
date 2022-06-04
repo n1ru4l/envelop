@@ -1,5 +1,15 @@
 # @envelop/generic-auth
 
+## 4.2.3
+
+### Patch Changes
+
+- fbf6155: update package.json repository links to point to the new home
+- Updated dependencies [fbf6155]
+  - @envelop/core@2.3.3
+- Updated dependencies [fbf6155]
+  - @envelop/extended-validation@1.6.3
+
 ## 4.2.2
 
 ### Patch Changes

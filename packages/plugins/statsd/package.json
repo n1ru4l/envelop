@@ -1,6 +1,6 @@
 {
   "name": "@envelop/statsd",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "author": "Kamil Kisiela <kamil.kisiela@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -44,7 +44,7 @@
     "typescript": "4.4.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.3.2",
+    "@envelop/core": "^2.3.3",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0",
     "hot-shots": "^8.0.0 || ^9.0.0"
   },

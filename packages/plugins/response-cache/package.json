@@ -1,6 +1,6 @@
 {
   "name": "@envelop/response-cache",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "author": "Kamil Kisiela <kamilkisiela@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -43,7 +43,7 @@
     "fast-json-stable-stringify": "^2.1.0"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.3.2",
+    "@envelop/core": "^2.3.3",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {
