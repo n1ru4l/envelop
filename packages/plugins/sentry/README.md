@@ -32,6 +32,8 @@ yarn add @sentry/node @sentry/tracing @envelop/sentry
 ```ts
 import { envelop } from '@envelop/core';
 import { useSentry } from '@envelop/sentry';
+// do this only once in you entry file.
+import "@sentry/tracing";
 
 const getEnveloped = envelop({
   plugins: [
