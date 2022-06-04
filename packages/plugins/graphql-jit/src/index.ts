@@ -81,8 +81,8 @@ export const useGraphQlJit = (
     },
     async onExecute({ args, setExecuteFn }) {
       if (!pluginOptions.enableIf || (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))) {
-        setExecuteFn(function jitExecutor() {
-          const cacheEntry = getCacheEntry(args);
+        setExecuteFn(function jitExecutor(args) {
+          const cacheEntry = getCacheEntry(args as TypedExecutionArgs<unknown>);
 
           return cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
         });
@@ -90,8 +90,8 @@ export const useGraphQlJit = (
     },
     async onSubscribe({ args, setSubscribeFn }) {
       if (!pluginOptions.enableIf || (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))) {
-        setSubscribeFn(async function jitSubscriber() {
-          const cacheEntry = getCacheEntry(args);
+        setSubscribeFn(async function jitSubscriber(args) {
+          const cacheEntry = getCacheEntry(args as TypedExecutionArgs<unknown>);
 
           return cacheEntry.subscribe
             ? (cacheEntry.subscribe(args.rootValue, args.contextValue, args.variableValues) as any)
