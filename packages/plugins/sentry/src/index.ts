@@ -263,7 +263,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
                     scope.addBreadcrumb({
                       category: 'execution-path',
                       message: errorPath,
-                      level: Sentry.Severity.Debug,
+                      level: 'debug',
                     });
                   }
 

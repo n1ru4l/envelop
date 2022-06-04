@@ -31,15 +31,15 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@sentry/node": "6.18.2",
-    "@sentry/tracing": "6.18.2",
+    "@sentry/node": "7.0.0",
+    "@sentry/tracing": "7.0.0",
     "bob-the-bundler": "1.6.1",
     "graphql": "16.3.0",
     "typescript": "4.4.4"
   },
   "peerDependencies": {
     "@envelop/core": "^2.3.2",
-    "@sentry/node": "^6",
+    "@sentry/node": "^6 || ^7",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {
