@@ -1,4 +1,11 @@
-import { DocumentNode, ExecutionArgs, GraphQLFieldResolver, GraphQLSchema, GraphQLTypeResolver, SubscriptionArgs } from 'graphql';
+import {
+  DocumentNode,
+  ExecutionArgs,
+  GraphQLFieldResolver,
+  GraphQLSchema,
+  GraphQLTypeResolver,
+  SubscriptionArgs,
+} from 'graphql';
 import { ArbitraryObject, Maybe } from '@envelop/types';
 import { EnvelopOrchestrator } from './orchestrator';
 import { isAsyncIterable } from './utils';

@@ -211,48 +211,48 @@ The goal of the response cache plugin is to educate how such mechanisms are impl
 Adding a response cache to an existing envelop GraphQL server setup is as easy as adding the plugin:
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useResponseCache(),
-  ],
-});
+    useResponseCache()
+  ]
+})
 ```
 
 If you need to imperatively invalidate you can do that by providing the cache to the plugin:
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache, createInMemoryCache } from '@envelop/response-cache';
-import { emitter } from './event-emitter';
+import { envelop } from '@envelop/core'
+import { useResponseCache, createInMemoryCache } from '@envelop/response-cache'
+import { emitter } from './event-emitter'
 
-const cache = createInMemoryCache();
+const cache = createInMemoryCache()
 
 emitter.on('invalidate', entity => {
   cache.invalidate([
     {
       typename: entity.type,
-      id: entity.id,
-    },
-  ]);
-});
+      id: entity.id
+    }
+  ])
+})
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useResponseCache({ cache }),
-  ],
-});
+    useResponseCache({ cache })
+  ]
+})
 ```
 
 The caching behavior can be fully customized. A TTL can be provided global or more granular per type or schema coordinate.
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
@@ -262,24 +262,24 @@ const getEnveloped = envelop({
       ttl: 60 * 1000 * 60,
       ttlPerType: {
         // cache operation containing Stock object type for 500ms
-        Stock: 500,
+        Stock: 500
       },
       ttlPerSchemaCoordinate: {
         // cache operation containing Query.rocketCoordinates selection for 100ms
-        'Query.rocketCoordinates': 100,
+        'Query.rocketCoordinates': 100
       },
       // never cache responses that include a RefreshToken object type.
-      ignoredTypes: ['RefreshToken'],
-    }),
-  ],
-});
+      ignoredTypes: ['RefreshToken']
+    })
+  ]
+})
 ```
 
 Need to cache based on the user? No problem.
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
@@ -288,27 +288,27 @@ const getEnveloped = envelop({
       // context is the GraphQL context that would be used for execution
       session: context => (context.user ? String(context.user.id) : null),
       // never serve cache for admin users
-      enabled: context => (context.user ? isAdmin(context.user) === false : true),
-    }),
-  ],
-});
+      enabled: context => (context.user ? isAdmin(context.user) === false : true)
+    })
+  ]
+})
 ```
 
 Don't want to automatically invalidate based on mutations? Also configurable!
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useResponseCache({
       // some might prefer invalidating only based on a database write log
-      invalidateViaMutation: false,
-    }),
-  ],
-});
+      invalidateViaMutation: false
+    })
+  ]
+})
 ```
 
 Want a global cache on Redis?

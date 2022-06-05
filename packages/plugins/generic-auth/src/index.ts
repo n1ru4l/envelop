@@ -102,14 +102,18 @@ export type GenericAuthPluginOptions<UserType extends {} = {}, ContextType exten
     }
 );
 
-export function defaultProtectAllValidateFn<UserType>(params: ValidateUserFnParams<UserType>): void | UnauthenticatedError {
+export function defaultProtectAllValidateFn<UserType>(
+  params: ValidateUserFnParams<UserType>
+): void | UnauthenticatedError {
   if (params.user == null && !params.fieldAuthDirectiveNode && !params.fieldAuthExtension) {
     const schemaCoordinate = `${params.objectType.name}.${params.fieldNode.name.value}`;
     return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [params.fieldNode]);
   }
 }
 
-export function defaultProtectSingleValidateFn<UserType>(params: ValidateUserFnParams<UserType>): void | UnauthenticatedError {
+export function defaultProtectSingleValidateFn<UserType>(
+  params: ValidateUserFnParams<UserType>
+): void | UnauthenticatedError {
   if (params.user == null && (params.fieldAuthDirectiveNode || params.fieldAuthExtension)) {
     const schemaCoordinate = `${params.objectType.name}.${params.fieldNode.name.value}`;
     return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [params.fieldNode]);
@@ -127,7 +131,8 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
     const directiveOrExtensionFieldName =
       options.directiveOrExtensionFieldName ?? (options.mode === 'protect-all' ? 'skipAuth' : 'auth');
     const validateUser =
-      options.validateUser ?? (options.mode === 'protect-all' ? defaultProtectAllValidateFn : defaultProtectSingleValidateFn);
+      options.validateUser ??
+      (options.mode === 'protect-all' ? defaultProtectAllValidateFn : defaultProtectSingleValidateFn);
     const extractAuthMeta = (
       input: GraphQLField<any, any>
     ): { fieldAuthDirectiveNode: DirectiveNode | undefined; fieldAuthExtension: unknown } => {

@@ -11,10 +11,10 @@ yarn add @envelop/filter-operation-type
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useFilterAllowedOperations } from '@envelop/filter-operation-type';
+import { envelop } from '@envelop/core'
+import { useFilterAllowedOperations } from '@envelop/filter-operation-type'
 const getEnveloped = envelop({
   // only allow execution of subscription operations
-  plugins: [useFilterAllowedOperations(['subscription'])],
-});
+  plugins: [useFilterAllowedOperations(['subscription'])]
+})
 ```

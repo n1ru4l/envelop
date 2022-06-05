@@ -33,7 +33,7 @@ To create your custom rules, implement the `ExtendedValidationRule` interface an
 For example:
 
 ```ts
-import { ExtendedValidationRule } from '@envelop/extended-validation';
+import { ExtendedValidationRule } from '@envelop/extended-validation'
 
 export const MyRule: ExtendedValidationRule = (validationContext, executionArgs) => {
   return {
@@ -41,9 +41,9 @@ export const MyRule: ExtendedValidationRule = (validationContext, executionArgs)
       // This will run for every executed Query/Mutation/Subscription
       // And now you also have access to the execution params like variables, context and so on.
       // If you wish to report an error, use validationContext.reportError or throw an exception.
-    },
-  };
-};
+    }
+  }
+}
 ```
 
 ## Built-in Rules
@@ -57,15 +57,15 @@ You can use union inputs either via a the SDL flow, by annotating types and fiel
 First, make sure to add that rule to your plugin usage:
 
 ```ts
-import { useExtendedValidation, OneOfInputObjectsRule } from '@envelop/extended-validation';
+import { useExtendedValidation, OneOfInputObjectsRule } from '@envelop/extended-validation'
 
 const getEnveloped = evelop({
   plugins: [
     useExtendedValidation({
-      rules: [OneOfInputObjectsRule],
-    }),
-  ],
-});
+      rules: [OneOfInputObjectsRule]
+    })
+  ]
+})
 ```
 
 #### Schema Directive Flow
@@ -99,16 +99,16 @@ const GraphQLFindUserInput = new GraphQLInputObjectType({
   name: 'FindUserInput',
   fields: {
     id: {
-      type: GraphQLID,
+      type: GraphQLID
     },
     organizationAndRegistrationNumber: {
-      type: GraphQLInt,
-    },
+      type: GraphQLInt
+    }
   },
   extensions: {
-    oneOf: true,
-  },
-});
+    oneOf: true
+  }
+})
 
 const Query = new GraphQLObjectType({
   name: 'Query',
@@ -117,19 +117,19 @@ const Query = new GraphQLObjectType({
       type: GraphQLString,
       args: {
         id: {
-          type: GraphQLID,
+          type: GraphQLID
         },
         str1: {
-          type: GraphQLString,
+          type: GraphQLString
         },
         str2: {
-          type: GraphQLString,
-        },
+          type: GraphQLString
+        }
       },
       extensions: {
-        oneOf: true,
-      },
-    },
-  },
-});
+        oneOf: true
+      }
+    }
+  }
+})
 ```

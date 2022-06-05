@@ -82,7 +82,10 @@ export const makeSubscribe = (
   ((...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<ExecutionResult>> =>
     subscribeFn(getSubscribeArgs(polyArgs))) as SubscribeFunction;
 
-export function mapAsyncIterator<T, O>(source: AsyncIterable<T>, mapper: (input: T) => Promise<O> | O): AsyncGenerator<O> {
+export function mapAsyncIterator<T, O>(
+  source: AsyncIterable<T>,
+  mapper: (input: T) => Promise<O> | O
+): AsyncGenerator<O> {
   const iterator = source[Symbol.asyncIterator]();
 
   async function mapResult(result: IteratorResult<T, O>): Promise<IteratorResult<O>> {

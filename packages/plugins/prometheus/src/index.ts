@@ -274,7 +274,9 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
         }
 
         const startTime = Date.now();
-        reqCounter?.counter.labels(reqCounter.fillLabelsFn(args.contextValue[promPluginContext], args.contextValue)).inc();
+        reqCounter?.counter
+          .labels(reqCounter.fillLabelsFn(args.contextValue[promPluginContext], args.contextValue))
+          .inc();
 
         const result: OnExecuteHookResult<PluginInternalContext> = {
           onExecuteDone: ({ result }) => {

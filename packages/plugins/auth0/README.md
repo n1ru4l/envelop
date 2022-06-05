@@ -37,9 +37,9 @@ const getEnveloped = envelop({
 
 ```ts
 myHttpServer.on('request', async req => {
-  const { contextFactory } = getEnveloped({ req });
-  const contextValue = await contextFactory({ req }); // Make sure to pass it here
-});
+  const { contextFactory } = getEnveloped({ req })
+  const contextValue = await contextFactory({ req }) // Make sure to pass it here
+})
 ```
 
 > By default, this plugins looks for `req` or `request` properties in your base context. If you need to override it, please use `extractTokenFn` and you can customize it.
@@ -50,10 +50,10 @@ myHttpServer.on('request', async req => {
 const myResolvers = {
   Query: {
     me: (root, args, context, info) => {
-      const auth0UserId = context.auth0.sub;
-    },
-  },
-};
+      const auth0UserId = context.auth0.sub
+    }
+  }
+}
 ```
 
 ### API Reference

@@ -14,7 +14,9 @@ export function envelop<PluginsType extends Plugin<any>[]>(options: {
     orchestrator = traceOrchestrator(orchestrator);
   }
 
-  const getEnveloped = <TInitialContext extends ArbitraryObject>(initialContext: TInitialContext = {} as TInitialContext) => {
+  const getEnveloped = <TInitialContext extends ArbitraryObject>(
+    initialContext: TInitialContext = {} as TInitialContext
+  ) => {
     const typedOrchestrator = orchestrator as EnvelopOrchestrator<TInitialContext, ComposeContext<PluginsType>>;
     typedOrchestrator.init(initialContext);
 

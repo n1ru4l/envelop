@@ -51,36 +51,36 @@ const getEnveloped = envelop({
 The result of `envelop` is a function that allows you to get everything you need for the GraphQL execution: `parse`, `validate`, `contextBuilder` and `execute`. Use that to run the client's GraphQL queries. Here's a pseudo-code example of how it should look like:
 
 ```ts
-const httpServer = createServer();
+const httpServer = createServer()
 
 httpServer.on('request', (req, res) => {
   // Here you get the alternative methods that are bundled with your plugins
   // You can also pass the "req" to make it available for your plugins or GraphQL context.
-  const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req });
+  const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req })
 
   // Parse the initial request and validate it
-  const { query, variables } = JSON.parse(req.payload);
-  const document = parse(query);
-  const validationErrors = validate(schema, document);
+  const { query, variables } = JSON.parse(req.payload)
+  const document = parse(query)
+  const validationErrors = validate(schema, document)
 
   if (validationErrors.length > 0) {
-    return res.end(JSON.stringify({ errors: validationErrors }));
+    return res.end(JSON.stringify({ errors: validationErrors }))
   }
 
   // Build the context and execute
-  const context = await contextFactory(req);
+  const context = await contextFactory(req)
   const result = await execute({
     document,
     schema,
     variableValues: variables,
-    contextValue: context,
-  });
+    contextValue: context
+  })
 
   // Send the response
-  res.end(JSON.stringify(result));
-});
+  res.end(JSON.stringify(result))
+})
 
-httpServer.listen(3000);
+httpServer.listen(3000)
 ```
 
 Behind the scenes, this simple workflow allows you to use **Envelop plugins** and hook into the entire request handling flow.
@@ -89,8 +89,8 @@ Here's a simple example for collecting metrics and log all incoming requests, us
 
 ```ts
 const getEnveloped = envelop({
-  plugins: [useSchema(schema), useLogger(), useTiming()],
-});
+  plugins: [useSchema(schema), useLogger(), useTiming()]
+})
 ```
 
 > [You can read more about here](https://www.envelop.dev/docs/getting-started)
@@ -122,22 +122,22 @@ Here's a simple example that allows you to print the execution params:
 ```ts
 const myPlugin = {
   onExecute({ args }) {
-    console.log('Execution started!', { args });
+    console.log('Execution started!', { args })
 
     return {
       onExecuteDone: ({ result }) => {
-        console.log('Execution done!', { result });
-      },
-    };
-  },
-};
+        console.log('Execution done!', { result })
+      }
+    }
+  }
+}
 
 const getEnveloped = envelop({
   plugins: [
     /// ... other plugins ...,
-    myPlugin,
-  ],
-});
+    myPlugin
+  ]
+})
 ```
 
 [For a complete guide and API docs for custom plugins, please refer to Envelop website](https://www.envelop.dev/docs/plugins)

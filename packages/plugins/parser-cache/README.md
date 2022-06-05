@@ -13,17 +13,17 @@ yarn add @envelop/parser-cache
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useParserCache } from '@envelop/parser-cache';
+import { envelop } from '@envelop/core'
+import { useParserCache } from '@envelop/parser-cache'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useParserCache({
       // options goes here
-    }),
-  ],
-});
+    })
+  ]
+})
 ```
 
 ### API Reference

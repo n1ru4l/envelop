@@ -223,7 +223,10 @@ describe('useMaskedErrors', () => {
   });
 
   it('Should mask subscribe (sync/promise) subscription errors with a custom error message', async () => {
-    const testInstance = createTestkit([useMaskedErrors({ errorMessage: 'My Custom subscription error message.' })], schema);
+    const testInstance = createTestkit(
+      [useMaskedErrors({ errorMessage: 'My Custom subscription error message.' })],
+      schema
+    );
     const result = await testInstance.execute(`subscription { instantError }`);
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
@@ -260,7 +263,10 @@ describe('useMaskedErrors', () => {
 
   it('Should mask subscribe (AsyncIterable) subscription errors with a custom error message', async () => {
     expect.assertions(1);
-    const testInstance = createTestkit([useMaskedErrors({ errorMessage: 'My AsyncIterable Custom Error Message.' })], schema);
+    const testInstance = createTestkit(
+      [useMaskedErrors({ errorMessage: 'My AsyncIterable Custom Error Message.' })],
+      schema
+    );
     const resultStream = await testInstance.execute(`subscription { streamError }`);
     assertStreamExecutionValue(resultStream);
     try {
@@ -294,7 +300,10 @@ describe('useMaskedErrors', () => {
     expect(error.message).toEqual(DEFAULT_ERROR_MESSAGE);
   });
   it('Should mask resolve subscription errors with a custom error message', async () => {
-    const testInstance = createTestkit([useMaskedErrors({ errorMessage: 'Custom resolve subscription errors.' })], schema);
+    const testInstance = createTestkit(
+      [useMaskedErrors({ errorMessage: 'Custom resolve subscription errors.' })],
+      schema
+    );
     const resultStream = await testInstance.execute(`subscription { streamResolveError }`);
     assertStreamExecutionValue(resultStream);
     const allResults = await collectAsyncIteratorValues(resultStream);

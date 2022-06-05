@@ -38,7 +38,9 @@ export function readOperationId(context: PersistedOperationPluginContext): strin
   return context[contextProperty];
 }
 
-export const usePersistedOperations = (rawOptions: UsePersistedOperationsOptions): Plugin<PersistedOperationPluginContext> => {
+export const usePersistedOperations = (
+  rawOptions: UsePersistedOperationsOptions
+): Plugin<PersistedOperationPluginContext> => {
   const options: UsePersistedOperationsOptions = {
     ...DEFAULT_OPTIONS,
     ...(rawOptions || {}),
@@ -46,7 +48,9 @@ export const usePersistedOperations = (rawOptions: UsePersistedOperationsOptions
 
   return {
     onParse({ context, params, extendContext, setParsedDocument }) {
-      const operationId = options.extractOperationId ? options.extractOperationId(context) : operationIdFromSource(params.source);
+      const operationId = options.extractOperationId
+        ? options.extractOperationId(context)
+        : operationIdFromSource(params.source);
 
       if (!operationId) {
         if (options.onlyPersisted) {

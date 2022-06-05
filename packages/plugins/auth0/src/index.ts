@@ -88,7 +88,8 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
 
   const verifyToken = async (token: string): Promise<any> => {
     const decodedToken =
-      (decode(token, { complete: true, ...(options.jwtDecodeOptions || {}) }) as Record<string, { kid?: string }>) || {};
+      (decode(token, { complete: true, ...(options.jwtDecodeOptions || {}) }) as Record<string, { kid?: string }>) ||
+      {};
 
     if (decodedToken && decodedToken.header && decodedToken.header.kid) {
       const secret = await jkwsClient.getSigningKey(decodedToken.header.kid);

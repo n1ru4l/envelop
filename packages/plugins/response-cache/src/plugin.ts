@@ -386,7 +386,12 @@ function applyResponseCacheLogic(schema: GraphQLSchema, idFieldNames: Array<stri
         return {
           ...fieldConfig,
           resolve(src, args, context, info) {
-            const result = (fieldConfig.resolve ?? defaultFieldResolver)(src, args, context, info) as PromiseOrValue<string>;
+            const result = (fieldConfig.resolve ?? defaultFieldResolver)(
+              src,
+              args,
+              context,
+              info
+            ) as PromiseOrValue<string>;
             runWith(result, (id: string) => {
               const ctx: Context | undefined = context[contextSymbol];
               if (ctx !== undefined) {

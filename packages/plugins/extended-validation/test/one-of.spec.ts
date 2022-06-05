@@ -544,7 +544,12 @@ describe('oneOf', () => {
     describe('FIELD_DEFINITION', () => {
       const DOCUMENT = /* GraphQL */ `
         query user($byID: ID, $byUsername: String, $byEmail: String, $byRegistrationNumber: Int) {
-          findUser(byID: $byID, byUsername: $byUsername, byEmail: $byEmail, byRegistrationNumber: $byRegistrationNumber) {
+          findUser(
+            byID: $byID
+            byUsername: $byUsername
+            byEmail: $byEmail
+            byRegistrationNumber: $byRegistrationNumber
+          ) {
             id
           }
         }

@@ -31,11 +31,11 @@
     return {
       onPluginInit(context) {
         context.registerContextErrorHandler(({ context }) => {
-          console.error('Error occurred during context creation but at least I have the  context so far', context);
-        });
-      },
-    };
-  };
+          console.error('Error occurred during context creation but at least I have the  context so far', context)
+        })
+      }
+    }
+  }
   ```
 
 ### Patch Changes
@@ -52,8 +52,8 @@
   ```ts
   useMaskedErrors({
     handleParseErrors: true,
-    handleValidateErrors: true,
-  });
+    handleValidateErrors: true
+  })
   ```
 
   This option is disabled by default as validation and parse errors are expected errors that help the API consumer instead of leaking secret information.
@@ -105,20 +105,20 @@
   If you need any shared state between `onExecute` and `onResolverCalled` you can share it by extending the context object.
 
   ```ts
-  import type { Plugin } from '@envelop/core';
+  import type { Plugin } from '@envelop/core'
 
-  const sharedStateSymbol = Symbol('sharedState');
+  const sharedStateSymbol = Symbol('sharedState')
 
   const plugin: Plugin = {
     onExecute({ extendContext }) {
-      extendContext({ [sharedStateSymbol]: { value: 1 } });
+      extendContext({ [sharedStateSymbol]: { value: 1 } })
     },
     onResolverCalled({ context }) {
-      const sharedState = context[sharedStateSymbol];
+      const sharedState = context[sharedStateSymbol]
       // logs 1
-      console.log(sharedState.value);
-    },
-  };
+      console.log(sharedState.value)
+    }
+  }
   ```
 
 ### Minor Changes
@@ -130,16 +130,16 @@
 - 4106e08: Add new plugin `useImmediateIntrospection` for speeding up introspection only operations by skipping context building.
 
   ```ts
-  import { envelop, useImmediateIntrospection } from '@envelop/core';
-  import { schema } from './schema';
+  import { envelop, useImmediateIntrospection } from '@envelop/core'
+  import { schema } from './schema'
 
   const getEnveloped = envelop({
     plugins: [
       useSchema(schema),
-      useImmediateIntrospection(),
+      useImmediateIntrospection()
       // additional plugins
-    ],
-  });
+    ]
+  })
   ```
 
 ### Patch Changes
@@ -161,7 +161,7 @@
 - d9cfb7c: Support including the original error stack for masked errors within the error extensions via the `isDev` option and the `defaultErrorFormatter`.
 
   ```ts
-  useMaskedErrors({ isDev: true });
+  useMaskedErrors({ isDev: true })
   ```
 
   On Node.js environments the `isDev` default value is `true` if `globalThis.process.env["NODE_ENV"]` is equal to `"development"`. Otherwise, the default value is ALWAYS `false`.
@@ -282,12 +282,12 @@
     return {
       onPluginInit(context) {
         context.registerContextErrorHandler(({ error, setError }) => {
-          console.error('Error occurred during context creation.', error);
-          setError(new Error('Something went wrong :('));
-        });
-      },
-    };
-  };
+          console.error('Error occurred during context creation.', error)
+          setError(new Error('Something went wrong :('))
+        })
+      }
+    }
+  }
   ```
 
 - 7704fc3: `useMaskedErrors` now masks errors thrown during context creation (calling `contextFactory`).
@@ -300,11 +300,11 @@
   const getEnveloped = envelop({
     plugins: [
       useExtendContext(() => {
-        throw new Error('Oooooops.');
+        throw new Error('Oooooops.')
       }),
-      useMaskedErrors(),
-    ],
-  });
+      useMaskedErrors()
+    ]
+  })
   ```
 
 - 7704fc3: useMaskedErrors now also handles errors that are occurring during subscriptions.
@@ -322,9 +322,9 @@
 
   ```ts
   // deprecated (removed in GraphQL.js 16)
-  execute(schema, ...args);
+  execute(schema, ...args)
   // how it should be done
-  execute({ schema, ...args });
+  execute({ schema, ...args })
   ```
 
   This fixes an edge-case with graphql frameworks that call execute with the old and deprecated signature.

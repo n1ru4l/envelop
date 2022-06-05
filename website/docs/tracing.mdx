@@ -11,8 +11,8 @@ const getEnveloped = envelop({
   plugins: [
     // ...
   ],
-  enableInternalTracing: true,
-});
+  enableInternalTracing: true
+})
 ```
 
 This way, on each executed request, you'll get the following object with metrics (measured in `ms`) added to your `result.extensions`:

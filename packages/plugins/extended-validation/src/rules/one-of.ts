@@ -36,7 +36,9 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
           if (Object.keys(values).length !== 1) {
             validationContext.reportError(
               new GraphQLError(
-                `Exactly one key must be specified for input for field "${fieldType.type.toString()}.${node.name.value}"`,
+                `Exactly one key must be specified for input for field "${fieldType.type.toString()}.${
+                  node.name.value
+                }"`,
                 [node]
               )
             );

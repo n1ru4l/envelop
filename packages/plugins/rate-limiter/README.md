@@ -11,21 +11,21 @@ yarn add @envelop/rate-limiter
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useRateLimiter, IdentifyFn } from '@envelop/rate-limiter';
+import { envelop } from '@envelop/core'
+import { useRateLimiter, IdentifyFn } from '@envelop/rate-limiter'
 
 const identifyFn: IdentifyFn = async context => {
-  return context.request.ip;
-};
+  return context.request.ip
+}
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useRateLimiter({
-      identifyFn,
-    }),
-  ],
-});
+      identifyFn
+    })
+  ]
+})
 ```
 
 > By default, we assume that you have the GraphQL directive definition as part of your GraphQL schema (`directive @rateLimit(max: Int, window: String, message: String) on FIELD_DEFINITION`).

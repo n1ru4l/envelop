@@ -22,33 +22,33 @@ https://github.com/n1ru4l/envelop/blob/main/packages/types/src/plugin.ts
 Here's a simple example that allows you to print the execution and parsing parameter.
 
 ```ts
-import type { Plugin } from '@envelop/core';
+import type { Plugin } from '@envelop/core'
 
 const myPlugin: Plugin = {
   onParse({ params }) {
-    console.log('Parse started!', { params });
+    console.log('Parse started!', { params })
 
     return result => {
-      console.log('Parse done!', { result });
-    };
+      console.log('Parse done!', { result })
+    }
   },
   onExecute({ args }) {
-    console.log('Execution started!', { args });
+    console.log('Execution started!', { args })
 
     return {
       onExecuteDone: ({ result }) => {
-        console.log('Execution done!', { result });
-      },
-    };
-  },
-};
+        console.log('Execution done!', { result })
+      }
+    }
+  }
+}
 
 const getEnveloped = envelop({
   plugins: [
     /// ... other plugins ...,
-    myPlugin,
-  ],
-});
+    myPlugin
+  ]
+})
 ```
 
 ## Adding config options to your plugin
@@ -59,25 +59,25 @@ Often plugins require additional configurartion. A common pattern for doing this
 const myPlugin = (shouldPrintResult: boolean): Plugin => {
   return {
     onExecute({ args }) {
-      console.log('Execution started!', { args });
+      console.log('Execution started!', { args })
 
       if (shouldPrintResult) {
         return {
           onExecuteDone: ({ result }) => {
-            console.log('Execution done!', { result });
-          },
-        };
+            console.log('Execution done!', { result })
+          }
+        }
       }
-    },
-  };
-};
+    }
+  }
+}
 
 const getEnveloped = envelop({
   plugins: [
     /// ... other plugins ...,
-    myPlugin(true),
-  ],
-});
+    myPlugin(true)
+  ]
+})
 ```
 
 ## Sharing Envelop plugins

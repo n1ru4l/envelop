@@ -7,8 +7,16 @@ import { ExecuteFunction, makeSubscribe, mapAsyncIterator, SubscribeFunction, is
  */
 export const subscribe = (execute: ExecuteFunction): SubscribeFunction =>
   makeSubscribe(async args => {
-    const { schema, document, rootValue, contextValue, variableValues, operationName, fieldResolver, subscribeFieldResolver } =
-      args;
+    const {
+      schema,
+      document,
+      rootValue,
+      contextValue,
+      variableValues,
+      operationName,
+      fieldResolver,
+      subscribeFieldResolver,
+    } = args;
 
     const resultOrStream = await createSourceEventStream(
       schema,

@@ -4,7 +4,9 @@ import { ExecuteFunction, ParseFunction, SubscribeFunction, ValidateFunction } f
 import { ArbitraryObject, Spread, PromiseOrValue } from './utils';
 export { ArbitraryObject } from './utils';
 
-export type EnvelopContextFnWrapper<TFunction extends Function, ContextType = unknown> = (context: ContextType) => TFunction;
+export type EnvelopContextFnWrapper<TFunction extends Function, ContextType = unknown> = (
+  context: ContextType
+) => TFunction;
 
 export type GetEnvelopedFn<PluginsContext> = {
   <InitialContext extends ArbitraryObject>(initialContext?: InitialContext): {

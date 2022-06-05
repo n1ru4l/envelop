@@ -42,7 +42,14 @@ import {
   ValidationRule,
 } from 'graphql';
 import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema';
-import { errorAsyncIterator, finalAsyncIterator, makeExecute, makeSubscribe, mapAsyncIterator, isAsyncIterable } from './utils';
+import {
+  errorAsyncIterator,
+  finalAsyncIterator,
+  makeExecute,
+  makeSubscribe,
+  mapAsyncIterator,
+  isAsyncIterable,
+} from './utils';
 
 export type EnvelopOrchestrator<
   InitialContext extends ArbitraryObject = ArbitraryObject,
@@ -267,7 +274,8 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
       }
     : () => validate;
 
-  const customContextFactory: EnvelopContextFnWrapper<(orchestratorCtx?: any) => any, any> = beforeCallbacks.context.length
+  const customContextFactory: EnvelopContextFnWrapper<(orchestratorCtx?: any) => any, any> = beforeCallbacks.context
+    .length
     ? initialContext => async orchestratorCtx => {
         const afterCalls: AfterContextBuildingHook<any>[] = [];
 

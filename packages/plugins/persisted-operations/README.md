@@ -58,25 +58,25 @@ usePersistedOperations({
 ## Usage Example with built-in JsonFileStore
 
 ```ts
-import { usePersistedOperations, JsonFileStore } from '@envelop/persisted-operations';
+import { usePersistedOperations, JsonFileStore } from '@envelop/persisted-operations'
 
-const persistedOperationsStore = new JsonFilesStore();
-const filePath = resolve(process.cwd(), 'assets/client1PersistedOperations.json');
+const persistedOperationsStore = new JsonFilesStore()
+const filePath = resolve(process.cwd(), 'assets/client1PersistedOperations.json')
 
 // sync
-persistedOperationsStore.loadFromFileSync(filePath); // load and parse persisted-operations files
+persistedOperationsStore.loadFromFileSync(filePath) // load and parse persisted-operations files
 
 // or async
-await persistedOperationsStore.loadFromFile(filePath); // load and parse persisted-operations files
+await persistedOperationsStore.loadFromFile(filePath) // load and parse persisted-operations files
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     usePersistedOperations({
-      store: persistedOperationsStore,
-    }),
-  ],
-});
+      store: persistedOperationsStore
+    })
+  ]
+})
 ```
 
 ## Multiple Stores
@@ -90,17 +90,17 @@ const getEnveloped = envelop({
     usePersistedOperations({
       store: context => {
         if (context.req.headers['user-agent'].includes('Android')) {
-          return mobileClientsStore;
+          return mobileClientsStore
         }
 
-        return defaultStore;
-      },
-    }),
-  ],
-});
+        return defaultStore
+      }
+    })
+  ]
+})
 
 // later, pass the initial context
-const proxyFns = getEnveloped({ req });
+const proxyFns = getEnveloped({ req })
 ```
 
 ## Additional options
@@ -116,8 +116,8 @@ The function receives the context and operationId as arguments, so you can use i
 
 ```js
 onMissingMatch: (context, operationId) => {
-  myEventPool.add(`Missing match for operation "${operationId}" from agent "${context.req.headers['user-agent']}"`);
-};
+  myEventPool.add(`Missing match for operation "${operationId}" from agent "${context.req.headers['user-agent']}"`)
+}
 ```
 
 ## With Relay

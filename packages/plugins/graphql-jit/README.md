@@ -34,8 +34,8 @@ const getEnveloped = envelop({
 If you wish to conditionally use the JIT executor based on the incoming request, you can use `enableIf` config flag and return a `boolean` based on the `ExecutionArgs`:
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useGraphQlJit } from '@envelop/graphql-jit';
+import { envelop } from '@envelop/core'
+import { useGraphQlJit } from '@envelop/graphql-jit'
 
 const getEnveloped = envelop({
   plugins: [
@@ -45,11 +45,11 @@ const getEnveloped = envelop({
         // your compiler options here. See https://github.com/zalando-incubator/graphql-jit#compiledquery--compilequeryschema-document-operationname-compileroptions
       },
       {
-        enableIf: executionArgs => executionArgs.contextValue.shouldUseJit,
+        enableIf: executionArgs => executionArgs.contextValue.shouldUseJit
       }
-    ),
-  ],
-});
+    )
+  ]
+})
 ```
 
 ## Configuring JIT cache
@@ -57,8 +57,8 @@ const getEnveloped = envelop({
 You can configure the JIT cache with the following options:
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useGraphQlJit } from '@envelop/graphql-jit';
+import { envelop } from '@envelop/core'
+import { useGraphQlJit } from '@envelop/graphql-jit'
 
 const getEnveloped = envelop({
   plugins: [
@@ -68,11 +68,11 @@ const getEnveloped = envelop({
         // your compiler options here
       },
       {
-        cache: lru(), // Pass in a custom cache instance, by default a new LRU cache is created which uses the default `max` and `ttl` settings
+        cache: lru() // Pass in a custom cache instance, by default a new LRU cache is created which uses the default `max` and `ttl` settings
       }
-    ),
-  ],
-});
+    )
+  ]
+})
 ```
 
 ## Notes
