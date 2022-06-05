@@ -275,7 +275,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
                     contexts: {
                       GraphQL: {
                         operationName: opName,
-                        operationType: operationType,
+                        operationType,
                         variables: args.variableValues,
                       },
                     },
