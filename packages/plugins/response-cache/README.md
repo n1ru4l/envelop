@@ -230,10 +230,10 @@ const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useResponseCache({
-      shouldCacheResult = myCustomShouldCacheResult,
-    }),
-  ],
-});
+      shouldCacheResult: myCustomShouldCacheResult
+    })
+  ]
+})
 ```
 
 ### Cache Introspection query operations

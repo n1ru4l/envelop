@@ -37,15 +37,13 @@ yarn add graphql @envelop/core
 Then, create a simple Envelop based on your GraphQL schema:
 
 ```ts
-import { envelop, useSchema } from '@envelop/core';
+import { envelop, useSchema } from '@envelop/core'
 
-const mySchema = buildSchema( ... ); // GraphQLSchema
+const mySchema = buildSchema(/* ... */) // GraphQLSchema
 
 const getEnveloped = envelop({
-  plugins: [
-    useSchema(mySchema)
-  ],
-});
+  plugins: [useSchema(mySchema)]
+})
 ```
 
 The result of `envelop` is a function that allows you to get everything you need for the GraphQL execution: `parse`, `validate`, `contextBuilder` and `execute`. Use that to run the client's GraphQL queries. Here's a pseudo-code example of how it should look like:
@@ -53,7 +51,7 @@ The result of `envelop` is a function that allows you to get everything you need
 ```ts
 const httpServer = createServer()
 
-httpServer.on('request', (req, res) => {
+httpServer.on('request', async (req, res) => {
   // Here you get the alternative methods that are bundled with your plugins
   // You can also pass the "req" to make it available for your plugins or GraphQL context.
   const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req })
@@ -125,7 +123,7 @@ const myPlugin = {
     console.log('Execution started!', { args })
 
     return {
-      onExecuteDone: ({ result }) => {
+      onExecuteDone({ result }) {
         console.log('Execution done!', { result })
       }
     }
