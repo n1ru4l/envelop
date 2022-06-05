@@ -17,12 +17,14 @@ yarn add @envelop/extended-validation
 Then, use the plugin with your validation rules:
 
 ```ts
-import { useExtendedValidation } from '@envelop/extended-validation';
+import { useExtendedValidation } from '@envelop/extended-validation'
 
 const getEnveloped = evelop({
   plugins: [
     useExtendedValidation({
-      rules: [ ... ] // your rules here
+      rules: [
+        /* ... your rules here  */
+      ]
     })
   ]
 })

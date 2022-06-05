@@ -11,16 +11,17 @@ yarn add @envelop/apollo-server-errors
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useApolloServerErrors } from '@envelop/apollo-server-errors';
+import { envelop } from '@envelop/core'
+import { useApolloServerErrors } from '@envelop/apollo-server-errors'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useApolloServerErrors({ // All fields are optional, and should match what you pass today to ApolloServer
+    useApolloServerErrors({
+      // All fields are optional, and should match what you pass today to ApolloServer
       debug: true, //
-      formatError: () => ...
-    }),
-  ],
-});
+      formatError: () => {}
+    })
+  ]
+})
 ```

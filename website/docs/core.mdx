@@ -11,17 +11,17 @@ This is the core package for `envelop`, it comes with the execution pipeline wra
 This plugin is the simplest plugin for specifying your GraphQL schema. You can specify a schema created from any tool that emits `GraphQLSchema` object.
 
 ```ts
-import { envelop, useSchema } from '@envelop/core';
-import { buildSchema } from 'graphql';
+import { envelop, useSchema } from '@envelop/core'
+import { buildSchema } from 'graphql'
 
-const mySchema = buildSchema(...);
+const mySchema = buildSchema(/* ... */)
 
 const getEnveloped = envelop({
   plugins: [
-    useSchema(mySchema),
+    useSchema(mySchema)
     // ... other plugins ...
-  ],
-});
+  ]
+})
 ```
 
 #### useAsyncSchema
@@ -71,19 +71,21 @@ const getEnveloped = envelop({
 Easily extends the context with custom fields.
 
 ```ts
-import { envelop, useExtendContext } from '@envelop/core';
-import { buildSchema } from 'graphql';
+import { envelop, useExtendContext } from '@envelop/core'
+import { buildSchema } from 'graphql'
 
 const getEnveloped = envelop({
   plugins: [
-    useExtendContext(async (contextSoFar) => {
+    useExtendContext(async contextSoFar => {
       return {
-        myCustomField: { ... }
+        myCustomField: {
+          /* ... */
+        }
       }
-    }),
+    })
     // ... other plugins ...
-  ],
-});
+  ]
+})
 ```
 
 #### useLogger

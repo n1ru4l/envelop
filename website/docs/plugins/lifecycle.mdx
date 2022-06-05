@@ -55,15 +55,15 @@ So for example, if you wish to make some data from `parse` stage available for y
 
 ```ts
 const myPlugin = {
-  onParse({ extendContext }) => {
+  onParse({ extendContext }) {
     extendContext({
       myVar: 'test'
-    });
+    })
   },
-  onExecute({ args }) => {
-   const myVar = args.contextValue.myVar;
-  },
-};
+  onExecute({ args }) {
+    const myVar = args.contextValue.myVar
+  }
+}
 ```
 
 ## Plugins API

@@ -15,26 +15,26 @@ yarn add @envelop/persisted-operations
 The most basic implementation can use an in-memory JS `Map` wrapper with a `Store` object:
 
 ```ts
-import { envelop } from '@envelop/core';
-import { usePersistedOperations, InMemoryStore } from '@envelop/persisted-operations';
+import { envelop } from '@envelop/core'
+import { usePersistedOperations, InMemoryStore } from '@envelop/persisted-operations'
 
 // You can retrieve the store in any way (e.g. from a remote source) and implement it with a simple Map / Key->Value
-const myData = new Map();
-myData.set('persisted_1', parse(`query { ... }`));
-myData.set('persisted_2', 'query { ... }'));
+const myData = new Map()
+myData.set('persisted_1', parse(`query { ... }`))
+myData.set('persisted_2', 'query { ... }')
 
 const store = new InMemoryStore({
-  initialData: myData,
+  initialData: myData
 })
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     usePersistedOperations({
-      store: myStore,
-    }),
-  ],
-});
+      store: myStore
+    })
+  ]
+})
 ```
 
 Now, when running operations through your GraphQL server, you can use a key instead of a query language:
