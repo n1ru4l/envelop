@@ -1,4 +1,4 @@
-import { DefaultContext, Plugin } from '@envelop/core';
+import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/core';
 import {
   DirectiveNode,
   FieldNode,
@@ -15,9 +15,7 @@ import { useExtendedValidation } from '@envelop/extended-validation';
 
 export class UnauthenticatedError extends GraphQLError {}
 
-export type ResolveUserFn<UserType, ContextType = DefaultContext> = (
-  context: ContextType
-) => null | UserType | Promise<UserType | null>;
+export type ResolveUserFn<UserType, ContextType = DefaultContext> = (context: ContextType) => PromiseOrValue<Maybe<UserType>>;
 
 export type ValidateUserFnParams<UserType> = {
   /** The user object. */
@@ -42,7 +40,11 @@ export const SKIP_AUTH_DIRECTIVE_SDL = /* GraphQL */ `
   directive @skipAuth on FIELD_DEFINITION
 `;
 
-export type GenericAuthPluginOptions<UserType extends {} = {}, ContextType extends DefaultContext = DefaultContext> = {
+export type GenericAuthPluginOptions<
+  UserType extends {} = {},
+  ContextType = DefaultContext,
+  CurrentUserKey extends string = 'currentUser'
+> = {
   /**
    * Here you can implement any custom sync/async code, and use the context built so far in Envelop and the HTTP request
    * to find the current user.
@@ -54,7 +56,7 @@ export type GenericAuthPluginOptions<UserType extends {} = {}, ContextType exten
    * Overrides the default field name for injecting the user into the execution `context`.
    * @default currentUser
    */
-  contextFieldName?: 'currentUser' | string;
+  contextFieldName?: CurrentUserKey;
 } & (
   | {
       /**
@@ -116,11 +118,17 @@ export function defaultProtectSingleValidateFn<UserType>(params: ValidateUserFnP
   }
 }
 
-export const useGenericAuth = <UserType extends {} = {}, ContextType extends DefaultContext = DefaultContext>(
-  options: GenericAuthPluginOptions<UserType, ContextType>
-): Plugin<{
-  validateUser: ValidateUserFn<UserType>;
-}> => {
+export const useGenericAuth = <
+  UserType extends {} = {},
+  ContextType = DefaultContext,
+  CurrentUserKey extends string = 'currentUser'
+>(
+  options: GenericAuthPluginOptions<UserType, ContextType, CurrentUserKey>
+): Plugin<
+  {
+    validateUser: ValidateUserFn<UserType>;
+  } & Record<CurrentUserKey, UserType>
+> => {
   const contextFieldName = options.contextFieldName || 'currentUser';
 
   if (options.mode === 'protect-all' || options.mode === 'protect-granular') {
@@ -145,7 +153,7 @@ export const useGenericAuth = <UserType extends {} = {}, ContextType extends Def
           useExtendedValidation({
             rules: [
               function AuthorizationExtendedValidationRule(context, args) {
-                const user = (args.contextValue as any)[contextFieldName];
+                const user = args.contextValue[contextFieldName];
 
                 const handleField = (fieldNode: FieldNode, objectType: GraphQLObjectType) => {
                   const field = objectType.getFields()[fieldNode.name.value];
