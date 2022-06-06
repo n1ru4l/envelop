@@ -153,7 +153,7 @@ export const useGenericAuth = <
           useExtendedValidation({
             rules: [
               function AuthorizationExtendedValidationRule(context, args) {
-                const user = args.contextValue[contextFieldName];
+                const user = (args.contextValue as any)[contextFieldName];
 
                 const handleField = (fieldNode: FieldNode, objectType: GraphQLObjectType) => {
                   const field = objectType.getFields()[fieldNode.name.value];
