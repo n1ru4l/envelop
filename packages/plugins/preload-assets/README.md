@@ -54,27 +54,27 @@ const getEnveloped = envelop({
 **Example client prefetch logic**
 
 ```ts
-const preloadAsset = (url) => {
-  var request = new XMLHttpRequest();
-  request.open('GET', url);
-  request.responseType = 'blob';
+const preloadAsset = url => {
+  var request = new XMLHttpRequest()
+  request.open('GET', url)
+  request.responseType = 'blob'
   request.onload = () => {
-    if  (request.status !== 200 ) {
-      console.error((new Error(`Image preload failed; error code '${request.statusText}'.`));
+    if (request.status !== 200) {
+      console.error(new Error(`Image preload failed; error code '${request.statusText}'.`))
     }
-  };
+  }
   request.onerror = () => {
-    console.error(new Error(`There was a network error while preloading '${url}'.`));
-  };
-  request.send();
+    console.error(new Error(`There was a network error while preloading '${url}'.`))
+  }
+  request.send()
 }
 
 // call this function with the execution result within your network layer.
-const onExecutionResult = (result) => {
+const onExecutionResult = result => {
   if (Array.isArray(result?.extensions?.preloadAssets)) {
-    result.extension.preloadAssets.forEach((url) => {
-      preloadAsset(url);
-    });
+    result.extension.preloadAssets.forEach(url => {
+      preloadAsset(url)
+    })
   }
-};
+}
 ```

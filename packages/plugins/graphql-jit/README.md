@@ -11,8 +11,8 @@ yarn add @envelop/graphql-jit
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useGraphQlJit } from '@envelop/graphql-jit';
+import { envelop } from '@envelop/core'
+import { useGraphQlJit } from '@envelop/graphql-jit'
 
 const getEnveloped = envelop({
   plugins: [
@@ -22,11 +22,11 @@ const getEnveloped = envelop({
         // your compiler options here. See https://github.com/zalando-incubator/graphql-jit#compiledquery--compilequeryschema-document-operationname-compileroptions
       },
       {
-        onError: (e: Error) => { ... } // custom error handler
+        onError: (e: Error) => {} // custom error handler
       }
-    ),
-  ],
-});
+    )
+  ]
+})
 ```
 
 ## Conditional Execution

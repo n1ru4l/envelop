@@ -328,28 +328,27 @@ Then, with that instance of the Redis Cache setup, provide it to the `useRespons
 Here's an example:
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
-import { createRedisCache } from '@envelop/response-cache-redis';
-
-import Redis from 'ioredis';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
+import { createRedisCache } from '@envelop/response-cache-redis'
+import Redis from 'ioredis'
 
 const redis = new Redis({
   host: 'my-redis-db.example.com',
   port: '30652',
-  password: '1234567890',
-});
+  password: '1234567890'
+})
 
-const redis = new Redis(("rediss://:1234567890@my-redis-db.example.com':30652");
+const redis = new Redis('rediss://:1234567890@my-redis-db.example.com:30652')
 
-const cache = createRedisCache({ redis });
+const cache = createRedisCache({ redis })
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useResponseCache({ cache }),
-  ],
-});
+    useResponseCache({ cache })
+  ]
+})
 ```
 
 More information about all possible configuration options can be found on [the response cache docs on the Plugin Hub](/plugins/use-response-cache).
