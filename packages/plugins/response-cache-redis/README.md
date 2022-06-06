@@ -61,7 +61,7 @@ import { createRedisCache } from '@envelop/response-cache-redis'
 import { emitter } from './eventEmitter'
 
 // we create our cache instance, which allows calling all methods on it
-const redis = new Redis('redis://:1234567890@my-redis-db.example.com:30652')
+const redis = new Redis('rediss://:1234567890@my-redis-db.example.com:30652')
 
 const cache = createRedisCache({ redis })
 
