@@ -38,8 +38,8 @@ const redis = new Redis({
   password: '1234567890'
 })
 
-// or, you can also specify connection options as a redis:// URL or redis:// URL when using TLS encryption
-const redis = new Redis('redis://:1234567890@my-redis-db.example.com:30652')
+// or, you can also specify connection options as a redis:// URL or rediss:// URL when using TLS encryption
+const redis = new Redis('rediss://:1234567890@my-redis-db.example.com:30652')
 
 const cache = createRedisCache({ redis })
 
