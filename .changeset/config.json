@@ -6,17 +6,5 @@
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [
-    "@envelop-examples/*",
-    "website",
-    "@envelop-examples/graphql-ws",
-    "@envelop-examples/graphql-sse",
-    "@envelop-examples/apollo-server",
-    "@envelop-examples/graphql-helix",
-    "@envelop-examples/graphql-socket.io",
-    "@envelop-examples/simple-http",
-    "@envelop-examples/with-esm",
-    "@envelop-examples/typegraphql",
-    "@envelop-examples/nexus"
-  ]
+  "ignore": ["website", "@envelop-examples/*"]
 }
