@@ -1,0 +1,54 @@
+---
+'@envelop/response-cache': major
+'@envelop-examples/apollo-server': major
+'@envelop-examples/azure-functions': major
+'@envelop-examples/cloudflare-workers': major
+'@envelop-examples/express-graphql': major
+'@envelop-examples/google-cloud-functions': major
+'@envelop-examples/graphql-helix': major
+'@envelop-examples/graphql-helix-auth0': major
+'@envelop-examples/graphql-socket.io': major
+'@envelop-examples/graphql-sse': major
+'@envelop-examples/graphql-ws': major
+'@envelop-examples/lambda-aws': major
+'@envelop-examples/nexus': major
+'@envelop-examples/simple-http': major
+'@envelop-examples/typegraphql': major
+'@envelop-examples/with-esm': major
+'@envelop/core': major
+'@envelop/apollo-datasources': major
+'@envelop/apollo-federation': major
+'@envelop/apollo-server-errors': major
+'@envelop/apollo-tracing': major
+'@envelop/auth0': major
+'@envelop/dataloader': major
+'@envelop/depth-limit': major
+'@envelop/disable-introspection': major
+'@envelop/execute-subscription-event': major
+'@envelop/extended-validation': major
+'@envelop/filter-operation-type': major
+'@envelop/fragment-arguments': major
+'@envelop/generic-auth': major
+'@envelop/graphql-jit': major
+'@envelop/graphql-middleware': major
+'@envelop/graphql-modules': major
+'@envelop/live-query': major
+'@envelop/newrelic': major
+'@envelop/opentelemetry': major
+'@envelop/operation-field-permissions': major
+'@envelop/parser-cache': major
+'@envelop/persisted-operations': major
+'@envelop/preload-assets': major
+'@envelop/prometheus': major
+'@envelop/rate-limiter': major
+'@envelop/resource-limitations': major
+'@envelop/response-cache-redis': major
+'@envelop/sentry': major
+'@envelop/statsd': major
+'@envelop/validation-cache': major
+'@envelop/testing': major
+'@envelop/types': major
+'website': major
+---
+
+drop official Node.js 12 support
