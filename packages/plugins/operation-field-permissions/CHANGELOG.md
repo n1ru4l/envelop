@@ -1,5 +1,11 @@
 # @envelop/operation-field-permissions
 
+## 3.3.4
+
+### Patch Changes
+
+- 2e79ae1: use EnvelopError instead of GraphQLError for preventing the error message from being masked
+
 ## 3.3.3
 
 ### Patch Changes
