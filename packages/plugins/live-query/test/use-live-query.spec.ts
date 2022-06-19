@@ -1,4 +1,4 @@
-import { useLiveQuery, GraphQLLiveDirectiveSDL } from '../src';
+import { useLiveQuery, GraphQLLiveDirectiveSDL } from '../src/index.js';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { createTestkit, assertStreamExecutionValue } from '@envelop/testing';

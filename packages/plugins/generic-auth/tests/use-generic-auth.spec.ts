@@ -8,7 +8,7 @@ import {
   useGenericAuth,
   ValidateUserFn,
   UnauthenticatedError,
-} from '../src';
+} from '../src/index.js';
 
 type UserType = {
   id: number;

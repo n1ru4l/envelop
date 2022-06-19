@@ -6,7 +6,7 @@ import {
 } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { execute, subscribe } from 'graphql';
-import { useGraphQlJit } from '../src';
+import { useGraphQlJit } from '../src/index.js';
 import lru from 'tiny-lru';
 
 describe('useGraphQlJit', () => {

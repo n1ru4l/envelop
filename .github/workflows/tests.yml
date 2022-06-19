@@ -124,5 +124,5 @@ jobs:
         run: yarn install --ignore-engines && git checkout yarn.lock
       - name: Build Packages
         run: yarn build
-      - name: Test ESM
-        run: node scripts/test-esm.mjs
+      - name: Test ESM & CJS exports integrity
+        run: yarn bob check

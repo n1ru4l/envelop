@@ -1,6 +1,6 @@
 import { assertStreamExecutionValue, createTestkit } from '@envelop/testing';
-import { schema, subscriptionOperationString } from '../../../core/test/common';
-import { useExtendContextValuePerExecuteSubscriptionEvent } from '../src';
+import { schema, subscriptionOperationString } from '../../../core/test/common.js';
+import { useExtendContextValuePerExecuteSubscriptionEvent } from '../src/index.js';
 import { useExtendContext } from '@envelop/core';
 import { makePushPullAsyncIterableIterator } from '@n1ru4l/push-pull-async-iterable-iterator';
 

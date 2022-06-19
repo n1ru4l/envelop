@@ -1,7 +1,6 @@
-import { Plugin, useExtendContext } from '@envelop/core';
+import { EnvelopError, Plugin, useExtendContext } from '@envelop/core';
 import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
 import {
-  GraphQLError,
   isUnionType,
   FieldNode,
   GraphQLObjectType,
@@ -64,7 +63,12 @@ const OperationScopeRule =
         !permissionContext.wildcardTypes.has(objectType.name) &&
         !permissionContext.schemaCoordinates.has(schemaCoordinate)
       ) {
-        context.reportError(new GraphQLError(options.formatError(schemaCoordinate), [node]));
+        // TODO: EnvelopError was a bad idea ;)
+        // We should use GraphQLError once the object constructor lands in stable GraphQL.js
+        // and useMaskedErrors supports it.
+        const error = new EnvelopError(options.formatError(schemaCoordinate));
+        (error as any).nodes = [node];
+        context.reportError(error);
       }
     };
 

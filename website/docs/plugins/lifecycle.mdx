@@ -198,14 +198,13 @@ const myPlugin = (): Plugin => {
     onExecute({ args }) {
       return {
         onExecuteDone: ({ result, setResult }) => {
-          if (isAsyncIterable(result)) {
-            // Here you can access result, and modify it with setResult if needed
-          }
-        }
-      }
-    }
-  }
-}
+          if (!isAsyncIterable(result)) return
+          // Here you can access result, and modify it with setResult if needed
+        },
+      };
+    },
+  };
+};
 ```
 
 ### `onSubscribe(api)`

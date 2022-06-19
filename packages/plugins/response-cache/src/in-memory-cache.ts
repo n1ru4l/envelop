@@ -1,5 +1,5 @@
 import LRU from 'lru-cache';
-import type { Cache } from './cache';
+import type { Cache } from './cache.js';
 
 export type BuildEntityId = (typename: string, id: number | string) => string;
 

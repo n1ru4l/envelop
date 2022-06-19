@@ -1,33 +1,20 @@
-import { Plugin, Maybe, DefaultContext, PromiseOrValue, isAsyncIterable } from '@envelop/core';
-import { MapperKind, mapSchema } from '@graphql-tools/utils';
+import { Plugin, Maybe, isAsyncIterable } from '@envelop/core';
+import { visitResult } from '@graphql-tools/utils';
 import {
-  DocumentNode,
-  OperationDefinitionNode,
   visit,
   TypeInfo,
   visitWithTypeInfo,
-  GraphQLSchema,
-  defaultFieldResolver,
   ExecutionArgs,
   ExecutionResult,
+  getOperationAST,
+  Kind,
+  SelectionSetNode,
 } from 'graphql';
 import jsonStableStringify from 'fast-json-stable-stringify';
-import type { Cache, CacheEntityRecord } from './cache';
-import { createInMemoryCache } from './in-memory-cache';
-import { hashSHA256 } from './hashSHA256';
-
-const contextSymbol = Symbol('responseCache');
-const rawDocumentStringSymbol = Symbol('rawDocumentString');
-
-type Context = {
-  identifier: Map<string, CacheEntityRecord>;
-  types: Set<string>;
-  /** The current ttl computed for this operation. */
-  currentTtl: number | undefined;
-  ttlPerType: Record<string, number>;
-  ignoredTypesMap: Set<string>;
-  skip: boolean;
-};
+import type { Cache, CacheEntityRecord } from './cache.js';
+import { createInMemoryCache } from './in-memory-cache.js';
+import { hashSHA256 } from './hashSHA256.js';
+import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str.js';
 
 /**
  * Function for building the response cache key based on the input parameters
@@ -40,10 +27,10 @@ export type BuildResponseCacheKeyFunction = (params: {
   /** The name of the GraphQL operation that should be executed from within the document. */
   operationName?: Maybe<string>;
   /** optional sessionId for make unique cache keys based on the session.  */
-  sessionId?: Maybe<string>;
+  sessionId: Maybe<string>;
 }) => Promise<string>;
 
-export type GetDocumentStringFromContextFunction = (params: DefaultContext) => Maybe<string>;
+export type GetDocumentStringFunction = (executionArgs: ExecutionArgs) => string;
 
 export type ShouldCacheResultFunction = (params: { result: ExecutionResult }) => Boolean;
 
@@ -74,8 +61,22 @@ export type UseResponseCacheParameter<C = any> = {
    * Return `null` or `undefined` to mark the session as public/global.
    * Creates a global session by default.
    * @param context GraphQL Context
+   *
+   * **Global Example:**
+   * ```ts
+   * useResponseCache({
+   *   session: () => null,
+   * });
+   * ```
+   *
+   * **User Specific with global fallback example:**
+   * ```ts
+   * useResponseCache({
+   *   session: (context) => context.user?.id ?? null,
+   * });
+   * ```
    */
-  session?(context: C): string | undefined | null;
+  session(context: C): string | undefined | null;
   /**
    * Specify whether the cache should be used based on the context.
    * By default any request uses the cache.
@@ -101,12 +102,13 @@ export type UseResponseCacheParameter<C = any> = {
    */
   buildResponseCacheKey?: BuildResponseCacheKeyFunction;
   /**
-   * Function used for reading the document string that is used for building the response cache key from the context object.
-   * By default, the useResponseCache plugin hooks into onParse and writes the original operation string to the context.
+   * Function used for reading the document string that is used for building the response cache key from the execution arguments.
+   * By default, the useResponseCache plugin hooks into onParse and caches the original operation string in a WeakMap.
    * If you are hard overriding parse you need to set this function, otherwise responses will not be cached or served from the cache.
-   * Defaults to `defaultGetDocumentStringFromContext`
+   * Defaults to `defaultGetDocumentString`
+   *
    */
-  getDocumentStringFromContext?: GetDocumentStringFromContextFunction;
+  getDocumentString?: GetDocumentStringFunction;
   /**
    * Include extension values that provide useful information, such as whether the cache was hit or which resources a mutation invalidated.
    * Defaults to `true` if `process.env["NODE_ENV"]` is set to `"development"`, otherwise `false`.
@@ -152,13 +154,10 @@ export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boo
   return true;
 };
 
-export const defaultGetDocumentStringFromContext: GetDocumentStringFromContextFunction = context =>
-  context[rawDocumentStringSymbol as any] as any;
-
 export function useResponseCache({
   cache = createInMemoryCache(),
   ttl: globalTtl = Infinity,
-  session = () => null,
+  session,
   enabled,
   ignoredTypes = [],
   ttlPerType = {},
@@ -166,65 +165,131 @@ export function useResponseCache({
   idFields = ['id'],
   invalidateViaMutation = true,
   buildResponseCacheKey = defaultBuildResponseCacheKey,
-  getDocumentStringFromContext = defaultGetDocumentStringFromContext,
+  getDocumentString = defaultGetDocumentString,
   shouldCacheResult = defaultShouldCacheResult,
   // eslint-disable-next-line dot-notation
   includeExtensionMetadata = typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false,
-}: UseResponseCacheParameter = {}): Plugin {
-  const appliedTransform = Symbol('responseCache.appliedTransform');
+}: UseResponseCacheParameter): Plugin {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
 
   // never cache Introspections
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
 
   return {
-    onSchemaChange({ schema, replaceSchema }) {
-      // @ts-expect-error See https://github.com/graphql/graphql-js/pull/3511 - remove this comments once merged
-      if (schema.extensions?.[appliedTransform] === true) {
-        return;
+    onPluginInit({ addPlugin }) {
+      if (getDocumentString === defaultGetDocumentString) {
+        addPlugin(useCacheDocumentString());
       }
-
-      const patchedSchema = applyResponseCacheLogic(schema, idFields);
-      patchedSchema.extensions = {
-        ...patchedSchema.extensions,
-        [appliedTransform]: true,
-      };
-      replaceSchema(patchedSchema);
     },
-    onParse(parseCtx) {
-      return function onParseEnd(ctx) {
-        if (ctx.result && 'kind' in ctx.result) {
-          const source = parseCtx.params.source;
-
-          const rawDocumentString = typeof source === 'string' ? source : source.body;
-          ctx.extendContext({
-            [rawDocumentStringSymbol]: rawDocumentString,
+    async onExecute(onExecuteParams) {
+      let documentChanged = false;
+      const newDocument = visit(onExecuteParams.args.document, {
+        SelectionSet(node): SelectionSetNode {
+          if (!node.selections.some(selection => selection.kind === Kind.FIELD && selection.name.value === '__typename')) {
+            documentChanged = true;
+            return {
+              ...node,
+              selections: [
+                {
+                  kind: Kind.FIELD,
+                  name: {
+                    kind: Kind.NAME,
+                    value: '__typename',
+                  },
+                },
+                ...node.selections,
+              ],
+            };
+          }
+          return node;
+        },
+      });
+      if (documentChanged) {
+        onExecuteParams.setExecuteFn(function typeNameAddedExecute() {
+          return onExecuteParams.executeFn({
+            ...onExecuteParams.args,
+            document: newDocument,
           });
-        }
-      };
-    },
-    async onExecute(ctx) {
+        });
+      }
       const identifier = new Map<string, CacheEntityRecord>();
       const types = new Set<string>();
 
-      const context: Context = {
-        identifier,
-        types,
-        currentTtl: undefined,
-        ttlPerType,
-        ignoredTypesMap,
-        skip: false,
-      };
+      let currentTtl: number | undefined;
+      let skip = false;
 
-      ctx.extendContext({
-        [contextSymbol]: context,
-      });
+      const processResult = (result: ExecutionResult): ExecutionResult =>
+        visitResult(
+          result,
+          {
+            document: onExecuteParams.args.document,
+            variables: onExecuteParams.args.variableValues as any,
+            operationName: onExecuteParams.args.operationName ?? undefined,
+            rootValue: onExecuteParams.args.rootValue,
+            context: onExecuteParams.args.contextValue,
+          },
+          onExecuteParams.args.schema,
+          new Proxy(
+            {},
+            {
+              get(_, typename: string) {
+                let typenameCalled = 0;
+                return new Proxy((val: any) => val, {
+                  // Needed for leaf values such as scalars, enums etc
+                  // They don't have fields so visitResult expects functions for those
+                  apply(_, __, [val]) {
+                    return val;
+                  },
+                  get(_, fieldName: string) {
+                    if (documentChanged) {
+                      if (fieldName === '__typename') {
+                        typenameCalled++;
+                      }
+                      if (fieldName === '__leave') {
+                        /**
+                         * The visitResult function is called for each field in the selection set.
+                         * But visitResult function looks for __typename field visitor even if it is not there in the document
+                         * So it calls __typename field visitor twice if it is also in the selection set.
+                         * That's why we need to count the number of times it is called.
+                         *
+                         * Default call of __typename https://github.com/ardatan/graphql-tools/blob/master/packages/utils/src/visitResult.ts#L277
+                         * Call for the field node https://github.com/ardatan/graphql-tools/blob/master/packages/utils/src/visitResult.ts#L272
+                         */
+                        if (typenameCalled < 2) {
+                          return (root: any) => {
+                            delete root.__typename;
+                            return root;
+                          };
+                        }
+                      }
+                    }
+                    if (idFields.includes(fieldName)) {
+                      if (ignoredTypesMap.has(typename)) {
+                        skip = true;
+                      }
+                      if (skip === true) {
+                        return;
+                      }
+                      return (id: string) => {
+                        identifier.set(`${typename}:${id}`, { typename, id });
+                        types.add(typename);
+                        if (typename in ttlPerType) {
+                          currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
+                        }
+                        return id;
+                      };
+                    }
+                    return undefined;
+                  },
+                });
+              },
+            }
+          )
+        );
 
-      if (isMutation(ctx.args.document)) {
-        if (invalidateViaMutation === false) {
-          return;
-        }
+      const operationAST = getOperationAST(onExecuteParams.args.document, onExecuteParams.args.operationName);
 
+      if (invalidateViaMutation !== false && operationAST?.operation === 'mutation') {
         return {
           onExecuteDone({ result, setResult }) {
             if (isAsyncIterable(result)) {
@@ -233,14 +298,16 @@ export function useResponseCache({
               return;
             }
 
-            cache.invalidate(context.identifier.values());
+            const processedResult = processResult(result);
+
+            cache.invalidate(identifier.values());
             if (includeExtensionMetadata) {
               setResult({
-                ...result,
+                ...processedResult,
                 extensions: {
-                  ...result.extensions,
+                  ...processedResult.extensions,
                   responseCache: {
-                    invalidatedEntities: Array.from(context.identifier.values()),
+                    invalidatedEntities: Array.from(identifier.values()),
                   },
                 },
               });
@@ -248,116 +315,106 @@ export function useResponseCache({
           },
         };
       }
-      const documentString = getDocumentStringFromContext(ctx.args.contextValue);
-      if (documentString != null) {
-        const operationId = await buildResponseCacheKey({
-          documentString,
-          variableValues: ctx.args.variableValues,
-          operationName: ctx.args.operationName,
-          sessionId: session(ctx.args.contextValue),
-        });
 
-        if ((enabled?.(ctx.args.contextValue) ?? true) === true) {
-          const cachedResponse = await cache.get(operationId);
+      const operationId = await buildResponseCacheKey({
+        documentString: getDocumentString(onExecuteParams.args),
+        variableValues: onExecuteParams.args.variableValues,
+        operationName: onExecuteParams.args.operationName,
+        sessionId: session(onExecuteParams.args.contextValue),
+      });
 
-          if (cachedResponse != null) {
-            if (includeExtensionMetadata) {
-              ctx.setResultAndStopExecution({
-                ...cachedResponse,
-                extensions: {
-                  responseCache: {
-                    hit: true,
-                  },
+      if ((enabled?.(onExecuteParams.args.contextValue) ?? true) === true) {
+        const cachedResponse = await cache.get(operationId);
+
+        if (cachedResponse != null) {
+          if (includeExtensionMetadata) {
+            onExecuteParams.setResultAndStopExecution({
+              ...cachedResponse,
+              extensions: {
+                responseCache: {
+                  hit: true,
                 },
-              });
-            } else {
-              ctx.setResultAndStopExecution(cachedResponse);
-            }
+              },
+            });
+          } else {
+            onExecuteParams.setResultAndStopExecution(cachedResponse);
+          }
+          return;
+        }
+      }
+
+      if (ttlPerSchemaCoordinate) {
+        const typeInfo = new TypeInfo(onExecuteParams.args.schema);
+        visit(
+          onExecuteParams.args.document,
+          visitWithTypeInfo(typeInfo, {
+            Field(fieldNode) {
+              const parentType = typeInfo.getParentType();
+              if (parentType) {
+                const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
+                const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate];
+                if (maybeTtl !== undefined) {
+                  currentTtl = calculateTtl(maybeTtl, currentTtl);
+                }
+              }
+            },
+          })
+        );
+      }
+
+      return {
+        onExecuteDone({ result, setResult }) {
+          if (isAsyncIterable(result)) {
+            // eslint-disable-next-line no-console
+            console.warn('[useResponseCache] AsyncIterable returned from execute is currently unsupported.');
             return;
           }
-        }
 
-        if (ttlPerSchemaCoordinate) {
-          const typeInfo = new TypeInfo(ctx.args.schema);
-          visit(
-            ctx.args.document,
-            visitWithTypeInfo(typeInfo, {
-              Field(fieldNode) {
-                const parentType = typeInfo.getParentType();
-                if (parentType) {
-                  const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
-                  const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate];
-                  if (maybeTtl !== undefined) {
-                    context.currentTtl = calculateTtl(maybeTtl, context.currentTtl);
-                  }
-                }
-              },
-            })
-          );
-        }
+          const processedResult = processResult(result);
 
-        return {
-          onExecuteDone({ result, setResult }) {
-            if (isAsyncIterable(result)) {
-              // eslint-disable-next-line no-console
-              console.warn('[useResponseCache] AsyncIterable returned from execute is currently unsupported.');
-              return;
-            }
+          if (skip) {
+            return;
+          }
 
-            if (context.skip) {
-              return;
-            }
+          if (!shouldCacheResult({ result: processedResult })) {
+            return;
+          }
 
-            if (!shouldCacheResult({ result })) {
-              return;
-            }
+          // we only use the global ttl if no currentTtl has been determined.
+          const finalTtl = currentTtl ?? globalTtl;
 
-            // we only use the global ttl if no currentTtl has been determined.
-            const finalTtl = context.currentTtl ?? globalTtl;
-
-            if (finalTtl === 0) {
-              if (includeExtensionMetadata) {
-                setResult({
-                  ...result,
-                  extensions: {
-                    responseCache: {
-                      hit: false,
-                      didCache: false,
-                    },
-                  },
-                });
-              }
-              return;
-            }
-
-            cache.set(operationId, result, identifier.values(), finalTtl);
+          if (finalTtl === 0) {
             if (includeExtensionMetadata) {
               setResult({
-                ...result,
+                ...processedResult,
                 extensions: {
                   responseCache: {
                     hit: false,
-                    didCache: true,
-                    ttl: finalTtl,
+                    didCache: false,
                   },
                 },
               });
             }
-          },
-        };
-      }
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[useResponseCache] Failed extracting document string from the context. The response will not be cached or served from the cache. ` +
-          `If you are overriding the 'parse' behavior make sure to pass a custom 'getDocumentStringFromContext' function for getting the document string, which is required for building the response cache key.`
-      );
-      return undefined;
+            return;
+          }
+
+          cache.set(operationId, processedResult, identifier.values(), finalTtl);
+          if (includeExtensionMetadata) {
+            setResult({
+              ...processedResult,
+              extensions: {
+                responseCache: {
+                  hit: false,
+                  didCache: true,
+                  ttl: finalTtl,
+                },
+              },
+            });
+          }
+        },
+      };
     },
   };
-}
-
-function isOperationDefinition(node: any): node is OperationDefinitionNode {
-  return node?.kind === 'OperationDefinition';
 }
 
 function calculateTtl(typeTtl: number, currentTtl: number | undefined): number {
@@ -365,58 +422,4 @@ function calculateTtl(typeTtl: number, currentTtl: number | undefined): number {
     return Math.min(currentTtl, typeTtl);
   }
   return typeTtl;
-}
-
-function isMutation(doc: DocumentNode) {
-  return doc.definitions.find(isOperationDefinition)!.operation === 'mutation';
-}
-
-function runWith<T>(input: T | Promise<T>, callback: (value: T) => void) {
-  if (input instanceof Promise) {
-    input.then(callback, () => undefined);
-  } else {
-    callback(input);
-  }
-}
-
-function applyResponseCacheLogic(schema: GraphQLSchema, idFieldNames: Array<string>): GraphQLSchema {
-  return mapSchema(schema, {
-    [MapperKind.OBJECT_FIELD](fieldConfig, fieldName, typename) {
-      if (idFieldNames.includes(fieldName)) {
-        return {
-          ...fieldConfig,
-          resolve(src, args, context, info) {
-            const result = (fieldConfig.resolve ?? defaultFieldResolver)(
-              src,
-              args,
-              context,
-              info
-            ) as PromiseOrValue<string>;
-            runWith(result, (id: string) => {
-              const ctx: Context | undefined = context[contextSymbol];
-              if (ctx !== undefined) {
-                if (ctx.ignoredTypesMap.has(typename)) {
-                  ctx.skip = true;
-                }
-                if (ctx.skip === true) {
-                  ctx.skip = true;
-                  return;
-                }
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore  TODO: investigate what to do if id is something unexpected
-                ctx.identifier.set(`${typename}:${id}`, { typename, id });
-                ctx.types.add(typename);
-                if (typename in ctx.ttlPerType) {
-                  ctx.currentTtl = calculateTtl(ctx.ttlPerType[typename], ctx.currentTtl);
-                }
-              }
-            });
-            return result;
-          },
-        };
-      }
-
-      return fieldConfig;
-    },
-  });
 }

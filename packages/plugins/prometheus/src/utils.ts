@@ -9,7 +9,7 @@ import {
   visitWithTypeInfo,
 } from 'graphql';
 import { AfterParseEventPayload } from '@envelop/core';
-import { PrometheusTracingPluginConfig } from './config';
+import { PrometheusTracingPluginConfig } from './config.js';
 import { Counter, Histogram, register as defaultRegistry, Summary } from 'prom-client';
 
 export type DeprecatedFieldInfo = {

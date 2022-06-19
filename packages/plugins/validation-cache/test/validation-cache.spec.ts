@@ -1,6 +1,6 @@
 import { buildSchema, GraphQLError, validate } from 'graphql';
 import { createTestkit } from '@envelop/testing';
-import { useValidationCache } from '../src';
+import { useValidationCache } from '../src/index.js';
 import { Plugin } from '@envelop/types';
 import lru from 'tiny-lru';
 

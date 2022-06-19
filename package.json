@@ -6,15 +6,29 @@
     "./website",
     "./packages/*",
     "./packages/plugins/*",
-    "./examples/*"
+    "./examples/apollo-server",
+    "./examples/graphql-ws",
+    "./examples/graphql-sse",
+    "./examples/graphql-socket.io",
+    "./examples/simple-http",
+    "./examples/graphql-helix",
+    "./examples/graphql-helix-auth0",
+    "./examples/lambda-aws",
+    "./examples/azure-functions",
+    "./examples/google-cloud-functions",
+    "./examples/cloudflare-workers",
+    "./examples/with-esm",
+    "./examples/typegraphql",
+    "./examples/nexus",
+    "./examples/express-graphql"
   ],
   "scripts": {
     "prepare": "husky install",
     "postinstall": "patch-package",
-    "lint": "eslint --config .eslintrc.json --ext .ts .",
+    "lint": "eslint --config .eslintrc.json --ext .ts . --max-warnings 0",
     "lint:prettier": "prettier --ignore-path .gitignore --check .",
     "prebuild": "rimraf packages/*/dist packages/plugins/*/dist",
-    "build": "tsc --project tsconfig.build.json && bob build",
+    "build": "bob build",
     "ts:check": "tsc --noEmit",
     "test": "jest",
     "test:ci": "jest --coverage",
@@ -32,7 +46,7 @@
     "@babel/preset-env": "7.16.11",
     "@babel/preset-typescript": "7.16.7",
     "@changesets/cli": "2.21.1",
-    "@graphql-tools/schema": "8.3.2",
+    "@graphql-tools/schema": "8.5.0",
     "@theguild/prettier-config": "^0.0.1",
     "@types/benchmark": "2.1.1",
     "@types/jest": "27.4.1",
@@ -42,7 +56,7 @@
     "@typescript-eslint/parser": "5.27.0",
     "apollo-server": "3.5.0",
     "benchmark": "2.1.4",
-    "bob-the-bundler": "1.6.1",
+    "bob-the-bundler": "2.0.0",
     "chalk": "5.0.1",
     "eslint": "8.17.0",
     "eslint-config-prettier": "8.5.0",
@@ -61,7 +75,7 @@
     "rimraf": "3.0.2",
     "ts-jest": "27.1.3",
     "ts-node": "10.7.0",
-    "typescript": "4.4.4",
+    "typescript": "4.7.4",
     "wait-on": "6.0.1"
   },
   "resolutions": {
@@ -73,7 +87,7 @@
     "packages/**/src/**/*.{ts,tsx}": [
       "eslint --fix"
     ],
-    "**/*": [
+    "**/*.{ts,tsx,graphql,yml,json}": [
       "prettier --write"
     ]
   }

@@ -5,9 +5,9 @@ import {
   collectAsyncIteratorValues,
   createTestkit,
 } from '@envelop/testing';
-import { EnvelopError, useMaskedErrors, DEFAULT_ERROR_MESSAGE } from '../../src/plugins/use-masked-errors';
+import { EnvelopError, useMaskedErrors, DEFAULT_ERROR_MESSAGE } from '../../src/plugins/use-masked-errors.js';
 import { useExtendContext } from '@envelop/core';
-import { useAuth0 } from '../../../plugins/auth0/src';
+import { useAuth0 } from '../../../plugins/auth0/src/index.js';
 
 describe('useMaskedErrors', () => {
   const schema = makeExecutableSchema({

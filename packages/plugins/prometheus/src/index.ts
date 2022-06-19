@@ -20,8 +20,8 @@ import {
   createInternalContext,
   extractDeprecatedFields,
   createSummary,
-} from './utils';
-import { PrometheusTracingPluginConfig } from './config';
+} from './utils.js';
+import { PrometheusTracingPluginConfig } from './config.js';
 
 export { PrometheusTracingPluginConfig, createCounter, createHistogram, createSummary, FillLabelsFnParams };
 

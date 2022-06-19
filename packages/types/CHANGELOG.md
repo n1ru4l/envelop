@@ -1,5 +1,11 @@
 # @envelop/types
 
+## 2.3.0
+
+### Minor Changes
+
+- 8bb2738: Support TypeScript module resolution.
+
 ## 2.2.1
 
 ### Patch Changes

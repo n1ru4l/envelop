@@ -1,7 +1,7 @@
 import type { StatsD } from 'hot-shots';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { useStatsD, metricNames, StatsDPluginOptions } from '../src';
+import { useStatsD, metricNames, StatsDPluginOptions } from '../src/index.js';
 import { getIntrospectionQuery } from 'graphql';
 import { useExtendContext } from '@envelop/core';
 
