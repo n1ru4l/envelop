@@ -203,7 +203,7 @@ This utility is helpful when you want to enable a plugin only when a certain con
 ```ts
 import { envelop, useMaskedErrors, enableIf } from '@envelop/core'
 
-const isProd = process.env === 'production'
+const isProd = process.env.NODE_ENV === 'production'
 
 const getEnveloped = envelop({
   plugins: [
