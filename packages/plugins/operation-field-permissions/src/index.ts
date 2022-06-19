@@ -1,7 +1,6 @@
 import { EnvelopError, Plugin, useExtendContext } from '@envelop/core';
 import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
 import {
-  GraphQLError,
   isUnionType,
   FieldNode,
   GraphQLObjectType,
