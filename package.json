@@ -25,7 +25,7 @@
   "scripts": {
     "prepare": "husky install",
     "postinstall": "patch-package",
-    "lint": "eslint --config .eslintrc.json --ext .ts .",
+    "lint": "eslint --config .eslintrc.json --ext .ts . --max-warnings 0",
     "prebuild": "rimraf packages/*/dist packages/plugins/*/dist",
     "build": "tsc --project tsconfig.build.json && bob build",
     "ts:check": "tsc --noEmit",
