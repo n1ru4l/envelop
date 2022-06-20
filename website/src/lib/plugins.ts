@@ -217,7 +217,7 @@ export const pluginsArr: Package<Tags>[] = [
     identifier: 'use-graphql-modules',
     title: 'useGraphQLModules',
     npmPackage: '@envelop/graphql-modules',
-    iconUrl: 'https://www.graphql-modules.com/img/just-logo.svg',
+    iconUrl: '/assets/logos/modules.svg',
     tags: ['schema', 'utilities', 'devtool'],
   },
   {
