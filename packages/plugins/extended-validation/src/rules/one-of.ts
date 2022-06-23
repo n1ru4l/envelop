@@ -9,7 +9,7 @@ import {
   getNamedType,
 } from 'graphql';
 import { getArgumentValues } from '@graphql-tools/utils';
-import { ExtendedValidationRule, getDirectiveFromAstNode } from '../common';
+import { ExtendedValidationRule, getDirectiveFromAstNode } from '../common.js';
 
 export const ONE_OF_DIRECTIVE_SDL = /* GraphQL */ `
   directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION

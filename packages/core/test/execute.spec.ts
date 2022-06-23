@@ -8,7 +8,7 @@ import {
 import { OnExecuteDoneHookResult, OnSubscribeResultResult } from '@envelop/types';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { execute, ExecutionResult, GraphQLError, GraphQLSchema } from 'graphql';
-import { schema, query } from './common';
+import { schema, query } from './common.js';
 
 type Deferred<T = void> = {
   promise: Promise<T>;

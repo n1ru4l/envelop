@@ -1,7 +1,7 @@
 import { GetEnvelopedFn, ComposeContext, Plugin, ArbitraryObject } from '@envelop/types';
-import { isPluginEnabled, PluginOrDisabledPlugin } from './enable-if';
-import { createEnvelopOrchestrator, EnvelopOrchestrator } from './orchestrator';
-import { traceOrchestrator } from './traced-orchestrator';
+import { isPluginEnabled, PluginOrDisabledPlugin } from './enable-if.js';
+import { createEnvelopOrchestrator, EnvelopOrchestrator } from './orchestrator.js';
+import { traceOrchestrator } from './traced-orchestrator.js';
 
 export function envelop<PluginsType extends Plugin<any>[]>(options: {
   plugins: Array<PluginOrDisabledPlugin>;
@@ -21,7 +21,7 @@ export function envelop<PluginsType extends Plugin<any>[]>(options: {
     return {
       parse: typedOrchestrator.parse(initialContext),
       validate: typedOrchestrator.validate(initialContext),
-      contextFactory: typedOrchestrator.contextFactory(initialContext),
+      contextFactory: typedOrchestrator.contextFactory(initialContext as any),
       execute: typedOrchestrator.execute,
       subscribe: typedOrchestrator.subscribe,
       schema: typedOrchestrator.getCurrentSchema(),

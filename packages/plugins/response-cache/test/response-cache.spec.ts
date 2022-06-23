@@ -2,7 +2,7 @@ import { getIntrospectionQuery, GraphQLObjectType } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useValidationCache } from '@envelop/validation-cache';
-import { useResponseCache, createInMemoryCache } from '../src';
+import { useResponseCache, createInMemoryCache } from '../src/index.js';
 import { useParserCache } from '@envelop/parser-cache';
 import { useLogger } from '@envelop/core';
 import { useGraphQlJit } from '@envelop/graphql-jit';

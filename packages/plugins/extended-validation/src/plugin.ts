@@ -9,7 +9,7 @@ import {
   visitInParallel,
   visitWithTypeInfo,
 } from 'graphql';
-import { ExtendedValidationRule } from './common';
+import { ExtendedValidationRule } from './common.js';
 
 const symbolExtendedValidationRules = Symbol('extendedValidationContext');
 

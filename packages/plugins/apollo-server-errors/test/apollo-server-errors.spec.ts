@@ -2,7 +2,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { ApolloServerBase } from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
 import { envelop, useSchema } from '@envelop/core';
-import { useApolloServerErrors } from '../src';
+import { useApolloServerErrors } from '../src/index.js';
 import { assertSingleExecutionValue } from '@envelop/testing';
 
 // Fix compat by mocking broken function

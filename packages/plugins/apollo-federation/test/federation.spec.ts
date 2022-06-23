@@ -1,6 +1,6 @@
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { execute, parse } from 'graphql';
-import { useApolloFederation } from '../src';
+import { useApolloFederation } from '../src/index.js';
 
 describe('useApolloFederation', () => {
   const query = /* GraphQL */ `

@@ -1,4 +1,4 @@
-import { createCounter, createHistogram, createSummary } from './utils';
+import { createCounter, createHistogram, createSummary } from './utils.js';
 import { Registry } from 'prom-client';
 
 export type PrometheusTracingPluginConfig = {

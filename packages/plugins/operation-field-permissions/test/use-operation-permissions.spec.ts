@@ -1,4 +1,4 @@
-import { useOperationFieldPermissions } from '../src';
+import { useOperationFieldPermissions } from '../src/index.js';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { getIntrospectionQuery } from 'graphql';

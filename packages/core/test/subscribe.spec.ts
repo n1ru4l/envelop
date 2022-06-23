@@ -1,6 +1,6 @@
 import { assertStreamExecutionValue, collectAsyncIteratorValues, createTestkit } from '@envelop/testing';
 import { ExecutionResult } from 'graphql';
-import { schema } from './common';
+import { schema } from './common.js';
 
 describe('subscribe', () => {
   it('Should be able to manipulate streams', async () => {

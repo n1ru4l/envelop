@@ -1,5 +1,5 @@
 import { DocumentNode } from 'graphql';
-import { PersistedOperationsStore } from '../types';
+import { PersistedOperationsStore } from '../types.js';
 
 export type InMemoryStoreDataMap = Map<string, DocumentNode | string>;
 

@@ -41,8 +41,15 @@ import {
   validate,
   ValidationRule,
 } from 'graphql';
-import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema';
-import { errorAsyncIterator, finalAsyncIterator, makeExecute, makeSubscribe, mapAsyncIterator, isAsyncIterable } from './utils';
+import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema.js';
+import {
+  errorAsyncIterator,
+  finalAsyncIterator,
+  makeExecute,
+  makeSubscribe,
+  mapAsyncIterator,
+  isAsyncIterable,
+} from './utils.js';
 
 export type EnvelopOrchestrator<
   InitialContext extends ArbitraryObject = ArbitraryObject,

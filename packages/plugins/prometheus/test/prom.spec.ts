@@ -1,4 +1,4 @@
-import { PrometheusTracingPluginConfig, usePrometheus, createHistogram, createCounter } from '../src';
+import { PrometheusTracingPluginConfig, usePrometheus, createHistogram, createCounter } from '../src/index.js';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { Registry, Histogram, Counter } from 'prom-client';

@@ -11,7 +11,7 @@ import {
   GraphQLList,
 } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { useExtendedValidation, ONE_OF_DIRECTIVE_SDL, OneOfInputObjectsRule } from '../src';
+import { useExtendedValidation, ONE_OF_DIRECTIVE_SDL, OneOfInputObjectsRule } from '../src/index.js';
 
 describe('oneOf', () => {
   const astSchema = buildSchema(/* GraphQL */ `

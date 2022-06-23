@@ -1,4 +1,4 @@
-export * from './plugin';
-export * from './common';
+export * from './plugin.js';
+export * from './common.js';
 
-export * from './rules/one-of';
+export * from './rules/one-of.js';

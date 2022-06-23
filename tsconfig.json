@@ -8,7 +8,7 @@
     "allowSyntheticDefaultImports": true,
     "importHelpers": true,
     "experimentalDecorators": true,
-    "module": "esnext",
+    "module": "node16",
     "target": "es2018",
     "lib": ["es6", "esnext", "es2015", "dom"],
     "suppressImplicitAnyIndexErrors": true,

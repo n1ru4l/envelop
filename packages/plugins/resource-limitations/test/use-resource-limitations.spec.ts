@@ -1,4 +1,4 @@
-import { useResourceLimitations } from '../src';
+import { useResourceLimitations } from '../src/index.js';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 

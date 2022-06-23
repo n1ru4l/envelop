@@ -11,7 +11,7 @@ import type {
   validate,
   GraphQLResolveInfo,
 } from 'graphql';
-import type { Maybe } from './utils';
+import type { Maybe } from './utils.js';
 
 /** @private */
 export type PolymorphicExecuteArguments =

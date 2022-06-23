@@ -1,6 +1,6 @@
 import { buildSchema, DocumentNode, parse } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { useParserCache } from '../src';
+import { useParserCache } from '../src/index.js';
 import { Plugin } from '@envelop/types';
 import lru from 'tiny-lru';
 

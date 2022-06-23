@@ -1,8 +1,8 @@
 import { useLogger, enableIf } from '@envelop/core';
 import { createTestkit, createSpiedPlugin } from '@envelop/testing';
 import { getIntrospectionQuery, parse } from 'graphql';
-import { isIntrospectionDocument } from '../src/utils';
-import { query, schema } from './common';
+import { isIntrospectionDocument } from '../src/utils.js';
+import { query, schema } from './common.js';
 
 describe('Utils', () => {
   describe('isIntrospectionDocument', () => {

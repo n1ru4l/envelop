@@ -3,7 +3,7 @@ import { ApolloGateway } from '@apollo/gateway';
 import { DocumentNode, getOperationAST, print, printSchema, Source } from 'graphql';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { CachePolicy, GraphQLRequestMetrics, Logger, SchemaHash } from 'apollo-server-types';
-import { newCachePolicy } from './newCachePolicy';
+import { newCachePolicy } from './newCachePolicy.js';
 
 export interface ApolloFederationPluginConfig {
   gateway: ApolloGateway;

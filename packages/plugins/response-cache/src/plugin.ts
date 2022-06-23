@@ -12,9 +12,9 @@ import {
   ExecutionResult,
 } from 'graphql';
 import jsonStableStringify from 'fast-json-stable-stringify';
-import type { Cache, CacheEntityRecord } from './cache';
-import { createInMemoryCache } from './in-memory-cache';
-import { hashSHA256 } from './hashSHA256';
+import type { Cache, CacheEntityRecord } from './cache.js';
+import { createInMemoryCache } from './in-memory-cache.js';
+import { hashSHA256 } from './hashSHA256.js';
 
 const contextSymbol = Symbol('responseCache');
 const rawDocumentStringSymbol = Symbol('rawDocumentString');
