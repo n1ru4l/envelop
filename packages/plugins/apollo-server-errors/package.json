@@ -25,16 +25,11 @@
   "typescript": {
     "definition": "dist/index.d.ts"
   },
-  "scripts": {
-    "test": "jest",
-    "prepack": "bob prepack"
-  },
   "dependencies": {
     "apollo-server-errors": "3.3.0"
   },
   "devDependencies": {
     "apollo-server-core": "3.5.0",
-    "bob-the-bundler": "1.6.1",
     "graphql": "16.3.0",
     "typescript": "4.4.4"
   },

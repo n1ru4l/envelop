@@ -54,7 +54,7 @@
     "@typescript-eslint/parser": "5.27.0",
     "apollo-server": "3.5.0",
     "benchmark": "2.1.4",
-    "bob-the-bundler": "1.6.1",
+    "bob-the-bundler": "2.0.0-canary-661f024.0",
     "chalk": "5.0.1",
     "eslint": "8.17.0",
     "eslint-config-prettier": "8.5.0",

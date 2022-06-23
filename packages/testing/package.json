@@ -25,10 +25,6 @@
   "typescript": {
     "definition": "dist/index.d.ts"
   },
-  "scripts": {
-    "test": "jest",
-    "prepack": "bob prepack"
-  },
   "dependencies": {
     "@graphql-tools/utils": "^8.6.1"
   },
