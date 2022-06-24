@@ -18,7 +18,6 @@ import { createInMemoryCache } from './in-memory-cache.js';
 import { hashSHA256 } from './hashSHA256.js';
 
 const contextSymbol = Symbol('responseCache');
-const rawDocumentStringSymbol = Symbol('rawDocumentString');
 
 type Context = {
   identifier: Map<string, CacheEntityRecord>;
@@ -44,7 +43,7 @@ export type BuildResponseCacheKeyFunction = (params: {
   sessionId?: Maybe<string>;
 }) => Promise<string>;
 
-export type GetDocumentStringFromContextFunction = (params: DefaultContext) => Maybe<string>;
+export type GetDocumentStringFromContextFunction = (context: DefaultContext, executionArgs: ExecutionArgs) => Maybe<string>;
 
 export type ShouldCacheResultFunction = (params: { result: ExecutionResult }) => Boolean;
 
@@ -103,11 +102,10 @@ export type UseResponseCacheParameter<C = any> = {
   buildResponseCacheKey?: BuildResponseCacheKeyFunction;
   /**
    * Function used for reading the document string that is used for building the response cache key from the context object.
-   * By default, the useResponseCache plugin hooks into onParse and writes the original operation string to the context.
+   * By default, the useResponseCache plugin hooks into onParse and caches the original operation string in a WeakMap.
    * If you are hard overriding parse you need to set this function, otherwise responses will not be cached or served from the cache.
    * Defaults to `defaultGetDocumentStringFromContext`
    *
-   * @deprecated No longer being used in the next major version.
    */
   getDocumentStringFromContext?: GetDocumentStringFromContextFunction;
   /**
@@ -154,18 +152,13 @@ export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boo
 
   return true;
 };
-
-// @deprecated This will be removed in the next major
-export const defaultGetDocumentStringFromContext: GetDocumentStringFromContextFunction = context =>
-  context[rawDocumentStringSymbol as any] as any;
-
 const documentStringByDocument = new WeakMap<DocumentNode, string>();
 
-function getDocumentStringFromDocument(documentNode: DocumentNode) {
-  let documentString = documentStringByDocument.get(documentNode);
+export function defaultGetDocumentStringFromContext(_context: DefaultContext, args: ExecutionArgs): string {
+  let documentString = documentStringByDocument.get(args.document);
   if (!documentString) {
-    documentString = print(documentNode);
-    documentStringByDocument.set(documentNode, documentString);
+    documentString = print(args.document);
+    documentStringByDocument.set(args.document, documentString);
   }
   return documentString;
 }
@@ -181,7 +174,7 @@ export function useResponseCache({
   idFields = ['id'],
   invalidateViaMutation = true,
   buildResponseCacheKey = defaultBuildResponseCacheKey,
-  getDocumentStringFromContext,
+  getDocumentStringFromContext = defaultGetDocumentStringFromContext,
   shouldCacheResult = defaultShouldCacheResult,
   // eslint-disable-next-line dot-notation
   includeExtensionMetadata = typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false,
@@ -258,8 +251,11 @@ export function useResponseCache({
           },
         };
       }
+
+      // Return a document string even if the user provided function doesn't return a valid result.
       const documentString =
-        getDocumentStringFromContext?.(ctx.args.contextValue) ?? getDocumentStringFromDocument(ctx.args.document);
+        getDocumentStringFromContext(ctx.args.contextValue, ctx.args) ??
+        defaultGetDocumentStringFromContext(ctx.args.contextValue, ctx.args);
       const operationId = await buildResponseCacheKey({
         documentString,
         variableValues: ctx.args.variableValues,
