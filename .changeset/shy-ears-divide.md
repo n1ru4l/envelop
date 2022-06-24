@@ -1,5 +1,5 @@
 ---
-'@envelop/response-cache': patch
+'@envelop/response-cache': major
 ---
 
 ## Better document string storage by default
