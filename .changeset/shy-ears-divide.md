@@ -6,7 +6,13 @@
 
 Previously non parsed operation document was stored in the context with a symbol to be used "documentString" in the later. But this can be solved with a "WeakMap" so the modification in the context is no longer needed.
 
-## Replace `getDocumentStringFromContext` with `getDocumentString`
+# API Changes
+
+## NON-BREAKING CHANGE: `buildResponseCacheKey` also takes `contextValue` and more execution args
+
+Previously it wasn't possible to get `contextValue` from the `buildResponseCacheKey` function. Now you can get `contextValue`
+
+## BREAKING CHANGE: Replace `getDocumentStringFromContext` with `getDocumentString`
 
 However, some users might provide document directly to the execution without parsing it via `parse`. So in that case, we replaced the context parameter with the execution args including `document`, `variableValues` and `contextValue` to the new `getDocumentString`.
 
