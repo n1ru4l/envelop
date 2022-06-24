@@ -253,10 +253,8 @@ export function useResponseCache({
         };
       }
 
-      const documentString = getDocumentString(ctx.args);
-
       const operationId = await buildResponseCacheKey({
-        documentString,
+        documentString: getDocumentString(ctx.args),
         variableValues: ctx.args.variableValues,
         operationName: ctx.args.operationName,
         sessionId: session(ctx.args.contextValue),
