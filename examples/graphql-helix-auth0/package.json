@@ -10,7 +10,7 @@
     "@envelop/core": "*",
     "@envelop/auth0": "*",
     "graphql-helix": "1.8.3",
-    "@graphql-tools/schema": "8.0.1"
+    "@graphql-tools/schema": "8.5.0"
   },
   "devDependencies": {
     "@types/node": "15.6.1",
