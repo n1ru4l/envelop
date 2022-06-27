@@ -1,5 +1,5 @@
 ---
-'@envelop/sentry': major
+'@envelop/sentry': minor
 ---
 
 Added tracing for sentry
