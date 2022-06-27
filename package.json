@@ -27,7 +27,7 @@
     "postinstall": "patch-package",
     "lint": "eslint --config .eslintrc.json --ext .ts . --max-warnings 0",
     "prebuild": "rimraf packages/*/dist packages/plugins/*/dist",
-    "build": "tsc --project tsconfig.build.json && bob build",
+    "build": "bob build",
     "ts:check": "tsc --noEmit",
     "test": "jest",
     "test:ci": "jest --coverage",
@@ -54,7 +54,7 @@
     "@typescript-eslint/parser": "5.27.0",
     "apollo-server": "3.5.0",
     "benchmark": "2.1.4",
-    "bob-the-bundler": "1.6.1",
+    "bob-the-bundler": "2.0.0",
     "chalk": "5.0.1",
     "eslint": "8.17.0",
     "eslint-config-prettier": "8.5.0",
@@ -73,7 +73,7 @@
     "rimraf": "3.0.2",
     "ts-jest": "27.1.3",
     "ts-node": "10.7.0",
-    "typescript": "4.4.4",
+    "typescript": "4.7.4",
     "wait-on": "6.0.1"
   },
   "resolutions": {

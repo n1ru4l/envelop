@@ -1,6 +1,6 @@
 import { assertSingleExecutionValue, createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { GraphQLError, GraphQLSchema, validate, ValidationContext } from 'graphql';
-import { schema, query } from './common';
+import { schema, query } from './common.js';
 
 describe('validate', () => {
   it('Should call before validate and after validate correctly', async () => {

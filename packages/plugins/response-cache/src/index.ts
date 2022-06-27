@@ -1,3 +1,3 @@
-export * from './in-memory-cache';
-export * from './plugin';
-export * from './cache';
+export * from './in-memory-cache.js';
+export * from './plugin.js';
+export * from './cache.js';

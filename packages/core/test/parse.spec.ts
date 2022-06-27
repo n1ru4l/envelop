@@ -1,6 +1,6 @@
 import { assertSingleExecutionValue, createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { FieldNode, parse, visit } from 'graphql';
-import { schema, query } from './common';
+import { schema, query } from './common.js';
 
 describe('parse', () => {
   it('Should call before parse and after parse correctly', async () => {

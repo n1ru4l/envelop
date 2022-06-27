@@ -1,7 +1,7 @@
 import { parse } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { usePersistedOperations } from '../src';
+import { usePersistedOperations } from '../src/index.js';
 
 describe('usePersistedOperations', () => {
   const testSchema = makeExecutableSchema({
