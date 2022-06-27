@@ -1,6 +1,6 @@
 {
   "name": "@envelop/core",
-  "version": "2.3.3",
+  "version": "2.4.0",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -56,7 +56,7 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "@envelop/types": "2.2.1"
+    "@envelop/types": "2.3.0"
   },
   "devDependencies": {
     "@graphql-tools/utils": "8.8.0",
