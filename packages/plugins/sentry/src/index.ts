@@ -191,6 +191,14 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
           op,
           tags,
         });
+
+        if (!rootSpan) {
+          const error = [
+            `Could not create the root Sentry transaction for the GraphQL operation "${transactionName}".`,
+            `It's very likely that this is because you have not included the Sentry tracing SDK in your app's runtime before handling the request.`,
+          ];
+          throw new Error(error.join('\n'));
+        }
       } else {
         const scope = Sentry.getCurrentHub().getScope();
         const parentSpan = scope?.getSpan();
