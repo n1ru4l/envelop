@@ -1,5 +1,13 @@
 # @envelop/apollo-federation
 
+## 2.4.0
+
+### Minor Changes
+
+- 8bb2738: Support TypeScript module resolution.
+- Updated dependencies [8bb2738]
+  - @envelop/core@2.4.0
+
 ## 2.3.3
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @envelop/sentry
 
+## 3.5.0
+
+### Minor Changes
+
+- 8bb2738: Support TypeScript module resolution.
+- Updated dependencies [8bb2738]
+  - @envelop/core@2.4.0
+
+### Patch Changes
+
+- b1851eb: Create a more friendly error message in case the Sentry SDK is not properly configured.
+
 ## 3.4.2
 
 ### Patch Changes

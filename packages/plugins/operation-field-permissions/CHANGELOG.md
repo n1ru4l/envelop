@@ -1,5 +1,19 @@
 # @envelop/operation-field-permissions
 
+## 3.4.0
+
+### Minor Changes
+
+- 8bb2738: Support TypeScript module resolution.
+- Updated dependencies [8bb2738]
+  - @envelop/core@2.4.0
+
+### Patch Changes
+
+- 646de1e: remove unused code import statement
+- Updated dependencies [8bb2738]
+  - @envelop/extended-validation@1.7.0
+
 ## 3.3.4
 
 ### Patch Changes
