@@ -47,7 +47,7 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "apollo-server-errors": "3.3.0"
+    "apollo-server-errors": "^3.3.1"
   },
   "devDependencies": {
     "apollo-server-core": "3.5.0",

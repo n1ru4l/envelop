@@ -9,7 +9,7 @@
     "@envelop/core": "*",
     "firebase-admin": "9.9.0",
     "firebase-functions": "3.14.1",
-    "@graphql-tools/schema": "8.0.1"
+    "@graphql-tools/schema": "8.5.0"
   },
   "main": "lib/index.js",
   "devDependencies": {
