@@ -6,7 +6,7 @@ import {
   OnExecuteDoneHookResultOnNextHook,
 } from '@envelop/core';
 import * as Sentry from '@sentry/node';
-import type { Span } from '@sentry/types';
+import type { Span, TraceparentData } from '@sentry/types';
 import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
 
 export type SentryPluginOptions = {
@@ -61,6 +61,12 @@ export type SentryPluginOptions = {
    * @default operation's name or "Anonymous Operation" when missing)
    */
   transactionName?: (args: ExecutionArgs) => string;
+  /**
+   * Produces tracing data for Transaction
+   *
+   * @default is empty
+   */
+  traceparentData?: (args: ExecutionArgs) => TraceparentData | undefined;
   /**
    * Produces a "op" (operation) of created Span.
    *
@@ -174,6 +180,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
       const document = print(args.document);
       const opName = args.operationName || rootOperation.name?.value || 'Anonymous Operation';
       const addedTags: Record<string, any> = (options.appendTags && options.appendTags(args)) || {};
+      const traceparentData = (options.traceparentData && options.traceparentData(args)) || {};
 
       const transactionName = options.transactionName ? options.transactionName(args) : opName;
       const op = options.operationName ? options.operationName(args) : 'execute';
@@ -190,6 +197,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
           name: transactionName,
           op,
           tags,
+          ...(traceparentData || {}),
         });
 
         if (!rootSpan) {
