@@ -74,6 +74,20 @@ export type UseResponseCacheParameter<C = any> = {
    * Return `null` or `undefined` to mark the session as public/global.
    * Creates a global session by default.
    * @param context GraphQL Context
+   *
+   * **Global Example:**
+   * ```ts
+   * useResponseCache({
+   *   session: () => null,
+   * });
+   * ```
+   *
+   * **User Specific with global fallback example:**
+   * ```ts
+   * useResponseCache({
+   *   session: (context) => context.user?.id ?? null,
+   * });
+   * ```
    */
   session(context: C): string | undefined | null;
   /**
