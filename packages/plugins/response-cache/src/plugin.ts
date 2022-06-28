@@ -10,12 +10,12 @@ import {
   defaultFieldResolver,
   ExecutionArgs,
   ExecutionResult,
-  print,
 } from 'graphql';
 import jsonStableStringify from 'fast-json-stable-stringify';
 import type { Cache, CacheEntityRecord } from './cache.js';
 import { createInMemoryCache } from './in-memory-cache.js';
 import { hashSHA256 } from './hashSHA256.js';
+import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str.js';
 
 const contextSymbol = Symbol('responseCache');
 
@@ -153,17 +153,6 @@ export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boo
   return true;
 };
 
-const documentStringByDocument = new WeakMap<DocumentNode, string>();
-
-export function defaultGetDocumentString(executionArgs: ExecutionArgs): string {
-  let documentString = documentStringByDocument.get(executionArgs.document);
-  if (!documentString) {
-    documentString = print(executionArgs.document);
-    documentStringByDocument.set(executionArgs.document, documentString);
-  }
-  return documentString;
-}
-
 export function useResponseCache({
   cache = createInMemoryCache(),
   ttl: globalTtl = Infinity,
@@ -187,6 +176,11 @@ export function useResponseCache({
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
 
   return {
+    onPluginInit({ addPlugin }) {
+      if (getDocumentString === defaultGetDocumentString) {
+        addPlugin(useCacheDocumentString());
+      }
+    },
     onSchemaChange({ schema, replaceSchema }) {
       // @ts-expect-error See https://github.com/graphql/graphql-js/pull/3511 - remove this comments once merged
       if (schema.extensions?.[appliedTransform] === true) {
@@ -199,13 +193,6 @@ export function useResponseCache({
         [appliedTransform]: true,
       };
       replaceSchema(patchedSchema);
-    },
-    onParse({ params: { source } }) {
-      return function onParseEnd({ result }) {
-        if (result != null && !(result instanceof Error)) {
-          documentStringByDocument.set(result, source.toString());
-        }
-      };
     },
     async onExecute(ctx) {
       const identifier = new Map<string, CacheEntityRecord>();
