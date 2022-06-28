@@ -32,14 +32,16 @@ type Context = {
 /**
  * Function for building the response cache key based on the input parameters
  */
-export type BuildResponseCacheKeyFunction = (
-  params: {
-    /** Raw document string as sent from the client. */
-    documentString: string;
-    /** optional sessionId for make unique cache keys based on the session.  */
-    sessionId?: Maybe<string>;
-  } & ExecutionArgs
-) => Promise<string>;
+export type BuildResponseCacheKeyFunction = (params: {
+  /** Raw document string as sent from the client. */
+  documentString: string;
+  /** Variable values as sent form the client. */
+  variableValues: ExecutionArgs['variableValues'];
+  /** The name of the GraphQL operation that should be executed from within the document. */
+  operationName?: Maybe<string>;
+  /** optional sessionId for make unique cache keys based on the session.  */
+  sessionId?: Maybe<string>;
+}) => Promise<string>;
 
 export type GetDocumentStringFunction = (executionArgs: ExecutionArgs) => string;
 
@@ -253,8 +255,9 @@ export function useResponseCache({
 
       const operationId = await buildResponseCacheKey({
         documentString: getDocumentString(ctx.args),
+        variableValues: ctx.args.variableValues,
+        operationName: ctx.args.operationName,
         sessionId: session(ctx.args.contextValue),
-        ...ctx.args,
       });
 
       if ((enabled?.(ctx.args.contextValue) ?? true) === true) {
