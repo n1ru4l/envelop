@@ -40,7 +40,7 @@ export type BuildResponseCacheKeyFunction = (params: {
   /** The name of the GraphQL operation that should be executed from within the document. */
   operationName?: Maybe<string>;
   /** optional sessionId for make unique cache keys based on the session.  */
-  sessionId?: Maybe<string>;
+  sessionId: Maybe<string>;
 }) => Promise<string>;
 
 export type GetDocumentStringFunction = (executionArgs: ExecutionArgs) => string;
@@ -74,8 +74,22 @@ export type UseResponseCacheParameter<C = any> = {
    * Return `null` or `undefined` to mark the session as public/global.
    * Creates a global session by default.
    * @param context GraphQL Context
+   *
+   * **Global Example:**
+   * ```ts
+   * useResponseCache({
+   *   session: () => null,
+   * });
+   * ```
+   *
+   * **User Specific with global fallback example:**
+   * ```ts
+   * useResponseCache({
+   *   session: (context) => context.user?.id ?? null,
+   * });
+   * ```
    */
-  session?(context: C): string | undefined | null;
+  session(context: C): string | undefined | null;
   /**
    * Specify whether the cache should be used based on the context.
    * By default any request uses the cache.
@@ -156,7 +170,7 @@ export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boo
 export function useResponseCache({
   cache = createInMemoryCache(),
   ttl: globalTtl = Infinity,
-  session = () => null,
+  session,
   enabled,
   ignoredTypes = [],
   ttlPerType = {},
@@ -168,7 +182,7 @@ export function useResponseCache({
   shouldCacheResult = defaultShouldCacheResult,
   // eslint-disable-next-line dot-notation
   includeExtensionMetadata = typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false,
-}: UseResponseCacheParameter = {}): Plugin {
+}: UseResponseCacheParameter): Plugin {
   const appliedTransform = Symbol('responseCache.appliedTransform');
   const ignoredTypesMap = new Set<string>(ignoredTypes);
 

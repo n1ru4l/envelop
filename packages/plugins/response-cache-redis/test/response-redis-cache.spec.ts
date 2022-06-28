@@ -73,7 +73,7 @@ describe('useResponseCache with Redis cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -151,7 +151,7 @@ describe('useResponseCache with Redis cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -246,7 +246,7 @@ describe('useResponseCache with Redis cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -380,7 +380,7 @@ describe('useResponseCache with Redis cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -493,7 +493,10 @@ describe('useResponseCache with Redis cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache, includeExtensionMetadata: true })], schema);
+    const testInstance = createTestkit(
+      [useResponseCache({ session: () => null, cache, includeExtensionMetadata: true })],
+      schema
+    );
 
     const query = /* GraphQL */ `
       query test {
@@ -596,7 +599,10 @@ describe('useResponseCache with Redis cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache, includeExtensionMetadata: true })], schema);
+    const testInstance = createTestkit(
+      [useResponseCache({ session: () => null, cache, includeExtensionMetadata: true })],
+      schema
+    );
 
     const result = await testInstance.execute(
       /* GraphQL */ `
@@ -673,7 +679,7 @@ describe('useResponseCache with Redis cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
 
     const query = /* GraphQL */ `
       query test($limit: Int!) {
@@ -756,7 +762,7 @@ describe('useResponseCache with Redis cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache, ttl: 100 })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache, ttl: 100 })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -942,7 +948,7 @@ describe('useResponseCache with Redis cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache, ignoredTypes: ['Comment'] })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache, ignoredTypes: ['Comment'] })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -1031,6 +1037,7 @@ describe('useResponseCache with Redis cache', () => {
     const testInstance = createTestkit(
       [
         useResponseCache({
+          session: () => null,
           cache,
           ttl: 500,
           ttlPerType: {
@@ -1121,6 +1128,7 @@ describe('useResponseCache with Redis cache', () => {
     const testInstance = createTestkit(
       [
         useResponseCache({
+          session: () => null,
           cache,
           ttl: 500,
           ttlPerSchemaCoordinate: {

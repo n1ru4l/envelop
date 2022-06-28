@@ -22,6 +22,7 @@ describe('useResponseCache', () => {
     const testInstance = createTestkit(
       [
         useResponseCache({
+          session: () => null,
           ttl: 0,
           ttlPerType: {
             User: 200,
@@ -96,6 +97,7 @@ describe('useResponseCache', () => {
     const testInstance = createTestkit(
       [
         useResponseCache({
+          session: () => null,
           ttl: 0,
           ttlPerType: {
             User: 200,
@@ -170,7 +172,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({})], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -249,7 +251,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ includeExtensionMetadata: true })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, includeExtensionMetadata: true })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -353,7 +355,16 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ includeExtensionMetadata: true }), useGraphQlJit()], schema);
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+          includeExtensionMetadata: true,
+        }),
+        useGraphQlJit(),
+      ],
+      schema
+    );
 
     const query = /* GraphQL */ `
       query test {
@@ -457,7 +468,7 @@ describe('useResponseCache', () => {
     });
 
     const cache = createInMemoryCache();
-    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -542,7 +553,7 @@ describe('useResponseCache', () => {
     });
 
     const cache = createInMemoryCache();
-    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -618,7 +629,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({})], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null })], schema);
 
     const query = /* GraphQL */ `
       query it($limit: Int!) {
@@ -691,14 +702,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit(
-      [
-        useResponseCache({
-          ttl: 100,
-        }),
-      ],
-      schema
-    );
+    const testInstance = createTestkit([useResponseCache({ session: () => null, ttl: 100 })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -871,14 +875,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit(
-      [
-        useResponseCache({
-          ignoredTypes: ['Comment'],
-        }),
-      ],
-      schema
-    );
+    const testInstance = createTestkit([useResponseCache({ session: () => null, ignoredTypes: ['Comment'] })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -951,6 +948,7 @@ describe('useResponseCache', () => {
     const testInstance = createTestkit(
       [
         useResponseCache({
+          session: () => null,
           ttl: 500,
           ttlPerType: {
             User: 200,
@@ -1034,6 +1032,7 @@ describe('useResponseCache', () => {
     const testInstance = createTestkit(
       [
         useResponseCache({
+          session: () => null,
           ttl: 500,
           ttlPerSchemaCoordinate: {
             'Query.users': 200,
@@ -1113,14 +1112,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit(
-      [
-        useResponseCache({
-          ttl: 0,
-        }),
-      ],
-      schema
-    );
+    const testInstance = createTestkit([useResponseCache({ session: () => null, ttl: 0 })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -1226,6 +1218,7 @@ describe('useResponseCache', () => {
     const testInstance = createTestkit(
       [
         useResponseCache({
+          session: () => null,
           ttl: 1,
           ttlPerSchemaCoordinate: {
             'Query.users': 200,
@@ -1343,6 +1336,7 @@ describe('useResponseCache', () => {
     const testInstance = createTestkit(
       [
         useResponseCache({
+          session: () => null,
           ttl: 0,
           ttlPerType: {
             User: 200,
@@ -1421,7 +1415,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({})], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -1464,6 +1458,7 @@ describe('useResponseCache', () => {
     const testInstance = createTestkit(
       [
         useResponseCache({
+          session: () => null,
           // cache any query execution result
           shouldCacheResult: () => true,
         }),
@@ -1552,7 +1547,7 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ includeExtensionMetadata: true })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, includeExtensionMetadata: true })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -1628,7 +1623,7 @@ describe('useResponseCache', () => {
     };
 
     const cache = createInMemoryCache();
-    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
 
     // after each execution the introspectionCounter should be incremented by 1
     // as we never cache the introspection
@@ -1678,7 +1673,7 @@ describe('useResponseCache', () => {
 
     const cache = createInMemoryCache();
     const testInstance = createTestkit(
-      [useResponseCache({ cache, ttlPerSchemaCoordinate: { 'Query.__schema': undefined } })],
+      [useResponseCache({ session: () => null, cache, ttlPerSchemaCoordinate: { 'Query.__schema': undefined } })],
       schema
     );
 
@@ -1716,7 +1711,7 @@ describe('useResponseCache', () => {
     });
 
     const cache = createInMemoryCache();
-    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -1730,7 +1725,7 @@ describe('useResponseCache', () => {
     await testInstance.execute(query);
     expect(usersResolverInvocationCount).toEqual(1);
 
-    const testInstance2 = createTestkit([useResponseCache({ cache })], schema);
+    const testInstance2 = createTestkit([useResponseCache({ session: () => null, cache })], schema);
     await testInstance2.execute(query);
     expect(usersResolverInvocationCount).toEqual(2);
   });
@@ -1746,7 +1741,7 @@ describe('useResponseCache', () => {
       `,
       resolvers: { Query: { foo: () => void mockFn() || 'hi' } },
     });
-    const testkit = createTestkit([useValidationCache(), useResponseCache(), useParserCache()], schema);
+    const testkit = createTestkit([useValidationCache(), useResponseCache({ session: () => null }), useParserCache()], schema);
 
     const document = /* GraphQL */ `
       query {
@@ -1788,7 +1783,7 @@ describe('useResponseCache', () => {
         useLogger({
           logFn: eventName => void logs.push(eventName),
         }),
-        useResponseCache({ ttlPerSchemaCoordinate: { 'Query.foo': Infinity } }),
+        useResponseCache({ session: () => null, ttlPerSchemaCoordinate: { 'Query.foo': Infinity } }),
       ],
       schema
     );

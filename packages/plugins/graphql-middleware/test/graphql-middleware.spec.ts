@@ -19,6 +19,7 @@ describe('useGraphQlJit', () => {
     const testkit = createTestkit(
       [
         useResponseCache({
+          session: () => null,
           ttl: 2000,
           includeExtensionMetadata: true,
         }),
