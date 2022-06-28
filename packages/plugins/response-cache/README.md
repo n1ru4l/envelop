@@ -44,7 +44,10 @@ import { useResponseCache } from '@envelop/response-cache';
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useResponseCache(),
+    useResponseCache({
+      // use global cache for all operations
+      session: () => null,
+    }),
   ],
 });
 ```
@@ -61,11 +64,30 @@ const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useResponseCache({ cache }),
+    session: () => null, // use global cache for all operations
   ],
 });
 ```
 
 > Note: The in-memory LRU cache is not suitable for serverless deployments. Instead, consider the Redis cache provided by `@envelop/response-cache-redis`.
+
+### Cache based on session/user
+
+```ts
+import { envelop } from '@envelop/core';
+import { useResponseCache } from '@envelop/response-cache';
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useResponseCache({
+      ttl: 2000,
+      // context is the GraphQL context used for execution
+      session: context => String(context.user?.id),
+    }),
+  ],
+});
+```
 
 ### Redis Cache
 
@@ -93,14 +115,17 @@ const redis = new Redis({
   password: '1234567890',
 });
 
-const redis = new Redis("rediss://:1234567890@my-redis-db.example.com:30652");
+const redis = new Redis('rediss://:1234567890@my-redis-db.example.com:30652');
 
 const cache = createRedisCache({ redis });
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useResponseCache({ cache }),
+    useResponseCache({
+      cache,
+      session: () => null, // use global cache for all operations
+    }),
   ],
 });
 ```
@@ -120,6 +145,7 @@ const getEnveloped = envelop({
     // ... other plugins ...
     useResponseCache({
       ttl: 2000, // cached execution results become stale after 2 seconds
+      session: () => null, // use global cache for all operations
     }),
   ],
 });
@@ -167,24 +193,6 @@ const getEnveloped = envelop({
 });
 ```
 
-### Cache based on session/user
-
-```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
-
-const getEnveloped = envelop({
-  plugins: [
-    // ... other plugins ...
-    useResponseCache({
-      ttl: 2000,
-      // context is the GraphQL context used for execution
-      session: context => String(context.user?.id),
-    }),
-  ],
-});
-```
-
 ### Disable cache based on session/user
 
 ```ts
@@ -198,6 +206,7 @@ const getEnveloped = envelop({
       ttl: 2000,
       // context is the GraphQL context used for execution
       enabled: context => context.user?.role !== 'admin',
+      session: () => null,
     }),
   ],
 });
@@ -231,6 +240,7 @@ const getEnveloped = envelop({
     // ... other plugins ...
     useResponseCache({
       shouldCacheResult = myCustomShouldCacheResult,
+      session: () => null,
     }),
   ],
 });
@@ -253,6 +263,7 @@ const getEnveloped = envelop({
       ttlPerSchemaCoordinate: {
         'Query.__schema': undefined, // cache infinitely
       },
+      session: () => null,
     }),
   ],
 });
@@ -271,6 +282,7 @@ const getEnveloped = envelop({
       ttlPerSchemaCoordinate: {
         'Query.__schema': 10_000, // cache for 10 seconds
       },
+      session: () => null,
     }),
   ],
 });
@@ -287,6 +299,7 @@ const getEnveloped = envelop({
     // ... other plugins ...
     useResponseCache({
       ttl: 2000, // cached execution results become stale after 2 seconds
+      session: () => null,
     }),
   ],
 });
@@ -305,6 +318,7 @@ const getEnveloped = envelop({
       ttl: 2000,
       // use the `_id` instead of `id` field.
       idFields: ['_id'],
+      session: () => null,
     }),
   ],
 });
@@ -323,6 +337,7 @@ const getEnveloped = envelop({
       ttl: 2000,
       // some might prefer invalidating based on a database write log
       invalidateViaMutation: false,
+      session: () => null,
     }),
   ],
 });
@@ -345,6 +360,7 @@ const getEnveloped = envelop({
       ttl: 2000,
       // we pass the cache instance to the request.
       cache,
+      session: () => null,
     }),
   ],
 });
@@ -379,6 +395,7 @@ const getEnveloped = envelop({
       ttl: 2000,
       // we pass the cache instance to the request.
       cache,
+      session: () => null,
     }),
   ],
 });
@@ -395,6 +412,7 @@ const getEnveloped = envelop({
     useResponseCache({
       ttl: 2000,
       includeExtensionMetadata: true,
+      session: () => null,
     }),
   ],
 });
