@@ -1,13 +1,14 @@
 import { Plugin, Maybe, isAsyncIterable } from '@envelop/core';
 import { visitResult } from '@graphql-tools/utils';
 import {
-  DocumentNode,
-  OperationDefinitionNode,
   visit,
   TypeInfo,
   visitWithTypeInfo,
   ExecutionArgs,
   ExecutionResult,
+  getOperationAST,
+  Kind,
+  SelectionSetNode,
 } from 'graphql';
 import jsonStableStringify from 'fast-json-stable-stringify';
 import type { Cache, CacheEntityRecord } from './cache.js';
@@ -181,13 +182,43 @@ export function useResponseCache({
       }
     },
     async onExecute(onExecuteParams) {
+      let documentChanged = false;
+      const newDocument = visit(onExecuteParams.args.document, {
+        SelectionSet(node): SelectionSetNode {
+          if (!node.selections.some(selection => selection.kind === Kind.FIELD && selection.name.value === '__typename')) {
+            documentChanged = true;
+            return {
+              ...node,
+              selections: [
+                {
+                  kind: Kind.FIELD,
+                  name: {
+                    kind: Kind.NAME,
+                    value: '__typename',
+                  },
+                },
+                ...node.selections,
+              ],
+            };
+          }
+          return node;
+        },
+      });
+      if (documentChanged) {
+        onExecuteParams.setExecuteFn(function typeNameAddedExecute() {
+          return onExecuteParams.executeFn({
+            ...onExecuteParams.args,
+            document: newDocument,
+          });
+        });
+      }
       const identifier = new Map<string, CacheEntityRecord>();
       const types = new Set<string>();
 
       let currentTtl: number | undefined;
       let skip = false;
 
-      const processResult = (result: ExecutionResult) => {
+      const processResult = (result: ExecutionResult): ExecutionResult =>
         visitResult(
           result,
           {
@@ -202,12 +233,27 @@ export function useResponseCache({
             {},
             {
               get(_, typename: string) {
+                let typenameCalled = 0;
                 return new Proxy((val: any) => val, {
                   // Needed for leaf values
                   apply(_, __, [val]) {
                     return val;
                   },
                   get(_, fieldName: string) {
+                    if (documentChanged) {
+                      if (fieldName === '__typename') {
+                        typenameCalled++;
+                      }
+                      if (fieldName === '__leave') {
+                        // When typename is defined in the selection set, it calls it twice.
+                        if (typenameCalled < 2) {
+                          return (root: any) => {
+                            delete root.__typename;
+                            return root;
+                          };
+                        }
+                      }
+                    }
                     if (idFields.includes(fieldName)) {
                       if (ignoredTypesMap.has(typename)) {
                         skip = true;
@@ -231,9 +277,10 @@ export function useResponseCache({
             }
           )
         );
-      };
 
-      if (invalidateViaMutation !== false && isMutation(onExecuteParams.args.document)) {
+      const operationAST = getOperationAST(onExecuteParams.args.document, onExecuteParams.args.operationName);
+
+      if (invalidateViaMutation !== false && operationAST?.operation === 'mutation') {
         return {
           onExecuteDone({ result, setResult }) {
             if (isAsyncIterable(result)) {
@@ -242,14 +289,14 @@ export function useResponseCache({
               return;
             }
 
-            processResult(result);
+            const processedResult = processResult(result);
 
             cache.invalidate(identifier.values());
             if (includeExtensionMetadata) {
               setResult({
-                ...result,
+                ...processedResult,
                 extensions: {
-                  ...result.extensions,
+                  ...processedResult.extensions,
                   responseCache: {
                     invalidatedEntities: Array.from(identifier.values()),
                   },
@@ -314,13 +361,13 @@ export function useResponseCache({
             return;
           }
 
-          processResult(result);
+          const processedResult = processResult(result);
 
           if (skip) {
             return;
           }
 
-          if (!shouldCacheResult({ result })) {
+          if (!shouldCacheResult({ result: processedResult })) {
             return;
           }
 
@@ -330,7 +377,7 @@ export function useResponseCache({
           if (finalTtl === 0) {
             if (includeExtensionMetadata) {
               setResult({
-                ...result,
+                ...processedResult,
                 extensions: {
                   responseCache: {
                     hit: false,
@@ -342,10 +389,10 @@ export function useResponseCache({
             return;
           }
 
-          cache.set(operationId, result, identifier.values(), finalTtl);
+          cache.set(operationId, processedResult, identifier.values(), finalTtl);
           if (includeExtensionMetadata) {
             setResult({
-              ...result,
+              ...processedResult,
               extensions: {
                 responseCache: {
                   hit: false,
@@ -361,17 +408,9 @@ export function useResponseCache({
   };
 }
 
-function isOperationDefinition(node: any): node is OperationDefinitionNode {
-  return node?.kind === 'OperationDefinition';
-}
-
 function calculateTtl(typeTtl: number, currentTtl: number | undefined): number {
   if (typeof currentTtl === 'number') {
     return Math.min(currentTtl, typeTtl);
   }
   return typeTtl;
-}
-
-function isMutation(doc: DocumentNode) {
-  return doc.definitions.find(isOperationDefinition)!.operation === 'mutation';
 }
