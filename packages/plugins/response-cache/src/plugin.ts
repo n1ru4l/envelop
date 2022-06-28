@@ -235,7 +235,8 @@ export function useResponseCache({
               get(_, typename: string) {
                 let typenameCalled = 0;
                 return new Proxy((val: any) => val, {
-                  // Needed for leaf values
+                  // Needed for leaf values such as scalars, enums etc
+                  // They don't have fields so visitResult expects functions for those
                   apply(_, __, [val]) {
                     return val;
                   },
@@ -245,7 +246,15 @@ export function useResponseCache({
                         typenameCalled++;
                       }
                       if (fieldName === '__leave') {
-                        // When typename is defined in the selection set, it calls it twice.
+                        /**
+                         * The visitResult function is called for each field in the selection set.
+                         * But visitResult function looks for __typename field visitor even if it is not there in the document
+                         * So it calls __typename field visitor twice if it is also in the selection set.
+                         * That's why we need to count the number of times it is called.
+                         *
+                         * Default call of __typename https://github.com/ardatan/graphql-tools/blob/master/packages/utils/src/visitResult.ts#L277
+                         * Call for the field node https://github.com/ardatan/graphql-tools/blob/master/packages/utils/src/visitResult.ts#L272
+                         */
                         if (typenameCalled < 2) {
                           return (root: any) => {
                             delete root.__typename;
