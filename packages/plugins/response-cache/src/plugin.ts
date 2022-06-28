@@ -1,4 +1,4 @@
-import { Plugin, Maybe, DefaultContext, PromiseOrValue, isAsyncIterable } from '@envelop/core';
+import { Plugin, Maybe, PromiseOrValue, isAsyncIterable } from '@envelop/core';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   DocumentNode,
@@ -15,9 +15,9 @@ import jsonStableStringify from 'fast-json-stable-stringify';
 import type { Cache, CacheEntityRecord } from './cache.js';
 import { createInMemoryCache } from './in-memory-cache.js';
 import { hashSHA256 } from './hashSHA256.js';
+import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str.js';
 
 const contextSymbol = Symbol('responseCache');
-const rawDocumentStringSymbol = Symbol('rawDocumentString');
 
 type Context = {
   identifier: Map<string, CacheEntityRecord>;
@@ -43,7 +43,7 @@ export type BuildResponseCacheKeyFunction = (params: {
   sessionId?: Maybe<string>;
 }) => Promise<string>;
 
-export type GetDocumentStringFromContextFunction = (params: DefaultContext) => Maybe<string>;
+export type GetDocumentStringFunction = (executionArgs: ExecutionArgs) => string;
 
 export type ShouldCacheResultFunction = (params: { result: ExecutionResult }) => Boolean;
 
@@ -101,12 +101,13 @@ export type UseResponseCacheParameter<C = any> = {
    */
   buildResponseCacheKey?: BuildResponseCacheKeyFunction;
   /**
-   * Function used for reading the document string that is used for building the response cache key from the context object.
-   * By default, the useResponseCache plugin hooks into onParse and writes the original operation string to the context.
+   * Function used for reading the document string that is used for building the response cache key from the execution arguments.
+   * By default, the useResponseCache plugin hooks into onParse and caches the original operation string in a WeakMap.
    * If you are hard overriding parse you need to set this function, otherwise responses will not be cached or served from the cache.
-   * Defaults to `defaultGetDocumentStringFromContext`
+   * Defaults to `defaultGetDocumentString`
+   *
    */
-  getDocumentStringFromContext?: GetDocumentStringFromContextFunction;
+  getDocumentString?: GetDocumentStringFunction;
   /**
    * Include extension values that provide useful information, such as whether the cache was hit or which resources a mutation invalidated.
    * Defaults to `true` if `process.env["NODE_ENV"]` is set to `"development"`, otherwise `false`.
@@ -152,9 +153,6 @@ export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boo
   return true;
 };
 
-export const defaultGetDocumentStringFromContext: GetDocumentStringFromContextFunction = context =>
-  context[rawDocumentStringSymbol as any] as any;
-
 export function useResponseCache({
   cache = createInMemoryCache(),
   ttl: globalTtl = Infinity,
@@ -166,7 +164,7 @@ export function useResponseCache({
   idFields = ['id'],
   invalidateViaMutation = true,
   buildResponseCacheKey = defaultBuildResponseCacheKey,
-  getDocumentStringFromContext = defaultGetDocumentStringFromContext,
+  getDocumentString = defaultGetDocumentString,
   shouldCacheResult = defaultShouldCacheResult,
   // eslint-disable-next-line dot-notation
   includeExtensionMetadata = typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false,
@@ -178,6 +176,11 @@ export function useResponseCache({
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
 
   return {
+    onPluginInit({ addPlugin }) {
+      if (getDocumentString === defaultGetDocumentString) {
+        addPlugin(useCacheDocumentString());
+      }
+    },
     onSchemaChange({ schema, replaceSchema }) {
       // @ts-expect-error See https://github.com/graphql/graphql-js/pull/3511 - remove this comments once merged
       if (schema.extensions?.[appliedTransform] === true) {
@@ -190,18 +193,6 @@ export function useResponseCache({
         [appliedTransform]: true,
       };
       replaceSchema(patchedSchema);
-    },
-    onParse(parseCtx) {
-      return function onParseEnd(ctx) {
-        if (ctx.result && 'kind' in ctx.result) {
-          const source = parseCtx.params.source;
-
-          const rawDocumentString = typeof source === 'string' ? source : source.body;
-          ctx.extendContext({
-            [rawDocumentStringSymbol]: rawDocumentString,
-          });
-        }
-      };
     },
     async onExecute(ctx) {
       const identifier = new Map<string, CacheEntityRecord>();
@@ -248,110 +239,102 @@ export function useResponseCache({
           },
         };
       }
-      const documentString = getDocumentStringFromContext(ctx.args.contextValue);
-      if (documentString != null) {
-        const operationId = await buildResponseCacheKey({
-          documentString,
-          variableValues: ctx.args.variableValues,
-          operationName: ctx.args.operationName,
-          sessionId: session(ctx.args.contextValue),
-        });
 
-        if ((enabled?.(ctx.args.contextValue) ?? true) === true) {
-          const cachedResponse = await cache.get(operationId);
+      const operationId = await buildResponseCacheKey({
+        documentString: getDocumentString(ctx.args),
+        variableValues: ctx.args.variableValues,
+        operationName: ctx.args.operationName,
+        sessionId: session(ctx.args.contextValue),
+      });
 
-          if (cachedResponse != null) {
-            if (includeExtensionMetadata) {
-              ctx.setResultAndStopExecution({
-                ...cachedResponse,
-                extensions: {
-                  responseCache: {
-                    hit: true,
-                  },
+      if ((enabled?.(ctx.args.contextValue) ?? true) === true) {
+        const cachedResponse = await cache.get(operationId);
+
+        if (cachedResponse != null) {
+          if (includeExtensionMetadata) {
+            ctx.setResultAndStopExecution({
+              ...cachedResponse,
+              extensions: {
+                responseCache: {
+                  hit: true,
                 },
-              });
-            } else {
-              ctx.setResultAndStopExecution(cachedResponse);
-            }
+              },
+            });
+          } else {
+            ctx.setResultAndStopExecution(cachedResponse);
+          }
+          return;
+        }
+      }
+
+      if (ttlPerSchemaCoordinate) {
+        const typeInfo = new TypeInfo(ctx.args.schema);
+        visit(
+          ctx.args.document,
+          visitWithTypeInfo(typeInfo, {
+            Field(fieldNode) {
+              const parentType = typeInfo.getParentType();
+              if (parentType) {
+                const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
+                const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate];
+                if (maybeTtl !== undefined) {
+                  context.currentTtl = calculateTtl(maybeTtl, context.currentTtl);
+                }
+              }
+            },
+          })
+        );
+      }
+
+      return {
+        onExecuteDone({ result, setResult }) {
+          if (isAsyncIterable(result)) {
+            // eslint-disable-next-line no-console
+            console.warn('[useResponseCache] AsyncIterable returned from execute is currently unsupported.');
             return;
           }
-        }
 
-        if (ttlPerSchemaCoordinate) {
-          const typeInfo = new TypeInfo(ctx.args.schema);
-          visit(
-            ctx.args.document,
-            visitWithTypeInfo(typeInfo, {
-              Field(fieldNode) {
-                const parentType = typeInfo.getParentType();
-                if (parentType) {
-                  const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
-                  const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate];
-                  if (maybeTtl !== undefined) {
-                    context.currentTtl = calculateTtl(maybeTtl, context.currentTtl);
-                  }
-                }
-              },
-            })
-          );
-        }
+          if (context.skip) {
+            return;
+          }
 
-        return {
-          onExecuteDone({ result, setResult }) {
-            if (isAsyncIterable(result)) {
-              // eslint-disable-next-line no-console
-              console.warn('[useResponseCache] AsyncIterable returned from execute is currently unsupported.');
-              return;
-            }
+          if (!shouldCacheResult({ result })) {
+            return;
+          }
 
-            if (context.skip) {
-              return;
-            }
+          // we only use the global ttl if no currentTtl has been determined.
+          const finalTtl = context.currentTtl ?? globalTtl;
 
-            if (!shouldCacheResult({ result })) {
-              return;
-            }
-
-            // we only use the global ttl if no currentTtl has been determined.
-            const finalTtl = context.currentTtl ?? globalTtl;
-
-            if (finalTtl === 0) {
-              if (includeExtensionMetadata) {
-                setResult({
-                  ...result,
-                  extensions: {
-                    responseCache: {
-                      hit: false,
-                      didCache: false,
-                    },
-                  },
-                });
-              }
-              return;
-            }
-
-            cache.set(operationId, result, identifier.values(), finalTtl);
+          if (finalTtl === 0) {
             if (includeExtensionMetadata) {
               setResult({
                 ...result,
                 extensions: {
                   responseCache: {
                     hit: false,
-                    didCache: true,
-                    ttl: finalTtl,
+                    didCache: false,
                   },
                 },
               });
             }
-          },
-        };
-      }
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[useResponseCache] Failed extracting document string from the context. The response will not be cached or served from the cache. ` +
-          `If you are overriding the 'parse' behavior make sure to pass a custom 'getDocumentStringFromContext' function for getting the document string, which is required for building the response cache key.`
-      );
-      return undefined;
+            return;
+          }
+
+          cache.set(operationId, result, identifier.values(), finalTtl);
+          if (includeExtensionMetadata) {
+            setResult({
+              ...result,
+              extensions: {
+                responseCache: {
+                  hit: false,
+                  didCache: true,
+                  ttl: finalTtl,
+                },
+              },
+            });
+          }
+        },
+      };
     },
   };
 }
