@@ -13,7 +13,7 @@ import {
 import jsonStableStringify from 'fast-json-stable-stringify';
 import type { Cache, CacheEntityRecord } from './cache.js';
 import { createInMemoryCache } from './in-memory-cache.js';
-import { hashSHA256 } from './hashSHA256.js';
+import { hashSHA256 } from './hash-sha256.js';
 import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str.js';
 
 /**
