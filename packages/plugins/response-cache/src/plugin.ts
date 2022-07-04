@@ -1,33 +1,20 @@
-import { Plugin, Maybe, PromiseOrValue, isAsyncIterable } from '@envelop/core';
-import { MapperKind, mapSchema } from '@graphql-tools/utils';
+import { Plugin, Maybe, isAsyncIterable } from '@envelop/core';
+import { visitResult } from '@graphql-tools/utils';
 import {
-  DocumentNode,
-  OperationDefinitionNode,
   visit,
   TypeInfo,
   visitWithTypeInfo,
-  GraphQLSchema,
-  defaultFieldResolver,
   ExecutionArgs,
   ExecutionResult,
+  getOperationAST,
+  Kind,
+  SelectionSetNode,
 } from 'graphql';
 import jsonStableStringify from 'fast-json-stable-stringify';
 import type { Cache, CacheEntityRecord } from './cache.js';
 import { createInMemoryCache } from './in-memory-cache.js';
 import { hashSHA256 } from './hashSHA256.js';
 import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str.js';
-
-const contextSymbol = Symbol('responseCache');
-
-type Context = {
-  identifier: Map<string, CacheEntityRecord>;
-  types: Set<string>;
-  /** The current ttl computed for this operation. */
-  currentTtl: number | undefined;
-  ttlPerType: Record<string, number>;
-  ignoredTypesMap: Set<string>;
-  skip: boolean;
-};
 
 /**
  * Function for building the response cache key based on the input parameters
@@ -183,7 +170,6 @@ export function useResponseCache({
   // eslint-disable-next-line dot-notation
   includeExtensionMetadata = typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false,
 }: UseResponseCacheParameter): Plugin {
-  const appliedTransform = Symbol('responseCache.appliedTransform');
   const ignoredTypesMap = new Set<string>(ignoredTypes);
 
   // never cache Introspections
@@ -195,41 +181,115 @@ export function useResponseCache({
         addPlugin(useCacheDocumentString());
       }
     },
-    onSchemaChange({ schema, replaceSchema }) {
-      // @ts-expect-error See https://github.com/graphql/graphql-js/pull/3511 - remove this comments once merged
-      if (schema.extensions?.[appliedTransform] === true) {
-        return;
+    async onExecute(onExecuteParams) {
+      let documentChanged = false;
+      const newDocument = visit(onExecuteParams.args.document, {
+        SelectionSet(node): SelectionSetNode {
+          if (!node.selections.some(selection => selection.kind === Kind.FIELD && selection.name.value === '__typename')) {
+            documentChanged = true;
+            return {
+              ...node,
+              selections: [
+                {
+                  kind: Kind.FIELD,
+                  name: {
+                    kind: Kind.NAME,
+                    value: '__typename',
+                  },
+                },
+                ...node.selections,
+              ],
+            };
+          }
+          return node;
+        },
+      });
+      if (documentChanged) {
+        onExecuteParams.setExecuteFn(function typeNameAddedExecute() {
+          return onExecuteParams.executeFn({
+            ...onExecuteParams.args,
+            document: newDocument,
+          });
+        });
       }
-
-      const patchedSchema = applyResponseCacheLogic(schema, idFields);
-      patchedSchema.extensions = {
-        ...patchedSchema.extensions,
-        [appliedTransform]: true,
-      };
-      replaceSchema(patchedSchema);
-    },
-    async onExecute(ctx) {
       const identifier = new Map<string, CacheEntityRecord>();
       const types = new Set<string>();
 
-      const context: Context = {
-        identifier,
-        types,
-        currentTtl: undefined,
-        ttlPerType,
-        ignoredTypesMap,
-        skip: false,
-      };
+      let currentTtl: number | undefined;
+      let skip = false;
 
-      ctx.extendContext({
-        [contextSymbol]: context,
-      });
+      const processResult = (result: ExecutionResult): ExecutionResult =>
+        visitResult(
+          result,
+          {
+            document: onExecuteParams.args.document,
+            variables: onExecuteParams.args.variableValues as any,
+            operationName: onExecuteParams.args.operationName ?? undefined,
+            rootValue: onExecuteParams.args.rootValue,
+            context: onExecuteParams.args.contextValue,
+          },
+          onExecuteParams.args.schema,
+          new Proxy(
+            {},
+            {
+              get(_, typename: string) {
+                let typenameCalled = 0;
+                return new Proxy((val: any) => val, {
+                  // Needed for leaf values such as scalars, enums etc
+                  // They don't have fields so visitResult expects functions for those
+                  apply(_, __, [val]) {
+                    return val;
+                  },
+                  get(_, fieldName: string) {
+                    if (documentChanged) {
+                      if (fieldName === '__typename') {
+                        typenameCalled++;
+                      }
+                      if (fieldName === '__leave') {
+                        /**
+                         * The visitResult function is called for each field in the selection set.
+                         * But visitResult function looks for __typename field visitor even if it is not there in the document
+                         * So it calls __typename field visitor twice if it is also in the selection set.
+                         * That's why we need to count the number of times it is called.
+                         *
+                         * Default call of __typename https://github.com/ardatan/graphql-tools/blob/master/packages/utils/src/visitResult.ts#L277
+                         * Call for the field node https://github.com/ardatan/graphql-tools/blob/master/packages/utils/src/visitResult.ts#L272
+                         */
+                        if (typenameCalled < 2) {
+                          return (root: any) => {
+                            delete root.__typename;
+                            return root;
+                          };
+                        }
+                      }
+                    }
+                    if (idFields.includes(fieldName)) {
+                      if (ignoredTypesMap.has(typename)) {
+                        skip = true;
+                      }
+                      if (skip === true) {
+                        return;
+                      }
+                      return (id: string) => {
+                        identifier.set(`${typename}:${id}`, { typename, id });
+                        types.add(typename);
+                        if (typename in ttlPerType) {
+                          currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
+                        }
+                        return id;
+                      };
+                    }
+                    return undefined;
+                  },
+                });
+              },
+            }
+          )
+        );
 
-      if (isMutation(ctx.args.document)) {
-        if (invalidateViaMutation === false) {
-          return;
-        }
+      const operationAST = getOperationAST(onExecuteParams.args.document, onExecuteParams.args.operationName);
 
+      if (invalidateViaMutation !== false && operationAST?.operation === 'mutation') {
         return {
           onExecuteDone({ result, setResult }) {
             if (isAsyncIterable(result)) {
@@ -238,14 +298,16 @@ export function useResponseCache({
               return;
             }
 
-            cache.invalidate(context.identifier.values());
+            const processedResult = processResult(result);
+
+            cache.invalidate(identifier.values());
             if (includeExtensionMetadata) {
               setResult({
-                ...result,
+                ...processedResult,
                 extensions: {
-                  ...result.extensions,
+                  ...processedResult.extensions,
                   responseCache: {
-                    invalidatedEntities: Array.from(context.identifier.values()),
+                    invalidatedEntities: Array.from(identifier.values()),
                   },
                 },
               });
@@ -255,18 +317,18 @@ export function useResponseCache({
       }
 
       const operationId = await buildResponseCacheKey({
-        documentString: getDocumentString(ctx.args),
-        variableValues: ctx.args.variableValues,
-        operationName: ctx.args.operationName,
-        sessionId: session(ctx.args.contextValue),
+        documentString: getDocumentString(onExecuteParams.args),
+        variableValues: onExecuteParams.args.variableValues,
+        operationName: onExecuteParams.args.operationName,
+        sessionId: session(onExecuteParams.args.contextValue),
       });
 
-      if ((enabled?.(ctx.args.contextValue) ?? true) === true) {
+      if ((enabled?.(onExecuteParams.args.contextValue) ?? true) === true) {
         const cachedResponse = await cache.get(operationId);
 
         if (cachedResponse != null) {
           if (includeExtensionMetadata) {
-            ctx.setResultAndStopExecution({
+            onExecuteParams.setResultAndStopExecution({
               ...cachedResponse,
               extensions: {
                 responseCache: {
@@ -275,16 +337,16 @@ export function useResponseCache({
               },
             });
           } else {
-            ctx.setResultAndStopExecution(cachedResponse);
+            onExecuteParams.setResultAndStopExecution(cachedResponse);
           }
           return;
         }
       }
 
       if (ttlPerSchemaCoordinate) {
-        const typeInfo = new TypeInfo(ctx.args.schema);
+        const typeInfo = new TypeInfo(onExecuteParams.args.schema);
         visit(
-          ctx.args.document,
+          onExecuteParams.args.document,
           visitWithTypeInfo(typeInfo, {
             Field(fieldNode) {
               const parentType = typeInfo.getParentType();
@@ -292,7 +354,7 @@ export function useResponseCache({
                 const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
                 const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate];
                 if (maybeTtl !== undefined) {
-                  context.currentTtl = calculateTtl(maybeTtl, context.currentTtl);
+                  currentTtl = calculateTtl(maybeTtl, currentTtl);
                 }
               }
             },
@@ -308,21 +370,23 @@ export function useResponseCache({
             return;
           }
 
-          if (context.skip) {
+          const processedResult = processResult(result);
+
+          if (skip) {
             return;
           }
 
-          if (!shouldCacheResult({ result })) {
+          if (!shouldCacheResult({ result: processedResult })) {
             return;
           }
 
           // we only use the global ttl if no currentTtl has been determined.
-          const finalTtl = context.currentTtl ?? globalTtl;
+          const finalTtl = currentTtl ?? globalTtl;
 
           if (finalTtl === 0) {
             if (includeExtensionMetadata) {
               setResult({
-                ...result,
+                ...processedResult,
                 extensions: {
                   responseCache: {
                     hit: false,
@@ -334,10 +398,10 @@ export function useResponseCache({
             return;
           }
 
-          cache.set(operationId, result, identifier.values(), finalTtl);
+          cache.set(operationId, processedResult, identifier.values(), finalTtl);
           if (includeExtensionMetadata) {
             setResult({
-              ...result,
+              ...processedResult,
               extensions: {
                 responseCache: {
                   hit: false,
@@ -353,62 +417,9 @@ export function useResponseCache({
   };
 }
 
-function isOperationDefinition(node: any): node is OperationDefinitionNode {
-  return node?.kind === 'OperationDefinition';
-}
-
 function calculateTtl(typeTtl: number, currentTtl: number | undefined): number {
   if (typeof currentTtl === 'number') {
     return Math.min(currentTtl, typeTtl);
   }
   return typeTtl;
-}
-
-function isMutation(doc: DocumentNode) {
-  return doc.definitions.find(isOperationDefinition)!.operation === 'mutation';
-}
-
-function runWith<T>(input: T | Promise<T>, callback: (value: T) => void) {
-  if (input instanceof Promise) {
-    input.then(callback, () => undefined);
-  } else {
-    callback(input);
-  }
-}
-
-function applyResponseCacheLogic(schema: GraphQLSchema, idFieldNames: Array<string>): GraphQLSchema {
-  return mapSchema(schema, {
-    [MapperKind.OBJECT_FIELD](fieldConfig, fieldName, typename) {
-      if (idFieldNames.includes(fieldName)) {
-        return {
-          ...fieldConfig,
-          resolve(src, args, context, info) {
-            const result = (fieldConfig.resolve ?? defaultFieldResolver)(src, args, context, info) as PromiseOrValue<string>;
-            runWith(result, (id: string) => {
-              const ctx: Context | undefined = context[contextSymbol];
-              if (ctx !== undefined) {
-                if (ctx.ignoredTypesMap.has(typename)) {
-                  ctx.skip = true;
-                }
-                if (ctx.skip === true) {
-                  ctx.skip = true;
-                  return;
-                }
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore  TODO: investigate what to do if id is something unexpected
-                ctx.identifier.set(`${typename}:${id}`, { typename, id });
-                ctx.types.add(typename);
-                if (typename in ctx.ttlPerType) {
-                  ctx.currentTtl = calculateTtl(ctx.ttlPerType[typename], ctx.currentTtl);
-                }
-              }
-            });
-            return result;
-          },
-        };
-      }
-
-      return fieldConfig;
-    },
-  });
 }
