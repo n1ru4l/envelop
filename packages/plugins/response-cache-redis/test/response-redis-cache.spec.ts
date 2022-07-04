@@ -948,7 +948,10 @@ describe('useResponseCache with Redis cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ session: () => null, cache, ignoredTypes: ['Comment'] })], schema);
+    const testInstance = createTestkit(
+      [useResponseCache({ session: () => null, cache, ignoredTypes: ['Comment'] })],
+      schema
+    );
 
     const query = /* GraphQL */ `
       query test {

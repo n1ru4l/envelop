@@ -200,11 +200,11 @@ const myPlugin = (): Plugin => {
         onExecuteDone: ({ result, setResult }) => {
           if (!isAsyncIterable(result)) return
           // Here you can access result, and modify it with setResult if needed
-        },
-      };
-    },
-  };
-};
+        }
+      }
+    }
+  }
+}
 ```
 
 ### `onSubscribe(api)`

@@ -15,7 +15,9 @@ import { useExtendedValidation } from '@envelop/extended-validation';
 
 export class UnauthenticatedError extends GraphQLError {}
 
-export type ResolveUserFn<UserType, ContextType = DefaultContext> = (context: ContextType) => PromiseOrValue<Maybe<UserType>>;
+export type ResolveUserFn<UserType, ContextType = DefaultContext> = (
+  context: ContextType
+) => PromiseOrValue<Maybe<UserType>>;
 
 export type ValidateUserFnParams<UserType> = {
   /** The user object. */

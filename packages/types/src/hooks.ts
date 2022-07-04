@@ -12,7 +12,13 @@ import type {
 } from 'graphql';
 import { Maybe, PromiseOrValue, AsyncIterableIteratorOrValue } from './utils.js';
 import { DefaultContext } from './context-types.js';
-import { ExecuteFunction, ParseFunction, ValidateFunction, ValidateFunctionParameter, SubscribeFunction } from './graphql.js';
+import {
+  ExecuteFunction,
+  ParseFunction,
+  ValidateFunction,
+  ValidateFunctionParameter,
+  SubscribeFunction,
+} from './graphql.js';
 import { Plugin } from './plugin.js';
 
 export type DefaultArgs = Record<string, unknown>;

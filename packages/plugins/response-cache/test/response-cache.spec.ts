@@ -251,7 +251,10 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ session: () => null, includeExtensionMetadata: true })], schema);
+    const testInstance = createTestkit(
+      [useResponseCache({ session: () => null, includeExtensionMetadata: true })],
+      schema
+    );
 
     const query = /* GraphQL */ `
       query test {
@@ -1547,7 +1550,10 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ session: () => null, includeExtensionMetadata: true })], schema);
+    const testInstance = createTestkit(
+      [useResponseCache({ session: () => null, includeExtensionMetadata: true })],
+      schema
+    );
 
     const query = /* GraphQL */ `
       query test {
@@ -1741,7 +1747,10 @@ describe('useResponseCache', () => {
       `,
       resolvers: { Query: { foo: () => void mockFn() || 'hi' } },
     });
-    const testkit = createTestkit([useValidationCache(), useResponseCache({ session: () => null }), useParserCache()], schema);
+    const testkit = createTestkit(
+      [useValidationCache(), useResponseCache({ session: () => null }), useParserCache()],
+      schema
+    );
 
     const document = /* GraphQL */ `
       query {
@@ -1969,7 +1978,10 @@ describe('useResponseCache', () => {
       `;
 
       const cache = createInMemoryCache();
-      const testkit = createTestkit([useResponseCache({ session: () => null, includeExtensionMetadata: true, cache })], schema);
+      const testkit = createTestkit(
+        [useResponseCache({ session: () => null, includeExtensionMetadata: true, cache })],
+        schema
+      );
 
       let result = await testkit.execute(operation);
       assertSingleExecutionValue(result);
