@@ -1,8 +1,9 @@
 {
   "parser": "@typescript-eslint/parser",
   "extends": ["eslint:recommended", "standard", "prettier", "plugin:@typescript-eslint/recommended"],
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "unicorn"],
   "rules": {
+    "unicorn/filename-case": "error",
     "no-empty": "off",
     "no-console": "error",
     "no-prototype-builtins": "off",
