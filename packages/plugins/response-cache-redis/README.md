@@ -22,12 +22,10 @@ In order to use the Redis cache, you need to:
 - Create an instance of the Redis Cache and set to the `useResponseCache` plugin options
 
 ```ts
-
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
-import { createRedisCache } from '@envelop/response-cache-redis';
-
-import Redis from 'ioredis';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
+import { createRedisCache } from '@envelop/response-cache-redis'
+import Redis from 'ioredis'
 
 /**
  * For additional Redis options to create the ioredis client
@@ -37,35 +35,35 @@ import Redis from 'ioredis';
 const redis = new Redis({
   host: 'my-redis-db.example.com',
   port: '30652',
-  password: '1234567890',
-});
+  password: '1234567890'
+})
 
 // or, you can also specify connection options as a redis:// URL or rediss:// URL when using TLS encryption
-const redis = new Redis(("rediss://:1234567890@my-redis-db.example.com':30652");
+const redis = new Redis('rediss://:1234567890@my-redis-db.example.com:30652')
 
-const cache = createRedisCache({ redis });
+const cache = createRedisCache({ redis })
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useResponseCache({ cache }),
-  ],
-});
+    useResponseCache({ cache })
+  ]
+})
 ```
 
 ### Invalidate Cache based on custom logic
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
-import { createRedisCache } from '@envelop/response-cache-redis';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
+import { createRedisCache } from '@envelop/response-cache-redis'
 
-import { emitter } from './eventEmitter';
+import { emitter } from './eventEmitter'
 
 // we create our cache instance, which allows calling all methods on it
-const redis = new Redis(("rediss://:1234567890@my-redis-db.example.com':30652");
+const redis = new Redis('rediss://:1234567890@my-redis-db.example.com:30652')
 
-const cache = createRedisCache({ redis });
+const cache = createRedisCache({ redis })
 
 const getEnveloped = envelop({
   plugins: [
@@ -73,17 +71,17 @@ const getEnveloped = envelop({
     useResponseCache({
       ttl: 2000,
       // we pass the cache instance to the request.
-      cache,
-    }),
-  ],
-});
+      cache
+    })
+  ]
+})
 
 emitter.on('invalidate', resource => {
   cache.invalidate([
     {
       typename: resource.type,
-      id: resource.id,
-    },
-  ]);
-});
+      id: resource.id
+    }
+  ])
+})
 ```

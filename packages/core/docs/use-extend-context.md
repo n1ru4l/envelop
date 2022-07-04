@@ -3,17 +3,19 @@
 Easily extends the context with custom fields.
 
 ```ts
-import { envelop, useExtendContext } from '@envelop/core';
-import { buildSchema } from 'graphql';
+import { envelop, useExtendContext } from '@envelop/core'
+import { buildSchema } from 'graphql'
 
 const getEnveloped = envelop({
   plugins: [
-    useExtendContext(async (contextSoFar) => {
+    useExtendContext(async contextSoFar => {
       return {
-        myCustomField: { ... }
+        myCustomField: {
+          /* ... */
+        }
       }
-    }),
+    })
     // ... other plugins ...
-  ],
-});
+  ]
+})
 ```

@@ -74,7 +74,11 @@
   },
   {
     "objectID": "envelop-adding-a-graphql-response-cache",
-    "headings": ["A brief Introduction to Caching", "How does GraphQL Response Caching work?", "Envelop Response Cache"],
+    "headings": [
+      "A brief Introduction to Caching",
+      "How does GraphQL Response Caching work?",
+      "Envelop Response Cache"
+    ],
     "toc": [
       {
         "children": [],

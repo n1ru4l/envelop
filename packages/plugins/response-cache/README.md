@@ -38,35 +38,37 @@ When configuring the `useResponseCache`, you can choose the type of cache:
 The in-memory LRU cache is used by default.
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useResponseCache({
       // use global cache for all operations
-      session: () => null,
-    }),
-  ],
-});
+      session: () => null
+    })
+  ]
+})
 ```
 
 Or, you may create the in-memory LRU cache explicitly.
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache, createInMemoryCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache, createInMemoryCache } from '@envelop/response-cache'
 
-const cache = createInMemoryCache();
+const cache = createInMemoryCache()
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useResponseCache({ cache }),
-    session: () => null, // use global cache for all operations
-  ],
-});
+    useResponseCache({
+      cache,
+      session: () => null // use global cache for all operations
+    })
+  ]
+})
 ```
 
 > Note: The in-memory LRU cache is not suitable for serverless deployments. Instead, consider the Redis cache provided by `@envelop/response-cache-redis`.
@@ -74,8 +76,8 @@ const getEnveloped = envelop({
 ### Cache based on session/user
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
@@ -83,10 +85,10 @@ const getEnveloped = envelop({
     useResponseCache({
       ttl: 2000,
       // context is the GraphQL context used for execution
-      session: context => String(context.user?.id),
-    }),
-  ],
-});
+      session: context => String(context.user?.id)
+    })
+  ]
+})
 ```
 
 ### Redis Cache
@@ -103,31 +105,31 @@ In order to use the Redis cache, you need to:
 - Create an instance of the Redis Cache and set to the `useResponseCache` plugin options
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
-import { createRedisCache } from '@envelop/response-cache-redis';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
+import { createRedisCache } from '@envelop/response-cache-redis'
 
-import Redis from 'ioredis';
+import Redis from 'ioredis'
 
 const redis = new Redis({
   host: 'my-redis-db.example.com',
   port: '30652',
-  password: '1234567890',
-});
+  password: '1234567890'
+})
 
-const redis = new Redis('rediss://:1234567890@my-redis-db.example.com:30652');
+const redis = new Redis('rediss://:1234567890@my-redis-db.example.com:30652')
 
-const cache = createRedisCache({ redis });
+const cache = createRedisCache({ redis })
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useResponseCache({
       cache,
-      session: () => null, // use global cache for all operations
-    }),
-  ],
-});
+      session: () => null // use global cache for all operations
+    })
+  ]
+})
 ```
 
 > Note: In the Recipes below, be sure to provide your Redis `cache` instance with `useResponseCache({ cache })`.
@@ -137,18 +139,18 @@ const getEnveloped = envelop({
 ### Cache with maximum TTL
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useResponseCache({
       ttl: 2000, // cached execution results become stale after 2 seconds
-      session: () => null, // use global cache for all operations
-    }),
-  ],
-});
+      session: () => null // use global cache for all operations
+    })
+  ]
+})
 ```
 
 > Note: Setting `ttl: 0` will disable TTL for all types. You can use that if you wish to disable caching for all type, and then enable caching for specific types using `ttlPerType`.
@@ -156,8 +158,8 @@ const getEnveloped = envelop({
 ### Cache with custom TTL per object type
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
@@ -166,18 +168,18 @@ const getEnveloped = envelop({
       ttl: 2000,
       ttlPerType: {
         // cached execution results that contain a `Stock` object become stale after 500ms
-        Stock: 500,
-      },
-    }),
-  ],
-});
+        Stock: 500
+      }
+    })
+  ]
+})
 ```
 
 ### Cache with custom TTL per schema coordinate
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
@@ -186,18 +188,18 @@ const getEnveloped = envelop({
       ttl: 2000,
       ttlPerSchemaCoordinate: {
         // cached execution results that select the `Query.user` field become stale after 100ms
-        'Query.rocketCoordinates': 100,
-      },
-    }),
-  ],
-});
+        'Query.rocketCoordinates': 100
+      }
+    })
+  ]
+})
 ```
 
 ### Disable cache based on session/user
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
@@ -206,10 +208,10 @@ const getEnveloped = envelop({
       ttl: 2000,
       // context is the GraphQL context used for execution
       enabled: context => context.user?.role !== 'admin',
-      session: () => null,
-    }),
-  ],
-});
+      session: () => null
+    })
+  ]
+})
 ```
 
 ### Customize if result should be cached
@@ -217,7 +219,7 @@ const getEnveloped = envelop({
 You can define a custom function used to check if a query operation execution result should be cached.
 
 ```ts
-type ShouldCacheResultFunction = (params: { result: ExecutionResult }) => Boolean;
+type ShouldCacheResultFunction = (params: { result: ExecutionResult }) => boolean
 ```
 
 This is useful for advanced use-cases. E.g. if you want to
@@ -226,24 +228,24 @@ cache results with certain error types.
 By default, the `defaultShouldCacheResult` function is used which never caches any query operation execution results that includes any errors (unexpected, EnvelopError, or GraphQLError).
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache, ShouldCacheResultFunction } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache, ShouldCacheResultFunction } from '@envelop/response-cache'
 
 export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boolean => {
   // cache any query operation execution result
   // even if it includes errors
-  return true;
-};
+  return true
+}
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useResponseCache({
-      shouldCacheResult = myCustomShouldCacheResult,
-      session: () => null,
-    }),
-  ],
-});
+      shouldCacheResult: myCustomShouldCacheResult,
+      session: () => null
+    })
+  ]
+})
 ```
 
 ### Cache Introspection query operations
@@ -253,63 +255,63 @@ By default introspection query operations are not cached. In case you want to ca
 **Infinite caching**
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useResponseCache({
       ttlPerSchemaCoordinate: {
-        'Query.__schema': undefined, // cache infinitely
+        'Query.__schema': undefined // cache infinitely
       },
-      session: () => null,
-    }),
-  ],
-});
+      session: () => null
+    })
+  ]
+})
 ```
 
 **TTL caching**
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useResponseCache({
       ttlPerSchemaCoordinate: {
-        'Query.__schema': 10_000, // cache for 10 seconds
+        'Query.__schema': 10_000 // cache for 10 seconds
       },
-      session: () => null,
-    }),
-  ],
-});
+      session: () => null
+    })
+  ]
+})
 ```
 
 ### Cache with maximum TTL
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useResponseCache({
       ttl: 2000, // cached execution results become stale after 2 seconds
-      session: () => null,
-    }),
-  ],
-});
+      session: () => null
+    })
+  ]
+})
 ```
 
 ### Customize the fields that are used for building the cache ID
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
@@ -318,17 +320,17 @@ const getEnveloped = envelop({
       ttl: 2000,
       // use the `_id` instead of `id` field.
       idFields: ['_id'],
-      session: () => null,
-    }),
-  ],
-});
+      session: () => null
+    })
+  ]
+})
 ```
 
 ### Disable automatic cache invalidation via mutations
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache } from '@envelop/response-cache';
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
@@ -337,21 +339,21 @@ const getEnveloped = envelop({
       ttl: 2000,
       // some might prefer invalidating based on a database write log
       invalidateViaMutation: false,
-      session: () => null,
-    }),
-  ],
-});
+      session: () => null
+    })
+  ]
+})
 ```
 
 ### Invalidate Cache based on custom logic
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache, createInMemoryCache } from '@envelop/response-cache';
-import { emitter } from './eventEmitter';
+import { envelop } from '@envelop/core'
+import { useResponseCache, createInMemoryCache } from '@envelop/response-cache'
+import { emitter } from './eventEmitter'
 
 // we create our cache instance, which allows calling all methods on it
-const cache = createInMemoryCache();
+const cache = createInMemoryCache()
 
 const getEnveloped = envelop({
   plugins: [
@@ -360,33 +362,33 @@ const getEnveloped = envelop({
       ttl: 2000,
       // we pass the cache instance to the request.
       cache,
-      session: () => null,
-    }),
-  ],
-});
+      session: () => null
+    })
+  ]
+})
 
 emitter.on('invalidate', resource => {
   cache.invalidate([
     {
       typename: resource.type,
-      id: resource.id,
-    },
-  ]);
-});
+      id: resource.id
+    }
+  ])
+})
 ```
 
 ### Customize how cache ids are built
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResponseCache, createInMemoryCache } from '@envelop/response-cache';
-import { emitter } from './eventEmitter';
+import { envelop } from '@envelop/core'
+import { useResponseCache, createInMemoryCache } from '@envelop/response-cache'
+import { emitter } from './eventEmitter'
 
 // we create our cache instance, which allows calling all methods on it
 const cache = createInMemoryCache({
   // in relay we have global unique ids, no need to use `typename:id`
-  makeId: (typename, id) => id ?? typename,
-});
+  makeId: (typename, id) => id ?? typename
+})
 
 const getEnveloped = envelop({
   plugins: [
@@ -395,10 +397,10 @@ const getEnveloped = envelop({
       ttl: 2000,
       // we pass the cache instance to the request.
       cache,
-      session: () => null,
-    }),
-  ],
-});
+      session: () => null
+    })
+  ]
+})
 ```
 
 ### Expose cache metadata via extensions
@@ -412,10 +414,10 @@ const getEnveloped = envelop({
     useResponseCache({
       ttl: 2000,
       includeExtensionMetadata: true,
-      session: () => null,
-    }),
-  ],
-});
+      session: () => null
+    })
+  ]
+})
 ```
 
 This option will attach the following fields to the execution result if set to true (or `process.env["NODE_ENV"]` is `"development"`).

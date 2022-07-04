@@ -25,13 +25,13 @@ yarn add hot-shots @envelop/stats
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useStatsD } from '@envelop/statsd';
+import { envelop } from '@envelop/core'
+import { useStatsD } from '@envelop/statsd'
 
 const client = new StatsD({
   port: 8020,
-  globalTags: { env: process.env.NODE_ENV },
-});
+  globalTags: { env: process.env.NODE_ENV }
+})
 
 const getEnveloped = envelop({
   plugins: [
@@ -39,8 +39,8 @@ const getEnveloped = envelop({
     useStatsD({
       client,
       prefix: 'gql', // results in `gql.operations.count` instead of `graphql.operations.count`,
-      skipIntrospection: true, // if you wish to disable introspection logging
-    }),
-  ],
-});
+      skipIntrospection: true // if you wish to disable introspection logging
+    })
+  ]
+})
 ```

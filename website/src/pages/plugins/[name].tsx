@@ -173,7 +173,12 @@ export default function PluginPageContent({ data }: PluginPageProps) {
  * TODO: document how people can configure their yoga plugin package.json so it properly processed.
  */
 function extractRepositoryInformation(stats: PackageInfo | null | undefined) {
-  if (stats?.repository == null || typeof stats.repository !== 'object' || !stats.repository.directory || !stats.repository.url) {
+  if (
+    stats?.repository == null ||
+    typeof stats.repository !== 'object' ||
+    !stats.repository.directory ||
+    !stats.repository.url
+  ) {
     return null;
   }
 

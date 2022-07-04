@@ -15,8 +15,8 @@ yarn add @envelop/opentelemetry
 By default, this plugin prints the collected telemetry to the console:
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useOpenTelemetry } from '@envelop/opentelemetry';
+import { envelop } from '@envelop/core'
+import { useOpenTelemetry } from '@envelop/opentelemetry'
 
 const getEnveloped = envelop({
   plugins: [
@@ -24,27 +24,27 @@ const getEnveloped = envelop({
     useOpenTelemetry({
       resolvers: true, // Tracks resolvers calls, and tracks resolvers thrown errors
       variables: true, // Includes the operation variables values as part of the metadata collected
-      result: true, // Includes execution result object as part of the metadata collected
-    }),
-  ],
-});
+      result: true // Includes execution result object as part of the metadata collected
+    })
+  ]
+})
 ```
 
 If you wish to use custom tracer/exporter, create it and pass it. This example integrates Jaeger tracer:
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useOpenTelemetry } from '@envelop/opentelemetry';
-import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
-import { SimpleSpanProcessor, BasicTracerProvider } from '@opentelemetry/tracing';
+import { envelop } from '@envelop/core'
+import { useOpenTelemetry } from '@envelop/opentelemetry'
+import { JaegerExporter } from '@opentelemetry/exporter-jaeger'
+import { SimpleSpanProcessor, BasicTracerProvider } from '@opentelemetry/tracing'
 
 const exporter = new JaegerExporter({
-  serviceName: 'my-service-name',
-});
+  serviceName: 'my-service-name'
+})
 
-const provider = new BasicTracerProvider();
-provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-provider.register();
+const provider = new BasicTracerProvider()
+provider.addSpanProcessor(new SimpleSpanProcessor(exporter))
+provider.register()
 
 const getEnveloped = envelop({
   plugins: [
@@ -53,10 +53,10 @@ const getEnveloped = envelop({
       {
         resolvers: true, // Tracks resolvers calls, and tracks resolvers thrown errors
         variables: true, // Includes the operation variables values as part of the metadata collected
-        result: true, // Includes execution result object as part of the metadata collected
+        result: true // Includes execution result object as part of the metadata collected
       },
       provider
-    ),
-  ],
-});
+    )
+  ]
+})
 ```

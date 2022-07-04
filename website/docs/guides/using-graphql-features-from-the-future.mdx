@@ -144,17 +144,17 @@ While the following input would be invalid and not pass the validation phase:
 Adding support to the existing envelop setup is straight-forward:
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useExtendedValidation, OneOfInputObjectsRule } from '@envelop/extended-validation';
+import { envelop } from '@envelop/core'
+import { useExtendedValidation, OneOfInputObjectsRule } from '@envelop/extended-validation'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins
     useExtendedValidation({
-      rules: [OneOfInputObjectsRule],
-    }),
-  ],
-});
+      rules: [OneOfInputObjectsRule]
+    })
+  ]
+})
 ```
 
 As there are developers using either the SDL first or code first approach envelop supports both ways.
@@ -182,43 +182,43 @@ input GeometryCreateInput @oneOf {
 Code-first via the `oneOf` extension.
 
 ```ts
-import { GraphQLInputObjectType, GraphQLFloat, GraphQLNonNull } from 'graphql';
+import { GraphQLInputObjectType, GraphQLFloat, GraphQLNonNull } from 'graphql'
 
 const GraphQLRectangleCreateInput = new GraphQLInputObjectType({
   name: 'RectangleCreateInput',
   fields: {
     width: {
-      type: GraphQLNonNull(GraphQLFloat),
+      type: GraphQLNonNull(GraphQLFloat)
     },
     height: {
-      type: GraphQLNonNull(GraphQLFloat),
-    },
-  },
-});
+      type: GraphQLNonNull(GraphQLFloat)
+    }
+  }
+})
 
 const GraphQLCircleCreateInput = new GraphQLInputObjectType({
   name: 'CircleCreateInput',
   fields: {
     radius: {
-      type: GraphQLNonNull(GraphQLFloat),
-    },
-  },
-});
+      type: GraphQLNonNull(GraphQLFloat)
+    }
+  }
+})
 
 const GraphQLGeometryCreateInput = new GraphQLInputObjectType({
   name: 'GeometryCreateInput',
   fields: {
     rectangle: {
-      type: GraphQLRectangleCreateInput,
+      type: GraphQLRectangleCreateInput
     },
     circle: {
-      type: GraphQLCircleCreateInput,
-    },
+      type: GraphQLCircleCreateInput
+    }
   },
   extensions: {
-    oneOf: true,
-  },
-});
+    oneOf: true
+  }
+})
 ```
 
 [You can learn more in the plugin documentations](/plugins/use-extended-validation#union-inputs-oneof)
@@ -286,13 +286,13 @@ There is a [pr for graphql.js](https://github.com/graphql/graphql-js/pull/3152) 
 Envelop already allows using fragment arguments by extending the GraphQL parser. We don't recommend using this for production usage! Please only use it for research or learning purposes!
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useFragmentArguments } from '@envelop/fragment-arguments';
+import { envelop } from '@envelop/core'
+import { useFragmentArguments } from '@envelop/fragment-arguments'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useFragmentArguments(),
-  ],
-});
+    useFragmentArguments()
+  ]
+})
 ```

@@ -11,18 +11,18 @@ yarn add @envelop/depth-limit
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useDepthLimit } from '@envelop/depth-limit';
+import { envelop } from '@envelop/core'
+import { useDepthLimit } from '@envelop/depth-limit'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useDepthLimit({
-      maxDepth: 10,
+      maxDepth: 10
       // ignore: [ ... ] - you can set this to ignore specific fields or types
-    }),
-  ],
-});
+    })
+  ]
+})
 ```
 
 ## Notes

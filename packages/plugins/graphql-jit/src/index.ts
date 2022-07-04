@@ -47,7 +47,12 @@ export const useGraphQlJit = (
     }
 
     if (!cacheEntry) {
-      const compilationResult = compileQuery(args.schema, args.document, args.operationName ?? undefined, compilerOptions);
+      const compilationResult = compileQuery(
+        args.schema,
+        args.document,
+        args.operationName ?? undefined,
+        compilerOptions
+      );
 
       if (!isCompiledQuery(compilationResult)) {
         if (pluginOptions?.onError) {

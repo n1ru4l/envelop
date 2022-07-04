@@ -185,7 +185,9 @@ export function useResponseCache({
       let documentChanged = false;
       const newDocument = visit(onExecuteParams.args.document, {
         SelectionSet(node): SelectionSetNode {
-          if (!node.selections.some(selection => selection.kind === Kind.FIELD && selection.name.value === '__typename')) {
+          if (
+            !node.selections.some(selection => selection.kind === Kind.FIELD && selection.name.value === '__typename')
+          ) {
             documentChanged = true;
             return {
               ...node,

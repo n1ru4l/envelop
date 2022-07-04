@@ -19,9 +19,9 @@ const myPlugin = {
     return ({ result }) => {
       // The is the after function,
       // JS Closure allow me to access the params here as well
-    };
-  },
-};
+    }
+  }
+}
 ```
 
 > All plugins lifecycle methods are executed in LIFO order (Last-in, First-out) to make timing more consistent.
@@ -35,18 +35,18 @@ While calling `getEnveloped` function (the result of `envelop({ plugins: [ ... ]
 In most cases, you'll pass the incoming HTTP request (or, just the relevant parts of it) to make it available for the plugins you use:
 
 ```ts
-import { envelop } from '@envelop/core';
+import { envelop } from '@envelop/core'
 
 const getEnveloped = envelop({
   plugins: [
     /* ... plugins ... */
-  ],
-});
+  ]
+})
 
 myHttpServer.on('request', async req => {
-  const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req });
+  const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req })
   // ...
-});
+})
 ```
 
 Plugins might also use this `context` to keep a contextual reference for objects they might need across stages.
@@ -55,15 +55,15 @@ So for example, if you wish to make some data from `parse` stage available for y
 
 ```ts
 const myPlugin = {
-  onParse({ extendContext }) => {
+  onParse({ extendContext }) {
     extendContext({
       myVar: 'test'
-    });
+    })
   },
-  onExecute({ args }) => {
-   const myVar = args.contextValue.myVar;
-  },
-};
+  onExecute({ args }) {
+    const myVar = args.contextValue.myVar
+  }
+}
 ```
 
 ## Plugins API
@@ -171,7 +171,7 @@ Since `envelop` aims to support stream responses (for live queries, or `@stream/
 If you wish you plugin to support this, please make sure to use the `handleStreamOrSingleExecutionResult` helper, like that:
 
 ```ts
-import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/types';
+import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/types'
 
 const myPlugin = (): Plugin => {
   return {
@@ -180,18 +180,18 @@ const myPlugin = (): Plugin => {
         onExecuteDone: payload => {
           return handleStreamOrSingleExecutionResult(payload, ({ result, setResult }) => {
             // Here you can access result, and modify it with setResult if needed
-          });
-        },
-      };
-    },
-  };
-};
+          })
+        }
+      }
+    }
+  }
+}
 ```
 
 Alternately, if you don't need to support stream responses, you can use the `isAsyncIterable` function as type-guard:
 
 ```ts
-import { Plugin, isAsyncIterable } from '@envelop/types';
+import { Plugin, isAsyncIterable } from '@envelop/types'
 
 const myPlugin = (): Plugin => {
   return {
@@ -200,11 +200,11 @@ const myPlugin = (): Plugin => {
         onExecuteDone: ({ result, setResult }) => {
           if (!isAsyncIterable(result)) return
           // Here you can access result, and modify it with setResult if needed
-        },
-      };
-    },
-  };
-};
+        }
+      }
+    }
+  }
+}
 ```
 
 ### `onSubscribe(api)`

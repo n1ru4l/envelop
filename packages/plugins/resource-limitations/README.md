@@ -11,8 +11,8 @@ yarn add @envelop/resource-limitations
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useResourceLimitations } from '@envelop/resource-limitations';
+import { envelop } from '@envelop/core'
+import { useResourceLimitations } from '@envelop/resource-limitations'
 
 const getEnveloped = envelop({
   plugins: [
@@ -22,8 +22,8 @@ const getEnveloped = envelop({
       paginationArgumentMaximum: 100, // optional, default to 100
       paginationArgumentMinimum: 1, // optional, default to 1
       paginationArgumentScalars: ['ConnectionInt'], // optional, use if connections use a different scalar type as the argument instead of `Int`
-      extensions: false, // set this to `true` in order to add the calculated const to the response of queries
-    }),
-  ],
-});
+      extensions: false // set this to `true` in order to add the calculated const to the response of queries
+    })
+  ]
+})
 ```

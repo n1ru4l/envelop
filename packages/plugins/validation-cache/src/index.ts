@@ -19,7 +19,9 @@ const rawDocumentSymbol = Symbol('rawDocument');
 
 export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): Plugin => {
   const resultCache =
-    typeof pluginOptions.cache !== 'undefined' ? pluginOptions.cache : lru<readonly GraphQLError[]>(DEFAULT_MAX, DEFAULT_TTL);
+    typeof pluginOptions.cache !== 'undefined'
+      ? pluginOptions.cache
+      : lru<readonly GraphQLError[]>(DEFAULT_MAX, DEFAULT_TTL);
 
   return {
     onSchemaChange() {

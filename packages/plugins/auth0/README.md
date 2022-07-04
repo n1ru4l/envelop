@@ -14,32 +14,32 @@ We recommend using the [Adding Authentication with Auth0 guide](https://www.enve
 4. Setup Envelop with that plugin:
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useAuth0 } from '@envelop/auth0';
+import { envelop } from '@envelop/core'
+import { useAuth0 } from '@envelop/auth0'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useAuth0({
-      onError: e => { ... }, // In case of an error, you can override it and customize the error your client will get.
+      onError: e => {}, // In case of an error, you can override it and customize the error your client will get.
       domain: 'YOUR_AUTH0_DOMAIN_HERE',
       audience: 'YOUR_AUTH0_AUDIENCE_HERE',
       headerName: 'authorization', // Name of the header
       preventUnauthenticatedAccess: true, // If you need to have unauthenticated parts on your schema, make sure to disable that by setting it to `false` and the check it in your resolvers.
       extendContextField: 'auth0', // The name of the field injected to your `context`
-      tokenType: 'Bearer', // Type of token to expect in the header
-    }),
-  ],
-});
+      tokenType: 'Bearer' // Type of token to expect in the header
+    })
+  ]
+})
 ```
 
 5. Make sure to pass your request as part of the context building:
 
 ```ts
 myHttpServer.on('request', async req => {
-  const { contextFactory } = getEnveloped({ req });
-  const contextValue = await contextFactory({ req }); // Make sure to pass it here
-});
+  const { contextFactory } = getEnveloped({ req })
+  const contextValue = await contextFactory({ req }) // Make sure to pass it here
+})
 ```
 
 > By default, this plugins looks for `req` or `request` properties in your base context. If you need to override it, please use `extractTokenFn` and you can customize it.
@@ -50,10 +50,10 @@ myHttpServer.on('request', async req => {
 const myResolvers = {
   Query: {
     me: (root, args, context, info) => {
-      const auth0UserId = context.auth0.sub;
-    },
-  },
-};
+      const auth0UserId = context.auth0.sub
+    }
+  }
+}
 ```
 
 ### API Reference

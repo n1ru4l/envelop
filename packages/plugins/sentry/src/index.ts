@@ -175,7 +175,9 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
         return;
       }
 
-      const rootOperation = args.document.definitions.find(o => o.kind === Kind.OPERATION_DEFINITION) as OperationDefinitionNode;
+      const rootOperation = args.document.definitions.find(
+        o => o.kind === Kind.OPERATION_DEFINITION
+      ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
       const document = print(args.document);
       const opName = args.operationName || rootOperation.name?.value || 'Anonymous Operation';
@@ -284,7 +286,9 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
                   }
 
                   // Map index values in list to $index for better grouping of events.
-                  const errorPathWithIndex = (err.path ?? []).map(v => (typeof v === 'number' ? '$index' : v)).join(' > ');
+                  const errorPathWithIndex = (err.path ?? [])
+                    .map(v => (typeof v === 'number' ? '$index' : v))
+                    .join(' > ');
 
                   const eventId = Sentry.captureException(err, {
                     fingerprint: ['graphql', errorPathWithIndex, opName, operationType],

@@ -12,7 +12,13 @@ import type {
 } from 'graphql';
 import { Maybe, PromiseOrValue, AsyncIterableIteratorOrValue } from './utils.js';
 import { DefaultContext } from './context-types.js';
-import { ExecuteFunction, ParseFunction, ValidateFunction, ValidateFunctionParameter, SubscribeFunction } from './graphql.js';
+import {
+  ExecuteFunction,
+  ParseFunction,
+  ValidateFunction,
+  ValidateFunctionParameter,
+  SubscribeFunction,
+} from './graphql.js';
 import { Plugin } from './plugin.js';
 
 export type DefaultArgs = Record<string, unknown>;
@@ -143,7 +149,9 @@ export type AfterParseHook<ContextType> = (options: AfterParseEventPayload<Conte
 /**
  * Hook that is invoked before the parse function is invoked.
  */
-export type OnParseHook<ContextType> = (options: OnParseEventPayload<ContextType>) => void | AfterParseHook<ContextType>;
+export type OnParseHook<ContextType> = (
+  options: OnParseEventPayload<ContextType>
+) => void | AfterParseHook<ContextType>;
 /**
  * Payload forwarded to the onValidate hook.
  */
@@ -213,7 +221,9 @@ export type AfterValidateHook<ContextType> = (options: AfterValidateEventPayload
 /**
  * The OnValidateHook is invoked before the validate function has been invoked.
  */
-export type OnValidateHook<ContextType> = (options: OnValidateEventPayload<ContextType>) => void | AfterValidateHook<ContextType>;
+export type OnValidateHook<ContextType> = (
+  options: OnValidateEventPayload<ContextType>
+) => void | AfterValidateHook<ContextType>;
 
 /**
  * The payload forwarded to the onContextBuilding hook.

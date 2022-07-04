@@ -39,11 +39,11 @@
     plugins: [
       // ... other plugins ...
       useNewRelic({
-        ...
-        extractOperationName: (context) => context.request.body.customOperationName
-      }),
-    ],
-  });
+        // ...
+        extractOperationName: context => context.request.body.customOperationName
+      })
+    ]
+  })
   ```
 
 ### Patch Changes

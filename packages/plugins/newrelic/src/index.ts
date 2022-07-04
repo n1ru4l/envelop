@@ -63,7 +63,9 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
   const instrumentationApi$ = import('newrelic')
     .then(m => m.default || m)
     .then(({ shim }) => {
-      shim.agent.metrics.getOrCreateMetric(`Supportability/ExternalModules/${AttributeName.COMPONENT_NAME}`).incrementCallCount();
+      shim.agent.metrics
+        .getOrCreateMetric(`Supportability/ExternalModules/${AttributeName.COMPONENT_NAME}`)
+        .incrementCallCount();
       return shim;
     });
 
@@ -107,7 +109,8 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
 
       spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_NAME, operationName);
       spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_TYPE, operationType);
-      options.includeOperationDocument && spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_DOCUMENT, document);
+      options.includeOperationDocument &&
+        spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_DOCUMENT, document);
 
       if (options.includeExecuteVariables) {
         const rawVariables = args.variableValues || {};

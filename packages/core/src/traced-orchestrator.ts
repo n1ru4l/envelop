@@ -1,10 +1,19 @@
-import { DocumentNode, ExecutionArgs, GraphQLFieldResolver, GraphQLSchema, GraphQLTypeResolver, SubscriptionArgs } from 'graphql';
+import {
+  DocumentNode,
+  ExecutionArgs,
+  GraphQLFieldResolver,
+  GraphQLSchema,
+  GraphQLTypeResolver,
+  SubscriptionArgs,
+} from 'graphql';
 import { ArbitraryObject, Maybe } from '@envelop/types';
 import { EnvelopOrchestrator } from './orchestrator.js';
 import { isAsyncIterable } from './utils.js';
 
 const getTimestamp =
-  typeof globalThis !== 'undefined' && globalThis?.performance?.now ? () => globalThis.performance.now() : () => Date.now();
+  typeof globalThis !== 'undefined' && globalThis?.performance?.now
+    ? () => globalThis.performance.now()
+    : () => Date.now();
 
 const measure = () => {
   const start = getTimestamp();

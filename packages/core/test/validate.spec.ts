@@ -48,7 +48,13 @@ describe('validate', () => {
     );
     await teskit.execute(query);
     expect(replacementFn).toHaveBeenCalledTimes(1);
-    expect(replacementFn).toHaveBeenCalledWith(expect.any(GraphQLSchema), expect.any(Object), undefined, undefined, undefined);
+    expect(replacementFn).toHaveBeenCalledWith(
+      expect.any(GraphQLSchema),
+      expect.any(Object),
+      undefined,
+      undefined,
+      undefined
+    );
   });
 
   it('Should allow to set validation result and avoid running validate', async () => {

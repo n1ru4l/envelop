@@ -13,17 +13,17 @@ yarn add @envelop/validation-cache
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useValidationCache } from '@envelop/validation-cache';
+import { envelop } from '@envelop/core'
+import { useValidationCache } from '@envelop/validation-cache'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useValidationCache({
       // options goes here
-    }),
-  ],
-});
+    })
+  ]
+})
 ```
 
 ### API Reference

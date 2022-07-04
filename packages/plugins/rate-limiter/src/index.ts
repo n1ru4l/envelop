@@ -37,8 +37,10 @@ export const useRateLimiter = (
 
       if (rateLimitDirectiveNode && rateLimitDirectiveNode.arguments) {
         const maxNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'max')?.value as IntValueNode;
-        const windowNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'window')?.value as StringValueNode;
-        const messageNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'message')?.value as IntValueNode;
+        const windowNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'window')
+          ?.value as StringValueNode;
+        const messageNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'message')
+          ?.value as IntValueNode;
 
         const message = messageNode.value;
         const max = parseInt(maxNode.value);

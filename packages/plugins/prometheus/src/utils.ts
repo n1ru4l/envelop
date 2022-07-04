@@ -58,7 +58,10 @@ export function createInternalContext(parseResult: AfterParseEventPayload<any>['
   };
 }
 
-export type FillLabelsFn<LabelNames extends string> = (params: FillLabelsFnParams, rawContext: any) => Record<LabelNames, string>;
+export type FillLabelsFn<LabelNames extends string> = (
+  params: FillLabelsFnParams,
+  rawContext: any
+) => Record<LabelNames, string>;
 
 export function createHistogram<LabelNames extends string>(options: {
   histogram: Histogram<LabelNames>;

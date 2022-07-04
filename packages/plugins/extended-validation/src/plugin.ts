@@ -76,7 +76,8 @@ function buildHandler(
     // it is that hooking right after validation and before execution has started is the
     // same as hooking into the validation step. The benefit of this approach is that
     // we may use execution context in the validation rules.
-    const validationRulesContext: ExtendedValidationContext | undefined = args.contextValue[symbolExtendedValidationRules];
+    const validationRulesContext: ExtendedValidationContext | undefined =
+      args.contextValue[symbolExtendedValidationRules];
     if (validationRulesContext === undefined) {
       throw new Error(
         'Plugin has not been properly set up. ' +

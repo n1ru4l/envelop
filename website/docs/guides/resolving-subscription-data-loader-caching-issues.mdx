@@ -19,53 +19,54 @@ This is a known issue that still has no solution in GraphQL.js core, although, [
 Previous workarounds have been to disable the DataLoader caching completely or manually calling the [`DataLoader.clearAll`](https://github.com/graphql/dataloader#clearall) within the mapping of the event values.
 
 ```ts
-import { GraphQLObjectType } from 'graphql';
-import pipe from 'lodash/pipe';
-import { GraphQLUserListUpdate, GraphQLNonNull } from './GraphQLUserListUpdate';
+import { GraphQLObjectType } from 'graphql'
+import pipe from 'lodash/fp/pipe'
+import { GraphQLUserListUpdate, GraphQLNonNull } from './GraphQLUserListUpdate'
 
 const mapAsyncIterable = <T, O>(map: (input: T) => Promise<O> | O) =>
   async function* mapGenerator(asyncIterable: AsyncIterableIterator<T>) {
     for await (const value of asyncIterable) {
-      yield map(value);
+      yield map(value)
     }
-  };
+  }
 
 const GraphQLSubscriptionType = new GraphQLObjectType({
   name: 'Subscription',
   fields: {
     something: {
       type: GraphQLNonNull(GraphQLUserListUpdate),
-      resolve: (_, __, context) => pipe(
-          context.pubSub.subscribe("userUpdate")
+      resolve: (_, __, context) =>
+        pipe(
+          context.pubSub.subscribe('userUpdate'),
           mapAsyncIterable(event => {
-              context.loader.userLoader.clearAll()
-              return event
+            context.loader.userLoader.clearAll()
+            return event
           })
-        ),
-    },
+        )
+    }
   }
-});
+})
 ```
 
 As your project scales this, however, can become a tedious task. With the `useContextValuePerExecuteSubscriptionEvent` plugin we abstracted this away by having a generic solution for extending the original context with a new partial before the subscription event is being executed.
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useContextValuePerExecuteSubscriptionEvent } from '@envelop/execute-subscription-event';
-import { createContext, createDataLoaders } from './context';
+import { envelop } from '@envelop/core'
+import { useContextValuePerExecuteSubscriptionEvent } from '@envelop/execute-subscription-event'
+import { createContext, createDataLoaders } from './context'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useContext(() => createContext())
+    useContext(() => createContext()),
     useContextValuePerExecuteSubscriptionEvent(() => ({
       // Existing context is merged with this context partial
       contextPartial: {
         loader: createDataLoaders()
-      },
-    })),
-  ],
-});
+      }
+    }))
+  ]
+})
 ```
 
 With this easy fix new DataLoader instances are used for every published value!

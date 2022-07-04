@@ -11,16 +11,16 @@ yarn add dataloader @envelop/dataloader
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import DataLoader from 'dataloader';
-import { useDataLoader } from '@envelop/dataloader';
+import { envelop } from '@envelop/core'
+import DataLoader from 'dataloader'
+import { useDataLoader } from '@envelop/dataloader'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useDataLoader('users', context => new DataLoader(keys => myBatchGetUsers(keys))),
-  ],
-});
+    useDataLoader('users', context => new DataLoader(keys => myBatchGetUsers(keys)))
+  ]
+})
 ```
 
 Then, when you need to use it in your resolvers, just take it from the context:
@@ -29,10 +29,10 @@ Then, when you need to use it in your resolvers, just take it from the context:
 export const resolvers = {
   Query: {
     user: (root, args, context, info) => {
-      return context.users.load(args.id);
-    },
-  },
-};
+      return context.users.load(args.id)
+    }
+  }
+}
 ```
 
 ## Notes

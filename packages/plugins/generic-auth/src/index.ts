@@ -15,7 +15,9 @@ import { useExtendedValidation } from '@envelop/extended-validation';
 
 export class UnauthenticatedError extends GraphQLError {}
 
-export type ResolveUserFn<UserType, ContextType = DefaultContext> = (context: ContextType) => PromiseOrValue<Maybe<UserType>>;
+export type ResolveUserFn<UserType, ContextType = DefaultContext> = (
+  context: ContextType
+) => PromiseOrValue<Maybe<UserType>>;
 
 export type ValidateUserFnParams<UserType> = {
   /** The user object. */
@@ -104,14 +106,18 @@ export type GenericAuthPluginOptions<
     }
 );
 
-export function defaultProtectAllValidateFn<UserType>(params: ValidateUserFnParams<UserType>): void | UnauthenticatedError {
+export function defaultProtectAllValidateFn<UserType>(
+  params: ValidateUserFnParams<UserType>
+): void | UnauthenticatedError {
   if (params.user == null && !params.fieldAuthDirectiveNode && !params.fieldAuthExtension) {
     const schemaCoordinate = `${params.objectType.name}.${params.fieldNode.name.value}`;
     return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [params.fieldNode]);
   }
 }
 
-export function defaultProtectSingleValidateFn<UserType>(params: ValidateUserFnParams<UserType>): void | UnauthenticatedError {
+export function defaultProtectSingleValidateFn<UserType>(
+  params: ValidateUserFnParams<UserType>
+): void | UnauthenticatedError {
   if (params.user == null && (params.fieldAuthDirectiveNode || params.fieldAuthExtension)) {
     const schemaCoordinate = `${params.objectType.name}.${params.fieldNode.name.value}`;
     return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [params.fieldNode]);
@@ -135,7 +141,8 @@ export const useGenericAuth = <
     const directiveOrExtensionFieldName =
       options.directiveOrExtensionFieldName ?? (options.mode === 'protect-all' ? 'skipAuth' : 'auth');
     const validateUser =
-      options.validateUser ?? (options.mode === 'protect-all' ? defaultProtectAllValidateFn : defaultProtectSingleValidateFn);
+      options.validateUser ??
+      (options.mode === 'protect-all' ? defaultProtectAllValidateFn : defaultProtectSingleValidateFn);
     const extractAuthMeta = (
       input: GraphQLField<any, any>
     ): { fieldAuthDirectiveNode: DirectiveNode | undefined; fieldAuthExtension: unknown } => {

@@ -19,7 +19,8 @@ export type TimingPluginOptions = {
 };
 
 const DEFAULT_OPTIONS: TimingPluginOptions = {
-  onExecutionMeasurement: (args, timing) => console.log(`Operation execution "${args.operationName}" done in ${timing.ms}ms`),
+  onExecutionMeasurement: (args, timing) =>
+    console.log(`Operation execution "${args.operationName}" done in ${timing.ms}ms`),
   onSubscriptionMeasurement: (args, timing) =>
     console.log(`Operation subscription "${args.operationName}" done in ${timing.ms}ms`),
   onParsingMeasurement: (source: Source | string, timing: ResultTiming) =>

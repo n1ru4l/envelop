@@ -68,7 +68,8 @@ describe('Prom Metrics plugin', () => {
         const m = arr.find(m => m.name === name);
 
         if (m) {
-          return ((m as any).values || []).filter((v: any) => (sub === null ? true : v.metricName === `${name}_${sub}`)).length;
+          return ((m as any).values || []).filter((v: any) => (sub === null ? true : v.metricName === `${name}_${sub}`))
+            .length;
         }
 
         return 0;
@@ -78,7 +79,8 @@ describe('Prom Metrics plugin', () => {
         const m = arr.find(m => m.name === name);
 
         if (m) {
-          return ((m as any).values || []).find((v: any) => (sub === null ? true : v.metricName === `${name}_${sub}`)).value;
+          return ((m as any).values || []).find((v: any) => (sub === null ? true : v.metricName === `${name}_${sub}`))
+            .value;
         }
 
         return 0;
@@ -118,7 +120,9 @@ describe('Prom Metrics plugin', () => {
       assertSingleExecutionValue(result);
 
       expect(result.errors?.length).toBe(1);
-      expect(await metricString('graphql_envelop_error_result')).toContain('graphql_envelop_error_result{phase="parse"} 1');
+      expect(await metricString('graphql_envelop_error_result')).toContain(
+        'graphql_envelop_error_result{phase="parse"} 1'
+      );
       expect(await metricCount('graphql_envelop_error_result')).toBe(1);
       expect(await metricCount('graphql_envelop_phase_parse')).toBe(0);
     });
@@ -403,7 +407,9 @@ describe('Prom Metrics plugin', () => {
 
       expect(result.errors?.length).toBe(1);
       expect(await metricCount('test_error')).toBe(1);
-      expect(await metricString('test_error')).toContain(`test_error{opText=\"{\\n  errorField\\n}\",errorMessage=\"error\"} 1`);
+      expect(await metricString('test_error')).toContain(
+        `test_error{opText=\"{\\n  errorField\\n}\",errorMessage=\"error\"} 1`
+      );
     });
 
     it('Should not trace parse errors when not needed', async () => {

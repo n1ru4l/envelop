@@ -3,7 +3,15 @@ import '../../public/admonitions.css';
 
 import { appWithTranslation } from 'next-i18next';
 import Script from 'next/script';
-import { chakra, Code, extendTheme, Text, theme as chakraTheme, UnorderedList, useColorModeValue } from '@chakra-ui/react';
+import {
+  chakra,
+  Code,
+  extendTheme,
+  Text,
+  theme as chakraTheme,
+  UnorderedList,
+  useColorModeValue,
+} from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 import {
   AppSeoProps,
@@ -42,7 +50,16 @@ ExtendComponents({
   inlineCode: props => {
     const colorScheme = useColorModeValue('blackAlpha', undefined);
 
-    return <Code display={'inline'} margin="1px" colorScheme={colorScheme} fontWeight="semibold" fontSize="0.875em" {...props} />;
+    return (
+      <Code
+        display={'inline'}
+        margin="1px"
+        colorScheme={colorScheme}
+        fontWeight="semibold"
+        fontSize="0.875em"
+        {...props}
+      />
+    );
   },
   Text,
   ul: UnorderedList,

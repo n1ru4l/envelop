@@ -96,7 +96,7 @@
 
   ```typescript
   // schema.ts
-  import { GraphQLObjectType, GraphQLInt } from 'graphql';
+  import { GraphQLObjectType, GraphQLInt } from 'graphql'
 
   const GraphQLQueryType = new GraphQLObjectType({
     name: 'Query',
@@ -105,20 +105,20 @@
         type: GraphQLInt,
         resolve: () => 1,
         extensions: {
-          skipAuth: true,
+          skipAuth: true
           // or auth: true for mode "protect-granular".
-        },
-      },
-    },
-  });
+        }
+      }
+    }
+  })
   ```
 
   The `validateUser` function is no longer attached to the `context` object passed to the resolvers. You can add your own `validateUser` function to the context using `useExtendContext`.
 
   ```typescript
   const getEnveloped = envelop({
-    plugins: [useSchema(schema), useGenericAuth(options), useExtendContext(() => ({ validateUser }))],
-  });
+    plugins: [useSchema(schema), useGenericAuth(options), useExtendContext(() => ({ validateUser }))]
+  })
   ```
 
 ### Minor Changes
