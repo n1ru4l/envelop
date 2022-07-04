@@ -20,7 +20,7 @@ const getEnveloped = envelop({
   plugins: [useSchema(schema), useLogger(), useTiming()],
 });
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+export const index: AzureFunction = async (context: Context, req: HttpRequest): Promise<void> => {
   const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req });
   const request = {
     body: req.body,
@@ -48,5 +48,3 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     body: JSON.stringify(result.payload),
   };
 };
-
-export default httpTrigger;
