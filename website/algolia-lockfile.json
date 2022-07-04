@@ -1547,6 +1547,11 @@
             "children": [
               {
                 "children": [],
+                "title": "Cache based on session/user",
+                "anchor": "cache-based-on-sessionuser"
+              },
+              {
+                "children": [],
                 "title": "Redis Cache",
                 "anchor": "redis-cache"
               }
@@ -1571,11 +1576,6 @@
                 "children": [],
                 "title": "Cache with custom TTL per schema coordinate",
                 "anchor": "cache-with-custom-ttl-per-schema-coordinate"
-              },
-              {
-                "children": [],
-                "title": "Cache based on session/user",
-                "anchor": "cache-based-on-sessionuser"
               },
               {
                 "children": [],
