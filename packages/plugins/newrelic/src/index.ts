@@ -56,7 +56,7 @@ export function defaultSkipError(error: GraphQLError): boolean {
 export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
   const options: InternalOptions = {
     ...DEFAULT_OPTIONS,
-    ...(rawOptions || {}),
+    ...rawOptions,
   };
   options.isExecuteVariablesRegex = options.includeExecuteVariables instanceof RegExp;
   options.isResolverArgsRegex = options.includeResolverArgs instanceof RegExp;

@@ -467,7 +467,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
             extendContext: extension => {
               if (typeof extension === 'object') {
                 context = {
-                  ...(context || {}),
+                  ...context,
                   ...extension,
                 };
               } else {
