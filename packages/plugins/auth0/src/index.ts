@@ -117,10 +117,8 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
           extendContext({
             [contextField]: decodedPayload,
           } as BuildContext<TOptions>);
-        } else {
-          if (options.preventUnauthenticatedAccess) {
-            throw new UnauthenticatedError(`Unauthenticated!`);
-          }
+        } else if (options.preventUnauthenticatedAccess) {
+          throw new UnauthenticatedError(`Unauthenticated!`);
         }
       } catch (e) {
         if (options.onError) {
