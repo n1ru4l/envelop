@@ -247,7 +247,8 @@ export function useResponseCache({
                       if (fieldName === '__typename') {
                         typenameCalled++;
                       }
-                      if (fieldName === '__leave') {
+                      if (
+                        fieldName === '__leave'
                         /**
                          * The visitResult function is called for each field in the selection set.
                          * But visitResult function looks for __typename field visitor even if it is not there in the document
@@ -256,13 +257,13 @@ export function useResponseCache({
                          *
                          * Default call of __typename https://github.com/ardatan/graphql-tools/blob/master/packages/utils/src/visitResult.ts#L277
                          * Call for the field node https://github.com/ardatan/graphql-tools/blob/master/packages/utils/src/visitResult.ts#L272
-                         */
-                        if (typenameCalled < 2) {
-                          return (root: any) => {
-                            delete root.__typename;
-                            return root;
-                          };
-                        }
+                         */ &&
+                        typenameCalled < 2
+                      ) {
+                        return (root: any) => {
+                          delete root.__typename;
+                          return root;
+                        };
                       }
                     }
                     if (idFields.includes(fieldName)) {

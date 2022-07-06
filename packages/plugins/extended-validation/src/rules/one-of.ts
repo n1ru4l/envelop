@@ -32,17 +32,13 @@ export const OneOfInputObjectsRule: ExtendedValidationRule = (validationContext,
         const isOneOfFieldType =
           fieldType.extensions?.oneOf || (fieldType.astNode && getDirectiveFromAstNode(fieldType.astNode, 'oneOf'));
 
-        if (isOneOfFieldType) {
-          if (Object.keys(values).length !== 1) {
-            validationContext.reportError(
-              new GraphQLError(
-                `Exactly one key must be specified for input for field "${fieldType.type.toString()}.${
-                  node.name.value
-                }"`,
-                [node]
-              )
-            );
-          }
+        if (isOneOfFieldType && Object.keys(values).length !== 1) {
+          validationContext.reportError(
+            new GraphQLError(
+              `Exactly one key must be specified for input for field "${fieldType.type.toString()}.${node.name.value}"`,
+              [node]
+            )
+          );
         }
 
         for (const arg of node.arguments) {
@@ -97,12 +93,10 @@ function traverseVariables(
   const isOneOfInputType =
     inputType.extensions?.oneOf || (inputType.astNode && getDirectiveFromAstNode(inputType.astNode, 'oneOf'));
 
-  if (isOneOfInputType) {
-    if (Object.keys(currentValue).length !== 1) {
-      validationContext.reportError(
-        new GraphQLError(`Exactly one key must be specified for input type "${inputType.name}"`, [arg])
-      );
-    }
+  if (isOneOfInputType && Object.keys(currentValue).length !== 1) {
+    validationContext.reportError(
+      new GraphQLError(`Exactly one key must be specified for input type "${inputType.name}"`, [arg])
+    );
   }
 
   if (inputType instanceof GraphQLInputObjectType) {
