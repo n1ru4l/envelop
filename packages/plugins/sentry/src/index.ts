@@ -189,7 +189,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
       const tags = {
         operationName: opName,
         operation: operationType,
-        ...(addedTags || {}),
+        ...addedTags,
       };
 
       let rootSpan: Span;
@@ -199,7 +199,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
           name: transactionName,
           op,
           tags,
-          ...(traceparentData || {}),
+          ...traceparentData,
         });
 
         if (!rootSpan) {

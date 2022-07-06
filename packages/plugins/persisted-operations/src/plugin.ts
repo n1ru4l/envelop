@@ -43,7 +43,7 @@ export const usePersistedOperations = (
 ): Plugin<PersistedOperationPluginContext> => {
   const options: UsePersistedOperationsOptions = {
     ...DEFAULT_OPTIONS,
-    ...(rawOptions || {}),
+    ...rawOptions,
   };
 
   return {

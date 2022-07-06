@@ -23,6 +23,7 @@
     "@typescript-eslint/ban-ts-ignore": "off",
     "@typescript-eslint/ban-types": "off",
     "import/no-default-export": "error",
+    "unicorn/no-useless-fallback-in-spread": "error",
     "import/no-extraneous-dependencies": [
       "error",
       { "devDependencies": ["**/*.test.ts", "**/*.spec.ts", "**/test/**/*.ts"] }

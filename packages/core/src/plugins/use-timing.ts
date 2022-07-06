@@ -51,7 +51,7 @@ type InternalPluginContext = {
 export const useTiming = (rawOptions?: TimingPluginOptions): Plugin<InternalPluginContext> => {
   const options = {
     ...DEFAULT_OPTIONS,
-    ...(rawOptions || {}),
+    ...rawOptions,
   };
 
   const result: Plugin<InternalPluginContext> = {};
