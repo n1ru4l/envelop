@@ -2,7 +2,7 @@
 import { makeExecute, makeSubscribe, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { DocumentNode, Source, ExecutionArgs, ExecutionResult } from 'graphql';
 import { compileQuery, isCompiledQuery, CompilerOptions, CompiledQuery } from 'graphql-jit';
-import lru from 'tiny-lru';
+import LRU from 'lru-cache';
 
 const DEFAULT_MAX = 1000;
 const DEFAULT_TTL = 3600000;
@@ -36,7 +36,9 @@ export const useGraphQlJit = (
 ): Plugin => {
   const documentSourceMap = new WeakMap<DocumentNode, string>();
   const jitCache =
-    typeof pluginOptions.cache !== 'undefined' ? pluginOptions.cache : lru<JITCacheEntry>(DEFAULT_MAX, DEFAULT_TTL);
+    typeof pluginOptions.cache !== 'undefined'
+      ? pluginOptions.cache
+      : new LRU<string, JITCacheEntry>({ max: DEFAULT_MAX, maxAge: DEFAULT_TTL });
 
   function getCacheEntry<T>(args: TypedExecutionArgs<T>): JITCacheEntry {
     let cacheEntry: JITCacheEntry | undefined;

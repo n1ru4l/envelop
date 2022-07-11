@@ -2,7 +2,7 @@ import { buildSchema, GraphQLError, validate } from 'graphql';
 import { createTestkit } from '@envelop/testing';
 import { useValidationCache } from '../src/index.js';
 import { Plugin } from '@envelop/types';
-import lru from 'tiny-lru';
+import LRU from 'lru-cache';
 
 describe('useValidationCache', () => {
   const testSchema = buildSchema(/* GraphQL */ `
@@ -58,7 +58,10 @@ describe('useValidationCache', () => {
   });
 
   it('should call validate multiple times when operation is invalidated', async () => {
-    const cache = lru<readonly GraphQLError[]>(100, 1);
+    const cache = new LRU<string, readonly GraphQLError[]>({
+      max: 100,
+      maxAge: 1,
+    });
     const testInstance = createTestkit(
       [
         useTestPlugin,
@@ -75,7 +78,7 @@ describe('useValidationCache', () => {
   });
 
   it('should use provided cache instance', async () => {
-    const cache = lru<readonly GraphQLError[]>();
+    const cache = new LRU<string, readonly GraphQLError[]>();
     jest.spyOn(cache, 'set');
     jest.spyOn(cache, 'get');
     const testInstance = createTestkit(

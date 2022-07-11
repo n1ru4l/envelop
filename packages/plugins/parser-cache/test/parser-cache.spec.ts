@@ -1,8 +1,8 @@
-import { buildSchema, DocumentNode, parse } from 'graphql';
+import { buildSchema, DocumentNode, GraphQLError, parse } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useParserCache } from '../src/index.js';
 import { Plugin } from '@envelop/types';
-import lru from 'tiny-lru';
+import lru from 'lru-cache';
 
 describe('useParserCache', () => {
   const testSchema = buildSchema(/* GraphQL */ `
@@ -62,7 +62,10 @@ describe('useParserCache', () => {
   });
 
   it('should call parse multiple times when operation is invalidated', async () => {
-    const cache = lru<DocumentNode>(100, 1);
+    const cache = new lru<string, DocumentNode>({
+      max: 100,
+      maxAge: 1,
+    });
     const testInstance = createTestkit(
       [
         useTestPlugin,
@@ -79,7 +82,7 @@ describe('useParserCache', () => {
   });
 
   it('should use provided documentCache instance', async () => {
-    const documentCache = lru();
+    const documentCache = new lru<string, DocumentNode>();
     jest.spyOn(documentCache, 'set');
     jest.spyOn(documentCache, 'get');
     const testInstance = createTestkit(
@@ -98,7 +101,7 @@ describe('useParserCache', () => {
   });
 
   it('should use provided documentCache instance', async () => {
-    const errorCache = lru();
+    const errorCache = new lru<string, Error>();
     jest.spyOn(errorCache, 'set');
     jest.spyOn(errorCache, 'get');
     const testInstance = createTestkit(

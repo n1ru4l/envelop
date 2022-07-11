@@ -1,11 +1,24 @@
 import { Plugin } from '@envelop/core';
 import { GraphQLError, print } from 'graphql';
-import lru from 'tiny-lru';
+import LRU from 'lru-cache';
 
 export interface ValidationCache {
+  /**
+   * Get a result from the validation cache.
+   */
   get(key: string): readonly GraphQLError[] | undefined;
+  /**
+   * Set a result to the validation cache.
+   */
   set(key: string, value: readonly GraphQLError[]): void;
-  clear(): void;
+  /**
+   * @deprecated Provide a `reset` implementation instead.
+   */
+  clear?(): void;
+  /**
+   * Reset the cache by clearing all entries.
+   */
+  reset?(): void;
 }
 
 export type ValidationCacheOptions = {
@@ -21,11 +34,18 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
   const resultCache =
     typeof pluginOptions.cache !== 'undefined'
       ? pluginOptions.cache
-      : lru<readonly GraphQLError[]>(DEFAULT_MAX, DEFAULT_TTL);
+      : new LRU<string, readonly GraphQLError[]>({
+          max: DEFAULT_MAX,
+          maxAge: DEFAULT_TTL,
+        });
 
   return {
     onSchemaChange() {
-      resultCache.clear();
+      if (resultCache.reset) {
+        resultCache.reset?.();
+      } else if ('clear' in resultCache) {
+        resultCache.clear?.();
+      }
     },
     onParse({ params, extendContext }) {
       extendContext({ [rawDocumentSymbol]: params.source.toString() });
