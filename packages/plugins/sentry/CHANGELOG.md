@@ -1,5 +1,11 @@
 # @envelop/sentry
 
+## 3.6.0
+
+### Minor Changes
+
+- 79ebe78: New feature: `traceparentData` (default: `{}`) - Adds tracing data to be sent to Sentry - this includes traceId, parentId and more. This can be used in connection with headers from the request to add the tracing details for Sentry.
+
 ## 3.5.0
 
 ### Minor Changes

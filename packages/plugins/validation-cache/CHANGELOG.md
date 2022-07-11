@@ -1,5 +1,11 @@
 # @envelop/validation-cache
 
+## 4.5.0
+
+### Minor Changes
+
+- 5d06ccc: Replace `tiny-lru` implementation with `lru-cache`. Deprecate the `ValidationCache.clear` method/function in favor of the `ValidationCache.reset` method/function.
+
 ## 4.4.0
 
 ### Minor Changes

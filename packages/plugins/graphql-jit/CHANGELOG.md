@@ -1,5 +1,11 @@
 # @envelop/graphql-jit
 
+## 4.4.0
+
+### Minor Changes
+
+- 5d06ccc: Replace `tiny-lru` implementation with `lru-cache`.
+
 ## 4.3.0
 
 ### Minor Changes
