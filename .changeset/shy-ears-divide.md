@@ -2,17 +2,17 @@
 '@envelop/response-cache': major
 ---
 
-## Better document string storage by default
+**Better default document string storage**
 
 Previously non parsed operation document was stored in the context with a symbol to be used "documentString" in the later. But this can be solved with a "WeakMap" so the modification in the context is no longer needed.
 
-## BREAKING CHANGE: Replace `getDocumentStringFromContext` with `getDocumentString`
+**BREAKING CHANGE**: Replace `getDocumentStringFromContext` with `getDocumentString`
 
 However, some users might provide document directly to the execution without parsing it via `parse`. So in that case, we replaced the context parameter with the execution args including `document`, `variableValues` and `contextValue` to the new `getDocumentString`.
 
 Now a valid document string should be returned from the new `getDocumentString`.
 
-### Example with a custom document string caching
+**Custom document string caching example.**
 
 ```ts
 const myCache = new WeakMap<DocumentNode, string>()
@@ -39,7 +39,7 @@ useResponseCache({
 })
 ```
 
-### Migration from `getDocumentStringFromContext`
+**Migration from `getDocumentStringFromContext`.**
 
 So if you use `getDocumentStringFromContext` like below before;
 
