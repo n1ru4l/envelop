@@ -1,6 +1,6 @@
 {
   "name": "@envelop/graphql-jit",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
