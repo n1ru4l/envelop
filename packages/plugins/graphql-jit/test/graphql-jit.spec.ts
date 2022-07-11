@@ -141,7 +141,9 @@ describe('useGraphQlJit', () => {
   });
 
   it('Should use the provided cache instance', async () => {
-    const cache: JITCache = new LRU();
+    const cache: JITCache = new LRU({
+      max: 100,
+    });
     jest.spyOn(cache, 'set');
     jest.spyOn(cache, 'get');
 

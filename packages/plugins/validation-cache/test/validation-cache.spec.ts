@@ -78,7 +78,9 @@ describe('useValidationCache', () => {
   });
 
   it('should use provided cache instance', async () => {
-    const cache = new LRU<string, readonly GraphQLError[]>();
+    const cache = new LRU<string, readonly GraphQLError[]>({
+      max: 100,
+    });
     jest.spyOn(cache, 'set');
     jest.spyOn(cache, 'get');
     const testInstance = createTestkit(

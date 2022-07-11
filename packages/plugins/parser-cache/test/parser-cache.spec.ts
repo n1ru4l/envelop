@@ -82,7 +82,9 @@ describe('useParserCache', () => {
   });
 
   it('should use provided documentCache instance', async () => {
-    const documentCache = new LRU<string, DocumentNode>();
+    const documentCache = new LRU<string, DocumentNode>({
+      max: 100,
+    });
     jest.spyOn(documentCache, 'set');
     jest.spyOn(documentCache, 'get');
     const testInstance = createTestkit(
@@ -101,7 +103,9 @@ describe('useParserCache', () => {
   });
 
   it('should use provided documentCache instance', async () => {
-    const errorCache = new LRU<string, Error>();
+    const errorCache = new LRU<string, Error>({
+      max: 100,
+    });
     jest.spyOn(errorCache, 'set');
     jest.spyOn(errorCache, 'get');
     const testInstance = createTestkit(

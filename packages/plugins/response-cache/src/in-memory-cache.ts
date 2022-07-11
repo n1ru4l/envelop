@@ -18,12 +18,12 @@ export type InMemoryCacheParameter = {
 export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
   const buildEntityId = params?.buildEntityId ?? defaultBuildEntityId;
   const cachedResponses = new LRU<string, any>({
-    max: params?.max,
-    stale: false,
+    max: params?.max ?? 1_000_000,
     noDisposeOnSet: true,
     dispose(responseId) {
       purgeResponse(responseId, false);
     },
+    ttlResolution: 1,
   });
 
   const entityToResponseIds = new Map<string, Set<string>>();
@@ -59,7 +59,9 @@ export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
 
   return {
     set(responseId, result, collectedEntities, ttl) {
-      cachedResponses.set(responseId, result, ttl);
+      cachedResponses.set(responseId, result, {
+        ttl,
+      });
       const entityIds = new Set<string>();
       responseIdToEntityIds.set(responseId, entityIds);
 

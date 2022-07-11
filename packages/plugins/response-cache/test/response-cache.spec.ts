@@ -1286,7 +1286,7 @@ describe('useResponseCache', () => {
     expect(userSpy).toHaveBeenCalledTimes(2);
   });
 
-  it('ttl=0 and ttlPerType should cache correctly', async () => {
+  it.only('ttl=0 and ttlPerType should cache correctly', async () => {
     jest.useFakeTimers();
     const userSpy = jest.fn(() => [
       {

@@ -12,13 +12,9 @@ export interface ValidationCache {
    */
   set(key: string, value: readonly GraphQLError[]): void;
   /**
-   * @deprecated Provide a `reset` implementation instead.
-   */
-  clear?(): void;
-  /**
    * Reset the cache by clearing all entries.
    */
-  reset?(): void;
+  clear(): void;
 }
 
 export type ValidationCacheOptions = {
@@ -41,11 +37,7 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
 
   return {
     onSchemaChange() {
-      if (resultCache.reset) {
-        resultCache.reset?.();
-      } else if ('clear' in resultCache) {
-        resultCache.clear?.();
-      }
+      resultCache.clear();
     },
     onParse({ params, extendContext }) {
       extendContext({ [rawDocumentSymbol]: params.source.toString() });

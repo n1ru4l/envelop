@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "graphql-jit": "^0.7.0",
-    "lru-cache": "^6.0.0"
+    "lru-cache": "^7.12.0"
   },
   "devDependencies": {
     "graphql-jit": "0.7.3",
