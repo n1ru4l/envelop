@@ -7,7 +7,7 @@ import {
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { execute, subscribe } from 'graphql';
 import { useGraphQlJit, JITCache } from '../src/index.js';
-import lru from 'lru-cache';
+import LRU from 'lru-cache';
 
 describe('useGraphQlJit', () => {
   const schema = makeExecutableSchema({
@@ -141,7 +141,7 @@ describe('useGraphQlJit', () => {
   });
 
   it('Should use the provided cache instance', async () => {
-    const cache: JITCache = new lru();
+    const cache: JITCache = new LRU();
     jest.spyOn(cache, 'set');
     jest.spyOn(cache, 'get');
 
