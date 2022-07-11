@@ -47,7 +47,7 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "tiny-lru": "7.0.6"
+    "lru-cache": "^6.0.0"
   },
   "devDependencies": {
     "graphql": "16.3.0",

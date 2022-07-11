@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "graphql-jit": "^0.7.0",
-    "tiny-lru": "7.0.6"
+    "lru-cache": "^6.0.0"
   },
   "devDependencies": {
     "graphql-jit": "0.7.3",

@@ -16,16 +16,16 @@ the concepts is applicable to every database.
 The first common error is to use a connection pool directly in the resolvers.
 
 ```ts
-const pool = new Pool({ maxClients: 10 });
+const pool = new Pool({ maxClients: 10 })
 
 const resolvers = {
   Query: {
-    bills: () => pool.query(SELECT_ALL_BILLS),
+    bills: () => pool.query(SELECT_ALL_BILLS)
   },
   Bill: {
-    payer: bill => pool.query({ text: SELECT_PAYER_BY_ID, values: [bill.payer_id] }),
-  },
-};
+    payer: bill => pool.query({ text: SELECT_PAYER_BY_ID, values: [bill.payer_id] })
+  }
+}
 ```
 
 In this example, you can very quickly totally starve your api with a simple request :
@@ -46,35 +46,35 @@ The better way to avoid this is to open only one client per request. With envelo
 a plugin which adds a client to the context add release it at the end of the request execution.
 
 ```ts
-import { isAsyncIterable } from '@envelop/core';
-import { useSchema } from './use-schema';
+import { isAsyncIterable } from '@envelop/core'
+import { useSchema } from './use-schema'
 
-const pool = new Pool({ maxClients: 10 });
+const pool = new Pool({ maxClients: 10 })
 
 const databaseClientPlugin = {
   async onExecute({ extendContext }) {
-    extendContext({ client: await pool.getClient() });
+    extendContext({ client: await pool.getClient() })
     return {
       async onExecuteDone({ result, args: { contextValue } }) {
-        if (isAsyncIterable(result)) throw TypeError('Not implemented');
-        await contextValue.client.release(result.errors);
-      },
-    };
-  },
-};
+        if (isAsyncIterable(result)) throw TypeError('Not implemented')
+        await contextValue.client.release(result.errors)
+      }
+    }
+  }
+}
 
 const resolvers = {
   Query: {
-    bills: (_, __, { client }) => client.query(SELECT_ALL_BILLS),
+    bills: (_, __, { client }) => client.query(SELECT_ALL_BILLS)
   },
   Bill: {
-    payer: (bill, _, { client }) => client.query({ text: SELECT_PAYER_BY_ID, values: [bill.payer_id] }),
-  },
-};
+    payer: (bill, _, { client }) => client.query({ text: SELECT_PAYER_BY_ID, values: [bill.payer_id] })
+  }
+}
 
 const getEnvelop = envelop({
-  plugins: [useSchema(/*...*/), databaseClientPlugin],
-});
+  plugins: [useSchema(/*...*/), databaseClientPlugin]
+})
 ```
 
 ## Wrap every request in a transaction
@@ -89,27 +89,27 @@ Let's see how we can change our plugin to implement this.
 ```ts
 const databaseClientPlugin = {
   async onExecute({ extendContext }) {
-    const client = await pool.getClient();
-    extendContext({ client });
-    await client.query('BEGIN');
+    const client = await pool.getClient()
+    extendContext({ client })
+    await client.query('BEGIN')
 
     return {
       async onExecuteDone({ result, args: { contextValue } }) {
-        const error = result.errors;
+        const error = result.errors
         try {
-          if (isAsyncIterable(result)) throw TypeError('Not implemented');
-          if (result.errors) throw result.errors;
-          await contextValue.client.query('COMMIT');
+          if (isAsyncIterable(result)) throw TypeError('Not implemented')
+          if (result.errors) throw result.errors
+          await contextValue.client.query('COMMIT')
         } catch (err) {
-          error = err;
-          await contextValue.client.query('ROLLBACK');
+          error = err
+          await contextValue.client.query('ROLLBACK')
         } finally {
-          await contextValue.client.release(error);
+          await contextValue.client.release(error)
         }
-      },
-    };
-  },
-};
+      }
+    }
+  }
+}
 ```
 
 ## Enforcing read only queries
@@ -122,33 +122,33 @@ We can configure transactions differently between query and mutation.
 ```ts
 const databaseClientPlugin = {
   async onExecute({ extendContext, args: { contextValue } }) {
-    const client = await pool.getClient();
-    extendContext({ client });
+    const client = await pool.getClient()
+    extendContext({ client })
 
     // We can find in the context the kind of request we are executing
     if (contextValue?.operation?.operation === mutation) {
-      await client.query('BEGIN');
+      await client.query('BEGIN')
     } else {
-      await client.query('BEGIN READ ONLY');
+      await client.query('BEGIN READ ONLY')
     }
 
     return {
       async onExecuteDone({ result, args: { contextValue } }) {
-        const error = result.errors;
+        const error = result.errors
         try {
-          if (isAsyncIterable(result)) throw TypeError('Not implemented');
-          if (result.errors) throw result.errors;
-          await contextValue.client.query('COMMIT');
+          if (isAsyncIterable(result)) throw TypeError('Not implemented')
+          if (result.errors) throw result.errors
+          await contextValue.client.query('COMMIT')
         } catch (err) {
-          error = err;
-          await contextValue.client.query('ROLLBACK');
+          error = err
+          await contextValue.client.query('ROLLBACK')
         } finally {
-          await contextValue.client.release(error);
+          await contextValue.client.release(error)
         }
-      },
-    };
-  },
-};
+      }
+    }
+  }
+}
 ```
 
 ## Transactions over multiple databases
@@ -163,58 +163,58 @@ To solve this we can use Tow Phase Commit, which is supported by most of databas
 (yes I'm looking at you Mongo).
 
 ```ts
-import pre from '@changesets/cli/dist/declarations/src/commands/pre';
+import pre from '@changesets/cli/dist/declarations/src/commands/pre'
 
 const databaseClientPlugin = {
   async onExecute({ extendContext, args: { contextValue } }) {
-    const client1 = await pool1.getClient();
-    const client2 = await pool2.getClient();
-    const clients = [client1, client2];
-    extendContext({ db1: client1, db2: client2, clients });
+    const client1 = await pool1.getClient()
+    const client2 = await pool2.getClient()
+    const clients = [client1, client2]
+    extendContext({ db1: client1, db2: client2, clients })
 
     // We can find in the context the kind of request we are executing
     if (contextValue?.operation?.operation === mutation) {
-      await Promise.all(clients.map(client => client.query('BEGIN')));
+      await Promise.all(clients.map(client => client.query('BEGIN')))
     } else {
-      await Promise.all(clients.map(client => client.query('BEGIN')));
+      await Promise.all(clients.map(client => client.query('BEGIN')))
     }
 
     return {
       async onExecuteDone({ result, args: { contextValue } }) {
-        const error = result.errors;
-        const preparedCommits = new Map();
+        const error = result.errors
+        const preparedCommits = new Map()
         try {
-          if (isAsyncIterable(result)) throw TypeError('Not implemented');
-          if (result.errors) throw result.errors;
+          if (isAsyncIterable(result)) throw TypeError('Not implemented')
+          if (result.errors) throw result.errors
           const commits = Promise.allSettled(
             contextValue.clients.map(async client => {
-              const commitId = uuid();
-              preparedCommits.set(client, commitId);
-              await client.query(`PREPARE COMMIT ${commitId}`);
+              const commitId = uuid()
+              preparedCommits.set(client, commitId)
+              await client.query(`PREPARE COMMIT ${commitId}`)
             })
-          );
+          )
 
           if (commits.some(commit => commit.some(result => result.status === 'rejected'))) {
-            throw Error('Error during commit phase');
+            throw Error('Error during commit phase')
           }
         } catch (err) {
-          error = err;
+          error = err
           Promise.allSettled(
             contextValue.clients.map(async client => {
-              const commitId = preparedCommits.get(client);
-              if (commitId) await client.query(`ROLLBACK PREPARED ${commitId}`);
-              else await client.query('ROLLBACK');
+              const commitId = preparedCommits.get(client)
+              if (commitId) await client.query(`ROLLBACK PREPARED ${commitId}`)
+              else await client.query('ROLLBACK')
             })
-          );
+          )
 
           if (commits.some(commit => commit.some(result => result.status === 'rejected'))) {
-            throw Error('Error during rollback phase');
+            throw Error('Error during rollback phase')
           }
         } finally {
-          await Promise.all(clients.map(client => client.release));
+          await Promise.all(clients.map(client => client.release))
         }
-      },
-    };
-  },
-};
+      }
+    }
+  }
+}
 ```

@@ -6,8 +6,8 @@ import {
 } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { execute, subscribe } from 'graphql';
-import { useGraphQlJit } from '../src/index.js';
-import lru from 'tiny-lru';
+import { useGraphQlJit, JITCache } from '../src/index.js';
+import LRU from 'lru-cache';
 
 describe('useGraphQlJit', () => {
   const schema = makeExecutableSchema({
@@ -141,7 +141,7 @@ describe('useGraphQlJit', () => {
   });
 
   it('Should use the provided cache instance', async () => {
-    const cache = lru();
+    const cache: JITCache = new LRU();
     jest.spyOn(cache, 'set');
     jest.spyOn(cache, 'get');
 
