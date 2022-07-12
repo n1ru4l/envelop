@@ -19,26 +19,9 @@ yarn add @envelop/graphql-executor
 Then, use the plugin with your validation rules:
 
 ```ts
-import { useGraphQLExecutor } from '@envelop/extended-validation';
+import { useGraphQLExecutor } from '@envelop/extended-validation'
 
 const getEnveloped = envelop({
-  plugins: [useGraphQLExecutor({})],
-});
-```
-
-To create your custom executor, implement the `Executor` class from `graphql-executor`.
-
-For example:
-
-```ts
-import { Executor } from 'graphql-executor';
-import { useGraphQLExecutor } from '@envelop/extended-validation';
-
-class MyCustomExecutor extends Executor {
-  // ...
-}
-
-const getEnveloped = envelop({
-  plugins: [useGraphQLExecutor({ customExecutor: new MyCustomExecutor() })],
-});
+  plugins: [useGraphQLExecutor()]
+})
 ```
