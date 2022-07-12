@@ -1,22 +1,13 @@
 import { Plugin } from '@envelop/core';
-import { Executor } from 'graphql-executor';
+import { execute } from 'graphql-executor';
 
-export type GraphQLExecutorOptions = {
-  customExecutor?: Executor;
-};
-
-export const useGraphQLExecutor = <TOptions extends GraphQLExecutorOptions>(options: TOptions): Plugin => {
-  const executor = options?.customExecutor ?? new Executor();
-
+export const useGraphQLExecutor = (): Plugin => {
   return {
-    onExecute: async ({ args, setExecuteFn }) => {
-      setExecuteFn(function executorExecute() {
-        return executor.execute(args);
-      });
-    },
-    onSubscribe: async ({ args, setSubscribeFn }) => {
-      setSubscribeFn(function executorSubscriber() {
-        return executor.execute(args);
+    onExecute: async ({ setExecuteFn }) => {
+      // @ts-expect-error It will work fine it is just the difference in Function signatures.
+      setExecuteFn(function executorExecute(args) {
+        // @ts-expect-error It will work fine it is just the difference in Function signatures.
+        return execute(args);
       });
     },
   };

@@ -423,10 +423,10 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.6, graceful-fs@^4.2.0
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.8.tgz#e412b8d33f5e006593cbd3cee6df9f2cebbe802a"
   integrity sha512-qkIilPUYcNhJpd33n0GBXTB1MMPp14TxEsEs0pTrsSVucApsYzW5V+Q8Qxhik6KU3evy+qkAAowTByymK0avdg==
 
-graphql-executor@^0.0.11:
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/graphql-executor/-/graphql-executor-0.0.11.tgz#54fdc02803f1af01dfba6b5be947f1846835a3f4"
-  integrity sha512-btm6AHPmyLog7rHzg5NWhTMsVRF5octZjUM2ZNOgH7IKdpqos2yn5mpip5TnvIHakWNfKTPcR/u8+78GNLkcug==
+graphql-executor@^0.0.23:
+  version "0.0.23"
+  resolved "https://registry.yarnpkg.com/graphql-executor/-/graphql-executor-0.0.23.tgz#205c1764b39ee0fcf611553865770f37b45851a2"
+  integrity sha512-3Ivlyfjaw3BWmGtUSnMpP/a4dcXCp0mJtj0PiPG14OKUizaMKlSEX+LX2Qed0LrxwniIwvU6B4w/koVjEPyWJg==
 
 graphql@16.0.1:
   version "16.0.1"
