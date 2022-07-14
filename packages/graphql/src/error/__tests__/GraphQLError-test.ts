@@ -18,19 +18,19 @@ expect(fieldNode != null).toBeTruthy();
 
 describe('GraphQLError', () => {
   it('is a class and is a subclass of Error', () => {
-    expect(new GraphQLError('str')).to.be.instanceof(Error);
-    expect(new GraphQLError('str')).to.be.instanceof(GraphQLError);
+    expect(new GraphQLError('str')).toBeInstanceOf(Error);
+    expect(new GraphQLError('str')).toBeInstanceOf(GraphQLError);
   });
 
   it('has a name, message, extensions, and stack trace', () => {
     const e = new GraphQLError('msg');
 
-    expect(e).to.deep.include({
+    expect(e).toMatchObject({
       name: 'GraphQLError',
       message: 'msg',
       extensions: {},
     });
-    expect(e.stack).to.be.a('string');
+    expect(e.stack).toBe('string');
   });
 
   it('enumerate only properties prescribed by the spec', () => {
@@ -52,7 +52,7 @@ describe('GraphQLError', () => {
       originalError: original,
     });
 
-    expect(e).to.include({
+    expect(e).toMatchObject({
       name: 'GraphQLError',
       message: 'msg',
       stack: original.stack,
@@ -64,17 +64,17 @@ describe('GraphQLError', () => {
     const original = new Error('original');
     const e = new GraphQLError('msg', { originalError: original });
 
-    expect(e).to.include({
+    expect(e).toMatchObject({
       name: 'GraphQLError',
       message: 'msg',
       originalError: original,
     });
-    expect(e.stack).to.be.a('string');
+    expect(e.stack).toBe('string');
   });
 
   it('converts nodes to positions and locations', () => {
     const e = new GraphQLError('msg', { nodes: [fieldNode] });
-    expect(e).to.deep.include({
+    expect(e).toMatchObject({
       source,
       nodes: [fieldNode],
       positions: [4],
@@ -84,7 +84,7 @@ describe('GraphQLError', () => {
 
   it('converts single node to positions and locations', () => {
     const e = new GraphQLError('msg', { nodes: fieldNode }); // Non-array value.
-    expect(e).to.deep.include({
+    expect(e).toMatchObject({
       source,
       nodes: [fieldNode],
       positions: [4],
@@ -94,7 +94,7 @@ describe('GraphQLError', () => {
 
   it('converts node with loc.start === 0 to positions and locations', () => {
     const e = new GraphQLError('msg', { nodes: operationNode });
-    expect(e).to.deep.include({
+    expect(e).toMatchObject({
       source,
       nodes: [operationNode],
       positions: [0],
@@ -109,7 +109,7 @@ describe('GraphQLError', () => {
     };
 
     const e = new GraphQLError('msg', { nodes: fieldNodeNoLocation });
-    expect(e).to.deep.include({
+    expect(e).toMatchObject({
       nodes: [fieldNodeNoLocation],
       source: undefined,
       positions: undefined,
@@ -119,7 +119,7 @@ describe('GraphQLError', () => {
 
   it('converts source and positions to locations', () => {
     const e = new GraphQLError('msg', { source, positions: [6] });
-    expect(e).to.deep.include({
+    expect(e).toMatchObject({
       source,
       nodes: undefined,
       positions: [6],
@@ -142,7 +142,7 @@ describe('GraphQLError', () => {
       originalError: original,
     });
 
-    expect(inheritedExtensions).to.deep.include({
+    expect(inheritedExtensions).toMatchObject({
       message: 'InheritedExtensions',
       originalError: original,
       extensions: { original: 'extensions' },
@@ -153,7 +153,7 @@ describe('GraphQLError', () => {
       extensions: { own: 'extensions' },
     });
 
-    expect(ownExtensions).to.deep.include({
+    expect(ownExtensions).toMatchObject({
       message: 'OwnExtensions',
       originalError: original,
       extensions: { own: 'extensions' },
@@ -164,7 +164,7 @@ describe('GraphQLError', () => {
       extensions: {},
     });
 
-    expect(ownEmptyExtensions).to.deep.include({
+    expect(ownEmptyExtensions).toMatchObject({
       message: 'OwnEmptyExtensions',
       originalError: original,
       extensions: {},

@@ -164,12 +164,12 @@ describe('Type System: Objects', () => {
       },
     });
 
-    expect(TypeWithDeprecatedField.getFields().bar).to.include({
+    expect(TypeWithDeprecatedField.getFields().bar).toMatchObject({
       name: 'bar',
       deprecationReason: 'A terrible reason',
     });
 
-    expect(TypeWithDeprecatedField.getFields().baz).to.include({
+    expect(TypeWithDeprecatedField.getFields().baz).toMatchObject({
       name: 'baz',
       deprecationReason: '',
     });
@@ -396,12 +396,12 @@ describe('Type System: Enums', () => {
       },
     });
 
-    expect(EnumTypeWithDeprecatedValue.getValues()[0]).to.include({
+    expect(EnumTypeWithDeprecatedValue.getValues()[0]).toMatchObject({
       name: 'foo',
       deprecationReason: 'Just because',
     });
 
-    expect(EnumTypeWithDeprecatedValue.getValues()[1]).to.include({
+    expect(EnumTypeWithDeprecatedValue.getValues()[1]).toMatchObject({
       name: 'bar',
       deprecationReason: '',
     });

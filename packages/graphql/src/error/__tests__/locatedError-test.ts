@@ -12,7 +12,7 @@ describe('locatedError', () => {
     const testObject = Object.freeze({});
     const error = locatedError(testObject, [], []);
 
-    expect(error).to.be.instanceOf(GraphQLError);
+    expect(error).toBeInstanceOf(GraphQLError);
     expect(error.originalError).to.include({
       name: 'NonErrorThrown',
       thrownValue: testObject,

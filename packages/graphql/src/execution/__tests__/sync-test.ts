@@ -83,7 +83,7 @@ describe('Execute: synchronously when possible', () => {
       document: parse(doc),
       rootValue: 'rootValue',
     });
-    expect(result).to.be.instanceOf(Promise);
+    expect(result).toBeInstanceOf(Promise);
     expect(await result).toEqual({
       data: { syncField: 'rootValue', asyncField: 'rootValue' },
     });

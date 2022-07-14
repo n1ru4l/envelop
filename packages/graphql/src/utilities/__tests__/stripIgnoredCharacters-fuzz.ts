@@ -1,6 +1,4 @@
-import { dedent } from '../../__testUtils__/dedent';
 import { genFuzzStrings } from '../../__testUtils__/genFuzzStrings';
-import { inspectStr } from '../../__testUtils__/inspectStr';
 
 import { Lexer } from '../../language/lexer';
 import { Source } from '../../language/source';
@@ -221,5 +219,5 @@ describe('stripIgnoredCharacters', () => {
 
       expect(testValue === strippedValue).toBeTruthy();
     }
-  }).timeout(20000);
+  });
 });

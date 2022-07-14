@@ -144,7 +144,7 @@ describe('Schema Parser', () => {
   });
 
   it('Description followed by something other than type system definition throws', () => {
-    expectSyntaxError('"Description" 1').toEqual({
+    expectSyntaxError('"Description" 1').toMatchObject({
       message: 'Syntax Error: Unexpected Int "1".',
       locations: [{ line: 1, column: 15 }],
     });
@@ -247,32 +247,32 @@ describe('Schema Parser', () => {
   });
 
   it('Extension without anything throws', () => {
-    expectSyntaxError('extend scalar Hello').toEqual({
+    expectSyntaxError('extend scalar Hello').toMatchObject({
       message: 'Syntax Error: Unexpected <EOF>.',
       locations: [{ line: 1, column: 20 }],
     });
 
-    expectSyntaxError('extend type Hello').toEqual({
+    expectSyntaxError('extend type Hello').toMatchObject({
       message: 'Syntax Error: Unexpected <EOF>.',
       locations: [{ line: 1, column: 18 }],
     });
 
-    expectSyntaxError('extend interface Hello').toEqual({
+    expectSyntaxError('extend interface Hello').toMatchObject({
       message: 'Syntax Error: Unexpected <EOF>.',
       locations: [{ line: 1, column: 23 }],
     });
 
-    expectSyntaxError('extend union Hello').toEqual({
+    expectSyntaxError('extend union Hello').toMatchObject({
       message: 'Syntax Error: Unexpected <EOF>.',
       locations: [{ line: 1, column: 19 }],
     });
 
-    expectSyntaxError('extend enum Hello').toEqual({
+    expectSyntaxError('extend enum Hello').toMatchObject({
       message: 'Syntax Error: Unexpected <EOF>.',
       locations: [{ line: 1, column: 18 }],
     });
 
-    expectSyntaxError('extend input Hello').toEqual({
+    expectSyntaxError('extend input Hello').toMatchObject({
       message: 'Syntax Error: Unexpected <EOF>.',
       locations: [{ line: 1, column: 19 }],
     });
@@ -314,7 +314,7 @@ describe('Schema Parser', () => {
       extend type Hello {
         world: String
       }
-    `).toEqual({
+    `).toMatchObject({
       message: 'Syntax Error: Unexpected description, descriptions are supported only on type definitions.',
       locations: [{ line: 2, column: 7 }],
     });
@@ -323,7 +323,7 @@ describe('Schema Parser', () => {
       extend "Description" type Hello {
         world: String
       }
-    `).toEqual({
+    `).toMatchObject({
       message: 'Syntax Error: Unexpected String "Description".',
       locations: [{ line: 2, column: 14 }],
     });
@@ -335,7 +335,7 @@ describe('Schema Parser', () => {
       extend interface Hello {
         world: String
       }
-    `).toEqual({
+    `).toMatchObject({
       message: 'Syntax Error: Unexpected description, descriptions are supported only on type definitions.',
       locations: [{ line: 2, column: 7 }],
     });
@@ -344,7 +344,7 @@ describe('Schema Parser', () => {
       extend "Description" interface Hello {
         world: String
       }
-    `).toEqual({
+    `).toMatchObject({
       message: 'Syntax Error: Unexpected String "Description".',
       locations: [{ line: 2, column: 14 }],
     });
@@ -402,14 +402,14 @@ describe('Schema Parser', () => {
   });
 
   it('Schema extension without anything throws', () => {
-    expectSyntaxError('extend schema').toEqual({
+    expectSyntaxError('extend schema').toMatchObject({
       message: 'Syntax Error: Unexpected <EOF>.',
       locations: [{ line: 1, column: 14 }],
     });
   });
 
   it('Schema extension with invalid operation type throws', () => {
-    expectSyntaxError('extend schema { unknown: SomeType }').toEqual({
+    expectSyntaxError('extend schema { unknown: SomeType }').toMatchObject({
       message: 'Syntax Error: Unexpected Name "unknown".',
       locations: [{ line: 1, column: 17 }],
     });
@@ -887,28 +887,28 @@ describe('Schema Parser', () => {
   });
 
   it('Union fails with no types', () => {
-    expectSyntaxError('union Hello = |').toEqual({
+    expectSyntaxError('union Hello = |').toMatchObject({
       message: 'Syntax Error: Expected Name, found <EOF>.',
       locations: [{ line: 1, column: 16 }],
     });
   });
 
   it('Union fails with leading double pipe', () => {
-    expectSyntaxError('union Hello = || Wo | Rld').toEqual({
+    expectSyntaxError('union Hello = || Wo | Rld').toMatchObject({
       message: 'Syntax Error: Expected Name, found "|".',
       locations: [{ line: 1, column: 16 }],
     });
   });
 
   it('Union fails with double pipe', () => {
-    expectSyntaxError('union Hello = Wo || Rld').toEqual({
+    expectSyntaxError('union Hello = Wo || Rld').toMatchObject({
       message: 'Syntax Error: Expected Name, found "|".',
       locations: [{ line: 1, column: 19 }],
     });
   });
 
   it('Union fails with trailing pipe', () => {
-    expectSyntaxError('union Hello = | Wo | Rld |').toEqual({
+    expectSyntaxError('union Hello = | Wo | Rld |').toMatchObject({
       message: 'Syntax Error: Expected Name, found <EOF>.',
       locations: [{ line: 1, column: 27 }],
     });
@@ -966,7 +966,7 @@ input Hello {
       input Hello {
         world(foo: Int): String
       }
-    `).toEqual({
+    `).toMatchObject({
       message: 'Syntax Error: Expected ":", found "(".',
       locations: [{ line: 3, column: 14 }],
     });
@@ -1045,7 +1045,7 @@ input Hello {
   });
 
   it('Directive with incorrect locations', () => {
-    expectSyntaxError('directive @foo on FIELD | INCORRECT_LOCATION').toEqual({
+    expectSyntaxError('directive @foo on FIELD | INCORRECT_LOCATION').toMatchObject({
       message: 'Syntax Error: Unexpected Name "INCORRECT_LOCATION".',
       locations: [{ line: 1, column: 27 }],
     });
