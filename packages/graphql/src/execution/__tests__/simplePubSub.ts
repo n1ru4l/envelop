@@ -62,7 +62,7 @@ export class SimplePubSub<T> {
       const value: R = transform(event);
       if (pullQueue.length > 0) {
         const receiver = pullQueue.shift();
-        assert(receiver != null);
+        expect(receiver != null).toBeTruthy();
         receiver({ value, done: false });
       } else {
         pushQueue.push(value);

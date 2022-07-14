@@ -395,7 +395,7 @@ describe('visitWithTypeInfo', () => {
     `);
     const ast = parseValue('{ stringListField: ["foo"] }');
     const complexInputType = schema.getType('ComplexInput');
-    assert(complexInputType != null);
+    expect(complexInputType != null).toBeTruthy();
 
     const typeInfo = new TypeInfo(schema, complexInputType);
 
@@ -430,13 +430,13 @@ describe('visitWithTypeInfo', () => {
 
   it('supports traversals of selection sets', () => {
     const humanType = testSchema.getType('Human');
-    assert(humanType != null);
+    expect(humanType != null).toBeTruthy();
 
     const typeInfo = new TypeInfo(testSchema, humanType);
 
     const ast = parse('{ name, pets { name } }');
     const operationNode = ast.definitions[0];
-    assert(operationNode.kind === 'OperationDefinition');
+    expect(operationNode.kind === 'OperationDefinition').toBeTruthy();
 
     const visited: Array<any> = [];
     visit(

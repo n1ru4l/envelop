@@ -3,6 +3,7 @@ import { parse } from '../../language/parser';
 import { Source } from '../../language/source';
 
 import { GraphQLError } from '../GraphQLError';
+import { Kind } from '../../language';
 
 const source = new Source(dedent`
   {
@@ -11,9 +12,9 @@ const source = new Source(dedent`
 `);
 const ast = parse(source);
 const operationNode = ast.definitions[0];
-assert(operationNode.kind === Kind.OPERATION_DEFINITION);
+expect(operationNode.kind === Kind.OPERATION_DEFINITION).toBeTruthy();
 const fieldNode = operationNode.selectionSet.selections[0];
-assert(fieldNode != null);
+expect(fieldNode != null).toBeTruthy();
 
 describe('GraphQLError', () => {
   it('is a class and is a subclass of Error', () => {
@@ -235,7 +236,7 @@ describe('toString', () => {
       )
     );
     const opA = docA.definitions[0];
-    assert(opA.kind === Kind.OBJECT_TYPE_DEFINITION && opA.fields != null);
+    expect(opA.kind === Kind.OBJECT_TYPE_DEFINITION && opA.fields != null).toBeTruthy();
     const fieldA = opA.fields[0];
 
     const docB = parse(
@@ -249,7 +250,7 @@ describe('toString', () => {
       )
     );
     const opB = docB.definitions[0];
-    assert(opB.kind === Kind.OBJECT_TYPE_DEFINITION && opB.fields != null);
+    expect(opB.kind === Kind.OBJECT_TYPE_DEFINITION && opB.fields != null).toBeTruthy();
     const fieldB = opB.fields[0];
 
     const error = new GraphQLError('Example error with two nodes', {

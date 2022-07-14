@@ -209,7 +209,7 @@ describe('Execute: Handles basic execution tasks', () => {
     );
 
     const operation = document.definitions[0];
-    assert(operation.kind === Kind.OPERATION_DEFINITION);
+    expect(operation.kind === Kind.OPERATION_DEFINITION).toBeTruthy();
 
     expect(resolvedInfo).to.include({
       fieldName: 'test',

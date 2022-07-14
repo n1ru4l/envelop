@@ -12,7 +12,7 @@ import { GraphQLSchema } from '../schema';
 const dummyType = new GraphQLScalarType({ name: 'DummyScalar' });
 
 function expectObjMap(value: unknown) {
-  assert(value != null && typeof value === 'object');
+  expect(value != null && typeof value === 'object').toBeTruthy();
   expect(Object.getPrototypeOf(value)).toEqual(null);
   return expect(value);
 }
@@ -67,7 +67,7 @@ describe('Type System: Extensions', () => {
       expect(config.extensions).toEqual({});
       const someFieldConfig = config.fields.someField;
       expect(someFieldConfig.extensions).toEqual({});
-      assert(someFieldConfig.args != null);
+      expect(someFieldConfig.args != null).toBeTruthy();
       const someArgConfig = someFieldConfig.args.someArg;
       expect(someArgConfig.extensions).toEqual({});
     });
@@ -104,7 +104,7 @@ describe('Type System: Extensions', () => {
       expectObjMap(config.extensions).toEqual(objectExtensions);
       const someFieldConfig = config.fields.someField;
       expectObjMap(someFieldConfig.extensions).toEqual(fieldExtensions);
-      assert(someFieldConfig.args != null);
+      expect(someFieldConfig.args != null).toBeTruthy();
       const someArgConfig = someFieldConfig.args.someArg;
       expectObjMap(someArgConfig.extensions).toEqual(argExtensions);
     });
@@ -136,7 +136,7 @@ describe('Type System: Extensions', () => {
       expect(config.extensions).toEqual({});
       const someFieldConfig = config.fields.someField;
       expect(someFieldConfig.extensions).toEqual({});
-      assert(someFieldConfig.args != null);
+      expect(someFieldConfig.args != null).toBeTruthy();
       const someArgConfig = someFieldConfig.args.someArg;
       expect(someArgConfig.extensions).toEqual({});
     });
@@ -175,7 +175,7 @@ describe('Type System: Extensions', () => {
       expectObjMap(config.extensions).toEqual(interfaceExtensions);
       const someFieldConfig = config.fields.someField;
       expectObjMap(someFieldConfig.extensions).toEqual(fieldExtensions);
-      assert(someFieldConfig.args != null);
+      expect(someFieldConfig.args != null).toBeTruthy();
       const someArgConfig = someFieldConfig.args.someArg;
       expectObjMap(someArgConfig.extensions).toEqual(argExtensions);
     });

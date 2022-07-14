@@ -14,7 +14,7 @@ function lexValue(str: string): Maybe<string> {
   const lexer = new Lexer(new Source(str));
   const value = lexer.advance().value;
 
-  assert(lexer.advance().kind === '<EOF>', 'Expected EOF');
+  expect(lexer.advance().kind === '<EOF>').toBeTruthy();
   return value;
 }
 

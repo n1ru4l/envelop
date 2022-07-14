@@ -52,7 +52,7 @@ describe('valueFromAST', () => {
     const passthroughScalar = new GraphQLScalarType({
       name: 'PassthroughScalar',
       parseLiteral(node) {
-        assert(node.kind === 'StringValue');
+        expect(node.kind === 'StringValue').toBeTruthy();
         return node.value;
       },
       parseValue: identityFunc,

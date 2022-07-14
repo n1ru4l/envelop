@@ -666,7 +666,7 @@ describe('Type System: build schema from introspection', () => {
       const introspection = introspectionFromSchema(dummySchema);
       const queryTypeIntrospection = introspection.__schema.types.find(({ name }) => name === 'Query');
 
-      assert(queryTypeIntrospection?.kind === 'OBJECT');
+      expect(queryTypeIntrospection?.kind === 'OBJECT').toBeTruthy();
       // @ts-expect-error
       delete queryTypeIntrospection.kind;
 
@@ -681,7 +681,7 @@ describe('Type System: build schema from introspection', () => {
 
       expect(queryTypeIntrospection).toHaveProperty('interfaces');
 
-      assert(queryTypeIntrospection?.kind === 'OBJECT');
+      expect(queryTypeIntrospection?.kind === 'OBJECT').toBeTruthy();
       // @ts-expect-error
       delete queryTypeIntrospection.interfaces;
 
@@ -694,7 +694,7 @@ describe('Type System: build schema from introspection', () => {
       const introspection = introspectionFromSchema(dummySchema);
       const someInterfaceIntrospection = introspection.__schema.types.find(({ name }) => name === 'SomeInterface');
 
-      assert(someInterfaceIntrospection?.kind === 'INTERFACE');
+      expect(someInterfaceIntrospection?.kind === 'INTERFACE').toBeTruthy();
       // @ts-expect-error
       someInterfaceIntrospection.interfaces = null;
 
@@ -706,7 +706,7 @@ describe('Type System: build schema from introspection', () => {
       const introspection = introspectionFromSchema(dummySchema);
       const queryTypeIntrospection = introspection.__schema.types.find(({ name }) => name === 'Query');
 
-      assert(queryTypeIntrospection?.kind === 'OBJECT');
+      expect(queryTypeIntrospection?.kind === 'OBJECT').toBeTruthy();
       // @ts-expect-error
       delete queryTypeIntrospection.fields;
 
@@ -719,7 +719,7 @@ describe('Type System: build schema from introspection', () => {
       const introspection = introspectionFromSchema(dummySchema);
       const queryTypeIntrospection = introspection.__schema.types.find(({ name }) => name === 'Query');
 
-      assert(queryTypeIntrospection?.kind === 'OBJECT');
+      expect(queryTypeIntrospection?.kind === 'OBJECT').toBeTruthy();
       // @ts-expect-error
       delete queryTypeIntrospection.fields[0].args;
 
@@ -732,9 +732,9 @@ describe('Type System: build schema from introspection', () => {
       const introspection = introspectionFromSchema(dummySchema);
       const queryTypeIntrospection = introspection.__schema.types.find(({ name }) => name === 'Query');
 
-      assert(queryTypeIntrospection?.kind === 'OBJECT');
+      expect(queryTypeIntrospection?.kind === 'OBJECT').toBeTruthy();
       const argType = queryTypeIntrospection.fields[0].args[0].type;
-      assert(argType.kind === 'SCALAR');
+      expect(argType.kind === 'SCALAR').toBeTruthy();
 
       expect(argType).toHaveProperty('name', 'String');
       // @ts-expect-error
@@ -749,9 +749,9 @@ describe('Type System: build schema from introspection', () => {
       const introspection = introspectionFromSchema(dummySchema);
       const queryTypeIntrospection = introspection.__schema.types.find(({ name }) => name === 'Query');
 
-      assert(queryTypeIntrospection?.kind === 'OBJECT');
+      expect(queryTypeIntrospection?.kind === 'OBJECT').toBeTruthy();
       const fieldType = queryTypeIntrospection.fields[0].type;
-      assert(fieldType.kind === 'SCALAR');
+      expect(fieldType.kind === 'SCALAR').toBeTruthy();
 
       expect(fieldType).toHaveProperty('name', 'String');
       // @ts-expect-error
@@ -766,7 +766,7 @@ describe('Type System: build schema from introspection', () => {
       const introspection = introspectionFromSchema(dummySchema);
       const someUnionIntrospection = introspection.__schema.types.find(({ name }) => name === 'SomeUnion');
 
-      assert(someUnionIntrospection?.kind === 'UNION');
+      expect(someUnionIntrospection?.kind === 'UNION').toBeTruthy();
       // @ts-expect-error
       delete someUnionIntrospection.possibleTypes;
 
@@ -779,7 +779,7 @@ describe('Type System: build schema from introspection', () => {
       const introspection = introspectionFromSchema(dummySchema);
       const someEnumIntrospection = introspection.__schema.types.find(({ name }) => name === 'SomeEnum');
 
-      assert(someEnumIntrospection?.kind === 'ENUM');
+      expect(someEnumIntrospection?.kind === 'ENUM').toBeTruthy();
       // @ts-expect-error
       delete someEnumIntrospection.enumValues;
 
@@ -792,7 +792,7 @@ describe('Type System: build schema from introspection', () => {
       const introspection = introspectionFromSchema(dummySchema);
       const someInputObjectIntrospection = introspection.__schema.types.find(({ name }) => name === 'SomeInputObject');
 
-      assert(someInputObjectIntrospection?.kind === 'INPUT_OBJECT');
+      expect(someInputObjectIntrospection?.kind === 'INPUT_OBJECT').toBeTruthy();
       // @ts-expect-error
       delete someInputObjectIntrospection.inputFields;
 

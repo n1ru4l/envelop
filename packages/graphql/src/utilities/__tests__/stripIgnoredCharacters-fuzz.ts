@@ -41,7 +41,7 @@ function lexValue(str: string) {
   const lexer = new Lexer(new Source(str));
   const value = lexer.advance().value;
 
-  assert(lexer.advance().kind === '<EOF>', 'Expected EOF');
+  expect(lexer.advance().kind === '<EOF>').toBeTruthy();
   return value;
 }
 
@@ -50,25 +50,11 @@ function expectStripped(docString: string) {
     toEqual(expected: string): void {
       const stripped = stripIgnoredCharacters(docString);
 
-      assert(
-        stripped === expected,
-        dedent`
-          Expected stripIgnoredCharacters(${inspectStr(docString)})
-            to equal ${inspectStr(expected)}
-            but got  ${inspectStr(stripped)}
-        `
-      );
+      expect(stripped === expected).toBeTruthy();
 
       const strippedTwice = stripIgnoredCharacters(stripped);
 
-      assert(
-        stripped === strippedTwice,
-        dedent`
-          Expected stripIgnoredCharacters(${inspectStr(stripped)})
-            to equal ${inspectStr(stripped)}
-            but got  ${inspectStr(strippedTwice)}
-        `
-      );
+      expect(stripped === strippedTwice).toBeTruthy();
     },
     toStayTheSame(): void {
       this.toEqual(docString);
@@ -233,14 +219,7 @@ describe('stripIgnoredCharacters', () => {
 
       const strippedValue = lexValue(stripIgnoredCharacters(testStr));
 
-      assert(
-        testValue === strippedValue,
-        dedent`
-          Expected lexValue(stripIgnoredCharacters(${inspectStr(testStr)}))
-            to equal ${inspectStr(testValue)}
-            but got  ${inspectStr(strippedValue)}
-        `
-      );
+      expect(testValue === strippedValue).toBeTruthy();
     }
   }).timeout(20000);
 });

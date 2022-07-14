@@ -10,34 +10,21 @@ function lexValue(str: string): string {
   const lexer = new Lexer(new Source(str));
   const value = lexer.advance().value;
 
-  assert(typeof value === 'string');
-  assert(lexer.advance().kind === '<EOF>', 'Expected EOF');
+  expect(typeof value === 'string').toBeTruthy();
+  expect(lexer.advance().kind === '<EOF>').toBeTruthy();
   return value;
 }
 
 function testPrintableBlockString(testValue: string, options?: { minimize: boolean }): void {
   const blockString = printBlockString(testValue, options);
   const printedValue = lexValue(blockString);
-  assert(
-    testValue === printedValue,
-    dedent`
-      Expected lexValue(${inspectStr(blockString)})
-         to equal ${inspectStr(testValue)}
-         but got  ${inspectStr(printedValue)}
-     `
-  );
+  expect(testValue === printedValue).toBeTruthy();
 }
 
 function testNonPrintableBlockString(testValue: string): void {
   const blockString = printBlockString(testValue);
   const printedValue = lexValue(blockString);
-  assert(
-    testValue !== printedValue,
-    dedent`
-      Expected lexValue(${inspectStr(blockString)})
-        to not equal ${inspectStr(testValue)}
-    `
-  );
+  expect(testValue !== printedValue).toBeTruthy();
 }
 
 describe('printBlockString', () => {

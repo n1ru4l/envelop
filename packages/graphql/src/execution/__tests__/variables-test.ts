@@ -990,9 +990,9 @@ describe('Execute: Handles inputs', () => {
     `);
 
     const operation = doc.definitions[0];
-    assert(operation.kind === Kind.OPERATION_DEFINITION);
+    expect(operation.kind === Kind.OPERATION_DEFINITION).toBeTruthy();
     const { variableDefinitions } = operation;
-    assert(variableDefinitions != null);
+    expect(variableDefinitions != null).toBeTruthy();
 
     const inputValue = { input: [0, 1, 2] };
 
