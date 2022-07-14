@@ -1052,6 +1052,6 @@ input Hello {
   });
 
   it('parses kitchen sink schema', () => {
-    expect(() => parse(kitchenSinkSDL)).to.not.throw();
+    expect(() => parse(kitchenSinkSDL)).not.toThrow();
   });
 });

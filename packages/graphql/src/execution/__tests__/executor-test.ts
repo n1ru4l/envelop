@@ -195,7 +195,7 @@ describe('Execute: Handles basic execution tasks', () => {
 
     executeSync({ schema, document, rootValue, variableValues });
 
-    expect(resolvedInfo).to.have.all.keys(
+    expect(Object.keys(resolvedInfo)).toEqual([
       'fieldName',
       'fieldNodes',
       'returnType',
@@ -205,13 +205,13 @@ describe('Execute: Handles basic execution tasks', () => {
       'fragments',
       'rootValue',
       'operation',
-      'variableValues'
-    );
+      'variableValues',
+    ]);
 
     const operation = document.definitions[0];
     expect(operation.kind === Kind.OPERATION_DEFINITION).toBeTruthy();
 
-    expect(resolvedInfo).to.include({
+    expect(resolvedInfo).toMatchObject({
       fieldName: 'test',
       returnType: GraphQLString,
       parentType: testType,
@@ -221,7 +221,7 @@ describe('Execute: Handles basic execution tasks', () => {
     });
 
     const field = operation.selectionSet.selections[0];
-    expect(resolvedInfo).to.deep.include({
+    expect(resolvedInfo).toMatchObject({
       fieldNodes: [field],
       path: { prev: undefined, key: 'result', typename: 'Test' },
       variableValues: { var: 'abc' },

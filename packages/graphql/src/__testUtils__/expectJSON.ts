@@ -31,8 +31,7 @@ export function expectJSON(actual: unknown) {
     },
     toDeepNestedProperty(path: string, expected: unknown) {
       const expectedJSON = toJSONDeep(expected);
-      // TODO - figure me out
-      // expect(actualJSON).to.deep.nested.property(path, expectedJSON);
+      expect(actualJSON).toHaveProperty(path, expectedJSON);
     },
   };
 }

@@ -38,7 +38,7 @@ const dummyFunc = () => expect.fail('Never called and used as a placeholder');
 
 describe('Type System: Scalars', () => {
   it('accepts a Scalar type defining serialize', () => {
-    expect(() => new GraphQLScalarType({ name: 'SomeScalar' })).to.not.throw();
+    expect(() => new GraphQLScalarType({ name: 'SomeScalar' })).not.toThrow();
   });
 
   it('accepts a Scalar type defining specifiedByURL', () => {
@@ -59,7 +59,7 @@ describe('Type System: Scalars', () => {
           parseValue: dummyFunc,
           parseLiteral: dummyFunc,
         })
-    ).to.not.throw();
+    ).not.toThrow();
   });
 
   it('provides default methods if omitted', () => {
@@ -67,7 +67,7 @@ describe('Type System: Scalars', () => {
 
     expect(scalar.serialize).toEqual(identityFunc);
     expect(scalar.parseValue).toEqual(identityFunc);
-    expect(scalar.parseLiteral).to.be.a('function');
+    expect(scalar.parseLiteral).toBe('function');
   });
 
   it('use parseValue for parsing literals if parseLiteral omitted', () => {
@@ -262,7 +262,7 @@ describe('Type System: Objects', () => {
         },
       },
     });
-    expect(() => objType.getFields()).to.not.throw();
+    expect(() => objType.getFields()).not.toThrow();
   });
 
   it('rejects an Object type with invalid name', () => {
@@ -316,7 +316,7 @@ describe('Type System: Interfaces', () => {
           name: 'AnotherInterface',
           fields: { f: { type: ScalarType } },
         })
-    ).to.not.throw();
+    ).not.toThrow();
   });
 
   it('accepts an Interface type with an array of interfaces', () => {
@@ -352,7 +352,7 @@ describe('Type System: Unions', () => {
           name: 'SomeUnion',
           types: [ObjectType],
         })
-    ).to.not.throw();
+    ).not.toThrow();
   });
 
   it('accepts a Union type with array types', () => {
@@ -585,10 +585,7 @@ describe('Type System: Input Objects', () => {
         },
       },
     });
-    expect(inputObjType.toConfig()).to.have.nested.property(
-      'fields.deprecatedField.deprecationReason',
-      'not used anymore'
-    );
+    expect(inputObjType.toConfig()).toHaveProperty('fields.deprecatedField.deprecationReason', 'not used anymore');
   });
 });
 
@@ -598,14 +595,14 @@ describe('Type System: List', () => {
   }
 
   it('accepts an type as item type of list', () => {
-    expectList(ScalarType).to.not.throw();
-    expectList(ObjectType).to.not.throw();
-    expectList(UnionType).to.not.throw();
-    expectList(InterfaceType).to.not.throw();
-    expectList(EnumType).to.not.throw();
-    expectList(InputObjectType).to.not.throw();
-    expectList(ListOfScalarsType).to.not.throw();
-    expectList(NonNullScalarType).to.not.throw();
+    expectList(ScalarType).not.toThrow();
+    expectList(ObjectType).not.toThrow();
+    expectList(UnionType).not.toThrow();
+    expectList(InterfaceType).not.toThrow();
+    expectList(EnumType).not.toThrow();
+    expectList(InputObjectType).not.toThrow();
+    expectList(ListOfScalarsType).not.toThrow();
+    expectList(NonNullScalarType).not.toThrow();
   });
 });
 
@@ -615,14 +612,14 @@ describe('Type System: Non-Null', () => {
   }
 
   it('accepts an type as nullable type of non-null', () => {
-    expectNonNull(ScalarType).to.not.throw();
-    expectNonNull(ObjectType).to.not.throw();
-    expectNonNull(UnionType).to.not.throw();
-    expectNonNull(InterfaceType).to.not.throw();
-    expectNonNull(EnumType).to.not.throw();
-    expectNonNull(InputObjectType).to.not.throw();
-    expectNonNull(ListOfScalarsType).to.not.throw();
-    expectNonNull(ListOfNonNullScalarsType).to.not.throw();
+    expectNonNull(ScalarType).not.toThrow();
+    expectNonNull(ObjectType).not.toThrow();
+    expectNonNull(UnionType).not.toThrow();
+    expectNonNull(InterfaceType).not.toThrow();
+    expectNonNull(EnumType).not.toThrow();
+    expectNonNull(InputObjectType).not.toThrow();
+    expectNonNull(ListOfScalarsType).not.toThrow();
+    expectNonNull(ListOfNonNullScalarsType).not.toThrow();
   });
 });
 

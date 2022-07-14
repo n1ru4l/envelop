@@ -86,7 +86,7 @@ describe('Parser', () => {
   });
 
   it('parses variable inline values', () => {
-    expect(() => parse('{ field(complex: { a: { b: [ $var ] } }) }')).to.not.throw();
+    expect(() => parse('{ field(complex: { a: { b: [ $var ] } }) }')).not.toThrow();
   });
 
   it('parses constant default values', () => {
@@ -97,7 +97,7 @@ describe('Parser', () => {
   });
 
   it('parses variable definition directives', () => {
-    expect(() => parse('query Foo($x: Boolean = false @bar) { field }')).to.not.throw();
+    expect(() => parse('query Foo($x: Boolean = false @bar) { field }')).not.toThrow();
   });
 
   it('does not accept fragments named "on"', () => {
@@ -145,7 +145,7 @@ describe('Parser', () => {
   });
 
   it('parses kitchen sink', () => {
-    expect(() => parseCCN(kitchenSinkQuery)).to.not.throw();
+    expect(() => parseCCN(kitchenSinkQuery)).not.toThrow();
   });
 
   it('allows non-keywords anywhere a Name is allowed', () => {
@@ -164,7 +164,7 @@ describe('Parser', () => {
         }
       `;
 
-      expect(() => parse(document)).to.not.throw();
+      expect(() => parse(document)).not.toThrow();
     }
   });
 
@@ -175,7 +175,7 @@ describe('Parser', () => {
         mutationField
       }
     `)
-    ).to.not.throw();
+    ).not.toThrow();
   });
 
   it('parses anonymous subscription operations', () => {
@@ -185,7 +185,7 @@ describe('Parser', () => {
         subscriptionField
       }
     `)
-    ).to.not.throw();
+    ).not.toThrow();
   });
 
   it('parses named mutation operations', () => {
@@ -195,7 +195,7 @@ describe('Parser', () => {
         mutationField
       }
     `)
-    ).to.not.throw();
+    ).not.toThrow();
   });
 
   it('parses named subscription operations', () => {
@@ -205,7 +205,7 @@ describe('Parser', () => {
         subscriptionField
       }
     `)
-    ).to.not.throw();
+    ).not.toThrow();
   });
 
   it('parses required field', () => {
@@ -219,7 +219,7 @@ describe('Parser', () => {
   });
 
   it('parses optional field', () => {
-    expect(() => parseCCN('{ optionalField? }')).to.not.throw();
+    expect(() => parseCCN('{ optionalField? }')).not.toThrow();
   });
 
   it('does not parse field with multiple designators', () => {
@@ -229,11 +229,11 @@ describe('Parser', () => {
   });
 
   it('parses required with alias', () => {
-    expect(() => parseCCN('{ requiredField: field! }')).to.not.throw();
+    expect(() => parseCCN('{ requiredField: field! }')).not.toThrow();
   });
 
   it('parses optional with alias', () => {
-    expect(() => parseCCN('{ requiredField: field? }')).to.not.throw();
+    expect(() => parseCCN('{ requiredField: field? }')).not.toThrow();
   });
 
   it('does not parse aliased field with bang on left of colon', () => {
@@ -257,11 +257,11 @@ describe('Parser', () => {
   });
 
   it('parses required within fragment', () => {
-    expect(() => parseCCN('fragment MyFragment on Query { field! }')).to.not.throw();
+    expect(() => parseCCN('fragment MyFragment on Query { field! }')).not.toThrow();
   });
 
   it('parses optional within fragment', () => {
-    expect(() => parseCCN('fragment MyFragment on Query { field? }')).to.not.throw();
+    expect(() => parseCCN('fragment MyFragment on Query { field? }')).not.toThrow();
   });
 
   it('parses field with required list elements', () => {
@@ -534,7 +534,7 @@ describe('Parser', () => {
   it('Legacy: allows parsing fragment defined variables', () => {
     const document = 'fragment a($v: Boolean = false) on t { f(v: $v) }';
 
-    expect(() => parse(document, { allowLegacyFragmentVariables: true })).to.not.throw();
+    expect(() => parse(document, { allowLegacyFragmentVariables: true })).not.toThrow();
     expect(() => parse(document)).toThrow('Syntax Error');
   });
 

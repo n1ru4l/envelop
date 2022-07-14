@@ -10,7 +10,7 @@ describe('Type System: Directive', () => {
       locations: [DirectiveLocation.QUERY],
     });
 
-    expect(directive).to.deep.include({
+    expect(directive).toMatchObject({
       name: 'Foo',
       args: [],
       isRepeatable: false,
@@ -28,7 +28,7 @@ describe('Type System: Directive', () => {
       locations: [DirectiveLocation.QUERY],
     });
 
-    expect(directive).to.deep.include({
+    expect(directive).toMatchObject({
       name: 'Foo',
       args: [
         {
@@ -62,7 +62,7 @@ describe('Type System: Directive', () => {
       locations: [DirectiveLocation.QUERY],
     });
 
-    expect(directive).to.deep.include({
+    expect(directive).toMatchObject({
       name: 'Foo',
       args: [],
       isRepeatable: true,

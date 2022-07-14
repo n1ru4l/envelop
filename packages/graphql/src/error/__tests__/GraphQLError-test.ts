@@ -30,7 +30,7 @@ describe('GraphQLError', () => {
       message: 'msg',
       extensions: {},
     });
-    expect(e.stack).toBe('string');
+    expect(typeof e.stack === 'string').toBeTruthy();
   });
 
   it('enumerate only properties prescribed by the spec', () => {
@@ -43,7 +43,7 @@ describe('GraphQLError', () => {
       extensions: { foo: 'bar' },
     });
 
-    expect(Object.keys(e)).toEqual(['message', 'path', 'locations', 'extensions']);
+    expect(Object.keys(e)).toEqual(['message', 'locations', 'path', 'extensions']);
   });
 
   it('uses the stack of an original error', () => {
@@ -69,7 +69,7 @@ describe('GraphQLError', () => {
       message: 'msg',
       originalError: original,
     });
-    expect(e.stack).toBe('string');
+    expect(typeof e.stack === 'string').toBeTruthy();
   });
 
   it('converts nodes to positions and locations', () => {

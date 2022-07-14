@@ -55,7 +55,7 @@ function getValue(node: ASTNode) {
 describe('Visitor', () => {
   it('handles empty visitor', () => {
     const ast = parse('{ a }', { noLocation: true });
-    expect(() => visit(ast, {})).to.not.throw();
+    expect(() => visit(ast, {})).not.toThrow();
   });
 
   it('validates path argument', () => {

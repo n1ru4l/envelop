@@ -94,7 +94,7 @@ describe('Schema Builder', () => {
         str
       }
     `;
-    expect(() => buildSchema(sdl)).to.not.throw();
+    expect(() => buildSchema(sdl)).not.toThrow();
   });
 
   it('Match order of default types and directives', () => {

@@ -35,7 +35,7 @@ describe('Star Wars Validation Tests', () => {
           appearsIn
         }
       `;
-      return expect(validationErrors(query)).to.be.empty;
+      return expect(validationErrors(query)).toHaveLength(0);
     });
 
     it('Notes that non-existent fields are invalid', () => {
@@ -46,7 +46,7 @@ describe('Star Wars Validation Tests', () => {
           }
         }
       `;
-      return expect(validationErrors(query)).to.not.be.empty;
+      return expect(validationErrors(query)).not.toHaveLength(0);
     });
 
     it('Requires fields on objects', () => {
@@ -55,7 +55,7 @@ describe('Star Wars Validation Tests', () => {
           hero
         }
       `;
-      return expect(validationErrors(query)).to.not.be.empty;
+      return expect(validationErrors(query)).not.toHaveLength(0);
     });
 
     it('Disallows fields on scalars', () => {
@@ -68,7 +68,7 @@ describe('Star Wars Validation Tests', () => {
           }
         }
       `;
-      return expect(validationErrors(query)).to.not.be.empty;
+      return expect(validationErrors(query)).not.toHaveLength(0);
     });
 
     it('Disallows object fields on interfaces', () => {
@@ -80,7 +80,7 @@ describe('Star Wars Validation Tests', () => {
           }
         }
       `;
-      return expect(validationErrors(query)).to.not.be.empty;
+      return expect(validationErrors(query)).not.toHaveLength(0);
     });
 
     it('Allows object fields in fragments', () => {

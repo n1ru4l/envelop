@@ -2618,7 +2618,7 @@ describe('assertValidSchema', () => {
         foo: String
       }
     `);
-    expect(() => assertValidSchema(schema)).to.not.throw();
+    expect(() => assertValidSchema(schema)).not.toThrow();
   });
 
   it('combines multiple errors', () => {
