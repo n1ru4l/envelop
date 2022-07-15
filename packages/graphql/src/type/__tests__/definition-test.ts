@@ -67,7 +67,7 @@ describe('Type System: Scalars', () => {
 
     expect(scalar.serialize).toEqual(identityFunc);
     expect(scalar.parseValue).toEqual(identityFunc);
-    expect(scalar.parseLiteral).toBe('function');
+    expect(typeof scalar.parseLiteral === 'function').toBeTruthy();
   });
 
   it('use parseValue for parsing literals if parseLiteral omitted', () => {
@@ -453,8 +453,8 @@ describe('Type System: Enums', () => {
         BAR: {},
       },
     });
-    expect(enumType.getValue('FOO')).has.property('value', 'FOO');
-    expect(enumType.getValue('BAR')).has.property('value', 'BAR');
+    expect(enumType.getValue('FOO')).toHaveProperty('value', 'FOO');
+    expect(enumType.getValue('BAR')).toHaveProperty('value', 'BAR');
   });
 
   it('accepts a well defined Enum type with internal value definition', () => {
@@ -465,8 +465,8 @@ describe('Type System: Enums', () => {
         BAR: { value: 20 },
       },
     });
-    expect(enumType.getValue('FOO')).has.property('value', 10);
-    expect(enumType.getValue('BAR')).has.property('value', 20);
+    expect(enumType.getValue('FOO')).toHaveProperty('value', 10);
+    expect(enumType.getValue('BAR')).toHaveProperty('value', 20);
   });
 
   it('rejects an Enum type with invalid name', () => {

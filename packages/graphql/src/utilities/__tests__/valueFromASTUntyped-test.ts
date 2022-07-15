@@ -50,7 +50,6 @@ describe('valueFromASTUntyped', () => {
       testVariable: 'foo',
     }).toEqual({ a: ['foo'] });
     expectValueFrom('$testVariable', { testVariable: null }).toEqual(null);
-    expectValueFrom('$testVariable', { testVariable: NaN }).to.satisfy(Number.isNaN);
     expectValueFrom('$testVariable', {}).toEqual(undefined);
     expectValueFrom('$testVariable', null).toEqual(undefined);
   });

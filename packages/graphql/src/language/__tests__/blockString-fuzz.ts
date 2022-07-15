@@ -1,6 +1,4 @@
-import { dedent } from '../../__testUtils__/dedent';
 import { genFuzzStrings } from '../../__testUtils__/genFuzzStrings';
-import { inspectStr } from '../../__testUtils__/inspectStr';
 
 import { isPrintableAsBlockString, printBlockString } from '../blockString';
 import { Lexer } from '../lexer';
@@ -43,5 +41,5 @@ describe('printBlockString', () => {
       testPrintableBlockString(fuzzStr);
       testPrintableBlockString(fuzzStr, { minimize: true });
     }
-  }).timeout(20000);
+  });
 });

@@ -270,7 +270,8 @@ describe('mapAsyncIterator', () => {
       caughtError = e;
     }
 
-    expect(caughtError).toBeInstanceOf(Error).with.property('message', 'Goodbye');
+    expect(caughtError).toBeInstanceOf(Error);
+    expect(caughtError).toHaveProperty('message', 'Goodbye');
   });
 
   async function testClosesSourceWithMapper<T>(mapper: (value: number) => T) {
@@ -300,7 +301,8 @@ describe('mapAsyncIterator', () => {
       expectedError = error;
     }
 
-    expect(expectedError).toBeInstanceOf(Error).with.property('message', 'Cannot count to 2');
+    expect(expectedError).toBeInstanceOf(Error);
+    expect(expectedError).toHaveProperty('message', 'Cannot count to 2');
 
     expect(await throwOver1.next()).toEqual({
       value: undefined,

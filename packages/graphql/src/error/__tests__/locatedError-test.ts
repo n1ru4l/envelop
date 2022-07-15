@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { GraphQLError } from '../GraphQLError';
 import { locatedError } from '../locatedError';
 
@@ -13,7 +14,7 @@ describe('locatedError', () => {
     const error = locatedError(testObject, [], []);
 
     expect(error).toBeInstanceOf(GraphQLError);
-    expect(error.originalError).to.include({
+    expect(error.originalError).toMatchObject({
       name: 'NonErrorThrown',
       thrownValue: testObject,
     });
@@ -41,6 +42,6 @@ describe('locatedError', () => {
     // @ts-expect-error
     e.path = '/something/feed/_search';
 
-    expect(locatedError(e, [], [])).to.not.deep.equal(e);
+    expect(locatedError(e, [], [])).toEqual(e);
   });
 });

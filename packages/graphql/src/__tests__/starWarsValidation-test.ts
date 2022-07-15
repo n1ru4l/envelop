@@ -96,7 +96,7 @@ describe('Star Wars Validation Tests', () => {
           primaryFunction
         }
       `;
-      return expect(validationErrors(query)).to.be.empty;
+      return expect(validationErrors(query)).toHaveLength(0);
     });
 
     it('Allows object fields in inline fragments', () => {
@@ -110,7 +110,7 @@ describe('Star Wars Validation Tests', () => {
           }
         }
       `;
-      return expect(validationErrors(query)).to.be.empty;
+      return expect(validationErrors(query)).toHaveLength(0);
     });
   });
 });

@@ -126,7 +126,7 @@ describe('Type System: build schema from introspection', () => {
 
     // Custom are built
     const customScalar = schema.getType('CustomScalar');
-    expect(clientSchema.getType('CustomScalar')).to.not.equal(customScalar);
+    expect(clientSchema.getType('CustomScalar')).not.toEqual(customScalar);
   });
 
   it('includes standard types only if they are used', () => {
@@ -465,7 +465,7 @@ describe('Type System: build schema from introspection', () => {
 
     const clientSchema = buildClientSchema(introspection);
 
-    expect(schema.getDirectives()).to.have.lengthOf.above(0);
+    expect(schema.getDirectives().length > 0).toBeTruthy();
     expect(clientSchema.getDirectives()).toEqual([]);
     expect(printSchema(clientSchema)).toEqual(sdl);
   });
@@ -654,7 +654,7 @@ describe('Type System: build schema from introspection', () => {
     it('throws when type reference is missing name', () => {
       const introspection = introspectionFromSchema(dummySchema);
 
-      expect(introspection).to.have.nested.property('__schema.queryType.name');
+      expect(introspection).toHaveProperty('__schema.queryType.name');
 
       // @ts-expect-error
       delete introspection.__schema.queryType.name;
@@ -805,7 +805,7 @@ describe('Type System: build schema from introspection', () => {
       const introspection = introspectionFromSchema(dummySchema);
 
       const someDirectiveIntrospection = introspection.__schema.directives[0];
-      expect(someDirectiveIntrospection).to.deep.include({
+      expect(someDirectiveIntrospection).toMatchObject({
         name: 'SomeDirective',
         locations: ['QUERY'],
       });
@@ -822,7 +822,7 @@ describe('Type System: build schema from introspection', () => {
       const introspection = introspectionFromSchema(dummySchema);
 
       const someDirectiveIntrospection = introspection.__schema.directives[0];
-      expect(someDirectiveIntrospection).to.deep.include({
+      expect(someDirectiveIntrospection).toMatchObject({
         name: 'SomeDirective',
         args: [],
       });
@@ -886,7 +886,7 @@ describe('Type System: build schema from introspection', () => {
       const introspection = introspectionFromSchema(schema);
 
       const fooIntrospection = introspection.__schema.types.find(type => type.name === 'Foo');
-      expect(fooIntrospection).to.deep.include({
+      expect(fooIntrospection).toMatchObject({
         name: 'Foo',
         interfaces: [{ kind: 'OBJECT', name: 'Foo', ofType: null }],
       });
@@ -906,7 +906,7 @@ describe('Type System: build schema from introspection', () => {
       const introspection = introspectionFromSchema(schema);
 
       const fooIntrospection = introspection.__schema.types.find(type => type.name === 'Foo');
-      expect(fooIntrospection).toEqual({
+      expect(fooIntrospection).toMatchObject({
         name: 'Foo',
         possibleTypes: [{ kind: 'UNION', name: 'Foo', ofType: null }],
       });

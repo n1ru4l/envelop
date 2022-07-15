@@ -26,7 +26,7 @@ describe('Parser', () => {
       caughtError = error;
     }
 
-    expect(caughtError).toStrictEqual({
+    expect(caughtError).toMatchObject({
       message: 'Syntax Error: Expected Name, found <EOF>.',
       positions: [1],
       locations: [{ line: 1, column: 2 }],
@@ -43,27 +43,27 @@ describe('Parser', () => {
     expectSyntaxError(`
       { ...MissingOn }
       fragment MissingOn Type
-    `).toStrictEqual({
+    `).toMatchObject({
       message: 'Syntax Error: Expected "on", found Name "Type".',
       locations: [{ line: 3, column: 26 }],
     });
 
-    expectSyntaxError('{ field: {} }').toStrictEqual({
+    expectSyntaxError('{ field: {} }').toMatchObject({
       message: 'Syntax Error: Expected Name, found "{".',
       locations: [{ line: 1, column: 10 }],
     });
 
-    expectSyntaxError('notAnOperation Foo { field }').toStrictEqual({
+    expectSyntaxError('notAnOperation Foo { field }').toMatchObject({
       message: 'Syntax Error: Unexpected Name "notAnOperation".',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('...').toStrictEqual({
+    expectSyntaxError('...').toMatchObject({
       message: 'Syntax Error: Unexpected "...".',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('{ ""').toStrictEqual({
+    expectSyntaxError('{ ""').toMatchObject({
       message: 'Syntax Error: Expected Name, found String "".',
       locations: [{ line: 1, column: 3 }],
     });
@@ -90,7 +90,7 @@ describe('Parser', () => {
   });
 
   it('parses constant default values', () => {
-    expectSyntaxError('query Foo($x: Complex = { a: { b: [ $var ] } }) { field }').toEqual({
+    expectSyntaxError('query Foo($x: Complex = { a: { b: [ $var ] } }) { field }').toMatchObject({
       message: 'Syntax Error: Unexpected variable "$var" in constant value.',
       locations: [{ line: 1, column: 37 }],
     });
@@ -101,31 +101,31 @@ describe('Parser', () => {
   });
 
   it('does not accept fragments named "on"', () => {
-    expectSyntaxError('fragment on on on { on }').toEqual({
+    expectSyntaxError('fragment on on on { on }').toMatchObject({
       message: 'Syntax Error: Unexpected Name "on".',
       locations: [{ line: 1, column: 10 }],
     });
   });
 
   it('does not accept fragments spread of "on"', () => {
-    expectSyntaxError('{ ...on }').toEqual({
+    expectSyntaxError('{ ...on }').toMatchObject({
       message: 'Syntax Error: Expected Name, found "}".',
       locations: [{ line: 1, column: 9 }],
     });
   });
 
   it('does not allow "true", "false", or "null" as enum value', () => {
-    expectSyntaxError('enum Test { VALID, true }').toEqual({
+    expectSyntaxError('enum Test { VALID, true }').toMatchObject({
       message: 'Syntax Error: Name "true" is reserved and cannot be used for an enum value.',
       locations: [{ line: 1, column: 20 }],
     });
 
-    expectSyntaxError('enum Test { VALID, false }').toEqual({
+    expectSyntaxError('enum Test { VALID, false }').toMatchObject({
       message: 'Syntax Error: Name "false" is reserved and cannot be used for an enum value.',
       locations: [{ line: 1, column: 20 }],
     });
 
-    expectSyntaxError('enum Test { VALID, null }').toEqual({
+    expectSyntaxError('enum Test { VALID, null }').toMatchObject({
       message: 'Syntax Error: Name "null" is reserved and cannot be used for an enum value.',
       locations: [{ line: 1, column: 20 }],
     });
@@ -138,7 +138,7 @@ describe('Parser', () => {
       { field(arg: "Has a \u0A0A multi-byte character.") }
     `);
 
-    expect(ast).to.have.nested.property(
+    expect(ast).toHaveProperty(
       'definitions[0].selectionSet.selections[0].arguments[0].value.value',
       'Has a \u0A0A multi-byte character.'
     );
@@ -550,14 +550,14 @@ describe('Parser', () => {
     const source = new Source('{ id }');
     const result = parse(source);
 
-    expect(result).to.have.nested.property('loc.source', source);
+    expect(result).toHaveProperty('loc.source', source);
   });
 
   it('contains references to start and end tokens', () => {
     const result = parse('{ id }');
 
-    expect(result).to.have.nested.property('loc.startToken.kind', TokenKind.SOF);
-    expect(result).to.have.nested.property('loc.endToken.kind', TokenKind.EOF);
+    expect(result).toHaveProperty('loc.startToken.kind', TokenKind.SOF);
+    expect(result).toHaveProperty('loc.endToken.kind', TokenKind.EOF);
   });
 
   describe('parseValue', () => {
@@ -641,21 +641,19 @@ describe('Parser', () => {
     });
 
     it('correct message for incomplete variable', () => {
-      expect(() => parseValue('$'))
-        .toThrow()
-        .to.deep.include({
-          message: 'Syntax Error: Expected Name, found <EOF>.',
-          locations: [{ line: 1, column: 2 }],
-        });
+      expect(() => parseValue('$')).toThrow();
+      expectToThrowJSON(() => parseValue('$')).toMatchObject({
+        message: 'Syntax Error: Expected Name, found <EOF>.',
+        locations: [{ line: 1, column: 2 }],
+      });
     });
 
     it('correct message for unexpected token', () => {
-      expect(() => parseValue(':'))
-        .toThrow()
-        .to.deep.include({
-          message: 'Syntax Error: Unexpected ":".',
-          locations: [{ line: 1, column: 1 }],
-        });
+      expect(() => parseValue(':')).toThrow();
+      expectToThrowJSON(() => parseValue(':')).toMatchObject({
+        message: 'Syntax Error: Unexpected ":".',
+        locations: [{ line: 1, column: 1 }],
+      });
     });
   });
 
@@ -682,21 +680,19 @@ describe('Parser', () => {
     });
 
     it('does not allow variables', () => {
-      expect(() => parseConstValue('{ field: $var }'))
-        .toThrow()
-        .to.deep.include({
-          message: 'Syntax Error: Unexpected variable "$var" in constant value.',
-          locations: [{ line: 1, column: 10 }],
-        });
+      expect(() => parseConstValue('{ field: $var }')).toThrow();
+      expectToThrowJSON(() => parseConstValue('{ field: $var }')).toMatchObject({
+        message: 'Syntax Error: Unexpected variable "$var" in constant value.',
+        locations: [{ line: 1, column: 10 }],
+      });
     });
 
     it('correct message for unexpected token', () => {
-      expect(() => parseConstValue('$'))
-        .toThrow()
-        .to.deep.include({
-          message: 'Syntax Error: Unexpected "$".',
-          locations: [{ line: 1, column: 1 }],
-        });
+      expect(() => parseConstValue('$')).toThrow();
+      expectToThrowJSON(() => parseConstValue('$')).toMatchObject({
+        message: 'Syntax Error: Unexpected "$".',
+        locations: [{ line: 1, column: 1 }],
+      });
     });
   });
 

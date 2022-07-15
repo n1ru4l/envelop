@@ -150,3 +150,7 @@ export function getHuman(id: string): Human | null {
 export function getDroid(id: string): Droid | null {
   return droidData[id];
 }
+
+describe.skip('no starWarsDataError', () => {
+  it.todo('nope');
+});

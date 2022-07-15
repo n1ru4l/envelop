@@ -96,7 +96,7 @@ describe('extendSchema', () => {
     expect(extendedSchema.getType('Boolean')).toEqual(GraphQLBoolean);
     expect(extendedSchema.getType('ID')).toEqual(GraphQLID);
 
-    expect(extendedSchema.getDirectives()).to.have.members(specifiedDirectives);
+    expect(extendedSchema.getDirectives()).toEqual(specifiedDirectives);
   });
 
   it('extends objects by adding new fields', () => {
@@ -246,7 +246,7 @@ describe('extendSchema', () => {
     `);
     const extendedSchema = extendSchema(schema, extendAST);
 
-    expect(validateSchema(extendedSchema)).to.have.lengthOf.above(0);
+    expect(validateSchema(extendedSchema).length > 0).toBeTruthy();
     expectSchemaChanges(schema, extendedSchema).toEqual(dedent`
       union SomeUnion = SomeUnion
     `);
@@ -448,7 +448,7 @@ describe('extendSchema', () => {
       ...someUnion.extensionASTNodes,
       ...someInput.extensionASTNodes,
       ...someInterface.extensionASTNodes,
-    ]).to.have.members([...firstExtensionAST.definitions, ...secondExtensionAST.definitions]);
+    ]).toEqual(expect.arrayContaining([...firstExtensionAST.definitions, ...secondExtensionAST.definitions]));
 
     const newField = query.getFields().newField;
     expectASTNode(newField).toEqual('newField(testArg: TestInput): TestEnum');
@@ -486,12 +486,12 @@ describe('extendSchema', () => {
     const extendedSchema = extendSchema(schema, extendAST);
 
     const someType = assertObjectType(extendedSchema.getType('SomeObject'));
-    expect(someType.getFields().deprecatedField).to.include({
+    expect(someType.getFields().deprecatedField).toMatchObject({
       deprecationReason: 'not used anymore',
     });
 
     const someEnum = assertEnumType(extendedSchema.getType('SomeEnum'));
-    expect(someEnum.getValue('DEPRECATED_VALUE')).to.include({
+    expect(someEnum.getValue('DEPRECATED_VALUE')).toMatchObject({
       deprecationReason: 'do not use',
     });
   });
@@ -506,7 +506,7 @@ describe('extendSchema', () => {
     const extendedSchema = extendSchema(schema, extendAST);
 
     const someType = assertObjectType(extendedSchema.getType('SomeObject'));
-    expect(someType.getFields().deprecatedField).to.include({
+    expect(someType.getFields().deprecatedField).toMatchObject({
       deprecationReason: 'not used anymore',
     });
   });
@@ -521,7 +521,7 @@ describe('extendSchema', () => {
     const extendedSchema = extendSchema(schema, extendAST);
 
     const someEnum = assertEnumType(extendedSchema.getType('SomeEnum'));
-    expect(someEnum.getValue('DEPRECATED_VALUE')).to.include({
+    expect(someEnum.getValue('DEPRECATED_VALUE')).toMatchObject({
       deprecationReason: 'do not use',
     });
   });
@@ -979,7 +979,7 @@ describe('extendSchema', () => {
     `);
     const extendedSchema = extendSchema(schema, extendAST);
 
-    expect(validateSchema(extendedSchema)).to.have.lengthOf.above(0);
+    expect(validateSchema(extendedSchema).length > 0).toBeTruthy();
     expectSchemaChanges(schema, extendedSchema).toEqual(dedent`
       interface SomeInterface {
         oldField: SomeInterface
@@ -1049,7 +1049,7 @@ describe('extendSchema', () => {
     `);
     const originalPrint = printSchema(mutationSchema);
     const extendedSchema = extendSchema(mutationSchema, ast);
-    expect(extendedSchema).to.not.equal(mutationSchema);
+    expect(extendedSchema).not.toEqual(mutationSchema);
     expect(printSchema(mutationSchema)).toEqual(originalPrint);
     expect(printSchema(extendedSchema)).toEqual(dedent`
       type Query {
@@ -1143,7 +1143,7 @@ describe('extendSchema', () => {
       const schema = new GraphQLSchema({});
       const extendedSchema = extendSchema(schema, parse('type Mutation'));
 
-      expect(extendedSchema.getType('Mutation')).to.not.equal(undefined);
+      expect(extendedSchema.getType('Mutation')).not.toEqual(undefined);
       expect(extendedSchema.getMutationType()).toEqual(undefined);
     });
 
@@ -1162,7 +1162,7 @@ describe('extendSchema', () => {
       const extendedSchema = extendSchema(schema, parse(extensionSDL));
 
       const queryType = extendedSchema.getQueryType();
-      expect(queryType).to.include({ name: 'Foo' });
+      expect(queryType).toMatchObject({ name: 'Foo' });
       expectASTNode(extendedSchema).toEqual(extensionSDL);
     });
 
@@ -1179,7 +1179,7 @@ describe('extendSchema', () => {
       const extendedSchema = extendSchema(schema, parse(extensionSDL));
 
       const mutationType = extendedSchema.getMutationType();
-      expect(mutationType).to.include({ name: 'MutationRoot' });
+      expect(mutationType).toMatchObject({ name: 'MutationRoot' });
       expectExtensionASTNodes(extendedSchema).toEqual(extensionSDL);
     });
 
@@ -1211,10 +1211,10 @@ describe('extendSchema', () => {
       const extendedSchema = extendSchema(schema, extendAST);
 
       const mutationType = extendedSchema.getMutationType();
-      expect(mutationType).to.include({ name: 'Mutation' });
+      expect(mutationType).toMatchObject({ name: 'Mutation' });
 
       const subscriptionType = extendedSchema.getSubscriptionType();
-      expect(subscriptionType).to.include({ name: 'Subscription' });
+      expect(subscriptionType).toMatchObject({ name: 'Subscription' });
     });
 
     it('applies multiple schema extensions', () => {
@@ -1233,10 +1233,10 @@ describe('extendSchema', () => {
       const extendedSchema = extendSchema(schema, extendAST);
 
       const mutationType = extendedSchema.getMutationType();
-      expect(mutationType).to.include({ name: 'Mutation' });
+      expect(mutationType).toMatchObject({ name: 'Mutation' });
 
       const subscriptionType = extendedSchema.getSubscriptionType();
-      expect(subscriptionType).to.include({ name: 'Subscription' });
+      expect(subscriptionType).toMatchObject({ name: 'Subscription' });
     });
 
     it('schema extension AST are available from schema object', () => {

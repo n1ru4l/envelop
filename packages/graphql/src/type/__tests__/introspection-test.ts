@@ -1626,6 +1626,6 @@ describe('Introspection', () => {
       fieldResolver,
       typeResolver,
     });
-    expect(result).to.not.have.property('errors');
+    expect(result).not.toHaveProperty('errors');
   });
 });

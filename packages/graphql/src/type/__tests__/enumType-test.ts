@@ -326,7 +326,7 @@ describe('Type System: Enum Values', () => {
 
   it('presents a getValues() API for complex enums', () => {
     const values = ComplexEnum.getValues();
-    expect(values).toStrictEqual([
+    expect(values).toMatchObject([
       {
         name: 'ONE',
         description: undefined,
@@ -348,7 +348,7 @@ describe('Type System: Enum Values', () => {
 
   it('presents a getValue() API for complex enums', () => {
     const oneValue = ComplexEnum.getValue('ONE');
-    expect(oneValue).to.include({ name: 'ONE', value: Complex1 });
+    expect(oneValue).toMatchObject({ name: 'ONE', value: Complex1 });
 
     // @ts-expect-error
     const badUsage = ComplexEnum.getValue(Complex1);

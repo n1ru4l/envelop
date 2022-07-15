@@ -208,7 +208,7 @@ describe('Schema Builder', () => {
   it('Maintains @include, @skip & @specifiedBy', () => {
     const schema = buildSchema('type Query');
 
-    expect(schema.getDirectives()).to.have.lengthOf(4);
+    expect(schema.getDirectives()).toHaveLength(4);
     expect(schema.getDirective('skip')).toEqual(GraphQLSkipDirective);
     expect(schema.getDirective('include')).toEqual(GraphQLIncludeDirective);
     expect(schema.getDirective('deprecated')).toEqual(GraphQLDeprecatedDirective);
@@ -223,11 +223,11 @@ describe('Schema Builder', () => {
       directive @specifiedBy on FIELD_DEFINITION
     `);
 
-    expect(schema.getDirectives()).to.have.lengthOf(4);
-    expect(schema.getDirective('skip')).to.not.equal(GraphQLSkipDirective);
-    expect(schema.getDirective('include')).to.not.equal(GraphQLIncludeDirective);
-    expect(schema.getDirective('deprecated')).to.not.equal(GraphQLDeprecatedDirective);
-    expect(schema.getDirective('specifiedBy')).to.not.equal(GraphQLSpecifiedByDirective);
+    expect(schema.getDirectives()).toHaveLength(4);
+    expect(schema.getDirective('skip')).not.toEqual(GraphQLSkipDirective);
+    expect(schema.getDirective('include')).not.toEqual(GraphQLIncludeDirective);
+    expect(schema.getDirective('deprecated')).not.toEqual(GraphQLDeprecatedDirective);
+    expect(schema.getDirective('specifiedBy')).not.toEqual(GraphQLSpecifiedByDirective);
   });
 
   it('Adding directives maintains @include, @skip & @specifiedBy', () => {
@@ -235,11 +235,11 @@ describe('Schema Builder', () => {
       directive @foo(arg: Int) on FIELD
     `);
 
-    expect(schema.getDirectives()).to.have.lengthOf(5);
-    expect(schema.getDirective('skip')).to.not.equal(undefined);
-    expect(schema.getDirective('include')).to.not.equal(undefined);
-    expect(schema.getDirective('deprecated')).to.not.equal(undefined);
-    expect(schema.getDirective('specifiedBy')).to.not.equal(undefined);
+    expect(schema.getDirectives()).toHaveLength(5);
+    expect(schema.getDirective('skip')).not.toEqual(undefined);
+    expect(schema.getDirective('include')).not.toEqual(undefined);
+    expect(schema.getDirective('deprecated')).not.toEqual(undefined);
+    expect(schema.getDirective('specifiedBy')).not.toEqual(undefined);
   });
 
   it('Type modifiers', () => {
@@ -447,7 +447,7 @@ describe('Schema Builder', () => {
       }
     `);
     const errors = validateSchema(schema);
-    expect(errors).to.have.lengthOf.above(0);
+    expect(errors.length > 0).toBeTruthy();
   });
 
   it('Custom Scalar', () => {
@@ -620,50 +620,50 @@ describe('Schema Builder', () => {
     const myEnum = assertEnumType(schema.getType('MyEnum'));
 
     const value = myEnum.getValue('VALUE');
-    expect(value).to.include({ deprecationReason: undefined });
+    expect(value).toMatchObject({ deprecationReason: undefined });
 
     const oldValue = myEnum.getValue('OLD_VALUE');
-    expect(oldValue).to.include({
+    expect(oldValue).toMatchObject({
       deprecationReason: 'No longer supported',
     });
 
     const otherValue = myEnum.getValue('OTHER_VALUE');
-    expect(otherValue).to.include({
+    expect(otherValue).toMatchObject({
       deprecationReason: 'Terrible reasons',
     });
 
     const rootFields = assertObjectType(schema.getType('Query')).getFields();
-    expect(rootFields.field1).to.include({
+    expect(rootFields.field1).toMatchObject({
       deprecationReason: 'No longer supported',
     });
-    expect(rootFields.field2).to.include({
+    expect(rootFields.field2).toMatchObject({
       deprecationReason: 'Because I said so',
     });
 
     const inputFields = assertInputObjectType(schema.getType('MyInput')).getFields();
 
     const newInput = inputFields.newInput;
-    expect(newInput).to.include({
+    expect(newInput).toMatchObject({
       deprecationReason: undefined,
     });
 
     const oldInput = inputFields.oldInput;
-    expect(oldInput).to.include({
+    expect(oldInput).toMatchObject({
       deprecationReason: 'No longer supported',
     });
 
     const otherInput = inputFields.otherInput;
-    expect(otherInput).to.include({
+    expect(otherInput).toMatchObject({
       deprecationReason: 'Use newInput',
     });
 
     const field3OldArg = rootFields.field3.args[0];
-    expect(field3OldArg).to.include({
+    expect(field3OldArg).toMatchObject({
       deprecationReason: 'No longer supported',
     });
 
     const field4OldArg = rootFields.field4.args[0];
-    expect(field4OldArg).to.include({
+    expect(field4OldArg).toMatchObject({
       deprecationReason: 'Why not?',
     });
   });
@@ -680,7 +680,7 @@ describe('Schema Builder', () => {
 
     const schema = buildSchema(sdl);
 
-    expect(schema.getType('Foo')).to.include({
+    expect(schema.getType('Foo')).toMatchObject({
       specifiedByURL: 'https://example.com/foo_spec',
     });
   });
@@ -950,7 +950,7 @@ describe('Schema Builder', () => {
       testType.astNode,
       testScalar.astNode,
       testDirective.astNode,
-    ]).to.be.deep.equal(ast.definitions);
+    ]).toEqual(ast.definitions);
 
     const testField = query.getFields().testField;
     expectASTNode(testField).toEqual('testField(testArg: TestInput): TestUnion');
@@ -976,9 +976,9 @@ describe('Schema Builder', () => {
       type SomeSubscription
     `);
 
-    expect(schema.getQueryType()).to.include({ name: 'SomeQuery' });
-    expect(schema.getMutationType()).to.include({ name: 'SomeMutation' });
-    expect(schema.getSubscriptionType()).to.include({
+    expect(schema.getQueryType()).toMatchObject({ name: 'SomeQuery' });
+    expect(schema.getMutationType()).toMatchObject({ name: 'SomeMutation' });
+    expect(schema.getSubscriptionType()).toMatchObject({
       name: 'SomeSubscription',
     });
   });
@@ -990,16 +990,16 @@ describe('Schema Builder', () => {
       type Subscription
     `);
 
-    expect(schema.getQueryType()).to.include({ name: 'Query' });
-    expect(schema.getMutationType()).to.include({ name: 'Mutation' });
-    expect(schema.getSubscriptionType()).to.include({ name: 'Subscription' });
+    expect(schema.getQueryType()).toMatchObject({ name: 'Query' });
+    expect(schema.getMutationType()).toMatchObject({ name: 'Mutation' });
+    expect(schema.getSubscriptionType()).toMatchObject({ name: 'Subscription' });
   });
 
   it('can build invalid schema', () => {
     // Invalid schema, because it is missing query root type
     const schema = buildSchema('type Mutation');
     const errors = validateSchema(schema);
-    expect(errors).to.have.lengthOf.above(0);
+    expect(errors.length > 0).toBeTruthy();
   });
 
   it('Do not override standard types', () => {
@@ -1024,7 +1024,7 @@ describe('Schema Builder', () => {
     `);
 
     const queryType = assertObjectType(schema.getType('Query'));
-    expect(queryType.getFields()).to.have.nested.property('introspectionField.type', __EnumValue);
+    expect(queryType.getFields()).toHaveProperty('introspectionField.type', __EnumValue);
     expect(schema.getType('__EnumValue')).toEqual(__EnumValue);
   });
 

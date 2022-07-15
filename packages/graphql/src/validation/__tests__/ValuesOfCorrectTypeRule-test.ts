@@ -958,7 +958,7 @@ describe('Validate: Values of correct type', () => {
         },
       ]);
 
-      expect(errors[0]).to.have.nested.property('originalError.message', 'Invalid scalar is always invalid: 123');
+      expect(errors[0]).toHaveProperty('originalError.message', 'Invalid scalar is always invalid: 123');
     });
 
     it('reports error for custom scalar that returns undefined', () => {

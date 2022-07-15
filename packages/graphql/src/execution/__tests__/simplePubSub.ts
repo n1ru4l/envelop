@@ -70,3 +70,7 @@ export class SimplePubSub<T> {
     }
   }
 }
+
+describe.skip('no simplePubSub tests', () => {
+  it.todo('nothing to test');
+});

@@ -298,3 +298,7 @@ export const StarWarsSchema: GraphQLSchema = new GraphQLSchema({
   query: queryType,
   types: [humanType, droidType],
 });
+
+describe.skip('no starWarsSchema', () => {
+  it.todo('nope');
+});

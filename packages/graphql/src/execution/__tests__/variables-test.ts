@@ -25,7 +25,7 @@ const TestComplexScalar = new GraphQLScalarType({
     return 'DeserializedValue';
   },
   parseLiteral(ast) {
-    expect(ast).to.include({ kind: 'StringValue', value: 'SerializedValue' });
+    expect(ast).toMatchObject({ kind: 'StringValue', value: 'SerializedValue' });
     return 'DeserializedValue';
   },
 });
@@ -154,7 +154,7 @@ describe('Execute: Handles inputs', () => {
           }
         `);
 
-        expect(result).toEqual({
+        expect(result).toMatchObject({
           data: {
             fieldWithObjectInput: '{ a: null, b: null, c: "C", d: null }',
           },
@@ -203,7 +203,7 @@ describe('Execute: Handles inputs', () => {
           }
         `);
 
-        expect(result).toEqual({
+        expect(result).toMatchObject({
           data: {
             fieldWithObjectInput: '{ c: "foo", d: "DeserializedValue" }',
           },
@@ -690,7 +690,7 @@ describe('Execute: Handles inputs', () => {
         ],
       });
 
-      expect(result).to.have.nested.property('errors[0].originalError');
+      expect(result).toHaveProperty('errors[0].originalError');
     });
 
     it('reports error for non-provided variables for non-nullable inputs', () => {

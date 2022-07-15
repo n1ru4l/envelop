@@ -11,7 +11,7 @@ function checkVisitorFnArgs(ast: any, args: any, isEdited: boolean = false) {
   const [node, key, parent, path, ancestors] = args;
 
   expect(node).toBeInstanceOf(Object);
-  expect(node.kind).to.be.oneOf(Object.values(Kind));
+  expect(Object.values(Kind).includes(node.kind)).toBeTruthy();
 
   const isRoot = key === undefined;
   if (isRoot) {
@@ -24,9 +24,7 @@ function checkVisitorFnArgs(ast: any, args: any, isEdited: boolean = false) {
     return;
   }
 
-  expect(typeof key).to.be.oneOf(['number', 'string']);
-
-  expect(parent).toHaveProperty(key);
+  expect(typeof key === 'string' || typeof key === 'number').toBeTruthy();
 
   expect(path).toBeInstanceOf(Array);
   expect(path[path.length - 1]).toEqual(key);
@@ -40,7 +38,7 @@ function checkVisitorFnArgs(ast: any, args: any, isEdited: boolean = false) {
       expect(ancestors[i]).toEqual(currentNode);
 
       currentNode = currentNode[path[i]];
-      expect(currentNode).to.not.equal(undefined);
+      expect(currentNode).not.toEqual(undefined);
     }
 
     expect(parent).toEqual(currentNode);

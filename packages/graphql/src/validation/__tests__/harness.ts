@@ -130,3 +130,7 @@ export function expectSDLValidationErrors(schema: Maybe<GraphQLSchema>, rule: SD
   const errors = validateSDL(doc, schema, [rule]);
   return expectJSON(errors);
 }
+
+describe.skip('no harness tests', () => {
+  it.todo('nothing to test');
+});

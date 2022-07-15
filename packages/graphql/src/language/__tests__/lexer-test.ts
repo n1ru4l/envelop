@@ -335,162 +335,162 @@ describe('Lexer', () => {
   });
 
   it('lex reports useful string errors', () => {
-    expectSyntaxError('"').toEqual({
+    expectSyntaxError('"').toMatchObject({
       message: 'Syntax Error: Unterminated string.',
       locations: [{ line: 1, column: 2 }],
     });
 
-    expectSyntaxError('"""').toEqual({
+    expectSyntaxError('"""').toMatchObject({
       message: 'Syntax Error: Unterminated string.',
       locations: [{ line: 1, column: 4 }],
     });
 
-    expectSyntaxError('""""').toEqual({
+    expectSyntaxError('""""').toMatchObject({
       message: 'Syntax Error: Unterminated string.',
       locations: [{ line: 1, column: 5 }],
     });
 
-    expectSyntaxError('"no end quote').toEqual({
+    expectSyntaxError('"no end quote').toMatchObject({
       message: 'Syntax Error: Unterminated string.',
       locations: [{ line: 1, column: 14 }],
     });
 
-    expectSyntaxError("'single quotes'").toEqual({
+    expectSyntaxError("'single quotes'").toMatchObject({
       message: 'Syntax Error: Unexpected single quote character (\'), did you mean to use a double quote (")?',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('"bad surrogate \uDEAD"').toEqual({
+    expectSyntaxError('"bad surrogate \uDEAD"').toMatchObject({
       message: 'Syntax Error: Invalid character within String: U+DEAD.',
       locations: [{ line: 1, column: 16 }],
     });
 
-    expectSyntaxError('"bad high surrogate pair \uDEAD\uDEAD"').toEqual({
+    expectSyntaxError('"bad high surrogate pair \uDEAD\uDEAD"').toMatchObject({
       message: 'Syntax Error: Invalid character within String: U+DEAD.',
       locations: [{ line: 1, column: 26 }],
     });
 
-    expectSyntaxError('"bad low surrogate pair \uD800\uD800"').toEqual({
+    expectSyntaxError('"bad low surrogate pair \uD800\uD800"').toMatchObject({
       message: 'Syntax Error: Invalid character within String: U+D800.',
       locations: [{ line: 1, column: 25 }],
     });
 
-    expectSyntaxError('"multi\nline"').toEqual({
+    expectSyntaxError('"multi\nline"').toMatchObject({
       message: 'Syntax Error: Unterminated string.',
       locations: [{ line: 1, column: 7 }],
     });
 
-    expectSyntaxError('"multi\rline"').toEqual({
+    expectSyntaxError('"multi\rline"').toMatchObject({
       message: 'Syntax Error: Unterminated string.',
       locations: [{ line: 1, column: 7 }],
     });
 
-    expectSyntaxError('"bad \\z esc"').toEqual({
+    expectSyntaxError('"bad \\z esc"').toMatchObject({
       message: 'Syntax Error: Invalid character escape sequence: "\\z".',
       locations: [{ line: 1, column: 6 }],
     });
 
-    expectSyntaxError('"bad \\x esc"').toEqual({
+    expectSyntaxError('"bad \\x esc"').toMatchObject({
       message: 'Syntax Error: Invalid character escape sequence: "\\x".',
       locations: [{ line: 1, column: 6 }],
     });
 
-    expectSyntaxError('"bad \\u1 esc"').toEqual({
+    expectSyntaxError('"bad \\u1 esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\u1 es".',
       locations: [{ line: 1, column: 6 }],
     });
 
-    expectSyntaxError('"bad \\u0XX1 esc"').toEqual({
+    expectSyntaxError('"bad \\u0XX1 esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\u0XX1".',
       locations: [{ line: 1, column: 6 }],
     });
 
-    expectSyntaxError('"bad \\uXXXX esc"').toEqual({
+    expectSyntaxError('"bad \\uXXXX esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\uXXXX".',
       locations: [{ line: 1, column: 6 }],
     });
 
-    expectSyntaxError('"bad \\uFXXX esc"').toEqual({
+    expectSyntaxError('"bad \\uFXXX esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\uFXXX".',
       locations: [{ line: 1, column: 6 }],
     });
 
-    expectSyntaxError('"bad \\uXXXF esc"').toEqual({
+    expectSyntaxError('"bad \\uXXXF esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\uXXXF".',
       locations: [{ line: 1, column: 6 }],
     });
 
-    expectSyntaxError('"bad \\u{} esc"').toEqual({
+    expectSyntaxError('"bad \\u{} esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\u{}".',
       locations: [{ line: 1, column: 6 }],
     });
 
-    expectSyntaxError('"bad \\u{FXXX} esc"').toEqual({
+    expectSyntaxError('"bad \\u{FXXX} esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\u{FX".',
       locations: [{ line: 1, column: 6 }],
     });
 
-    expectSyntaxError('"bad \\u{FFFF esc"').toEqual({
+    expectSyntaxError('"bad \\u{FFFF esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\u{FFFF ".',
       locations: [{ line: 1, column: 6 }],
     });
 
-    expectSyntaxError('"bad \\u{FFFF"').toEqual({
+    expectSyntaxError('"bad \\u{FFFF"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\u{FFFF"".',
       locations: [{ line: 1, column: 6 }],
     });
 
-    expectSyntaxError('"too high \\u{110000} esc"').toEqual({
+    expectSyntaxError('"too high \\u{110000} esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\u{110000}".',
       locations: [{ line: 1, column: 11 }],
     });
 
-    expectSyntaxError('"way too high \\u{12345678} esc"').toEqual({
+    expectSyntaxError('"way too high \\u{12345678} esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\u{12345678}".',
       locations: [{ line: 1, column: 15 }],
     });
 
-    expectSyntaxError('"too long \\u{000000000} esc"').toEqual({
+    expectSyntaxError('"too long \\u{000000000} esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\u{000000000".',
       locations: [{ line: 1, column: 11 }],
     });
 
-    expectSyntaxError('"bad surrogate \\uDEAD esc"').toEqual({
+    expectSyntaxError('"bad surrogate \\uDEAD esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\uDEAD".',
       locations: [{ line: 1, column: 16 }],
     });
 
-    expectSyntaxError('"bad surrogate \\u{DEAD} esc"').toEqual({
+    expectSyntaxError('"bad surrogate \\u{DEAD} esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\u{DEAD}".',
       locations: [{ line: 1, column: 16 }],
     });
 
-    expectSyntaxError('"cannot use braces for surrogate pair \\u{D83D}\\u{DE00} esc"').toEqual({
+    expectSyntaxError('"cannot use braces for surrogate pair \\u{D83D}\\u{DE00} esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\u{D83D}".',
       locations: [{ line: 1, column: 39 }],
     });
 
-    expectSyntaxError('"bad high surrogate pair \\uDEAD\\uDEAD esc"').toEqual({
+    expectSyntaxError('"bad high surrogate pair \\uDEAD\\uDEAD esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\uDEAD".',
       locations: [{ line: 1, column: 26 }],
     });
 
-    expectSyntaxError('"bad low surrogate pair \\uD800\\uD800 esc"').toEqual({
+    expectSyntaxError('"bad low surrogate pair \\uD800\\uD800 esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\uD800".',
       locations: [{ line: 1, column: 25 }],
     });
 
-    expectSyntaxError('"cannot escape half a pair \uD83D\\uDE00 esc"').toEqual({
+    expectSyntaxError('"cannot escape half a pair \uD83D\\uDE00 esc"').toMatchObject({
       message: 'Syntax Error: Invalid character within String: U+D83D.',
       locations: [{ line: 1, column: 28 }],
     });
 
-    expectSyntaxError('"cannot escape half a pair \\uD83D\uDE00 esc"').toEqual({
+    expectSyntaxError('"cannot escape half a pair \\uD83D\uDE00 esc"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\uD83D".',
       locations: [{ line: 1, column: 28 }],
     });
 
-    expectSyntaxError('"bad \\uD83D\\not an escape"').toEqual({
+    expectSyntaxError('"bad \\uD83D\\not an escape"').toMatchObject({
       message: 'Syntax Error: Invalid Unicode escape sequence: "\\uD83D".',
       locations: [{ line: 1, column: 6 }],
     });
@@ -636,17 +636,17 @@ describe('Lexer', () => {
   });
 
   it('lex reports useful block string errors', () => {
-    expectSyntaxError('"""').toEqual({
+    expectSyntaxError('"""').toMatchObject({
       message: 'Syntax Error: Unterminated string.',
       locations: [{ line: 1, column: 4 }],
     });
 
-    expectSyntaxError('"""no end quote').toEqual({
+    expectSyntaxError('"""no end quote').toMatchObject({
       message: 'Syntax Error: Unterminated string.',
       locations: [{ line: 1, column: 16 }],
     });
 
-    expectSyntaxError('"""contains invalid surrogate \uDEAD"""').toEqual({
+    expectSyntaxError('"""contains invalid surrogate \uDEAD"""').toMatchObject({
       message: 'Syntax Error: Invalid character within String: U+DEAD.',
       locations: [{ line: 1, column: 31 }],
     });
@@ -767,118 +767,118 @@ describe('Lexer', () => {
   });
 
   it('lex reports useful number errors', () => {
-    expectSyntaxError('00').toEqual({
+    expectSyntaxError('00').toMatchObject({
       message: 'Syntax Error: Invalid number, unexpected digit after 0: "0".',
       locations: [{ line: 1, column: 2 }],
     });
 
-    expectSyntaxError('01').toEqual({
+    expectSyntaxError('01').toMatchObject({
       message: 'Syntax Error: Invalid number, unexpected digit after 0: "1".',
       locations: [{ line: 1, column: 2 }],
     });
 
-    expectSyntaxError('01.23').toEqual({
+    expectSyntaxError('01.23').toMatchObject({
       message: 'Syntax Error: Invalid number, unexpected digit after 0: "1".',
       locations: [{ line: 1, column: 2 }],
     });
 
-    expectSyntaxError('+1').toEqual({
+    expectSyntaxError('+1').toMatchObject({
       message: 'Syntax Error: Unexpected character: "+".',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('1.').toEqual({
+    expectSyntaxError('1.').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: <EOF>.',
       locations: [{ line: 1, column: 3 }],
     });
 
-    expectSyntaxError('1e').toEqual({
+    expectSyntaxError('1e').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: <EOF>.',
       locations: [{ line: 1, column: 3 }],
     });
 
-    expectSyntaxError('1E').toEqual({
+    expectSyntaxError('1E').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: <EOF>.',
       locations: [{ line: 1, column: 3 }],
     });
 
-    expectSyntaxError('1.e1').toEqual({
+    expectSyntaxError('1.e1').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: "e".',
       locations: [{ line: 1, column: 3 }],
     });
 
-    expectSyntaxError('.123').toEqual({
+    expectSyntaxError('.123').toMatchObject({
       message: 'Syntax Error: Unexpected character: ".".',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('1.A').toEqual({
+    expectSyntaxError('1.A').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: "A".',
       locations: [{ line: 1, column: 3 }],
     });
 
-    expectSyntaxError('-A').toEqual({
+    expectSyntaxError('-A').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: "A".',
       locations: [{ line: 1, column: 2 }],
     });
 
-    expectSyntaxError('1.0e').toEqual({
+    expectSyntaxError('1.0e').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: <EOF>.',
       locations: [{ line: 1, column: 5 }],
     });
 
-    expectSyntaxError('1.0eA').toEqual({
+    expectSyntaxError('1.0eA').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: "A".',
       locations: [{ line: 1, column: 5 }],
     });
 
-    expectSyntaxError('1.0e"').toEqual({
+    expectSyntaxError('1.0e"').toMatchObject({
       message: "Syntax Error: Invalid number, expected digit but got: '\"'.",
       locations: [{ line: 1, column: 5 }],
     });
 
-    expectSyntaxError('1.2e3e').toEqual({
+    expectSyntaxError('1.2e3e').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: "e".',
       locations: [{ line: 1, column: 6 }],
     });
 
-    expectSyntaxError('1.2e3.4').toEqual({
+    expectSyntaxError('1.2e3.4').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: ".".',
       locations: [{ line: 1, column: 6 }],
     });
 
-    expectSyntaxError('1.23.4').toEqual({
+    expectSyntaxError('1.23.4').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: ".".',
       locations: [{ line: 1, column: 5 }],
     });
   });
 
   it('lex does not allow name-start after a number', () => {
-    expectSyntaxError('0xF1').toEqual({
+    expectSyntaxError('0xF1').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: "x".',
       locations: [{ line: 1, column: 2 }],
     });
-    expectSyntaxError('0b10').toEqual({
+    expectSyntaxError('0b10').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: "b".',
       locations: [{ line: 1, column: 2 }],
     });
-    expectSyntaxError('123abc').toEqual({
+    expectSyntaxError('123abc').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: "a".',
       locations: [{ line: 1, column: 4 }],
     });
-    expectSyntaxError('1_234').toEqual({
+    expectSyntaxError('1_234').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: "_".',
       locations: [{ line: 1, column: 2 }],
     });
-    expectSyntaxError('1\u00DF').toEqual({
+    expectSyntaxError('1\u00DF').toMatchObject({
       message: 'Syntax Error: Unexpected character: U+00DF.',
       locations: [{ line: 1, column: 2 }],
     });
-    expectSyntaxError('1.23f').toEqual({
+    expectSyntaxError('1.23f').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: "f".',
       locations: [{ line: 1, column: 5 }],
     });
-    expectSyntaxError('1.234_5').toEqual({
+    expectSyntaxError('1.234_5').toMatchObject({
       message: 'Syntax Error: Invalid number, expected digit but got: "_".',
       locations: [{ line: 1, column: 6 }],
     });
@@ -985,62 +985,62 @@ describe('Lexer', () => {
   });
 
   it('lex reports useful unknown character error', () => {
-    expectSyntaxError('..').toEqual({
+    expectSyntaxError('..').toMatchObject({
       message: 'Syntax Error: Unexpected character: ".".',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('~').toEqual({
+    expectSyntaxError('~').toMatchObject({
       message: 'Syntax Error: Unexpected character: "~".',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('\x00').toEqual({
+    expectSyntaxError('\x00').toMatchObject({
       message: 'Syntax Error: Unexpected character: U+0000.',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('\b').toEqual({
+    expectSyntaxError('\b').toMatchObject({
       message: 'Syntax Error: Unexpected character: U+0008.',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('\u00AA').toEqual({
+    expectSyntaxError('\u00AA').toMatchObject({
       message: 'Syntax Error: Unexpected character: U+00AA.',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('\u0AAA').toEqual({
+    expectSyntaxError('\u0AAA').toMatchObject({
       message: 'Syntax Error: Unexpected character: U+0AAA.',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('\u203B').toEqual({
+    expectSyntaxError('\u203B').toMatchObject({
       message: 'Syntax Error: Unexpected character: U+203B.',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('\u{1f600}').toEqual({
+    expectSyntaxError('\u{1f600}').toMatchObject({
       message: 'Syntax Error: Unexpected character: U+1F600.',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('\uD83D\uDE00').toEqual({
+    expectSyntaxError('\uD83D\uDE00').toMatchObject({
       message: 'Syntax Error: Unexpected character: U+1F600.',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('\uD800\uDC00').toEqual({
+    expectSyntaxError('\uD800\uDC00').toMatchObject({
       message: 'Syntax Error: Unexpected character: U+10000.',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('\uDBFF\uDFFF').toEqual({
+    expectSyntaxError('\uDBFF\uDFFF').toMatchObject({
       message: 'Syntax Error: Unexpected character: U+10FFFF.',
       locations: [{ line: 1, column: 1 }],
     });
 
-    expectSyntaxError('\uDEAD').toEqual({
+    expectSyntaxError('\uDEAD').toMatchObject({
       message: 'Syntax Error: Invalid character: U+DEAD.',
       locations: [{ line: 1, column: 1 }],
     });
@@ -1057,12 +1057,11 @@ describe('Lexer', () => {
       value: 'a',
     });
 
-    expect(() => lexer.advance())
-      .throw(GraphQLError)
-      .that.deep.include({
-        message: 'Syntax Error: Invalid number, expected digit but got: "b".',
-        locations: [{ line: 1, column: 3 }],
-      });
+    expect(() => lexer.advance()).toThrow(GraphQLError);
+    expectToThrowJSON(() => lexer.advance()).toMatchObject({
+      message: 'Syntax Error: Invalid number, expected digit but got: "b".',
+      locations: [{ line: 1, column: 3 }],
+    });
   });
 
   it('produces double linked list of tokens, including comments', () => {
@@ -1080,22 +1079,22 @@ describe('Lexer', () => {
       endToken = lexer.advance();
       // Lexer advances over ignored comment tokens to make writing parsers
       // easier, but will include them in the linked list result.
-      expect(endToken.kind).to.not.equal(TokenKind.COMMENT);
+      expect(endToken.kind).not.toEqual(TokenKind.COMMENT);
     } while (endToken.kind !== TokenKind.EOF);
 
-    expect(startToken.prev).toEqual(null);
-    expect(endToken.next).toEqual(null);
+    expect(startToken.prev).toBeFalsy();
+    expect(endToken.next).toBeFalsy();
 
     const tokens = [];
     for (let tok: Token | null = startToken; tok; tok = tok.next) {
       if (tokens.length) {
         // Tokens are double-linked, prev should point to last seen token.
-        expect(tok.prev).toEqual(tokens[tokens.length - 1]);
+        expect(tok.prev).toMatchObject(tokens[tokens.length - 1]);
       }
       tokens.push(tok);
     }
 
-    expect(tokens.map(tok => tok.kind)).toEqual([
+    expect(tokens.map(tok => tok.kind)).toMatchObject([
       TokenKind.SOF,
       TokenKind.BRACE_L,
       TokenKind.COMMENT,
@@ -1130,7 +1129,7 @@ describe('Lexer', () => {
       end: 12,
       value: ' Comment \u{1f600}',
     });
-    expectSyntaxError('# Invalid surrogate \uDEAD').toEqual({
+    expectSyntaxError('# Invalid surrogate \uDEAD').toMatchObject({
       message: 'Syntax Error: Invalid character: U+DEAD.',
       locations: [{ line: 1, column: 21 }],
     });

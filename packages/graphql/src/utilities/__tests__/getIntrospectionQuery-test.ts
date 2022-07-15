@@ -22,11 +22,11 @@ function expectIntrospectionQuery(options?: IntrospectionOptions) {
     toMatch(name: string, times: number = 1): void {
       const pattern = toRegExp(name);
 
-      expect(query).to.match(pattern);
-      expect(query.match(pattern)).to.have.lengthOf(times);
+      expect(query).toMatch(pattern);
+      expect(query.match(pattern)).toHaveLength(times);
     },
     toNotMatch(name: string): void {
-      expect(query).to.not.match(toRegExp(name));
+      expect(query).not.toMatch(toRegExp(name));
     },
   };
 

@@ -41,10 +41,9 @@ export function expectToThrowJSON(fn: () => unknown) {
     try {
       return fn();
     } catch (error) {
-      throw toJSONDeep(error);
+      return error;
     }
   }
 
-  expect(mapException).toThrow();
-  return expect(mapException);
+  return expect(mapException());
 }
