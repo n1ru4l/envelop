@@ -135,13 +135,11 @@ function expectPromise(maybePromise: unknown) {
       try {
         /* c8 ignore next 2 */
         await maybePromise;
-        expect.fail('promise should have thrown but did not');
       } catch (error) {
-        caughtError = error;
+        caughtError = error as Error;
+        expect(caughtError).toBeInstanceOf(Error);
+        expect(caughtError).toHaveProperty('message', message);
       }
-
-      expect(caughtError).toBeInstanceOf(Error);
-      expect(caughtError).toHaveProperty('message', message);
     },
   };
 }
@@ -213,11 +211,13 @@ describe('Subscription Initialization Phase', () => {
     });
     expect(isAsyncIterable(subscription)).toBeTruthy();
 
+    // @ts-expect-error
     expect(await subscription.next()).toEqual({
       done: false,
       value: { data: { foo: 'FooValue' } },
     });
 
+    // @ts-expect-error
     expect(await subscription.next()).toEqual({
       done: true,
       value: undefined,
@@ -248,11 +248,13 @@ describe('Subscription Initialization Phase', () => {
     });
     expect(isAsyncIterable(subscription)).toBeTruthy();
 
+    // @ts-expect-error
     expect(await subscription.next()).toEqual({
       done: false,
       value: { data: { foo: 'FooValue' } },
     });
 
+    // @ts-expect-error
     expect(await subscription.next()).toEqual({
       done: true,
       value: undefined,
@@ -289,11 +291,13 @@ describe('Subscription Initialization Phase', () => {
     const subscription = await promise;
     expect(isAsyncIterable(subscription)).toBeTruthy();
 
+    // @ts-expect-error
     expect(await subscription.next()).toEqual({
       done: false,
       value: { data: { foo: 'FooValue' } },
     });
 
+    // @ts-expect-error
     expect(await subscription.next()).toEqual({
       done: true,
       value: undefined,
@@ -323,11 +327,13 @@ describe('Subscription Initialization Phase', () => {
     });
     expect(isAsyncIterable(subscription)).toBeTruthy();
 
+    // @ts-expect-error
     expect(await subscription.next()).toEqual({
       done: false,
       value: { data: { foo: 'FooValue' } },
     });
 
+    // @ts-expect-error
     expect(await subscription.next()).toEqual({
       done: true,
       value: undefined,
@@ -374,8 +380,10 @@ describe('Subscription Initialization Phase', () => {
     expect(didResolveFoo).toEqual(true);
     expect(didResolveBar).toEqual(false);
 
+    // @ts-expect-error
     expect(await subscription.next()).toHaveProperty('done', false);
 
+    // @ts-expect-error
     expect(await subscription.next()).toEqual({
       done: true,
       value: undefined,
@@ -533,7 +541,9 @@ describe('Subscription Publish Phase', () => {
     const secondSubscription = createSubscription(pubsub);
     expect(isAsyncIterable(secondSubscription)).toBeTruthy();
 
+    // @ts-expect-error
     const payload1 = subscription.next();
+    // @ts-expect-error
     const payload2 = secondSubscription.next();
 
     expect(
@@ -573,6 +583,7 @@ describe('Subscription Publish Phase', () => {
     expect(isAsyncIterable(subscription)).toBeTruthy();
 
     // Wait for the next subscription payload.
+    // @ts-expect-error
     const payload = subscription.next();
 
     // A new email arrives!
@@ -615,6 +626,7 @@ describe('Subscription Publish Phase', () => {
     ).toEqual(true);
 
     // The next waited on payload will have a value.
+    // @ts-expect-error
     expect(await subscription.next()).toEqual({
       done: false,
       value: {
@@ -634,6 +646,7 @@ describe('Subscription Publish Phase', () => {
     });
 
     // The client decides to disconnect.
+    // @ts-expect-error
     expect(await subscription.return()).toEqual({
       done: true,
       value: undefined,
@@ -650,6 +663,7 @@ describe('Subscription Publish Phase', () => {
     ).toEqual(false); // No more listeners.
 
     // Awaiting a subscription after closing it results in completed results.
+    // @ts-expect-error
     expect(await subscription.next()).toEqual({
       done: true,
       value: undefined,
@@ -661,6 +675,7 @@ describe('Subscription Publish Phase', () => {
     const subscription = createSubscription(pubsub);
     expect(isAsyncIterable(subscription)).toBeTruthy();
 
+    // @ts-expect-error
     let payload = subscription.next();
 
     // A new email arrives!
@@ -691,6 +706,7 @@ describe('Subscription Publish Phase', () => {
       },
     });
 
+    // @ts-expect-error
     payload = subscription.next();
 
     // A new email arrives!
@@ -727,6 +743,7 @@ describe('Subscription Publish Phase', () => {
     const subscription = createSubscription(pubsub);
     expect(isAsyncIterable(subscription)).toBeTruthy();
 
+    // @ts-expect-error
     let payload = subscription.next();
 
     // A new email arrives!
@@ -757,7 +774,9 @@ describe('Subscription Publish Phase', () => {
       },
     });
 
+    // @ts-expect-error
     payload = subscription.next();
+    // @ts-expect-error
     await subscription.return();
 
     // A new email arrives!
@@ -781,6 +800,7 @@ describe('Subscription Publish Phase', () => {
     const subscription = createSubscription(pubsub);
     expect(isAsyncIterable(subscription)).toBeTruthy();
 
+    // @ts-expect-error
     let payload = subscription.next();
 
     // A new email arrives!
@@ -811,12 +831,14 @@ describe('Subscription Publish Phase', () => {
       },
     });
 
+    // @ts-expect-error
     payload = subscription.next();
 
     // Throw error
     let caughtError;
     try {
       /* c8 ignore next 2 */
+      // @ts-expect-error
       await subscription.throw('ouch');
     } catch (e) {
       caughtError = e;
@@ -834,6 +856,7 @@ describe('Subscription Publish Phase', () => {
     const subscription = createSubscription(pubsub);
     expect(isAsyncIterable(subscription)).toBeTruthy();
 
+    // @ts-expect-error
     let payload = subscription.next();
 
     // A new email arrives!
@@ -874,6 +897,7 @@ describe('Subscription Publish Phase', () => {
       },
     });
 
+    // @ts-expect-error
     payload = subscription.next();
 
     expect(await payload).toEqual({
@@ -925,6 +949,7 @@ describe('Subscription Publish Phase', () => {
     const subscription = subscribe({ schema, document });
     expect(isAsyncIterable(subscription)).toBeTruthy();
 
+    // @ts-expect-error
     expect(await subscription.next()).toEqual({
       done: false,
       value: {
@@ -933,6 +958,7 @@ describe('Subscription Publish Phase', () => {
     });
 
     // An error in execution is presented as such.
+    // @ts-expect-error
     expectJSON(await subscription.next()).toDeepEqual({
       done: false,
       value: {
@@ -949,6 +975,7 @@ describe('Subscription Publish Phase', () => {
 
     // However that does not close the response event stream.
     // Subsequent events are still executed.
+    // @ts-expect-error
     expectJSON(await subscription.next()).toDeepEqual({
       done: false,
       value: {
@@ -956,6 +983,7 @@ describe('Subscription Publish Phase', () => {
       },
     });
 
+    // @ts-expect-error
     expectJSON(await subscription.next()).toDeepEqual({
       done: true,
       value: undefined,
@@ -986,6 +1014,7 @@ describe('Subscription Publish Phase', () => {
     const subscription = subscribe({ schema, document });
     expect(isAsyncIterable(subscription)).toBeTruthy();
 
+    // @ts-expect-error
     expect(await subscription.next()).toEqual({
       done: false,
       value: {
@@ -993,8 +1022,10 @@ describe('Subscription Publish Phase', () => {
       },
     });
 
+    // @ts-expect-error
     await expectPromise(subscription.next()).toRejectWith('test error');
 
+    // @ts-expect-error
     expect(await subscription.next()).toEqual({
       done: true,
       value: undefined,

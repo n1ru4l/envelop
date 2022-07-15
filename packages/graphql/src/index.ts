@@ -386,8 +386,6 @@ export {
   // Produce the GraphQL query recommended for a full schema introspection.
   // Accepts optional IntrospectionOptions.
   getIntrospectionQuery,
-  // Gets the target Operation from a Document.
-  getOperationAST,
   // Convert a GraphQLSchema to an IntrospectionQuery.
   introspectionFromSchema,
   // Build a GraphQLSchema from an introspection result.

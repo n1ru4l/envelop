@@ -13,6 +13,7 @@ const source = new Source(dedent`
 const ast = parse(source);
 const operationNode = ast.definitions[0];
 expect(operationNode.kind === Kind.OPERATION_DEFINITION).toBeTruthy();
+// @ts-expect-error
 const fieldNode = operationNode.selectionSet.selections[0];
 expect(fieldNode != null).toBeTruthy();
 
@@ -237,6 +238,7 @@ describe('toString', () => {
     );
     const opA = docA.definitions[0];
     expect(opA.kind === Kind.OBJECT_TYPE_DEFINITION && opA.fields != null).toBeTruthy();
+    // @ts-expect-error
     const fieldA = opA.fields[0];
 
     const docB = parse(
@@ -251,6 +253,7 @@ describe('toString', () => {
     );
     const opB = docB.definitions[0];
     expect(opB.kind === Kind.OBJECT_TYPE_DEFINITION && opB.fields != null).toBeTruthy();
+    // @ts-expect-error
     const fieldB = opB.fields[0];
 
     const error = new GraphQLError('Example error with two nodes', {

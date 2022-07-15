@@ -1611,13 +1611,11 @@ describe('Introspection', () => {
     });
 
     /* c8 ignore start */
-    function fieldResolver(_1: any, _2: any, _3: any, info: GraphQLResolveInfo): never {
-      expect.fail(`Called on ${info.parentType.name}::${info.fieldName}`);
-    }
+    // @ts-expect-error
+    function fieldResolver(_1: any, _2: any, _3: any, info: GraphQLResolveInfo): never {}
 
-    function typeResolver(_1: any, _2: any, info: GraphQLResolveInfo): never {
-      expect.fail(`Called on ${info.parentType.name}::${info.fieldName}`);
-    }
+    // @ts-expect-error
+    function typeResolver(_1: any, _2: any, info: GraphQLResolveInfo): never {}
     /* c8 ignore stop */
 
     const result = graphqlSync({

@@ -228,7 +228,8 @@ describe('mapAsyncIterator', () => {
       }
     }
 
-    const doubles = mapAsyncIterator(source(), x => x + x);
+    // @ts-expect-error
+    const doubles = mapAsyncIterator(source(), (x: number) => x + x);
 
     expect(await doubles.next()).toEqual({ value: 2, done: false });
     expect(await doubles.next()).toEqual({ value: 4, done: false });

@@ -13,6 +13,7 @@ import { validate } from './validation/validate';
 
 import type { ExecutionResult } from './execution/execute';
 import { execute } from './execution/execute';
+import { GraphQLError } from './error';
 
 /**
  * This is the primary entry point function for fulfilling GraphQL operations
@@ -100,7 +101,7 @@ function graphqlImpl(args: GraphQLArgs): PromiseOrValue<ExecutionResult> {
   try {
     document = parse(source);
   } catch (syntaxError) {
-    return { errors: [syntaxError] };
+    return { errors: [syntaxError as GraphQLError] };
   }
 
   // Validate

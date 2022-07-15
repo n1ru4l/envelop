@@ -733,11 +733,11 @@ describe('Type System: build schema from introspection', () => {
       const queryTypeIntrospection = introspection.__schema.types.find(({ name }) => name === 'Query');
 
       expect(queryTypeIntrospection?.kind === 'OBJECT').toBeTruthy();
+      // @ts-expect-error
       const argType = queryTypeIntrospection.fields[0].args[0].type;
       expect(argType.kind === 'SCALAR').toBeTruthy();
 
       expect(argType).toHaveProperty('name', 'String');
-      // @ts-expect-error
       argType.name = 'SomeUnion';
 
       expect(() => buildClientSchema(introspection)).toThrow(
@@ -750,11 +750,11 @@ describe('Type System: build schema from introspection', () => {
       const queryTypeIntrospection = introspection.__schema.types.find(({ name }) => name === 'Query');
 
       expect(queryTypeIntrospection?.kind === 'OBJECT').toBeTruthy();
+      // @ts-expect-error
       const fieldType = queryTypeIntrospection.fields[0].type;
       expect(fieldType.kind === 'SCALAR').toBeTruthy();
 
       expect(fieldType).toHaveProperty('name', 'String');
-      // @ts-expect-error
       fieldType.name = 'SomeInputObject';
 
       expect(() => buildClientSchema(introspection)).toThrow(

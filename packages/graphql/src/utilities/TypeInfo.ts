@@ -91,36 +91,42 @@ export class TypeInfo {
     if (this._typeStack.length > 0) {
       return this._typeStack[this._typeStack.length - 1];
     }
+    return undefined;
   }
 
   getParentType(): Maybe<GraphQLCompositeType> {
     if (this._parentTypeStack.length > 0) {
       return this._parentTypeStack[this._parentTypeStack.length - 1];
     }
+    return undefined;
   }
 
   getInputType(): Maybe<GraphQLInputType> {
     if (this._inputTypeStack.length > 0) {
       return this._inputTypeStack[this._inputTypeStack.length - 1];
     }
+    return undefined;
   }
 
   getParentInputType(): Maybe<GraphQLInputType> {
     if (this._inputTypeStack.length > 1) {
       return this._inputTypeStack[this._inputTypeStack.length - 2];
     }
+    return undefined;
   }
 
   getFieldDef(): Maybe<GraphQLField<unknown, unknown>> {
     if (this._fieldDefStack.length > 0) {
       return this._fieldDefStack[this._fieldDefStack.length - 1];
     }
+    return undefined;
   }
 
   getDefaultValue(): Maybe<unknown> {
     if (this._defaultValueStack.length > 0) {
       return this._defaultValueStack[this._defaultValueStack.length - 1];
     }
+    return undefined;
   }
 
   getDirective(): Maybe<GraphQLDirective> {

@@ -370,7 +370,6 @@ export function extendSchemaImpl(
         // Note: While this could make early assertions to get the correctly
         // typed values below, that would throw immediately while type system
         // validation with validateSchema() will produce more actionable results.
-        // @ts-expect-error
         opTypes[operationType.operation] = getNamedType(operationType.type);
       }
     }

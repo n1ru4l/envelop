@@ -133,6 +133,8 @@ const characterInterface: GraphQLInterfaceType = new GraphQLInterfaceType({
         return humanType.name;
       case 'Droid':
         return droidType.name;
+      default:
+        throw new Error(`Unknown character type: ${character.type}`);
     }
   },
 });

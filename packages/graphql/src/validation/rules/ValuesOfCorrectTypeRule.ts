@@ -39,6 +39,7 @@ export function ValuesOfCorrectTypeRule(context: ValidationContext): ASTVisitor 
         isValidValueNode(context, node);
         return false; // Don't traverse further.
       }
+      return undefined;
     },
     ObjectValue(node) {
       const type = getNamedType(context.getInputType());
@@ -59,6 +60,7 @@ export function ValuesOfCorrectTypeRule(context: ValidationContext): ASTVisitor 
           );
         }
       }
+      return undefined;
     },
     ObjectField(node) {
       const parentType = getNamedType(context.getParentInputType());
@@ -126,9 +128,9 @@ function isValidValueNode(context: ValidationContext, node: ValueNode): void {
       context.reportError(error);
     } else {
       context.reportError(
-        new GraphQLError(`Expected value of type "${typeStr}", found ${print(node)}; ` + error.message, {
+        new GraphQLError(`Expected value of type "${typeStr}", found ${print(node)}; ` + (error as Error).message, {
           nodes: node,
-          originalError: error,
+          originalError: error as Error,
         })
       );
     }

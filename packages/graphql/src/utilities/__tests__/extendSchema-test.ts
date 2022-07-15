@@ -32,6 +32,7 @@ function expectExtensionASTNodes(obj: { readonly extensionASTNodes: ReadonlyArra
 
 function expectASTNode(obj: Maybe<{ readonly astNode: Maybe<ASTNode> }>) {
   expect(obj?.astNode != null).toBeTruthy();
+  // @ts-expect-error
   return expect(print(obj.astNode));
 }
 

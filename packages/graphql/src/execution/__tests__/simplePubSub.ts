@@ -63,6 +63,7 @@ export class SimplePubSub<T> {
       if (pullQueue.length > 0) {
         const receiver = pullQueue.shift();
         expect(receiver != null).toBeTruthy();
+        // @ts-expect-error
         receiver({ value, done: false });
       } else {
         pushQueue.push(value);

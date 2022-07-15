@@ -172,7 +172,7 @@ function executeImpl(exeContext: ExecutionContext): PromiseOrValue<ExecutionResu
     }
     return buildResponse(result, exeContext.errors);
   } catch (error) {
-    exeContext.errors.push(error);
+    exeContext.errors.push(error as GraphQLError);
     return buildResponse(null, exeContext.errors);
   }
 }
@@ -836,6 +836,7 @@ function invalidReturnTypeError(
  * Otherwise, test each possible type for the abstract type by calling
  * isTypeOf for the object being coerced, returning the first type that matches.
  */
+// @ts-expect-error
 export const defaultTypeResolver: GraphQLTypeResolver<unknown, unknown> = function (
   value,
   contextValue,
@@ -866,6 +867,7 @@ export const defaultTypeResolver: GraphQLTypeResolver<unknown, unknown> = functi
   }
 
   if (promisedIsTypeOfResults.length) {
+    // @ts-expect-error
     return Promise.all(promisedIsTypeOfResults).then(isTypeOfResults => {
       for (let i = 0; i < isTypeOfResults.length; i++) {
         if (isTypeOfResults[i]) {
@@ -1011,7 +1013,7 @@ function createSourceEventStreamImpl(
 
     return eventStream;
   } catch (error) {
-    return { errors: [error] };
+    return { errors: [error as GraphQLError] };
   }
 }
 

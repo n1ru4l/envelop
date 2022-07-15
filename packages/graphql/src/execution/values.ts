@@ -55,6 +55,7 @@ export function getVariableValues(
     errors.push(error);
   }
 
+  // @ts-expect-error
   return { errors };
 }
 
@@ -218,6 +219,7 @@ export function getDirectiveValues(
   if (directiveNode) {
     return getArgumentValues(directiveDef, directiveNode, variableValues);
   }
+  return undefined;
 }
 
 function hasOwnProperty(obj: unknown, prop: string): boolean {

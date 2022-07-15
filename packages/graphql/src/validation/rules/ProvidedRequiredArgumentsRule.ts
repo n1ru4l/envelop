@@ -49,6 +49,8 @@ export function ProvidedRequiredArgumentsRule(context: ValidationContext): ASTVi
             );
           }
         }
+
+        return undefined;
       },
     },
   };

@@ -577,6 +577,8 @@ function findConflict(
     );
     return subfieldConflicts(conflicts, responseName, node1, node2);
   }
+
+  return undefined;
 }
 
 function stringifyArguments(fieldNode: FieldNode): string {
@@ -704,6 +706,7 @@ function subfieldConflicts(
       [node2, ...conflicts.map(([, , fields2]) => fields2).flat()],
     ];
   }
+  return undefined;
 }
 
 /**

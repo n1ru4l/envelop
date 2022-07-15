@@ -195,6 +195,7 @@ describe('Execute: Handles basic execution tasks', () => {
 
     executeSync({ schema, document, rootValue, variableValues });
 
+    // @ts-expect-error
     expect(Object.keys(resolvedInfo)).toEqual([
       'fieldName',
       'fieldNodes',
@@ -220,6 +221,7 @@ describe('Execute: Handles basic execution tasks', () => {
       operation,
     });
 
+    // @ts-expect-error
     const field = operation.selectionSet.selections[0];
     expect(resolvedInfo).toMatchObject({
       fieldNodes: [field],

@@ -257,6 +257,7 @@ export const __Type: GraphQLObjectType = new GraphQLObjectType({
             const fields = Object.values(type.getFields());
             return includeDeprecated ? fields : fields.filter(field => field.deprecationReason == null);
           }
+          return undefined;
         },
       },
       interfaces: {
@@ -265,6 +266,7 @@ export const __Type: GraphQLObjectType = new GraphQLObjectType({
           if (isObjectType(type) || isInterfaceType(type)) {
             return type.getInterfaces();
           }
+          return undefined;
         },
       },
       possibleTypes: {
@@ -273,6 +275,7 @@ export const __Type: GraphQLObjectType = new GraphQLObjectType({
           if (isAbstractType(type)) {
             return schema.getPossibleTypes(type);
           }
+          return undefined;
         },
       },
       enumValues: {
@@ -285,6 +288,7 @@ export const __Type: GraphQLObjectType = new GraphQLObjectType({
             const values = type.getValues();
             return includeDeprecated ? values : values.filter(field => field.deprecationReason == null);
           }
+          return undefined;
         },
       },
       inputFields: {
@@ -300,6 +304,7 @@ export const __Type: GraphQLObjectType = new GraphQLObjectType({
             const values = Object.values(type.getFields());
             return includeDeprecated ? values : values.filter(field => field.deprecationReason == null);
           }
+          return undefined;
         },
       },
       ofType: {

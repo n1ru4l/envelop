@@ -34,6 +34,7 @@ const ListOfNonNullScalarsType = new GraphQLList(NonNullScalarType);
 const NonNullListOfScalars = new GraphQLNonNull(ListOfScalarsType);
 
 /* c8 ignore next */
+// @ts-expect-error
 const dummyFunc = () => expect.fail('Never called and used as a placeholder');
 
 describe('Type System: Scalars', () => {

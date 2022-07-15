@@ -133,8 +133,8 @@ function coerceInputValueImpl(
         onError(
           pathToArray(path),
           inputValue,
-          new GraphQLError(`Expected type "${type.name}". ` + error.message, {
-            originalError: error,
+          new GraphQLError(`Expected type "${type.name}". ` + (error as Error).message, {
+            originalError: error as Error,
           })
         );
       }

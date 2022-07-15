@@ -806,6 +806,7 @@ export class Parser {
     if (this.peekDescription()) {
       return this.parseStringLiteral();
     }
+    return undefined;
   }
 
   /**

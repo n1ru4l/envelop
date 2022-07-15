@@ -43,6 +43,7 @@ function cycleSDL(sdl: string): string {
 
 function expectASTNode(obj: Maybe<{ readonly astNode: Maybe<ASTNode> }>) {
   expect(obj?.astNode != null).toBeTruthy();
+  // @ts-expect-error
   return expect(print(obj.astNode));
 }
 
@@ -308,10 +309,7 @@ describe('Schema Builder', () => {
     `;
 
     const definition = parse(sdl).definitions[0];
-    expect(definition.kind === 'InterfaceTypeDefinition' && definition.interfaces).toEqual(
-      [],
-      'The interfaces property must be an empty array.'
-    );
+    expect(definition.kind === 'InterfaceTypeDefinition' && definition.interfaces).toEqual([]);
 
     expect(cycleSDL(sdl)).toEqual(sdl);
   });

@@ -66,4 +66,5 @@ function getFragmentType(context: ValidationContext, name: string): Maybe<GraphQ
       return type;
     }
   }
+  return undefined;
 }

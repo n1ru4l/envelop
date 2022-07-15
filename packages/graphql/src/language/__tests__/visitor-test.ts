@@ -197,6 +197,7 @@ describe('Visitor', () => {
         if (node.kind === 'Field' && node.name.value === 'b') {
           return null;
         }
+        return undefined;
       },
     });
 
@@ -213,6 +214,7 @@ describe('Visitor', () => {
         if (node.kind === 'Field' && node.name.value === 'b') {
           return null;
         }
+        return undefined;
       },
     });
 
@@ -256,6 +258,7 @@ describe('Visitor', () => {
         if (node === addedField) {
           didVisitAddedField = true;
         }
+        return undefined;
       },
     });
 
@@ -273,6 +276,7 @@ describe('Visitor', () => {
         if (node.kind === 'Field' && node.name.value === 'b') {
           return false;
         }
+        return undefined;
       },
 
       leave(node) {
@@ -1006,6 +1010,7 @@ describe('Visitor', () => {
               if (node.kind === 'Field' && node.name.value === 'b') {
                 return false;
               }
+              return undefined;
             },
 
             leave(node) {
@@ -1049,6 +1054,7 @@ describe('Visitor', () => {
               if (node.kind === 'Field' && node.name.value === 'a') {
                 return false;
               }
+              return undefined;
             },
             leave(node) {
               checkVisitorFnArgs(ast, arguments);
@@ -1062,6 +1068,7 @@ describe('Visitor', () => {
               if (node.kind === 'Field' && node.name.value === 'b') {
                 return false;
               }
+              return undefined;
             },
             leave(node) {
               checkVisitorFnArgs(ast, arguments);
@@ -1167,9 +1174,7 @@ describe('Visitor', () => {
               }
             },
             /* c8 ignore next 3 */
-            leave() {
-              expect.fail('Should not be called');
-            },
+            leave() {},
           },
           {
             enter(node) {
@@ -1343,6 +1348,7 @@ describe('Visitor', () => {
               if (node.kind === 'Field' && node.name.value === 'b') {
                 return null;
               }
+              return undefined;
             },
           },
           {
@@ -1403,6 +1409,7 @@ describe('Visitor', () => {
               if (node.kind === 'Field' && node.name.value === 'b') {
                 return null;
               }
+              return undefined;
             },
           },
           {

@@ -384,6 +384,7 @@ export function getNullableType(type: Maybe<GraphQLType>): GraphQLNullableType |
   if (type) {
     return isNonNullType(type) ? type.ofType : type;
   }
+  return undefined;
 }
 
 /**
@@ -431,6 +432,7 @@ export function getNamedType(type: Maybe<GraphQLType>): GraphQLNamedType | undef
     }
     return unwrappedType;
   }
+  return undefined;
 }
 
 /**

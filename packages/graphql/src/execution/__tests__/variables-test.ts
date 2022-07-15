@@ -68,6 +68,7 @@ function fieldWithInputArg(inputArg: GraphQLArgumentConfig): GraphQLFieldConfig<
       if ('input' in args) {
         return inspect(args.input);
       }
+      return undefined;
     },
   };
 }
@@ -991,6 +992,7 @@ describe('Execute: Handles inputs', () => {
 
     const operation = doc.definitions[0];
     expect(operation.kind === Kind.OPERATION_DEFINITION).toBeTruthy();
+    // @ts-expect-error
     const { variableDefinitions } = operation;
     expect(variableDefinitions != null).toBeTruthy();
 

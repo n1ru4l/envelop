@@ -318,6 +318,7 @@ describe('visitWithTypeInfo', () => {
               },
             };
           }
+          return undefined;
         },
         leave(node) {
           const parentType = typeInfo.getParentType();
@@ -440,6 +441,7 @@ describe('visitWithTypeInfo', () => {
 
     const visited: Array<any> = [];
     visit(
+      // @ts-expect-error
       operationNode.selectionSet,
       visitWithTypeInfo(typeInfo, {
         enter(node) {

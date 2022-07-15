@@ -53,6 +53,7 @@ describe('valueFromAST', () => {
       name: 'PassthroughScalar',
       parseLiteral(node) {
         expect(node.kind === 'StringValue').toBeTruthy();
+        // @ts-expect-error
         return node.value;
       },
       parseValue: identityFunc,

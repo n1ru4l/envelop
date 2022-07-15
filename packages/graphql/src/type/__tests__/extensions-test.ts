@@ -68,6 +68,7 @@ describe('Type System: Extensions', () => {
       const someFieldConfig = config.fields.someField;
       expect(someFieldConfig.extensions).toEqual({});
       expect(someFieldConfig.args != null).toBeTruthy();
+      // @ts-expect-error
       const someArgConfig = someFieldConfig.args.someArg;
       expect(someArgConfig.extensions).toEqual({});
     });
@@ -105,6 +106,7 @@ describe('Type System: Extensions', () => {
       const someFieldConfig = config.fields.someField;
       expectObjMap(someFieldConfig.extensions).toEqual(fieldExtensions);
       expect(someFieldConfig.args != null).toBeTruthy();
+      // @ts-expect-error
       const someArgConfig = someFieldConfig.args.someArg;
       expectObjMap(someArgConfig.extensions).toEqual(argExtensions);
     });
@@ -137,6 +139,7 @@ describe('Type System: Extensions', () => {
       const someFieldConfig = config.fields.someField;
       expect(someFieldConfig.extensions).toEqual({});
       expect(someFieldConfig.args != null).toBeTruthy();
+      // @ts-expect-error
       const someArgConfig = someFieldConfig.args.someArg;
       expect(someArgConfig.extensions).toEqual({});
     });
@@ -176,6 +179,7 @@ describe('Type System: Extensions', () => {
       const someFieldConfig = config.fields.someField;
       expectObjMap(someFieldConfig.extensions).toEqual(fieldExtensions);
       expect(someFieldConfig.args != null).toBeTruthy();
+      // @ts-expect-error
       const someArgConfig = someFieldConfig.args.someArg;
       expectObjMap(someArgConfig.extensions).toEqual(argExtensions);
     });

@@ -108,7 +108,7 @@ const PetType = new GraphQLUnionType({
     }
     /* c8 ignore next 3 */
     // Not reachable, all possible types have been considered.
-    expect.fail('Not reachable');
+    return undefined;
   },
 });
 
