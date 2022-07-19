@@ -32,6 +32,12 @@ export { introspectionFromSchema } from './introspectionFromSchema.js';
 // Build a GraphQLSchema from an introspection result.
 export { buildClientSchema } from './buildClientSchema.js';
 
+// Gets the target Operation from a Document.
+export { getOperationAST } from './getOperationAST.js';
+
+// Gets the Type for the target Operation AST.
+export { getOperationRootType } from './getOperationRootType.js';
+
 // Build a GraphQLSchema from GraphQL Schema language.
 export { buildASTSchema, buildSchema } from './buildASTSchema.js';
 export type { BuildSchemaOptions } from './buildASTSchema.js';
@@ -83,6 +89,9 @@ export {
   findDangerousChanges,
 } from './findBreakingChanges.js';
 export type { BreakingChange, DangerousChange } from './findBreakingChanges.js';
+
+// Asserts that a string is a valid GraphQL name
+export { assertValidName, isValidNameError } from './assertValidName.js';
 
 // Wrapper type that contains DocumentNode and types that can be deduced from it.
 export type { TypedQueryDocumentNode } from './typedQueryDocumentNode.js';

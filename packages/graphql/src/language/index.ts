@@ -6,18 +6,20 @@ export type { SourceLocation } from './location.js';
 export { printLocation, printSourceLocation } from './printLocation.js';
 
 export { Kind } from './kinds.js';
+export type { KindEnum } from './kinds';
 
 export { TokenKind } from './tokenKind.js';
+export type { TokenKindEnum } from './tokenKind';
 
 export { Lexer } from './lexer.js';
 
 export { parse, parseValue, parseConstValue, parseType } from './parser.js';
-export type { ParseOptions } from './parser.js';
+export type { ParseOptions } from './parser';
 
 export { print } from './printer.js';
 
-export { visit, visitInParallel, getEnterLeaveForKind, BREAK } from './visitor.js';
-export type { ASTVisitor, ASTVisitFn, ASTVisitorKeyMap } from './visitor.js';
+export { visit, visitInParallel, getVisitFn, getEnterLeaveForKind, BREAK } from './visitor.js';
+export type { ASTVisitor, ASTVisitFn, ASTVisitorKeyMap } from './visitor';
 
 export { Location, Token, OperationTypeNode } from './ast.js';
 export type {
@@ -103,3 +105,4 @@ export {
 } from './predicates.js';
 
 export { DirectiveLocation } from './directiveLocation.js';
+export type { DirectiveLocationEnum } from './directiveLocation';

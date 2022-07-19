@@ -365,3 +365,15 @@ export function getEnterLeaveForKind(visitor: ASTVisitor, kind: Kind): EnterLeav
   // { enter() {}, leave() {} }
   return { enter: (visitor as any).enter, leave: (visitor as any).leave };
 }
+
+/**
+ * Given a visitor instance, if it is leaving or not, and a node kind, return
+ * the function the visitor runtime should call.
+ *
+ * @deprecated Please use `getEnterLeaveForKind` instead. Will be removed in v17
+ */
+/* c8 ignore next 8 */
+export function getVisitFn(visitor: ASTVisitor, kind: Kind, isLeaving: boolean): ASTVisitFn<ASTNode> | undefined {
+  const { enter, leave } = getEnterLeaveForKind(visitor, kind);
+  return isLeaving ? leave : enter;
+}

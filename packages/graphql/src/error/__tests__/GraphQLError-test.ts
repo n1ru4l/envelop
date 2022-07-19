@@ -1,9 +1,10 @@
 import { dedent } from '../../__testUtils__/dedent.js';
+
+import { Kind } from '../../language/kinds.js';
 import { parse } from '../../language/parser.js';
 import { Source } from '../../language/source.js';
 
-import { GraphQLError } from '../GraphQLError.js';
-import { Kind } from '../../language/index.js';
+import { formatError, GraphQLError, printError } from '../GraphQLError.js';
 
 const source = new Source(dedent`
   {
@@ -279,10 +280,17 @@ describe('toString', () => {
 });
 
 describe('toJSON', () => {
+  it('Deprecated: format an error using formatError', () => {
+    const error = new GraphQLError('Example Error');
+    expect(formatError(error)).toMatchObject({
+      message: 'Example Error',
+    });
+  });
+
   it('includes path', () => {
     const error = new GraphQLError('msg', { path: ['path', 3, 'to', 'field'] });
 
-    expect(error.toJSON()).toEqual({
+    expect(error.toJSON()).toMatchObject({
       message: 'msg',
       path: ['path', 3, 'to', 'field'],
     });
@@ -293,9 +301,22 @@ describe('toJSON', () => {
       extensions: { foo: 'bar' },
     });
 
-    expect(error.toJSON()).toEqual({
+    expect(error.toJSON()).toMatchObject({
       message: 'msg',
       extensions: { foo: 'bar' },
+    });
+  });
+
+  it('can be created with the legacy argument list', () => {
+    const error = new GraphQLError('msg', [operationNode], source, [6], ['path', 2, 'a'], new Error('I like turtles'), {
+      hee: 'I like turtles',
+    });
+
+    expect(error.toJSON()).toMatchObject({
+      message: 'msg',
+      locations: [{ column: 5, line: 2 }],
+      path: ['path', 2, 'a'],
+      extensions: { hee: 'I like turtles' },
     });
   });
 });
