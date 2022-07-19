@@ -25,6 +25,7 @@
     "skipLibCheck": true,
     "paths": {
       "@envelop/core": ["packages/core/src/index.ts"],
+      "@envelop/graphql": ["packages/graphql/src/index.ts"],
       "@envelop/testing": ["packages/testing/src/index.ts"],
       "@envelop/types": ["packages/types/src/index.ts"],
       "@envelop/*": ["packages/plugins/*/src/index.ts"]
