@@ -1,3 +1,4 @@
+import { devAssert } from '../jsutils/devAssert.js';
 import { inspect } from '../jsutils/inspect.js';
 import { invariant } from '../jsutils/invariant.js';
 import { isAsyncIterable } from '../jsutils/isAsyncIterable.js';
@@ -35,6 +36,7 @@ import type {
 import { isAbstractType, isLeafType, isListType, isNonNullType, isObjectType } from '../type/definition.js';
 import type { GraphQLSchema } from '../type/schema.js';
 import { assertValidSchema } from '../type/validate.js';
+import { SchemaMetaFieldDef, TypeMetaFieldDef, TypeNameMetaFieldDef } from '../type/introspection.js';
 
 import { collectFields, collectSubfields as _collectSubfields } from './collectFields.js';
 import { mapAsyncIterator } from './mapAsyncIterator.js';
@@ -199,6 +201,29 @@ export function executeSync(args: ExecutionArgs): ExecutionResult {
  */
 function buildResponse(data: ObjMap<unknown> | null, errors: ReadonlyArray<GraphQLError>): ExecutionResult {
   return errors.length === 0 ? { data } : { errors, data };
+}
+
+/**
+ * Essential assertions before executing to provide developer feedback for
+ * improper use of the GraphQL library.
+ *
+ * @internal
+ */
+export function assertValidExecutionArguments(
+  schema: GraphQLSchema,
+  document: DocumentNode,
+  rawVariableValues: Maybe<{ readonly [variable: string]: unknown }>
+): void {
+  devAssert(!!document, 'Must provide document.');
+
+  // If the schema used for execution is invalid, throw an error.
+  assertValidSchema(schema);
+
+  // Variables, if provided, must be an object.
+  devAssert(
+    rawVariableValues == null || isObjectLike(rawVariableValues),
+    'Variables must be provided as an Object where each property is a variable value. Perhaps look to see if an unparsed JSON string was provided.'
+  );
 }
 
 /**
@@ -1078,4 +1103,32 @@ function assertEventStream(result: unknown): AsyncIterable<unknown> {
   }
 
   return result;
+}
+
+/**
+ * This method looks up the field on the given type definition.
+ * It has special casing for the three introspection fields,
+ * __schema, __type and __typename. __typename is special because
+ * it can always be queried as a field, even in situations where no
+ * other fields are allowed, like on a Union. __schema and __type
+ * could get automatically added to the query type, but that would
+ * require mutating type definitions, which would cause issues.
+ *
+ * @internal
+ */
+export function getFieldDef(
+  schema: GraphQLSchema,
+  parentType: GraphQLObjectType,
+  fieldNode: FieldNode
+): Maybe<GraphQLField<unknown, unknown>> {
+  const fieldName = fieldNode.name.value;
+
+  if (fieldName === SchemaMetaFieldDef.name && schema.getQueryType() === parentType) {
+    return SchemaMetaFieldDef;
+  } else if (fieldName === TypeMetaFieldDef.name && schema.getQueryType() === parentType) {
+    return TypeMetaFieldDef;
+  } else if (fieldName === TypeNameMetaFieldDef.name) {
+    return TypeNameMetaFieldDef;
+  }
+  return parentType.getFields()[fieldName];
 }
