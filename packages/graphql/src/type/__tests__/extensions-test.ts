@@ -5,9 +5,9 @@ import {
   GraphQLObjectType,
   GraphQLScalarType,
   GraphQLUnionType,
-} from '../definition';
-import { GraphQLDirective } from '../directives';
-import { GraphQLSchema } from '../schema';
+} from '../definition.js';
+import { GraphQLDirective } from '../directives.js';
+import { GraphQLSchema } from '../schema.js';
 
 const dummyType = new GraphQLScalarType({ name: 'DummyScalar' });
 

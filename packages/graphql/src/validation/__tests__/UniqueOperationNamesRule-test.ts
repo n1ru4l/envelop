@@ -1,6 +1,6 @@
-import { UniqueOperationNamesRule } from '../rules/UniqueOperationNamesRule';
+import { UniqueOperationNamesRule } from '../rules/UniqueOperationNamesRule.js';
 
-import { expectValidationErrors } from './harness';
+import { expectValidationErrors } from './harness.js';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrors(UniqueOperationNamesRule, queryStr);

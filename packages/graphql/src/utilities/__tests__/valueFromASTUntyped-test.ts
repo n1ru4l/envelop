@@ -1,9 +1,9 @@
-import type { Maybe } from '../../jsutils/Maybe';
-import type { ObjMap } from '../../jsutils/ObjMap';
+import type { Maybe } from '../../jsutils/Maybe.js';
+import type { ObjMap } from '../../jsutils/ObjMap.js';
 
-import { parseValue } from '../../language/parser';
+import { parseValue } from '../../language/parser.js';
 
-import { valueFromASTUntyped } from '../valueFromASTUntyped';
+import { valueFromASTUntyped } from '../valueFromASTUntyped.js';
 
 describe('valueFromASTUntyped', () => {
   function expectValueFrom(valueText: string, variables?: Maybe<ObjMap<unknown>>) {

@@ -1,10 +1,10 @@
-import type { GraphQLSchema } from '../../type/schema';
+import type { GraphQLSchema } from '../../type/schema.js';
 
-import { buildSchema } from '../../utilities/buildASTSchema';
+import { buildSchema } from '../../utilities/buildASTSchema.js';
 
-import { KnownDirectivesRule } from '../rules/KnownDirectivesRule';
+import { KnownDirectivesRule } from '../rules/KnownDirectivesRule.js';
 
-import { expectSDLValidationErrors, expectValidationErrorsWithSchema } from './harness';
+import { expectSDLValidationErrors, expectValidationErrorsWithSchema } from './harness.js';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrorsWithSchema(schemaWithDirectives, KnownDirectivesRule, queryStr);

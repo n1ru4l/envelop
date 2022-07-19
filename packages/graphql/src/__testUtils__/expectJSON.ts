@@ -1,5 +1,5 @@
-import { isObjectLike } from '../jsutils/isObjectLike';
-import { mapValue } from '../jsutils/mapValue';
+import { isObjectLike } from '../jsutils/isObjectLike.js';
+import { mapValue } from '../jsutils/mapValue.js';
 
 /**
  * Deeply transforms an arbitrary value to a JSON-safe value by calling toJSON

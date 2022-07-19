@@ -1,7 +1,7 @@
-import { dedent } from '../../__testUtils__/dedent';
+import { dedent } from '../../__testUtils__/dedent.js';
 
-import { printSourceLocation } from '../printLocation';
-import { Source } from '../source';
+import { printSourceLocation } from '../printLocation.js';
+import { Source } from '../source.js';
 
 describe('printSourceLocation', () => {
   it('prints minified documents', () => {

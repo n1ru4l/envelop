@@ -1,4 +1,4 @@
-import { assertEnumValueName, assertName } from '../assertName';
+import { assertEnumValueName, assertName } from '../assertName.js';
 
 describe('assertName', () => {
   it('passthrough valid name', () => {

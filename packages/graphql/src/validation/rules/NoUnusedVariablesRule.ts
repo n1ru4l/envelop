@@ -1,9 +1,9 @@
-import { GraphQLError } from '../../error/GraphQLError';
+import { GraphQLError } from '../../error/GraphQLError.js';
 
-import type { VariableDefinitionNode } from '../../language/ast';
-import type { ASTVisitor } from '../../language/visitor';
+import type { VariableDefinitionNode } from '../../language/ast.js';
+import type { ASTVisitor } from '../../language/visitor.js';
 
-import type { ValidationContext } from '../ValidationContext';
+import type { ValidationContext } from '../ValidationContext.js';
 
 /**
  * No unused variables

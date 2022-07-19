@@ -1,15 +1,15 @@
-import type { GraphQLFieldConfigMap } from '../../type/definition';
+import type { GraphQLFieldConfigMap } from '../../type/definition.js';
 import {
   GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLUnionType,
-} from '../../type/definition';
-import { GraphQLFloat, GraphQLInt, GraphQLString } from '../../type/scalars';
-import { GraphQLSchema } from '../../type/schema';
+} from '../../type/definition.js';
+import { GraphQLFloat, GraphQLInt, GraphQLString } from '../../type/scalars.js';
+import { GraphQLSchema } from '../../type/schema.js';
 
-import { isEqualType, isTypeSubTypeOf } from '../typeComparators';
+import { isEqualType, isTypeSubTypeOf } from '../typeComparators.js';
 
 describe('typeComparators', () => {
   describe('isEqualType', () => {

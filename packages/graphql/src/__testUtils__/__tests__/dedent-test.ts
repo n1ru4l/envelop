@@ -1,4 +1,4 @@
-import { dedent, dedentString } from '../dedent';
+import { dedent, dedentString } from '../dedent.js';
 
 describe('dedentString', () => {
   it('removes indentation in typical usage', () => {

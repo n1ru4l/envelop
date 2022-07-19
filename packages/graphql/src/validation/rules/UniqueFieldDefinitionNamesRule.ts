@@ -1,12 +1,12 @@
-import { GraphQLError } from '../../error/GraphQLError';
+import { GraphQLError } from '../../error/GraphQLError.js';
 
-import type { FieldDefinitionNode, InputValueDefinitionNode, NameNode } from '../../language/ast';
-import type { ASTVisitor } from '../../language/visitor';
+import type { FieldDefinitionNode, InputValueDefinitionNode, NameNode } from '../../language/ast.js';
+import type { ASTVisitor } from '../../language/visitor.js';
 
-import type { GraphQLNamedType } from '../../type/definition';
-import { isInputObjectType, isInterfaceType, isObjectType } from '../../type/definition';
+import type { GraphQLNamedType } from '../../type/definition.js';
+import { isInputObjectType, isInterfaceType, isObjectType } from '../../type/definition.js';
 
-import type { SDLValidationContext } from '../ValidationContext';
+import type { SDLValidationContext } from '../ValidationContext.js';
 
 /**
  * Unique field definition names

@@ -1,4 +1,4 @@
-import { genFuzzStrings } from '../genFuzzStrings';
+import { genFuzzStrings } from '../genFuzzStrings.js';
 
 function expectFuzzStrings(options: { allowedChars: ReadonlyArray<string>; maxLength: number }) {
   return expect([...genFuzzStrings(options)]);

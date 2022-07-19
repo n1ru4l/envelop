@@ -4,10 +4,10 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType,
-} from '../../type/definition';
-import { GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLString } from '../../type/scalars';
+} from '../../type/definition.js';
+import { GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLString } from '../../type/scalars.js';
 
-import { astFromValue } from '../astFromValue';
+import { astFromValue } from '../astFromValue.js';
 
 describe('astFromValue', () => {
   it('converts boolean values to ASTs', () => {

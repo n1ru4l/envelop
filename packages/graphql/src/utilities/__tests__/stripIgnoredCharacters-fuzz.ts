@@ -1,9 +1,9 @@
-import { genFuzzStrings } from '../../__testUtils__/genFuzzStrings';
+import { genFuzzStrings } from '../../__testUtils__/genFuzzStrings.js';
 
-import { Lexer } from '../../language/lexer';
-import { Source } from '../../language/source';
+import { Lexer } from '../../language/lexer.js';
+import { Source } from '../../language/source.js';
 
-import { stripIgnoredCharacters } from '../stripIgnoredCharacters';
+import { stripIgnoredCharacters } from '../stripIgnoredCharacters.js';
 
 const ignoredTokens = [
   // UnicodeBOM ::

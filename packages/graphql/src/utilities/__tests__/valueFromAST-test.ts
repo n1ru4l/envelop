@@ -1,19 +1,19 @@
-import { identityFunc } from '../../jsutils/identityFunc';
-import type { ObjMap } from '../../jsutils/ObjMap';
+import { identityFunc } from '../../jsutils/identityFunc.js';
+import type { ObjMap } from '../../jsutils/ObjMap.js';
 
-import { parseValue } from '../../language/parser';
+import { parseValue } from '../../language/parser.js';
 
-import type { GraphQLInputType } from '../../type/definition';
+import type { GraphQLInputType } from '../../type/definition.js';
 import {
   GraphQLEnumType,
   GraphQLInputObjectType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType,
-} from '../../type/definition';
-import { GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLString } from '../../type/scalars';
+} from '../../type/definition.js';
+import { GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLString } from '../../type/scalars.js';
 
-import { valueFromAST } from '../valueFromAST';
+import { valueFromAST } from '../valueFromAST.js';
 
 describe('valueFromAST', () => {
   function expectValueFrom(valueText: string, type: GraphQLInputType, variables?: ObjMap<unknown>) {

@@ -1,15 +1,15 @@
-import { dedent } from '../../__testUtils__/dedent';
+import { dedent } from '../../__testUtils__/dedent.js';
 
-import { assertEnumType, GraphQLEnumType, GraphQLObjectType } from '../../type/definition';
-import { GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLString } from '../../type/scalars';
-import { GraphQLSchema } from '../../type/schema';
+import { assertEnumType, GraphQLEnumType, GraphQLObjectType } from '../../type/definition.js';
+import { GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLString } from '../../type/scalars.js';
+import { GraphQLSchema } from '../../type/schema.js';
 
-import { graphqlSync } from '../../graphql';
+import { graphqlSync } from '../../graphql.js';
 
-import { buildSchema } from '../buildASTSchema';
-import { buildClientSchema } from '../buildClientSchema';
-import { introspectionFromSchema } from '../introspectionFromSchema';
-import { printSchema } from '../printSchema';
+import { buildSchema } from '../buildASTSchema.js';
+import { buildClientSchema } from '../buildClientSchema.js';
+import { introspectionFromSchema } from '../introspectionFromSchema.js';
+import { printSchema } from '../printSchema.js';
 
 /**
  * This function does a full cycle of going from a string with the contents of

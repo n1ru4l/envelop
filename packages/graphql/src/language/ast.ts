@@ -1,6 +1,6 @@
-import type { Kind } from './kinds';
-import type { Source } from './source';
-import type { TokenKind } from './tokenKind';
+import type { Kind } from './kinds.js';
+import type { Source } from './source.js';
+import type { TokenKind } from './tokenKind.js';
 
 /**
  * Represents a range of characters represented by a lexical token

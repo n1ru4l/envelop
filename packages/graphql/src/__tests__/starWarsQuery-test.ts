@@ -1,8 +1,8 @@
-import { expectJSON } from '../__testUtils__/expectJSON';
+import { expectJSON } from '../__testUtils__/expectJSON.js';
 
-import { graphql } from '../graphql';
+import { graphql } from '../graphql.js';
 
-import { StarWarsSchema as schema } from './starWarsSchema';
+import { StarWarsSchema as schema } from './starWarsSchema.js';
 
 describe('Star Wars Query Tests', () => {
   describe('Basic Queries', () => {

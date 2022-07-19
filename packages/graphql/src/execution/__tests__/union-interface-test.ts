@@ -1,10 +1,10 @@
-import { parse } from '../../language/parser';
+import { parse } from '../../language/parser.js';
 
-import { GraphQLInterfaceType, GraphQLList, GraphQLObjectType, GraphQLUnionType } from '../../type/definition';
-import { GraphQLBoolean, GraphQLString } from '../../type/scalars';
-import { GraphQLSchema } from '../../type/schema';
+import { GraphQLInterfaceType, GraphQLList, GraphQLObjectType, GraphQLUnionType } from '../../type/definition.js';
+import { GraphQLBoolean, GraphQLString } from '../../type/scalars.js';
+import { GraphQLSchema } from '../../type/schema.js';
 
-import { executeSync } from '../execute';
+import { executeSync } from '../execute.js';
 
 class Dog {
   name: string;

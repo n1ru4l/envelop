@@ -1,17 +1,17 @@
-import { didYouMean } from '../../jsutils/didYouMean';
-import { naturalCompare } from '../../jsutils/naturalCompare';
-import { suggestionList } from '../../jsutils/suggestionList';
+import { didYouMean } from '../../jsutils/didYouMean.js';
+import { naturalCompare } from '../../jsutils/naturalCompare.js';
+import { suggestionList } from '../../jsutils/suggestionList.js';
 
-import { GraphQLError } from '../../error/GraphQLError';
+import { GraphQLError } from '../../error/GraphQLError.js';
 
-import type { FieldNode } from '../../language/ast';
-import type { ASTVisitor } from '../../language/visitor';
+import type { FieldNode } from '../../language/ast.js';
+import type { ASTVisitor } from '../../language/visitor.js';
 
-import type { GraphQLInterfaceType, GraphQLObjectType, GraphQLOutputType } from '../../type/definition';
-import { isAbstractType, isInterfaceType, isObjectType } from '../../type/definition';
-import type { GraphQLSchema } from '../../type/schema';
+import type { GraphQLInterfaceType, GraphQLObjectType, GraphQLOutputType } from '../../type/definition.js';
+import { isAbstractType, isInterfaceType, isObjectType } from '../../type/definition.js';
+import type { GraphQLSchema } from '../../type/schema.js';
 
-import type { ValidationContext } from '../ValidationContext';
+import type { ValidationContext } from '../ValidationContext.js';
 
 /**
  * Fields on correct type

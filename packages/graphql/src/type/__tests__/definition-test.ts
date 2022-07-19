@@ -1,9 +1,9 @@
-import { identityFunc } from '../../jsutils/identityFunc';
-import { inspect } from '../../jsutils/inspect';
+import { identityFunc } from '../../jsutils/identityFunc.js';
+import { inspect } from '../../jsutils/inspect.js';
 
-import { parseValue } from '../../language/parser';
+import { parseValue } from '../../language/parser.js';
 
-import type { GraphQLNullableType, GraphQLType } from '../definition';
+import type { GraphQLNullableType, GraphQLType } from '../definition.js';
 import {
   GraphQLEnumType,
   GraphQLInputObjectType,
@@ -13,7 +13,7 @@ import {
   GraphQLObjectType,
   GraphQLScalarType,
   GraphQLUnionType,
-} from '../definition';
+} from '../definition.js';
 
 const ScalarType = new GraphQLScalarType({ name: 'Scalar' });
 const ObjectType = new GraphQLObjectType({ name: 'Object', fields: {} });

@@ -1,19 +1,19 @@
-import { isPromise } from './jsutils/isPromise';
-import type { Maybe } from './jsutils/Maybe';
-import type { PromiseOrValue } from './jsutils/PromiseOrValue';
+import { isPromise } from './jsutils/isPromise.js';
+import type { Maybe } from './jsutils/Maybe.js';
+import type { PromiseOrValue } from './jsutils/PromiseOrValue.js';
 
-import { parse } from './language/parser';
-import type { Source } from './language/source';
+import { parse } from './language/parser.js';
+import type { Source } from './language/source.js';
 
-import type { GraphQLFieldResolver, GraphQLTypeResolver } from './type/definition';
-import type { GraphQLSchema } from './type/schema';
-import { validateSchema } from './type/validate';
+import type { GraphQLFieldResolver, GraphQLTypeResolver } from './type/definition.js';
+import type { GraphQLSchema } from './type/schema.js';
+import { validateSchema } from './type/validate.js';
 
-import { validate } from './validation/validate';
+import { validate } from './validation/validate.js';
 
-import type { ExecutionResult } from './execution/execute';
-import { execute } from './execution/execute';
-import { GraphQLError } from './error';
+import type { ExecutionResult } from './execution/execute.js';
+import { execute } from './execution/execute.js';
+import { GraphQLError } from './error/index.js';
 
 /**
  * This is the primary entry point function for fulfilling GraphQL operations

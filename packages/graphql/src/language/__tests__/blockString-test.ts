@@ -1,4 +1,4 @@
-import { dedentBlockStringLines, isPrintableAsBlockString, printBlockString } from '../blockString';
+import { dedentBlockStringLines, isPrintableAsBlockString, printBlockString } from '../blockString.js';
 
 function joinLines(...args: ReadonlyArray<string>) {
   return args.join('\n');

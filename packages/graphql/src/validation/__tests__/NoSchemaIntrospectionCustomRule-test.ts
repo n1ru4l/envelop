@@ -1,8 +1,8 @@
-import { buildSchema } from '../../utilities/buildASTSchema';
+import { buildSchema } from '../../utilities/buildASTSchema.js';
 
-import { NoSchemaIntrospectionCustomRule } from '../rules/custom/NoSchemaIntrospectionCustomRule';
+import { NoSchemaIntrospectionCustomRule } from '../rules/custom/NoSchemaIntrospectionCustomRule.js';
 
-import { expectValidationErrorsWithSchema } from './harness';
+import { expectValidationErrorsWithSchema } from './harness.js';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrorsWithSchema(schema, NoSchemaIntrospectionCustomRule, queryStr);

@@ -1,5 +1,5 @@
-import { identityFunc } from '../identityFunc';
-import { isAsyncIterable } from '../isAsyncIterable';
+import { identityFunc } from '../identityFunc.js';
+import { isAsyncIterable } from '../isAsyncIterable.js';
 
 describe('isAsyncIterable', () => {
   it('should return `true` for AsyncIterable', () => {

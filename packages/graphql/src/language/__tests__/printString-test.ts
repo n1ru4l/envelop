@@ -1,4 +1,4 @@
-import { printString } from '../printString';
+import { printString } from '../printString.js';
 
 describe('printString', () => {
   it('prints a simple string', () => {

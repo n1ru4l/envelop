@@ -1,4 +1,4 @@
-import { mapAsyncIterator } from '../mapAsyncIterator';
+import { mapAsyncIterator } from '../mapAsyncIterator.js';
 
 /* eslint-disable @typescript-eslint/require-await */
 describe('mapAsyncIterator', () => {

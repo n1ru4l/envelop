@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { GraphQLError } from '../GraphQLError';
-import { locatedError } from '../locatedError';
+import { GraphQLError } from '../GraphQLError.js';
+import { locatedError } from '../locatedError.js';
 
 describe('locatedError', () => {
   it('passes GraphQLError through', () => {

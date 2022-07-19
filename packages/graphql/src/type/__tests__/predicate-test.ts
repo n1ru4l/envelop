@@ -1,6 +1,6 @@
-import { DirectiveLocation } from '../../language/directiveLocation';
+import { DirectiveLocation } from '../../language/directiveLocation.js';
 
-import type { GraphQLArgument, GraphQLInputField, GraphQLInputType } from '../definition';
+import type { GraphQLArgument, GraphQLInputField, GraphQLInputType } from '../definition.js';
 import {
   assertAbstractType,
   assertCompositeType,
@@ -48,7 +48,7 @@ import {
   isType,
   isUnionType,
   isWrappingType,
-} from '../definition';
+} from '../definition.js';
 import {
   assertDirective,
   GraphQLDeprecatedDirective,
@@ -57,9 +57,16 @@ import {
   GraphQLSkipDirective,
   isDirective,
   isSpecifiedDirective,
-} from '../directives';
-import { GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLString, isSpecifiedScalarType } from '../scalars';
-import { assertSchema, GraphQLSchema, isSchema } from '../schema';
+} from '../directives.js';
+import {
+  GraphQLBoolean,
+  GraphQLFloat,
+  GraphQLID,
+  GraphQLInt,
+  GraphQLString,
+  isSpecifiedScalarType,
+} from '../scalars.js';
+import { assertSchema, GraphQLSchema, isSchema } from '../schema.js';
 
 const ObjectType = new GraphQLObjectType({ name: 'Object', fields: {} });
 const InterfaceType = new GraphQLInterfaceType({
