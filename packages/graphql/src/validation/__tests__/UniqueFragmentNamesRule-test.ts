@@ -1,6 +1,6 @@
-import { UniqueFragmentNamesRule } from '../rules/UniqueFragmentNamesRule';
+import { UniqueFragmentNamesRule } from '../rules/UniqueFragmentNamesRule.js';
 
-import { expectValidationErrors } from './harness';
+import { expectValidationErrors } from './harness.js';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrors(UniqueFragmentNamesRule, queryStr);

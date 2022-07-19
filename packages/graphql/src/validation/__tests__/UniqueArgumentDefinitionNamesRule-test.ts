@@ -1,6 +1,6 @@
-import { UniqueArgumentDefinitionNamesRule } from '../rules/UniqueArgumentDefinitionNamesRule';
+import { UniqueArgumentDefinitionNamesRule } from '../rules/UniqueArgumentDefinitionNamesRule.js';
 
-import { expectSDLValidationErrors } from './harness';
+import { expectSDLValidationErrors } from './harness.js';
 
 function expectSDLErrors(sdlStr: string) {
   return expectSDLValidationErrors(undefined, UniqueArgumentDefinitionNamesRule, sdlStr);

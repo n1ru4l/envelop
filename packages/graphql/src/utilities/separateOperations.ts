@@ -1,8 +1,8 @@
-import type { ObjMap } from '../jsutils/ObjMap';
+import type { ObjMap } from '../jsutils/ObjMap.js';
 
-import type { DocumentNode, OperationDefinitionNode, SelectionSetNode } from '../language/ast';
-import { Kind } from '../language/kinds';
-import { visit } from '../language/visitor';
+import type { DocumentNode, OperationDefinitionNode, SelectionSetNode } from '../language/ast.js';
+import { Kind } from '../language/kinds.js';
+import { visit } from '../language/visitor.js';
 
 /**
  * separateOperations accepts a single AST document which may contain many

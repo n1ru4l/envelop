@@ -1,13 +1,13 @@
-import { expectJSON } from '../../__testUtils__/expectJSON';
-import { resolveOnNextTick } from '../../__testUtils__/resolveOnNextTick';
+import { expectJSON } from '../../__testUtils__/expectJSON.js';
+import { resolveOnNextTick } from '../../__testUtils__/resolveOnNextTick.js';
 
-import { parse } from '../../language/parser';
+import { parse } from '../../language/parser.js';
 
-import { GraphQLObjectType } from '../../type/definition';
-import { GraphQLInt } from '../../type/scalars';
-import { GraphQLSchema } from '../../type/schema';
+import { GraphQLObjectType } from '../../type/definition.js';
+import { GraphQLInt } from '../../type/scalars.js';
+import { GraphQLSchema } from '../../type/schema.js';
 
-import { execute, executeSync } from '../execute';
+import { execute, executeSync } from '../execute.js';
 
 class NumberHolder {
   theNumber: number;

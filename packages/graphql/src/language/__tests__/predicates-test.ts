@@ -1,6 +1,6 @@
-import type { ASTNode } from '../ast';
-import { Kind } from '../kinds';
-import { parseValue } from '../parser';
+import type { ASTNode } from '../ast.js';
+import { Kind } from '../kinds.js';
+import { parseValue } from '../parser.js';
 import {
   isConstValueNode,
   isDefinitionNode,
@@ -13,7 +13,7 @@ import {
   isTypeSystemDefinitionNode,
   isTypeSystemExtensionNode,
   isValueNode,
-} from '../predicates';
+} from '../predicates.js';
 
 function filterNodes(predicate: (node: ASTNode) => boolean): Array<string> {
   return Object.values(Kind).filter(

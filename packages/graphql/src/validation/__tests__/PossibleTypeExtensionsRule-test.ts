@@ -1,10 +1,10 @@
-import type { GraphQLSchema } from '../../type/schema';
+import type { GraphQLSchema } from '../../type/schema.js';
 
-import { buildSchema } from '../../utilities/buildASTSchema';
+import { buildSchema } from '../../utilities/buildASTSchema.js';
 
-import { PossibleTypeExtensionsRule } from '../rules/PossibleTypeExtensionsRule';
+import { PossibleTypeExtensionsRule } from '../rules/PossibleTypeExtensionsRule.js';
 
-import { expectSDLValidationErrors } from './harness';
+import { expectSDLValidationErrors } from './harness.js';
 
 function expectSDLErrors(sdlStr: string, schema?: GraphQLSchema) {
   return expectSDLValidationErrors(schema, PossibleTypeExtensionsRule, sdlStr);

@@ -1,4 +1,4 @@
-import { suggestionList } from '../suggestionList';
+import { suggestionList } from '../suggestionList.js';
 
 function expectSuggestions(input: string, options: ReadonlyArray<string>) {
   return expect(suggestionList(input, options));

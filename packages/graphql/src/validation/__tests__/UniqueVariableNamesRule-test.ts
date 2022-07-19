@@ -1,6 +1,6 @@
-import { UniqueVariableNamesRule } from '../rules/UniqueVariableNamesRule';
+import { UniqueVariableNamesRule } from '../rules/UniqueVariableNamesRule.js';
 
-import { expectValidationErrors } from './harness';
+import { expectValidationErrors } from './harness.js';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrors(UniqueVariableNamesRule, queryStr);

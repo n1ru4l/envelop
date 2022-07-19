@@ -1,6 +1,6 @@
-import { NoUndefinedVariablesRule } from '../rules/NoUndefinedVariablesRule';
+import { NoUndefinedVariablesRule } from '../rules/NoUndefinedVariablesRule.js';
 
-import { expectValidationErrors } from './harness';
+import { expectValidationErrors } from './harness.js';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrors(NoUndefinedVariablesRule, queryStr);

@@ -1,6 +1,6 @@
-import { UniqueArgumentNamesRule } from '../rules/UniqueArgumentNamesRule';
+import { UniqueArgumentNamesRule } from '../rules/UniqueArgumentNamesRule.js';
 
-import { expectValidationErrors } from './harness';
+import { expectValidationErrors } from './harness.js';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrors(UniqueArgumentNamesRule, queryStr);

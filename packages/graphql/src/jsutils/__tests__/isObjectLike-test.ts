@@ -1,5 +1,5 @@
-import { identityFunc } from '../identityFunc';
-import { isObjectLike } from '../isObjectLike';
+import { identityFunc } from '../identityFunc.js';
+import { isObjectLike } from '../isObjectLike.js';
 
 describe('isObjectLike', () => {
   it('should return `true` for objects', () => {

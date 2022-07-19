@@ -1,9 +1,9 @@
-import type { ListTypeNode, NamedTypeNode, NonNullTypeNode, TypeNode } from '../language/ast';
-import { Kind } from '../language/kinds';
+import type { ListTypeNode, NamedTypeNode, NonNullTypeNode, TypeNode } from '../language/ast.js';
+import { Kind } from '../language/kinds.js';
 
-import type { GraphQLNamedType, GraphQLType } from '../type/definition';
-import { GraphQLList, GraphQLNonNull } from '../type/definition';
-import type { GraphQLSchema } from '../type/schema';
+import type { GraphQLNamedType, GraphQLType } from '../type/definition.js';
+import { GraphQLList, GraphQLNonNull } from '../type/definition.js';
+import type { GraphQLSchema } from '../type/schema.js';
 
 /**
  * Given a Schema and an AST node describing a type, return a GraphQLType

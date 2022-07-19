@@ -1,9 +1,9 @@
-import { dedent } from '../../__testUtils__/dedent';
-import { parse } from '../../language/parser';
-import { Source } from '../../language/source';
+import { dedent } from '../../__testUtils__/dedent.js';
+import { parse } from '../../language/parser.js';
+import { Source } from '../../language/source.js';
 
-import { GraphQLError } from '../GraphQLError';
-import { Kind } from '../../language';
+import { GraphQLError } from '../GraphQLError.js';
+import { Kind } from '../../language/index.js';
 
 const source = new Source(dedent`
   {

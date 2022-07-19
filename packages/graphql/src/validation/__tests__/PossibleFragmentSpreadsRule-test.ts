@@ -1,8 +1,8 @@
-import { buildSchema } from '../../utilities/buildASTSchema';
+import { buildSchema } from '../../utilities/buildASTSchema.js';
 
-import { PossibleFragmentSpreadsRule } from '../rules/PossibleFragmentSpreadsRule';
+import { PossibleFragmentSpreadsRule } from '../rules/PossibleFragmentSpreadsRule.js';
 
-import { expectValidationErrorsWithSchema } from './harness';
+import { expectValidationErrorsWithSchema } from './harness.js';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrorsWithSchema(testSchema, PossibleFragmentSpreadsRule, queryStr);

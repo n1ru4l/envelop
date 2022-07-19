@@ -1,15 +1,15 @@
-import { inspect } from '../../jsutils/inspect';
-import type { Maybe } from '../../jsutils/Maybe';
-import type { ObjMap } from '../../jsutils/ObjMap';
+import { inspect } from '../../jsutils/inspect.js';
+import type { Maybe } from '../../jsutils/Maybe.js';
+import type { ObjMap } from '../../jsutils/ObjMap.js';
 
-import { GraphQLError } from '../../error/GraphQLError';
+import { GraphQLError } from '../../error/GraphQLError.js';
 
-import type { FieldNode, FragmentDefinitionNode, ObjectValueNode, SelectionSetNode } from '../../language/ast';
-import { Kind } from '../../language/kinds';
-import { print } from '../../language/printer';
-import type { ASTVisitor } from '../../language/visitor';
+import type { FieldNode, FragmentDefinitionNode, ObjectValueNode, SelectionSetNode } from '../../language/ast.js';
+import { Kind } from '../../language/kinds.js';
+import { print } from '../../language/printer.js';
+import type { ASTVisitor } from '../../language/visitor.js';
 
-import type { GraphQLField, GraphQLNamedType, GraphQLOutputType } from '../../type/definition';
+import type { GraphQLField, GraphQLNamedType, GraphQLOutputType } from '../../type/definition.js';
 import {
   getNamedType,
   isInterfaceType,
@@ -17,12 +17,12 @@ import {
   isListType,
   isNonNullType,
   isObjectType,
-} from '../../type/definition';
+} from '../../type/definition.js';
 
-import { sortValueNode } from '../../utilities/sortValueNode';
-import { typeFromAST } from '../../utilities/typeFromAST';
+import { sortValueNode } from '../../utilities/sortValueNode.js';
+import { typeFromAST } from '../../utilities/typeFromAST.js';
 
-import type { ValidationContext } from '../ValidationContext';
+import type { ValidationContext } from '../ValidationContext.js';
 
 /* eslint-disable max-params */
 // This file contains a lot of such errors but we plan to refactor it anyway

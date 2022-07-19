@@ -1,8 +1,8 @@
-import { buildSchema } from '../../utilities/buildASTSchema';
+import { buildSchema } from '../../utilities/buildASTSchema.js';
 
-import { SingleFieldSubscriptionsRule } from '../rules/SingleFieldSubscriptionsRule';
+import { SingleFieldSubscriptionsRule } from '../rules/SingleFieldSubscriptionsRule.js';
 
-import { expectValidationErrorsWithSchema } from './harness';
+import { expectValidationErrorsWithSchema } from './harness.js';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrorsWithSchema(schema, SingleFieldSubscriptionsRule, queryStr);

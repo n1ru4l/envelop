@@ -1,4 +1,4 @@
-import { inspectStr } from '../inspectStr';
+import { inspectStr } from '../inspectStr.js';
 
 describe('inspectStr', () => {
   it('handles null and undefined values', () => {

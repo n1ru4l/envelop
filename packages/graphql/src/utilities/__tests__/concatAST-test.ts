@@ -1,10 +1,10 @@
-import { dedent } from '../../__testUtils__/dedent';
+import { dedent } from '../../__testUtils__/dedent.js';
 
-import { parse } from '../../language/parser';
-import { print } from '../../language/printer';
-import { Source } from '../../language/source';
+import { parse } from '../../language/parser.js';
+import { print } from '../../language/printer.js';
+import { Source } from '../../language/source.js';
 
-import { concatAST } from '../concatAST';
+import { concatAST } from '../concatAST.js';
 
 describe('concatAST', () => {
   it('concatenates two ASTs together', () => {

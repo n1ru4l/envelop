@@ -1,5 +1,5 @@
-import { identityFunc } from '../identityFunc';
-import { isIterableObject } from '../isIterableObject';
+import { identityFunc } from '../identityFunc.js';
+import { isIterableObject } from '../isIterableObject.js';
 
 describe('isIterableObject', () => {
   it('should return `true` for collections', () => {

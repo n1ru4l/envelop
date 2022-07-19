@@ -1,10 +1,10 @@
-import type { GraphQLSchema } from '../../type/schema';
+import type { GraphQLSchema } from '../../type/schema.js';
 
-import { buildSchema } from '../../utilities/buildASTSchema';
+import { buildSchema } from '../../utilities/buildASTSchema.js';
 
-import { LoneSchemaDefinitionRule } from '../rules/LoneSchemaDefinitionRule';
+import { LoneSchemaDefinitionRule } from '../rules/LoneSchemaDefinitionRule.js';
 
-import { expectSDLValidationErrors } from './harness';
+import { expectSDLValidationErrors } from './harness.js';
 
 function expectSDLErrors(sdlStr: string, schema?: GraphQLSchema) {
   return expectSDLValidationErrors(schema, LoneSchemaDefinitionRule, sdlStr);

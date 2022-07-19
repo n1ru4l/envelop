@@ -1,6 +1,6 @@
-import { LoneAnonymousOperationRule } from '../rules/LoneAnonymousOperationRule';
+import { LoneAnonymousOperationRule } from '../rules/LoneAnonymousOperationRule.js';
 
-import { expectValidationErrors } from './harness';
+import { expectValidationErrors } from './harness.js';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrors(LoneAnonymousOperationRule, queryStr);

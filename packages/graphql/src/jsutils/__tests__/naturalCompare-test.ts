@@ -1,4 +1,4 @@
-import { naturalCompare } from '../naturalCompare';
+import { naturalCompare } from '../naturalCompare.js';
 
 describe('naturalCompare', () => {
   it('Handles empty strings', () => {

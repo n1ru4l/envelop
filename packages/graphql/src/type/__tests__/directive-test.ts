@@ -1,7 +1,7 @@
-import { DirectiveLocation } from '../../language/directiveLocation';
+import { DirectiveLocation } from '../../language/directiveLocation.js';
 
-import { GraphQLDirective } from '../directives';
-import { GraphQLInt, GraphQLString } from '../scalars';
+import { GraphQLDirective } from '../directives.js';
+import { GraphQLInt, GraphQLString } from '../scalars.js';
 
 describe('Type System: Directive', () => {
   it('defines a directive with no args', () => {

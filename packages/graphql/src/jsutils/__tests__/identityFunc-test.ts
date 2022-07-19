@@ -1,4 +1,4 @@
-import { identityFunc } from '../identityFunc';
+import { identityFunc } from '../identityFunc.js';
 
 describe('identityFunc', () => {
   it('returns the first argument it receives', () => {

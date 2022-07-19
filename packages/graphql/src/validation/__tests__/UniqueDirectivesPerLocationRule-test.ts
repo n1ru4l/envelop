@@ -1,12 +1,12 @@
-import { parse } from '../../language/parser';
+import { parse } from '../../language/parser.js';
 
-import type { GraphQLSchema } from '../../type/schema';
+import type { GraphQLSchema } from '../../type/schema.js';
 
-import { extendSchema } from '../../utilities/extendSchema';
+import { extendSchema } from '../../utilities/extendSchema.js';
 
-import { UniqueDirectivesPerLocationRule } from '../rules/UniqueDirectivesPerLocationRule';
+import { UniqueDirectivesPerLocationRule } from '../rules/UniqueDirectivesPerLocationRule.js';
 
-import { expectSDLValidationErrors, expectValidationErrorsWithSchema, testSchema } from './harness';
+import { expectSDLValidationErrors, expectValidationErrorsWithSchema, testSchema } from './harness.js';
 
 const extensionSDL = `
   directive @directive on FIELD | FRAGMENT_DEFINITION

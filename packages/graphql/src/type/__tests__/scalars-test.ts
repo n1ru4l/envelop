@@ -1,6 +1,6 @@
-import { parseValue as parseValueToAST } from '../../language/parser';
+import { parseValue as parseValueToAST } from '../../language/parser.js';
 
-import { GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLString } from '../scalars';
+import { GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLString } from '../scalars.js';
 
 describe('Type System: Specified scalar types', () => {
   describe('GraphQLInt', () => {
