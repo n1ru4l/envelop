@@ -1,6 +1,6 @@
 import { useLogger, enableIf } from '@envelop/core';
 import { createTestkit, createSpiedPlugin } from '@envelop/testing';
-import { getIntrospectionQuery, parse } from 'graphql';
+import { getIntrospectionQuery, parse } from '@envelop/graphql';
 import { isIntrospectionDocument } from '../src/utils.js';
 import { query, schema } from './common.js';
 

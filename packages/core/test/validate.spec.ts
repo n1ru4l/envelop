@@ -1,5 +1,5 @@
 import { assertSingleExecutionValue, createSpiedPlugin, createTestkit } from '@envelop/testing';
-import { GraphQLError, GraphQLSchema, validate, ValidationContext } from 'graphql';
+import { GraphQLError, GraphQLSchema, validate, ValidationContext } from '@envelop/graphql';
 import { schema, query } from './common.js';
 
 describe('validate', () => {

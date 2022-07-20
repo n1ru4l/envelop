@@ -1,6 +1,6 @@
 import { createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { Plugin } from '@envelop/types';
-import { buildSchema, GraphQLSchema } from 'graphql';
+import { buildSchema, GraphQLSchema } from '@envelop/graphql';
 import { schema, query } from './common.js';
 
 describe('schemaChange', () => {

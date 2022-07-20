@@ -4,7 +4,7 @@ Prevent unexpected error messages from leaking to the GraphQL clients.
 
 ```ts
 import { envelop, useSchema, useMaskedErrors, EnvelopError } from '@envelop/core'
-import { makeExecutableSchema } from 'graphql'
+import { makeExecutableSchema } from '@envelop/graphql'
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `

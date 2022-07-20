@@ -4,7 +4,7 @@ Simple time metric collection, for every phase in your execution. You can easily
 
 ```ts
 import { envelop, useTiming } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { buildSchema } from '@envelop/graphql'
 
 const getEnveloped = envelop({
   plugins: [

@@ -47,16 +47,16 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "@graphql-tools/utils": "^8.8.0"
+    "@graphql-tools/utils": "^8.8.0",
+    "@envelop/graphql": "*"
   },
   "devDependencies": {
-    "graphql": "16.3.0",
+    "graphql": "npm:@envelop/graphql",
     "typescript": "4.7.4"
   },
   "peerDependencies": {
     "@envelop/core": "^2.4.0",
-    "@envelop/types": "^2.3.0",
-    "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
+    "@envelop/types": "^2.3.0"
   },
   "buildOptions": {
     "input": "./src/index.ts"

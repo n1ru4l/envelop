@@ -2,7 +2,7 @@ import { createTestkit } from '@envelop/testing';
 import { useImmediateIntrospection } from '../../src/plugins/use-immediate-introspection.js';
 import { useExtendContext } from '../../src/plugins/use-extend-context.js';
 import { schema } from '../common.js';
-import { getIntrospectionQuery } from 'graphql';
+import { getIntrospectionQuery } from '@envelop/graphql';
 
 describe('useImmediateIntrospection', () => {
   it('skips context building for introspection only operation', async () => {
