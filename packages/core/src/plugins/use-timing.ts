@@ -1,6 +1,13 @@
 /* eslint-disable no-console */
 import { Plugin } from '@envelop/types';
-import { DocumentNode, ExecutionArgs, getOperationAST, GraphQLResolveInfo, Source, SubscriptionArgs } from 'graphql';
+import {
+  DocumentNode,
+  ExecutionArgs,
+  getOperationAST,
+  GraphQLResolveInfo,
+  Source,
+  SubscriptionArgs,
+} from '@envelop/graphql';
 import { isIntrospectionOperationString, envelopIsIntrospectionSymbol } from '../utils.js';
 
 const HR_TO_NS = 1e9;

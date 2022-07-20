@@ -56,12 +56,13 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "@envelop/types": "2.3.0"
+    "@envelop/types": "2.3.0",
+    "@envelop/graphql": "*",
+    "graphql": "npm:@envelop/graphql"
   },
   "devDependencies": {
     "@graphql-tools/utils": "8.8.0",
     "@graphql-tools/schema": "8.5.0",
-    "graphql": "16.3.0",
     "typescript": "4.7.4"
   },
   "peerDependencies": {

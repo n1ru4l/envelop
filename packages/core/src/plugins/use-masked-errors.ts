@@ -1,5 +1,5 @@
 import { Plugin } from '@envelop/types';
-import { ExecutionResult, GraphQLError, GraphQLErrorExtensions } from 'graphql';
+import { ExecutionResult, GraphQLError, GraphQLErrorExtensions } from '@envelop/graphql';
 import { handleStreamOrSingleExecutionResult } from '../utils.js';
 
 export const DEFAULT_ERROR_MESSAGE = 'Unexpected error.';

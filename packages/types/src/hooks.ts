@@ -9,7 +9,7 @@ import type {
   Source,
   SubscriptionArgs,
   ValidationRule,
-} from 'graphql';
+} from '@envelop/graphql';
 import { Maybe, PromiseOrValue, AsyncIterableIteratorOrValue } from './utils.js';
 import { DefaultContext } from './context-types.js';
 import {

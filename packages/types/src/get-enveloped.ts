@@ -1,5 +1,5 @@
 import { Plugin } from './plugin.js';
-import { GraphQLSchema } from 'graphql';
+import { GraphQLSchema } from '@envelop/graphql';
 import { ExecuteFunction, ParseFunction, SubscribeFunction, ValidateFunction } from './graphql.js';
 import { ArbitraryObject, Spread, PromiseOrValue } from './utils.js';
 export { ArbitraryObject } from './utils.js';

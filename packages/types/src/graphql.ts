@@ -10,7 +10,7 @@ import type {
   parse,
   validate,
   GraphQLResolveInfo,
-} from 'graphql';
+} from '@envelop/graphql';
 import type { Maybe } from './utils.js';
 
 /** @private */

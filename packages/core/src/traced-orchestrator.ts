@@ -5,7 +5,7 @@ import {
   GraphQLSchema,
   GraphQLTypeResolver,
   SubscriptionArgs,
-} from 'graphql';
+} from '@envelop/graphql';
 import { ArbitraryObject, Maybe } from '@envelop/types';
 import { EnvelopOrchestrator } from './orchestrator.js';
 import { isAsyncIterable } from './utils.js';
