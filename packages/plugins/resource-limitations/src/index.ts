@@ -24,7 +24,8 @@ const getWrappedType = (graphqlType: GraphQLType): Exclude<GraphQLType, GraphQLL
 };
 
 const isValidArgType = (type: GraphQLInputType, paginationArgumentTypes?: string[]): boolean =>
-  type === GraphQLInt || (isScalarType(type) && !!paginationArgumentTypes && paginationArgumentTypes.includes(type.name));
+  type === GraphQLInt ||
+  (isScalarType(type) && !!paginationArgumentTypes && paginationArgumentTypes.includes(type.name));
 
 const hasFieldDefConnectionArgs = (field: GraphQLField<any, any>, argumentTypes?: string[]) => {
   let hasFirst = false;
@@ -44,7 +45,11 @@ const hasFieldDefConnectionArgs = (field: GraphQLField<any, any>, argumentTypes?
 const buildMissingPaginationFieldErrorMessage = (params: { fieldName: string; hasFirst: boolean; hasLast: boolean }) =>
   `Missing pagination argument for field '${params.fieldName}'. ` +
   `Please provide ` +
-  (params.hasFirst && params.hasLast ? "either the 'first' or 'last'" : params.hasFirst ? "the 'first'" : "the 'last'") +
+  (params.hasFirst && params.hasLast
+    ? "either the 'first' or 'last'"
+    : params.hasFirst
+    ? "the 'first'"
+    : "the 'last'") +
   ' field argument.';
 
 const buildInvalidPaginationRangeErrorMessage = (params: {
@@ -112,7 +117,10 @@ export const ResourceLimitationValidationRule =
                     )
                   );
                 } else if ('first' in argumentValues === true && 'last' in argumentValues === false) {
-                  if (argumentValues.first < paginationArgumentMinimum || argumentValues.first > paginationArgumentMaximum) {
+                  if (
+                    argumentValues.first < paginationArgumentMinimum ||
+                    argumentValues.first > paginationArgumentMaximum
+                  ) {
                     context.reportError(
                       new GraphQLError(
                         buildInvalidPaginationRangeErrorMessage({
@@ -129,7 +137,10 @@ export const ResourceLimitationValidationRule =
                     nodeCost = argumentValues['first'] as number;
                   }
                 } else if ('last' in argumentValues === true && 'false' in argumentValues === false) {
-                  if (argumentValues.last < paginationArgumentMinimum || argumentValues.last > paginationArgumentMaximum) {
+                  if (
+                    argumentValues.last < paginationArgumentMinimum ||
+                    argumentValues.last > paginationArgumentMaximum
+                  ) {
                     context.reportError(
                       new GraphQLError(
                         buildInvalidPaginationRangeErrorMessage({

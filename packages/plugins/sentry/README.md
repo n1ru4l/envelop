@@ -30,22 +30,24 @@ yarn add @sentry/node @sentry/tracing @envelop/sentry
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useSentry } from '@envelop/sentry';
+import { envelop } from '@envelop/core'
+import { useSentry } from '@envelop/sentry'
+// do this only once in you entry file.
+import '@sentry/tracing'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useSentry({
-      includeRawResult: false // set to `true` in order to include the execution result in the metadata collected
+      includeRawResult: false, // set to `true` in order to include the execution result in the metadata collected
       includeResolverArgs: false, // set to `true` in order to include the args passed to resolvers
       includeExecuteVariables: false, // set to `true` in order to include the operation variables values
-      appendTags: (args) => { return { ... }} // if you wish to add custom "tags" to the Sentry transaction created per operation
-      configureScope: (args, scope) => { return { ... }} // if you wish to modify the Sentry scope
-      skip: (executionArgs) => { return { ... }} // if you wish to modify the skip specific operations
-    }),
-  ],
-});
+      appendTags: args => {}, // if you wish to add custom "tags" to the Sentry transaction created per operation
+      configureScope: (args, scope) => {}, // if you wish to modify the Sentry scope
+      skip: executionArgs => {} // if you wish to modify the skip specific operations
+    })
+  ]
+})
 ```
 
 ### Configuration
@@ -59,6 +61,7 @@ const getEnveloped = envelop({
 - `appendTags` - See example above. Allow you to manipulate the tags reports on the Sentry transaction.
 - `configureScope` - See example above. Allow you to manipulate the tags reports on the Sentry transaction.
 - `transactionName` (default: operation name) - Produces a name of Transaction (only when "renameTransaction" or "startTransaction" are enabled) and description of created Span.
+- `traceparentData` (default: `{}`) - Adds tracing data to be sent to Sentry - this includes traceId, parentId and more.
 - `operationName` - Produces a "op" (operation) of created Span.
 - `skip` (default: none) - Produces a "op" (operation) of created Span.
 - `skipError` (default: ignored `EnvelopError`) - Indicates whether or not to skip Sentry exception reporting for a given error. By default, this plugin skips all `EnvelopError` errors and does not report it to Sentry.

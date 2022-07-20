@@ -212,13 +212,17 @@ export function assertSingleExecutionValue(input: ExecutionReturn): asserts inpu
   }
 }
 
-export function assertStreamExecutionValue(input: ExecutionReturn): asserts input is AsyncIterableIterator<ExecutionResult> {
+export function assertStreamExecutionValue(
+  input: ExecutionReturn
+): asserts input is AsyncIterableIterator<ExecutionResult> {
   if (!isAsyncIterable(input)) {
     throw new Error('Received single result but expected stream.');
   }
 }
 
-export const collectAsyncIteratorValues = async <TType>(asyncIterable: AsyncIterableIterator<TType>): Promise<Array<TType>> => {
+export const collectAsyncIteratorValues = async <TType>(
+  asyncIterable: AsyncIterableIterator<TType>
+): Promise<Array<TType>> => {
   const values: Array<TType> = [];
   for await (const value of asyncIterable) {
     values.push(value);

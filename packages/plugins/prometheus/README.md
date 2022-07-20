@@ -26,8 +26,8 @@ yarn add prom-client @envelop/prometheus
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import { usePrometheus } from '@envelop/prometheus';
+import { envelop } from '@envelop/core'
+import { usePrometheus } from '@envelop/prometheus'
 
 const getEnveloped = envelop({
   plugins: [
@@ -44,10 +44,10 @@ const getEnveloped = envelop({
       resolvers: true, // requires "execute" to be `true` as well
       resolversWhitelist: ['Mutation.*', 'Query.user'], // reports metrics als for these resolvers, leave `undefined` to report all fields
       deprecatedFields: true,
-      registry: myRegistry, // If you are using a custom prom-client registry, please set it here
-    }),
-  ],
-});
+      registry: myRegistry // If you are using a custom prom-client registry, please set it here
+    })
+  ]
+})
 ```
 
 > Note: Tracing resolvers using `resovlers: true` might have a performance impact on your GraphQL runtime. Please consider to test it locally first and then decide if it's needed.
@@ -57,19 +57,19 @@ const getEnveloped = envelop({
 You can customize the `prom-client` `Registry` object if you are using a custom one, by passing it along with the configuration object:
 
 ```ts
-import { Registry } from 'prom-client';
+import { Registry } from 'prom-client'
 
-const myRegistry = new Registry();
+const myRegistry = new Registry()
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     usePrometheus({
       // ... config ...
-      registry: myRegistry,
-    }),
-  ],
-});
+      registry: myRegistry
+    })
+  ]
+})
 ```
 
 > Note: if you are using custom `prom-client` instances, you need to make sure to pass your registry there as well.
@@ -83,9 +83,9 @@ If you wish to disable introspection logging, you can use `skipIntrospection: tr
 Each tracing field supports custom `prom-client` objects, and custom `labels` a metadata, you can create a custom extraction function for every `Histogram` / `Summary` / `Counter`:
 
 ```ts
-import { Histogram } from 'prom-client';
-import { envelop } from '@envelop/core';
-import { createHistogram, usePrometheus } from '@envelop/prometheus';
+import { Histogram } from 'prom-client'
+import { envelop } from '@envelop/core'
+import { createHistogram, usePrometheus } from '@envelop/prometheus'
 
 const getEnveloped = envelop({
   plugins: [
@@ -97,16 +97,16 @@ const getEnveloped = envelop({
           name: 'my_custom_name',
           help: 'HELP ME',
           labelNames: ['opText'] as const,
-          registers: [registry], // make sure to add your custom registry, if you are not using the default one
+          registers: [registry] // make sure to add your custom registry, if you are not using the default one
         }),
         fillLabelsFn: params => {
           // if you wish to fill your `lables` with metadata, you can use the params in order to get access to things like DocumentNode, operationName, operationType, `error` (for error metrics) and `info` (for resolvers metrics)
           return {
-            opText: print(params.document),
-          };
-        },
-      }),
-    }),
-  ],
-});
+            opText: print(params.document)
+          }
+        }
+      })
+    })
+  ]
+})
 ```

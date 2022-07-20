@@ -1,6 +1,6 @@
 import { readFileSync, promises } from 'fs';
 import { DocumentNode } from 'graphql';
-import { PersistedOperationsStore } from '../types';
+import { PersistedOperationsStore } from '../types.js';
 
 export type JsonFileStoreDataMap = Map<string, DocumentNode | string>;
 

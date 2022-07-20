@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { createTestkit, assertSingleExecutionValue } from '@envelop/testing';
 import { InMemoryLRUCache } from 'apollo-server-caching';
 import type { DataSourceConfig } from 'apollo-datasource';
-import { useApolloDataSources } from '../src';
+import { useApolloDataSources } from '../src/index.js';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 describe('useApolloDataSources', () => {

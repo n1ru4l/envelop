@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { Plugin } from '@envelop/types';
 import { DocumentNode, ExecutionArgs, getOperationAST, GraphQLResolveInfo, Source, SubscriptionArgs } from 'graphql';
-import { isIntrospectionOperationString, envelopIsIntrospectionSymbol } from '../utils';
+import { isIntrospectionOperationString, envelopIsIntrospectionSymbol } from '../utils.js';
 
 const HR_TO_NS = 1e9;
 const NS_TO_MS = 1e6;
@@ -19,7 +19,8 @@ export type TimingPluginOptions = {
 };
 
 const DEFAULT_OPTIONS: TimingPluginOptions = {
-  onExecutionMeasurement: (args, timing) => console.log(`Operation execution "${args.operationName}" done in ${timing.ms}ms`),
+  onExecutionMeasurement: (args, timing) =>
+    console.log(`Operation execution "${args.operationName}" done in ${timing.ms}ms`),
   onSubscriptionMeasurement: (args, timing) =>
     console.log(`Operation subscription "${args.operationName}" done in ${timing.ms}ms`),
   onParsingMeasurement: (source: Source | string, timing: ResultTiming) =>
@@ -50,7 +51,7 @@ type InternalPluginContext = {
 export const useTiming = (rawOptions?: TimingPluginOptions): Plugin<InternalPluginContext> => {
   const options = {
     ...DEFAULT_OPTIONS,
-    ...(rawOptions || {}),
+    ...rawOptions,
   };
 
   const result: Plugin<InternalPluginContext> = {};

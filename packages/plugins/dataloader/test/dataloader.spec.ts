@@ -1,7 +1,7 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import DataLoader from 'dataloader';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { useDataLoader } from '../src';
+import { useDataLoader } from '../src/index.js';
 
 describe('useDataLoader', () => {
   const schema = makeExecutableSchema({

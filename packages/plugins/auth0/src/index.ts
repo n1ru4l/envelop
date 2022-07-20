@@ -40,7 +40,7 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
     rateLimit: true,
     jwksRequestsPerMinute: 5,
     jwksUri: `https://${options.domain}/.well-known/jwks.json`,
-    ...(options.jwksClientOptions || {}),
+    ...options.jwksClientOptions,
   });
 
   const contextField = options.extendContextField || '_auth0';
@@ -88,7 +88,7 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
 
   const verifyToken = async (token: string): Promise<any> => {
     const decodedToken =
-      (decode(token, { complete: true, ...(options.jwtDecodeOptions || {}) }) as Record<string, { kid?: string }>) || {};
+      (decode(token, { complete: true, ...options.jwtDecodeOptions }) as Record<string, { kid?: string }>) || {};
 
     if (decodedToken && decodedToken.header && decodedToken.header.kid) {
       const secret = await jkwsClient.getSigningKey(decodedToken.header.kid);
@@ -97,7 +97,7 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
         algorithms: ['RS256'],
         audience: options.audience,
         issuer: `https://${options.domain}/`,
-        ...(options.jwtVerifyOptions || {}),
+        ...options.jwtVerifyOptions,
       }) as { sub: string };
 
       return decoded;
@@ -116,10 +116,8 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
           extendContext({
             [contextField]: decodedPayload,
           } as BuildContext<TOptions>);
-        } else {
-          if (options.preventUnauthenticatedAccess) {
-            throw new UnauthenticatedError(`Unauthenticated!`);
-          }
+        } else if (options.preventUnauthenticatedAccess) {
+          throw new UnauthenticatedError(`Unauthenticated!`);
         }
       } catch (e) {
         if (options.onError) {

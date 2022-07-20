@@ -18,19 +18,19 @@ const getEnveloped = envelop({
     // ...
     useExtendContext(({ context, extendContext }) => {
       // generate the requestId (it also may come from `express-request-id` or other middleware)
-      const requestId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER); // uuid-like
-      const container = Container.of(requestId); // get the scoped container
-      const typeGraphQLContext = { ...context, requestId, container }; // create fresh context object for TypeDI
-      container.set('context', typeGraphQLContext); // place context or other data in container
+      const requestId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER) // uuid-like
+      const container = Container.of(requestId) // get the scoped container
+      const typeGraphQLContext = { ...context, requestId, container } // create fresh context object for TypeDI
+      container.set('context', typeGraphQLContext) // place context or other data in container
 
       // Make these available also for Envelop context
       extendContext({
         requestId,
-        container,
-      });
-    }),
-  ],
-});
+        container
+      })
+    })
+  ]
+})
 ```
 
 > [You can read more about this setup here](https://typegraphql.com/docs/dependency-injection.html)

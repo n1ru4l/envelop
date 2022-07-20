@@ -15,9 +15,9 @@ yarn add graphql-middleware @envelop/graphql-middleware
 You can use any type of middleware defined for `graphql-middleware`, here's an example for doing that with [`graphql-shield`](https://github.com/maticzav/graphql-shield):
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useGraphQLMiddleware } from '@envelop/graphql-middleware';
-import { rule, shield, and, or, not } from 'graphql-shield';
+import { envelop } from '@envelop/core'
+import { useGraphQLMiddleware } from '@envelop/graphql-middleware'
+import { rule, shield, and, or, not } from 'graphql-shield'
 
 // ...
 // You can find a complete example here: https://github.com/maticzav/graphql-shield#graphql-yoga
@@ -25,20 +25,20 @@ import { rule, shield, and, or, not } from 'graphql-shield';
 
 const permissions = shield({
   Query: {
-    fruits: and(isAuthenticated, or(isAdmin, isEditor)),
+    fruits: and(isAuthenticated, or(isAdmin, isEditor))
   },
   Mutation: {
-    addFruitToBasket: isAuthenticated,
+    addFruitToBasket: isAuthenticated
   },
   Fruit: isAuthenticated,
-  Customer: isAdmin,
-});
+  Customer: isAdmin
+})
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useSchema(mySchema),
-    useGraphQLMiddleware([permissions]),
-  ],
-});
+    useGraphQLMiddleware([permissions])
+  ]
+})
 ```

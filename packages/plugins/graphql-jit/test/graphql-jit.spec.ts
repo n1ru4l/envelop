@@ -6,8 +6,8 @@ import {
 } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { execute, subscribe } from 'graphql';
-import { useGraphQlJit } from '../src';
-import lru from 'tiny-lru';
+import { useGraphQlJit, JITCache } from '../src/index.js';
+import LRU from 'lru-cache';
 
 describe('useGraphQlJit', () => {
   const schema = makeExecutableSchema({
@@ -52,7 +52,6 @@ describe('useGraphQlJit', () => {
 
     expect(onExecuteSpy).toHaveBeenCalledTimes(1);
     expect(onExecuteSpy.mock.calls[0][0].executeFn).not.toBe(execute);
-    expect(onExecuteSpy.mock.calls[0][0].executeFn.name).toBe('jitExecutor');
   });
 
   it('Should override subscribe function', async () => {
@@ -72,7 +71,6 @@ describe('useGraphQlJit', () => {
 
     expect(onSubscribeSpy).toHaveBeenCalledTimes(1);
     expect(onSubscribeSpy.mock.calls[0][0].subscribeFn).not.toBe(subscribe);
-    expect(onSubscribeSpy.mock.calls[0][0].subscribeFn.name).toBe('jitSubscriber');
   });
 
   it('Should not override execute function when enableIf returns false', async () => {
@@ -143,7 +141,7 @@ describe('useGraphQlJit', () => {
   });
 
   it('Should use the provided cache instance', async () => {
-    const cache = lru();
+    const cache: JITCache = new LRU();
     jest.spyOn(cache, 'set');
     jest.spyOn(cache, 'get');
 

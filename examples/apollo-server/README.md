@@ -12,4 +12,4 @@ In this exmaple, Apollo-Server provides the basic HTTP wrapper and execution flo
 
 ## Limitations
 
-See https://github.com/apollographql/apollo-server/discussions/5541 
+See https://github.com/apollographql/apollo-server/discussions/5541

@@ -1,10 +1,12 @@
-import { Plugin } from './plugin';
+import { Plugin } from './plugin.js';
 import { GraphQLSchema } from 'graphql';
-import { ExecuteFunction, ParseFunction, SubscribeFunction, ValidateFunction } from './graphql';
-import { ArbitraryObject, Spread, PromiseOrValue } from './utils';
-export { ArbitraryObject } from './utils';
+import { ExecuteFunction, ParseFunction, SubscribeFunction, ValidateFunction } from './graphql.js';
+import { ArbitraryObject, Spread, PromiseOrValue } from './utils.js';
+export { ArbitraryObject } from './utils.js';
 
-export type EnvelopContextFnWrapper<TFunction extends Function, ContextType = unknown> = (context: ContextType) => TFunction;
+export type EnvelopContextFnWrapper<TFunction extends Function, ContextType = unknown> = (
+  context: ContextType
+) => TFunction;
 
 export type GetEnvelopedFn<PluginsContext> = {
   <InitialContext extends ArbitraryObject>(initialContext?: InitialContext): {

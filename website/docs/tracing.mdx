@@ -12,7 +12,7 @@ const getEnveloped = envelop({
     // ...
   ],
   enableInternalTracing: true
-});
+})
 ```
 
 This way, on each executed request, you'll get the following object with metrics (measured in `ms`) added to your `result.extensions`:
@@ -25,7 +25,7 @@ This way, on each executed request, you'll get the following object with metrics
       "validate": 0.1,
       "context": 0.1,
       "execute": 0.1,
-      "subscribe": 0.1,
+      "subscribe": 0.1
     }
   }
 }

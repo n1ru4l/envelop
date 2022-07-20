@@ -6,7 +6,7 @@ import {
   OnExecuteDoneHookResultOnNextHook,
 } from '@envelop/core';
 import * as Sentry from '@sentry/node';
-import type { Span } from '@sentry/types';
+import type { Span, TraceparentData } from '@sentry/types';
 import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
 
 export type SentryPluginOptions = {
@@ -61,6 +61,12 @@ export type SentryPluginOptions = {
    * @default operation's name or "Anonymous Operation" when missing)
    */
   transactionName?: (args: ExecutionArgs) => string;
+  /**
+   * Produces tracing data for Transaction
+   *
+   * @default is empty
+   */
+  traceparentData?: (args: ExecutionArgs) => TraceparentData | undefined;
   /**
    * Produces a "op" (operation) of created Span.
    *
@@ -169,18 +175,21 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
         return;
       }
 
-      const rootOperation = args.document.definitions.find(o => o.kind === Kind.OPERATION_DEFINITION) as OperationDefinitionNode;
+      const rootOperation = args.document.definitions.find(
+        o => o.kind === Kind.OPERATION_DEFINITION
+      ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
       const document = print(args.document);
       const opName = args.operationName || rootOperation.name?.value || 'Anonymous Operation';
       const addedTags: Record<string, any> = (options.appendTags && options.appendTags(args)) || {};
+      const traceparentData = (options.traceparentData && options.traceparentData(args)) || {};
 
       const transactionName = options.transactionName ? options.transactionName(args) : opName;
       const op = options.operationName ? options.operationName(args) : 'execute';
       const tags = {
         operationName: opName,
         operation: operationType,
-        ...(addedTags || {}),
+        ...addedTags,
       };
 
       let rootSpan: Span;
@@ -190,7 +199,16 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
           name: transactionName,
           op,
           tags,
+          ...traceparentData,
         });
+
+        if (!rootSpan) {
+          const error = [
+            `Could not create the root Sentry transaction for the GraphQL operation "${transactionName}".`,
+            `It's very likely that this is because you have not included the Sentry tracing SDK in your app's runtime before handling the request.`,
+          ];
+          throw new Error(error.join('\n'));
+        }
       } else {
         const scope = Sentry.getCurrentHub().getScope();
         const parentSpan = scope?.getSpan();
@@ -263,19 +281,21 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
                     scope.addBreadcrumb({
                       category: 'execution-path',
                       message: errorPath,
-                      level: Sentry.Severity.Debug,
+                      level: 'debug',
                     });
                   }
 
                   // Map index values in list to $index for better grouping of events.
-                  const errorPathWithIndex = (err.path ?? []).map(v => (typeof v === 'number' ? '$index' : v)).join(' > ');
+                  const errorPathWithIndex = (err.path ?? [])
+                    .map(v => (typeof v === 'number' ? '$index' : v))
+                    .join(' > ');
 
                   const eventId = Sentry.captureException(err, {
                     fingerprint: ['graphql', errorPathWithIndex, opName, operationType],
                     contexts: {
                       GraphQL: {
                         operationName: opName,
-                        operationType: operationType,
+                        operationType,
                         variables: args.variableValues,
                       },
                     },

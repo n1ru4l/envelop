@@ -1,5 +1,21 @@
 # @envelop/graphql-modules
 
+## 3.4.0
+
+### Minor Changes
+
+- 8bb2738: Support TypeScript module resolution.
+- Updated dependencies [8bb2738]
+  - @envelop/core@2.4.0
+
+## 3.3.3
+
+### Patch Changes
+
+- fbf6155: update package.json repository links to point to the new home
+- Updated dependencies [fbf6155]
+  - @envelop/core@2.3.3
+
 ## 3.3.2
 
 ### Patch Changes

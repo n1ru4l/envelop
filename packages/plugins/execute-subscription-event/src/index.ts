@@ -1,6 +1,6 @@
 import { SubscriptionArgs, execute } from 'graphql';
 import { Plugin, PromiseOrValue, makeExecute, DefaultContext } from '@envelop/core';
-import { subscribe } from './subscribe';
+import { subscribe } from './subscribe.js';
 
 export type ContextFactoryOptions = {
   /** The arguments with which the subscription was set up. */

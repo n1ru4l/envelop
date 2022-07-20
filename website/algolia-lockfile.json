@@ -74,7 +74,11 @@
   },
   {
     "objectID": "envelop-adding-a-graphql-response-cache",
-    "headings": ["A brief Introduction to Caching", "How does GraphQL Response Caching work?", "Envelop Response Cache"],
+    "headings": [
+      "A brief Introduction to Caching",
+      "How does GraphQL Response Caching work?",
+      "Envelop Response Cache"
+    ],
     "toc": [
       {
         "children": [],
@@ -1547,6 +1551,11 @@
             "children": [
               {
                 "children": [],
+                "title": "Cache based on session/user",
+                "anchor": "cache-based-on-sessionuser"
+              },
+              {
+                "children": [],
                 "title": "Redis Cache",
                 "anchor": "redis-cache"
               }
@@ -1571,11 +1580,6 @@
                 "children": [],
                 "title": "Cache with custom TTL per schema coordinate",
                 "anchor": "cache-with-custom-ttl-per-schema-coordinate"
-              },
-              {
-                "children": [],
-                "title": "Cache based on session/user",
-                "anchor": "cache-based-on-sessionuser"
               },
               {
                 "children": [],

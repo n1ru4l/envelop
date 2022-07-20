@@ -5,9 +5,9 @@ import {
   collectAsyncIteratorValues,
   createTestkit,
 } from '@envelop/testing';
-import { EnvelopError, useMaskedErrors, DEFAULT_ERROR_MESSAGE } from '../../src/plugins/use-masked-errors';
+import { EnvelopError, useMaskedErrors, DEFAULT_ERROR_MESSAGE } from '../../src/plugins/use-masked-errors.js';
 import { useExtendContext } from '@envelop/core';
-import { useAuth0 } from '../../../plugins/auth0/src';
+import { useAuth0 } from '../../../plugins/auth0/src/index.js';
 
 describe('useMaskedErrors', () => {
   const schema = makeExecutableSchema({
@@ -32,7 +32,7 @@ describe('useMaskedErrors', () => {
           throw new Error('Secret sauce that should not leak.');
         },
         secretEnvelop: () => {
-          throw new EnvelopError('This message goes to all the clients out there!');
+          throw new EnvelopError('This message goes to all the clients out there!', { foo: 1 });
         },
         secretWithExtensions: () => {
           throw new EnvelopError('This message goes to all the clients out there!', {
@@ -96,7 +96,7 @@ describe('useMaskedErrors', () => {
     expect(error.message).toEqual(DEFAULT_ERROR_MESSAGE);
   });
 
-  it('Should mask unexpected errors', async () => {
+  it('Should not mask expected errors', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
     const result = await testInstance.execute(`query { secretEnvelop }`);
     assertSingleExecutionValue(result);
@@ -104,6 +104,7 @@ describe('useMaskedErrors', () => {
     expect(result.errors).toHaveLength(1);
     const [error] = result.errors!;
     expect(error.message).toEqual('This message goes to all the clients out there!');
+    expect(error.extensions).toEqual({ foo: 1 });
   });
 
   it('Should include the original error within the error extensions when `isDev` is set to `true`', async () => {
@@ -190,11 +191,11 @@ describe('useMaskedErrors', () => {
   });
 
   it('Should not mask expected context creation errors', async () => {
-    expect.assertions(1);
+    expect.assertions(2);
     const testInstance = createTestkit(
       [
         useExtendContext((): {} => {
-          throw new EnvelopError('No context for you!');
+          throw new EnvelopError('No context for you!', { foo: 1 });
         }),
         useMaskedErrors(),
       ],
@@ -203,7 +204,12 @@ describe('useMaskedErrors', () => {
     try {
       await testInstance.execute(`query { secretWithExtensions }`);
     } catch (err) {
-      expect(err).toMatchInlineSnapshot(`[GraphQLError: No context for you!]`);
+      if (err instanceof EnvelopError) {
+        expect(err.message).toEqual(`No context for you!`);
+        expect(err.extensions).toEqual({ foo: 1 });
+      } else {
+        throw err;
+      }
     }
   });
   it('Should mask subscribe (sync/promise) subscription errors', async () => {
@@ -217,7 +223,10 @@ describe('useMaskedErrors', () => {
   });
 
   it('Should mask subscribe (sync/promise) subscription errors with a custom error message', async () => {
-    const testInstance = createTestkit([useMaskedErrors({ errorMessage: 'My Custom subscription error message.' })], schema);
+    const testInstance = createTestkit(
+      [useMaskedErrors({ errorMessage: 'My Custom subscription error message.' })],
+      schema
+    );
     const result = await testInstance.execute(`subscription { instantError }`);
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
@@ -254,7 +263,10 @@ describe('useMaskedErrors', () => {
 
   it('Should mask subscribe (AsyncIterable) subscription errors with a custom error message', async () => {
     expect.assertions(1);
-    const testInstance = createTestkit([useMaskedErrors({ errorMessage: 'My AsyncIterable Custom Error Message.' })], schema);
+    const testInstance = createTestkit(
+      [useMaskedErrors({ errorMessage: 'My AsyncIterable Custom Error Message.' })],
+      schema
+    );
     const resultStream = await testInstance.execute(`subscription { streamError }`);
     assertStreamExecutionValue(resultStream);
     try {
@@ -288,7 +300,10 @@ describe('useMaskedErrors', () => {
     expect(error.message).toEqual(DEFAULT_ERROR_MESSAGE);
   });
   it('Should mask resolve subscription errors with a custom error message', async () => {
-    const testInstance = createTestkit([useMaskedErrors({ errorMessage: 'Custom resolve subscription errors.' })], schema);
+    const testInstance = createTestkit(
+      [useMaskedErrors({ errorMessage: 'Custom resolve subscription errors.' })],
+      schema
+    );
     const resultStream = await testInstance.execute(`subscription { streamResolveError }`);
     assertStreamExecutionValue(resultStream);
     const allResults = await collectAsyncIteratorValues(resultStream);

@@ -8,7 +8,7 @@ import {
   useGenericAuth,
   ValidateUserFn,
   UnauthenticatedError,
-} from '../src';
+} from '../src/index.js';
 
 type UserType = {
   id: number;
@@ -366,7 +366,9 @@ describe('useGenericAuth', () => {
       const validateUserFn: ValidateUserFn<UserTypeWithRole> = params => {
         const schemaCoordinate = `${params.objectType.name}.${params.fieldNode.name.value}`;
         if (!params.user) {
-          return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [params.fieldNode]);
+          return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [
+            params.fieldNode,
+          ]);
         }
 
         if (params.fieldAuthDirectiveNode?.arguments) {

@@ -11,7 +11,7 @@ import {
   GraphQLList,
 } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { useExtendedValidation, ONE_OF_DIRECTIVE_SDL, OneOfInputObjectsRule } from '../src';
+import { useExtendedValidation, ONE_OF_DIRECTIVE_SDL, OneOfInputObjectsRule } from '../src/index.js';
 
 describe('oneOf', () => {
   const astSchema = buildSchema(/* GraphQL */ `
@@ -544,7 +544,12 @@ describe('oneOf', () => {
     describe('FIELD_DEFINITION', () => {
       const DOCUMENT = /* GraphQL */ `
         query user($byID: ID, $byUsername: String, $byEmail: String, $byRegistrationNumber: Int) {
-          findUser(byID: $byID, byUsername: $byUsername, byEmail: $byEmail, byRegistrationNumber: $byRegistrationNumber) {
+          findUser(
+            byID: $byID
+            byUsername: $byUsername
+            byEmail: $byEmail
+            byRegistrationNumber: $byRegistrationNumber
+          ) {
             id
           }
         }

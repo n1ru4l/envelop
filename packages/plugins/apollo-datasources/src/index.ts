@@ -31,7 +31,9 @@ export function useApolloDataSources(config: ApolloDataSourcesConfig): Plugin {
       await Promise.all(initializers);
 
       if ('dataSources' in args.contextValue) {
-        throw new Error('Please use the dataSources config option instead of putting dataSources on the context yourself.');
+        throw new Error(
+          'Please use the dataSources config option instead of putting dataSources on the context yourself.'
+        );
       }
 
       extendContext({

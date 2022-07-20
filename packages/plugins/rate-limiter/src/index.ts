@@ -1,8 +1,8 @@
 import { Plugin } from '@envelop/core';
 import { IntValueNode, StringValueNode, GraphQLResolveInfo } from 'graphql';
-import { getDirective } from './utils';
+import { getDirective } from './utils.js';
 import { getGraphQLRateLimiter } from 'graphql-rate-limit';
-export * from './utils';
+export * from './utils.js';
 
 export class UnauthenticatedError extends Error {}
 
@@ -37,8 +37,10 @@ export const useRateLimiter = (
 
       if (rateLimitDirectiveNode && rateLimitDirectiveNode.arguments) {
         const maxNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'max')?.value as IntValueNode;
-        const windowNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'window')?.value as StringValueNode;
-        const messageNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'message')?.value as IntValueNode;
+        const windowNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'window')
+          ?.value as StringValueNode;
+        const messageNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'message')
+          ?.value as IntValueNode;
 
         const message = messageNode.value;
         const max = parseInt(maxNode.value);

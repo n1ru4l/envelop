@@ -1,5 +1,27 @@
 # @envelop/parser-cache
 
+## 4.5.0
+
+### Minor Changes
+
+- 5d06ccc: Replace `tiny-lru` implementation with `lru-cache`.
+
+## 4.4.0
+
+### Minor Changes
+
+- 8bb2738: Support TypeScript module resolution.
+- Updated dependencies [8bb2738]
+  - @envelop/core@2.4.0
+
+## 4.3.3
+
+### Patch Changes
+
+- fbf6155: update package.json repository links to point to the new home
+- Updated dependencies [fbf6155]
+  - @envelop/core@2.3.3
+
 ## 4.3.2
 
 ### Patch Changes

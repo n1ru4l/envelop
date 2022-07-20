@@ -1,4 +1,4 @@
-import { useErrorHandler } from '../../src/plugins/use-error-handler';
+import { useErrorHandler } from '../../src/plugins/use-error-handler.js';
 import { createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 

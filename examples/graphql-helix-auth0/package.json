@@ -10,12 +10,12 @@
     "@envelop/core": "*",
     "@envelop/auth0": "*",
     "graphql-helix": "1.8.3",
-    "@graphql-tools/schema": "8.0.1"
+    "@graphql-tools/schema": "8.5.0"
   },
   "devDependencies": {
     "@types/node": "15.6.1",
     "ts-node": "10.0.0",
-    "typescript": "4.3.5"
+    "typescript": "4.7.4"
   },
   "scripts": {
     "start": "ts-node index.ts"

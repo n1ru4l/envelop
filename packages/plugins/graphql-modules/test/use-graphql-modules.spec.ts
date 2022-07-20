@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { parse } from 'graphql';
 import { Application, createApplication, createModule, Injectable, Scope } from 'graphql-modules';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { useGraphQLModules } from '../src';
+import { useGraphQLModules } from '../src/index.js';
 
 describe('useGraphQLModules', () => {
   let app: Application;
@@ -27,7 +27,8 @@ describe('useGraphQLModules', () => {
           providers: [TestProvider],
           resolvers: {
             Query: {
-              foo: (root: never, args: never, { injector }: GraphQLModules.Context) => injector.get(TestProvider).getFoo(),
+              foo: (root: never, args: never, { injector }: GraphQLModules.Context) =>
+                injector.get(TestProvider).getFoo(),
             },
           },
         }),

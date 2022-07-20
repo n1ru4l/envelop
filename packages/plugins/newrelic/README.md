@@ -31,8 +31,8 @@ yarn add newrelic @envelop/newrelic
 ## Basic usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useNewRelic } from '@envelop/newrelic';
+import { envelop } from '@envelop/core'
+import { useNewRelic } from '@envelop/newrelic'
 
 const getEnveloped = envelop({
   plugins: [
@@ -44,11 +44,13 @@ const getEnveloped = envelop({
       trackResolvers: true, // default `false`. When set to `true`, track resolvers as segments to monitor their performance
       includeResolverArgs: false, // default `false`. When set to `true`, includes all the arguments passed to resolvers with their values
       rootFieldsNaming: true, // default `false`. When set to `true` append the names of operation root fields to the transaction name
-      skipError: error => { ... return true; }, // a function that allows you to skip reporting a given error to NewRelic. By default custom `EnvelopError`s will be skipped
-      extractOperationName: (context) => context.request.body.customOperationName, // Allows to set a custom operation name to be used as transaction name and attribute
-    }),
-  ],
-});
+      skipError: error => {
+        return true // a function that allows you to skip reporting a given error to NewRelic. By default custom `EnvelopError`s will be skipped
+      },
+      extractOperationName: context => context.request.body.customOperationName // Allows to set a custom operation name to be used as transaction name and attribute
+    })
+  ]
+})
 ```
 
 > Note: Transaction and segment/span timings may be affected by other plugins used. In order to get more accurate tracking, it is recommended to add the New Relic plugin last.

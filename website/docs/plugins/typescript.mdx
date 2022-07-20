@@ -17,9 +17,9 @@ export const useMyPlugin = (): Plugin<{ myContext: string }> => {
     },
     onExecute({ args }) {
       // Here, args.contextValue is typed as { myContext: string }
-    },
-  };
-};
+    }
+  }
+}
 ```
 
 ### For Plugins users
@@ -31,15 +31,15 @@ As a user of a plugin, you get type-inference based on the plugins that you use,
 const getEnveloped = envelop({
   plugins: [
     usePluginA(), // Defined with Plugin<{ pluginA: string }>
-    usePluginB(), // Defined with Plugin<{ pluginB: string }>
-  ],
-});
+    usePluginB() // Defined with Plugin<{ pluginB: string }>
+  ]
+})
 
 server.on('req', async (req, res) => {
   // At this point, the context known to envelop is `{ pluginA: string, pluginB: string, req: Http.IncomingRequest }`
-  const { parse, validate, execute, schema, contextFactory } = getEnveloped({ req });
+  const { parse, validate, execute, schema, contextFactory } = getEnveloped({ req })
 
   // At this point, the context known to envelop is `{ pluginA: string, pluginB: string, req: Http.IncomingRequest, extra: boolean }`
-  const context = await contextFactory({ extra: true });
-});
+  const context = await contextFactory({ extra: true })
+})
 ```

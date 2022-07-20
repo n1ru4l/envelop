@@ -78,7 +78,9 @@ export const useApolloTracing = (): Plugin => {
             execution: {
               resolvers: ctx.resolversTiming.map(resolverCall => {
                 const startOffset = durationHrTimeToNanos(resolverCall.startOffset);
-                const duration = resolverCall.endOffset ? durationHrTimeToNanos(resolverCall.endOffset) - startOffset : 0;
+                const duration = resolverCall.endOffset
+                  ? durationHrTimeToNanos(resolverCall.endOffset) - startOffset
+                  : 0;
 
                 return {
                   path: [...responsePathAsArray(resolverCall.path)],

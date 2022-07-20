@@ -2,7 +2,7 @@ import { envelop, useSchema } from '@envelop/core';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { buildSchema, GraphQLError, parse } from 'graphql';
-import { useExtendedValidation } from '../src';
+import { useExtendedValidation } from '../src/index.js';
 
 describe('useExtendedValidation', () => {
   it('supports usage of multiple useExtendedValidation in different plugins', async () => {

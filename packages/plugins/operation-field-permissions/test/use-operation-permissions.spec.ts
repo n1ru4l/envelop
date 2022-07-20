@@ -1,7 +1,8 @@
-import { useOperationFieldPermissions } from '../src';
+import { useOperationFieldPermissions } from '../src/index.js';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { getIntrospectionQuery } from 'graphql';
+import { useMaskedErrors } from '@envelop/core';
 
 const schema = makeExecutableSchema({
   typeDefs: [
@@ -77,10 +78,10 @@ describe('useOperationPermissions', () => {
     `);
     assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: Insufficient permissions for selecting 'Query.greetings'.],
-]
-`);
+      Array [
+        [GraphQLError: Insufficient permissions for selecting 'Query.greetings'.],
+      ]
+    `);
   });
 
   it('allow everything', async () => {
@@ -111,12 +112,12 @@ Array [
     const result = await kit.execute(query);
     assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: Insufficient permissions for selecting 'Query.foo'.],
-  [GraphQLError: Insufficient permissions for selecting 'Query.user'.],
-  [GraphQLError: Insufficient permissions for selecting 'User.id'.],
-]
-`);
+      Array [
+        [GraphQLError: Insufficient permissions for selecting 'Query.foo'.],
+        [GraphQLError: Insufficient permissions for selecting 'Query.user'.],
+        [GraphQLError: Insufficient permissions for selecting 'User.id'.],
+      ]
+    `);
   });
   it('allow wildcard for types', async () => {
     const kit = createTestkit(
@@ -131,10 +132,10 @@ Array [
     const result = await kit.execute(query);
     assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: Insufficient permissions for selecting 'User.id'.],
-]
-`);
+      Array [
+        [GraphQLError: Insufficient permissions for selecting 'User.id'.],
+      ]
+    `);
   });
   it('allow selecting specific fields', async () => {
     const kit = createTestkit(
@@ -169,12 +170,12 @@ Array [
     `);
     assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: Insufficient permissions for selecting 'Query.postOrUser'.],
-  [GraphQLError: Insufficient permissions for selecting 'Post.__typename'.],
-  [GraphQLError: Insufficient permissions for selecting 'User.__typename'.],
-]
-`);
+      Array [
+        [GraphQLError: Insufficient permissions for selecting 'Query.postOrUser'.],
+        [GraphQLError: Insufficient permissions for selecting 'Post.__typename'.],
+        [GraphQLError: Insufficient permissions for selecting 'User.__typename'.],
+      ]
+    `);
   });
 
   it('interface errors', async () => {
@@ -196,11 +197,52 @@ Array [
     `);
     assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: Insufficient permissions for selecting 'Query.node'.],
-  [GraphQLError: Insufficient permissions for selecting 'User.__typename'.],
-  [GraphQLError: Insufficient permissions for selecting 'Post.__typename'.],
-]
-`);
+      Array [
+        [GraphQLError: Insufficient permissions for selecting 'Query.node'.],
+        [GraphQLError: Insufficient permissions for selecting 'User.__typename'.],
+        [GraphQLError: Insufficient permissions for selecting 'Post.__typename'.],
+      ]
+    `);
+  });
+
+  it('includes the node location', async () => {
+    const kit = createTestkit(
+      [
+        useOperationFieldPermissions({
+          getPermissions: () => new Set([]),
+        }),
+      ],
+      schema
+    );
+
+    const result = await kit.execute(/* GraphQL */ `
+      query {
+        __typename
+      }
+    `);
+    assertSingleExecutionValue(result);
+    expect(result.errors).toBeDefined();
+    const [error] = result.errors!;
+    expect(error.nodes).toBeDefined();
+  });
+
+  it('is not masked by the masked errors plugin', async () => {
+    const kit = createTestkit(
+      [
+        useOperationFieldPermissions({
+          getPermissions: () => new Set([]),
+        }),
+        useMaskedErrors(),
+      ],
+      schema
+    );
+    const result = await kit.execute(/* GraphQL */ `
+      query {
+        __typename
+      }
+    `);
+    assertSingleExecutionValue(result);
+    expect(result.errors).toBeDefined();
+    expect(result.errors![0].message).toEqual("Insufficient permissions for selecting 'Query.__typename'.");
   });
 });

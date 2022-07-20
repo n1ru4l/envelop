@@ -13,19 +13,19 @@ yarn add @envelop/operation-field-permissions
 ## Usage Example
 
 ```ts
-import { envelop, useSchema } from '@envelop/core';
-import { useOperationFieldPermissions } from 'envelop/operation-field-permissions';
+import { envelop, useSchema } from '@envelop/core'
+import { useOperationFieldPermissions } from 'envelop/operation-field-permissions'
 
 const getEnveloped = envelop({
   plugins: [
     useSchema(schema),
     useOperationFieldPermissions({
       // we can access graphql context here
-      getPermissions: async context => new Set(['Query.greetings', ...context.viewer.permissions]),
-    }),
+      getPermissions: async context => new Set(['Query.greetings', ...context.viewer.permissions])
+    })
     /* ... other envelops */
-  ],
-});
+  ]
+})
 ```
 
 **Schema**

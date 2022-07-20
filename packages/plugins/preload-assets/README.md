@@ -12,9 +12,9 @@ yarn add @envelop/preload-assets
 ```
 
 ```ts
-import { envelop } from '@envelop/core';
-import { usePreloadAssets } from '@envelop/preload-asset';
-import { makeExecutableSchema } from 'graphql';
+import { envelop } from '@envelop/core'
+import { usePreloadAssets } from '@envelop/preload-asset'
+import { makeExecutableSchema } from 'graphql'
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `
@@ -25,17 +25,17 @@ const schema = makeExecutableSchema({
   resolvers: {
     Query: {
       imageUrl: (_: unknown, __: unknown, context: any) => {
-        const imageUrl = 'https://localhost/some-asset.png';
-        context.registerPreloadAsset(imageUrl);
-        return Promise.resolve(imageUrl);
-      },
-    },
-  },
-});
+        const imageUrl = 'https://localhost/some-asset.png'
+        context.registerPreloadAsset(imageUrl)
+        return Promise.resolve(imageUrl)
+      }
+    }
+  }
+})
 
 const getEnveloped = envelop({
-  plugins: [usePreloadAssets()],
-});
+  plugins: [usePreloadAssets()]
+})
 ```
 
 **Example response**
@@ -54,27 +54,27 @@ const getEnveloped = envelop({
 **Example client prefetch logic**
 
 ```ts
-const preloadAsset = (url) => {
-  var request = new XMLHttpRequest();
-  request.open('GET', url);
-  request.responseType = 'blob';
+const preloadAsset = url => {
+  var request = new XMLHttpRequest()
+  request.open('GET', url)
+  request.responseType = 'blob'
   request.onload = () => {
-    if  (request.status !== 200 ) {
-      console.error((new Error(`Image preload failed; error code '${request.statusText}'.`));
+    if (request.status !== 200) {
+      console.error(new Error(`Image preload failed; error code '${request.statusText}'.`))
     }
-  };
+  }
   request.onerror = () => {
-    console.error(new Error(`There was a network error while preloading '${url}'.`));
-  };
-  request.send();
+    console.error(new Error(`There was a network error while preloading '${url}'.`))
+  }
+  request.send()
 }
 
 // call this function with the execution result within your network layer.
-const onExecutionResult = (result) => {
+const onExecutionResult = result => {
   if (Array.isArray(result?.extensions?.preloadAssets)) {
-    result.extension.preloadAssets.forEach((url) => {
-      preloadAsset(url);
-    });
+    result.extension.preloadAssets.forEach(url => {
+      preloadAsset(url)
+    })
   }
-};
+}
 ```

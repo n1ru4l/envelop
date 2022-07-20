@@ -1,5 +1,32 @@
 # @envelop/sentry
 
+## 3.6.0
+
+### Minor Changes
+
+- 79ebe78: New feature: `traceparentData` (default: `{}`) - Adds tracing data to be sent to Sentry - this includes traceId, parentId and more. This can be used in connection with headers from the request to add the tracing details for Sentry.
+
+## 3.5.0
+
+### Minor Changes
+
+- 8bb2738: Support TypeScript module resolution.
+- Updated dependencies [8bb2738]
+  - @envelop/core@2.4.0
+
+### Patch Changes
+
+- b1851eb: Create a more friendly error message in case the Sentry SDK is not properly configured.
+
+## 3.4.2
+
+### Patch Changes
+
+- 3612010: supporting sentry v7.0.0
+- fbf6155: update package.json repository links to point to the new home
+- Updated dependencies [fbf6155]
+  - @envelop/core@2.3.3
+
 ## 3.4.1
 
 ### Patch Changes

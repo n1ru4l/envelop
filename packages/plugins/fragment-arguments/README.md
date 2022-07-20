@@ -15,13 +15,13 @@ yarn add @envelop/fragment-arguments
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useFragmentArguments } from '@envelop/fragment-arguments';
+import { envelop } from '@envelop/core'
+import { useFragmentArguments } from '@envelop/fragment-arguments'
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useFragmentArguments(),
-  ],
-});
+    useFragmentArguments()
+  ]
+})
 ```

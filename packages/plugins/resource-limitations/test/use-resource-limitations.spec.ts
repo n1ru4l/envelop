@@ -1,4 +1,4 @@
-import { useResourceLimitations } from '../src';
+import { useResourceLimitations } from '../src/index.js';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 
@@ -166,7 +166,10 @@ describe('useResourceLimitations', () => {
     );
   });
   it('requires the first field to be not higher than a custom maximum value', async () => {
-    const testkit = createTestkit([useResourceLimitations({ paginationArgumentMaximum: 99, extensions: true })], schema);
+    const testkit = createTestkit(
+      [useResourceLimitations({ paginationArgumentMaximum: 99, extensions: true })],
+      schema
+    );
     const result = await testkit.execute(/* GraphQL */ `
       query {
         viewer {
@@ -254,7 +257,10 @@ describe('useResourceLimitations', () => {
     );
   });
   it('requires the last field to be not higher than a custom maximum value', async () => {
-    const testkit = createTestkit([useResourceLimitations({ paginationArgumentMaximum: 99, extensions: true })], schema);
+    const testkit = createTestkit(
+      [useResourceLimitations({ paginationArgumentMaximum: 99, extensions: true })],
+      schema
+    );
     const result = await testkit.execute(/* GraphQL */ `
       query {
         viewer {

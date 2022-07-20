@@ -1,6 +1,6 @@
 import { ContextFactoryFn, EnvelopError, useExtendContext } from '@envelop/core';
 import { createSpiedPlugin, createTestkit } from '@envelop/testing';
-import { schema, query } from './common';
+import { schema, query } from './common.js';
 
 describe('contextFactory', () => {
   it('Should call before parse and after parse correctly', async () => {

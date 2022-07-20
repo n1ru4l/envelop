@@ -16,14 +16,14 @@ Ideally, you already have your basic envelop setup with your http framework of c
 
 We start by installing the package into our envelop setup with your favorite Package manager.
 
-import { PackageInstall } from '@guild-docs/client';
+import { PackageInstall } from '@guild-docs/client'
 
 <PackageInstall packages="@envelop/auth0" />
 
 ## Adding the Auth0 Plugin to the Envelop setup
 
 ```ts
-import { useAuth0 } from '@envelop/auth0';
+import { useAuth0 } from '@envelop/auth0'
 
 // ... other imports and code
 
@@ -33,10 +33,10 @@ const getEnveloped = envelop({
     useAuth0({
       domain: 'TODO',
       audience: 'TODO',
-      extendContextField: 'auth0',
-    }),
-  ],
-});
+      extendContextField: 'auth0'
+    })
+  ]
+})
 
 // ... server code
 ```
@@ -85,7 +85,7 @@ This is our `domain` configuration value.
 Let's quickly add this information to our envelop setup.
 
 ```ts
-import { useAuth0 } from '@envelop/auth0';
+import { useAuth0 } from '@envelop/auth0'
 
 // ... other imports and code
 
@@ -95,10 +95,10 @@ const getEnveloped = envelop({
     useAuth0({
       domain: '{account_name}.{region}.auth0.com',
       audience: 'http://localhost:3000/graphql',
-      extendContextField: 'auth0',
-    }),
-  ],
-});
+      extendContextField: 'auth0'
+    })
+  ]
+})
 ```
 
 We now have all the information needed for configuring the envelop plugin. However, we did not yet setup an application that is required for users to authenticate in the browser.
@@ -112,7 +112,7 @@ The complete code should look like this:
 
 ```ts
 // The quickest way of building a schema :)
-import { makeExecutableSchema } from '@graphql-tools/schema';
+import { makeExecutableSchema } from '@graphql-tools/schema'
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `
@@ -136,11 +136,11 @@ const schema = makeExecutableSchema({
   resolvers: {
     Query: {
       authInfo(_source, _args, context) {
-        return context.auth0;
-      },
-    },
-  },
-});
+        return context.auth0
+      }
+    }
+  }
+})
 ```
 
 Then we can start our server. The helix fastify server can be started via `yarn start`.
@@ -195,7 +195,7 @@ app.route({
   method: 'GET',
   url: '/',
   async handler(req, res) {
-    res.header('Content-Type', 'text/html; charset=UTF-8');
+    res.header('Content-Type', 'text/html; charset=UTF-8')
     res.send(/* HTML */ `
       <!DOCTYPE html />
       <html>
@@ -207,18 +207,18 @@ app.route({
             createAuth0Client({
               domain: '{account_name}.{region}.auth0.com',
               client_id: '<client_id>',
-              audience: 'http://localhost:3000/graphql',
+              audience: 'http://localhost:3000/graphql'
             }).then(async auth0 => {
-              await auth0.loginWithPopup();
-              const accessToken = await auth0.getTokenSilently();
-              window.document.body.innerText = accessToken;
-            });
+              await auth0.loginWithPopup()
+              const accessToken = await auth0.getTokenSilently()
+              window.document.body.innerText = accessToken
+            })
           </script>
         </body>
       </html>
-    `);
-  },
-});
+    `)
+  }
+})
 ```
 
 As mentioned before it is not that fancy. After restarting the server and opening `http://localhost:3000/` URL we should see a blank page and an Auth0 LogIn pop-up.
@@ -275,11 +275,11 @@ const getEnveloped = envelop({
     useExtendContext(async context => {
       if (context.auth0) {
         return {
-          user: await context.db.loadUserBySub(context.auth0.sub),
-        };
+          user: await context.db.loadUserBySub(context.auth0.sub)
+        }
       }
-      return {};
-    }),
-  ],
-});
+      return {}
+    })
+  ]
+})
 ```

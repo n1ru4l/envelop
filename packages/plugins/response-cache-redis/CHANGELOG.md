@@ -1,5 +1,32 @@
 # @envelop/response-cache-redis
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies [887fc07]
+- Updated dependencies [a5d8dcb]
+  - @envelop/response-cache@3.0.0
+
+## 0.5.0
+
+### Minor Changes
+
+- 8bb2738: Support TypeScript module resolution.
+
+### Patch Changes
+
+- Updated dependencies [8bb2738]
+  - @envelop/response-cache@2.4.0
+
+## 0.4.3
+
+### Patch Changes
+
+- fbf6155: update package.json repository links to point to the new home
+- Updated dependencies [fbf6155]
+  - @envelop/response-cache@2.3.3
+
 ## 0.4.2
 
 ### Patch Changes

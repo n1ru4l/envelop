@@ -1,5 +1,36 @@
 # @envelop/generic-auth
 
+## 4.3.0
+
+### Minor Changes
+
+- 8bb2738: Support TypeScript module resolution.
+- Updated dependencies [8bb2738]
+  - @envelop/core@2.4.0
+
+### Patch Changes
+
+- Updated dependencies [8bb2738]
+  - @envelop/extended-validation@1.7.0
+
+## 4.2.4
+
+### Patch Changes
+
+- ddd0e4f: `useGenericAuth`'s `ContextType` generic used to accept the types that has an index signature which makes it impossible to use it with "fixed types". Now it defaults to `DefaultContext` without extending it so any kind of type can be used as `ContextType`.
+
+  Also `useGenericAuth` now takes a third generic which is the name of the field name that contains the user data in the context. It can be also inferred from `contextFieldName` of the plugin options.
+
+## 4.2.3
+
+### Patch Changes
+
+- fbf6155: update package.json repository links to point to the new home
+- Updated dependencies [fbf6155]
+  - @envelop/core@2.3.3
+- Updated dependencies [fbf6155]
+  - @envelop/extended-validation@1.6.3
+
 ## 4.2.2
 
 ### Patch Changes
@@ -65,7 +96,7 @@
 
   ```typescript
   // schema.ts
-  import { GraphQLObjectType, GraphQLInt } from 'graphql';
+  import { GraphQLObjectType, GraphQLInt } from 'graphql'
 
   const GraphQLQueryType = new GraphQLObjectType({
     name: 'Query',
@@ -74,20 +105,20 @@
         type: GraphQLInt,
         resolve: () => 1,
         extensions: {
-          skipAuth: true,
+          skipAuth: true
           // or auth: true for mode "protect-granular".
-        },
-      },
-    },
-  });
+        }
+      }
+    }
+  })
   ```
 
   The `validateUser` function is no longer attached to the `context` object passed to the resolvers. You can add your own `validateUser` function to the context using `useExtendContext`.
 
   ```typescript
   const getEnveloped = envelop({
-    plugins: [useSchema(schema), useGenericAuth(options), useExtendContext(() => ({ validateUser }))],
-  });
+    plugins: [useSchema(schema), useGenericAuth(options), useExtendContext(() => ({ validateUser }))]
+  })
   ```
 
 ### Minor Changes

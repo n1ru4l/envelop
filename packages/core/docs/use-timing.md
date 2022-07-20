@@ -3,8 +3,8 @@
 Simple time metric collection, for every phase in your execution. You can easily customize the behavior of each timing measurement. By default, the timing is printed to the log, using `console.log`.
 
 ```ts
-import { envelop, useTiming } from '@envelop/core';
-import { buildSchema } from 'graphql';
+import { envelop, useTiming } from '@envelop/core'
+import { buildSchema } from 'graphql'
 
 const getEnveloped = envelop({
   plugins: [
@@ -16,9 +16,9 @@ const getEnveloped = envelop({
       onSubscriptionMeasurement: (args: SubscriptionArgs, timing: ResultTiming) => {},
       onParsingMeasurement: (source: Source | string, timing: ResultTiming) => {},
       onValidationMeasurement: (document: DocumentNode, timing: ResultTiming) => {},
-      onResolverMeasurement: (info: GraphQLResolveInfo, timing: ResultTiming) => {},
-    }),
+      onResolverMeasurement: (info: GraphQLResolveInfo, timing: ResultTiming) => {}
+    })
     // ... other plugins ...
-  ],
-});
+  ]
+})
 ```

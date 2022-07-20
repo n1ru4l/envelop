@@ -1,4 +1,4 @@
-import { DefaultContext, Plugin } from '@envelop/core';
+import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/core';
 import {
   DirectiveNode,
   FieldNode,
@@ -17,7 +17,7 @@ export class UnauthenticatedError extends GraphQLError {}
 
 export type ResolveUserFn<UserType, ContextType = DefaultContext> = (
   context: ContextType
-) => null | UserType | Promise<UserType | null>;
+) => PromiseOrValue<Maybe<UserType>>;
 
 export type ValidateUserFnParams<UserType> = {
   /** The user object. */
@@ -42,7 +42,11 @@ export const SKIP_AUTH_DIRECTIVE_SDL = /* GraphQL */ `
   directive @skipAuth on FIELD_DEFINITION
 `;
 
-export type GenericAuthPluginOptions<UserType extends {} = {}, ContextType extends DefaultContext = DefaultContext> = {
+export type GenericAuthPluginOptions<
+  UserType extends {} = {},
+  ContextType = DefaultContext,
+  CurrentUserKey extends string = 'currentUser'
+> = {
   /**
    * Here you can implement any custom sync/async code, and use the context built so far in Envelop and the HTTP request
    * to find the current user.
@@ -54,7 +58,7 @@ export type GenericAuthPluginOptions<UserType extends {} = {}, ContextType exten
    * Overrides the default field name for injecting the user into the execution `context`.
    * @default currentUser
    */
-  contextFieldName?: 'currentUser' | string;
+  contextFieldName?: CurrentUserKey;
 } & (
   | {
       /**
@@ -102,32 +106,43 @@ export type GenericAuthPluginOptions<UserType extends {} = {}, ContextType exten
     }
 );
 
-export function defaultProtectAllValidateFn<UserType>(params: ValidateUserFnParams<UserType>): void | UnauthenticatedError {
+export function defaultProtectAllValidateFn<UserType>(
+  params: ValidateUserFnParams<UserType>
+): void | UnauthenticatedError {
   if (params.user == null && !params.fieldAuthDirectiveNode && !params.fieldAuthExtension) {
     const schemaCoordinate = `${params.objectType.name}.${params.fieldNode.name.value}`;
     return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [params.fieldNode]);
   }
 }
 
-export function defaultProtectSingleValidateFn<UserType>(params: ValidateUserFnParams<UserType>): void | UnauthenticatedError {
+export function defaultProtectSingleValidateFn<UserType>(
+  params: ValidateUserFnParams<UserType>
+): void | UnauthenticatedError {
   if (params.user == null && (params.fieldAuthDirectiveNode || params.fieldAuthExtension)) {
     const schemaCoordinate = `${params.objectType.name}.${params.fieldNode.name.value}`;
     return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [params.fieldNode]);
   }
 }
 
-export const useGenericAuth = <UserType extends {} = {}, ContextType extends DefaultContext = DefaultContext>(
-  options: GenericAuthPluginOptions<UserType, ContextType>
-): Plugin<{
-  validateUser: ValidateUserFn<UserType>;
-}> => {
+export const useGenericAuth = <
+  UserType extends {} = {},
+  ContextType = DefaultContext,
+  CurrentUserKey extends string = 'currentUser'
+>(
+  options: GenericAuthPluginOptions<UserType, ContextType, CurrentUserKey>
+): Plugin<
+  {
+    validateUser: ValidateUserFn<UserType>;
+  } & Record<CurrentUserKey, UserType>
+> => {
   const contextFieldName = options.contextFieldName || 'currentUser';
 
   if (options.mode === 'protect-all' || options.mode === 'protect-granular') {
     const directiveOrExtensionFieldName =
       options.directiveOrExtensionFieldName ?? (options.mode === 'protect-all' ? 'skipAuth' : 'auth');
     const validateUser =
-      options.validateUser ?? (options.mode === 'protect-all' ? defaultProtectAllValidateFn : defaultProtectSingleValidateFn);
+      options.validateUser ??
+      (options.mode === 'protect-all' ? defaultProtectAllValidateFn : defaultProtectSingleValidateFn);
     const extractAuthMeta = (
       input: GraphQLField<any, any>
     ): { fieldAuthDirectiveNode: DirectiveNode | undefined; fieldAuthExtension: unknown } => {

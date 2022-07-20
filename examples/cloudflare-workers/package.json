@@ -8,14 +8,14 @@
   "dependencies": {
     "graphql-helix": "1.8.3",
     "@envelop/core": "*",
-    "@graphql-tools/schema": "8.0.1",
+    "@graphql-tools/schema": "8.5.0",
     "worktop": "0.7.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "2.2.2",
     "@types/node": "15.6.1",
     "ts-node": "10.0.0",
-    "typescript": "4.3.5"
+    "typescript": "4.7.4"
   },
   "scripts": {
     "compile": "tsc"

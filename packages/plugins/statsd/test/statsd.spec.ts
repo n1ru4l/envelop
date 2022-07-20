@@ -1,7 +1,7 @@
 import type { StatsD } from 'hot-shots';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { useStatsD, metricNames, StatsDPluginOptions } from '../src';
+import { useStatsD, metricNames, StatsDPluginOptions } from '../src/index.js';
 import { getIntrospectionQuery } from 'graphql';
 import { useExtendContext } from '@envelop/core';
 
@@ -109,7 +109,9 @@ describe('StatsD plugin', () => {
     expect(client.increment).toBeCalledTimes(1);
     expect(client.increment).toBeCalledWith(createMetricName('operationCount', prefix), { operation: 'test' });
     expect(client.histogram).toBeCalledTimes(1);
-    expect(client.histogram).toBeCalledWith(createMetricName('latency', prefix), expect.any(Number), { operation: 'test' });
+    expect(client.histogram).toBeCalledWith(createMetricName('latency', prefix), expect.any(Number), {
+      operation: 'test',
+    });
   });
 
   test('do not skip on introspection by default', async () => {
@@ -121,7 +123,9 @@ describe('StatsD plugin', () => {
     expect(client.increment).toBeCalledTimes(1);
     expect(client.increment).toBeCalledWith(createMetricName('operationCount'), { operation: 'IntrospectionQuery' });
     expect(client.histogram).toBeCalledTimes(1);
-    expect(client.histogram).toBeCalledWith(createMetricName('latency'), expect.any(Number), { operation: 'IntrospectionQuery' });
+    expect(client.histogram).toBeCalledWith(createMetricName('latency'), expect.any(Number), {
+      operation: 'IntrospectionQuery',
+    });
   });
 
   test('skip on introspection on demand', async () => {

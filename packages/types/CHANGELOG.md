@@ -1,5 +1,17 @@
 # @envelop/types
 
+## 2.3.0
+
+### Minor Changes
+
+- 8bb2738: Support TypeScript module resolution.
+
+## 2.2.1
+
+### Patch Changes
+
+- fbf6155: update package.json repository links to point to the new home
+
 ## 2.2.0
 
 ### Minor Changes
@@ -11,11 +23,11 @@
     return {
       onPluginInit(context) {
         context.registerContextErrorHandler(({ context }) => {
-          console.error('Error occurred during context creation but at least I have the  context so far', context);
-        });
-      },
-    };
-  };
+          console.error('Error occurred during context creation but at least I have the  context so far', context)
+        })
+      }
+    }
+  }
   ```
 
 ## 2.1.0
@@ -51,20 +63,20 @@
   If you need any shared state between `onExecute` and `onResolverCalled` you can share it by extending the context object.
 
   ```ts
-  import type { Plugin } from '@envelop/core';
+  import type { Plugin } from '@envelop/core'
 
-  const sharedStateSymbol = Symbol('sharedState');
+  const sharedStateSymbol = Symbol('sharedState')
 
   const plugin: Plugin = {
     onExecute({ extendContext }) {
-      extendContext({ [sharedStateSymbol]: { value: 1 } });
+      extendContext({ [sharedStateSymbol]: { value: 1 } })
     },
     onResolverCalled({ context }) {
-      const sharedState = context[sharedStateSymbol];
+      const sharedState = context[sharedStateSymbol]
       // logs 1
-      console.log(sharedState.value);
-    },
-  };
+      console.log(sharedState.value)
+    }
+  }
   ```
 
 ### Minor Changes
@@ -117,12 +129,12 @@
     return {
       onPluginInit(context) {
         context.registerContextErrorHandler(({ error, setError }) => {
-          console.error('Error occurred during context creation.', error);
-          setError(new Error('Something went wrong :('));
-        });
-      },
-    };
-  };
+          console.error('Error occurred during context creation.', error)
+          setError(new Error('Something went wrong :('))
+        })
+      }
+    }
+  }
   ```
 
 ## 1.0.2

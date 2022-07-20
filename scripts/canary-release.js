@@ -21,7 +21,11 @@ function getRelevantChangesets(baseBranch) {
     .stdout.toString()
     .trim();
   console.log('compare point', comparePoint);
-  const listModifiedFiles = cp.spawnSync('git', ['diff', '--name-only', comparePoint]).stdout.toString().trim().split('\n');
+  const listModifiedFiles = cp
+    .spawnSync('git', ['diff', '--name-only', comparePoint])
+    .stdout.toString()
+    .trim()
+    .split('\n');
   console.log('listModifiedFiles', listModifiedFiles);
 
   const items = listModifiedFiles.filter(f => f.startsWith('.changeset')).map(f => basename(f, '.md'));

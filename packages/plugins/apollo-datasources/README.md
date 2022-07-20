@@ -11,26 +11,26 @@ yarn add @envelop/apollo-datasources
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import { useApolloDataSources } from '@envelop/apollo-datasources';
-import { RESTDataSource } from 'apollo-datasource-rest';
+import { envelop } from '@envelop/core'
+import { useApolloDataSources } from '@envelop/apollo-datasources'
+import { RESTDataSource } from 'apollo-datasource-rest'
 
 class MoviesAPI extends RESTDataSource {
   constructor() {
-    super();
-    this.baseURL = 'https://movies-api.example.com/';
+    super()
+    this.baseURL = 'https://movies-api.example.com/'
   }
 
   async getMovie(id) {
-    return this.get(`movies/${encodeURIComponent(id)}`);
+    return this.get(`movies/${encodeURIComponent(id)}`)
   }
 
   async getMostViewedMovies(limit = 10) {
     const data = await this.get('movies', {
       per_page: limit,
-      order_by: 'most_viewed',
-    });
-    return data.results;
+      order_by: 'most_viewed'
+    })
+    return data.results
   }
 }
 
@@ -40,12 +40,12 @@ const getEnveloped = envelop({
     useApolloDataSources({
       dataSources() {
         return {
-          moviesAPI: new MoviesAPI(),
-        };
-      },
+          moviesAPI: new MoviesAPI()
+        }
+      }
       // To provide a custom cache, you can use the following code (InMemoryLRUCache is used by default):
       // cache: new YourCustomCache()
-    }),
-  ],
-});
+    })
+  ]
+})
 ```

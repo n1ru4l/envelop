@@ -1,11 +1,15 @@
 {
   "parser": "@typescript-eslint/parser",
   "extends": ["eslint:recommended", "standard", "prettier", "plugin:@typescript-eslint/recommended"],
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "unicorn"],
   "rules": {
+    "unicorn/filename-case": "error",
+    "no-lonely-if": "error",
+    "unicorn/no-lonely-if": "error",
     "no-empty": "off",
     "no-console": "error",
     "no-prototype-builtins": "off",
+    "prefer-arrow-callback": ["error", { "allowNamedFunctions": true }],
     "no-useless-constructor": "off",
     "@typescript-eslint/no-unused-vars": ["warn", { "args": "none" }],
     "@typescript-eslint/no-use-before-define": "off",
@@ -18,7 +22,12 @@
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/ban-ts-ignore": "off",
     "@typescript-eslint/ban-types": "off",
-    "import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/*.test.ts", "**/*.spec.ts", "**/test/**/*.ts"] }]
+    "import/no-default-export": "error",
+    "unicorn/no-useless-fallback-in-spread": "error",
+    "import/no-extraneous-dependencies": [
+      "error",
+      { "devDependencies": ["**/*.test.ts", "**/*.spec.ts", "**/test/**/*.ts"] }
+    ]
   },
   "env": {
     "es6": true,

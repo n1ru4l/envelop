@@ -1,6 +1,6 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { createTestkit, assertSingleExecutionValue } from '@envelop/testing';
-import { usePreloadAssets } from '../src';
+import { usePreloadAssets } from '../src/index.js';
 import { useExtendContext } from '@envelop/core';
 
 describe('usePreloadAssets', () => {

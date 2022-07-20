@@ -1,5 +1,35 @@
 # @envelop/operation-field-permissions
 
+## 3.4.0
+
+### Minor Changes
+
+- 8bb2738: Support TypeScript module resolution.
+- Updated dependencies [8bb2738]
+  - @envelop/core@2.4.0
+
+### Patch Changes
+
+- 646de1e: remove unused code import statement
+- Updated dependencies [8bb2738]
+  - @envelop/extended-validation@1.7.0
+
+## 3.3.4
+
+### Patch Changes
+
+- 2e79ae1: use EnvelopError instead of GraphQLError for preventing the error message from being masked
+
+## 3.3.3
+
+### Patch Changes
+
+- fbf6155: update package.json repository links to point to the new home
+- Updated dependencies [fbf6155]
+  - @envelop/core@2.3.3
+- Updated dependencies [fbf6155]
+  - @envelop/extended-validation@1.6.3
+
 ## 3.3.2
 
 ### Patch Changes

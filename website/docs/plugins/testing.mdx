@@ -18,23 +18,23 @@ To get started with your `envelop` testing, make sure first to setup your favori
 To test a plugin in a real GraphQL environment, just create a testkit envelop:
 
 ```ts
-import { useMyPlugin } from './my-plugin';
-import { createTestkit, assertSingleExecutionValue } from '@envelop/testing';
+import { useMyPlugin } from './my-plugin'
+import { createTestkit, assertSingleExecutionValue } from '@envelop/testing'
 
 describe('My Plugin', () => {
-  const mySchema = buildSchema(`type Query { foo: String }`);
+  const mySchema = buildSchema(`type Query { foo: String }`)
 
   it('Should run correctly with no errors', async () => {
     // Create a testkit for the plugin, using the plugin and a dummy schema
-    const testkit = createTestkit([useMyPlugin], mySchema);
+    const testkit = createTestkit([useMyPlugin], mySchema)
     // Execute the envelop using a simple query
-    const result = await testkit.execute(`query testQuery { foo }`);
+    const result = await testkit.execute(`query testQuery { foo }`)
     // During tests, it's simpler to assume you are dealing with a non-stream responses
-    assertSingleExecutionValue(result);
+    assertSingleExecutionValue(result)
     // Assert that the result is correct
-    expect(result.data).toBeDefined();
-  });
-});
+    expect(result.data).toBeDefined()
+  })
+})
 ```
 
 ## Testing Envelop instance
@@ -42,23 +42,23 @@ describe('My Plugin', () => {
 You can also pass a complete instance of `envelop` (the `getEnveloped` function) to your testkit, and run the same testing flow for multiple plugins together:
 
 ```ts
-import { getEnveloped } from './my-app';
-import { createTestkit, assertSingleExecutionValue } from '@envelop/testing';
+import { getEnveloped } from './my-app'
+import { createTestkit, assertSingleExecutionValue } from '@envelop/testing'
 
 describe('My GQL App', () => {
-  const mySchema = buildSchema(`type Query { foo: String }`);
+  const mySchema = buildSchema(`type Query { foo: String }`)
 
   it('Should run correctly with no errors', async () => {
     // Create a testkit based on the envelop, with a dummy schema
-    const testkit = createTestkit(getEnveloped, mySchema);
+    const testkit = createTestkit(getEnveloped, mySchema)
     // Execute the envelop using a simple query
-    const result = await testkit.execute(`query testQuery { foo }`);
+    const result = await testkit.execute(`query testQuery { foo }`)
     // During tests, it's simpler to assume you are dealing with a non-stream responses
-    assertSingleExecutionValue(result);
+    assertSingleExecutionValue(result)
     // Assert that the result is correct
-    expect(result.data).toBeDefined();
-  });
-});
+    expect(result.data).toBeDefined()
+  })
+})
 ```
 
 ## Additional Resources
@@ -71,11 +71,11 @@ You can use `modifyPlugins` in order to modify the plugins that are part of your
 
 ```ts
 // Create a testkit based on the envelop, with a dummy schema
-const testkit = createTestkit(getEnveloped, mySchema);
+const testkit = createTestkit(getEnveloped, mySchema)
 // Modify the envelop's plugins
-testkit.modifyPlugins(plugins => [...plugins, somePlugins]);
+testkit.modifyPlugins(plugins => [...plugins, somePlugins])
 // Execute the envelop using a simple query
-const result = await testkit.execute(`query testQuery { foo }`);
+const result = await testkit.execute(`query testQuery { foo }`)
 ```
 
 > You can either add plugins, but also replace/remove plugins that are not needed during testing.
@@ -90,16 +90,16 @@ Here's an example for replacing the whole context building phase:
 
 ```ts
 // Create a testkit based on the envelop, with a dummy schema
-const testkit = createTestkit(getEnveloped, mySchema);
+const testkit = createTestkit(getEnveloped, mySchema)
 // Replace the entire context factory phase
 testkit.mockPhase({
   phase: 'contextFactory',
   fn: () => ({
     currentUser: {
-      id: 1,
-    },
-  }),
-});
+      id: 1
+    }
+  })
+})
 ```
 
 > Note: Replacing whole phases might effect plugins execution, so use it carefully!
@@ -109,26 +109,26 @@ testkit.mockPhase({
 If you are using Jest, you can use a pre-defined plugin that can help you spy on Envelop phases and check the validity of your parameters.
 
 ```ts
-import { getEnveloped } from './my-app';
-import { createTestkit, assertSingleExecutionValue } from '@envelop/testing';
+import { getEnveloped } from './my-app'
+import { createTestkit, assertSingleExecutionValue } from '@envelop/testing'
 
 describe('My GQL App', () => {
-  const mySchema = buildSchema(`type Query { foo: String }`);
+  const mySchema = buildSchema(`type Query { foo: String }`)
 
   it('Should run correctly with no errors', async () => {
-    const spy = createSpiedPlugin();
-    const testkit = createTestkit(getEnveloped, mySchema);
-    testkit.modifyPlugins(plugins => [...plugins, spy.plugin]);
-    const result = await testkit.execute(`query testQuery { foo }`);
-    assertSingleExecutionValue(result);
+    const spy = createSpiedPlugin()
+    const testkit = createTestkit(getEnveloped, mySchema)
+    testkit.modifyPlugins(plugins => [...plugins, spy.plugin])
+    const result = await testkit.execute(`query testQuery { foo }`)
+    assertSingleExecutionValue(result)
 
     // Assert and test
     expect(spy.spies.beforeContextBuilding).toHaveBeenCalledWith({
       context: expect.objectContaining({
-        test: true,
+        test: true
       }),
-      extendContext: expect.any(Function),
-    });
-  });
-});
+      extendContext: expect.any(Function)
+    })
+  })
+})
 ```

@@ -1,7 +1,7 @@
 import { createSpiedPlugin, createTestkit } from '@envelop/testing';
-import { envelop, useExtendContext, useLogger, useSchema } from '../src';
-import { useEnvelop } from '../src/plugins/use-envelop';
-import { schema, query } from './common';
+import { envelop, useExtendContext, useLogger, useSchema } from '../src/index.js';
+import { useEnvelop } from '../src/plugins/use-envelop.js';
+import { schema, query } from './common.js';
 
 describe('extending envelops', () => {
   it('should allow to extend envelops', async () => {

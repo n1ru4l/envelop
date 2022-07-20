@@ -2,7 +2,7 @@ import { buildSchema, print } from 'graphql';
 import { oneLine, stripIndent } from 'common-tags';
 import { diff } from 'jest-diff';
 import { envelop, useSchema } from '@envelop/core';
-import { useFragmentArguments } from '../src';
+import { useFragmentArguments } from '../src/index.js';
 
 function compareStrings(a: string, b: string): boolean {
   return a.includes(b);

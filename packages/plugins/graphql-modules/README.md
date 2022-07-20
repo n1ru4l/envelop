@@ -13,20 +13,22 @@ yarn add @envelop/graphql-modules
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core';
-import { createApplication } from 'graphql-modules';
-import { useGraphQLModules } from '@envelop/graphql-modules';
+import { envelop } from '@envelop/core'
+import { createApplication } from 'graphql-modules'
+import { useGraphQLModules } from '@envelop/graphql-modules'
 
 const myApp = createApplication({
-  modules: [ ... ]
+  modules: [
+    /* ... */
+  ]
 })
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useGraphQLModules(myApp),
-  ],
-});
+    useGraphQLModules(myApp)
+  ]
+})
 ```
 
 Then, you can use GraphQL-Modules `injector` in your resolvers:
@@ -35,7 +37,7 @@ Then, you can use GraphQL-Modules `injector` in your resolvers:
 const resolvers = {
   Query: {
     foo: (root, args, context, info) => {
-      const myProviderInstance = context.injector.get(...);
+      const myProviderInstance = context.injector.get(/* ... */)
     }
   }
 }

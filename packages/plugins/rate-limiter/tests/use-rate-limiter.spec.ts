@@ -1,6 +1,6 @@
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { DIRECTIVE_SDL, IdentifyFn, useRateLimiter } from '../src';
+import { DIRECTIVE_SDL, IdentifyFn, useRateLimiter } from '../src/index.js';
 
 describe('useRateLimiter', () => {
   const delay = (ms: number) => {

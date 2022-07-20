@@ -4,10 +4,10 @@ const sha256Browser = (bytes: Uint8Array): Promise<Uint8Array> => {
   const hash = webCrypto!.subtle.digest({ name: 'SHA-256' }, bytes);
   return new Promise((resolve, reject) => {
     Promise.resolve(hash)
-      .then(function (result) {
+      .then(result => {
         resolve(new Uint8Array(result));
       })
-      .catch(function (error) {
+      .catch(error => {
         reject(error);
       });
   });

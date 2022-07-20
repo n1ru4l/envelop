@@ -9,7 +9,7 @@ import {
   OnValidateHook,
   OnResolverCalledHook,
   DefaultArgs,
-} from './hooks';
+} from './hooks.js';
 
 export interface Plugin<PluginContext extends Record<string, any> = {}> {
   /**
