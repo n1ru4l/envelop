@@ -8,7 +8,7 @@ import { addPath, pathToArray } from '../jsutils/Path.js';
 import { printPathArray } from '../jsutils/printPathArray.js';
 import { suggestionList } from '../jsutils/suggestionList.js';
 
-import { GraphQLError } from '../error/GraphQLError.js';
+import { GraphQLError, isGraphQLError } from '../error/GraphQLError.js';
 
 import type { GraphQLInputType } from '../type/definition.js';
 import { isInputObjectType, isLeafType, isListType, isNonNullType } from '../type/definition.js';
@@ -127,7 +127,7 @@ function coerceInputValueImpl(
     try {
       parseResult = type.parseValue(inputValue);
     } catch (error) {
-      if (error instanceof GraphQLError) {
+      if (isGraphQLError(error)) {
         onError(pathToArray(path), inputValue, error);
       } else {
         onError(

@@ -1,5 +1,4 @@
 import { inspect } from '../jsutils/inspect.js';
-import { instanceOf } from '../jsutils/instanceOf.js';
 import type { Maybe } from '../jsutils/Maybe.js';
 import type { ObjMap } from '../jsutils/ObjMap.js';
 import { toObjMap } from '../jsutils/toObjMap.js';
@@ -23,11 +22,13 @@ import type { GraphQLDirective } from './directives.js';
 import { isDirective, specifiedDirectives } from './directives.js';
 import { __Schema, SchemaMetaFieldDef, TypeMetaFieldDef, TypeNameMetaFieldDef } from './introspection.js';
 
+const isSchemaSymbol = Symbol.for('GraphQLSchema');
+
 /**
  * Test if the given value is a GraphQL schema.
  */
 export function isSchema(schema: unknown): schema is GraphQLSchema {
-  return instanceOf(schema, GraphQLSchema);
+  return typeof schema === 'object' && schema != null && isSchemaSymbol in schema;
 }
 
 export function assertSchema(schema: unknown): GraphQLSchema {
@@ -119,6 +120,7 @@ export interface GraphQLSchemaExtensions {
  * ```
  */
 export class GraphQLSchema {
+  readonly [isSchemaSymbol]: true = true;
   description: Maybe<string>;
   extensions: Readonly<GraphQLSchemaExtensions>;
   astNode: Maybe<SchemaDefinitionNode>;

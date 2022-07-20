@@ -1,5 +1,4 @@
 import { inspect } from '../jsutils/inspect.js';
-import { instanceOf } from '../jsutils/instanceOf.js';
 import type { Maybe } from '../jsutils/Maybe.js';
 import { toObjMap } from '../jsutils/toObjMap.js';
 
@@ -11,11 +10,13 @@ import type { GraphQLArgument, GraphQLFieldConfigArgumentMap } from './definitio
 import { argsToArgsConfig, defineArguments, GraphQLNonNull } from './definition.js';
 import { GraphQLBoolean, GraphQLString } from './scalars.js';
 
+const isGraphQLDirectiveSymbol = Symbol.for('GraphQLDirective');
+
 /**
  * Test if the given value is a GraphQL directive.
  */
 export function isDirective(directive: unknown): directive is GraphQLDirective {
-  return instanceOf(directive, GraphQLDirective);
+  return typeof directive === 'object' && directive != null && isGraphQLDirectiveSymbol in directive;
 }
 
 export function assertDirective(directive: unknown): GraphQLDirective {
@@ -43,6 +44,7 @@ export interface GraphQLDirectiveExtensions {
  * behavior. Type system creators will usually not create these directly.
  */
 export class GraphQLDirective {
+  readonly [isGraphQLDirectiveSymbol]: true = true;
   name: string;
   description: Maybe<string>;
   locations: ReadonlyArray<DirectiveLocation>;
