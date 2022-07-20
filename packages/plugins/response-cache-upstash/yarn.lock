@@ -114,10 +114,10 @@
   dependencies:
     "@types/node" "*"
 
-"@upstash/redis@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@upstash/redis/-/redis-1.4.0.tgz#4a682fc9a68b3c37b6ae5339eb653598062c8081"
-  integrity sha512-1512ao/RdNzQOB/kXrevD3ZVbYbjBSc2Cx3JWGm9/Zj8bdDc/D0Ni9RDXHFNPQ7S06GdfYx+aYyNpY1XYAeNXw==
+"@upstash/redis@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@upstash/redis/-/redis-1.3.0.tgz#702350d5f0650f17eeeaeb409a162d3d8238a6b8"
+  integrity sha512-mxoPic6eQ6nibOUcSrzaG75BWjrgGH46rVBJLxWicZvAJFHJIC95JMxm/OAh6xPDGCsA8Ilkn8fZ/N6kHeuDng==
   dependencies:
     isomorphic-fetch "^3.0.0"
 
