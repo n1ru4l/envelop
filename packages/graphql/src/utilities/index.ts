@@ -95,3 +95,31 @@ export { assertValidName, isValidNameError } from './assertValidName.js';
 
 // Wrapper type that contains DocumentNode and types that can be deduced from it.
 export type { TypedQueryDocumentNode } from './typedQueryDocumentNode.js';
+
+// Utility function for adding resolvers to a schema object.
+export { addResolversToExistingSchema } from './addResolversToSchema.js';
+
+// Get DocumentNode from a GraphQLSchema object.
+export { getDocumentNodeFromSchema } from './getDocumentNodeFromSchema';
+
+// Better backwards compat print function
+export { printSchemaWithDirectives } from './printSchemaWithDirectives';
+
+export { getRootTypeMap } from './getRootTypeMap';
+
+export {
+  astFromArg,
+  astFromDirective,
+  astFromEnumType,
+  astFromEnumValue,
+  astFromField,
+  astFromInputField,
+  astFromInputObjectType,
+  astFromInterfaceType,
+  astFromObjectType,
+  astFromScalarType,
+  astFromSchema,
+  astFromType,
+  astFromUnionType,
+  astFromValueUntyped,
+} from './astFromSchema';

@@ -446,6 +446,29 @@ export {
   DangerousChangeType,
   findBreakingChanges,
   findDangerousChanges,
+  // Add resolvers to a schema object.
+  addResolversToExistingSchema,
+  // Get DocumentNode from a GraphQLSchema object.
+  getDocumentNodeFromSchema,
+  // Better backwards compat print
+  printSchemaWithDirectives,
+  // AST conversion helpers
+  astFromArg,
+  astFromDirective,
+  astFromEnumType,
+  astFromEnumValue,
+  astFromField,
+  astFromInputField,
+  astFromInputObjectType,
+  astFromInterfaceType,
+  astFromObjectType,
+  astFromScalarType,
+  astFromSchema,
+  astFromType,
+  astFromUnionType,
+  astFromValueUntyped,
+  // Gets the Root type map from a schema.
+  getRootTypeMap,
 } from './utilities/index.js';
 
 export type {
