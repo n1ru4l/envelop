@@ -39,10 +39,11 @@ import {
   specifiedRules,
   subscribe,
   validate,
+  buildASTSchema,
+  addResolversToExistingSchema,
   ValidationRule,
 } from '@envelop/graphql';
-import { getDocumentNodeFromSchema, getResolversFromSchema } from '@graphql-tools/utils';
-import { makeExecutableSchema } from '@graphql-tools/schema';
+import { getResolversFromSchema, getDocumentNodeFromSchema } from '@graphql-tools/utils';
 import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema.js';
 import {
   errorAsyncIterator,
@@ -82,9 +83,14 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
   // to allow setting the schema from the onPluginInit callback. We also need to make sure
   // here not to call the same plugin that initiated the schema switch.
   const replaceSchema = (newSchema: GraphQLSchema, ignorePluginIndex = -1) => {
+    // @ts-expect-error it be like that
     const documentNode = getDocumentNodeFromSchema(newSchema);
+    // @ts-expect-error it be like that
     const resolvers = getResolversFromSchema(newSchema);
-    const envelopSchema = makeExecutableSchema({ typeDefs: documentNode, resolvers });
+    // @ts-expect-error it be like that
+    const envelopSchema = buildASTSchema(documentNode);
+    addResolversToExistingSchema(envelopSchema, resolvers);
+    // const envelopSchema = makeExecutableSchema({ typeDefs: documentNode, resolvers });
     if (onResolversHandlers.length) {
       prepareTracedSchema(envelopSchema);
     }
@@ -95,7 +101,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
         if (i !== ignorePluginIndex) {
           plugin.onSchemaChange &&
             plugin.onSchemaChange({
-              envelopSchema,
+              schema: envelopSchema,
               replaceSchema: schemaToSet => {
                 replaceSchema(schemaToSet, i);
               },
