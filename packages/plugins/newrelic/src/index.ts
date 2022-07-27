@@ -63,6 +63,9 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
   const instrumentationApi$ = import('newrelic')
     .then(m => m.default || m)
     .then(({ shim }) => {
+      if (!shim?.agent) {
+        throw new Error("Unable to find New Relic agent, please confirm the agent is installed.")
+      }
       shim.agent.metrics
         .getOrCreateMetric(`Supportability/ExternalModules/${AttributeName.COMPONENT_NAME}`)
         .incrementCallCount();
