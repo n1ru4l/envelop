@@ -111,7 +111,7 @@ export const useMaskedErrors = (opts?: UseMaskedErrorsOpts): Plugin => {
         : undefined,
     onPluginInit(context) {
       context.registerContextErrorHandler(({ error, setError }) => {
-        setError(formatError(error, message, isDev));
+        setError(format(error, message, isDev));
       });
     },
     onExecute() {
@@ -127,7 +127,7 @@ export const useMaskedErrors = (opts?: UseMaskedErrorsOpts): Plugin => {
           return handleStreamOrSingleExecutionResult(payload, handleResult);
         },
         onSubscribeError({ error, setError }) {
-          setError(formatError(error, message, isDev));
+          setError(format(error, message, isDev));
         },
       };
     },
