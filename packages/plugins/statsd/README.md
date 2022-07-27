@@ -27,7 +27,7 @@ yarn add hot-shots @envelop/stats
 ```ts
 import { envelop } from '@envelop/core'
 import { useStatsD } from '@envelop/statsd'
-import { StatsD } from 'hot-shots'
+import StatsD from 'hot-shots'
 
 const client = new StatsD({
   port: 8020,
