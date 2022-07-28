@@ -1,4 +1,4 @@
-import { DirectiveNode, GraphQLObjectType, GraphQLResolveInfo } from 'graphql';
+import { DirectiveNode, GraphQLObjectType, GraphQLResolveInfo } from '@graphql-tools/graphql';
 
 export function getDirective(info: GraphQLResolveInfo, name: string): null | DirectiveNode {
   const { parentType, fieldName, schema } = info;

@@ -47,8 +47,8 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "@graphql-tools/graphql": "0.1.0-alpha-62ec7058.0",
-    "@graphql-tools/utils": "8.9.1-alpha-62ec7058.0"
+    "@graphql-tools/graphql": "0.1.0-alpha-fbf97581.0",
+    "@graphql-tools/utils": "8.9.1-alpha-fbf97581.0"
   },
   "devDependencies": {
     "typescript": "4.7.4"

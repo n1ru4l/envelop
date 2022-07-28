@@ -9,7 +9,7 @@ import {
   isIntrospectionOperationString,
   isAsyncIterable,
 } from '@envelop/core';
-import { TypeInfo } from 'graphql';
+import { TypeInfo } from '@graphql-tools/graphql';
 import { Summary, Counter, Histogram, register as defaultRegistry } from 'prom-client';
 import {
   getHistogramFromConfig,

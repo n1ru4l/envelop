@@ -1,9 +1,10 @@
 import { Plugin } from '@envelop/core';
 import { ApolloGateway } from '@apollo/gateway';
-import { DocumentNode, getOperationAST, print, printSchema, Source } from 'graphql';
+import { DocumentNode, getOperationAST, print, printSchema, Source } from '@graphql-tools/graphql';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { CachePolicy, GraphQLRequestMetrics, Logger, SchemaHash } from 'apollo-server-types';
 import { newCachePolicy } from './new-cache-policy.js';
+import { compatSchema } from '@graphql-tools/compat';
 
 export interface ApolloFederationPluginConfig {
   gateway: ApolloGateway;
@@ -74,7 +75,7 @@ export const useApolloFederation = (options: ApolloFederationPluginConfig): Plug
           metrics,
           source: documentStr,
           operation,
-          schema: args.schema,
+          schema: compatSchema(args.schema),
           schemaHash,
         });
       });

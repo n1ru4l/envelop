@@ -9,7 +9,7 @@ import {
   GraphQLSchema,
   GraphQLBoolean,
   GraphQLList,
-} from 'graphql';
+} from '@graphql-tools/graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useExtendedValidation, ONE_OF_DIRECTIVE_SDL, OneOfInputObjectsRule } from '../src/index.js';
 

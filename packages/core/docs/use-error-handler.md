@@ -4,7 +4,7 @@ This plugin triggers a custom function when execution encounters an error.
 
 ```ts
 import { envelop, useErrorHandler } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { buildSchema } from '@graphql-tools/graphql'
 
 const getEnveloped = envelop({
   plugins: [

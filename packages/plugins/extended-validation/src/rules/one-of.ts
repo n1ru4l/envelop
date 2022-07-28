@@ -7,7 +7,7 @@ import {
   isListType,
   ValidationContext,
   getNamedType,
-} from 'graphql';
+} from '@graphql-tools/graphql';
 import { getArgumentValues } from '@graphql-tools/utils';
 import { ExtendedValidationRule, getDirectiveFromAstNode } from '../common.js';
 

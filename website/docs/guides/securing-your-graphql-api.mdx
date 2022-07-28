@@ -148,7 +148,7 @@ In most GraphQL servers any thrown error or rejected promise will result in the 
 
 ```tsx
 import { envelop, useSchema, useMaskedErrors, EnvelopError } from '@envelop/core'
-import { makeExecutableSchema } from 'graphql'
+import { makeExecutableSchema } from '@graphql-tools/graphql'
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `

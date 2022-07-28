@@ -1,5 +1,5 @@
 import { Plugin } from '@envelop/core';
-import { GraphQLError, print } from 'graphql';
+import { GraphQLError, print } from '@graphql-tools/graphql';
 import LRU from 'lru-cache';
 
 export interface ValidationCache {

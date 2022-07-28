@@ -12,7 +12,7 @@ This plugin is the simplest plugin for specifying your GraphQL schema. You can s
 
 ```ts
 import { envelop, useSchema } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { buildSchema } from '@graphql-tools/graphql'
 
 const mySchema = buildSchema(/* ... */)
 
@@ -32,7 +32,7 @@ If you are using a framework that creates the schema in an async way, you can ei
 
 ```ts
 import { envelop, useAsyncSchema } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { buildSchema } from '@graphql-tools/graphql'
 
 const getSchema = async (): Promise<GraphQLSchema> => {
   // return schema when it's ready
@@ -52,7 +52,7 @@ This plugin invokes a custom function with the every time execution encounters a
 
 ```ts
 import { envelop, useErrorHandler } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { buildSchema } from '@graphql-tools/graphql'
 
 const getEnveloped = envelop({
   plugins: [
@@ -72,7 +72,7 @@ Easily extends the context with custom fields.
 
 ```ts
 import { envelop, useExtendContext } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { buildSchema } from '@graphql-tools/graphql'
 
 const getEnveloped = envelop({
   plugins: [
@@ -94,7 +94,7 @@ Logs parameters and information about the execution phases. You can easily plug 
 
 ```ts
 import { envelop, useLogger } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { buildSchema } from '@graphql-tools/graphql'
 
 const getEnveloped = envelop({
   plugins: [
@@ -117,7 +117,7 @@ The second argument `executionArgs` provides additional information for your for
 
 ```ts
 import { envelop, usePayloadFormatter } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { buildSchema } from '@graphql-tools/graphql'
 
 const getEnveloped = envelop({
   plugins: [
@@ -136,7 +136,7 @@ It's a simple time metric collection for every phase in your execution. You can 
 
 ```ts
 import { envelop, useTiming } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { buildSchema } from '@graphql-tools/graphql'
 
 const getEnveloped = envelop({
   plugins: [
@@ -161,7 +161,7 @@ Prevent unexpected error messages from leaking to the GraphQL API consumers.
 
 ```ts
 import { envelop, useSchema, useMaskedErrors, EnvelopError } from '@envelop/core'
-import { makeExecutableSchema } from 'graphql'
+import { makeExecutableSchema } from '@graphql-tools/graphql'
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `

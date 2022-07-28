@@ -1,4 +1,4 @@
-import { buildSchema, GraphQLError, validate } from 'graphql';
+import { buildSchema, GraphQLError, validate } from '@graphql-tools/graphql';
 import { createTestkit } from '@envelop/testing';
 import { useValidationCache } from '../src/index.js';
 import { Plugin } from '@envelop/types';

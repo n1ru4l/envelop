@@ -1,6 +1,6 @@
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { EnumValueNode, getIntrospectionQuery } from 'graphql';
+import { EnumValueNode, getIntrospectionQuery } from '@graphql-tools/graphql';
 import {
   DIRECTIVE_SDL,
   ResolveUserFn,

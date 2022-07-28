@@ -1,4 +1,4 @@
-import { createSourceEventStream, ExecutionResult } from 'graphql';
+import { createSourceEventStream, ExecutionResult } from '@graphql-tools/graphql';
 import { ExecuteFunction, makeSubscribe, mapAsyncIterator, SubscribeFunction, isAsyncIterable } from '@envelop/core';
 
 /**

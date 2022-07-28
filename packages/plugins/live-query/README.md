@@ -73,7 +73,7 @@ const getEnveloped = envelop({
 You need to pass the `GraphQLLiveDirective` to the list of directives:
 
 ```tsx
-import { GraphQLSchema } from 'graphql'
+import { GraphQLSchema } from '@graphql-tools/graphql'
 import { GraphQLLiveDirective } from '@envelop/live-query'
 
 const schema = new GraphQLSchema({

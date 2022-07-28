@@ -1,4 +1,4 @@
-import { getIntrospectionQuery, GraphQLObjectType } from 'graphql';
+import { getIntrospectionQuery, GraphQLObjectType } from '@graphql-tools/graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useValidationCache } from '@envelop/validation-cache';

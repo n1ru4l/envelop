@@ -10,7 +10,7 @@ import {
   isIntrospectionType,
   isObjectType,
   isUnionType,
-} from 'graphql';
+} from '@graphql-tools/graphql';
 import { useExtendedValidation } from '@envelop/extended-validation';
 
 export class UnauthenticatedError extends GraphQLError {}

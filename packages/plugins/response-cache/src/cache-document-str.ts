@@ -1,4 +1,4 @@
-import { DocumentNode, ExecutionArgs, print } from 'graphql';
+import { DocumentNode, ExecutionArgs, print } from '@graphql-tools/graphql';
 import { Plugin } from '@envelop/core';
 
 const documentStringByDocument = new WeakMap<DocumentNode, string>();

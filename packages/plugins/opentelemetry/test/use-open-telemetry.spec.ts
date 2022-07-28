@@ -1,6 +1,6 @@
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { BasicTracerProvider, SimpleSpanProcessor, InMemorySpanExporter } from '@opentelemetry/tracing';
-import { buildSchema } from 'graphql';
+import { buildSchema } from '@graphql-tools/graphql';
 import { useOpenTelemetry } from '../src/index.js';
 
 function createTraceProvider(exporter: InMemorySpanExporter) {

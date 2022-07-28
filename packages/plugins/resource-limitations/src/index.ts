@@ -13,7 +13,7 @@ import {
   GraphQLObjectType,
   GraphQLType,
   isScalarType,
-} from 'graphql';
+} from '@graphql-tools/graphql';
 import { getArgumentValues } from '@graphql-tools/utils';
 
 const getWrappedType = (graphqlType: GraphQLType): Exclude<GraphQLType, GraphQLList<any> | GraphQLNonNull<any>> => {

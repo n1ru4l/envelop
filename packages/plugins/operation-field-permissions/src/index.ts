@@ -8,7 +8,7 @@ import {
   isInterfaceType,
   isIntrospectionType,
   getNamedType,
-} from 'graphql';
+} from '@graphql-tools/graphql';
 
 type PromiseOrValue<T> = T | Promise<T>;
 

@@ -14,7 +14,7 @@ yarn add @envelop/preload-assets
 ```ts
 import { envelop } from '@envelop/core'
 import { usePreloadAssets } from '@envelop/preload-asset'
-import { makeExecutableSchema } from 'graphql'
+import { makeExecutableSchema } from '@graphql-tools/graphql'
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `

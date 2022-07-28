@@ -2,7 +2,7 @@ import { Plugin, OnExecuteHookResult, isAsyncIterable } from '@envelop/core';
 import { SpanAttributes, SpanKind } from '@opentelemetry/api';
 import * as opentelemetry from '@opentelemetry/api';
 import { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/tracing';
-import { print } from 'graphql';
+import { print } from '@graphql-tools/graphql';
 
 export enum AttributeName {
   EXECUTION_ERROR = 'graphql.execute.error',

@@ -7,7 +7,7 @@ import {
   visit,
   ASTNode,
   visitWithTypeInfo,
-} from 'graphql';
+} from '@graphql-tools/graphql';
 import { AfterParseEventPayload } from '@envelop/core';
 import { PrometheusTracingPluginConfig } from './config.js';
 import { Counter, Histogram, register as defaultRegistry, Summary } from 'prom-client';

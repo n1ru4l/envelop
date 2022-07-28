@@ -1,4 +1,4 @@
-import { ValidationRule, OperationTypeNode, GraphQLError } from 'graphql';
+import { ValidationRule, OperationTypeNode, GraphQLError } from '@graphql-tools/graphql';
 
 export type AllowedOperations = Iterable<OperationTypeNode>;
 

@@ -19,7 +19,7 @@ This is a known issue that still has no solution in GraphQL.js core, although, [
 Previous workarounds have been to disable the DataLoader caching completely or manually calling the [`DataLoader.clearAll`](https://github.com/graphql/dataloader#clearall) within the mapping of the event values.
 
 ```ts
-import { GraphQLObjectType } from 'graphql'
+import { GraphQLObjectType } from '@graphql-tools/graphql'
 import pipe from 'lodash/fp/pipe'
 import { GraphQLUserListUpdate, GraphQLNonNull } from './GraphQLUserListUpdate'
 

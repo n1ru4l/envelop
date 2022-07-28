@@ -1,6 +1,6 @@
 import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/core';
 import { TracingFormat } from 'apollo-tracing';
-import { GraphQLType, ResponsePath, responsePathAsArray } from 'graphql';
+import { GraphQLType, ResponsePath, responsePathAsArray } from '@graphql-tools/graphql';
 
 const HR_TO_NS = 1e9;
 const NS_TO_MS = 1e6;

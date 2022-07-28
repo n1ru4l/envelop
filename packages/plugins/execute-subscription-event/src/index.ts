@@ -1,4 +1,4 @@
-import { SubscriptionArgs, execute } from 'graphql';
+import { SubscriptionArgs, execute } from '@graphql-tools/graphql';
 import { Plugin, PromiseOrValue, makeExecute, DefaultContext } from '@envelop/core';
 import { subscribe } from './subscribe.js';
 

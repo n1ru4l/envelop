@@ -3,7 +3,7 @@
 import { EnvelopError, Plugin } from '@envelop/core';
 import * as JwksRsa from 'jwks-rsa';
 import jwtPkg, { VerifyOptions, DecodeOptions } from 'jsonwebtoken';
-import { GraphQLError } from 'graphql';
+import { GraphQLError } from '@graphql-tools/graphql';
 
 const { decode, verify } = jwtPkg;
 

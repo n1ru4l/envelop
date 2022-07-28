@@ -18,7 +18,7 @@ After installing the `@envelop/core` package, you can use the `envelop` function
 
 ```ts
 import { envelop, useSchema } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { buildSchema } from '@graphql-tools/graphql'
 
 const schema = buildSchema(/* GraphQL */ `
   type Query {
@@ -59,7 +59,7 @@ Let's add a parser and validation cache, so sending the same operation string se
 
 ```ts
 import { envelop, useSchema } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { buildSchema } from '@graphql-tools/graphql'
 import { useParserCache } from '@envelop/parser-cache'
 import { useValidationCache } from '@envelop/validation-cache'
 
@@ -87,7 +87,7 @@ you can build a very simple GraphQL HTTP server from scratch, by using the Node.
 
 ```ts
 import { createServer } from 'http'
-import { GraphQLError } from 'graphql'
+import { GraphQLError } from '@graphql-tools/graphql'
 import { getEnveloped } from './envelop'
 
 const httpServer = http.createServer(async (req, res) => {

@@ -7,7 +7,14 @@ import {
 } from '@envelop/core';
 import * as Sentry from '@sentry/node';
 import type { Span, TraceparentData } from '@sentry/types';
-import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
+import {
+  ExecutionArgs,
+  GraphQLError,
+  Kind,
+  OperationDefinitionNode,
+  print,
+  responsePathAsArray,
+} from '@graphql-tools/graphql';
 
 export type SentryPluginOptions = {
   /**

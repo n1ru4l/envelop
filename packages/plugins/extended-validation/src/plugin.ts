@@ -8,7 +8,7 @@ import {
   visit,
   visitInParallel,
   visitWithTypeInfo,
-} from 'graphql';
+} from '@graphql-tools/graphql';
 import { ExtendedValidationRule } from './common.js';
 
 const symbolExtendedValidationRules = Symbol('extendedValidationContext');

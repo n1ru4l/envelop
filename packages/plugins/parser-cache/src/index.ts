@@ -1,5 +1,5 @@
 import { Plugin } from '@envelop/core';
-import { DocumentNode, Source } from 'graphql';
+import { DocumentNode, Source } from '@graphql-tools/graphql';
 import LRU from 'lru-cache';
 
 interface Cache<T> {

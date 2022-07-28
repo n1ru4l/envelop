@@ -1,4 +1,4 @@
-import { buildSchema, DocumentNode, GraphQLError, parse } from 'graphql';
+import { buildSchema, DocumentNode, GraphQLError, parse } from '@graphql-tools/graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useParserCache } from '../src/index.js';
 import { Plugin } from '@envelop/types';

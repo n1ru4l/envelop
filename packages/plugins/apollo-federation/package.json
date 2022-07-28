@@ -51,16 +51,17 @@
     "apollo-server-types": "^3.2.0"
   },
   "devDependencies": {
-    "graphql": "16.3.0",
-    "typescript": "4.7.4",
-    "@apollo/gateway": "0.43.1",
     "@apollo/federation": "0.33.6",
-    "graphql-tag": "2.12.6"
+    "@apollo/gateway": "0.43.1",
+    "@graphql-tools/graphql": "0.1.0-alpha-fbf97581.0",
+    "graphql-tag": "2.12.6",
+    "typescript": "4.7.4"
   },
   "peerDependencies": {
     "@envelop/core": "^2.4.2",
     "@apollo/gateway": "^0.41.0 || ^0.42.0 || ^0.43.0",
-    "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
+    "@envelop/core": "^2.4.1",
+    "@graphql-tools/graphql": "0.1.0-alpha-fbf97581.0"
   },
   "buildOptions": {
     "input": "./src/index.ts"

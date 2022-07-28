@@ -1,5 +1,5 @@
 import { Plugin, OnResolverCalledHook, Path, isAsyncIterable, EnvelopError, DefaultContext } from '@envelop/core';
-import { print, FieldNode, Kind, OperationDefinitionNode, ExecutionResult, GraphQLError } from 'graphql';
+import { print, FieldNode, Kind, OperationDefinitionNode, ExecutionResult, GraphQLError } from '@graphql-tools/graphql';
 
 enum AttributeName {
   COMPONENT_NAME = 'Envelop_NewRelic_Plugin',

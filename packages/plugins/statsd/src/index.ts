@@ -1,5 +1,5 @@
 import { Plugin, AfterParseEventPayload, isIntrospectionOperationString, isAsyncIterable } from '@envelop/core';
-import { DocumentNode, Kind, OperationDefinitionNode } from 'graphql';
+import { DocumentNode, Kind, OperationDefinitionNode } from '@graphql-tools/graphql';
 import type { StatsD } from 'hot-shots';
 
 export interface StatsDPluginOptions {

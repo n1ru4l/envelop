@@ -114,7 +114,7 @@
 
   ```typescript
   // schema.ts
-  import { GraphQLObjectType, GraphQLInt } from 'graphql'
+  import { GraphQLObjectType, GraphQLInt } from '@graphql-tools/graphql'
 
   const GraphQLQueryType = new GraphQLObjectType({
     name: 'Query',

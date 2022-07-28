@@ -50,12 +50,13 @@
     "@envelop/extended-validation": "^1.7.2"
   },
   "devDependencies": {
-    "graphql": "16.3.0",
-    "typescript": "4.7.4"
+    "@graphql-tools/graphql": "0.1.0-alpha-fbf97581.0",
+    "typescript": "4.7.4",
+    "@graphql-tools/schema": "8.5.2-alpha-fbf97581.0"
   },
   "peerDependencies": {
     "@envelop/core": "^2.4.2",
-    "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
+    "@graphql-tools/graphql": "0.1.0-alpha-fbf97581.0"
   },
   "buildOptions": {
     "input": "./src/index.ts"

@@ -123,7 +123,7 @@ type Query {
 ##### Allow unauthenticated access for specific fields using a field extension
 
 ```typescript
-import { GraphQLObjectType, GraphQLInt } from 'graphql'
+import { GraphQLObjectType, GraphQLInt } from '@graphql-tools/graphql'
 
 const GraphQLQueryType = new GraphQLObjectType({
   name: 'Query',
@@ -237,7 +237,7 @@ type Query {
 ##### Protect a field using a field extension
 
 ```typescript
-import { GraphQLObjectType, GraphQLInt } from 'graphql'
+import { GraphQLObjectType, GraphQLInt } from '@graphql-tools/graphql'
 
 const GraphQLQueryType = new GraphQLObjectType({
   name: 'Query',
@@ -260,7 +260,7 @@ const GraphQLQueryType = new GraphQLObjectType({
 You can also specify a custom `validateUser` function and get access to a handy object while using the `protect-all` and `protect-granular` mode:
 
 ```ts
-import { GraphQLError } from 'graphql'
+import { GraphQLError } from '@graphql-tools/graphql'
 import { ValidateUserFn } from '@envelop/generic-auth'
 
 const validateUser: ValidateUserFn<UserType> = async ({ user }) => {

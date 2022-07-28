@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
 import { makeExecute, makeSubscribe, Plugin, TypedExecutionArgs } from '@envelop/core';
-import { DocumentNode, Source, ExecutionArgs, ExecutionResult } from 'graphql';
+import { DocumentNode, Source, ExecutionArgs, ExecutionResult } from '@graphql-tools/graphql';
 import { compileQuery, isCompiledQuery, CompilerOptions, CompiledQuery } from 'graphql-jit';
 import LRU from 'lru-cache';
+import { compatSchema } from '@graphql-tools/compat';
 
 const DEFAULT_MAX = 1000;
 const DEFAULT_TTL = 3600000;
@@ -49,12 +50,9 @@ export const useGraphQlJit = (
     }
 
     if (!cacheEntry) {
-      const compilationResult = compileQuery(
-        args.schema,
-        args.document,
-        args.operationName ?? undefined,
-        compilerOptions
-      );
+      // TODO: CACHE ME
+      const schema = compatSchema(args.schema);
+      const compilationResult = compileQuery(schema, args.document, args.operationName ?? undefined, compilerOptions);
 
       if (!isCompiledQuery(compilationResult)) {
         if (pluginOptions?.onError) {

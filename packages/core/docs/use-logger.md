@@ -4,7 +4,7 @@ Logs parameters and information about the execution phases. You can easily plug 
 
 ```ts
 import { envelop, useLogger } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { buildSchema } from '@graphql-tools/graphql'
 
 const getEnveloped = envelop({
   plugins: [

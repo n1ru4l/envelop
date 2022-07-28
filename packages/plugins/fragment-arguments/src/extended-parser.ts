@@ -9,7 +9,7 @@ import {
   FragmentDefinitionNode,
   FragmentSpreadNode,
   InlineFragmentNode,
-} from 'graphql';
+} from '@graphql-tools/graphql';
 
 export class FragmentArgumentCompatibleParser extends Parser {
   // see https://github.com/graphql/graphql-js/pull/3248

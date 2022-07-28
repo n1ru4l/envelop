@@ -5,7 +5,7 @@ import {
   createTestkit,
 } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { execute, subscribe } from 'graphql';
+import { execute, subscribe } from '@graphql-tools/graphql';
 import { useGraphQlJit, JITCache } from '../src/index.js';
 import LRU from 'lru-cache';
 

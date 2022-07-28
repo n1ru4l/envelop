@@ -2,7 +2,7 @@ import { PrometheusTracingPluginConfig, usePrometheus, createHistogram, createCo
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { Registry, Histogram, Counter } from 'prom-client';
-import { ASTNode, print as graphQLPrint } from 'graphql';
+import { ASTNode, print as graphQLPrint } from '@graphql-tools/graphql';
 import { useExtendContext } from '@envelop/core';
 
 // Graphql.js 16 and 15 produce different results

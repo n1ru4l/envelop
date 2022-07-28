@@ -9,7 +9,7 @@ import {
   getOperationAST,
   Kind,
   SelectionSetNode,
-} from 'graphql';
+} from '@graphql-tools/graphql';
 import jsonStableStringify from 'fast-json-stable-stringify';
 import type { Cache, CacheEntityRecord } from './cache.js';
 import { createInMemoryCache } from './in-memory-cache.js';

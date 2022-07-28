@@ -4,7 +4,7 @@ This plugin is the simplest plugin for specifying your GraphQL schema. You can s
 
 ```ts
 import { envelop, useAsyncSchema } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { buildSchema } from '@graphql-tools/graphql'
 
 const getSchema = async (): Promise<GraphQLSchema> => {
   // return schema when it's ready

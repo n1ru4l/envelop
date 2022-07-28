@@ -1,5 +1,5 @@
 import { Plugin } from '@envelop/core';
-import { IntValueNode, StringValueNode, GraphQLResolveInfo } from 'graphql';
+import { IntValueNode, StringValueNode, GraphQLResolveInfo } from '@graphql-tools/graphql';
 import { getDirective } from './utils.js';
 import { getGraphQLRateLimiter } from 'graphql-rate-limit';
 export * from './utils.js';

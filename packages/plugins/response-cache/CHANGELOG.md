@@ -105,7 +105,7 @@
   You have to change it to the following;
 
   ```ts
-  import { print } from 'graphql'
+  import { print } from '@graphql-tools/graphql'
   function getDocumentString(executionArgs: ExecutionArgs) {
     // We need to fallback to `graphql`'s print to return a value no matter what.
     return executionArgs.contextValue.myDocumentString ?? print(executionArgs.document)

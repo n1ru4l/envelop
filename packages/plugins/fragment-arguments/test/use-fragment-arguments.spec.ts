@@ -1,4 +1,4 @@
-import { buildSchema, print } from 'graphql';
+import { buildSchema, print } from '@graphql-tools/graphql';
 import { oneLine, stripIndent } from 'common-tags';
 import { diff } from 'jest-diff';
 import { envelop, useSchema } from '@envelop/core';

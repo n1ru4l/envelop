@@ -1,5 +1,5 @@
 import { Plugin, DefaultContext } from '@envelop/core';
-import { GraphQLError, parse } from 'graphql';
+import { GraphQLError, parse } from '@graphql-tools/graphql';
 import { PersistedOperationsFunctionStore, PersistedOperationsStore } from './types.js';
 import { operationIdFromSource } from './utils.js';
 
