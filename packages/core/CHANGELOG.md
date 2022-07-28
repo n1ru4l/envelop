@@ -1,5 +1,11 @@
 # @envelop/core
 
+## 2.4.1
+
+### Patch Changes
+
+- 787d28a2: Use the custom error formatter for the errors thrown when building the context and the subscription
+
 ## 2.4.0
 
 ### Minor Changes
