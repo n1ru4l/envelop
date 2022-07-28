@@ -1,5 +1,13 @@
 # @envelop/generic-auth
 
+## 4.3.1
+
+### Patch Changes
+
+- Updated dependencies [787d28a2]
+  - @envelop/core@2.4.1
+  - @envelop/extended-validation@1.7.1
+
 ## 4.3.0
 
 ### Minor Changes

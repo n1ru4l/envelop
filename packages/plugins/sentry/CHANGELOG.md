@@ -1,5 +1,12 @@
 # @envelop/sentry
 
+## 3.6.1
+
+### Patch Changes
+
+- Updated dependencies [787d28a2]
+  - @envelop/core@2.4.1
+
 ## 3.6.0
 
 ### Minor Changes
