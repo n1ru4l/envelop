@@ -40,7 +40,7 @@ import {
   subscribe,
   validate,
   ValidationRule,
-} from 'graphql';
+} from '@graphql-tools/graphql';
 import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema.js';
 import {
   errorAsyncIterator,

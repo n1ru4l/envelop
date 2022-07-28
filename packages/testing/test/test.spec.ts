@@ -2,7 +2,7 @@ import { enableIf } from '@envelop/core';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { Plugin } from '@envelop/types';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { GraphQLError, parse } from 'graphql';
+import { GraphQLError, parse } from '@graphql-tools/graphql';
 
 describe('Test the testkit', () => {
   const createSchema = () =>

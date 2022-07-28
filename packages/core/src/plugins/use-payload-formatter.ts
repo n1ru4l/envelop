@@ -1,6 +1,6 @@
 import { Plugin, TypedExecutionArgs } from '@envelop/types';
 import { handleStreamOrSingleExecutionResult } from '../utils.js';
-import { ExecutionResult } from 'graphql';
+import { ExecutionResult } from '@graphql-tools/graphql';
 
 export type FormatterFunction = (
   result: ExecutionResult<any, any>,

@@ -14,7 +14,7 @@ import {
 } from '../../src/plugins/use-masked-errors.js';
 import { Plugin, useExtendContext } from '@envelop/core';
 import { useAuth0 } from '../../../plugins/auth0/src/index.js';
-import { GraphQLError } from 'graphql';
+import { GraphQLError } from '@graphql-tools/graphql';
 
 describe('useMaskedErrors', () => {
   const schema = makeExecutableSchema({

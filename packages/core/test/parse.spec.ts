@@ -1,5 +1,5 @@
 import { assertSingleExecutionValue, createSpiedPlugin, createTestkit } from '@envelop/testing';
-import { FieldNode, parse, visit } from 'graphql';
+import { FieldNode, parse, visit } from '@graphql-tools/graphql';
 import { schema, query } from './common.js';
 
 describe('parse', () => {

@@ -46,13 +46,11 @@
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   },
-  "dependencies": {},
-  "devDependencies": {
-    "graphql": "16.3.0",
-    "typescript": "4.7.4"
+  "dependencies": {
+    "@graphql-tools/graphql": "0.1.0-alpha-62ec7058.0"
   },
-  "peerDependencies": {
-    "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
+  "devDependencies": {
+    "typescript": "4.7.4"
   },
   "buildOptions": {
     "input": "./src/index.ts"

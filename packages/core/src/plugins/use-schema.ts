@@ -1,4 +1,4 @@
-import { GraphQLSchema } from 'graphql';
+import { GraphQLSchema } from '@graphql-tools/graphql';
 import { DefaultContext, Maybe, Plugin } from '@envelop/types';
 
 export const useSchema = (schema: GraphQLSchema): Plugin => {

@@ -1,4 +1,11 @@
-import { DocumentNode, ExecutionResult, getOperationAST, GraphQLError, GraphQLSchema, print } from 'graphql';
+import {
+  DocumentNode,
+  ExecutionResult,
+  getOperationAST,
+  GraphQLError,
+  GraphQLSchema,
+  print,
+} from '@graphql-tools/graphql';
 import { useSchema, envelop, PluginOrDisabledPlugin, isAsyncIterable } from '@envelop/core';
 import { GetEnvelopedFn, Plugin } from '@envelop/types';
 import { mapSchema as cloneSchema, isDocumentNode } from '@graphql-tools/utils';

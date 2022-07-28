@@ -1,5 +1,5 @@
 import { assertStreamExecutionValue, collectAsyncIteratorValues, createTestkit } from '@envelop/testing';
-import { ExecutionResult } from 'graphql';
+import { ExecutionResult } from '@graphql-tools/graphql';
 import { schema } from './common.js';
 
 describe('subscribe', () => {

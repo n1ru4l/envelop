@@ -9,7 +9,7 @@ import {
   ExecutionResult,
   SubscriptionArgs,
   ExecutionArgs,
-} from 'graphql';
+} from '@graphql-tools/graphql';
 import {
   AsyncIterableIteratorOrValue,
   ExecuteFunction,
