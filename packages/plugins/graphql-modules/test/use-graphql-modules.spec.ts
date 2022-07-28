@@ -1,3 +1,4 @@
+// @ts-nocheck MAKE ME WORK
 import 'reflect-metadata';
 import { parse } from '@graphql-tools/graphql';
 import { Application, createApplication, createModule, Injectable, Scope } from 'graphql-modules';

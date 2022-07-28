@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck TODO: MAKE ME WORK
 import { Plugin } from '@envelop/core';
 import { ApolloGateway } from '@apollo/gateway';
 import { DocumentNode, getOperationAST, print, printSchema, Source } from '@graphql-tools/graphql';

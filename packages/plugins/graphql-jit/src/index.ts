@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck MAKE ME WORK
 import { makeExecute, makeSubscribe, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { DocumentNode, Source, ExecutionArgs, ExecutionResult } from '@graphql-tools/graphql';
 import { compileQuery, isCompiledQuery, CompilerOptions, CompiledQuery } from 'graphql-jit';

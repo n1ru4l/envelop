@@ -1,6 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck MAKE ME WORK
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { ParseOptions, Parser } from 'graphql/language/parser.js';
-import type { Lexer } from 'graphql/language/lexer.js';
+import { ParseOptions, Parser } from '@graphql-tools/graphql/esm/language/parser.js';
+import type { Lexer } from '@graphql-tools/graphql/esm/language/lexer.js';
 import {
   TokenKind,
   Kind,

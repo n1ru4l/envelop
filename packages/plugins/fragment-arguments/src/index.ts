@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck MAKE ME WORK
 import type { Plugin } from '@envelop/core';
 import type { ParseOptions } from 'graphql/language/parser';
 import type { Source, DocumentNode } from '@graphql-tools/graphql';

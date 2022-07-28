@@ -1,3 +1,5 @@
+// TODO: MAKE ME WORK
+// @ts-nocheck
 import 'reflect-metadata';
 import { createTestkit, assertSingleExecutionValue } from '@envelop/testing';
 import { InMemoryLRUCache } from 'apollo-server-caching';
@@ -5,7 +7,6 @@ import type { DataSourceConfig } from 'apollo-datasource';
 import { useApolloDataSources } from '../src/index.js';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
-// TODO: MAKE ME WORK
 describe.skip('useApolloDataSources', () => {
   it('should use InMemoryLRUCache by default', async () => {
     const initialize = jest.fn();

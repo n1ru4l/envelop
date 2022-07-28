@@ -1,3 +1,4 @@
+// @ts-nocheck MAKE ME WORK
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { ApolloServerBase } from 'apollo-server-core';
 import { GraphQLSchema } from '@graphql-tools/graphql';

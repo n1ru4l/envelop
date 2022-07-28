@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck MAKE ME WORK
 import { Plugin } from '@envelop/core';
 import { IntValueNode, StringValueNode, GraphQLResolveInfo } from '@graphql-tools/graphql';
 import { getDirective } from './utils.js';

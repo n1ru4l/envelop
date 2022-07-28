@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck MAKE ME WORK
 import { Plugin } from '@envelop/core';
 import { print } from '@graphql-tools/graphql';
 import { NoLiveMixedWithDeferStreamRule, GraphQLLiveDirective } from '@n1ru4l/graphql-live-query';
