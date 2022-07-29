@@ -49,14 +49,14 @@
   "dependencies": {},
   "devDependencies": {
     "@types/newrelic": "7.0.3",
-    "@graphql-tools/graphql": "0.1.0-alpha-fbf97581.0",
+    "@graphql-tools/graphql": "0.1.0-alpha-33fb2950.0",
     "newrelic": "8.8.0",
     "typescript": "4.7.4"
   },
   "peerDependencies": {
     "@envelop/core": "^2.4.2",
     "newrelic": "^7 || ^8.0.0",
-    "@graphql-tools/graphql": "0.1.0-alpha-fbf97581.0"
+    "@graphql-tools/graphql": "0.1.0-alpha-33fb2950.0"
   },
   "buildOptions": {
     "input": "./src/index.ts"
