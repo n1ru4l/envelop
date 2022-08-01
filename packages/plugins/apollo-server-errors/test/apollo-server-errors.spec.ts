@@ -1,10 +1,10 @@
-// @ts-nocheck MAKE ME WORK
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { ApolloServerBase } from 'apollo-server-core';
 import { GraphQLSchema } from '@graphql-tools/graphql';
 import { envelop, useSchema } from '@envelop/core';
 import { useApolloServerErrors } from '../src/index.js';
 import { assertSingleExecutionValue } from '@envelop/testing';
+import { compatSchema } from '@graphql-tools/compat';
 
 // Fix compat by mocking broken function
 // we can remove this once apollo fixed legacy usages of execute(schema, ...args)
@@ -13,10 +13,9 @@ jest.mock('../../../../node_modules/apollo-server-core/dist/utils/schemaHash', (
   generateSchemaHash: () => 'noop',
 }));
 
-// TODO: MAKE ME WORK
-describe.skip('useApolloServerErrors', () => {
+describe('useApolloServerErrors', () => {
   const executeBoth = async (schema: GraphQLSchema, query: string, debug: boolean) => {
-    const apolloServer = new ApolloServerBase({ schema, debug });
+    const apolloServer = new ApolloServerBase({ schema: compatSchema.toGraphQLJS(schema), debug });
     const envelopRuntime = envelop({ plugins: [useSchema(schema), useApolloServerErrors({ debug })] })({});
 
     return {
