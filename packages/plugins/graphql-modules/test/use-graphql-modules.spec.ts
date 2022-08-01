@@ -1,11 +1,10 @@
-// @ts-nocheck MAKE ME WORK
 import 'reflect-metadata';
-import { parse } from '@graphql-tools/graphql';
+import { parse } from 'graphql';
 import { Application, createApplication, createModule, Injectable, Scope } from 'graphql-modules';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useGraphQLModules } from '../src/index.js';
 
-describe.skip('useGraphQLModules', () => {
+describe('useGraphQLModules', () => {
   let app: Application;
 
   beforeEach(() => {

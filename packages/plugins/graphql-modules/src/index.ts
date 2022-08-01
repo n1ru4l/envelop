@@ -1,14 +1,13 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck MAKE ME WORK
 import { Plugin } from '@envelop/core';
 import { Application } from 'graphql-modules';
+import { compatSchema } from '@graphql-tools/compat';
 
 const graphqlModulesControllerSymbol = Symbol('GRAPHQL_MODULES');
 
 export const useGraphQLModules = (app: Application): Plugin => {
   return {
     onPluginInit({ setSchema }) {
-      setSchema(app.schema);
+      setSchema(compatSchema.toTools(app.schema));
     },
     onContextBuilding({ extendContext, context }) {
       const controller = app.createOperationController({
