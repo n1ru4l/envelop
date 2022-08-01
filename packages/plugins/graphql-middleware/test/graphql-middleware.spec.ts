@@ -14,8 +14,7 @@ const schema = makeExecutableSchema({
 
 const permissions = shield({});
 
-// TODO: MAKE ME WORK
-describe.skip('useGraphQlJit', () => {
+describe('useGraphQlJit', () => {
   it('does not cause infinite loops', async () => {
     const testkit = createTestkit(
       [

@@ -1,7 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck MAKE ME WORK
 import { Plugin } from '@envelop/core';
 import { IMiddlewareGenerator, IMiddleware, applyMiddleware } from 'graphql-middleware';
+import { compatSchema } from '@graphql-tools/compat';
 
 const graphqlMiddlewareAppliedTransformSymbol = Symbol('graphqlMiddleware.appliedTransform');
 
@@ -16,12 +15,12 @@ export const useGraphQLMiddleware = <TSource = any, TContext = any, TArgs = any>
       }
 
       if (middlewares.length > 0) {
-        const wrappedSchema = applyMiddleware(schema, ...middlewares);
+        const wrappedSchema = applyMiddleware(compatSchema.toGraphQLJS(schema), ...middlewares);
         wrappedSchema.extensions = {
           ...schema.extensions,
           [graphqlMiddlewareAppliedTransformSymbol]: true,
         };
-        replaceSchema(wrappedSchema);
+        replaceSchema(compatSchema.toTools(wrappedSchema));
       }
     },
   };
