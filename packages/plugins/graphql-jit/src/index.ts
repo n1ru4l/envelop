@@ -53,7 +53,7 @@ export const useGraphQlJit = (
 
     if (!cacheEntry) {
       // TODO: CACHE ME
-      const schema = compatSchema(args.schema);
+      const schema = compatSchema.toGraphQLJS(args.schema);
       const compilationResult = compileQuery(schema, args.document, args.operationName ?? undefined, compilerOptions);
 
       if (!isCompiledQuery(compilationResult)) {

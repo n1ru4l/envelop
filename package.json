@@ -46,7 +46,7 @@
     "@babel/preset-env": "7.16.11",
     "@babel/preset-typescript": "7.16.7",
     "@changesets/cli": "2.21.1",
-    "@graphql-tools/schema": "8.5.2-alpha-33fb2950.0",
+    "@graphql-tools/schema": "8.5.2-alpha-e7752ba5.0",
     "@theguild/prettier-config": "0.0.2",
     "@types/benchmark": "2.1.1",
     "@types/jest": "27.4.1",

@@ -57,11 +57,11 @@
   },
   "dependencies": {
     "@envelop/types": "2.3.1",
-    "@graphql-tools/graphql": "0.1.0-alpha-33fb2950.0"
+    "@graphql-tools/graphql": "0.1.0-alpha-e7752ba5.0"
   },
   "devDependencies": {
-    "@graphql-tools/schema": "8.5.2-alpha-33fb2950.0",
-    "@graphql-tools/utils": "8.9.1-alpha-33fb2950.0",
+    "@graphql-tools/schema": "8.5.2-alpha-e7752ba5.0",
+    "@graphql-tools/utils": "8.9.1-alpha-e7752ba5.0",
     "typescript": "4.7.4"
   },
   "buildOptions": {
