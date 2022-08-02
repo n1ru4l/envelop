@@ -1,5 +1,11 @@
 # @envelop/live-query
 
+## 4.0.0
+
+### Major Changes
+
+- dcde041: Bump `@n1ru4l/in-memory-live-query-store` and `@n1ru4l/graphql-live-query` version
+
 ## 3.4.1
 
 ### Patch Changes

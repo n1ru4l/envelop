@@ -1,6 +1,6 @@
 {
   "name": "@envelop/live-query",
-  "version": "3.4.1",
+  "version": "4.0.0",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
