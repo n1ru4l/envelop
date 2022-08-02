@@ -2823,18 +2823,18 @@
     "@types/mdx" "^2.0.0"
     "@types/react" ">=16"
 
-"@n1ru4l/graphql-live-query@0.9.0", "@n1ru4l/graphql-live-query@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query/-/graphql-live-query-0.9.0.tgz#defaebdd31f625bee49e6745934f36312532b2bc"
-  integrity sha512-BTpWy1e+FxN82RnLz4x1+JcEewVdfmUhV1C6/XYD5AjS7PQp9QFF7K8bCD6gzPTr2l+prvqOyVueQhFJxB1vfg==
+"@n1ru4l/graphql-live-query@0.10.0", "@n1ru4l/graphql-live-query@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query/-/graphql-live-query-0.10.0.tgz#2306151630b0e74b017cc1067ebbea351acf56f8"
+  integrity sha512-qZ7OHH/NB0NcG/Xa7irzgjE63UH0CkofZT0Bw4Ko6iRFagPRHBM8RgFXwTt/6JbFGIEUS4STRtaFoc/Eq/ZtzQ==
 
-"@n1ru4l/in-memory-live-query-store@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@n1ru4l/in-memory-live-query-store/-/in-memory-live-query-store-0.9.0.tgz#8e0d7e56292389bacaacb228c2f4c86c38b8c3c0"
-  integrity sha512-nLq8oUoVfj3givm7pAxL5f2a8IvmsCEeKnG9Fw29KYVTKL4jNUM90LQYBTkwLnjhxgzu+9WwLQmjOx1bEOHRUA==
+"@n1ru4l/in-memory-live-query-store@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@n1ru4l/in-memory-live-query-store/-/in-memory-live-query-store-0.10.0.tgz#108a60ccfefb59f76eaf1600712d0d190fec0f89"
+  integrity sha512-pt7bZgTPz9dk7ceoOp76KIbVFFlAPe0e5A07UiZ19fQy3JPvvoLRdjmnKbUh3VsEUUh8MyytFcFRguaeiidAYA==
   dependencies:
     "@graphql-tools/utils" "^8.5.2"
-    "@n1ru4l/graphql-live-query" "0.9.0"
+    "@n1ru4l/graphql-live-query" "0.10.0"
     "@repeaterjs/repeater" "^3.0.4"
 
 "@n1ru4l/push-pull-async-iterable-iterator@3.2.0":
@@ -5030,17 +5030,16 @@ bl@^4.1.0:
     inherits "^2.0.4"
     readable-stream "^3.4.0"
 
-bob-the-bundler@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/bob-the-bundler/-/bob-the-bundler-2.0.0.tgz#a0b5971e557d15f53c942e559a979542786677fc"
-  integrity sha512-3/qnKDSlUc/65hDgJLK/t7P2eWYKJF8Siz3Cu5mJRgMvtvYnbhKc5lbJyda/Y1sox1fnePHfBn+mFd/L/Z9KtA==
+bob-the-bundler@3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/bob-the-bundler/-/bob-the-bundler-3.0.4.tgz#9ab19c8d8d9cff3eaf106e5f10bafe946bdaf0a9"
+  integrity sha512-Lx1Xf6OWdXpUCUSQTdgbBfgg9K8GIjMtibDKS5TEd0LFv3PAOeIGgY9VxyUVylWJeqawHl5ztD2MfNBZYooIiQ==
   dependencies:
     "@rollup/plugin-json" "^4.1.0"
     "@rollup/plugin-node-resolve" "^13.3.0"
     "@vercel/ncc" "^0.34.0"
     builtins "^5.0.1"
     consola "^2.15.3"
-    cosmiconfig "^7.0.1"
     cross-spawn "^7.0.3"
     dependency-graph "^0.11.0"
     fs-extra "^10.1.0"
