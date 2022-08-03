@@ -1,5 +1,11 @@
 # @envelop/sentry
 
+## 3.6.2
+
+### Patch Changes
+
+- d54091f: Fix interoperability between the plugin and Sentry Integrations
+
 ## 3.6.1
 
 ### Patch Changes
