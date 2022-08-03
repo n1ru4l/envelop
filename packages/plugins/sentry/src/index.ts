@@ -236,6 +236,8 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
         }
       }
 
+      Sentry.configureScope(scope => scope.setSpan(rootSpan));
+
       rootSpan.setData('document', document);
 
       if (options.configureScope) {
