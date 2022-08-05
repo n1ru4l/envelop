@@ -1,5 +1,11 @@
 # @envelop/types
 
+## 2.3.1
+
+### Patch Changes
+
+- 071f946: Fix CommonJS TypeScript resolution with `moduleResolution` `node16` or `nodenext`
+
 ## 2.3.0
 
 ### Minor Changes

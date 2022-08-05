@@ -1,5 +1,14 @@
 # @envelop/testing
 
+## 4.4.2
+
+### Patch Changes
+
+- 071f946: Fix CommonJS TypeScript resolution with `moduleResolution` `node16` or `nodenext`
+- Updated dependencies [071f946]
+  - @envelop/core@2.4.2
+  - @envelop/types@2.3.1
+
 ## 4.4.1
 
 ### Patch Changes
