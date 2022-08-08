@@ -47,11 +47,11 @@
     "definition": "dist/typings/index.d.ts"
   },
   "devDependencies": {
-    "@graphql-tools/graphql": "0.1.0-alpha-98c3fea0.0",
+    "@graphql-tools/graphql": "0.1.0-alpha-25f2d2c4.0",
     "typescript": "4.7.4"
   },
   "peerDependencies": {
-    "@graphql-tools/graphql": "0.1.0-alpha-98c3fea0.0"
+    "@graphql-tools/graphql": "0.1.0-alpha-25f2d2c4.0"
   },
   "buildOptions": {
     "input": "./src/index.ts"

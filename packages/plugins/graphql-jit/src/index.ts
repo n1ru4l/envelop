@@ -5,7 +5,7 @@ import { makeExecute, makeSubscribe, Plugin, TypedExecutionArgs } from '@envelop
 import { DocumentNode, Source, ExecutionArgs, ExecutionResult } from '@graphql-tools/graphql';
 import { compileQuery, isCompiledQuery, CompilerOptions, CompiledQuery } from 'graphql-jit';
 import LRU from 'lru-cache';
-import { compatSchema } from '@graphql-tools/compat';
+import { compat } from '@graphql-tools/compat';
 
 const DEFAULT_MAX = 1000;
 const DEFAULT_TTL = 3600000;
@@ -53,7 +53,7 @@ export const useGraphQlJit = (
 
     if (!cacheEntry) {
       // TODO: CACHE ME
-      const schema = compatSchema.toGraphQLJS(args.schema);
+      const schema = compat.toGraphQLJS(args.schema);
       const compilationResult = compileQuery(schema, args.document, args.operationName ?? undefined, compilerOptions);
 
       if (!isCompiledQuery(compilationResult)) {

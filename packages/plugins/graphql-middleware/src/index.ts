@@ -1,6 +1,6 @@
 import { Plugin } from '@envelop/core';
 import { IMiddlewareGenerator, IMiddleware, applyMiddleware } from 'graphql-middleware';
-import { compatSchema } from '@graphql-tools/compat';
+import { compat } from '@graphql-tools/compat';
 
 const graphqlMiddlewareAppliedTransformSymbol = Symbol('graphqlMiddleware.appliedTransform');
 
@@ -15,12 +15,12 @@ export const useGraphQLMiddleware = <TSource = any, TContext = any, TArgs = any>
       }
 
       if (middlewares.length > 0) {
-        const wrappedSchema = applyMiddleware(compatSchema.toGraphQLJS(schema), ...middlewares);
+        const wrappedSchema = applyMiddleware(compat.toGraphQLJS(schema), ...middlewares);
         wrappedSchema.extensions = {
           ...schema.extensions,
           [graphqlMiddlewareAppliedTransformSymbol]: true,
         };
-        replaceSchema(compatSchema.toTools(wrappedSchema));
+        replaceSchema(compat.toTools(wrappedSchema));
       }
     },
   };

@@ -47,18 +47,18 @@
     "definition": "dist/typings/index.d.ts"
   },
   "devDependencies": {
-    "@graphql-tools/utils": "8.9.1-alpha-98c3fea0.0",
-    "@graphql-tools/schema": "8.5.2-alpha-98c3fea0.0",
+    "@graphql-tools/utils": "8.9.1-alpha-25f2d2c4.0",
+    "@graphql-tools/schema": "8.5.2-alpha-25f2d2c4.0",
     "apollo-server-caching": "3.3.0",
     "apollo-datasource": "3.3.1",
-    "@graphql-tools/graphql": "0.1.0-alpha-98c3fea0.0",
+    "@graphql-tools/graphql": "0.1.0-alpha-25f2d2c4.0",
     "typescript": "4.7.4"
   },
   "peerDependencies": {
     "@envelop/core": "^2.4.2",
     "apollo-datasource": "^3",
     "apollo-server-caching": "^3",
-    "@graphql-tools/graphql": "0.1.0-alpha-98c3fea0.0"
+    "@graphql-tools/graphql": "0.1.0-alpha-25f2d2c4.0"
   },
   "buildOptions": {
     "input": "./src/index.ts"
