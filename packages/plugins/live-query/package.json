@@ -47,17 +47,17 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "@n1ru4l/graphql-live-query": "0.11.0-alpha-4f39e4d.0",
-    "@n1ru4l/in-memory-live-query-store": "0.11.0-alpha-4f39e4d.0",
-    "@graphql-tools/utils": "8.9.1-alpha-25f2d2c4.0"
+    "@n1ru4l/graphql-live-query": "0.11.0-alpha-4a0d9f8.0",
+    "@n1ru4l/in-memory-live-query-store": "0.11.0-alpha-4a0d9f8.0",
+    "@graphql-tools/utils": "8.9.2-alpha-20220809192840-c5b336bd"
   },
   "devDependencies": {
-    "@graphql-tools/graphql": "0.1.0-alpha-25f2d2c4.0",
+    "@graphql-tools/graphql": "0.1.0-alpha-20220809192840-c5b336bd",
     "typescript": "4.7.4"
   },
   "peerDependencies": {
     "@envelop/core": "^2.4.2",
-    "@graphql-tools/graphql": "0.1.0-alpha-25f2d2c4.0"
+    "@graphql-tools/graphql": "0.1.0-alpha-20220809192840-c5b336bd"
   },
   "buildOptions": {
     "input": "./src/index.ts"

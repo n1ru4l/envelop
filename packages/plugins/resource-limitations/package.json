@@ -49,15 +49,15 @@
   },
   "dependencies": {
     "@envelop/extended-validation": "^1.7.2",
-    "@graphql-tools/utils": "8.9.1-alpha-25f2d2c4.0"
+    "@graphql-tools/utils": "8.9.2-alpha-20220809192840-c5b336bd"
   },
   "devDependencies": {
-    "@graphql-tools/graphql": "0.1.0-alpha-25f2d2c4.0",
+    "@graphql-tools/graphql": "0.1.0-alpha-20220809192840-c5b336bd",
     "typescript": "4.7.4"
   },
   "peerDependencies": {
     "@envelop/core": "^2.4.2",
-    "@graphql-tools/graphql": "0.1.0-alpha-25f2d2c4.0"
+    "@graphql-tools/graphql": "0.1.0-alpha-20220809192840-c5b336bd"
   },
   "buildOptions": {
     "input": "./src/index.ts"
