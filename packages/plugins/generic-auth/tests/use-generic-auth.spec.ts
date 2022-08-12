@@ -175,6 +175,26 @@ describe('useGenericAuth', () => {
       expect(result.errors).toBeUndefined();
       expect(result.data?.public).toBe('public');
     });
+
+    it('Should not call validateUser for public field when user is not authenticated', async () => {
+      const spyFn = jest.fn();
+      const testInstance = createTestkit(
+        [
+          useGenericAuth({
+            mode: 'protect-all',
+            resolveUserFn: invalidresolveUserFn,
+            validateUser: spyFn,
+          }),
+        ],
+        schemaWithDirective
+      );
+
+      const result = await testInstance.execute(`query { public }`);
+      assertSingleExecutionValue(result);
+      expect(result.errors).toBeUndefined();
+      expect(result.data?.public).toBe('public');
+      expect(spyFn).not.toBeCalled();
+    });
   });
 
   describe('resolve-only', () => {
@@ -342,6 +362,26 @@ describe('useGenericAuth', () => {
       assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(result.data?.public).toBe('public');
+    });
+
+    it('Should not call validateUser for public field', async () => {
+      const spyFn = jest.fn();
+      const testInstance = createTestkit(
+        [
+          useGenericAuth({
+            mode: 'protect-granular',
+            resolveUserFn: validresolveUserFn,
+            validateUser: spyFn,
+          }),
+        ],
+        schemaWithDirective
+      );
+
+      const result = await testInstance.execute(`query { public }`);
+      assertSingleExecutionValue(result);
+      expect(result.errors).toBeUndefined();
+      expect(result.data?.public).toBe('public');
+      expect(spyFn).not.toBeCalled();
     });
 
     it('Should prevent field execution when user is not authenticated correctly', async () => {
