@@ -111,6 +111,9 @@ export const useMaskedErrors = (opts?: UseMaskedErrorsOpts): Plugin => {
         : undefined,
     onPluginInit(context) {
       context.registerContextErrorHandler(({ error, setError }) => {
+        if (error instanceof GraphQLError === false && error instanceof Error) {
+          error = new GraphQLError(error.message, undefined, undefined, undefined, undefined, error);
+        }
         setError(format(error, message, isDev));
       });
     },
