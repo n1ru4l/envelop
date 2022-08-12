@@ -219,6 +219,30 @@ describe('useMaskedErrors', () => {
       }
     }
   });
+  it('Should include the original context error in extensions in dev mode for error thrown during context creation.', async () => {
+    expect.assertions(3);
+    const testInstance = createTestkit(
+      [
+        useExtendContext((): {} => {
+          throw new Error('No context for you!');
+        }),
+        useMaskedErrors({ isDev: true }),
+      ],
+      schema
+    );
+    try {
+      await testInstance.execute(`query { secretWithExtensions }`);
+    } catch (err: any) {
+      expect(err).toBeInstanceOf(GraphQLError);
+      expect(err.message).toEqual('Unexpected error.');
+      expect(err.extensions).toEqual({
+        originalError: {
+          message: 'No context for you!',
+          stack: expect.stringContaining('Error: No context for you!'),
+        },
+      });
+    }
+  });
   it('Should mask subscribe (sync/promise) subscription errors', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
     const result = await testInstance.execute(`subscription { instantError }`);
