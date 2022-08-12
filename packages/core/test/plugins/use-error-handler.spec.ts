@@ -1,29 +1,74 @@
 import { useErrorHandler } from '../../src/plugins/use-error-handler.js';
-import { createTestkit } from '@envelop/testing';
+import { assertStreamExecutionValue, collectAsyncIteratorValues, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { Repeater } from '@repeaterjs/repeater';
 
 describe('useErrorHandler', () => {
-  const testError = new Error('Foobar');
+  it('should invoke error handler when error happens during execution', async () => {
+    const testError = new Error('Foobar');
 
-  const schema = makeExecutableSchema({
-    typeDefs: /* GraphQL */ `
-      type Query {
-        foo: String
-      }
-    `,
-    resolvers: {
-      Query: {
-        foo: () => {
-          throw testError;
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          foo: String
+        }
+      `,
+      resolvers: {
+        Query: {
+          foo: () => {
+            throw testError;
+          },
         },
       },
-    },
-  });
+    });
 
-  it('should invoke error handler when error happens during execution', async () => {
     const mockHandler = jest.fn();
     const testInstance = createTestkit([useErrorHandler(mockHandler)], schema);
     await testInstance.execute(`query { foo }`, {}, { foo: 'bar' });
+
+    expect(mockHandler).toHaveBeenCalledWith(
+      [testError],
+      expect.objectContaining({
+        contextValue: expect.objectContaining({
+          foo: 'bar',
+        }),
+      })
+    );
+  });
+
+  it('should invoke error handler when error happens during subscription resolver call', async () => {
+    const testError = new Error('Foobar');
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          _: String
+        }
+        type Subscription {
+          foo: String
+        }
+      `,
+      resolvers: {
+        Subscription: {
+          foo: {
+            subscribe: () =>
+              new Repeater(async (push, end) => {
+                await push(1);
+                end();
+              }),
+            resolve: () => {
+              throw new Error('Foobar');
+            },
+          },
+        },
+      },
+    });
+
+    const mockHandler = jest.fn();
+    const testInstance = createTestkit([useErrorHandler(mockHandler)], schema);
+    const result = await testInstance.execute(`subscription { foo }`, {}, { foo: 'bar' });
+    assertStreamExecutionValue(result);
+    await collectAsyncIteratorValues(result);
 
     expect(mockHandler).toHaveBeenCalledWith(
       [testError],
