@@ -64,7 +64,9 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
     .then(m => m.default || m)
     .then(({ shim }) => {
       if (!shim?.agent) {
-        throw new Error("Agent unavailable. Please check your New Relic Agent configuration and ensure New Relic is enabled.")
+        throw new Error(
+          'Agent unavailable. Please check your New Relic Agent configuration and ensure New Relic is enabled.'
+        );
       }
       shim.agent.metrics
         .getOrCreateMetric(`Supportability/ExternalModules/${AttributeName.COMPONENT_NAME}`)
@@ -128,50 +130,50 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
 
       const onResolverCalled: OnResolverCalledHook | undefined = options.trackResolvers
         ? async ({ args: resolversArgs, info }) => {
-          const logger = await logger$;
-          const { returnType, path, parentType } = info;
-          const formattedPath = flattenPath(path, delimiter);
-          const currentSegment = instrumentationApi.getActiveSegment();
+            const logger = await logger$;
+            const { returnType, path, parentType } = info;
+            const formattedPath = flattenPath(path, delimiter);
+            const currentSegment = instrumentationApi.getActiveSegment();
 
-          if (!currentSegment) {
-            logger.trace('No active segment found at resolver call. Not recording resolver (%s).', formattedPath);
-            return () => { };
-          }
-
-          const resolverSegment = instrumentationApi.createSegment(
-            `resolver${delimiter}${formattedPath}`,
-            null,
-            operationSegment
-          );
-
-          if (!resolverSegment) {
-            logger.trace('Resolver segment was not created (%s).', formattedPath);
-            return () => { };
-          }
-
-          resolverSegment.start();
-
-          resolverSegment.addAttribute(AttributeName.RESOLVER_FIELD_PATH, formattedPath);
-          resolverSegment.addAttribute(AttributeName.RESOLVER_TYPE_NAME, parentType.toString());
-          resolverSegment.addAttribute(AttributeName.RESOLVER_RESULT_TYPE, returnType.toString());
-
-          if (options.includeResolverArgs) {
-            const rawArgs = resolversArgs || {};
-            const resolverArgsToTrack = options.isResolverArgsRegex
-              ? filterPropertiesByRegex(rawArgs, options.includeResolverArgs as RegExp)
-              : rawArgs;
-
-            resolverSegment.addAttribute(AttributeName.RESOLVER_ARGS, JSON.stringify(resolverArgsToTrack));
-          }
-
-          return ({ result }) => {
-            if (options.includeRawResult) {
-              resolverSegment.addAttribute(AttributeName.RESOLVER_RESULT, JSON.stringify(result));
+            if (!currentSegment) {
+              logger.trace('No active segment found at resolver call. Not recording resolver (%s).', formattedPath);
+              return () => {};
             }
 
-            resolverSegment.end();
-          };
-        }
+            const resolverSegment = instrumentationApi.createSegment(
+              `resolver${delimiter}${formattedPath}`,
+              null,
+              operationSegment
+            );
+
+            if (!resolverSegment) {
+              logger.trace('Resolver segment was not created (%s).', formattedPath);
+              return () => {};
+            }
+
+            resolverSegment.start();
+
+            resolverSegment.addAttribute(AttributeName.RESOLVER_FIELD_PATH, formattedPath);
+            resolverSegment.addAttribute(AttributeName.RESOLVER_TYPE_NAME, parentType.toString());
+            resolverSegment.addAttribute(AttributeName.RESOLVER_RESULT_TYPE, returnType.toString());
+
+            if (options.includeResolverArgs) {
+              const rawArgs = resolversArgs || {};
+              const resolverArgsToTrack = options.isResolverArgsRegex
+                ? filterPropertiesByRegex(rawArgs, options.includeResolverArgs as RegExp)
+                : rawArgs;
+
+              resolverSegment.addAttribute(AttributeName.RESOLVER_ARGS, JSON.stringify(resolverArgsToTrack));
+            }
+
+            return ({ result }) => {
+              if (options.includeRawResult) {
+                resolverSegment.addAttribute(AttributeName.RESOLVER_RESULT, JSON.stringify(result));
+              }
+
+              resolverSegment.end();
+            };
+          }
         : undefined;
 
       return {
