@@ -1,4 +1,4 @@
-name: Tests
+name: test
 
 on:
   push:
@@ -8,15 +8,14 @@ on:
 
 jobs:
   lint:
-    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Use Node
         uses: actions/setup-node@master
         with:
-          node-version: 17
+          node-version: 18
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -24,9 +23,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-17-16-yarn-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-18-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-17-16-yarn-
+            ${{ runner.os }}-18-yarn-
       - name: Install Dependencies
         run: yarn install --ignore-engines && git checkout yarn.lock
 
@@ -35,19 +34,20 @@ jobs:
 
       - name: Lint Prettier
         run: yarn lint:prettier
+
   build:
-    name: Type Check on GraphQL v${{matrix.graphql_version}}
+    name: build / graphql v${{matrix.graphql_version}}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         graphql_version: [15, 16]
     steps:
-      - name: Checkout Master
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Use Node
         uses: actions/setup-node@master
         with:
-          node-version: 17
+          node-version: 18
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -55,17 +55,18 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-16-${{matrix.graphql_version}}-yarn-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-18-${{matrix.graphql_version}}-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-16-yarn-
+            ${{ runner.os }}-18-yarn-
       - name: Use GraphQL v${{matrix.graphql_version}}
         run: node ./scripts/match-graphql.js ${{matrix.graphql_version}}
       - name: Install Dependencies using Yarn
         run: yarn install --ignore-engines && git checkout yarn.lock
       - name: Build
         run: yarn ts:check
-  test:
-    name: Unit Test on Node ${{matrix.node-version}} (${{matrix.os}}) and GraphQL v${{matrix.graphql_version}}
+
+  unit:
+    name: unit / ${{matrix.os}} / node v${{matrix.node-version}} / graphql v${{matrix.graphql_version}}
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
@@ -102,16 +103,17 @@ jobs:
         run: yarn test --ci
         env:
           CI: true
+
   test_esm:
-    name: ESM Test
+    name: esm
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Master
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Use Node
         uses: actions/setup-node@master
         with:
-          node-version: 17
+          node-version: 18
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -119,7 +121,10 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-17-16-yarn-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-18-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-18-yarn-
+            
       - name: Install Dependencies using Yarn
         run: yarn install --ignore-engines && git checkout yarn.lock
       - name: Build Packages
