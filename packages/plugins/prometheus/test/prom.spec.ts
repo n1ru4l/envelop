@@ -27,10 +27,7 @@ describe('Prom Metrics plugin', () => {
         payloadField: String
       }
       type Mutation {
-        mutationWithDeprecatedFields(
-          nonDeprecatedInput: MutationInput
-          deprecatedInput: String @deprecated(reason: "old")
-        ): MutationPayload
+        mutationWithDeprecatedFields(deprecatedInput: String @deprecated(reason: "old")): MutationPayload
       }
     `,
     resolvers: {
