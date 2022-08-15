@@ -61,6 +61,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
   // This method is being triggered in different flows, based on the mode you chose to implement.
 
   // If you are using the `protect-auth-directive` mode, you'll also get 2 additional parameters: the resolver parameters as object and the DirectiveNode of the auth directive.
+  // In `protect-auth-directive` mode, this function will always get called and you can use these parameters to check if the field has the `@auth` or `@skipAuth` directive
 
   if (!user) {
     throw new Error(`Unauthenticated!`)
@@ -106,7 +107,7 @@ const getEnveloped = envelop({
 
 > By default, we assume that you have the GraphQL directive definition as part of your GraphQL schema (`directive @skipAuth on FIELD_DEFINITION`).
 
-Then, in your GraphQL schema SDL, you can add `@skipAuth` directive to your fields, and the `validateUser` will not get called while resolving that specific field:
+Then, in your GraphQL schema SDL, you can add `@skipAuth` directive to your fields, and the default `validateUser` function will not get called while resolving that specific field:
 
 ```graphql
 type Query {
