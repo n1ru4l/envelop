@@ -515,37 +515,6 @@ describe('Prom Metrics plugin', () => {
       expect(await metricCount('graphql_envelop_deprecated_field')).toBe(1);
     });
 
-    it.skip('Should track deprecated fields in mutation input', async () => {
-      const { execute, metricCount, metricString } = prepare({
-        errors: true,
-        execute: true,
-        parse: true,
-        validate: true,
-        contextBuilding: true,
-        deprecatedFields: true,
-        resolvers: true,
-      });
-      const result = await execute(
-        /* GraphQL */ `
-          mutation MutationWithDeprecatedFields($nonDeprecatedInput: MutationInput!) {
-            mutationWithDeprecatedFields(nonDeprecatedInput: $nonDeprecatedInput) {
-              payloadField
-            }
-          }
-        `,
-        {
-          nonDeprecatedInput: { deprecatedField: 'deprecatedField', regularField: 'regularField' },
-        }
-      );
-      assertSingleExecutionValue(result);
-
-      expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_deprecated_field')).toBe(1);
-
-      const m = await metricString('graphql_envelop_deprecated_field');
-      // TODO assert the field logged is correct
-    });
-
     it('Should track deprecated arguments in mutation', async () => {
       const { execute, metricCount, allMetrics, metricString } = prepare({
         errors: true,
