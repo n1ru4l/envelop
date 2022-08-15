@@ -1,4 +1,4 @@
-name: Benchmark
+name: benchmark
 
 on:
   pull_request:
