@@ -2,7 +2,7 @@ import { useLiveQuery, GraphQLLiveDirectiveSDL } from '../src/index.js';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { createTestkit, assertStreamExecutionValue } from '@envelop/testing';
-import { parse } from 'graphql';
+import { applyLiveQueryJSONDiffPatchGenerator } from '@n1ru4l/graphql-live-query-patch-jsondiffpatch';
 
 const schema = makeExecutableSchema({
   typeDefs: [
@@ -39,32 +39,78 @@ describe('useLiveQuery', () => {
     assertStreamExecutionValue(result);
     let current = await result.next();
     expect(current.value).toMatchInlineSnapshot(`
-Object {
-  "data": Object {
-    "greetings": Array [
-      "Hi",
-      "Sup",
-      "Ola",
-    ],
-  },
-  "isLive": true,
-}
-`);
+      Object {
+        "data": Object {
+          "greetings": Array [
+            "Hi",
+            "Sup",
+            "Ola",
+          ],
+        },
+        "isLive": true,
+      }
+    `);
     contextValue.greetings.reverse();
     liveQueryStore.invalidate('Query.greetings');
     current = await result.next();
     expect(current.value).toMatchInlineSnapshot(`
-Object {
-  "data": Object {
-    "greetings": Array [
-      "Ola",
-      "Sup",
-      "Hi",
-    ],
-  },
-  "isLive": true,
-}
-`);
+      Object {
+        "data": Object {
+          "greetings": Array [
+            "Ola",
+            "Sup",
+            "Hi",
+          ],
+        },
+        "isLive": true,
+      }
+    `);
+    result.return?.();
+  });
+
+  it('apply patch middleware', async () => {
+    const liveQueryStore = new InMemoryLiveQueryStore();
+    const testKit = createTestkit(
+      [useLiveQuery({ liveQueryStore, applyLiveQueryPatchGenerator: applyLiveQueryJSONDiffPatchGenerator })],
+      schema
+    );
+    const contextValue = {
+      greetings: ['Hi', 'Sup', 'Ola'],
+    };
+    const result = await testKit.execute(
+      /* GraphQL */ `
+        query @live {
+          greetings
+        }
+      `,
+      undefined,
+      contextValue
+    );
+    assertStreamExecutionValue(result);
+    let current = await result.next();
+    contextValue.greetings.reverse();
+    liveQueryStore.invalidate('Query.greetings');
+    current = await result.next();
+    expect(current.value).toMatchInlineSnapshot(`
+      Object {
+        "patch": Object {
+          "greetings": Object {
+            "_1": Array [
+              null,
+              1,
+              3,
+            ],
+            "_2": Array [
+              null,
+              0,
+              3,
+            ],
+            "_t": "a",
+          },
+        },
+        "revision": 2,
+      }
+    `);
     result.return?.();
   });
 });

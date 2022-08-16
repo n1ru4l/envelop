@@ -2847,6 +2847,21 @@
     "@types/mdx" "^2.0.0"
     "@types/react" ">=16"
 
+"@n1ru4l/graphql-live-query-patch-jsondiffpatch@0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query-patch-jsondiffpatch/-/graphql-live-query-patch-jsondiffpatch-0.8.0.tgz#fd18bde201ca82b491c63d836e0ce13999edb8f9"
+  integrity sha512-m5OPdEhBbqQ+pkFz2dQmPl10JW/RB1Qc2zoVn9QTEXvyeSzQmrl+qNtn3nvv87P9rQDiRD/JWlD86BFX0XloBg==
+  dependencies:
+    "@n1ru4l/graphql-live-query-patch" "^0.7.0"
+    "@n1ru4l/json-patch-plus" "^0.2.0"
+
+"@n1ru4l/graphql-live-query-patch@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query-patch/-/graphql-live-query-patch-0.7.0.tgz#c5b30341d218627b9ed15cea37e72ea3c15f3632"
+  integrity sha512-1q49iNxqEIbmUp+qFAEVEn4ts344Cw72g5OtAuFeTwKtJT3V91kTPGMcRk5Pxb5FPHbvn52q+PCVKOAyVrtPwQ==
+  dependencies:
+    "@repeaterjs/repeater" "^3.0.4"
+
 "@n1ru4l/graphql-live-query@0.10.0", "@n1ru4l/graphql-live-query@^0.10.0":
   version "0.10.0"
   resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query/-/graphql-live-query-0.10.0.tgz#2306151630b0e74b017cc1067ebbea351acf56f8"
@@ -2860,6 +2875,11 @@
     "@graphql-tools/utils" "^8.5.2"
     "@n1ru4l/graphql-live-query" "0.10.0"
     "@repeaterjs/repeater" "^3.0.4"
+
+"@n1ru4l/json-patch-plus@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@n1ru4l/json-patch-plus/-/json-patch-plus-0.2.0.tgz#b8fa09fd980c3460dfdc109a7c4cc5590157aa6b"
+  integrity sha512-pLkJy83/rVfDTyQgDSC8GeXAHEdXNHGNJrB1b7wAyGQu0iv7tpMXntKVSqj0+XKNVQbco40SZffNfVALzIt0SQ==
 
 "@n1ru4l/push-pull-async-iterable-iterator@3.2.0":
   version "3.2.0"
