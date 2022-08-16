@@ -114,6 +114,19 @@ export function extractDeprecatedFields(node: ASTNode, typeInfo: TypeInfo): Depr
   visit(
     node,
     visitWithTypeInfo(typeInfo, {
+      Argument: () => {
+        const argument = typeInfo.getArgument();
+        const field = typeInfo.getFieldDef();
+        if (field && argument && (argument.deprecationReason != null || (argument as any).isDeprecated)) {
+          found.push({
+            fieldName: argument.name,
+            // the GraphQLArgument type doesn't contain context regarding the mutation the argument was passed to
+            // however, when visiting an argument, typeInfo.getFieldDef returns the mutation
+            typeName: field.name, // this is the mutation name
+          });
+        }
+      },
+
       Field: () => {
         const field = typeInfo.getFieldDef();
 
