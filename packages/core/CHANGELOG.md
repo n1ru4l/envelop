@@ -1,5 +1,15 @@
 # @envelop/core
 
+## 2.5.0
+
+### Minor Changes
+
+- [#1473](https://github.com/n1ru4l/envelop/pull/1473) [`d828f129`](https://github.com/n1ru4l/envelop/commit/d828f1291254a0f9dfdc3654611087859e4c9708) Thanks [@n1ru4l](https://github.com/n1ru4l)! - handle subscription resolver errors in useErrorHandler
+
+### Patch Changes
+
+- [#1471](https://github.com/n1ru4l/envelop/pull/1471) [`5a5f5c04`](https://github.com/n1ru4l/envelop/commit/5a5f5c04177b9e1379fd77db5d6383160879d449) Thanks [@n1ru4l](https://github.com/n1ru4l)! - Ensure error thrown from the context factory is wrapped within a GraphQLError for proper formatting. Previously this caused an unexpected error to be swallowed completly when error masking is enabled.
+
 ## 2.4.2
 
 ### Patch Changes

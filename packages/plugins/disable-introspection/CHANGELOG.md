@@ -1,5 +1,12 @@
 # @envelop/disable-introspection
 
+## 3.5.0
+
+### Minor Changes
+
+- Updated dependencies [[`5a5f5c04`](https://github.com/n1ru4l/envelop/commit/5a5f5c04177b9e1379fd77db5d6383160879d449), [`d828f129`](https://github.com/n1ru4l/envelop/commit/d828f1291254a0f9dfdc3654611087859e4c9708)]:
+  - @envelop/core@2.5.0
+
 ## 3.4.2
 
 ### Patch Changes
