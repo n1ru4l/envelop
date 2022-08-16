@@ -1,5 +1,29 @@
 # @envelop/live-query
 
+## 4.1.0
+
+### Minor Changes
+
+- [#1481](https://github.com/n1ru4l/envelop/pull/1481) [`752ba122`](https://github.com/n1ru4l/envelop/commit/752ba12247427822a02bfca2633e337864bccbef) Thanks [@n1ru4l](https://github.com/n1ru4l)! - Support for plugging in a patch middleware.
+
+  ```ts
+  import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store'
+  import { applyLiveQueryJSONDiffPatchGenerator } from '@n1ru4l/graphql-live-query-patch-jsondiffpatch'
+
+  const liveQueryStore = new InMemoryLiveQueryStore()
+
+  const plugin = useLiveQuery({ liveQueryStore, applyLiveQueryPatchGenerator: applyLiveQueryJSONDiffPatchGenerator })
+  ```
+
+- Updated dependencies [[`5a5f5c04`](https://github.com/n1ru4l/envelop/commit/5a5f5c04177b9e1379fd77db5d6383160879d449), [`d828f129`](https://github.com/n1ru4l/envelop/commit/d828f1291254a0f9dfdc3654611087859e4c9708)]:
+  - @envelop/core@2.5.0
+
+### Patch Changes
+
+- [#1481](https://github.com/n1ru4l/envelop/pull/1481) [`752ba122`](https://github.com/n1ru4l/envelop/commit/752ba12247427822a02bfca2633e337864bccbef) Thanks [@n1ru4l](https://github.com/n1ru4l)! - dependencies updates:
+
+  - Added dependency [`@n1ru4l/graphql-live-query-patch@^0.7.0` ↗︎](https://www.npmjs.com/package/@n1ru4l/graphql-live-query-patch/v/^0.7.0) (to `dependencies`)
+
 ## 4.0.1
 
 ### Patch Changes

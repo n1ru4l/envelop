@@ -1,5 +1,20 @@
 # @envelop/newrelic
 
+## 4.2.0
+
+### Minor Changes
+
+- Updated dependencies [[`5a5f5c04`](https://github.com/n1ru4l/envelop/commit/5a5f5c04177b9e1379fd77db5d6383160879d449), [`d828f129`](https://github.com/n1ru4l/envelop/commit/d828f1291254a0f9dfdc3654611087859e4c9708)]:
+  - @envelop/core@2.5.0
+
+### Patch Changes
+
+- [#1457](https://github.com/n1ru4l/envelop/pull/1457) [`ff8b4476`](https://github.com/n1ru4l/envelop/commit/ff8b447652ed71159ac7b3d94223e8e1dfb2d14e) Thanks [@zawadzkip](https://github.com/zawadzkip)! - New Relic: add error for agent not being found
+  Adds an error message when initializing the new relic plugin
+
+  - This error message will occur when the new relic agent is not found when initializing the plugin. Signalling information to a developer that new relic may not be
+  - installed correctly or may be disabled where this plugin is being instantiated.
+
 ## 4.1.2
 
 ### Patch Changes
