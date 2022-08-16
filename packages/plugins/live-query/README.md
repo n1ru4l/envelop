@@ -81,6 +81,24 @@ const schema = new GraphQLSchema({
 })
 ```
 
+### Applying a patch middleware
+
+By using a patch middleware you can significantly reduce the size of the GraphQL execution result payload that is sent over the wire from the server to the client.
+We recommend using the `@n1ru4l/graphql-live-query-patch-jsondiffpatch` patch generator. [You can learn more about it here](https://github.com/n1ru4l/graphql-live-query/tree/main/packages/graphql-live-query-patch-jsondiffpatch).
+
+```bash
+yarn add @n1ru4l/graphql-live-query-patch-jsondiffpatch
+```
+
+```ts
+import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store'
+import { applyLiveQueryJSONDiffPatchGenerator } from '@n1ru4l/graphql-live-query-patch-jsondiffpatch'
+
+const liveQueryStore = new InMemoryLiveQueryStore()
+
+const plugin = useLiveQuery({ liveQueryStore, applyLiveQueryPatchGenerator: applyLiveQueryJSONDiffPatchGenerator })
+```
+
 ## Further information
 
 This plugin requires you to use a graphql transports that supports usage of the `@defer` and `@stream` directives, as it is built upon the same concepts (return an `AsyncIterable` from `execute`).
