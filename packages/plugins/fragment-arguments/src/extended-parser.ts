@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { ParseOptions, Parser } from 'graphql/language/parser.js';
-import type { Lexer } from 'graphql/language/lexer.js';
 import {
   TokenKind,
   Kind,
@@ -9,6 +6,9 @@ import {
   FragmentDefinitionNode,
   FragmentSpreadNode,
   InlineFragmentNode,
+  Lexer,
+  ParseOptions,
+  Parser,
 } from 'graphql';
 
 export class FragmentArgumentCompatibleParser extends Parser {

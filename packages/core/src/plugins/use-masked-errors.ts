@@ -6,6 +6,7 @@ export const DEFAULT_ERROR_MESSAGE = 'Unexpected error.';
 
 export class EnvelopError extends GraphQLError {
   constructor(message: string, extensions?: GraphQLErrorExtensions) {
+    // @ts-expect-error I DON'T KNOW
     super(message, undefined, undefined, undefined, undefined, undefined, extensions);
   }
 }

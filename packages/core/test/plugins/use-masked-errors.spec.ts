@@ -39,10 +39,12 @@ describe('useMaskedErrors', () => {
           throw new Error('Secret sauce that should not leak.');
         },
         secretEnvelop: () => {
+          // @ts-expect-error I DON'T KNOW
           throw new EnvelopError('This message goes to all the clients out there!', { foo: 1 });
         },
         secretWithExtensions: () => {
           throw new EnvelopError('This message goes to all the clients out there!', {
+            // @ts-expect-error I DON'T KNOW
             code: 'Foo',
             message: 'Bar',
           });
@@ -202,6 +204,7 @@ describe('useMaskedErrors', () => {
     const testInstance = createTestkit(
       [
         useExtendContext((): {} => {
+          // @ts-expect-error I DON'T KNOW
           throw new EnvelopError('No context for you!', { foo: 1 });
         }),
         useMaskedErrors(),

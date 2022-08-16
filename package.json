@@ -81,7 +81,7 @@
   },
   "resolutions": {
     "esbuild": "^0.14.0",
-    "graphql": "16.3.0",
+    "graphql": "npm:@graphql-tools/graphql@0.1.0-alpha-20220815193214-83898018",
     "prettier": "2.7.1"
   },
   "lint-staged": {

@@ -18,15 +18,15 @@ export const subscribe = (execute: ExecuteFunction): SubscribeFunction =>
       subscribeFieldResolver,
     } = args;
 
-    const resultOrStream = await createSourceEventStream(
+    const resultOrStream = await createSourceEventStream({
       schema,
       document,
       rootValue,
       contextValue,
-      variableValues ?? undefined,
+      variableValues: variableValues ?? undefined,
       operationName,
-      subscribeFieldResolver
-    );
+      subscribeFieldResolver,
+    });
 
     if (!isAsyncIterable(resultOrStream)) {
       return resultOrStream as AsyncIterableIterator<ExecutionResult>;
