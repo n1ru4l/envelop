@@ -1,14 +1,15 @@
 import { GetEnvelopedFn, ComposeContext, Plugin, ArbitraryObject } from '@envelop/types';
 import { isPluginEnabled, PluginOrDisabledPlugin } from './enable-if.js';
-import { createEnvelopOrchestrator, EnvelopOrchestrator } from './orchestrator.js';
+import { createEnvelopOrchestrator, EnvelopOrchestrator, GraphQLEngine } from './orchestrator.js';
 import { traceOrchestrator } from './traced-orchestrator.js';
 
 export function envelop<PluginsType extends Plugin<any>[]>(options: {
   plugins: Array<PluginOrDisabledPlugin>;
   enableInternalTracing?: boolean;
+  engine?: typeof GraphQLEngine;
 }): GetEnvelopedFn<ComposeContext<PluginsType>> {
   const plugins = options.plugins.filter(isPluginEnabled);
-  let orchestrator = createEnvelopOrchestrator<ComposeContext<PluginsType>>(plugins);
+  let orchestrator = createEnvelopOrchestrator<ComposeContext<PluginsType>>(plugins, options.engine);
 
   if (options.enableInternalTracing) {
     orchestrator = traceOrchestrator(orchestrator);
