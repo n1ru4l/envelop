@@ -29,18 +29,7 @@ import {
   DefaultContext,
   Maybe,
 } from '@envelop/types';
-import {
-  DocumentNode,
-  execute,
-  ExecutionResult,
-  GraphQLError,
-  GraphQLSchema,
-  parse,
-  specifiedRules,
-  subscribe,
-  validate,
-  ValidationRule,
-} from 'graphql';
+import { DocumentNode, ExecutionResult, GraphQLError, GraphQLSchema, specifiedRules, ValidationRule } from 'graphql';
 import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema.js';
 import {
   errorAsyncIterator,
@@ -64,10 +53,38 @@ export type EnvelopOrchestrator<
   getCurrentSchema: () => Maybe<GraphQLSchema>;
 };
 
+export const GraphQLEngine = ({
+  parse,
+  execute,
+  validate,
+  subscribe,
+}: {
+  parse?: Function;
+  execute?: Function;
+  validate?: Function;
+  subscribe?: Function;
+}) => {
+  const noop = (name: string) => {
+    throw new Error(`'${name}' is not implemented.`);
+  };
+
+  return () => {
+    return {
+      parse: parse ?? noop('parse'),
+      execute: execute ?? noop('execute'),
+      validate: validate ?? noop('validate'),
+      subscribe: subscribe ?? noop('subscribe'),
+    };
+  };
+};
+export type Engine = ReturnType<typeof GraphQLEngine>;
+
 export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>(
-  plugins: Plugin[]
+  plugins: Plugin[],
+  engine: Engine
 ): EnvelopOrchestrator<any, PluginsContext> {
   let schema: GraphQLSchema | undefined | null = null;
+  const { parse, execute, validate, subscribe } = engine();
   let initDone = false;
   const onResolversHandlers: OnResolverCalledHook[] = [];
   for (const plugin of plugins) {
