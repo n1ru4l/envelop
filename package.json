@@ -26,6 +26,7 @@
     "prepare": "husky install",
     "postinstall": "patch-package",
     "lint": "eslint --config .eslintrc.json --ext .ts . --max-warnings 0",
+    "ci:lint": "eslint --config .eslintrc.json --ext .ts . --max-warnings 0 --output-file eslint_report.json --format json",
     "lint:prettier": "prettier --ignore-path .gitignore --check .",
     "prebuild": "rimraf packages/*/dist packages/plugins/*/dist",
     "build": "bob build",
