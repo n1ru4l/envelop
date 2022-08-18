@@ -2,7 +2,9 @@ import { isAsyncIterable, Plugin } from '@envelop/core';
 import { GraphQLError, ResponsePath } from 'graphql';
 import { google, Trace } from 'apollo-reporting-protobuf';
 
-interface ApolloInlineTracer {
+const ctxKey = Symbol('ApolloInlineTracePluginContextKey');
+
+interface ApolloInlineTracePluginContext {
   startHrTime: [number, number];
   rootNode: Trace.Node;
   trace: Trace;
@@ -45,10 +47,11 @@ export interface ApolloInlineTracePluginOptions<PluginContext extends Record<str
 export function useApolloInlineTrace<PluginContext extends Record<string, any> = {}>({
   shouldTrace,
   rewriteError,
-}: ApolloInlineTracePluginOptions<PluginContext>): Plugin<PluginContext> {
-  const tracerForCtx = new WeakMap<PluginContext, ApolloInlineTracer>();
+}: ApolloInlineTracePluginOptions<PluginContext>): Plugin<
+  PluginContext & { [ctxKey]: ApolloInlineTracePluginContext }
+> {
   return {
-    onEnveloped({ context }) {
+    onEnveloped({ context, extendContext }) {
       if (!context) {
         throw new Error("Context must be set for Apollo's inline tracing plugin");
       }
@@ -56,53 +59,56 @@ export function useApolloInlineTrace<PluginContext extends Record<string, any> =
       if (shouldTrace(context)) {
         const startHrTime = process.hrtime();
         const rootNode = new Trace.Node();
-        tracerForCtx.set(context, {
-          startHrTime,
-          rootNode,
-          trace: new Trace({
-            root: rootNode,
-            fieldExecutionWeight: 1, // Why 1? See: https://github.com/apollographql/apollo-server/blob/9389da785567a56e989430962564afc71e93bd7f/packages/apollo-server-core/src/plugin/traceTreeBuilder.ts#L16-L23
-            startTime: nowTimestamp(),
-          }),
-          nodes: new Map([[responsePathToString(), rootNode]]),
-          stopped: false,
+        extendContext({
+          ...context,
+          [ctxKey]: {
+            startHrTime,
+            rootNode,
+            trace: new Trace({
+              root: rootNode,
+              fieldExecutionWeight: 1, // Why 1? See: https://github.com/apollographql/apollo-server/blob/9389da785567a56e989430962564afc71e93bd7f/packages/apollo-server-core/src/plugin/traceTreeBuilder.ts#L16-L23
+              startTime: nowTimestamp(),
+            }),
+            nodes: new Map([[responsePathToString(), rootNode]]),
+            stopped: false,
+          },
         });
       }
     },
     onResolverCalled({ context, info }) {
-      const tracer = tracerForCtx.get(context);
-      if (!tracer) return;
+      const ctx = context[ctxKey];
+      if (!ctx) return;
 
-      // result was already shipped (see ApolloInlineTracer.stopped)
-      if (tracer.stopped) {
+      // result was already shipped (see ApolloInlineTracePluginContext.stopped)
+      if (ctx.stopped) {
         return () => {
           // noop
         };
       }
 
-      const node = newTraceNode(tracer, info.path);
+      const node = newTraceNode(ctx, info.path);
       node.type = info.returnType.toString();
       node.parentType = info.parentType.toString();
-      node.startTime = hrTimeToDurationInNanos(process.hrtime(tracer.startHrTime));
+      node.startTime = hrTimeToDurationInNanos(process.hrtime(ctx.startHrTime));
       if (typeof info.path.key === 'string' && info.path.key !== info.fieldName) {
         // field was aliased, send the original field name too
         node.originalFieldName = info.fieldName;
       }
 
       return () => {
-        node.endTime = hrTimeToDurationInNanos(process.hrtime(tracer.startHrTime));
+        node.endTime = hrTimeToDurationInNanos(process.hrtime(ctx.startHrTime));
       };
     },
     onParse() {
       return ({ context, result }) => {
-        const tracer = tracerForCtx.get(context);
-        if (!tracer) return;
+        const ctx = context[ctxKey];
+        if (!ctx) return;
 
         if (result instanceof GraphQLError) {
-          handleErrors(tracer, [result], rewriteError);
+          handleErrors(ctx, [result], rewriteError);
         } else if (result instanceof Error) {
           handleErrors(
-            tracer,
+            ctx,
             [
               new GraphQLError(result.message, {
                 originalError: result,
@@ -116,16 +122,16 @@ export function useApolloInlineTrace<PluginContext extends Record<string, any> =
     onValidate() {
       return ({ context, result: errors }) => {
         if (errors.length) {
-          const tracer = tracerForCtx.get(context);
-          if (tracer) handleErrors(tracer, errors, rewriteError);
+          const ctx = context[ctxKey];
+          if (ctx) handleErrors(ctx, errors, rewriteError);
         }
       };
     },
     onExecute() {
       return {
         onExecuteDone({ args: { contextValue }, result, setResult }) {
-          const tracer = tracerForCtx.get(contextValue);
-          if (!tracer) return;
+          const ctx = contextValue[ctxKey];
+          if (!ctx) return;
 
           // TODO: should handle streaming results? how?
           if (isAsyncIterable(result)) return;
@@ -135,17 +141,17 @@ export function useApolloInlineTrace<PluginContext extends Record<string, any> =
           }
 
           if (result.errors?.length) {
-            handleErrors(tracer, result.errors, rewriteError);
+            handleErrors(ctx, result.errors, rewriteError);
           }
 
           // onResultProcess will be called only once since we disallow async iterables
-          if (tracer.stopped) throw new Error('Trace stopped multiple times');
+          if (ctx.stopped) throw new Error('Trace stopped multiple times');
 
-          tracer.stopped = true;
-          tracer.trace.durationNs = hrTimeToDurationInNanos(process.hrtime(tracer.startHrTime));
-          tracer.trace.endTime = nowTimestamp();
+          ctx.stopped = true;
+          ctx.trace.durationNs = hrTimeToDurationInNanos(process.hrtime(ctx.startHrTime));
+          ctx.trace.endTime = nowTimestamp();
 
-          const encodedUint8Array = Trace.encode(tracer.trace).finish();
+          const encodedUint8Array = Trace.encode(ctx.trace).finish();
           const encodedBuffer = Buffer.from(
             encodedUint8Array,
             encodedUint8Array.byteOffset,
@@ -211,14 +217,14 @@ function responsePathToString(path?: ResponsePath): string {
   return res;
 }
 
-function ensureParentTraceNode(ctx: ApolloInlineTracer, path: ResponsePath): Trace.Node {
+function ensureParentTraceNode(ctx: ApolloInlineTracePluginContext, path: ResponsePath): Trace.Node {
   const parentNode = ctx.nodes.get(responsePathToString(path.prev));
   if (parentNode) return parentNode;
   // path.prev isn't undefined because we set up the root path in ctx.nodes
   return newTraceNode(ctx, path.prev!);
 }
 
-function newTraceNode(ctx: ApolloInlineTracer, path: ResponsePath) {
+function newTraceNode(ctx: ApolloInlineTracePluginContext, path: ResponsePath) {
   const node = new Trace.Node();
   const id = path.key;
   if (typeof id === 'number') {
@@ -233,7 +239,7 @@ function newTraceNode(ctx: ApolloInlineTracer, path: ResponsePath) {
 }
 
 function handleErrors(
-  ctx: ApolloInlineTracer,
+  ctx: ApolloInlineTracePluginContext,
   errors: readonly GraphQLError[],
   rewriteError: ApolloInlineTracePluginOptions['rewriteError']
 ) {
