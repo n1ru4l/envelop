@@ -30,28 +30,21 @@ export function isOperationDefinition(def: ASTNode): def is OperationDefinitionN
 }
 
 export function isIntrospectionOperation(operation: OperationDefinitionNode): boolean {
-  if (operation.kind === 'OperationDefinition') {
-    let hasIntrospectionField = false;
-
-    visit(operation, {
-      Field: node => {
-        if (node.name.value === '__schema') {
-          hasIntrospectionField = true;
-          return BREAK;
-        }
-      },
-    });
-
-    return hasIntrospectionField;
-  }
-
-  return false;
+  return isIntrospectionDocument({
+    definitions: [operation],
+  });
 }
-
 export function isIntrospectionDocument(document: DocumentNode): boolean {
-  const operations = document.definitions.filter(isOperationDefinition);
-
-  return operations.some(op => isIntrospectionOperation(op));
+  let isIntrospectionOperation = false;
+  visit(document, {
+    Field: node => {
+      if (node.name.value === '__schema') {
+        isIntrospectionOperation = true;
+        return BREAK;
+      }
+    },
+  });
+  return isIntrospectionOperation;
 }
 
 export function isIntrospectionOperationString(operation: string | Source): boolean {

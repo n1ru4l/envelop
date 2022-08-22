@@ -29,6 +29,18 @@ describe('Utils', () => {
 
       expect(isIntrospectionDocument(parse(doc))).toBeTruthy();
     });
+
+    it('Should detect inline fragment tricks', () => {
+      const doc = `query { ... on Query { __schema { test } } }`;
+
+      expect(isIntrospectionDocument(parse(doc))).toBeTruthy();
+    });
+
+    it('should detect fragment spread tricks', () => {
+      const doc = `fragment Fragment on Query { __schema } query { ...Fragment }`;
+
+      expect(isIntrospectionDocument(parse(doc))).toBeTruthy();
+    });
   });
 
   describe('enableIf', () => {
