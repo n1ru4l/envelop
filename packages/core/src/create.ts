@@ -1,5 +1,13 @@
-import { GetEnvelopedFn, ComposeContext, Plugin, ArbitraryObject } from '@envelop/types';
-import type { execute, parse, subscribe, validate } from 'graphql';
+import {
+  GetEnvelopedFn,
+  ComposeContext,
+  Plugin,
+  ArbitraryObject,
+  ExecuteFunction,
+  SubscribeFunction,
+  ParseFunction,
+  ValidateFunction,
+} from '@envelop/types';
 import { isPluginEnabled, PluginOrDisabledPlugin } from './enable-if.js';
 import { createEnvelopOrchestrator, EnvelopOrchestrator } from './orchestrator.js';
 import { traceOrchestrator } from './traced-orchestrator.js';
@@ -7,10 +15,10 @@ import { traceOrchestrator } from './traced-orchestrator.js';
 export function envelop<PluginsType extends Plugin<any>[]>(options: {
   plugins: Array<PluginOrDisabledPlugin>;
   enableInternalTracing?: boolean;
-  parse: typeof parse;
-  execute: typeof execute;
-  validate: typeof validate;
-  subscribe: typeof subscribe;
+  parse: ParseFunction;
+  execute: ExecuteFunction;
+  validate: ValidateFunction;
+  subscribe: SubscribeFunction;
 }): GetEnvelopedFn<ComposeContext<PluginsType>> {
   const plugins = options.plugins.filter(isPluginEnabled);
   let orchestrator = createEnvelopOrchestrator<ComposeContext<PluginsType>>({
