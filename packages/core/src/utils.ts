@@ -31,6 +31,7 @@ export function isOperationDefinition(def: ASTNode): def is OperationDefinitionN
 
 export function isIntrospectionOperation(operation: OperationDefinitionNode): boolean {
   return isIntrospectionDocument({
+    kind: Kind.DOCUMENT,
     definitions: [operation],
   });
 }
@@ -38,7 +39,7 @@ export function isIntrospectionDocument(document: DocumentNode): boolean {
   let isIntrospectionOperation = false;
   visit(document, {
     Field: node => {
-      if (node.name.value === '__schema') {
+      if (node.name.value === '__schema' || node.name.value === '__type') {
         isIntrospectionOperation = true;
         return BREAK;
       }

@@ -6,40 +6,42 @@ import { query, schema } from './common.js';
 
 describe('Utils', () => {
   describe('isIntrospectionDocument', () => {
-    it('Should detect original introspection query', () => {
-      const doc = getIntrospectionQuery();
-
-      expect(isIntrospectionDocument(parse(doc))).toBeTruthy();
-    });
-
     it('Should return false on non-introspection', () => {
       const doc = `query test { f }`;
 
       expect(isIntrospectionDocument(parse(doc))).toBeFalsy();
     });
+    const introspectionFields = ['__schema', '__type'];
+    introspectionFields.forEach(introspectionFieldName => {
+      it(`Should detect ${introspectionFieldName} original introspection query`, () => {
+        const doc = getIntrospectionQuery();
 
-    it('Should detect minimal introspection', () => {
-      const doc = `query { __schema { test }}`;
+        expect(isIntrospectionDocument(parse(doc))).toBeTruthy();
+      });
 
-      expect(isIntrospectionDocument(parse(doc))).toBeTruthy();
-    });
+      it('Should detect minimal introspection', () => {
+        const doc = `query { ${introspectionFieldName} { test }}`;
 
-    it('Should detect alias tricks', () => {
-      const doc = `query { test: __schema { test }}`;
+        expect(isIntrospectionDocument(parse(doc))).toBeTruthy();
+      });
 
-      expect(isIntrospectionDocument(parse(doc))).toBeTruthy();
-    });
+      it('Should detect alias tricks', () => {
+        const doc = `query { test: ${introspectionFieldName} { test }}`;
 
-    it('Should detect inline fragment tricks', () => {
-      const doc = `query { ... on Query { __schema { test } } }`;
+        expect(isIntrospectionDocument(parse(doc))).toBeTruthy();
+      });
 
-      expect(isIntrospectionDocument(parse(doc))).toBeTruthy();
-    });
+      it('Should detect inline fragment tricks', () => {
+        const doc = `query { ... on Query { ${introspectionFieldName} { test } } }`;
 
-    it('should detect fragment spread tricks', () => {
-      const doc = `fragment Fragment on Query { __schema } query { ...Fragment }`;
+        expect(isIntrospectionDocument(parse(doc))).toBeTruthy();
+      });
 
-      expect(isIntrospectionDocument(parse(doc))).toBeTruthy();
+      it('should detect fragment spread tricks', () => {
+        const doc = `fragment Fragment on Query { ${introspectionFieldName} } query { ...Fragment }`;
+
+        expect(isIntrospectionDocument(parse(doc))).toBeTruthy();
+      });
     });
   });
 
