@@ -1,13 +1,12 @@
 import type {
   DocumentNode,
-  ExecutionArgs,
-  ExecutionResult,
-  GraphQLError,
   GraphQLResolveInfo,
   GraphQLSchema,
   ParseOptions,
   Source,
   SubscriptionArgs,
+  ExecutionArgs,
+  GraphQLError,
   ValidationRule,
 } from 'graphql';
 import { Maybe, PromiseOrValue, AsyncIterableIteratorOrValue } from './utils.js';
@@ -18,6 +17,7 @@ import {
   ValidateFunction,
   ValidateFunctionParameter,
   SubscribeFunction,
+  ExecutionResult,
 } from './graphql.js';
 import { Plugin } from './plugin.js';
 

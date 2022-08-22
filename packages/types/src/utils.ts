@@ -29,3 +29,20 @@ export type ArbitraryObject = Record<string | number | symbol, any>;
 export type PromiseOrValue<T> = T | Promise<T>;
 export type AsyncIterableIteratorOrValue<T> = T | AsyncIterableIterator<T>;
 export type Maybe<T> = T | null | undefined;
+
+export interface ObjMap<T> {
+  [key: string]: T;
+}
+export type ObjMapLike<T> =
+  | ObjMap<T>
+  | {
+      [key: string]: T;
+    };
+export interface ReadOnlyObjMap<T> {
+  readonly [key: string]: T;
+}
+export type ReadOnlyObjMapLike<T> =
+  | ReadOnlyObjMap<T>
+  | {
+      readonly [key: string]: T;
+    };

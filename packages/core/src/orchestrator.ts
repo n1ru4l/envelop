@@ -28,19 +28,10 @@ import {
   SubscribeErrorHook,
   DefaultContext,
   Maybe,
-} from '@envelop/types';
-import {
-  DocumentNode,
-  execute,
+  ParseFunction,
+  ValidateFunction,
   ExecutionResult,
-  GraphQLError,
-  GraphQLSchema,
-  parse,
-  specifiedRules,
-  subscribe,
-  validate,
-  ValidationRule,
-} from 'graphql';
+} from '@envelop/types';
 import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema.js';
 import {
   errorAsyncIterator,
@@ -61,15 +52,15 @@ export type EnvelopOrchestrator<
   execute: ReturnType<GetEnvelopedFn<PluginsContext>>['execute'];
   subscribe: ReturnType<GetEnvelopedFn<PluginsContext>>['subscribe'];
   contextFactory: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['contextFactory'], PluginsContext>;
-  getCurrentSchema: () => Maybe<GraphQLSchema>;
+  getCurrentSchema: () => Maybe<any>;
 };
 
 type EnvelopOrchestratorOptions = {
   plugins: Plugin[];
-  parse: typeof parse;
-  execute: typeof execute;
-  subscribe: typeof subscribe;
-  validate: typeof validate;
+  parse: ParseFunction;
+  execute: ExecuteFunction;
+  subscribe: SubscribeFunction;
+  validate: ValidateFunction;
 };
 
 export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>({
@@ -79,7 +70,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
   subscribe,
   validate,
 }: EnvelopOrchestratorOptions): EnvelopOrchestrator<any, PluginsContext> {
-  let schema: GraphQLSchema | undefined | null = null;
+  let schema: any | undefined | null = null;
   let initDone = false;
   const onResolversHandlers: OnResolverCalledHook[] = [];
   for (const plugin of plugins) {
@@ -91,7 +82,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
   // Define the initial method for replacing the GraphQL schema, this is needed in order
   // to allow setting the schema from the onPluginInit callback. We also need to make sure
   // here not to call the same plugin that initiated the schema switch.
-  const replaceSchema = (newSchema: GraphQLSchema, ignorePluginIndex = -1) => {
+  const replaceSchema = (newSchema: any, ignorePluginIndex = -1) => {
     if (onResolversHandlers.length) {
       prepareTracedSchema(newSchema);
     }
@@ -164,7 +155,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
 
   const customParse: EnvelopContextFnWrapper<typeof parse, any> = beforeCallbacks.parse.length
     ? initialContext => (source, parseOptions) => {
-        let result: DocumentNode | Error | null = null;
+        let result: any | Error | null = null;
         let parseFn: typeof parse = parse;
         const context = initialContext;
         const afterCalls: AfterParseHook<any>[] = [];
@@ -223,9 +214,9 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
 
   const customValidate: EnvelopContextFnWrapper<typeof validate, any> = beforeCallbacks.validate.length
     ? initialContext => (schema, documentAST, rules, typeInfo, validationOptions) => {
-        let actualRules: undefined | ValidationRule[] = rules ? [...rules] : undefined;
+        let actualRules: undefined | any[] = rules ? [...rules] : undefined;
         let validateFn = validate;
-        let result: null | readonly GraphQLError[] = null;
+        let result: null | readonly any[] = null;
         const context = initialContext;
 
         const afterCalls: AfterValidateHook<any>[] = [];
@@ -246,7 +237,10 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
             validateFn,
             addValidationRule: rule => {
               if (!actualRules) {
-                actualRules = [...specifiedRules];
+                // Ideally we should provide default validation rules here.
+                // eslint-disable-next-line no-console
+                console.warn('No default validation rules provided.');
+                actualRules = [];
               }
 
               actualRules.push(rule);
@@ -264,6 +258,10 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
 
         if (!result) {
           result = validateFn(schema, documentAST, actualRules, typeInfo, validationOptions);
+        }
+
+        if (!result) {
+          return;
         }
 
         const valid = result.length === 0;
@@ -395,6 +393,9 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
             // Casted for GraphQL.js 15 compatibility
             // Can be removed once we drop support for GraphQL.js 15
           });
+        }
+        if (!result) {
+          return;
         }
 
         const onNextHandler: OnSubscribeResultResultOnNextHook<PluginsContext>[] = [];

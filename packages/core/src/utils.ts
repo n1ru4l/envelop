@@ -1,16 +1,4 @@
 import {
-  ASTNode,
-  DocumentNode,
-  Kind,
-  OperationDefinitionNode,
-  visit,
-  BREAK,
-  Source,
-  ExecutionResult,
-  SubscriptionArgs,
-  ExecutionArgs,
-} from 'graphql';
-import {
   AsyncIterableIteratorOrValue,
   ExecuteFunction,
   PolymorphicExecuteArguments,
@@ -21,44 +9,47 @@ import {
   OnExecuteDoneEventPayload,
   OnExecuteDoneHookResult,
   OnExecuteDoneHookResultOnNextHook,
+  ExecutionArgs,
 } from '@envelop/types';
 
 export const envelopIsIntrospectionSymbol = Symbol('ENVELOP_IS_INTROSPECTION');
 
-export function isOperationDefinition(def: ASTNode): def is OperationDefinitionNode {
-  return def.kind === Kind.OPERATION_DEFINITION;
+export function isOperationDefinition(def: any): boolean {
+  return def.kind === 'OperationDefinition';
 }
 
-export function isIntrospectionOperation(operation: OperationDefinitionNode): boolean {
+export function isIntrospectionOperation(operation: any): boolean {
   if (operation.kind === 'OperationDefinition') {
-    let hasIntrospectionField = false;
+    if (operation.name?.value === '__schema') {
+      return true;
+    }
 
-    visit(operation, {
-      Field: node => {
-        if (node.name.value === '__schema') {
-          hasIntrospectionField = true;
-          return BREAK;
-        }
-      },
+    const nodesWithSchema = operation.selectionSet.selections.filter((selection: any) => {
+      if (selection.kind === 'Field' && selection.name.value === '__schema') {
+        return true;
+      }
+      return false;
     });
 
-    return hasIntrospectionField;
+    if (nodesWithSchema.length > 0) {
+      return true;
+    }
   }
 
   return false;
 }
 
-export function isIntrospectionDocument(document: DocumentNode): boolean {
+export function isIntrospectionDocument(document: any): boolean {
   const operations = document.definitions.filter(isOperationDefinition);
 
-  return operations.some(op => isIntrospectionOperation(op));
+  return operations.some((op: any) => isIntrospectionOperation(op));
 }
 
-export function isIntrospectionOperationString(operation: string | Source): boolean {
+export function isIntrospectionOperationString(operation: string | any): boolean {
   return (typeof operation === 'string' ? operation : operation.body).indexOf('__schema') !== -1;
 }
 
-function getSubscribeArgs(args: PolymorphicSubscribeArguments): SubscriptionArgs {
+function getSubscribeArgs(args: PolymorphicSubscribeArguments): ExecutionArgs {
   return args.length === 1
     ? args[0]
     : {
@@ -76,10 +67,8 @@ function getSubscribeArgs(args: PolymorphicSubscribeArguments): SubscriptionArgs
 /**
  * Utility function for making a subscribe function that handles polymorphic arguments.
  */
-export const makeSubscribe = (
-  subscribeFn: (args: SubscriptionArgs) => PromiseOrValue<AsyncIterableIterator<ExecutionResult>>
-): SubscribeFunction =>
-  ((...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<ExecutionResult>> =>
+export const makeSubscribe = (subscribeFn: (args: ExecutionArgs) => any): SubscribeFunction =>
+  ((...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<any>> =>
     subscribeFn(getSubscribeArgs(polyArgs))) as SubscribeFunction;
 
 export function mapAsyncIterator<T, O>(
@@ -148,9 +137,9 @@ function getExecuteArgs(args: PolymorphicExecuteArguments): ExecutionArgs {
  * Utility function for making a execute function that handles polymorphic arguments.
  */
 export const makeExecute = (
-  executeFn: (args: ExecutionArgs) => PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>>
+  executeFn: (args: ExecutionArgs) => PromiseOrValue<AsyncIterableIteratorOrValue<any>>
 ): ExecuteFunction =>
-  ((...polyArgs: PolymorphicExecuteArguments): PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>> =>
+  ((...polyArgs: PolymorphicExecuteArguments): PromiseOrValue<AsyncIterableIteratorOrValue<any>> =>
     executeFn(getExecuteArgs(polyArgs))) as unknown as ExecuteFunction;
 
 /**

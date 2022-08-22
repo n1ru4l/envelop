@@ -289,7 +289,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
 
                   // Map index values in list to $index for better grouping of events.
                   const errorPathWithIndex = (err.path ?? [])
-                    .map(v => (typeof v === 'number' ? '$index' : v))
+                    .map((v: any) => (typeof v === 'number' ? '$index' : v))
                     .join(' > ');
 
                   const eventId = Sentry.captureException(err, {
