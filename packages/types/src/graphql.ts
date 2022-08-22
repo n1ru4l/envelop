@@ -1,4 +1,3 @@
-import type { GraphQLResolveInfo } from 'graphql';
 import { ObjMap } from './utils.js';
 export interface ExecutionArgs {
   schema: any;
@@ -62,7 +61,11 @@ export type PolymorphicExecuteArguments =
 /** @private */
 export type PolymorphicSubscribeArguments = PolymorphicExecuteArguments;
 
-export type Path = GraphQLResolveInfo['path'];
+export type Path = {
+  readonly prev: Path | undefined;
+  readonly key: string | number;
+  readonly typename: string | undefined;
+};
 
 export interface ExecutionResult<TData = ObjMap<unknown>, TExtensions = ObjMap<unknown>> {
   errors?: ReadonlyArray<any>;

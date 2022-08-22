@@ -1,14 +1,3 @@
-import type {
-  DocumentNode,
-  GraphQLResolveInfo,
-  GraphQLSchema,
-  ParseOptions,
-  Source,
-  SubscriptionArgs,
-  ExecutionArgs,
-  GraphQLError,
-  ValidationRule,
-} from 'graphql';
 import { Maybe, PromiseOrValue, AsyncIterableIteratorOrValue } from './utils.js';
 import { DefaultContext } from './context-types.js';
 import {
@@ -18,17 +7,18 @@ import {
   ValidateFunctionParameter,
   SubscribeFunction,
   ExecutionResult,
+  ExecutionArgs,
 } from './graphql.js';
 import { Plugin } from './plugin.js';
 
 export type DefaultArgs = Record<string, unknown>;
 
-export type SetSchemaFn = (newSchema: GraphQLSchema) => void;
+export type SetSchemaFn = (newSchema: any) => void;
 
 /**
  * The payload forwarded to the onSchemaChange hook.
  */
-export type OnSchemaChangeEventPayload = { schema: GraphQLSchema; replaceSchema: SetSchemaFn };
+export type OnSchemaChangeEventPayload = { schema: any; replaceSchema: SetSchemaFn };
 
 /**
  * Invoked each time the schema is changed via a setSchema call.
@@ -107,7 +97,7 @@ export type OnParseEventPayload<ContextType> = {
   /**
    * The parameters that are passed to the parse call.
    */
-  params: { source: string | Source; options?: ParseOptions };
+  params: { source: string | any; options?: any };
   /**
    * The current parse function
    */
@@ -120,7 +110,7 @@ export type OnParseEventPayload<ContextType> = {
    * Set/overwrite the parsed document.
    * If a parsed document is set the call to the parseFn will be skipped.
    */
-  setParsedDocument: (doc: DocumentNode) => void;
+  setParsedDocument: (doc: any) => void;
 };
 
 export type AfterParseEventPayload<ContextType> = {
@@ -135,11 +125,11 @@ export type AfterParseEventPayload<ContextType> = {
   /**
    * The result of the parse phase.
    */
-  result: DocumentNode | Error | null;
+  result: any | Error | null;
   /**
    * Replace the parse result with a new result.
    */
-  replaceParseResult: (newResult: DocumentNode | Error) => void;
+  replaceParseResult: (newResult: any | Error) => void;
 };
 
 /**
@@ -171,7 +161,7 @@ export type OnValidateEventPayload<ContextType> = {
   /**
    * Register a validation rule that will be used for the validate invocation.
    */
-  addValidationRule: (rule: ValidationRule) => void;
+  addValidationRule: (rule: any) => void;
   /**
    * The current validate function that will be invoked.
    */
@@ -183,7 +173,7 @@ export type OnValidateEventPayload<ContextType> = {
   /**
    * Set a validation error result and skip the validate invocation.
    */
-  setResult: (errors: readonly GraphQLError[]) => void;
+  setResult: (errors: readonly any[]) => void;
 };
 
 /**
@@ -206,11 +196,11 @@ export type AfterValidateEventPayload<ContextType> = {
    * An array of errors that were raised during the validation phase.
    * The array is empty if no errors were raised.
    */
-  result: readonly GraphQLError[];
+  result: readonly Error[] | any[];
   /**
    * Replace the current error result with a new one.
    */
-  setResult: (errors: GraphQLError[]) => void;
+  setResult: (errors: Error[] | any[]) => void;
 };
 
 /**
@@ -276,7 +266,7 @@ export type ResolverFn<ParentType = unknown, ArgsType = DefaultArgs, ContextType
   root: ParentType,
   args: ArgsType,
   context: ContextType,
-  info: GraphQLResolveInfo
+  info: any
 ) => PromiseOrValue<ResultType>;
 
 export type OnBeforeResolverCalledEventPayload<
@@ -288,7 +278,7 @@ export type OnBeforeResolverCalledEventPayload<
   root: ParentType;
   args: ArgsType;
   context: ContextType;
-  info: GraphQLResolveInfo;
+  info: any;
   resolverFn: ResolverFn<ParentType, ArgsType, ContextType, ResultType>;
   replaceResolverFn: (newResolver: ResolverFn<ParentType, ArgsType, ContextType, ResultType>) => void;
 };
@@ -428,7 +418,7 @@ export type OnExecuteHook<ContextType> = (
 /**
  * Subscription arguments with inferred context value type.
  */
-export type TypedSubscriptionArgs<ContextType> = Omit<SubscriptionArgs, 'contextValue'> & { contextValue: ContextType };
+export type TypedSubscriptionArgs<ContextType> = Omit<ExecutionArgs, 'contextValue'> & { contextValue: ContextType };
 
 /**
  * Payload with which the onSubscribe hook is invoked.

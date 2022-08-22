@@ -87,6 +87,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
       const spanContext = instrumentationApi.agent.tracer.getSpanContext();
       const delimiter = transactionNameState.delimiter;
       const rootOperation = args.document.definitions.find(
+        // @ts-expect-error TODO: not sure how we will make it dev friendly
         definitionNode => definitionNode.kind === Kind.OPERATION_DEFINITION
       ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
