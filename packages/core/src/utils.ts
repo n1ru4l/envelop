@@ -3,8 +3,6 @@ import {
   DocumentNode,
   Kind,
   OperationDefinitionNode,
-  visit,
-  BREAK,
   Source,
   ExecutionResult,
   SubscriptionArgs,
@@ -31,18 +29,20 @@ export function isOperationDefinition(def: ASTNode): def is OperationDefinitionN
 
 export function isIntrospectionOperation(operation: OperationDefinitionNode): boolean {
   if (operation.kind === 'OperationDefinition') {
-    let hasIntrospectionField = false;
+    if (operation.name?.value === '__schema') {
+      return true;
+    }
 
-    visit(operation, {
-      Field: node => {
-        if (node.name.value === '__schema') {
-          hasIntrospectionField = true;
-          return BREAK;
-        }
-      },
+    const nodesWithSchema = operation.selectionSet.selections.filter(selection => {
+      if (selection.kind === 'Field' && selection.name.value === '__schema') {
+        return true;
+      }
+      return false;
     });
 
-    return hasIntrospectionField;
+    if (nodesWithSchema.length > 0) {
+      return true;
+    }
   }
 
   return false;
