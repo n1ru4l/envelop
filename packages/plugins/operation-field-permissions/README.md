@@ -14,7 +14,7 @@ yarn add @envelop/operation-field-permissions
 
 ```ts
 import { envelop, useSchema } from '@envelop/core'
-import { useOperationFieldPermissions } from 'envelop/operation-field-permissions'
+import { useOperationFieldPermissions } from '@envelop/operation-field-permissions'
 
 const getEnveloped = envelop({
   plugins: [
