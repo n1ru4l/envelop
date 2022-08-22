@@ -64,31 +64,22 @@ export type EnvelopOrchestrator<
   getCurrentSchema: () => Maybe<GraphQLSchema>;
 };
 
-export const GraphQLEngine = ({
-  parseFn,
-  executeFn,
-  validateFn,
-  subscribeFn,
-}: {
-  parseFn?: typeof parse;
-  executeFn?: typeof execute;
-  validateFn?: typeof validate;
-  subscribeFn?: typeof subscribe;
-}) => {
-  return {
-    parse: parseFn ?? parse,
-    execute: executeFn ?? execute,
-    validate: validateFn ?? validate,
-    subscribe: subscribeFn ?? subscribe,
-  };
+type EnvelopOrchestratorOptions = {
+  plugins: Plugin[];
+  parse: typeof parse;
+  execute: typeof execute;
+  subscribe: typeof subscribe;
+  validate: typeof validate;
 };
 
-export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>(
-  plugins: Plugin[],
-  engine: typeof GraphQLEngine = GraphQLEngine
-): EnvelopOrchestrator<any, PluginsContext> {
+export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>({
+  plugins,
+  parse,
+  execute,
+  subscribe,
+  validate,
+}: EnvelopOrchestratorOptions): EnvelopOrchestrator<any, PluginsContext> {
   let schema: GraphQLSchema | undefined | null = null;
-  const { parse, execute, validate, subscribe } = engine({});
   let initDone = false;
   const onResolversHandlers: OnResolverCalledHook[] = [];
   for (const plugin of plugins) {

@@ -3,6 +3,7 @@ import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { buildSchema, GraphQLError, parse } from 'graphql';
 import { useExtendedValidation } from '../src/index.js';
+import { parse as gqlParse, execute as gqlExecute, validate as gqlValidate, subscribe as gqlSubscribe } from 'graphql';
 
 describe('useExtendedValidation', () => {
   it('supports usage of multiple useExtendedValidation in different plugins', async () => {
@@ -114,6 +115,10 @@ describe('useExtendedValidation', () => {
           rules: [() => ({})],
         }),
       ],
+      parse: gqlParse,
+      execute: gqlExecute,
+      validate: gqlValidate,
+      subscribe: gqlSubscribe,
     })();
     await expect(
       execute({

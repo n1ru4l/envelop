@@ -1,4 +1,15 @@
-import { DocumentNode, ExecutionResult, getOperationAST, GraphQLError, GraphQLSchema, print } from 'graphql';
+import {
+  DocumentNode,
+  ExecutionResult,
+  getOperationAST,
+  GraphQLError,
+  GraphQLSchema,
+  print,
+  execute,
+  parse,
+  subscribe,
+  validate,
+} from 'graphql';
 import { useSchema, envelop, PluginOrDisabledPlugin, isAsyncIterable } from '@envelop/core';
 import { GetEnvelopedFn, Plugin } from '@envelop/types';
 import { mapSchema as cloneSchema, isDocumentNode } from '@graphql-tools/utils';
@@ -101,6 +112,10 @@ export function createTestkit(
   let getEnveloped = Array.isArray(pluginsOrEnvelop)
     ? envelop({
         plugins: [...(schema ? [useSchema(cloneSchema(schema))] : []), ...pluginsOrEnvelop],
+        parse,
+        execute,
+        validate,
+        subscribe,
       })
     : pluginsOrEnvelop;
 
@@ -108,6 +123,10 @@ export function createTestkit(
     modifyPlugins(modifyPluginsFn: ModifyPluginsFn) {
       getEnveloped = envelop({
         plugins: [...(schema ? [useSchema(cloneSchema(schema))] : []), ...modifyPluginsFn(getEnveloped._plugins)],
+        parse,
+        execute,
+        validate,
+        subscribe,
       });
     },
     mockPhase(phaseReplacement: PhaseReplacementParams) {
