@@ -45,9 +45,9 @@
         "import/no-extraneous-dependencies": "off"
       }
     },
-    // Disallow `graphql-js` specific things in `core`
+    // Disallow `graphql-js` specific things in `core` or `types`
     {
-      "files": ["packages/core/**"],
+      "files": ["packages/core/**", "packages/types/**"],
       "env": {
         "jest": true
       },
