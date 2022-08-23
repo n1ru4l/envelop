@@ -1,7 +1,7 @@
 import { createTestkit } from '@envelop/testing';
-import { useImmediateIntrospection } from '../../src/plugins/use-immediate-introspection.js';
-import { useExtendContext } from '../../src/plugins/use-extend-context.js';
-import { schema } from '../common.js';
+import { useImmediateIntrospection } from '../src/index.js';
+import { useExtendContext } from '@envelop/core';
+import { schema } from '../../../core/test/common.js';
 import { getIntrospectionQuery } from 'graphql';
 
 describe('useImmediateIntrospection', () => {
