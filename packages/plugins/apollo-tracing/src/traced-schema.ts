@@ -1,8 +1,8 @@
 import { defaultFieldResolver, GraphQLSchema, isIntrospectionType, isObjectType } from 'graphql';
 import { AfterResolverHook, OnResolverCalledHook, ResolverFn } from '@envelop/types';
+import { resolversHooksSymbol } from '@envelop/core';
 
-export const trackedSchemaSymbol = Symbol('TRACKED_SCHEMA');
-export const resolversHooksSymbol = Symbol('RESOLVERS_HOOKS');
+const trackedSchemaSymbol = Symbol('TRACKED_SCHEMA');
 
 export function prepareTracedSchema(schema: GraphQLSchema | null | undefined): void {
   if (!schema || schema[trackedSchemaSymbol]) {

@@ -11,3 +11,4 @@ export * from './plugins/use-payload-formatter.js';
 export * from './plugins/use-masked-errors.js';
 export * from './plugins/use-immediate-introspection.js';
 export * from './enable-if.js';
+export { resolversHooksSymbol } from './orchestrator.js';

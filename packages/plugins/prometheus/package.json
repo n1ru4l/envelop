@@ -54,6 +54,7 @@
   },
   "peerDependencies": {
     "@envelop/core": "^2.5.0",
+    "@envelop/types": "^2.3.1",
     "prom-client": "^13 || ^14.0.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },

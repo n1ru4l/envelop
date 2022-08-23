@@ -1,6 +1,7 @@
 import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/core';
 import { TracingFormat } from 'apollo-tracing';
 import { GraphQLType, ResponsePath, responsePathAsArray } from 'graphql';
+import { prepareTracedSchema } from './traced-schema.js';
 
 const HR_TO_NS = 1e9;
 const NS_TO_MS = 1e6;
@@ -41,6 +42,9 @@ type TracingContextObject = {
 
 export const useApolloTracing = (): Plugin => {
   return {
+    onSchemaChange: ({ schema }) => {
+      prepareTracedSchema(schema);
+    },
     onResolverCalled: ({ info, context }) => {
       const ctx = context[apolloTracingSymbol] as TracingContextObject;
       // Taken from https://github.com/apollographql/apollo-server/blob/main/packages/apollo-tracing/src/index.ts

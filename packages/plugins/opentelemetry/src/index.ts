@@ -3,6 +3,7 @@ import { SpanAttributes, SpanKind } from '@opentelemetry/api';
 import * as opentelemetry from '@opentelemetry/api';
 import { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/tracing';
 import { print } from 'graphql';
+import { prepareTracedSchema } from './traced-schema.js';
 
 export enum AttributeName {
   EXECUTION_ERROR = 'graphql.execute.error',
@@ -45,6 +46,9 @@ export const useOpenTelemetry = (
   const tracer = tracingProvider.getTracer(serviceName);
 
   return {
+    onSchemaChange: async ({ schema }) => {
+      prepareTracedSchema(schema);
+    },
     onResolverCalled: options.resolvers
       ? ({ info, context, args }) => {
           if (context && typeof context === 'object' && context[tracingSpanSymbol]) {

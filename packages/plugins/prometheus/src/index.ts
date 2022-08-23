@@ -22,6 +22,7 @@ import {
   createSummary,
 } from './utils.js';
 import { PrometheusTracingPluginConfig } from './config.js';
+import { prepareTracedSchema } from './traced-schema.js';
 
 export { PrometheusTracingPluginConfig, createCounter, createHistogram, createSummary, FillLabelsFnParams };
 
@@ -350,6 +351,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
       });
     },
     onSchemaChange({ schema }) {
+      prepareTracedSchema(schema);
       typeInfo = new TypeInfo(schema);
     },
     onParse,
