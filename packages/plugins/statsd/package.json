@@ -53,7 +53,9 @@
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "tslib": "^2.4.0"
+  },
   "devDependencies": {
     "graphql": "16.3.0",
     "hot-shots": "9.0.0",

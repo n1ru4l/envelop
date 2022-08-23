@@ -47,7 +47,8 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "apollo-tracing": "^0.15.0"
+    "apollo-tracing": "^0.15.0",
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@graphql-tools/schema": "8.5.0",

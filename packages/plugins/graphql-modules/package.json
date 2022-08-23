@@ -46,7 +46,9 @@
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "tslib": "^2.4.0"
+  },
   "devDependencies": {
     "reflect-metadata": "0.1.13",
     "graphql-modules": "2.0.0",

@@ -46,7 +46,9 @@
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "tslib": "^2.4.0"
+  },
   "devDependencies": {
     "@sentry/node": "7.0.0",
     "@sentry/tracing": "7.0.0",

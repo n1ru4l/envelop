@@ -56,7 +56,8 @@
   "dependencies": {
     "@graphql-tools/utils": "^8.8.0",
     "lru-cache": "^6.0.0",
-    "fast-json-stable-stringify": "^2.1.0"
+    "fast-json-stable-stringify": "^2.1.0",
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
     "@envelop/core": "^2.5.0",

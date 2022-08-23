@@ -46,7 +46,9 @@
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "tslib": "^2.4.0"
+  },
   "devDependencies": {
     "@n1ru4l/push-pull-async-iterable-iterator": "3.2.0",
     "graphql": "16.3.0",
