@@ -29,6 +29,7 @@
       { "devDependencies": ["**/*.test.ts", "**/*.spec.ts", "**/test/**/*.ts"] }
     ]
   },
+
   "env": {
     "es6": true,
     "node": true
@@ -42,6 +43,26 @@
       "rules": {
         "@typescript-eslint/no-unused-vars": "off",
         "import/no-extraneous-dependencies": "off"
+      }
+    },
+    // Disallow `graphql-js` specific things in `core`
+    {
+      "files": ["packages/core/**"],
+      "env": {
+        "jest": true
+      },
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "graphql",
+                "message": "You chose violence. Try to make it work without using GraphQL.js"
+              }
+            ]
+          }
+        ]
       }
     }
   ],
