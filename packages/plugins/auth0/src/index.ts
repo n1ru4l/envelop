@@ -3,7 +3,6 @@
 import { Plugin } from '@envelop/core';
 import * as JwksRsa from 'jwks-rsa';
 import jwtPkg, { VerifyOptions, DecodeOptions } from 'jsonwebtoken';
-import { GraphQLError } from 'graphql';
 
 const { decode, verify } = jwtPkg;
 
@@ -23,7 +22,7 @@ export type Auth0PluginOptions = {
   headerName?: string;
 };
 
-export class UnauthenticatedError extends GraphQLError {}
+export class UnauthenticatedError extends Error {}
 
 export type UserPayload = {
   sub: string;

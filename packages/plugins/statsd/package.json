@@ -61,7 +61,6 @@
   },
   "peerDependencies": {
     "@envelop/core": "^2.5.0",
-    "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0",
     "hot-shots": "^8.0.0 || ^9.0.0"
   },
   "buildOptions": {
