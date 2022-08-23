@@ -1,7 +1,6 @@
-import { GraphQLSchema } from 'graphql';
 import { DefaultContext, Maybe, Plugin } from '@envelop/types';
 
-export const useSchema = (schema: GraphQLSchema): Plugin => {
+export const useSchema = (schema: any): Plugin => {
   return {
     onPluginInit({ setSchema }) {
       setSchema(schema);
@@ -9,7 +8,7 @@ export const useSchema = (schema: GraphQLSchema): Plugin => {
   };
 };
 
-export const useLazyLoadedSchema = (schemaLoader: (context: Maybe<DefaultContext>) => GraphQLSchema): Plugin => {
+export const useLazyLoadedSchema = (schemaLoader: (context: Maybe<DefaultContext>) => any): Plugin => {
   return {
     onEnveloped({ setSchema, context }) {
       setSchema(schemaLoader(context));
@@ -17,7 +16,7 @@ export const useLazyLoadedSchema = (schemaLoader: (context: Maybe<DefaultContext
   };
 };
 
-export const useAsyncSchema = (schemaPromise: Promise<GraphQLSchema>): Plugin => {
+export const useAsyncSchema = (schemaPromise: Promise<any>): Plugin => {
   return {
     onPluginInit({ setSchema }) {
       schemaPromise.then(schemaObj => {
