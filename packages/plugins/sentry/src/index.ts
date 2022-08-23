@@ -1,7 +1,6 @@
 import {
   Plugin,
   OnResolverCalledHook,
-  EnvelopError,
   handleStreamOrSingleExecutionResult,
   OnExecuteDoneHookResultOnNextHook,
 } from '@envelop/core';
@@ -80,13 +79,13 @@ export type SentryPluginOptions = {
   skip?: (args: ExecutionArgs) => boolean;
   /**
    * Indicates whether or not to skip Sentry exception reporting for a given error.
-   * By default, this plugin skips all `EnvelopError` errors and does not report it to Sentry.
+   * By default, this plugin skips all `Error` errors and does not report it to Sentry.
    */
   skipError?: (args: Error) => boolean;
 };
 
 export function defaultSkipError(error: Error): boolean {
-  return error instanceof EnvelopError;
+  return error instanceof Error;
 }
 
 const sentryTracingSymbol = Symbol('sentryTracing');

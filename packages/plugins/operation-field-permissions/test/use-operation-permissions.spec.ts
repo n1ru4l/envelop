@@ -2,7 +2,6 @@ import { useOperationFieldPermissions } from '../src/index.js';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { getIntrospectionQuery } from 'graphql';
-import { useMaskedErrors } from '@envelop/core';
 
 const schema = makeExecutableSchema({
   typeDefs: [
@@ -224,25 +223,5 @@ describe('useOperationPermissions', () => {
     expect(result.errors).toBeDefined();
     const [error] = result.errors!;
     expect(error.nodes).toBeDefined();
-  });
-
-  it('is not masked by the masked errors plugin', async () => {
-    const kit = createTestkit(
-      [
-        useOperationFieldPermissions({
-          getPermissions: () => new Set([]),
-        }),
-        useMaskedErrors(),
-      ],
-      schema
-    );
-    const result = await kit.execute(/* GraphQL */ `
-      query {
-        __typename
-      }
-    `);
-    assertSingleExecutionValue(result);
-    expect(result.errors).toBeDefined();
-    expect(result.errors![0].message).toEqual("Insufficient permissions for selecting 'Query.__typename'.");
   });
 });

@@ -1,4 +1,4 @@
-import { Plugin, OnResolverCalledHook, Path, isAsyncIterable, EnvelopError, DefaultContext } from '@envelop/core';
+import { Plugin, OnResolverCalledHook, Path, isAsyncIterable, DefaultContext } from '@envelop/core';
 import { print, FieldNode, Kind, OperationDefinitionNode, ExecutionResult, GraphQLError } from 'graphql';
 
 enum AttributeName {
@@ -29,7 +29,7 @@ export type UseNewRelicOptions = {
   extractOperationName?: (context: DefaultContext) => string | undefined;
   /**
    * Indicates whether or not to skip reporting a given error to NewRelic.
-   * By default, this plugin skips all `EnvelopError` errors and does not report them to NewRelic.
+   * By default, this plugin skips all `Error` errors and does not report them to NewRelic.
    */
   skipError?: (error: GraphQLError) => boolean;
 };
@@ -46,12 +46,8 @@ const DEFAULT_OPTIONS: UseNewRelicOptions = {
   trackResolvers: false,
   includeResolverArgs: false,
   rootFieldsNaming: false,
-  skipError: defaultSkipError,
+  skipError: () => false,
 };
-
-export function defaultSkipError(error: GraphQLError): boolean {
-  return error.originalError instanceof EnvelopError;
-}
 
 export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
   const options: InternalOptions = {

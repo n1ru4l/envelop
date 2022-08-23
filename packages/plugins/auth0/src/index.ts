@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable dot-notation */
-import { EnvelopError, Plugin } from '@envelop/core';
+import { Plugin } from '@envelop/core';
 import * as JwksRsa from 'jwks-rsa';
 import jwtPkg, { VerifyOptions, DecodeOptions } from 'jsonwebtoken';
 import { GraphQLError } from 'graphql';
@@ -71,12 +71,12 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
         const split = authHeader.split(' ');
 
         if (split.length !== 2) {
-          throw new EnvelopError(`Invalid value provided for header "${headerName}"!`);
+          throw new Error(`Invalid value provided for header "${headerName}"!`);
         } else {
           const [type, value] = split;
 
           if (type !== tokenType) {
-            throw new EnvelopError(`Unsupported token type provided: "${type}"!`);
+            throw new Error(`Unsupported token type provided: "${type}"!`);
           } else {
             return value;
           }
