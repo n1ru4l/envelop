@@ -14,37 +14,6 @@ import {
 
 export const envelopIsIntrospectionSymbol = Symbol('ENVELOP_IS_INTROSPECTION');
 
-export function isOperationDefinition(def: any): boolean {
-  return def.kind === 'OperationDefinition';
-}
-
-export function isIntrospectionOperation(operation: any): boolean {
-  if (operation.kind === 'OperationDefinition') {
-    if (operation.name?.value === '__schema') {
-      return true;
-    }
-
-    const nodesWithSchema = operation.selectionSet.selections.filter((selection: any) => {
-      if (selection.kind === 'Field' && selection.name.value === '__schema') {
-        return true;
-      }
-      return false;
-    });
-
-    if (nodesWithSchema.length > 0) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-export function isIntrospectionDocument(document: any): boolean {
-  const operations = document.definitions.filter(isOperationDefinition);
-
-  return operations.some((op: any) => isIntrospectionOperation(op));
-}
-
 export function isIntrospectionOperationString(operation: string | any): boolean {
   return (typeof operation === 'string' ? operation : operation.body).indexOf('__schema') !== -1;
 }
