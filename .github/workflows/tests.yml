@@ -48,13 +48,38 @@ jobs:
         run: yarn ts:check
 
   unit:
-    name: unit / ${{matrix.os}} / node v${{matrix.node-version}} / graphql v${{matrix.graphql_version}}
+    name: Unit Test
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-latest] # remove windows to speed up the tests
+    steps:
+      - name: Checkout Master
+        uses: actions/checkout@v2
+      - name: Setup env
+        uses: the-guild-org/shared-config/setup@main
+        with:
+          nodeVersion: 18
+      - name: Install Dependencies
+        run: yarn install --ignore-engines && git checkout yarn.lock
+      - name: Cache Jest
+        uses: actions/cache@v2
+        with:
+          path: .cache/jest
+          key: ${{ runner.os }}-${{matrix.node-version}}-${{matrix.graphql_version}}-jest-${{ hashFiles('yarn.lock') }}-${{ hashFiles('patches/*.patch') }}
+      - name: Test
+        run: yarn test
+        env:
+          CI: true
+
+  core:
+    name: Core Test / ${{matrix.os}} / node v${{matrix.node-version}} / graphql v${{matrix.graphql_version}}
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
         os: [ubuntu-latest] # remove windows to speed up the tests
         node-version: [12, 17]
-        graphql_version: [15, 16]
+        graphql_version: [15, 16, 'npm:@graphql-tools/graphql@0.1.0-alpha-20220815193214-83898018']
     steps:
       - name: Checkout Master
         uses: actions/checkout@v2
@@ -71,8 +96,8 @@ jobs:
         with:
           path: .cache/jest
           key: ${{ runner.os }}-${{matrix.node-version}}-${{matrix.graphql_version}}-jest-${{ hashFiles('yarn.lock') }}-${{ hashFiles('patches/*.patch') }}
-      - name: Test
-        run: yarn test --ci
+      - name: Test Core
+        run: yarn test:core --ci
         env:
           CI: true
 

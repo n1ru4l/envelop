@@ -32,6 +32,7 @@
     "build": "bob build",
     "ts:check": "tsc --noEmit",
     "test": "jest",
+    "test:core": "jest ./packages/core --coverage",
     "test:ci": "jest --coverage",
     "prerelease": "yarn build",
     "release": "changeset publish",
