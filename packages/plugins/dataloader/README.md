@@ -11,11 +11,16 @@ yarn add dataloader @envelop/dataloader
 ## Usage Example
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import DataLoader from 'dataloader'
 import { useDataLoader } from '@envelop/dataloader'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useDataLoader('users', context => new DataLoader(keys => myBatchGetUsers(keys)))

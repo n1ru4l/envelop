@@ -13,6 +13,7 @@ yarn add @envelop/graphql-modules
 ## Usage Example
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { createApplication } from 'graphql-modules'
 import { useGraphQLModules } from '@envelop/graphql-modules'
@@ -24,6 +25,10 @@ const myApp = createApplication({
 })
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useGraphQLModules(myApp)

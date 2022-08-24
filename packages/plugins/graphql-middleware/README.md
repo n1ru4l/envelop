@@ -15,6 +15,7 @@ yarn add graphql-middleware @envelop/graphql-middleware
 You can use any type of middleware defined for `graphql-middleware`, here's an example for doing that with [`graphql-shield`](https://github.com/maticzav/graphql-shield):
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useGraphQLMiddleware } from '@envelop/graphql-middleware'
 import { rule, shield, and, or, not } from 'graphql-shield'
@@ -35,6 +36,10 @@ const permissions = shield({
 })
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useSchema(mySchema),

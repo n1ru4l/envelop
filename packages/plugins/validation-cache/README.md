@@ -13,10 +13,15 @@ yarn add @envelop/validation-cache
 ## Usage Example
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useValidationCache } from '@envelop/validation-cache'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useValidationCache({

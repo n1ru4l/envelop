@@ -23,9 +23,15 @@ With the `@envelop/auth0` plugin, you can simply bootstrap the authorization pro
 
 ```tsx
 import { envelop, useExtendContext } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
 import { useAuth0 } from '@envelop/auth0'
 import { schema } from './schema'
+
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     useSchema(schema),
     useAuth0({
@@ -79,6 +85,7 @@ Libraries such as [`graphql-public-schema-filter`](https://github.com/n1ru4l/gra
 
 ```ts
 import { envelop, useLazyLoadedSchema } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
 import { privateSchema, publicSchema } from './schema'
 
 const getEnveloped = envelop({
@@ -100,6 +107,10 @@ import { envelop, useSchema } from '@envelop/core'
 import { useOperationFieldPermissions } from '@envelop/operation-field-permissions'
 import { schema } from './schema'
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins (e.g. useAuth0)
     useSchema(schema),
@@ -148,7 +159,7 @@ In most GraphQL servers any thrown error or rejected promise will result in the 
 
 ```tsx
 import { envelop, useSchema, useMaskedErrors, EnvelopError } from '@envelop/core'
-import { makeExecutableSchema } from 'graphql'
+import { makeExecutableSchema, parse, validate, execute, subscribe } from 'graphql'
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `
@@ -177,6 +188,10 @@ const schema = makeExecutableSchema({
 })
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [useSchema(schema), useMaskedErrors()]
 })
 ```
@@ -189,9 +204,14 @@ If your schema includes sensitive information that you want to hide from the out
 
 ```ts
 import { envelop } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
 import { useDisableIntrospection } from '@envelop/disable-introspection'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [useDisableIntrospection()]
 })
 ```
@@ -264,6 +284,7 @@ With the [`usePersistedOperations`](/plugins/use-persisted-operations) plugin su
 
 ```ts
 import { envelop } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
 import { usePersistedOperations, PersistedOperationsStore } from '@envelop/persisted-operations'
 import persistedOperations from './codegen-artifact'
 
@@ -273,6 +294,10 @@ const store: PersistedOperationsStore = {
 }
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     usePersistedOperations({
@@ -294,8 +319,13 @@ The [`useDepthLimit`](/plugins/use-depth-limit) allows a maximum nesting level a
 ```ts
 import { envelop } from '@envelop/core'
 import { useDepthLimit } from '@envelop/depth-limit'
+import { parse, validate, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useDepthLimit({
@@ -315,6 +345,7 @@ The [`useRateLimiter`](/plugins/use-rate-limiter) to limit access to resources, 
 
 ```ts
 import { envelop } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
 import { useRateLimiter } from '@envelop/rate-limiter'
 
 const getEnveloped = envelop({

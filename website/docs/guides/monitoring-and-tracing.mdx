@@ -17,10 +17,15 @@ Sentry is the biggest player regarding error tracking within JavaScript land. Wi
 As with any other envelop plugin the setup is straight forward!
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useSentry } from '@envelop/sentry'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useSentry()
@@ -53,10 +58,15 @@ If you wish to integrate NewRelic for tracing, monitoring and error reporting, y
 As with any other envelop plugin the setup is straight forward!
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useNewRelic } from '@envelop/newrelic'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useNewRelic({
@@ -73,10 +83,15 @@ const getEnveloped = envelop({
 Apollo introduced the apollo-tracing specification and implemented it in apollo-server. With envelop it is possible to use apollo-tracing for tracking down slow resolvers with any server.
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useApolloTracing } from '@envelop/apollo-tracing'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useApolloTracing()

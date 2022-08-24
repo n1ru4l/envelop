@@ -24,10 +24,15 @@ import { PackageInstall } from '@guild-docs/client'
 
 ```ts
 import { useAuth0 } from '@envelop/auth0'
+import { parse, execute, subcribe, validate } from 'graphql'
 
 // ... other imports and code
 
 const getEnveloped = envelop({
+  parse,
+  execute,
+  subcribe,
+  validate,
   plugins: [
     useSchema(schema),
     useAuth0({

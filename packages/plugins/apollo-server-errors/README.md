@@ -11,10 +11,15 @@ yarn add @envelop/apollo-server-errors
 ## Usage Example
 
 ```ts
+import { parse, validate, execute, subscribe } from 'grapqhl'
 import { envelop } from '@envelop/core'
 import { useApolloServerErrors } from '@envelop/apollo-server-errors'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useApolloServerErrors({

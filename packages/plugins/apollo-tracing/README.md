@@ -17,10 +17,15 @@ yarn add @envelop/apollo-tracing
 ## Usage Example
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useApolloTracing } from '@envelop/apollo-tracing'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useApolloTracing()

@@ -12,11 +12,15 @@ This plugin is the simplest plugin for specifying your GraphQL schema. You can s
 
 ```ts
 import { envelop, useSchema } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { parse, validate, execute, subscribe } from 'graphql'
 
 const mySchema = buildSchema(/* ... */)
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     useSchema(mySchema)
     // ... other plugins ...
@@ -32,13 +36,17 @@ If you are using a framework that creates the schema in an async way, you can ei
 
 ```ts
 import { envelop, useAsyncSchema } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { parse, validate, execute, subscribe } from 'graphql'
 
 const getSchema = async (): Promise<GraphQLSchema> => {
   // return schema when it's ready
 }
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     useAsyncSchema(getSchema())
     // ... other plugins ...
@@ -52,9 +60,13 @@ This plugin invokes a custom function with the every time execution encounters a
 
 ```ts
 import { envelop, useErrorHandler } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { parse, validate, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     useErrorHandler(error => {
       // This callback is called per each GraphQLError emitted during execution phase
@@ -72,9 +84,13 @@ Easily extends the context with custom fields.
 
 ```ts
 import { envelop, useExtendContext } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { parse, validate, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     useExtendContext(async contextSoFar => {
       return {
@@ -94,9 +110,13 @@ Logs parameters and information about the execution phases. You can easily plug 
 
 ```ts
 import { envelop, useLogger } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { parse, validate, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     useLogger({
       logFn: (eventName, args) => {
@@ -117,9 +137,13 @@ The second argument `executionArgs` provides additional information for your for
 
 ```ts
 import { envelop, usePayloadFormatter } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { parse, validate, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     usePayloadFormatter((result, executionArgs) => {
       // Return a modified result here,
@@ -127,70 +151,6 @@ const getEnveloped = envelop({
     })
     // ... other plugins ...
   ]
-})
-```
-
-#### useTiming
-
-It's a simple time metric collection for every phase in your execution. You can easily customize the behavior of each timing measurement. By default, the timing is printed to the log, using `console.log`.
-
-```ts
-import { envelop, useTiming } from '@envelop/core'
-import { buildSchema } from 'graphql'
-
-const getEnveloped = envelop({
-  plugins: [
-    useTiming({
-      // All options are optional. By default it just print it to the log.
-      // ResultTiming is an object built with { ms, ns } (milliseconds and nanoseconds)
-      onContextBuildingMeasurement: (timing: ResultTiming) => {},
-      onExecutionMeasurement: (args: ExecutionArgs, timing: ResultTiming) => {},
-      onSubscriptionMeasurement: (args: SubscriptionArgs, timing: ResultTiming) => {},
-      onParsingMeasurement: (source: Source | string, timing: ResultTiming) => {},
-      onValidationMeasurement: (document: DocumentNode, timing: ResultTiming) => {},
-      onResolverMeasurement: (info: GraphQLResolveInfo, timing: ResultTiming) => {}
-    })
-    // ... other plugins ...
-  ]
-})
-```
-
-#### useMaskedErrors
-
-Prevent unexpected error messages from leaking to the GraphQL API consumers.
-
-```ts
-import { envelop, useSchema, useMaskedErrors, EnvelopError } from '@envelop/core'
-import { makeExecutableSchema } from 'graphql'
-
-const schema = makeExecutableSchema({
-  typeDefs: /* GraphQL */ `
-    type Query {
-      something: String!
-      somethingElse: String!
-      somethingSpecial: String!
-    }
-  `,
-  resolvers: {
-    Query: {
-      something: () => {
-        throw new EnvelopError('Error that is propagated to the clients.')
-      },
-      somethingElse: () => {
-        throw new Error("Unsafe error that will be masked as 'Unexpected Error.'.")
-      },
-      somethingSpecial: () => {
-        throw new EnvelopError('The error will have an extensions field.', {
-          code: 'ERR_CODE',
-          randomNumber: 123
-        })
-      }
-    }
-  }
-})
-
-const getEnveloped = envelop({
-  plugins: [useSchema(schema), useMaskedErrors()]
 })
 ```
 
@@ -202,10 +162,15 @@ This utility is helpful when you want to enable a plugin only when a certain con
 
 ```ts
 import { envelop, useMaskedErrors, enableIf } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
 
 const isProd = process.env.NODE_ENV === 'production'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // This plugin is enabled only in production
     enableIf(isProd, useMaskedErrors()),

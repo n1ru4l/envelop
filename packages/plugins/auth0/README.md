@@ -14,10 +14,15 @@ We recommend using the [Adding Authentication with Auth0 guide](https://www.enve
 4. Setup Envelop with that plugin:
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useAuth0 } from '@envelop/auth0'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useAuth0({

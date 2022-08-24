@@ -4,11 +4,15 @@ This plugin is the simplest plugin for specifying your GraphQL schema. You can s
 
 ```ts
 import { envelop, useSchema } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { parse, validate, execute, subscribe } from 'graphql'
 
 const mySchema = buildSchema(/* ... */)
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     useSchema(mySchema)
     // ... other plugins ...

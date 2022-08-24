@@ -13,10 +13,15 @@ yarn add @envelop/operation-field-permissions
 ## Usage Example
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop, useSchema } from '@envelop/core'
 import { useOperationFieldPermissions } from '@envelop/operation-field-permissions'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     useSchema(schema),
     useOperationFieldPermissions({

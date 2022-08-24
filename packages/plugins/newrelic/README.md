@@ -31,10 +31,15 @@ yarn add newrelic @envelop/newrelic
 ## Basic usage Example
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useNewRelic } from '@envelop/newrelic'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useNewRelic({

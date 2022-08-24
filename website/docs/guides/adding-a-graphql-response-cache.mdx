@@ -297,10 +297,15 @@ const getEnveloped = envelop({
 Don't want to automatically invalidate based on mutations? Also configurable!
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({
@@ -315,9 +320,7 @@ Want a global cache on Redis?
 
 Maybe you are in a server-less environment and the In-Memory Cache isn't an option. Also, when having multiple server replicas, you might want to have a shared cache between all the replicas.
 
-```bash
-yarn add @envelop/response-cache-redis
-```
+<PackageInstall packages="@envelop/response-cache-redis" />
 
 First create a Redis database with your favorite hosting provider.
 
@@ -328,6 +331,7 @@ Then, with that instance of the Redis Cache setup, provide it to the `useRespons
 Here's an example:
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 import { createRedisCache } from '@envelop/response-cache-redis'
@@ -344,6 +348,10 @@ const redis = new Redis('rediss://:1234567890@my-redis-db.example.com:30652')
 const cache = createRedisCache({ redis })
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({ cache })

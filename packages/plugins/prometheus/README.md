@@ -26,10 +26,15 @@ yarn add prom-client @envelop/prometheus
 ## Usage Example
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { usePrometheus } from '@envelop/prometheus'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     usePrometheus({
@@ -57,11 +62,17 @@ const getEnveloped = envelop({
 You can customize the `prom-client` `Registry` object if you are using a custom one, by passing it along with the configuration object:
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop } from '@envelop/core'
 import { Registry } from 'prom-client'
 
 const myRegistry = new Registry()
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     usePrometheus({
@@ -83,11 +94,16 @@ If you wish to disable introspection logging, you can use `skipIntrospection: tr
 Each tracing field supports custom `prom-client` objects, and custom `labels` a metadata, you can create a custom extraction function for every `Histogram` / `Summary` / `Counter`:
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { Histogram } from 'prom-client'
 import { envelop } from '@envelop/core'
 import { createHistogram, usePrometheus } from '@envelop/prometheus'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     usePrometheus({

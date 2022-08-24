@@ -25,6 +25,7 @@ yarn add hot-shots @envelop/stats
 ## Usage Example
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useStatsD } from '@envelop/statsd'
 import StatsD from 'hot-shots'
@@ -35,6 +36,10 @@ const client = new StatsD({
 })
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useStatsD({

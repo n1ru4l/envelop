@@ -15,10 +15,15 @@ yarn add @envelop/fragment-arguments
 ## Usage Example
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useFragmentArguments } from '@envelop/fragment-arguments'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useFragmentArguments()

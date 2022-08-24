@@ -6,9 +6,13 @@ The second argument `executionArgs` provides additional information for your for
 
 ```ts
 import { envelop, usePayloadFormatter } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { parse, validate, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     usePayloadFormatter((result, executionArgs) => {
       // Return a modified result here,

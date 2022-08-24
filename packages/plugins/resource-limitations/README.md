@@ -11,10 +11,15 @@ yarn add @envelop/resource-limitations
 ## Usage Example
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResourceLimitations } from '@envelop/resource-limitations'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResourceLimitations({

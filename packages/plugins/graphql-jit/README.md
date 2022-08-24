@@ -11,10 +11,15 @@ yarn add @envelop/graphql-jit
 ## Usage Example
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useGraphQlJit } from '@envelop/graphql-jit'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useGraphQlJit(

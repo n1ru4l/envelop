@@ -78,6 +78,7 @@ This mode offers complete protection for the entire API. It protects your entire
 To setup this mode, use the following config:
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useGenericAuth, ResolveUserFn, ValidateUserFn } from '@envelop/generic-auth'
 
@@ -92,6 +93,10 @@ const validateUser: ValidateUserFn<UserType> = params => {
 }
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useGenericAuth({
