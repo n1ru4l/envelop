@@ -3,7 +3,7 @@ import { PromiseOrValue } from '@envelop/core';
 
 export type Resolver<Context = unknown> = (
   root: unknown,
-  args: unknown,
+  args: Record<string, unknown>,
   context: Context,
   info: GraphQLResolveInfo
 ) => PromiseOrValue<unknown>;
@@ -16,7 +16,7 @@ export type AfterResolver = (options: {
 export type OnResolve<PluginContext extends Record<string, any> = {}> = (options: {
   context: PluginContext;
   root: unknown;
-  args: unknown;
+  args: Record<string, unknown>;
   info: GraphQLResolveInfo;
   resolver: Resolver<PluginContext>;
   replaceResolver: (newResolver: Resolver<PluginContext>) => void;
