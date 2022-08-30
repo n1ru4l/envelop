@@ -32,6 +32,7 @@ import {
   ValidateFunction,
   ExecutionResult,
 } from '@envelop/types';
+import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema.js';
 import {
   errorAsyncIterator,
   finalAsyncIterator,
@@ -61,7 +62,6 @@ type EnvelopOrchestratorOptions = {
   subscribe: SubscribeFunction;
   validate: ValidateFunction;
 };
-export const resolversHooksSymbol = Symbol('RESOLVERS_HOOKS');
 
 export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>({
   plugins,
@@ -84,7 +84,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
   // here not to call the same plugin that initiated the schema switch.
   const replaceSchema = (newSchema: any, ignorePluginIndex = -1) => {
     if (onResolversHandlers.length) {
-      // prepareTracedSchema(newSchema);
+      prepareTracedSchema(newSchema);
     }
     schema = newSchema;
 
