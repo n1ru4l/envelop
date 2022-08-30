@@ -59,7 +59,6 @@ export function createSpiedPlugin() {
     beforeExecute: jest.fn(() => ({
       onExecuteDone: baseSpies.afterExecute,
     })),
-    onResolverCalled: baseSpies.beforeResolver,
   };
 
   return {
@@ -75,7 +74,6 @@ export function createSpiedPlugin() {
       onValidate: spies.beforeValidate,
       onExecute: spies.beforeExecute,
       onContextBuilding: spies.beforeContextBuilding,
-      onResolverCalled: spies.beforeResolver,
     },
   };
 }
