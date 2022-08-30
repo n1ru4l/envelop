@@ -1,4 +1,5 @@
 import { Plugin, OnExecuteHookResult, isAsyncIterable } from '@envelop/core';
+import { useOnResolve } from '@envelop/on-resolve';
 import { SpanAttributes, SpanKind } from '@opentelemetry/api';
 import * as opentelemetry from '@opentelemetry/api';
 import { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/tracing';
@@ -45,8 +46,9 @@ export const useOpenTelemetry = (
   const tracer = tracingProvider.getTracer(serviceName);
 
   return {
-    onResolverCalled: options.resolvers
-      ? ({ info, context, args }) => {
+    onSchemaChange: async ({ schema }) => {
+      if (options.resolvers) {
+        useOnResolve(schema, ({ info, context, args }) => {
           if (context && typeof context === 'object' && context[tracingSpanSymbol]) {
             tracer.getActiveSpanProcessor();
             const ctx = opentelemetry.trace.setSpan(opentelemetry.context.active(), context[tracingSpanSymbol]);
@@ -78,8 +80,9 @@ export const useOpenTelemetry = (
           }
 
           return () => {};
-        }
-      : undefined,
+        });
+      }
+    },
     onExecute({ args, extendContext }) {
       const executionSpan = tracer.startSpan(`${args.operationName || 'Anonymous Operation'}`, {
         kind: spanKind,

@@ -1,4 +1,5 @@
 import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/core';
+import { useOnResolve } from '@envelop/on-resolve';
 import { TracingFormat } from 'apollo-tracing';
 import { GraphQLType, ResponsePath, responsePathAsArray } from 'graphql';
 
@@ -41,21 +42,23 @@ type TracingContextObject = {
 
 export const useApolloTracing = (): Plugin => {
   return {
-    onResolverCalled: ({ info, context }) => {
-      const ctx = context[apolloTracingSymbol] as TracingContextObject;
-      // Taken from https://github.com/apollographql/apollo-server/blob/main/packages/apollo-tracing/src/index.ts
-      const resolverCall: ResolverCall = {
-        path: info.path,
-        fieldName: info.fieldName,
-        parentType: info.parentType,
-        returnType: info.returnType,
-        startOffset: process.hrtime(ctx.hrtime),
-      };
+    onSchemaChange: ({ schema }) => {
+      useOnResolve<TracingContextObject>(schema, ({ info, context }) => {
+        const ctx = context[apolloTracingSymbol] as TracingContextObject;
+        // Taken from https://github.com/apollographql/apollo-server/blob/main/packages/apollo-tracing/src/index.ts
+        const resolverCall: ResolverCall = {
+          path: info.path,
+          fieldName: info.fieldName,
+          parentType: info.parentType,
+          returnType: info.returnType,
+          startOffset: process.hrtime(ctx.hrtime),
+        };
 
-      return () => {
-        resolverCall.endOffset = process.hrtime(ctx.hrtime);
-        ctx.resolversTiming.push(resolverCall);
-      };
+        return () => {
+          resolverCall.endOffset = process.hrtime(ctx.hrtime);
+          ctx.resolversTiming.push(resolverCall);
+        };
+      });
     },
     onExecute(onExecuteContext) {
       const ctx: TracingContextObject = {

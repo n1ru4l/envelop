@@ -9,6 +9,7 @@ import {
   isIntrospectionOperationString,
   isAsyncIterable,
 } from '@envelop/core';
+import { useOnResolve } from '@envelop/on-resolve';
 import { TypeInfo } from 'graphql';
 import { Summary, Counter, Histogram, register as defaultRegistry } from 'prom-client';
 import {
@@ -324,8 +325,15 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
     : undefined;
 
   return {
-    onResolverCalled: resolversHistogram
-      ? ({ info, context }) => {
+    onEnveloped({ extendContext }) {
+      extendContext({
+        [promPluginExecutionStartTimeSymbol]: Date.now(),
+      });
+    },
+    onSchemaChange({ schema }) {
+      typeInfo = new TypeInfo(schema);
+      if (resolversHistogram) {
+        useOnResolve(schema, ({ info, context }) => {
           const shouldTrace = shouldTraceFieldResolver(info, config.resolversWhitelist);
 
           if (!shouldTrace) {
@@ -342,15 +350,8 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
             };
             resolversHistogram.histogram.observe(resolversHistogram.fillLabelsFn(paramsCtx, context), totalTime);
           };
-        }
-      : undefined,
-    onEnveloped({ extendContext }) {
-      extendContext({
-        [promPluginExecutionStartTimeSymbol]: Date.now(),
-      });
-    },
-    onSchemaChange({ schema }) {
-      typeInfo = new TypeInfo(schema);
+        });
+      }
     },
     onParse,
     onValidate,

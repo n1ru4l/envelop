@@ -1,4 +1,5 @@
 import { Plugin } from '@envelop/core';
+import { useOnResolve } from '@envelop/on-resolve';
 import { IntValueNode, StringValueNode, GraphQLResolveInfo } from 'graphql';
 import { getDirective } from './utils.js';
 import { getGraphQLRateLimiter } from 'graphql-rate-limit';
@@ -19,61 +20,63 @@ export type RateLimiterPluginOptions = {
   onRateLimitError?: (event: { error: string; identifier: string; context: unknown; info: GraphQLResolveInfo }) => void;
 };
 
-export const useRateLimiter = (
-  options: RateLimiterPluginOptions
-): Plugin<{
+interface RateLimiterContext {
   rateLimiterFn: ReturnType<typeof getGraphQLRateLimiter>;
-}> => {
+}
+
+export const useRateLimiter = (options: RateLimiterPluginOptions): Plugin<RateLimiterContext> => {
   const rateLimiterFn = getGraphQLRateLimiter({ identifyContext: options.identifyFn });
 
   return {
+    onSchemaChange: ({ schema }) => {
+      useOnResolve<RateLimiterContext>(schema, async ({ args, root, context, info }) => {
+        const rateLimitDirectiveNode = getDirective(info, options.rateLimitDirectiveName || 'rateLimit');
+
+        if (rateLimitDirectiveNode && rateLimitDirectiveNode.arguments) {
+          const maxNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'max')?.value as IntValueNode;
+          const windowNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'window')
+            ?.value as StringValueNode;
+          const messageNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'message')
+            ?.value as IntValueNode;
+
+          const message = messageNode.value;
+          const max = parseInt(maxNode.value);
+          const window = windowNode.value;
+          const id = options.identifyFn(context);
+
+          const errorMessage = await context.rateLimiterFn(
+            { parent: root, args, context, info },
+            {
+              max,
+              window,
+              message: interpolate(message, {
+                id,
+              }),
+            }
+          );
+          if (errorMessage) {
+            if (options.onRateLimitError) {
+              options.onRateLimitError({
+                error: errorMessage,
+                identifier: id,
+                context,
+                info,
+              });
+            }
+
+            if (options.transformError) {
+              throw options.transformError(errorMessage);
+            }
+
+            throw new Error(errorMessage);
+          }
+        }
+      });
+    },
     async onContextBuilding({ extendContext }) {
       extendContext({
         rateLimiterFn,
       });
-    },
-    async onResolverCalled({ args, root, context, info }) {
-      const rateLimitDirectiveNode = getDirective(info, options.rateLimitDirectiveName || 'rateLimit');
-
-      if (rateLimitDirectiveNode && rateLimitDirectiveNode.arguments) {
-        const maxNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'max')?.value as IntValueNode;
-        const windowNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'window')
-          ?.value as StringValueNode;
-        const messageNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'message')
-          ?.value as IntValueNode;
-
-        const message = messageNode.value;
-        const max = parseInt(maxNode.value);
-        const window = windowNode.value;
-        const id = options.identifyFn(context);
-
-        const errorMessage = await context.rateLimiterFn(
-          { parent: root, args, context, info },
-          {
-            max,
-            window,
-            message: interpolate(message, {
-              id,
-            }),
-          }
-        );
-        if (errorMessage) {
-          if (options.onRateLimitError) {
-            options.onRateLimitError({
-              error: errorMessage,
-              identifier: id,
-              context,
-              info,
-            });
-          }
-
-          if (options.transformError) {
-            throw options.transformError(errorMessage);
-          }
-
-          throw new Error(errorMessage);
-        }
-      }
     },
   };
 };
