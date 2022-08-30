@@ -1,5 +1,5 @@
 import { defaultFieldResolver, GraphQLResolveInfo, GraphQLSchema, isIntrospectionType, isObjectType } from 'graphql';
-import { Plugin, PromiseOrValue } from '@envelop/core';
+import { PromiseOrValue } from '@envelop/core';
 
 export type Resolver<Context = unknown> = (
   root: unknown,
