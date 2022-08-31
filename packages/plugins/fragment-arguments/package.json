@@ -45,7 +45,9 @@
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "tslib": "^2.4.0"
+  },
   "devDependencies": {
     "@types/common-tags": "1.8.1",
     "@graphql-tools/utils": "8.8.0",

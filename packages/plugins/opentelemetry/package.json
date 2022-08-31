@@ -48,7 +48,8 @@
   },
   "dependencies": {
     "@opentelemetry/api": "^1.0.0",
-    "@opentelemetry/tracing": "^0.24.0"
+    "@opentelemetry/tracing": "^0.24.0",
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "graphql": "16.3.0",

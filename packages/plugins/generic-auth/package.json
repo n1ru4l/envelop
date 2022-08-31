@@ -47,7 +47,8 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "@envelop/extended-validation": "^1.8.0"
+    "@envelop/extended-validation": "^1.8.0",
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "graphql": "16.3.0",

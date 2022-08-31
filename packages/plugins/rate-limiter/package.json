@@ -47,7 +47,8 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "graphql-rate-limit": "3.3.0"
+    "graphql-rate-limit": "3.3.0",
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "graphql": "16.3.0",

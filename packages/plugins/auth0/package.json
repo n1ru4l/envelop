@@ -48,7 +48,8 @@
   },
   "dependencies": {
     "jsonwebtoken": "^8.5.1",
-    "jwks-rsa": "^2.0.1"
+    "jwks-rsa": "^2.0.1",
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "8.5.8",

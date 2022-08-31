@@ -48,7 +48,8 @@
   },
   "dependencies": {
     "apollo-server-caching": "^3.1.0",
-    "apollo-server-types": "^3.2.0"
+    "apollo-server-types": "^3.2.0",
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "graphql": "16.3.0",

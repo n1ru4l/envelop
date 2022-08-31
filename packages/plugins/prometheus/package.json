@@ -46,6 +46,9 @@
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   },
+  "dependencies": {
+    "tslib": "^2.4.0"
+  },
   "devDependencies": {
     "prom-client": "14.0.1",
     "@graphql-tools/schema": "8.5.0",
