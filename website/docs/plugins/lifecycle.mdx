@@ -3,6 +3,8 @@ title: Plugin Lifecycle
 sidebar_label: Plugin Lifecycle
 ---
 
+import { Callout } from '@theguild/components'
+
 ## Plugins Lifecycle
 
 Plugins are executed in order of their usage, and inject functionality serially, so aim to keep your plugins simple and standalone as much as possible.
@@ -242,6 +244,10 @@ Some plugins (like gateway implementations) could potentially change the schema 
 ### `onResolverCalled(api)`
 
 Triggered when a resolver is called during the execution of the operation.
+
+<Callout type="warning" emoji="⚠️">
+  This hook will not call the default field resolver.
+</Callout>
 
 - `params` - an object with `{ root, args, context, info }` that was originally passed to the resolver.
 
