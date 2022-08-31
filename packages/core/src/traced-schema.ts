@@ -11,9 +11,6 @@ const isIntrospectionType = (type: any) => {
 };
 
 /**
- * Based on the `.toConfig()` method of the `GraphQLObjectType` class.
- * https://github.com/graphql/graphql-js/blob/29bf39faa670effd3c1561a1512ec7767658a63b/src/type/definition.ts#L744-L755
- *
  * This isn't the best but will get the job done
  */
 const isObjectType = (type: any) => {
