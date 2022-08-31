@@ -2,7 +2,6 @@ import { Plugin } from '@envelop/core';
 import { IntValueNode, StringValueNode, GraphQLResolveInfo } from 'graphql';
 import { getDirective } from './utils.js';
 import { getGraphQLRateLimiter } from 'graphql-rate-limit';
-import { prepareTracedSchema } from './traced-schema.js';
 export * from './utils.js';
 
 export class UnauthenticatedError extends Error {}
@@ -28,9 +27,6 @@ export const useRateLimiter = (
   const rateLimiterFn = getGraphQLRateLimiter({ identifyContext: options.identifyFn });
 
   return {
-    onSchemaChange: ({ schema }) => {
-      prepareTracedSchema(schema);
-    },
     async onContextBuilding({ extendContext }) {
       extendContext({
         rateLimiterFn,
