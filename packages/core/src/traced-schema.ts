@@ -2,41 +2,12 @@ import { AfterResolverHook, OnResolverCalledHook, ResolverFn } from '@envelop/ty
 export const resolversHooksSymbol = Symbol('RESOLVERS_HOOKS');
 const trackedSchemaSymbol = Symbol('TRACKED_SCHEMA');
 
-const introspectionTypes = [
-  '__Schema',
-  '__Directive',
-  '__DirectiveLocation',
-  '__Type',
-  '__Field',
-  '__InputValue',
-  '__EnumValue',
-  '__TypeKind',
-];
-
 function isObjectLike(value: unknown) {
   return typeof value === 'object' && value !== null;
 }
-/**
- * If a resolve function is not given, then a default resolve behavior is used
- * which takes the property of the source object of the same name as the field
- * and returns it as the result, or if it's a function, returns the result
- * of calling that function while passing along args and context value.
- */
-const defaultFieldResolver = function (source: unknown, args: unknown, contextValue: unknown, info: unknown) {
-  // ensure source is a value for which property access is acceptable.
-  if (isObjectLike(source) || typeof source === 'function') {
-    const property = source[info.fieldName];
-    console.log('property', property);
-    if (typeof property === 'function') {
-      return source[info.fieldName](args, contextValue, info);
-    }
-
-    return property;
-  }
-};
 
 const isIntrospectionType = (type: any) => {
-  return introspectionTypes.some(name => type.name === name);
+  return type.name.startsWith('__');
 };
 
 /**
@@ -46,7 +17,7 @@ const isIntrospectionType = (type: any) => {
  * This isn't the best but will get the job done
  */
 const isObjectType = (type: any) => {
-  if ('fields' in type && 'isTypeOf' in type) {
+  if (isObjectLike(type) && '_interfaces' in type) {
     return true;
   }
   return false;
@@ -68,12 +39,13 @@ export function prepareTracedSchema(schema: any | null | undefined): void {
 
       for (const field of fields) {
         // @ts-expect-error - we hope there is a resolve field
-        let resolverFn: ResolverFn = field.resolve || defaultFieldResolver;
+        const existingResolver = field.resolve;
         // We are not going to wrap any default resolvers
-        if (!resolverFn) return;
+        if (!existingResolver) continue;
 
         // @ts-expect-error - we know this is a resolver fn
         field.resolve = async (root, args, context, info) => {
+          let resolverFn: ResolverFn = existingResolver;
           if (context && context[resolversHooksSymbol]) {
             const hooks: OnResolverCalledHook[] = context[resolversHooksSymbol];
             const afterCalls: AfterResolverHook[] = [];
