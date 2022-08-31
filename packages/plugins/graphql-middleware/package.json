@@ -1,6 +1,6 @@
 {
   "name": "@envelop/graphql-middleware",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -56,7 +56,7 @@
     "typescript": "4.7.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.5.0",
+    "@envelop/core": "^2.6.0",
     "graphql-middleware": "^6.0.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
