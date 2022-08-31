@@ -7,7 +7,7 @@ function isObjectLike(value: unknown) {
 }
 
 const isIntrospectionType = (type: any) => {
-  return type.name.startsWith('__');
+  return type?.name?.startsWith('__');
 };
 
 /**
