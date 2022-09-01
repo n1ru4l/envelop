@@ -11,7 +11,7 @@ import {
 import { createEnvelopOrchestrator, EnvelopOrchestrator } from './orchestrator.js';
 
 export function envelop<PluginsType extends Plugin<any>[]>(options: {
-  plugins: Array<Plugin<any>>;
+  plugins: PluginsType;
   enableInternalTracing?: boolean;
   parse: ParseFunction;
   execute: ExecuteFunction;
