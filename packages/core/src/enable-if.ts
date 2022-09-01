@@ -16,7 +16,7 @@ export function isPluginEnabled(t: PluginOrDisabledPlugin): t is Plugin {
 /**
  * Utility function to enable a plugin.
  */
-export function enableIf<PluginContextType = {}>(
+export function enableIf<PluginContextType extends Record<any, any> = {}>(
   condition: boolean,
   plugin: Plugin<PluginContextType> | (() => Plugin<PluginContextType>)
 ): PluginOrDisabledPlugin {

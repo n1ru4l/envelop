@@ -9,14 +9,16 @@ type ErrorHandlerCallback<ContextType> = {
 };
 
 const makeHandleResult =
-  <ContextType>(errorHandler: ErrorHandler) =>
+  <ContextType extends Record<any, any>>(errorHandler: ErrorHandler) =>
   ({ result, args }: ErrorHandlerCallback<ContextType>) => {
     if (result.errors?.length) {
       errorHandler(result.errors, args);
     }
   };
 
-export const useErrorHandler = <ContextType>(errorHandler: ErrorHandler): Plugin<ContextType> => {
+export const useErrorHandler = <ContextType extends Record<string, any>>(
+  errorHandler: ErrorHandler
+): Plugin<ContextType> => {
   const handleResult = makeHandleResult<ContextType>(errorHandler);
   return {
     onExecute() {

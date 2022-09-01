@@ -126,7 +126,7 @@ export function defaultProtectSingleValidateFn<UserType>(
 
 export const useGenericAuth = <
   UserType extends {} = {},
-  ContextType = DefaultContext,
+  ContextType extends Record<any, any> = DefaultContext,
   CurrentUserKey extends string = 'currentUser'
 >(
   options: GenericAuthPluginOptions<UserType, ContextType, CurrentUserKey>
@@ -212,7 +212,7 @@ export const useGenericAuth = <
         const user = await options.resolveUserFn(context as unknown as ContextType);
         extendContext({
           [contextFieldName]: user,
-        } as unknown as ContextType);
+        } as any);
       },
     };
   }
@@ -223,7 +223,7 @@ export const useGenericAuth = <
 
         extendContext({
           [contextFieldName]: user,
-        } as unknown as ContextType);
+        } as any);
       },
     };
   }
