@@ -1,8 +1,9 @@
 import { isAsyncIterable, Plugin } from '@envelop/core';
-import { GraphQLError, ResponsePath } from 'graphql';
+import { ExecutionResult, GraphQLError, Kind, OperationTypeNode, ResponsePath } from 'graphql';
 import { google, Trace } from 'apollo-reporting-protobuf';
 
 const ctxKey = Symbol('ApolloInlineTracePluginContextKey');
+const errorsKey = Symbol('ApolloInlineTracePluginErrorsKey');
 
 interface ApolloInlineTracePluginContext {
   startHrTime: [number, number];
@@ -48,7 +49,7 @@ export function useApolloInlineTrace<PluginContext extends Record<string, any> =
   shouldTrace,
   rewriteError,
 }: ApolloInlineTracePluginOptions<PluginContext>): Plugin<
-  PluginContext & { [ctxKey]: ApolloInlineTracePluginContext }
+  PluginContext & { [ctxKey]: ApolloInlineTracePluginContext; [errorsKey]: GraphQLError[] }
 > {
   return {
     onEnveloped({ context, extendContext }) {
@@ -72,6 +73,7 @@ export function useApolloInlineTrace<PluginContext extends Record<string, any> =
             nodes: new Map([[responsePathToString(), rootNode]]),
             stopped: false,
           },
+          [errorsKey]: [],
         });
       }
     },
@@ -100,34 +102,67 @@ export function useApolloInlineTrace<PluginContext extends Record<string, any> =
       };
     },
     onParse() {
-      return ({ context, result }) => {
+      return ({ context, result, replaceParseResult }) => {
         const ctx = context[ctxKey];
         if (!ctx) return;
 
-        if (result instanceof GraphQLError) {
-          handleErrors(ctx, [result], rewriteError);
-        } else if (result instanceof Error) {
-          handleErrors(
-            ctx,
-            [
+        const errors = context[errorsKey];
+        if (errors && result instanceof Error) {
+          if (result instanceof GraphQLError) {
+            errors.push(result);
+          } else {
+            errors.push(
               new GraphQLError(result.message, {
                 originalError: result,
-              }),
+              })
+            );
+          }
+          replaceParseResult({
+            kind: Kind.DOCUMENT,
+            definitions: [
+              {
+                kind: Kind.OPERATION_DEFINITION,
+                operation: OperationTypeNode.QUERY,
+                selectionSet: {
+                  kind: Kind.SELECTION_SET,
+                  selections: [
+                    {
+                      kind: Kind.FIELD,
+                      name: {
+                        kind: Kind.NAME,
+                        value: '__typename',
+                      },
+                    },
+                  ],
+                },
+              },
             ],
-            rewriteError
-          );
+          });
         }
       };
     },
-    onValidate() {
-      return ({ context, result: errors }) => {
-        if (errors.length) {
-          const ctx = context[ctxKey];
-          if (ctx) handleErrors(ctx, errors, rewriteError);
+    onValidate({ context, setResult }) {
+      const errorsInContext = context[errorsKey];
+      if (errorsInContext?.length) {
+        setResult([]);
+      }
+      return ({ result: errors, setResult }) => {
+        if (errorsInContext) {
+          errorsInContext.push(...errors);
+          setResult([]);
         }
       };
     },
-    onExecute() {
+    onExecute({ args: { contextValue }, setResultAndStopExecution }) {
+      const errors = contextValue[errorsKey];
+      if (errors?.length) {
+        const ctx = contextValue[ctxKey];
+        if (!ctx) return;
+        const result = { errors };
+        const updatedResult = updateResult(result, rewriteError, ctx);
+        setResultAndStopExecution(updatedResult);
+        return;
+      }
       return {
         onExecuteDone({ args: { contextValue }, result, setResult }) {
           const ctx = contextValue[ctxKey];
@@ -136,38 +171,44 @@ export function useApolloInlineTrace<PluginContext extends Record<string, any> =
           // TODO: should handle streaming results? how?
           if (isAsyncIterable(result)) return;
 
-          if (result.extensions?.ftv1 !== undefined) {
-            throw new Error('The `ftv1` extension is already present');
-          }
+          const updatedResult = updateResult(result, rewriteError, ctx);
 
-          if (result.errors?.length) {
-            handleErrors(ctx, result.errors, rewriteError);
-          }
-
-          // onResultProcess will be called only once since we disallow async iterables
-          if (ctx.stopped) throw new Error('Trace stopped multiple times');
-
-          ctx.stopped = true;
-          ctx.trace.durationNs = hrTimeToDurationInNanos(process.hrtime(ctx.startHrTime));
-          ctx.trace.endTime = nowTimestamp();
-
-          const encodedUint8Array = Trace.encode(ctx.trace).finish();
-          const encodedBuffer = Buffer.from(
-            encodedUint8Array,
-            encodedUint8Array.byteOffset,
-            encodedUint8Array.byteLength
-          );
-
-          result.extensions = {
-            ...result.extensions,
-            ftv1: encodedBuffer.toString('base64'),
-          };
-
-          setResult(result);
+          setResult(updatedResult);
         },
       };
     },
   };
+}
+
+function updateResult(
+  result: ExecutionResult,
+  rewriteError: ApolloInlineTracePluginOptions['rewriteError'],
+  ctx: ApolloInlineTracePluginContext
+) {
+  if (result.extensions?.ftv1 !== undefined) {
+    throw new Error('The `ftv1` extension is already present');
+  }
+
+  if (result.errors?.length) {
+    handleErrors(ctx, result.errors, rewriteError);
+  }
+
+  // onResultProcess will be called only once since we disallow async iterables
+  if (ctx.stopped) throw new Error('Trace stopped multiple times');
+
+  ctx.stopped = true;
+  ctx.trace.durationNs = hrTimeToDurationInNanos(process.hrtime(ctx.startHrTime));
+  ctx.trace.endTime = nowTimestamp();
+
+  const encodedUint8Array = Trace.encode(ctx.trace).finish();
+  const encodedBuffer = Buffer.from(encodedUint8Array, encodedUint8Array.byteOffset, encodedUint8Array.byteLength);
+
+  result.extensions = {
+    ...result.extensions,
+    ftv1: encodedBuffer.toString('base64'),
+  };
+
+  return result;
 }
 
 /**
