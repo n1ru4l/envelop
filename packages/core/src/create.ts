@@ -7,19 +7,26 @@ import {
   SubscribeFunction,
   ParseFunction,
   ValidateFunction,
+  Optional,
 } from '@envelop/types';
 import { createEnvelopOrchestrator, EnvelopOrchestrator } from './orchestrator.js';
 
-export function envelop<PluginsType extends Plugin<any>[]>(options: {
+type ExcludeFalsy<TArray extends any[]> = Exclude<TArray[0], null | undefined | false>[];
+
+function notEmpty<T>(value: Optional<T>): value is T {
+  return value != null;
+}
+
+export function envelop<PluginsType extends Optional<Plugin<any>>[]>(options: {
   plugins: PluginsType;
   enableInternalTracing?: boolean;
   parse: ParseFunction;
   execute: ExecuteFunction;
   validate: ValidateFunction;
   subscribe: SubscribeFunction;
-}): GetEnvelopedFn<ComposeContext<PluginsType>> {
-  const plugins = options.plugins;
-  const orchestrator = createEnvelopOrchestrator<ComposeContext<PluginsType>>({
+}): GetEnvelopedFn<ComposeContext<ExcludeFalsy<PluginsType>>> {
+  const plugins = options.plugins.filter(notEmpty);
+  const orchestrator = createEnvelopOrchestrator<ComposeContext<ExcludeFalsy<PluginsType>>>({
     plugins,
     parse: options.parse,
     execute: options.execute,
@@ -30,7 +37,10 @@ export function envelop<PluginsType extends Plugin<any>[]>(options: {
   const getEnveloped = <TInitialContext extends ArbitraryObject>(
     initialContext: TInitialContext = {} as TInitialContext
   ) => {
-    const typedOrchestrator = orchestrator as EnvelopOrchestrator<TInitialContext, ComposeContext<PluginsType>>;
+    const typedOrchestrator = orchestrator as EnvelopOrchestrator<
+      TInitialContext,
+      ComposeContext<ExcludeFalsy<PluginsType>>
+    >;
     typedOrchestrator.init(initialContext);
 
     return {
@@ -45,5 +55,5 @@ export function envelop<PluginsType extends Plugin<any>[]>(options: {
 
   getEnveloped._plugins = plugins;
 
-  return getEnveloped as GetEnvelopedFn<ComposeContext<PluginsType>>;
+  return getEnveloped as GetEnvelopedFn<ComposeContext<ExcludeFalsy<PluginsType>>>;
 }
