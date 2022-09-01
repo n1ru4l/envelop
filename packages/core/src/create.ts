@@ -8,18 +8,17 @@ import {
   ParseFunction,
   ValidateFunction,
 } from '@envelop/types';
-import { isPluginEnabled, PluginOrDisabledPlugin } from './enable-if.js';
 import { createEnvelopOrchestrator, EnvelopOrchestrator } from './orchestrator.js';
 
 export function envelop<PluginsType extends Plugin<any>[]>(options: {
-  plugins: Array<PluginOrDisabledPlugin>;
+  plugins: Array<Plugin<any>>;
   enableInternalTracing?: boolean;
   parse: ParseFunction;
   execute: ExecuteFunction;
   validate: ValidateFunction;
   subscribe: SubscribeFunction;
 }): GetEnvelopedFn<ComposeContext<PluginsType>> {
-  const plugins = options.plugins.filter(isPluginEnabled);
+  const plugins = options.plugins;
   const orchestrator = createEnvelopOrchestrator<ComposeContext<PluginsType>>({
     plugins,
     parse: options.parse,
