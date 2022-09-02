@@ -10,8 +10,8 @@ import {
   subscribe,
   validate,
 } from 'graphql';
-import { useSchema, envelop, PluginOrDisabledPlugin, isAsyncIterable } from '@envelop/core';
-import { GetEnvelopedFn, Plugin } from '@envelop/types';
+import { useSchema, envelop, isAsyncIterable } from '@envelop/core';
+import { GetEnvelopedFn, Optional, Plugin } from '@envelop/types';
 import { mapSchema as cloneSchema, isDocumentNode } from '@graphql-tools/utils';
 
 export type ModifyPluginsFn = (plugins: Plugin<any>[]) => Plugin<any>[];
@@ -97,7 +97,7 @@ export type TestkitInstance = {
 };
 
 export function createTestkit(
-  pluginsOrEnvelop: GetEnvelopedFn<any> | Array<PluginOrDisabledPlugin>,
+  pluginsOrEnvelop: GetEnvelopedFn<any> | Parameters<typeof envelop>['0']['plugins'],
   schema?: GraphQLSchema
 ): TestkitInstance {
   const toGraphQLErrorOrThrow = (thrownThing: unknown): GraphQLError => {

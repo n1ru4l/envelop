@@ -153,30 +153,3 @@ const getEnveloped = envelop({
   ]
 })
 ```
-
-### Utilities
-
-#### enableIf
-
-This utility is helpful when you want to enable a plugin only when a certain condition is met.
-
-```ts
-import { envelop, useMaskedErrors, enableIf } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
-
-const isProd = process.env.NODE_ENV === 'production'
-
-const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
-  plugins: [
-    // This plugin is enabled only in production
-    enableIf(isProd, useMaskedErrors()),
-    // you can also pass function
-    enableIf(isProd, () => useMaskedErrors())
-    // ... other plugins ...
-  ]
-})
-```

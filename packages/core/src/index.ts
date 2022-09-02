@@ -7,5 +7,4 @@ export * from './plugins/use-schema.js';
 export * from './plugins/use-error-handler.js';
 export * from './plugins/use-extend-context.js';
 export * from './plugins/use-payload-formatter.js';
-export * from './enable-if.js';
 export { resolversHooksSymbol } from './traced-schema.js';

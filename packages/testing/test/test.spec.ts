@@ -1,4 +1,3 @@
-import { enableIf } from '@envelop/core';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { Plugin } from '@envelop/types';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -98,7 +97,7 @@ describe('Test the testkit', () => {
       onValidate: jest.fn().mockReturnValue(undefined),
     };
 
-    const testkit = createTestkit([plugin1, enableIf(false, plugin2)], createSchema());
+    const testkit = createTestkit([plugin1, false && plugin2], createSchema());
     const result = await testkit.execute('query test { foo }');
     assertSingleExecutionValue(result);
     expect(plugin1.onParse).toBeCalled();
