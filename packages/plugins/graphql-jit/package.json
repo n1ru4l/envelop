@@ -1,6 +1,6 @@
 {
   "name": "@envelop/graphql-jit",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -48,7 +48,8 @@
   },
   "dependencies": {
     "graphql-jit": "^0.7.0",
-    "lru-cache": "^6.0.0"
+    "lru-cache": "^6.0.0",
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "graphql-jit": "0.7.3",
@@ -57,7 +58,7 @@
     "typescript": "4.7.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.5.0",
+    "@envelop/core": "^2.6.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {

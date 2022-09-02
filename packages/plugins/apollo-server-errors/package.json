@@ -1,6 +1,6 @@
 {
   "name": "@envelop/apollo-server-errors",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -47,7 +47,8 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "apollo-server-errors": "^3.3.1"
+    "apollo-server-errors": "^3.3.1",
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "apollo-server-core": "3.5.0",
@@ -55,7 +56,7 @@
     "typescript": "4.7.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.5.0",
+    "@envelop/core": "^2.6.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {

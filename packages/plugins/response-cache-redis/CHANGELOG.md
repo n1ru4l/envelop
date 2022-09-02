@@ -1,5 +1,35 @@
 # @envelop/response-cache-redis
 
+## 1.2.0
+
+### Minor Changes
+
+- [#1499](https://github.com/n1ru4l/envelop/pull/1499) [`1f7af02b`](https://github.com/n1ru4l/envelop/commit/1f7af02b9f1a16058a6d69fcd48425a93be655c6) Thanks [@viniciuspalma](https://github.com/viniciuspalma)! - Adding tslib to package dependencies
+
+  Projects that currently are using yarn Berry with PnP or any strict dependency
+  resolver, that requires that all dependencies are specified on
+  package.json otherwise it would endue in an error if not treated correct
+
+  Since https://www.typescriptlang.org/tsconfig#importHelpers is currently
+  being used, tslib should be exported as a dependency to external runners
+  get the proper import.
+
+  Change on each package:
+
+  ```json
+  // package.json
+  {
+    "dependencies": {
+      "tslib": "^2.4.0"
+    }
+  }
+  ```
+
+### Patch Changes
+
+- Updated dependencies [[`1f7af02b`](https://github.com/n1ru4l/envelop/commit/1f7af02b9f1a16058a6d69fcd48425a93be655c6)]:
+  - @envelop/response-cache@3.2.0
+
 ## 1.1.0
 
 ### Patch Changes

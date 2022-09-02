@@ -1,6 +1,6 @@
 {
   "name": "@envelop/live-query",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -50,7 +50,8 @@
     "@graphql-tools/utils": "^8.8.0",
     "@n1ru4l/graphql-live-query": "^0.10.0",
     "@n1ru4l/in-memory-live-query-store": "^0.10.0",
-    "@n1ru4l/graphql-live-query-patch": "^0.7.0"
+    "@n1ru4l/graphql-live-query-patch": "^0.7.0",
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "graphql": "16.3.0",
@@ -58,7 +59,7 @@
     "@n1ru4l/graphql-live-query-patch-jsondiffpatch": "0.8.0"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.5.0",
+    "@envelop/core": "^2.6.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {
