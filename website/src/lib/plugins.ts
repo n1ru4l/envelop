@@ -45,19 +45,8 @@ export const pluginsArr: Package<Tags>[] = [
     tags: ['core', 'schema'],
   },
   {
-    identifier: 'use-async-schema',
-    title: 'useAsyncSchema',
-    githubReadme: {
-      repo: 'n1ru4l/envelop',
-      path: 'packages/core/docs/use-async-schema.md',
-    },
-    npmPackage: '@envelop/core',
-    iconUrl: '/logo.png',
-    tags: ['core', 'schema'],
-  },
-  {
     identifier: 'use-lazy-loaded-schema',
-    title: 'useLazyLoadedSchema',
+    title: 'useSchemaByContext',
     githubReadme: {
       repo: 'n1ru4l/envelop',
       path: 'packages/core/docs/use-lazy-loaded-schema.md',
