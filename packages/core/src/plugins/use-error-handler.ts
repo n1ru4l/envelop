@@ -21,6 +21,23 @@ export const useErrorHandler = <ContextType extends Record<string, any>>(
 ): Plugin<ContextType> => {
   const handleResult = makeHandleResult<ContextType>(errorHandler);
   return {
+    onParse() {
+      return function onParseEnd({ result, replaceParseResult, context }) {
+        replaceParseResult(errorHandler([result], context));
+      };
+    },
+    onValidate() {
+      return function onValidateEnd({ valid, result, setResult, context }) {
+        if (valid === false && result.length > 0) {
+          setResult(errorHandler(result as Error[], context));
+        }
+      };
+    },
+    onPluginInit(context) {
+      context.registerContextErrorHandler(({ error, setError }) => {
+        setError(errorHandler([error], context));
+      });
+    },
     onExecute() {
       return {
         onExecuteDone(payload) {

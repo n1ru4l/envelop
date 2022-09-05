@@ -36,6 +36,28 @@ describe('useErrorHandler', () => {
     );
   });
 
+  it.only('should invoke error handler when error happens during parse', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          foo: String
+        }
+      `,
+      resolvers: {
+        Query: {
+          foo: () => {
+            return 'foo';
+          },
+        },
+      },
+    });
+
+    const mockHandler = jest.fn();
+    const testInstance = createTestkit([useErrorHandler(mockHandler)], schema);
+    await testInstance.execute(`query { foo `, {});
+    expect(mockHandler).toHaveBeenCalledTimes(1);
+  });
+
   it('should invoke error handler when error happens during subscription resolver call', async () => {
     const testError = new Error('Foobar');
 
