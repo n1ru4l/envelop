@@ -46,7 +46,7 @@ export const pluginsArr: Package<Tags>[] = [
   },
   {
     identifier: 'use-lazy-loaded-schema',
-    title: 'useLazyLoadedSchema',
+    title: 'useSchemaByContext',
     githubReadme: {
       repo: 'n1ru4l/envelop',
       path: 'packages/core/docs/use-lazy-loaded-schema.md',
