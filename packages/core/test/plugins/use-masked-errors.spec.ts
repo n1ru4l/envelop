@@ -33,12 +33,14 @@ describe('useMaskedErrors', () => {
           throw new Error('Secret sauce that should not leak.');
         },
         secretEnvelop: () => {
-          throw new GraphQLError('This message goes to all the clients out there!', { foo: 1 });
+          throw new GraphQLError('This message goes to all the clients out there!', { extensions: { foo: 1 } });
         },
         secretWithExtensions: () => {
           throw new GraphQLError('This message goes to all the clients out there!', {
-            code: 'Foo',
-            message: 'Bar',
+            extensions: {
+              code: 'Foo',
+              message: 'Bar',
+            },
           });
         },
       },
@@ -108,31 +110,6 @@ describe('useMaskedErrors', () => {
     expect(error.extensions).toEqual({ foo: 1 });
   });
 
-  it('Should include the original error within the error extensions when `isDev` is set to `true`', async () => {
-    const testInstance = createTestkit([useMaskedErrors({ isDev: true })], schema);
-    const result = await testInstance.execute(`query { secret }`);
-    assertSingleExecutionValue(result);
-    expect(result.errors).toBeDefined();
-    expect(result.errors).toHaveLength(1);
-    const [error] = result.errors!;
-    expect(error.extensions).toEqual({
-      originalError: {
-        message: 'Secret sauce that should not leak.',
-        stack: expect.stringContaining('Error: Secret sauce that should not leak.'),
-      },
-    });
-  });
-
-  it('Should not include the original error within the error extensions when `isDev` is set to `false`', async () => {
-    const testInstance = createTestkit([useMaskedErrors({ isDev: false })], schema);
-    const result = await testInstance.execute(`query { secret }`);
-    assertSingleExecutionValue(result);
-    expect(result.errors).toBeDefined();
-    expect(result.errors).toHaveLength(1);
-    const [error] = result.errors!;
-    expect(error.extensions).toEqual({});
-  });
-
   it('Should not mask GraphQL operation syntax errors (of course it does not since we are only hooking in after execute, but just to be sure)', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
     const result = await testInstance.execute(`query { idonotexist }`);
@@ -196,7 +173,7 @@ describe('useMaskedErrors', () => {
     const testInstance = createTestkit(
       [
         useExtendContext((): {} => {
-          throw new GraphQLError('No context for you!', { foo: 1 });
+          throw new GraphQLError('No context for you!', { extensions: { foo: 1 } });
         }),
         useMaskedErrors(),
       ],
@@ -211,30 +188,6 @@ describe('useMaskedErrors', () => {
       } else {
         throw err;
       }
-    }
-  });
-  it('Should include the original context error in extensions in dev mode for error thrown during context creation.', async () => {
-    expect.assertions(3);
-    const testInstance = createTestkit(
-      [
-        useExtendContext((): {} => {
-          throw new Error('No context for you!');
-        }),
-        useMaskedErrors({ isDev: true }),
-      ],
-      schema
-    );
-    try {
-      await testInstance.execute(`query { secretWithExtensions }`);
-    } catch (err: any) {
-      expect(err).toBeInstanceOf(GraphQLError);
-      expect(err.message).toEqual('Unexpected error.');
-      expect(err.extensions).toEqual({
-        originalError: {
-          message: 'No context for you!',
-          stack: expect.stringContaining('Error: No context for you!'),
-        },
-      });
     }
   });
 
@@ -258,7 +211,7 @@ describe('useMaskedErrors', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchInlineSnapshot(`
       Array [
-        [GraphQLError: Noop],
+        [Error: My Custom subscription error message.],
       ]
     `);
   });
@@ -339,7 +292,7 @@ describe('useMaskedErrors', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchInlineSnapshot(`
       Array [
-        [GraphQLError: Noop],
+        [Error: Custom resolve subscription errors.],
       ]
     `);
   });

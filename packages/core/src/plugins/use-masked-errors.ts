@@ -6,7 +6,13 @@ export const DEFAULT_ERROR_MESSAGE = 'Unexpected error.';
 export type FormatErrorHandler = (error: unknown, message: string) => Error;
 
 export const formatError: FormatErrorHandler = (err, message) => {
-  if ((err as Error).name === 'GraphQLError') {
+  if (err?.name === 'GraphQLError') {
+    if (err?.originalError) {
+      if (err.originalError.name === 'GraphQLError') {
+        return err as Error;
+      }
+      return new Error(message);
+    }
     return err as Error;
   }
   return new Error(message);
