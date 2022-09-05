@@ -15,13 +15,3 @@ export const useLazyLoadedSchema = (schemaLoader: (context: Maybe<DefaultContext
     },
   };
 };
-
-export const useAsyncSchema = (schemaPromise: Promise<any>): Plugin => {
-  return {
-    onPluginInit({ setSchema }) {
-      schemaPromise.then(schemaObj => {
-        setSchema(schemaObj);
-      });
-    },
-  };
-};
