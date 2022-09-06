@@ -289,12 +289,9 @@ describe('useMaskedErrors', () => {
     const allResults = await collectAsyncIteratorValues(resultStream);
     expect(allResults).toHaveLength(1);
     const [result] = allResults;
-    expect(result.errors).toBeDefined();
-    expect(result.errors).toMatchInlineSnapshot(`
-      Array [
-        [Error: Custom resolve subscription errors.],
-      ]
-    `);
+    expect(JSON.stringify(result)).toMatchInlineSnapshot(
+      `"{\\"errors\\":[{\\"message\\":\\"Custom resolve subscription errors.\\"}],\\"data\\":{\\"streamResolveError\\":null}}"`
+    );
   });
 
   it('Should not mask resolve subscription envelop errors', async () => {
