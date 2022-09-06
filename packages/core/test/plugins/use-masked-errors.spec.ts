@@ -131,6 +131,9 @@ describe('useMaskedErrors', () => {
       code: 'Foo',
       message: 'Bar',
     });
+    expect(JSON.stringify(result)).toMatchInlineSnapshot(
+      `"{\\"errors\\":[{\\"message\\":\\"This message goes to all the clients out there!\\",\\"locations\\":[{\\"line\\":1,\\"column\\":9}],\\"path\\":[\\"secretWithExtensions\\"],\\"extensions\\":{\\"code\\":\\"Foo\\",\\"message\\":\\"Bar\\"}}],\\"data\\":null}"`
+    );
   });
 
   it('Should properly mask context creation errors with a custom error message', async () => {
@@ -379,6 +382,9 @@ describe('useMaskedErrors', () => {
         ],
       }
     `);
+    expect(JSON.stringify(result)).toMatchInlineSnapshot(
+      `"{\\"errors\\":[{\\"message\\":\\"Custom error message for Secret sauce that should not leak.\\\\n\\\\nGraphQL request:1:9\\\\n1 | query { secret }\\\\n  |         ^\\",\\"extensions\\":{\\"custom\\":true}}],\\"data\\":null}"`
+    );
   });
 
   it('should use custom error mask function for subscribe (AsyncIterable) subscription errors', async () => {
