@@ -11,6 +11,7 @@ export function isGraphQLError(error: unknown): error is Error & { originalError
 
 function createSerializableError(message: string, originalError?: Error) {
   const error = new Error(message);
+  error.name = 'GraphQLError';
   Object.defineProperty(error, 'toJSON', {
     value() {
       if (originalError) {
