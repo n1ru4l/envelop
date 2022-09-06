@@ -22,23 +22,22 @@ export const useErrorHandler = <ContextType extends Record<string, any>>(
   const handleResult = makeHandleResult<ContextType>(errorHandler);
   return {
     onParse() {
-      return function onParseEnd({ result, replaceParseResult, context }) {
+      return function onParseEnd({ result, context }) {
         if (result instanceof Error) {
-          console.log('onParseEnd', result);
-          replaceParseResult(errorHandler([result], context));
+          errorHandler([result], context);
         }
       };
     },
     onValidate() {
       return function onValidateEnd({ valid, result, setResult, context }) {
         if (valid === false && result.length > 0) {
-          setResult(errorHandler(result as Error[], context));
+          errorHandler(result as Error[], context);
         }
       };
     },
     onPluginInit(context) {
-      context.registerContextErrorHandler(({ error, setError }) => {
-        setError(errorHandler([error], context));
+      context.registerContextErrorHandler(({ error }) => {
+        errorHandler([error], context);
       });
     },
     onExecute() {

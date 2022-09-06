@@ -1,7 +1,11 @@
 import { useErrorHandler } from '../../src/plugins/use-error-handler.js';
 import { assertStreamExecutionValue, collectAsyncIteratorValues, createTestkit } from '@envelop/testing';
+import { Plugin } from '@envelop/types';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { Repeater } from '@repeaterjs/repeater';
+import { createGraphQLError } from '@graphql-tools/utils';
+import { schema } from '../common.js';
+import { useExtendContext } from '@envelop/core';
 
 describe('useErrorHandler', () => {
   it('should invoke error handler when error happens during execution', async () => {
@@ -36,25 +40,42 @@ describe('useErrorHandler', () => {
     );
   });
 
-  it.only('should invoke error handler when error happens during parse', async () => {
-    const schema = makeExecutableSchema({
-      typeDefs: /* GraphQL */ `
-        type Query {
-          foo: String
-        }
-      `,
-      resolvers: {
-        Query: {
-          foo: () => {
-            return 'foo';
-          },
-        },
-      },
-    });
-
+  it('should invoke error handler when error happens during parse', async () => {
+    expect.assertions(1);
     const mockHandler = jest.fn();
     const testInstance = createTestkit([useErrorHandler(mockHandler)], schema);
-    await testInstance.execute(`query { foo `, {});
+    await testInstance.execute(`query { me `, {});
+    expect(mockHandler).toHaveBeenCalledTimes(1);
+  });
+
+  it('should invoke error handler on validation error', async () => {
+    expect.assertions(1);
+    const useMyFailingValidator: Plugin = {
+      onValidate(payload) {
+        payload.setValidationFn(() => {
+          return [createGraphQLError('Failure!')];
+        });
+      },
+    };
+    const mockHandler = jest.fn();
+    const testInstance = createTestkit([useMyFailingValidator, useErrorHandler(mockHandler)], schema);
+    await testInstance.execute(`query { iDoNotExistsMyGuy }`, {});
+    expect(mockHandler).toHaveBeenCalledTimes(1);
+  });
+
+  it('should invoke error handle for context errors', async () => {
+    expect.assertions(1);
+    const mockHandler = jest.fn();
+    const testInstance = createTestkit(
+      [
+        useExtendContext((): {} => {
+          throw new Error('No context for you!');
+        }),
+        useErrorHandler(mockHandler),
+      ],
+      schema
+    );
+    await testInstance.execute(`query { secretWithExtensions }`);
     expect(mockHandler).toHaveBeenCalledTimes(1);
   });
 
