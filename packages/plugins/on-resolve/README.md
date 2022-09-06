@@ -73,37 +73,26 @@ const getEnveloped = envelop({
 ### Custom field resolutions
 
 ```ts
-import { envelop, Plugin } from '@envelop/core'
+import { envelop } from '@envelop/core'
 import { useOnResolve } from '@envelop/on-resolve'
 import { specialResolver } from './my-resolvers'
-
-function useSpecialResolve(): Plugin {
-  return {
-    onPluginInit({ addPlugin }) {
-      // we hook into onSchemaChange to make sure we're always tracing the current schema
-      addPlugin(
-        useOnResolve(async function onResolve({ context, root, args, info, replaceResolver }) {
-          // replace special field's resolver
-          if (info.fieldName === 'special') {
-            replaceResolver(specialResolver)
-          }
-
-          // replace field's result
-          if (info.fieldName === 'alwaysHello') {
-            return ({ setResult }) => {
-              setResult('hello')
-            }
-          }
-        })
-      )
-    }
-  }
-}
 
 const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
-    useSpecialResolve()
+    useOnResolve(async function onResolve({ context, root, args, info, replaceResolver }) {
+      // replace special field's resolver
+      if (info.fieldName === 'special') {
+        replaceResolver(specialResolver)
+      }
+
+      // replace field's result
+      if (info.fieldName === 'alwaysHello') {
+        return ({ setResult }) => {
+          setResult('hello')
+        }
+      }
+    })
   ]
 })
 ```
