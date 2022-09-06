@@ -1,5 +1,4 @@
 import { Maybe, PromiseOrValue, AsyncIterableIteratorOrValue } from './utils.js';
-import { DefaultContext } from './context-types.js';
 import {
   ExecuteFunction,
   ParseFunction,
