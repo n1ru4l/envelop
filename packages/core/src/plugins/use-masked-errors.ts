@@ -3,80 +3,67 @@ import { handleStreamOrSingleExecutionResult } from '../utils.js';
 
 export const DEFAULT_ERROR_MESSAGE = 'Unexpected error.';
 
-export type FormatErrorHandler = (error: unknown, message: string, isDev: boolean) => Error;
+export type MaskErrorFn = (error: unknown, message: string) => Error;
+
+export type SerializableGraphQLErrorLike = Error & {
+  name: 'GraphQLError';
+  toJSON(): { message: string };
+};
 
 export function isGraphQLError(error: unknown): error is Error & { originalError?: Error } {
   return error instanceof Error && error.name === 'GraphQLError';
 }
 
-function createSerializableError(message: string, originalError?: Error) {
+export function createSerializableGraphQLError(message: string): SerializableGraphQLErrorLike {
   const error = new Error(message);
   error.name = 'GraphQLError';
   Object.defineProperty(error, 'toJSON', {
     value() {
-      if (originalError) {
-        return {
-          message: error.message,
-          extensions: {
-            originalError: {
-              name: originalError.name,
-              message: originalError.message,
-              stack: originalError.stack,
-            },
-          },
-        };
-      }
       return {
         message: error.message,
       };
     },
   });
-  return error;
+  return error as SerializableGraphQLErrorLike;
 }
 
-export const formatError: FormatErrorHandler = (err, message, isDev) => {
+export const defaultMaskErrorFn: MaskErrorFn = (err, message) => {
   if (isGraphQLError(err)) {
     if (err?.originalError) {
       if (isGraphQLError(err.originalError)) {
         return err;
-      } else if (isDev) {
-        return createSerializableError(message, err.originalError);
-      } else {
-        return createSerializableError(message);
       }
+      return createSerializableGraphQLError(message);
     }
     return err;
   }
-  return createSerializableError(message);
+  return createSerializableGraphQLError(message);
 };
 
 export type UseMaskedErrorsOpts = {
-  /** The function used for format/identify errors. */
-  formatError?: FormatErrorHandler;
+  /** The function used for identify and mask errors. */
+  maskErrorFn?: MaskErrorFn;
   /** The error message that shall be used for masked errors. */
   errorMessage?: string;
-
-  isDev?: boolean;
 };
 
 const makeHandleResult =
-  (format: FormatErrorHandler, message: string, isDev: boolean) =>
+  (maskErrorFn: MaskErrorFn, message: string) =>
   ({ result, setResult }: { result: ExecutionResult; setResult: (result: ExecutionResult) => void }) => {
     if (result.errors != null) {
-      setResult({ ...result, errors: result.errors.map(error => format(error, message, isDev)) });
+      setResult({ ...result, errors: result.errors.map(error => maskErrorFn(error, message)) });
     }
   };
 
 export const useMaskedErrors = (opts?: UseMaskedErrorsOpts): Plugin => {
-  const format = opts?.formatError ?? formatError;
+  const maskErrorFn = opts?.maskErrorFn ?? defaultMaskErrorFn;
   const message = opts?.errorMessage || DEFAULT_ERROR_MESSAGE;
-  const isDev = opts?.isDev ?? process.env.NODE_ENV === 'development';
-  const handleResult = makeHandleResult(format, message, isDev);
+  const handleResult = makeHandleResult(maskErrorFn, message);
 
   return {
     onPluginInit(context) {
       context.registerContextErrorHandler(({ error, setError }) => {
-        setError(format(error, message, isDev));
+        setError(maskErrorFn(error, message));
       });
     },
     onExecute() {
@@ -92,7 +79,7 @@ export const useMaskedErrors = (opts?: UseMaskedErrorsOpts): Plugin => {
           return handleStreamOrSingleExecutionResult(payload, handleResult);
         },
         onSubscribeError({ error, setError }) {
-          setError(format(error, message, isDev));
+          setError(maskErrorFn(error, message));
         },
       };
     },

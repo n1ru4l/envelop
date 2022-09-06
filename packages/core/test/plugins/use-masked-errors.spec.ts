@@ -5,7 +5,7 @@ import {
   collectAsyncIteratorValues,
   createTestkit,
 } from '@envelop/testing';
-import { useMaskedErrors, DEFAULT_ERROR_MESSAGE, FormatErrorHandler } from '../../src/plugins/use-masked-errors.js';
+import { useMaskedErrors, DEFAULT_ERROR_MESSAGE, MaskErrorFn } from '../../src/plugins/use-masked-errors.js';
 import { useExtendContext } from '@envelop/core';
 import { useAuth0 } from '../../../plugins/auth0/src/index.js';
 import { GraphQLError } from 'graphql';
@@ -147,7 +147,7 @@ describe('useMaskedErrors', () => {
     try {
       await testInstance.execute(`query { secretWithExtensions }`);
     } catch (err) {
-      expect(err).toMatchInlineSnapshot(`[Error: My Custom Error Message.]`);
+      expect(err).toMatchInlineSnapshot(`[GraphQLError: My Custom Error Message.]`);
     }
   });
   it('Should properly mask context creation errors', async () => {
@@ -211,7 +211,7 @@ describe('useMaskedErrors', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchInlineSnapshot(`
       Array [
-        [Error: My Custom subscription error message.],
+        [GraphQLError: My Custom subscription error message.],
       ]
     `);
   });
@@ -251,7 +251,7 @@ describe('useMaskedErrors', () => {
     try {
       await collectAsyncIteratorValues(resultStream);
     } catch (err) {
-      expect(err).toMatchInlineSnapshot(`[Error: My AsyncIterable Custom Error Message.]`);
+      expect(err).toMatchInlineSnapshot(`[GraphQLError: My AsyncIterable Custom Error Message.]`);
     }
   });
 
@@ -323,13 +323,13 @@ describe('useMaskedErrors', () => {
     try {
       await testInstance.execute(`query { secret }`, {}, { request: { headers: { authorization: 'Something' } } });
     } catch (err) {
-      expect(err).toMatchInlineSnapshot(`[Error: Unexpected error.]`);
+      expect(err).toMatchInlineSnapshot(`[GraphQLError: Unexpected error.]`);
     }
 
     try {
       await testInstance.execute(`query { secret }`, {}, { request: { headers: { authorization: 'Something else' } } });
     } catch (err) {
-      expect(err).toMatchInlineSnapshot(`[Error: Unexpected error.]`);
+      expect(err).toMatchInlineSnapshot(`[GraphQLError: Unexpected error.]`);
     }
   });
 
@@ -359,12 +359,12 @@ describe('useMaskedErrors', () => {
     `);
   });
 
-  it('should use custom error formatter for execution errors', async () => {
-    const customErrorFormatter: FormatErrorHandler = e =>
+  it('should use custom error mask function for execution errors', async () => {
+    const customErrorMaskFn: MaskErrorFn = e =>
       new GraphQLError('Custom error message for ' + e, null, null, null, null, null, {
         custom: true,
       });
-    const testInstance = createTestkit([useMaskedErrors({ formatError: customErrorFormatter })], schema);
+    const testInstance = createTestkit([useMaskedErrors({ maskErrorFn: customErrorMaskFn })], schema);
     const result = await testInstance.execute(`query { secret }`);
     assertSingleExecutionValue(result);
     expect(result).toMatchInlineSnapshot(`
@@ -381,13 +381,13 @@ describe('useMaskedErrors', () => {
     `);
   });
 
-  it('should use custom error formatter for subscribe (AsyncIterable) subscription errors', async () => {
-    const customErrorFormatter: FormatErrorHandler = e =>
+  it('should use custom error mask function for subscribe (AsyncIterable) subscription errors', async () => {
+    const customErrorMaskFn: MaskErrorFn = e =>
       new GraphQLError('Custom error message for ' + e, null, null, null, null, null, {
         custom: true,
       });
     expect.assertions(2);
-    const testInstance = createTestkit([useMaskedErrors({ formatError: customErrorFormatter })], schema);
+    const testInstance = createTestkit([useMaskedErrors({ maskErrorFn: customErrorMaskFn })], schema);
     const resultStream = await testInstance.execute(`subscription { streamError }`);
     assertStreamExecutionValue(resultStream);
     try {
@@ -398,14 +398,14 @@ describe('useMaskedErrors', () => {
     }
   });
 
-  it('should use custom error formatter for errors while building the context', async () => {
-    const customErrorFormatter: FormatErrorHandler = e =>
+  it('should use custom error mask function for errors while building the context', async () => {
+    const customErrorMaskFn: MaskErrorFn = e =>
       new GraphQLError('Custom error message for ' + e, null, null, null, null, null, {
         custom: true,
       });
     const testInstance = createTestkit(
       [
-        useMaskedErrors({ formatError: customErrorFormatter }),
+        useMaskedErrors({ maskErrorFn: customErrorMaskFn }),
         useExtendContext(() => {
           throw new GraphQLError('Custom error');
           return {};
