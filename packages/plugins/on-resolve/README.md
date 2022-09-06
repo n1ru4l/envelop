@@ -12,6 +12,33 @@ yarn add @envelop/on-resolve
 
 ## Usage Example
 
+### Custom field resolutions
+
+```ts
+import { envelop } from '@envelop/core'
+import { useOnResolve } from '@envelop/on-resolve'
+import { specialResolver } from './my-resolvers'
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useOnResolve(async function onResolve({ context, root, args, info, replaceResolver }) {
+      // replace special field's resolver
+      if (info.fieldName === 'special') {
+        replaceResolver(specialResolver)
+      }
+
+      // replace field's result
+      if (info.fieldName === 'alwaysHello') {
+        return ({ setResult }) => {
+          setResult('hello')
+        }
+      }
+    })
+  ]
+})
+```
+
 ### Tracing
 
 ```ts
@@ -66,33 +93,6 @@ const getEnveloped = envelop({
   plugins: [
     // ... other plugins ...
     useSpecialResolve()
-  ]
-})
-```
-
-### Custom field resolutions
-
-```ts
-import { envelop } from '@envelop/core'
-import { useOnResolve } from '@envelop/on-resolve'
-import { specialResolver } from './my-resolvers'
-
-const getEnveloped = envelop({
-  plugins: [
-    // ... other plugins ...
-    useOnResolve(async function onResolve({ context, root, args, info, replaceResolver }) {
-      // replace special field's resolver
-      if (info.fieldName === 'special') {
-        replaceResolver(specialResolver)
-      }
-
-      // replace field's result
-      if (info.fieldName === 'alwaysHello') {
-        return ({ setResult }) => {
-          setResult('hello')
-        }
-      }
-    })
   ]
 })
 ```
