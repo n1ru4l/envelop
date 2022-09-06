@@ -21,7 +21,7 @@ export interface Plugin<PluginContext extends Record<string, any> = {}> {
   /**
    * Invoked when a plugin is initialized.
    */
-  onPluginInit?: OnPluginInitHook;
+  onPluginInit?: OnPluginInitHook<PluginContext>;
   /**
    * Invoked for each execute call.
    */

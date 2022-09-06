@@ -43,15 +43,15 @@ export type RegisterContextErrorHandler = (handler: OnContextErrorHandler) => vo
 /**
  * Payload forwarded to the onPluginInit hook.
  */
-export type OnPluginInitEventPayload = {
+export type OnPluginInitEventPayload<PluginContext extends Record<string, any>> = {
   /**
    * Register a new plugin.
    */
-  addPlugin: (newPlugin: Plugin<any>) => void;
+  addPlugin: (newPlugin: Plugin<PluginContext>) => void;
   /**
    * A list of all currently active plugins.
    */
-  plugins: Plugin<any>[];
+  plugins: Plugin<PluginContext>[];
   /**
    * Set the GraphQL schema.
    */
@@ -65,7 +65,9 @@ export type OnPluginInitEventPayload = {
 /**
  * Invoked when a plugin is initialized.
  */
-export type OnPluginInitHook = (options: OnPluginInitEventPayload) => void;
+export type OnPluginInitHook<ContextType extends Record<string, any>> = (
+  options: OnPluginInitEventPayload<ContextType>
+) => void;
 
 /** onPluginInit */
 export type OnEnvelopedHookEventPayload<ContextType> = {
