@@ -9,6 +9,7 @@ import { useMaskedErrors, DEFAULT_ERROR_MESSAGE, MaskErrorFn } from '../../src/p
 import { useExtendContext } from '@envelop/core';
 import { useAuth0 } from '../../../plugins/auth0/src/index.js';
 import { GraphQLError } from 'graphql';
+import { createGraphQLError } from '@graphql-tools/utils';
 
 describe('useMaskedErrors', () => {
   const schema = makeExecutableSchema({
@@ -33,10 +34,10 @@ describe('useMaskedErrors', () => {
           throw new Error('Secret sauce that should not leak.');
         },
         secretEnvelop: () => {
-          throw new GraphQLError('This message goes to all the clients out there!', { extensions: { foo: 1 } });
+          throw createGraphQLError('This message goes to all the clients out there!', { extensions: { foo: 1 } });
         },
         secretWithExtensions: () => {
-          throw new GraphQLError('This message goes to all the clients out there!', {
+          throw createGraphQLError('This message goes to all the clients out there!', {
             extensions: {
               code: 'Foo',
               message: 'Bar',
@@ -67,13 +68,13 @@ describe('useMaskedErrors', () => {
         },
         instantGraphQLError: {
           subscribe: async function () {
-            throw new GraphQLError('Noop');
+            throw createGraphQLError('Noop');
           },
           resolve: _ => _,
         },
         streamGraphQLError: {
           subscribe: async function* () {
-            throw new GraphQLError('Noop');
+            throw createGraphQLError('Noop');
           },
           resolve: _ => _,
         },
@@ -82,7 +83,7 @@ describe('useMaskedErrors', () => {
             yield '1';
           },
           resolve: _ => {
-            throw new GraphQLError('Noop');
+            throw createGraphQLError('Noop');
           },
         },
       },
@@ -176,7 +177,7 @@ describe('useMaskedErrors', () => {
     const testInstance = createTestkit(
       [
         useExtendContext((): {} => {
-          throw new GraphQLError('No context for you!', { extensions: { foo: 1 } });
+          throw createGraphQLError('No context for you!', { extensions: { foo: 1 } });
         }),
         useMaskedErrors(),
       ],
@@ -413,7 +414,7 @@ describe('useMaskedErrors', () => {
       [
         useMaskedErrors({ maskErrorFn: customErrorMaskFn }),
         useExtendContext(() => {
-          throw new GraphQLError('Custom error');
+          throw createGraphQLError('Custom error');
           return {};
         }),
       ],
