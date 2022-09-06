@@ -23,7 +23,10 @@ export const useErrorHandler = <ContextType extends Record<string, any>>(
   return {
     onParse() {
       return function onParseEnd({ result, replaceParseResult, context }) {
-        replaceParseResult(errorHandler([result], context));
+        if (result instanceof Error) {
+          console.log('onParseEnd', result);
+          replaceParseResult(errorHandler([result], context));
+        }
       };
     },
     onValidate() {
