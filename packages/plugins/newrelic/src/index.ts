@@ -1,5 +1,5 @@
 import { Plugin, Path, isAsyncIterable, DefaultContext } from '@envelop/core';
-// import { OnResolve, useOnResolve } from '@envelop/on-resolve';
+import { useOnResolve } from '@envelop/on-resolve';
 import { print, FieldNode, Kind, OperationDefinitionNode, ExecutionResult, GraphQLError } from 'graphql';
 
 enum AttributeName {
@@ -78,6 +78,53 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
   });
 
   return {
+    onPluginInit({ addPlugin }) {
+      if (options.trackResolvers) {
+        addPlugin(
+          useOnResolve(async ({ args: resolversArgs, info }) => {
+            const instrumentationApi = await instrumentationApi$;
+            const transactionNameState = instrumentationApi.agent.tracer.getTransaction().nameState;
+            const delimiter = transactionNameState.delimiter;
+
+            const logger = await logger$;
+            const { returnType, path, parentType } = info;
+            const formattedPath = flattenPath(path, delimiter);
+            const currentSegment = instrumentationApi.getActiveSegment();
+            if (!currentSegment) {
+              logger.trace('No active segment found at resolver call. Not recording resolver (%s).', formattedPath);
+              return () => {};
+            }
+
+            const resolverSegment = instrumentationApi.createSegment(
+              `resolver${delimiter}${formattedPath}`,
+              null,
+              currentSegment
+            );
+            if (!resolverSegment) {
+              logger.trace('Resolver segment was not created (%s).', formattedPath);
+              return () => {};
+            }
+            resolverSegment.start();
+            resolverSegment.addAttribute(AttributeName.RESOLVER_FIELD_PATH, formattedPath);
+            resolverSegment.addAttribute(AttributeName.RESOLVER_TYPE_NAME, parentType.toString());
+            resolverSegment.addAttribute(AttributeName.RESOLVER_RESULT_TYPE, returnType.toString());
+            if (options.includeResolverArgs) {
+              const rawArgs = resolversArgs || {};
+              const resolverArgsToTrack = options.isResolverArgsRegex
+                ? filterPropertiesByRegex(rawArgs, options.includeResolverArgs as RegExp)
+                : rawArgs;
+              resolverSegment.addAttribute(AttributeName.RESOLVER_ARGS, JSON.stringify(resolverArgsToTrack));
+            }
+            return ({ result }) => {
+              if (options.includeRawResult) {
+                resolverSegment.addAttribute(AttributeName.RESOLVER_RESULT, JSON.stringify(result));
+              }
+              resolverSegment.end();
+            };
+          })
+        );
+      }
+    },
     async onExecute({ args }) {
       const instrumentationApi = await instrumentationApi$;
       const transactionNameState = instrumentationApi.agent.tracer.getTransaction().nameState;
@@ -125,46 +172,6 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
       }
 
       const operationSegment = instrumentationApi.getActiveSegment();
-
-      if (options.trackResolvers) {
-        // TODO: cant rewrap, figure out better approach
-        // useOnResolve(args.schema, async ({ args: resolversArgs, info }) => {
-        //   const logger = await logger$;
-        //   const { returnType, path, parentType } = info;
-        //   const formattedPath = flattenPath(path, delimiter);
-        //   const currentSegment = instrumentationApi.getActiveSegment();
-        //   if (!currentSegment) {
-        //     logger.trace('No active segment found at resolver call. Not recording resolver (%s).', formattedPath);
-        //     return () => {};
-        //   }
-        //   const resolverSegment = instrumentationApi.createSegment(
-        //     `resolver${delimiter}${formattedPath}`,
-        //     null,
-        //     operationSegment
-        //   );
-        //   if (!resolverSegment) {
-        //     logger.trace('Resolver segment was not created (%s).', formattedPath);
-        //     return () => {};
-        //   }
-        //   resolverSegment.start();
-        //   resolverSegment.addAttribute(AttributeName.RESOLVER_FIELD_PATH, formattedPath);
-        //   resolverSegment.addAttribute(AttributeName.RESOLVER_TYPE_NAME, parentType.toString());
-        //   resolverSegment.addAttribute(AttributeName.RESOLVER_RESULT_TYPE, returnType.toString());
-        //   if (options.includeResolverArgs) {
-        //     const rawArgs = resolversArgs || {};
-        //     const resolverArgsToTrack = options.isResolverArgsRegex
-        //       ? filterPropertiesByRegex(rawArgs, options.includeResolverArgs as RegExp)
-        //       : rawArgs;
-        //     resolverSegment.addAttribute(AttributeName.RESOLVER_ARGS, JSON.stringify(resolverArgsToTrack));
-        //   }
-        //   return ({ result }) => {
-        //     if (options.includeRawResult) {
-        //       resolverSegment.addAttribute(AttributeName.RESOLVER_RESULT, JSON.stringify(result));
-        //     }
-        //     resolverSegment.end();
-        //   };
-        // });
-      }
 
       return {
         onExecuteDone({ result }) {
