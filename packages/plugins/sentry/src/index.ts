@@ -164,9 +164,9 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
     : undefined;
 
   return {
-    onSchemaChange({ schema }) {
+    onPluginInit({ addPlugin }) {
       if (onResolve) {
-        useOnResolve(schema, onResolve);
+        addPlugin(useOnResolve(onResolve));
       }
     },
     onExecute({ args, extendContext }) {

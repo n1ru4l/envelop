@@ -46,41 +46,43 @@ export const useOpenTelemetry = (
   const tracer = tracingProvider.getTracer(serviceName);
 
   return {
-    onSchemaChange: async ({ schema }) => {
+    onPluginInit({ addPlugin }) {
       if (options.resolvers) {
-        useOnResolve(schema, ({ info, context, args }) => {
-          if (context && typeof context === 'object' && context[tracingSpanSymbol]) {
-            tracer.getActiveSpanProcessor();
-            const ctx = opentelemetry.trace.setSpan(opentelemetry.context.active(), context[tracingSpanSymbol]);
-            const { fieldName, returnType, parentType } = info;
+        addPlugin(
+          useOnResolve(({ info, context, args }) => {
+            if (context && typeof context === 'object' && context[tracingSpanSymbol]) {
+              tracer.getActiveSpanProcessor();
+              const ctx = opentelemetry.trace.setSpan(opentelemetry.context.active(), context[tracingSpanSymbol]);
+              const { fieldName, returnType, parentType } = info;
 
-            const resolverSpan = tracer.startSpan(
-              `${parentType.name}.${fieldName}`,
-              {
-                attributes: {
-                  [AttributeName.RESOLVER_FIELD_NAME]: fieldName,
-                  [AttributeName.RESOLVER_TYPE_NAME]: parentType.toString(),
-                  [AttributeName.RESOLVER_RESULT_TYPE]: returnType.toString(),
-                  [AttributeName.RESOLVER_ARGS]: JSON.stringify(args || {}),
+              const resolverSpan = tracer.startSpan(
+                `${parentType.name}.${fieldName}`,
+                {
+                  attributes: {
+                    [AttributeName.RESOLVER_FIELD_NAME]: fieldName,
+                    [AttributeName.RESOLVER_TYPE_NAME]: parentType.toString(),
+                    [AttributeName.RESOLVER_RESULT_TYPE]: returnType.toString(),
+                    [AttributeName.RESOLVER_ARGS]: JSON.stringify(args || {}),
+                  },
                 },
-              },
-              ctx
-            );
+                ctx
+              );
 
-            return ({ result }) => {
-              if (result instanceof Error) {
-                resolverSpan.recordException({
-                  name: AttributeName.RESOLVER_EXCEPTION,
-                  message: JSON.stringify(result),
-                });
-              } else {
-                resolverSpan.end();
-              }
-            };
-          }
+              return ({ result }) => {
+                if (result instanceof Error) {
+                  resolverSpan.recordException({
+                    name: AttributeName.RESOLVER_EXCEPTION,
+                    message: JSON.stringify(result),
+                  });
+                } else {
+                  resolverSpan.end();
+                }
+              };
+            }
 
-          return () => {};
-        });
+            return () => {};
+          })
+        );
       }
     },
     onExecute({ args, extendContext }) {

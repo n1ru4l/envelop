@@ -28,50 +28,53 @@ export const useRateLimiter = (options: RateLimiterPluginOptions): Plugin<RateLi
   const rateLimiterFn = getGraphQLRateLimiter({ identifyContext: options.identifyFn });
 
   return {
-    onSchemaChange: ({ schema }) => {
-      useOnResolve<RateLimiterContext>(schema, async ({ args, root, context, info }) => {
-        const rateLimitDirectiveNode = getDirective(info, options.rateLimitDirectiveName || 'rateLimit');
+    onPluginInit({ addPlugin }) {
+      addPlugin(
+        useOnResolve(async ({ args, root, context, info }) => {
+          const rateLimitDirectiveNode = getDirective(info, options.rateLimitDirectiveName || 'rateLimit');
 
-        if (rateLimitDirectiveNode && rateLimitDirectiveNode.arguments) {
-          const maxNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'max')?.value as IntValueNode;
-          const windowNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'window')
-            ?.value as StringValueNode;
-          const messageNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'message')
-            ?.value as IntValueNode;
+          if (rateLimitDirectiveNode && rateLimitDirectiveNode.arguments) {
+            const maxNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'max')
+              ?.value as IntValueNode;
+            const windowNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'window')
+              ?.value as StringValueNode;
+            const messageNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'message')
+              ?.value as IntValueNode;
 
-          const message = messageNode.value;
-          const max = parseInt(maxNode.value);
-          const window = windowNode.value;
-          const id = options.identifyFn(context);
+            const message = messageNode.value;
+            const max = parseInt(maxNode.value);
+            const window = windowNode.value;
+            const id = options.identifyFn(context);
 
-          const errorMessage = await context.rateLimiterFn(
-            { parent: root, args, context, info },
-            {
-              max,
-              window,
-              message: interpolate(message, {
-                id,
-              }),
+            const errorMessage = await context.rateLimiterFn(
+              { parent: root, args, context, info },
+              {
+                max,
+                window,
+                message: interpolate(message, {
+                  id,
+                }),
+              }
+            );
+            if (errorMessage) {
+              if (options.onRateLimitError) {
+                options.onRateLimitError({
+                  error: errorMessage,
+                  identifier: id,
+                  context,
+                  info,
+                });
+              }
+
+              if (options.transformError) {
+                throw options.transformError(errorMessage);
+              }
+
+              throw new Error(errorMessage);
             }
-          );
-          if (errorMessage) {
-            if (options.onRateLimitError) {
-              options.onRateLimitError({
-                error: errorMessage,
-                identifier: id,
-                context,
-                info,
-              });
-            }
-
-            if (options.transformError) {
-              throw options.transformError(errorMessage);
-            }
-
-            throw new Error(errorMessage);
           }
-        }
-      });
+        })
+      );
     },
     async onContextBuilding({ extendContext }) {
       extendContext({

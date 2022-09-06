@@ -42,23 +42,24 @@ type TracingContextObject = {
 
 export const useApolloTracing = (): Plugin => {
   return {
-    onSchemaChange: ({ schema }) => {
-      useOnResolve<TracingContextObject>(schema, ({ info, context }) => {
-        const ctx = context[apolloTracingSymbol] as TracingContextObject;
-        // Taken from https://github.com/apollographql/apollo-server/blob/main/packages/apollo-tracing/src/index.ts
-        const resolverCall: ResolverCall = {
-          path: info.path,
-          fieldName: info.fieldName,
-          parentType: info.parentType,
-          returnType: info.returnType,
-          startOffset: process.hrtime(ctx.hrtime),
-        };
-
-        return () => {
-          resolverCall.endOffset = process.hrtime(ctx.hrtime);
-          ctx.resolversTiming.push(resolverCall);
-        };
-      });
+    onPluginInit({ addPlugin }) {
+      addPlugin(
+        useOnResolve(({ info, context }) => {
+          const ctx = context[apolloTracingSymbol] as TracingContextObject;
+          // Taken from https://github.com/apollographql/apollo-server/blob/main/packages/apollo-tracing/src/index.ts
+          const resolverCall: ResolverCall = {
+            path: info.path,
+            fieldName: info.fieldName,
+            parentType: info.parentType,
+            returnType: info.returnType,
+            startOffset: process.hrtime(ctx.hrtime),
+          };
+          return () => {
+            resolverCall.endOffset = process.hrtime(ctx.hrtime);
+            ctx.resolversTiming.push(resolverCall);
+          };
+        })
+      );
     },
     onExecute(onExecuteContext) {
       const ctx: TracingContextObject = {

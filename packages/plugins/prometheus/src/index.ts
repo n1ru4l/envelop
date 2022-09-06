@@ -330,28 +330,32 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
         [promPluginExecutionStartTimeSymbol]: Date.now(),
       });
     },
+    onPluginInit({ addPlugin }) {
+      if (resolversHistogram) {
+        addPlugin(
+          useOnResolve(({ info, context }) => {
+            const shouldTrace = shouldTraceFieldResolver(info, config.resolversWhitelist);
+
+            if (!shouldTrace) {
+              return undefined;
+            }
+
+            const startTime = Date.now();
+
+            return () => {
+              const totalTime = (Date.now() - startTime) / 1000;
+              const paramsCtx = {
+                ...context[promPluginContext],
+                info,
+              };
+              resolversHistogram.histogram.observe(resolversHistogram.fillLabelsFn(paramsCtx, context), totalTime);
+            };
+          })
+        );
+      }
+    },
     onSchemaChange({ schema }) {
       typeInfo = new TypeInfo(schema);
-      if (resolversHistogram) {
-        useOnResolve(schema, ({ info, context }) => {
-          const shouldTrace = shouldTraceFieldResolver(info, config.resolversWhitelist);
-
-          if (!shouldTrace) {
-            return undefined;
-          }
-
-          const startTime = Date.now();
-
-          return () => {
-            const totalTime = (Date.now() - startTime) / 1000;
-            const paramsCtx = {
-              ...context[promPluginContext],
-              info,
-            };
-            resolversHistogram.histogram.observe(resolversHistogram.fillLabelsFn(paramsCtx, context), totalTime);
-          };
-        });
-      }
     },
     onParse,
     onValidate,
