@@ -13,14 +13,18 @@ export type AfterResolver = (options: {
   setResult: (newResult: unknown) => void;
 }) => PromiseOrValue<void>;
 
-export type OnResolve<PluginContext extends Record<string, any> = {}> = (options: {
+export interface OnResolveOptions<PluginContext extends Record<string, any> = {}> {
   context: PluginContext;
   root: unknown;
   args: Record<string, unknown>;
   info: GraphQLResolveInfo;
   resolver: Resolver<PluginContext>;
   replaceResolver: (newResolver: Resolver<PluginContext>) => void;
-}) => PromiseOrValue<AfterResolver | void>;
+}
+
+export type OnResolve<PluginContext extends Record<string, any> = {}> = (
+  options: OnResolveOptions<PluginContext>
+) => PromiseOrValue<AfterResolver | void>;
 
 /**
  * Wraps the provided schema by hooking into the resolvers of every field.
