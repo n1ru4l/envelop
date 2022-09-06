@@ -48,8 +48,10 @@ const getEnveloped = envelop({
 Or provide a custom formatter when masking the output:
 
 ```ts
-export const customFormatError: FormatErrorHandler = err => {
-  if (err.originalError) {
+import { isGraphQLError, MaskErrorFn } from '@envelop/core'
+
+export const customFormatError: MaskErrorFn = err => {
+  if (isGraphQLError(err)) {
     return new GraphQLError('Sorry, something went wrong.')
   }
 
@@ -57,6 +59,6 @@ export const customFormatError: FormatErrorHandler = err => {
 }
 
 const getEnveloped = envelop({
-  plugins: [useSchema(schema), useMaskedErrors({ formatError: customFormatError })]
+  plugins: [useSchema(schema), useMaskedErrors({ maskErrorFn: customFormatError })]
 })
 ```
