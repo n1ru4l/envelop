@@ -1,5 +1,5 @@
 import { defaultFieldResolver, GraphQLResolveInfo, GraphQLSchema, isIntrospectionType, isObjectType } from 'graphql';
-import { PromiseOrValue } from '@envelop/core';
+import { Plugin, PromiseOrValue } from '@envelop/core';
 
 export type Resolver<Context = unknown> = (
   root: unknown,
@@ -28,48 +28,54 @@ export type OnResolve<PluginContext extends Record<string, any> = {}> = (options
  * Use the `onResolve` argument to manipulate the resolver and its results/errors.
  */
 export function useOnResolve<PluginContext extends Record<string, any> = {}>(
-  schema: GraphQLSchema,
   onResolve: OnResolve<PluginContext>
-) {
-  for (const type of Object.values(schema.getTypeMap())) {
-    if (!isIntrospectionType(type) && isObjectType(type)) {
-      for (const field of Object.values(type.getFields())) {
-        let resolver = (field.resolve || defaultFieldResolver) as Resolver<PluginContext>;
+): Plugin<PluginContext> {
+  return {
+    onSchemaChange({ schema: _schema }) {
+      const schema = _schema as GraphQLSchema;
+      if (!schema) return; // nothing to do if schema is missing
 
-        field.resolve = async (root, args, context, info) => {
-          const afterResolve = await onResolve({
-            root,
-            args,
-            context,
-            info,
-            resolver,
-            replaceResolver: newResolver => {
-              resolver = newResolver;
-            },
-          });
+      for (const type of Object.values(schema.getTypeMap())) {
+        if (!isIntrospectionType(type) && isObjectType(type)) {
+          for (const field of Object.values(type.getFields())) {
+            let resolver = (field.resolve || defaultFieldResolver) as Resolver<PluginContext>;
 
-          let result;
-          try {
-            result = await resolver(root, args, context, info);
-          } catch (err) {
-            result = err as Error;
+            field.resolve = async (root, args, context, info) => {
+              const afterResolve = await onResolve({
+                root,
+                args,
+                context,
+                info,
+                resolver,
+                replaceResolver: newResolver => {
+                  resolver = newResolver;
+                },
+              });
+
+              let result;
+              try {
+                result = await resolver(root, args, context, info);
+              } catch (err) {
+                result = err as Error;
+              }
+
+              if (typeof afterResolve === 'function') {
+                await afterResolve({
+                  result,
+                  setResult: newResult => {
+                    result = newResult;
+                  },
+                });
+              }
+
+              if (result instanceof Error) {
+                throw result;
+              }
+              return result;
+            };
           }
-
-          if (typeof afterResolve === 'function') {
-            await afterResolve({
-              result,
-              setResult: newResult => {
-                result = newResult;
-              },
-            });
-          }
-
-          if (result instanceof Error) {
-            throw result;
-          }
-          return result;
-        };
+        }
       }
-    }
-  }
+    },
+  };
 }

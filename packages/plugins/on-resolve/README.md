@@ -24,39 +24,40 @@ interface FieldTracingPluginContext {
 
 function useFieldTracing() {
   return {
-    onSchemaChange: ({ schema }) => {
-      // we hook into onSchemaChange to make sure we're always tracing the current schema
-      useOnResolve(schema, async function onResolve({ context, root, args, info }) {
-        await fetch(context.tracerUrl, {
-          method: 'POST',
-          headers: {
-            'content-type': 'application/json'
-          },
-          body: JSON.stringify({
-            startedResolving: {
-              ...info,
-              parent: root,
-              args
-            }
-          })
-        })
-
-        return async () => {
+    onPluginInit({ addPlugin }) {
+      addPlugin(
+        useOnResolve(async function onResolve({ context, root, args, info }) {
           await fetch(context.tracerUrl, {
             method: 'POST',
             headers: {
               'content-type': 'application/json'
             },
             body: JSON.stringify({
-              endedResolving: {
+              startedResolving: {
                 ...info,
                 parent: root,
                 args
               }
             })
           })
-        }
-      })
+
+          return async () => {
+            await fetch(context.tracerUrl, {
+              method: 'POST',
+              headers: {
+                'content-type': 'application/json'
+              },
+              body: JSON.stringify({
+                endedResolving: {
+                  ...info,
+                  parent: root,
+                  args
+                }
+              })
+            })
+          }
+        })
+      )
     }
   }
 }
@@ -78,21 +79,23 @@ import { specialResolver } from './my-resolvers'
 
 function useSpecialResolve(): Plugin {
   return {
-    onSchemaChange: ({ schema }) => {
+    onPluginInit({ addPlugin }) {
       // we hook into onSchemaChange to make sure we're always tracing the current schema
-      useOnResolve(schema, async function onResolve({ context, root, args, info, replaceResolver }) {
-        // replace special field's resolver
-        if (info.fieldName === 'special') {
-          replaceResolver(specialResolver)
-        }
-
-        // replace field's result
-        if (info.fieldName === 'alwaysHello') {
-          return ({ setResult }) => {
-            setResult('hello')
+      addPlugin(
+        useOnResolve(async function onResolve({ context, root, args, info, replaceResolver }) {
+          // replace special field's resolver
+          if (info.fieldName === 'special') {
+            replaceResolver(specialResolver)
           }
-        }
-      })
+
+          // replace field's result
+          if (info.fieldName === 'alwaysHello') {
+            return ({ setResult }) => {
+              setResult('hello')
+            }
+          }
+        })
+      )
     }
   }
 }
