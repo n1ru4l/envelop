@@ -1,7 +1,13 @@
 {
   "parser": "@typescript-eslint/parser",
-  "extends": ["eslint:recommended", "standard", "prettier", "plugin:@typescript-eslint/recommended"],
-  "plugins": ["@typescript-eslint", "unicorn"],
+  "extends": [
+    "eslint:recommended",
+    "standard",
+    "prettier",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:package-json/recommended"
+  ],
+  "plugins": ["@typescript-eslint", "unicorn", "package-json"],
   "rules": {
     "unicorn/filename-case": "error",
     "no-lonely-if": "error",
