@@ -6,39 +6,64 @@ export const DEFAULT_ERROR_MESSAGE = 'Unexpected error.';
 export type MaskErrorFn = (error: unknown, message: string) => Error;
 
 export type SerializableGraphQLErrorLike = Error & {
-  name: 'GraphQLError';
-  toJSON(): { message: string };
+  toJSON?(): { message: string };
+  extensions?: Record<string, unknown>;
 };
 
 export function isGraphQLError(error: unknown): error is Error & { originalError?: Error } {
   return error instanceof Error && error.name === 'GraphQLError';
 }
 
-export function createSerializableGraphQLError(message: string): SerializableGraphQLErrorLike {
-  const error = new Error(message);
+function createSerializableGraphQLError(
+  message: string,
+  originalError: unknown,
+  isDev: boolean
+): SerializableGraphQLErrorLike {
+  const error: SerializableGraphQLErrorLike = new Error(message);
   error.name = 'GraphQLError';
+  if (isDev) {
+    const extensions =
+      originalError instanceof Error
+        ? { message: originalError.message, stack: originalError.stack }
+        : { message: String(originalError) };
+
+    Object.defineProperty(error, 'extensions', {
+      get() {
+        return extensions;
+      },
+    });
+  }
+
   Object.defineProperty(error, 'toJSON', {
     value() {
       return {
         message: error.message,
+        extensions: error.extensions,
       };
     },
   });
+
   return error as SerializableGraphQLErrorLike;
 }
 
-export const defaultMaskErrorFn: MaskErrorFn = (err, message) => {
-  if (isGraphQLError(err)) {
-    if (err?.originalError) {
-      if (isGraphQLError(err.originalError)) {
-        return err;
+export const createDefaultMaskErrorFn =
+  (isDev: boolean): MaskErrorFn =>
+  (error, message) => {
+    if (isGraphQLError(error)) {
+      if (error?.originalError) {
+        if (isGraphQLError(error.originalError)) {
+          return error;
+        }
+        return createSerializableGraphQLError(message, error, isDev);
       }
-      return createSerializableGraphQLError(message);
+      return error;
     }
-    return err;
-  }
-  return createSerializableGraphQLError(message);
-};
+    return createSerializableGraphQLError(message, error, isDev);
+  };
+
+const isDev = globalThis.process?.env?.NODE_ENV === 'development';
+
+export const defaultMaskErrorFn: MaskErrorFn = createDefaultMaskErrorFn(isDev);
 
 export type UseMaskedErrorsOpts = {
   /** The function used for identify and mask errors. */
