@@ -1,7 +1,15 @@
 import { Plugin, DefaultContext, TypedExecutionArgs, ExecutionResult } from '@envelop/types';
 import { handleStreamOrSingleExecutionResult } from '../utils.js';
 
-export type ErrorHandler = (errors: readonly Error[] | any[], context: Readonly<DefaultContext>) => void;
+export type ErrorHandler = ({
+  errors,
+  context,
+  phase,
+}: {
+  errors: readonly Error[] | any[];
+  context: Readonly<DefaultContext>;
+  phase: 'parse' | 'validate' | 'context' | 'execution';
+}) => void;
 
 type ErrorHandlerCallback<ContextType> = {
   result: ExecutionResult;
@@ -12,7 +20,7 @@ const makeHandleResult =
   <ContextType extends Record<any, any>>(errorHandler: ErrorHandler) =>
   ({ result, args }: ErrorHandlerCallback<ContextType>) => {
     if (result.errors?.length) {
-      errorHandler(result.errors, args);
+      errorHandler({ errors: result.errors, context: args, phase: 'execution' });
     }
   };
 
@@ -24,20 +32,20 @@ export const useErrorHandler = <ContextType extends Record<string, any>>(
     onParse() {
       return function onParseEnd({ result, context }) {
         if (result instanceof Error) {
-          errorHandler([result], context);
+          errorHandler({ errors: [result], context, phase: 'parse' });
         }
       };
     },
     onValidate() {
-      return function onValidateEnd({ valid, result, setResult, context }) {
+      return function onValidateEnd({ valid, result, context }) {
         if (valid === false && result.length > 0) {
-          errorHandler(result as Error[], context);
+          errorHandler({ errors: result as Error[], context, phase: 'validate' });
         }
       };
     },
     onPluginInit(context) {
       context.registerContextErrorHandler(({ error }) => {
-        errorHandler([error], context);
+        errorHandler({ errors: [error], context, phase: 'context' });
       });
     },
     onExecute() {
