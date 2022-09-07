@@ -8,8 +8,8 @@ import {
 import {
   useMaskedErrors,
   DEFAULT_ERROR_MESSAGE,
-  MaskErrorFn,
-  createDefaultMaskErrorFn,
+  MaskError,
+  createDefaultMaskError,
 } from '../../src/plugins/use-masked-errors.js';
 import { useExtendContext } from '@envelop/core';
 import { useAuth0 } from '../../../plugins/auth0/src/index.js';
@@ -369,11 +369,11 @@ describe('useMaskedErrors', () => {
   });
 
   it('should use custom error mask function for execution errors', async () => {
-    const customErrorMaskFn: MaskErrorFn = e =>
+    const customErrorMaskFn: MaskError = e =>
       new GraphQLError('Custom error message for ' + e, null, null, null, null, null, {
         custom: true,
       });
-    const testInstance = createTestkit([useMaskedErrors({ maskErrorFn: customErrorMaskFn })], schema);
+    const testInstance = createTestkit([useMaskedErrors({ maskError: customErrorMaskFn })], schema);
     const result = await testInstance.execute(`query { secret }`);
     assertSingleExecutionValue(result);
     expect(result).toMatchInlineSnapshot(`
@@ -394,12 +394,12 @@ describe('useMaskedErrors', () => {
   });
 
   it('should use custom error mask function for subscribe (AsyncIterable) subscription errors', async () => {
-    const customErrorMaskFn: MaskErrorFn = e =>
+    const customErrorMaskFn: MaskError = e =>
       new GraphQLError('Custom error message for ' + e, null, null, null, null, null, {
         custom: true,
       });
     expect.assertions(2);
-    const testInstance = createTestkit([useMaskedErrors({ maskErrorFn: customErrorMaskFn })], schema);
+    const testInstance = createTestkit([useMaskedErrors({ maskError: customErrorMaskFn })], schema);
     const resultStream = await testInstance.execute(`subscription { streamError }`);
     assertStreamExecutionValue(resultStream);
     try {
@@ -411,13 +411,13 @@ describe('useMaskedErrors', () => {
   });
 
   it('should use custom error mask function for errors while building the context', async () => {
-    const customErrorMaskFn: MaskErrorFn = e =>
+    const customErrorMaskFn: MaskError = e =>
       new GraphQLError('Custom error message for ' + e, null, null, null, null, null, {
         custom: true,
       });
     const testInstance = createTestkit(
       [
-        useMaskedErrors({ maskErrorFn: customErrorMaskFn }),
+        useMaskedErrors({ maskError: customErrorMaskFn }),
         useExtendContext(() => {
           throw createGraphQLError('Custom error');
           return {};
@@ -448,7 +448,7 @@ describe('useMaskedErrors', () => {
         },
       },
     });
-    const testInstance = createTestkit([useMaskedErrors({ maskErrorFn: createDefaultMaskErrorFn(true) })], schema);
+    const testInstance = createTestkit([useMaskedErrors({ maskError: createDefaultMaskError(true) })], schema);
     const result = await testInstance.execute(`query { foo }`, {}, {});
     assertSingleExecutionValue(result);
     expect(result.errors?.[0].extensions).toEqual({
@@ -472,7 +472,7 @@ describe('useMaskedErrors', () => {
         },
       },
     });
-    const testInstance = createTestkit([useMaskedErrors({ maskErrorFn: createDefaultMaskErrorFn(true) })], schema);
+    const testInstance = createTestkit([useMaskedErrors({ maskError: createDefaultMaskError(true) })], schema);
     const result = await testInstance.execute(`query { foo }`, {}, {});
     assertSingleExecutionValue(result);
     expect(result.errors?.[0].extensions).toEqual({
