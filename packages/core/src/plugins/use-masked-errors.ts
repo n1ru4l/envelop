@@ -20,7 +20,7 @@ function createSerializableGraphQLError(
   originalError: unknown,
   isDev: boolean
 ): SerializableGraphQLErrorLike {
-  const error: SerializableGraphQLErrorLike = new Error(message);
+  const error = new Error(message) as SerializableGraphQLErrorLike;
   error.name = 'GraphQLError';
   if (isDev) {
     const extensions =
