@@ -5,7 +5,12 @@ import {
   collectAsyncIteratorValues,
   createTestkit,
 } from '@envelop/testing';
-import { useMaskedErrors, DEFAULT_ERROR_MESSAGE, MaskErrorFn } from '../../src/plugins/use-masked-errors.js';
+import {
+  useMaskedErrors,
+  DEFAULT_ERROR_MESSAGE,
+  MaskErrorFn,
+  createDefaultMaskErrorFn,
+} from '../../src/plugins/use-masked-errors.js';
 import { useExtendContext } from '@envelop/core';
 import { useAuth0 } from '../../../plugins/auth0/src/index.js';
 import { GraphQLError } from 'graphql';
@@ -426,5 +431,53 @@ describe('useMaskedErrors', () => {
       expect((e as GraphQLError).message).toEqual('Custom error message for Custom error');
     }
     expect.assertions(1);
+  });
+
+  it('should include the original error message stack in the extensions in development mode', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          foo: String
+        }
+      `,
+      resolvers: {
+        Query: {
+          foo: () => {
+            throw new Error("I'm a teapot");
+          },
+        },
+      },
+    });
+    const testInstance = createTestkit([useMaskedErrors({ maskErrorFn: createDefaultMaskErrorFn(true) })], schema);
+    const result = await testInstance.execute(`query { foo }`, {}, {});
+    assertSingleExecutionValue(result);
+    expect(result.errors?.[0].extensions).toEqual({
+      message: "I'm a teapot",
+      stack: expect.stringMatching(/^Error: I'm a teapot/),
+    });
+  });
+
+  it('should include the original thrown thing in the extensions in development mode', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          foo: String
+        }
+      `,
+      resolvers: {
+        Query: {
+          foo: () => {
+            throw "I'm a teapot";
+          },
+        },
+      },
+    });
+    const testInstance = createTestkit([useMaskedErrors({ maskErrorFn: createDefaultMaskErrorFn(true) })], schema);
+    const result = await testInstance.execute(`query { foo }`, {}, {});
+    assertSingleExecutionValue(result);
+    expect(result.errors?.[0].extensions).toEqual({
+      message: 'Unexpected error value: "I\'m a teapot"',
+      stack: expect.stringMatching(/NonErrorThrown: Unexpected error value: \"I'm a teapot/),
+    });
   });
 });
