@@ -7,7 +7,7 @@ export type MaskError = (error: unknown, message: string) => Error;
 
 export type SerializableGraphQLErrorLike = Error & {
   name: 'GraphQLError';
-  toJSON?(): { message: string };
+  toJSON(): { message: string };
   extensions?: Record<string, unknown>;
 };
 
