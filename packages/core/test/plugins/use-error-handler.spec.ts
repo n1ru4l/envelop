@@ -30,26 +30,24 @@ describe('useErrorHandler', () => {
     const testInstance = createTestkit([useErrorHandler(mockHandler)], schema);
     await testInstance.execute(`query { foo }`, {}, { foo: 'bar' });
 
-    expect(mockHandler).toHaveBeenCalledWith(
-      [testError],
-      expect.objectContaining({
-        contextValue: expect.objectContaining({
-          foo: 'bar',
-        }),
-      })
-    );
+    expect(mockHandler).toHaveBeenCalledWith(expect.objectContaining({ phase: 'execution' }));
   });
 
   it('should invoke error handler when error happens during parse', async () => {
-    expect.assertions(1);
+    expect.assertions(2);
     const mockHandler = jest.fn();
     const testInstance = createTestkit([useErrorHandler(mockHandler)], schema);
     await testInstance.execute(`query { me `, {});
     expect(mockHandler).toHaveBeenCalledTimes(1);
+    expect(mockHandler).toHaveBeenCalledWith(
+      expect.objectContaining({
+        phase: 'parse',
+      })
+    );
   });
 
   it('should invoke error handler on validation error', async () => {
-    expect.assertions(1);
+    expect.assertions(2);
     const useMyFailingValidator: Plugin = {
       onValidate(payload) {
         payload.setValidationFn(() => {
@@ -61,10 +59,15 @@ describe('useErrorHandler', () => {
     const testInstance = createTestkit([useMyFailingValidator, useErrorHandler(mockHandler)], schema);
     await testInstance.execute(`query { iDoNotExistsMyGuy }`, {});
     expect(mockHandler).toHaveBeenCalledTimes(1);
+    expect(mockHandler).toHaveBeenCalledWith(
+      expect.objectContaining({
+        phase: 'validate',
+      })
+    );
   });
 
   it('should invoke error handle for context errors', async () => {
-    expect.assertions(1);
+    expect.assertions(2);
     const mockHandler = jest.fn();
     const testInstance = createTestkit(
       [
@@ -75,8 +78,17 @@ describe('useErrorHandler', () => {
       ],
       schema
     );
-    await testInstance.execute(`query { secretWithExtensions }`);
-    expect(mockHandler).toHaveBeenCalledTimes(1);
+
+    try {
+      await testInstance.execute(`query { me { name } }`);
+    } catch {
+      expect(mockHandler).toHaveBeenCalledWith(
+        expect.objectContaining({
+          phase: 'context',
+        })
+      );
+      expect(mockHandler).toHaveBeenCalledTimes(1);
+    }
   });
 
   it('should invoke error handler when error happens during subscription resolver call', async () => {
@@ -114,11 +126,9 @@ describe('useErrorHandler', () => {
     await collectAsyncIteratorValues(result);
 
     expect(mockHandler).toHaveBeenCalledWith(
-      [testError],
       expect.objectContaining({
-        contextValue: expect.objectContaining({
-          foo: 'bar',
-        }),
+        errors: expect.objectContaining([testError]),
+        phase: 'execution',
       })
     );
   });
