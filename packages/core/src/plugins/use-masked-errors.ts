@@ -6,6 +6,7 @@ export const DEFAULT_ERROR_MESSAGE = 'Unexpected error.';
 export type MaskError = (error: unknown, message: string) => Error;
 
 export type SerializableGraphQLErrorLike = Error & {
+  name: 'GraphQLError';
   toJSON?(): { message: string };
   extensions?: Record<string, unknown>;
 };
