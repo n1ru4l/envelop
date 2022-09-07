@@ -10,7 +10,6 @@ import {
   OnExecuteDoneHook,
   OnExecuteHook,
   OnParseHook,
-  OnResolverCalledHook,
   OnSubscribeHook,
   OnValidateHook,
   Plugin,
@@ -32,7 +31,6 @@ import {
   ValidateFunction,
   ExecutionResult,
 } from '@envelop/types';
-import { prepareTracedSchema, resolversHooksSymbol } from './traced-schema.js';
 import {
   errorAsyncIterator,
   finalAsyncIterator,
@@ -72,20 +70,11 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
 }: EnvelopOrchestratorOptions): EnvelopOrchestrator<any, PluginsContext> {
   let schema: any | undefined | null = null;
   let initDone = false;
-  const onResolversHandlers: OnResolverCalledHook[] = [];
-  for (const plugin of plugins) {
-    if (plugin.onResolverCalled) {
-      onResolversHandlers.push(plugin.onResolverCalled);
-    }
-  }
 
   // Define the initial method for replacing the GraphQL schema, this is needed in order
   // to allow setting the schema from the onPluginInit callback. We also need to make sure
   // here not to call the same plugin that initiated the schema switch.
   const replaceSchema = (newSchema: any, ignorePluginIndex = -1) => {
-    if (onResolversHandlers.length) {
-      prepareTracedSchema(newSchema);
-    }
     schema = newSchema;
 
     if (initDone) {
@@ -341,7 +330,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
       }
     : initialContext => orchestratorCtx => orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
 
-  const useCustomSubscribe = beforeCallbacks.subscribe.length || onResolversHandlers.length;
+  const useCustomSubscribe = beforeCallbacks.subscribe.length;
 
   const customSubscribe = useCustomSubscribe
     ? makeSubscribe(async args => {
@@ -380,10 +369,6 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
           if (result !== undefined) {
             break;
           }
-        }
-
-        if (onResolversHandlers.length) {
-          context[resolversHooksSymbol] = onResolversHandlers;
         }
 
         if (result === undefined) {
@@ -458,7 +443,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
       })
     : makeSubscribe(subscribe as any);
 
-  const useCustomExecute = beforeCallbacks.execute.length || onResolversHandlers.length;
+  const useCustomExecute = beforeCallbacks.execute.length;
 
   const customExecute = useCustomExecute
     ? makeExecute(async args => {
@@ -501,10 +486,6 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
           if (result !== undefined) {
             break;
           }
-        }
-
-        if (onResolversHandlers.length) {
-          context[resolversHooksSymbol] = onResolversHandlers;
         }
 
         if (result === undefined) {

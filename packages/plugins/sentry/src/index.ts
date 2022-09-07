@@ -1,9 +1,5 @@
-import {
-  Plugin,
-  OnResolverCalledHook,
-  handleStreamOrSingleExecutionResult,
-  OnExecuteDoneHookResultOnNextHook,
-} from '@envelop/core';
+import { Plugin, handleStreamOrSingleExecutionResult, OnExecuteDoneHookResultOnNextHook } from '@envelop/core';
+import { OnResolve, useOnResolve } from '@envelop/on-resolve';
 import * as Sentry from '@sentry/node';
 import type { Span, TraceparentData } from '@sentry/types';
 import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
@@ -122,7 +118,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
     });
   }
 
-  const onResolverCalled: OnResolverCalledHook | undefined = trackResolvers
+  const onResolve: OnResolve | undefined = trackResolvers
     ? ({ args: resolversArgs, info, context }) => {
         const { rootSpan, opName, operationType } = context[sentryTracingSymbol] as SentryTracingContext;
         if (rootSpan) {
@@ -168,7 +164,11 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
     : undefined;
 
   return {
-    onResolverCalled,
+    onPluginInit({ addPlugin }) {
+      if (onResolve) {
+        addPlugin(useOnResolve(onResolve));
+      }
+    },
     onExecute({ args, extendContext }) {
       if (skipOperation(args)) {
         return;
@@ -244,7 +244,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
         Sentry.configureScope(scope => options.configureScope!(args, scope));
       }
 
-      if (onResolverCalled) {
+      if (onResolve) {
         const sentryContext: SentryTracingContext = {
           rootSpan,
           opName,

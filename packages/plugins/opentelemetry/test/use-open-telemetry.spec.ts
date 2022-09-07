@@ -67,7 +67,8 @@ describe('useOpenTelemetry', () => {
 
     await testInstance.execute(query);
     const actual = exporter.getFinishedSpans();
-    expect(actual.length).toBe(1);
-    expect(actual[0].name).toBe('Anonymous Operation');
+    expect(actual.length).toBe(2);
+    expect(actual[0].name).toBe('Query.ping');
+    expect(actual[1].name).toBe('Anonymous Operation');
   });
 });

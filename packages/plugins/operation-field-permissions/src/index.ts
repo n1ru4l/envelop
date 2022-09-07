@@ -124,7 +124,9 @@ type OperationScopeOptions<TContext> = {
 const defaultFormatError = (schemaCoordinate: string) =>
   `Insufficient permissions for selecting '${schemaCoordinate}'.`;
 
-export const useOperationFieldPermissions = <TContext>(opts: OperationScopeOptions<TContext>): Plugin => {
+export const useOperationFieldPermissions = <TContext>(
+  opts: OperationScopeOptions<TContext>
+): Plugin<{ [OPERATION_PERMISSIONS_SYMBOL]: ScopeContext }> => {
   return {
     onPluginInit({ addPlugin }) {
       addPlugin(

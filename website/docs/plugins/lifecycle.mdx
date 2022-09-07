@@ -240,18 +240,3 @@ Some plugins (like gateway implementations) could potentially change the schema 
 
 - `schema` - the `GraphQLSchema`
 - `replaceSchema` - replaces the schema. Calling this will trigger `onSchemaChange` for all other plugins (except for the one that initiated the change);
-
-### `onResolverCalled(api)`
-
-Triggered when a resolver is called during the execution of the operation.
-
-<Callout type="warning" emoji="⚠️">
-  This hook will not call the default field resolver.
-</Callout>
-
-- `params` - an object with `{ root, args, context, info }` that was originally passed to the resolver.
-
-You can also return a function to run after the resolver is done, with the following API:
-
-- `result` - the resolver return value.
-- `setResult` - replaces the resolver return value.

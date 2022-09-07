@@ -11,7 +11,7 @@ import {
   validate,
 } from 'graphql';
 import { useSchema, envelop, isAsyncIterable } from '@envelop/core';
-import { GetEnvelopedFn, Optional, Plugin } from '@envelop/types';
+import { GetEnvelopedFn, Plugin } from '@envelop/types';
 import { mapSchema as cloneSchema, isDocumentNode } from '@graphql-tools/utils';
 
 export type ModifyPluginsFn = (plugins: Plugin<any>[]) => Plugin<any>[];
@@ -59,7 +59,6 @@ export function createSpiedPlugin() {
     beforeExecute: jest.fn(() => ({
       onExecuteDone: baseSpies.afterExecute,
     })),
-    onResolverCalled: baseSpies.beforeResolver,
   };
 
   return {
@@ -75,7 +74,6 @@ export function createSpiedPlugin() {
       onValidate: spies.beforeValidate,
       onExecute: spies.beforeExecute,
       onContextBuilding: spies.beforeContextBuilding,
-      onResolverCalled: spies.beforeResolver,
     },
   };
 }

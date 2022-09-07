@@ -1,13 +1,13 @@
 {
-  "name": "@envelop/newrelic",
-  "version": "4.3.0",
-  "author": "Santino Puleio <santinopuleio@gmail.com>",
+  "name": "@envelop/on-resolve",
+  "version": "1.0.0",
+  "author": "Denis Badurina <badurinadenis@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/n1ru4l/envelop.git",
-    "directory": "packages/plugins/newrelic"
+    "directory": "packages/plugins/on-resolve"
   },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -46,19 +46,13 @@
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   },
-  "dependencies": {
-    "@envelop/on-resolve": "^1.0.0",
-    "tslib": "^2.4.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@types/newrelic": "7.0.3",
     "graphql": "16.3.0",
-    "newrelic": "8.8.0",
     "typescript": "4.7.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.6.0",
-    "newrelic": "^7 || ^8.0.0",
+    "@envelop/core": "^2.5.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {

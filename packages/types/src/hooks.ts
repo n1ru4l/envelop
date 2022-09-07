@@ -1,5 +1,4 @@
 import { Maybe, PromiseOrValue, AsyncIterableIteratorOrValue } from './utils.js';
-import { DefaultContext } from './context-types.js';
 import {
   ExecuteFunction,
   ParseFunction,
@@ -43,15 +42,15 @@ export type RegisterContextErrorHandler = (handler: OnContextErrorHandler) => vo
 /**
  * Payload forwarded to the onPluginInit hook.
  */
-export type OnPluginInitEventPayload = {
+export type OnPluginInitEventPayload<PluginContext extends Record<string, any>> = {
   /**
    * Register a new plugin.
    */
-  addPlugin: (newPlugin: Plugin<any>) => void;
+  addPlugin: (newPlugin: Plugin<PluginContext>) => void;
   /**
    * A list of all currently active plugins.
    */
-  plugins: Plugin<any>[];
+  plugins: Plugin<PluginContext>[];
   /**
    * Set the GraphQL schema.
    */
@@ -65,7 +64,9 @@ export type OnPluginInitEventPayload = {
 /**
  * Invoked when a plugin is initialized.
  */
-export type OnPluginInitHook = (options: OnPluginInitEventPayload) => void;
+export type OnPluginInitHook<ContextType extends Record<string, any>> = (
+  options: OnPluginInitEventPayload<ContextType>
+) => void;
 
 /** onPluginInit */
 export type OnEnvelopedHookEventPayload<ContextType> = {
@@ -261,40 +262,6 @@ export type AfterContextBuildingHook<ContextType> = (
 export type OnContextBuildingHook<ContextType> = (
   options: OnContextBuildingEventPayload<ContextType>
 ) => PromiseOrValue<void | AfterContextBuildingHook<ContextType>>;
-
-export type ResolverFn<ParentType = unknown, ArgsType = DefaultArgs, ContextType = unknown, ResultType = unknown> = (
-  root: ParentType,
-  args: ArgsType,
-  context: ContextType,
-  info: any
-) => PromiseOrValue<ResultType>;
-
-export type OnBeforeResolverCalledEventPayload<
-  ParentType = unknown,
-  ArgsType = DefaultArgs,
-  ContextType = unknown,
-  ResultType = unknown
-> = {
-  root: ParentType;
-  args: ArgsType;
-  context: ContextType;
-  info: any;
-  resolverFn: ResolverFn<ParentType, ArgsType, ContextType, ResultType>;
-  replaceResolverFn: (newResolver: ResolverFn<ParentType, ArgsType, ContextType, ResultType>) => void;
-};
-
-export type AfterResolverEventPayload = { result: unknown | Error; setResult: (newResult: unknown) => void };
-
-export type AfterResolverHook = (options: AfterResolverEventPayload) => void;
-
-export type OnResolverCalledHook<
-  ParentType = unknown,
-  ArgsType = DefaultArgs,
-  ContextType = DefaultContext,
-  ResultType = unknown
-> = (
-  options: OnBeforeResolverCalledEventPayload<ParentType, ArgsType, ContextType, ResultType>
-) => PromiseOrValue<void | AfterResolverHook>;
 
 /**
  * Execution arguments with inferred context value type.

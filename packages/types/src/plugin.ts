@@ -7,8 +7,6 @@ import {
   OnSchemaChangeHook,
   OnSubscribeHook,
   OnValidateHook,
-  OnResolverCalledHook,
-  DefaultArgs,
 } from './hooks.js';
 
 export interface Plugin<PluginContext extends Record<string, any> = {}> {
@@ -23,7 +21,7 @@ export interface Plugin<PluginContext extends Record<string, any> = {}> {
   /**
    * Invoked when a plugin is initialized.
    */
-  onPluginInit?: OnPluginInitHook;
+  onPluginInit?: OnPluginInitHook<PluginContext>;
   /**
    * Invoked for each execute call.
    */
@@ -44,8 +42,4 @@ export interface Plugin<PluginContext extends Record<string, any> = {}> {
    * Invoked for each time the context is builded.
    */
   onContextBuilding?: OnContextBuildingHook<PluginContext>;
-  /**
-   * Invoked before each resolver has been invoked during the execution phase.
-   */
-  onResolverCalled?: OnResolverCalledHook<any, DefaultArgs, PluginContext, unknown>;
 }
