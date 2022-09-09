@@ -139,4 +139,54 @@ describe('perform', () => {
       }
     `);
   });
+
+  it('should replace params in onPerform plugin', async () => {
+    const getEnveloped = envelop({
+      ...graphqlFuncs,
+      plugins: [
+        useSchema(schema),
+        {
+          onPerform: ({ setParams }) => {
+            setParams({ query: '{ hello }' });
+          },
+        },
+      ],
+    });
+
+    const { perform } = getEnveloped();
+    const result = await perform({ query: 'subscribe { greetings }' });
+    assertSingleExecutionValue(result);
+
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "hello": "world",
+        },
+      }
+    `);
+  });
+
+  it('should replace result in onPerformDone plugin', async () => {
+    const replacedResult = { data: { something: 'else' } };
+
+    const getEnveloped = envelop({
+      ...graphqlFuncs,
+      plugins: [
+        useSchema(schema),
+        {
+          onPerform: () => ({
+            onPerformDone: ({ setResult }) => {
+              setResult(replacedResult);
+            },
+          }),
+        },
+      ],
+    });
+
+    const { perform } = getEnveloped();
+    const result = await perform({ query: '{ hello }' });
+    assertSingleExecutionValue(result);
+
+    expect(result).toBe(replacedResult);
+  });
 });
