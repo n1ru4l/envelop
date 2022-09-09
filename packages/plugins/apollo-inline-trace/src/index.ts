@@ -1,9 +1,9 @@
 import { isAsyncIterable, Plugin } from '@envelop/core';
-import { ExecutionResult, GraphQLError, Kind, OperationTypeNode, ResponsePath } from 'graphql';
+import { useOnResolve } from '@envelop/on-resolve';
+import { GraphQLError, ResponsePath } from 'graphql';
 import { google, Trace } from 'apollo-reporting-protobuf';
 
 const ctxKey = Symbol('ApolloInlineTracePluginContextKey');
-const errorsKey = Symbol('ApolloInlineTracePluginErrorsKey');
 
 interface ApolloInlineTracePluginContext {
   startHrTime: [number, number];
@@ -49,7 +49,7 @@ export function useApolloInlineTrace<PluginContext extends Record<string, any> =
   shouldTrace,
   rewriteError,
 }: ApolloInlineTracePluginOptions<PluginContext>): Plugin<
-  PluginContext & { [ctxKey]: ApolloInlineTracePluginContext; [errorsKey]: GraphQLError[] }
+  PluginContext & { [ctxKey]: ApolloInlineTracePluginContext }
 > {
   return {
     onEnveloped({ context, extendContext }) {
@@ -73,142 +73,72 @@ export function useApolloInlineTrace<PluginContext extends Record<string, any> =
             nodes: new Map([[responsePathToString(), rootNode]]),
             stopped: false,
           },
-          [errorsKey]: [],
         });
       }
     },
-    onResolverCalled({ context, info }) {
-      const ctx = context[ctxKey];
-      if (!ctx) return;
+    onPluginInit({ addPlugin }) {
+      addPlugin(
+        useOnResolve(({ context, info }) => {
+          const ctx = context[ctxKey];
+          if (!ctx) return;
 
-      // result was already shipped (see ApolloInlineTracePluginContext.stopped)
-      if (ctx.stopped) {
-        return () => {
-          // noop
-        };
-      }
-
-      const node = newTraceNode(ctx, info.path);
-      node.type = info.returnType.toString();
-      node.parentType = info.parentType.toString();
-      node.startTime = hrTimeToDurationInNanos(process.hrtime(ctx.startHrTime));
-      if (typeof info.path.key === 'string' && info.path.key !== info.fieldName) {
-        // field was aliased, send the original field name too
-        node.originalFieldName = info.fieldName;
-      }
-
-      return () => {
-        node.endTime = hrTimeToDurationInNanos(process.hrtime(ctx.startHrTime));
-      };
-    },
-    onParse() {
-      return ({ context, result, replaceParseResult }) => {
-        const ctx = context[ctxKey];
-        if (!ctx) return;
-
-        const errors = context[errorsKey];
-        if (errors && result instanceof Error) {
-          if (result instanceof GraphQLError) {
-            errors.push(result);
-          } else {
-            errors.push(
-              new GraphQLError(result.message, {
-                originalError: result,
-              })
-            );
+          // result was already shipped (see ApolloInlineTracePluginContext.stopped)
+          if (ctx.stopped) {
+            return () => {
+              // noop
+            };
           }
-          replaceParseResult({
-            kind: Kind.DOCUMENT,
-            definitions: [
-              {
-                kind: Kind.OPERATION_DEFINITION,
-                operation: OperationTypeNode.QUERY,
-                selectionSet: {
-                  kind: Kind.SELECTION_SET,
-                  selections: [
-                    {
-                      kind: Kind.FIELD,
-                      name: {
-                        kind: Kind.NAME,
-                        value: '__typename',
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
-          });
-        }
-      };
+
+          const node = newTraceNode(ctx, info.path);
+          node.type = info.returnType.toString();
+          node.parentType = info.parentType.toString();
+          node.startTime = hrTimeToDurationInNanos(process.hrtime(ctx.startHrTime));
+          if (typeof info.path.key === 'string' && info.path.key !== info.fieldName) {
+            // field was aliased, send the original field name too
+            node.originalFieldName = info.fieldName;
+          }
+
+          return () => {
+            node.endTime = hrTimeToDurationInNanos(process.hrtime(ctx.startHrTime));
+          };
+        })
+      );
     },
-    onValidate({ context, setResult }) {
-      const errorsInContext = context[errorsKey];
-      if (errorsInContext?.length) {
-        setResult([]);
-      }
-      return ({ result: errors, setResult }) => {
-        if (errorsInContext) {
-          errorsInContext.push(...errors);
-          setResult([]);
-        }
-      };
-    },
-    onExecute({ args: { contextValue }, setResultAndStopExecution }) {
-      const errors = contextValue[errorsKey];
-      if (errors?.length) {
-        const ctx = contextValue[ctxKey];
-        if (!ctx) return;
-        const result = { errors };
-        const updatedResult = updateResult(result, rewriteError, ctx);
-        setResultAndStopExecution(updatedResult);
-        return;
-      }
+    onPerform({ context }) {
       return {
-        onExecuteDone({ args: { contextValue }, result, setResult }) {
-          const ctx = contextValue[ctxKey];
+        onPerformDone({ result }) {
+          const ctx = context[ctxKey];
           if (!ctx) return;
 
           // TODO: should handle streaming results? how?
           if (isAsyncIterable(result)) return;
 
-          const updatedResult = updateResult(result, rewriteError, ctx);
+          if (result.extensions?.ftv1 !== undefined) {
+            throw new Error('The `ftv1` extension is already present');
+          }
 
-          setResult(updatedResult);
+          // onResultProcess will be called only once since we disallow async iterables
+          if (ctx.stopped) throw new Error('Trace stopped multiple times');
+
+          if (result.errors) {
+            handleErrors(ctx, result.errors, rewriteError);
+          }
+
+          ctx.stopped = true;
+          ctx.trace.durationNs = hrTimeToDurationInNanos(process.hrtime(ctx.startHrTime));
+          ctx.trace.endTime = nowTimestamp();
+
+          const encodedUint8Array = Trace.encode(ctx.trace).finish();
+          const base64 = btoa(String.fromCharCode(...encodedUint8Array));
+
+          result.extensions = {
+            ...result.extensions,
+            ftv1: base64,
+          };
         },
       };
     },
   };
-}
-
-function updateResult(
-  result: ExecutionResult,
-  rewriteError: ApolloInlineTracePluginOptions['rewriteError'],
-  ctx: ApolloInlineTracePluginContext
-) {
-  if (result.extensions?.ftv1 !== undefined) {
-    throw new Error('The `ftv1` extension is already present');
-  }
-
-  if (result.errors?.length) {
-    handleErrors(ctx, result.errors, rewriteError);
-  }
-
-  // onResultProcess will be called only once since we disallow async iterables
-  if (ctx.stopped) throw new Error('Trace stopped multiple times');
-
-  ctx.stopped = true;
-  ctx.trace.durationNs = hrTimeToDurationInNanos(process.hrtime(ctx.startHrTime));
-  ctx.trace.endTime = nowTimestamp();
-
-  const encodedUint8Array = Trace.encode(ctx.trace).finish();
-  const encodedBuffer = Buffer.from(encodedUint8Array, encodedUint8Array.byteOffset, encodedUint8Array.byteLength);
-
-  result.extensions = {
-    ...result.extensions,
-    ftv1: encodedBuffer.toString('base64'),
-  };
-
-  return result;
 }
 
 /**

@@ -1,9 +1,11 @@
 import { useApolloInlineTrace } from '../src';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { createTestkit } from '@envelop/testing';
 import { Trace } from 'apollo-reporting-protobuf';
-import { ExecutionResult, GraphQLError, version, versionInfo } from 'graphql';
-import { envelop, isAsyncIterable, Plugin, useSchema } from '@envelop/core';
+import { parse, validate, execute, subscribe, GraphQLError, versionInfo } from 'graphql';
+import { envelop, useSchema } from '@envelop/core';
+import { assertSingleExecutionValue, assertStreamExecutionValue } from '@envelop/testing';
+
+const graphqlFuncs = { parse, validate, execute, subscribe };
 
 describe('Apollo Inline Trace Plugin', () => {
   if (versionInfo.major < 16) {
@@ -51,10 +53,13 @@ describe('Apollo Inline Trace Plugin', () => {
   });
 
   it('should add ftv1 tracing to result extensions', async () => {
-    const testKit = createTestkit([useApolloInlineTrace({ shouldTrace: () => true })], schema);
+    const { perform } = envelop({
+      ...graphqlFuncs,
+      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+    })();
 
-    const result = await testKit.execute('{ hello }');
-    if (isAsyncIterable(result)) throw new Error('Unexpected iterable');
+    const result = await perform({ query: '{ hello }' });
+    assertSingleExecutionValue(result);
 
     expect(result.errors).toBeUndefined();
     expect(typeof result.extensions?.ftv1).toBe('string');
@@ -71,7 +76,7 @@ describe('Apollo Inline Trace Plugin', () => {
     expect(typeof trace.endTime?.seconds).toBe('number');
     expect(typeof trace.endTime?.nanos).toBe('number');
 
-    expect(addSecondsAndNanos(trace.startTime!.seconds!, trace.startTime!.nanos!)).toBeLessThan(
+    expect(addSecondsAndNanos(trace.startTime!.seconds!, trace.startTime!.nanos!)).toBeLessThanOrEqual(
       addSecondsAndNanos(trace.endTime!.seconds!, trace.endTime!.nanos!)
     );
 
@@ -91,14 +96,17 @@ describe('Apollo Inline Trace Plugin', () => {
     expect(typeof node!.startTime).toBe('number');
     expect(typeof node!.endTime).toBe('number');
 
-    expect(node!.startTime!).toBeLessThan(node!.endTime!);
+    expect(node!.startTime!).toBeLessThanOrEqual(node!.endTime!);
   }
 
   it('should have proto tracing on flat query', async () => {
-    const testKit = createTestkit([useApolloInlineTrace({ shouldTrace: () => true })], schema);
+    const { perform } = envelop({
+      ...graphqlFuncs,
+      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+    })();
 
-    const result = await testKit.execute('{ hello }');
-    if (isAsyncIterable(result)) throw new Error('Unexpected iterable');
+    const result = await perform({ query: '{ hello }' });
+    assertSingleExecutionValue(result);
 
     //
 
@@ -115,10 +123,13 @@ describe('Apollo Inline Trace Plugin', () => {
   });
 
   it('should have proto tracing on aliased flat query', async () => {
-    const testKit = createTestkit([useApolloInlineTrace({ shouldTrace: () => true })], schema);
+    const { perform } = envelop({
+      ...graphqlFuncs,
+      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+    })();
 
-    const result = await testKit.execute('{ hi: hello }');
-    if (isAsyncIterable(result)) throw new Error('Unexpected iterable');
+    const result = await perform({ query: '{ hi: hello }' });
+    assertSingleExecutionValue(result);
 
     expect(result.errors).toBeUndefined();
 
@@ -138,10 +149,13 @@ describe('Apollo Inline Trace Plugin', () => {
   });
 
   it('should have proto tracing on nested query', async () => {
-    const testKit = createTestkit([useApolloInlineTrace({ shouldTrace: () => true })], schema);
+    const { perform } = envelop({
+      ...graphqlFuncs,
+      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+    })();
 
-    const result = await testKit.execute('{ person { name } }');
-    if (isAsyncIterable(result)) throw new Error('Unexpected iterable');
+    const result = await perform({ query: '{ person { name } }' });
+    assertSingleExecutionValue(result);
 
     expect(result.errors).toBeUndefined();
 
@@ -164,10 +178,13 @@ describe('Apollo Inline Trace Plugin', () => {
   });
 
   it('should have proto tracing on flat query with array field', async () => {
-    const testKit = createTestkit([useApolloInlineTrace({ shouldTrace: () => true })], schema);
+    const { perform } = envelop({
+      ...graphqlFuncs,
+      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+    })();
 
-    const result = await testKit.execute('{ people { name } }');
-    if (isAsyncIterable(result)) throw new Error('Unexpected iterable');
+    const result = await perform({ query: '{ people { name } }' });
+    assertSingleExecutionValue(result);
 
     expect(result.errors).toBeUndefined();
 
@@ -209,10 +226,13 @@ describe('Apollo Inline Trace Plugin', () => {
   }
 
   it('should have proto tracing on parse fail', async () => {
-    const testKit = createTestkit([useApolloInlineTrace({ shouldTrace: () => true })], schema);
+    const { perform } = envelop({
+      ...graphqlFuncs,
+      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+    })();
 
-    const result = await testKit.execute('{ he');
-    if (isAsyncIterable(result)) throw new Error('Unexpected iterable');
+    const result = await perform({ query: '{ he' });
+    assertSingleExecutionValue(result);
 
     expect(result.errors).toBeDefined();
 
@@ -227,10 +247,13 @@ describe('Apollo Inline Trace Plugin', () => {
   });
 
   it('should have proto tracing on validation fail', async () => {
-    const testKit = createTestkit([useApolloInlineTrace({ shouldTrace: () => true })], schema);
+    const { perform } = envelop({
+      ...graphqlFuncs,
+      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+    })();
 
-    const result = await testKit.execute('{ henlo }');
-    if (isAsyncIterable(result)) throw new Error('Unexpected iterable');
+    const result = await perform({ query: '{ henlo }' });
+    assertSingleExecutionValue(result);
 
     expect(result.errors).toBeDefined();
 
@@ -245,10 +268,13 @@ describe('Apollo Inline Trace Plugin', () => {
   });
 
   it('should have proto tracing on execution fail', async () => {
-    const testKit = createTestkit([useApolloInlineTrace({ shouldTrace: () => true })], schema);
+    const { perform } = envelop({
+      ...graphqlFuncs,
+      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+    })();
 
-    const result = await testKit.execute('{ boom }');
-    if (isAsyncIterable(result)) throw new Error('Unexpected iterable');
+    const result = await perform({ query: '{ boom }' });
+    assertSingleExecutionValue(result);
 
     expect(result.errors).toBeDefined();
 
@@ -267,13 +293,13 @@ describe('Apollo Inline Trace Plugin', () => {
   });
 
   it('should skip tracing errors through rewriteError', async () => {
-    const testKit = createTestkit(
-      [useApolloInlineTrace({ shouldTrace: () => true, rewriteError: () => null })],
-      schema
-    );
+    const { perform } = envelop({
+      ...graphqlFuncs,
+      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+    })();
 
-    const result = await testKit.execute('{ boom }');
-    if (isAsyncIterable(result)) throw new Error('Unexpected iterable');
+    const result = await perform({ query: '{ boom }' });
+    assertSingleExecutionValue(result);
 
     expect(result.errors).toBeDefined();
 
@@ -288,18 +314,19 @@ describe('Apollo Inline Trace Plugin', () => {
   });
 
   it('should rewrite only error messages and extensions through rewriteError', async () => {
-    const testKit = createTestkit(
-      [
+    const { perform } = envelop({
+      ...graphqlFuncs,
+      plugins: [
+        useSchema(schema),
         useApolloInlineTrace({
           shouldTrace: () => true,
           rewriteError: () => new GraphQLError('bim', { extensions: { str: 'ing' } }),
         }),
       ],
-      schema
-    );
+    })();
 
-    const result = await testKit.execute('{ boom }');
-    if (isAsyncIterable(result)) throw new Error('Unexpected iterable');
+    const result = await perform({ query: '{ boom }' });
+    assertSingleExecutionValue(result);
 
     expect(result.errors).toBeDefined();
 
@@ -324,18 +351,18 @@ describe('Apollo Inline Trace Plugin', () => {
   });
 
   it('should not trace subscriptions', async () => {
-    const getEnveloped = envelop({
+    const { perform } = envelop({
+      ...graphqlFuncs,
       plugins: [
         useSchema(schema),
         useApolloInlineTrace({
           shouldTrace: () => true,
         }),
       ],
-    });
+    })();
 
-    const { parse, subscribe } = getEnveloped();
-    const result = await subscribe({ schema, document: parse('subscription { hello }') });
-    if (!isAsyncIterable(result)) throw new Error('Unexpected result');
+    const result = await perform({ query: 'subscription { hello }' });
+    assertStreamExecutionValue(result);
 
     for await (const part of result) {
       expect(part.data).toEqual({ hello: 'world' });
