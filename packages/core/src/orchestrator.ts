@@ -564,7 +564,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     const validate = customValidate(initialContext);
     const contextFactory = customContextFactory(initialContext);
 
-    return async params => {
+    return async (params, contextExtension) => {
       let document;
       try {
         document = parse(params.query);
@@ -577,8 +577,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
         return { errors: validationErrors };
       }
 
-      // TODO: add context to perform
-      const context = await contextFactory();
+      const context = await contextFactory(contextExtension);
 
       if (isSubscriptionOperation(document, params.operationName)) {
         return await customSubscribe({

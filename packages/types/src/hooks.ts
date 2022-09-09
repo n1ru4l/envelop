@@ -514,7 +514,10 @@ export interface PerformParams {
  *
  * Will never throw GraphQL errors, they will be constructed accordingly and placed in the result.
  */
-export type PerformFunction = (params: PerformParams) => Promise<AsyncIterableIteratorOrValue<ExecutionResult>>;
+export type PerformFunction<ContextExtension = unknown> = (
+  params: PerformParams,
+  contextExtension?: ContextExtension
+) => Promise<AsyncIterableIteratorOrValue<ExecutionResult>>;
 
 export type OnPerformEventPayload = {
   params: PerformParams;
