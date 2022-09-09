@@ -1,7 +1,7 @@
-import { assertSingleExecutionValue, createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { parse, validate, execute, subscribe } from 'graphql';
 import { envelop, useSchema } from '../src/index.js';
-import { schema, query } from './common.js';
+import { assertSingleExecutionValue } from '@envelop/testing';
+import { schema } from './common.js';
 
 const graphqlFuncs = { parse, validate, execute, subscribe };
 
