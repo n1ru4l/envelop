@@ -30,6 +30,7 @@ import {
   ParseFunction,
   ValidateFunction,
   ExecutionResult,
+  PerformFunction,
 } from '@envelop/types';
 import {
   errorAsyncIterator,
@@ -51,6 +52,7 @@ export type EnvelopOrchestrator<
   subscribe: ReturnType<GetEnvelopedFn<PluginsContext>>['subscribe'];
   contextFactory: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['contextFactory'], PluginsContext>;
   getCurrentSchema: () => Maybe<any>;
+  perform: EnvelopContextFnWrapper<PerformFunction>;
 };
 
 type EnvelopOrchestratorOptions = {
@@ -556,6 +558,39 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     }
   }
 
+  const customPerform: EnvelopContextFnWrapper<PerformFunction> = initialContext => {
+    const parse = customParse(initialContext);
+    const validate = customValidate(initialContext);
+    const contextFactory = customContextFactory(initialContext);
+
+    return async params => {
+      let document;
+      try {
+        document = parse(params.query);
+      } catch (err) {
+        return { errors: [err] };
+      }
+
+      const validationErrors = validate(schema, document);
+      if (validationErrors.length) {
+        return { errors: validationErrors };
+      }
+
+      // TODO: add context to perform
+      const context = await contextFactory();
+
+      // TODO: handle subscriptions
+      const result = await customExecute({
+        document,
+        schema,
+        variableValues: params.variables,
+        contextValue: context,
+      });
+
+      return result;
+    };
+  };
+
   return {
     getCurrentSchema() {
       return schema;
@@ -566,5 +601,6 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     execute: customExecute as ExecuteFunction,
     subscribe: customSubscribe,
     contextFactory: customContextFactory,
+    perform: customPerform,
   };
 }

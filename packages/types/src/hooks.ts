@@ -502,3 +502,34 @@ export type OnSubscribeHookResult<ContextType> = {
 export type OnSubscribeHook<ContextType> = (
   options: OnSubscribeEventPayload<ContextType>
 ) => PromiseOrValue<void | OnSubscribeHookResult<ContextType>>;
+
+export interface PerformParams {
+  operationName?: string;
+  query: string;
+  variables?: Record<string, unknown>;
+}
+
+/**
+ * Performs the parsing, validation, context assembly and execution/subscription.
+ *
+ * Will never throw GraphQL errors, they will be constructed accordingly and placed in the result.
+ */
+export type PerformFunction = (params: PerformParams) => Promise<AsyncIterableIteratorOrValue<ExecutionResult>>;
+
+export type OnPerformEventPayload = {
+  params: PerformParams;
+  setParams: (newParams: PerformParams) => void;
+};
+
+export type OnPerformDoneEventPayload = {
+  result: AsyncIterableIteratorOrValue<ExecutionResult>;
+  setResult: (newResult: AsyncIterableIteratorOrValue<ExecutionResult>) => void;
+};
+
+export type OnPerformDoneHook = (options: OnPerformDoneEventPayload) => PromiseOrValue<void>;
+
+export type OnPerformHookResult = {
+  onPerformDone?: OnPerformDoneHook;
+};
+
+export type OnPerformHook = (options: OnPerformEventPayload) => PromiseOrValue<void | OnPerformHookResult>;
