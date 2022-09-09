@@ -46,5 +46,5 @@ export interface Plugin<PluginContext extends Record<string, any> = {}> {
   /**
    * Invoked for each perform call.
    */
-  onPerform?: OnPerformHook;
+  onPerform?: OnPerformHook<PluginContext>;
 }

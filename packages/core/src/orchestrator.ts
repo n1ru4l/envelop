@@ -31,6 +31,9 @@ import {
   ValidateFunction,
   ExecutionResult,
   PerformFunction,
+  OnPerformHook,
+  OnPerformHookResult,
+  OnPerformDoneHook,
 } from '@envelop/types';
 import {
   errorAsyncIterator,
@@ -118,15 +121,17 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     subscribe: [] as OnSubscribeHook<any>[],
     execute: [] as OnExecuteHook<any>[],
     context: [] as OnContextBuildingHook<any>[],
+    perform: [] as OnPerformHook<any>[],
   };
 
-  for (const { onContextBuilding, onExecute, onParse, onSubscribe, onValidate, onEnveloped } of plugins) {
+  for (const { onContextBuilding, onExecute, onParse, onSubscribe, onValidate, onEnveloped, onPerform } of plugins) {
     onEnveloped && beforeCallbacks.init.push(onEnveloped);
     onContextBuilding && beforeCallbacks.context.push(onContextBuilding);
     onExecute && beforeCallbacks.execute.push(onExecute);
     onParse && beforeCallbacks.parse.push(onParse);
     onSubscribe && beforeCallbacks.subscribe.push(onSubscribe);
     onValidate && beforeCallbacks.validate.push(onValidate);
+    onPerform && beforeCallbacks.perform.push(onPerform);
   }
 
   const init: EnvelopOrchestrator['init'] = initialContext => {
@@ -565,6 +570,24 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     const contextFactory = customContextFactory(initialContext);
 
     return async (params, contextExtension) => {
+      const context = await contextFactory(contextExtension);
+
+      const doneFns: OnPerformDoneHook[] = [];
+      for (const onPerform of beforeCallbacks.perform) {
+        const result = await onPerform({
+          context,
+          extendContext: extension => {
+            Object.assign(context, extension);
+          },
+          params,
+          setParams: newParams => {
+            params = newParams;
+          },
+        });
+
+        result?.onPerformDone && doneFns.push(result.onPerformDone);
+      }
+
       let document;
       try {
         document = parse(params.query);
@@ -577,10 +600,16 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
         return { errors: validationErrors };
       }
 
-      const context = await contextFactory(contextExtension);
-
+      let result;
       if (isSubscriptionOperation(document, params.operationName)) {
-        return await customSubscribe({
+        result = await customSubscribe({
+          document,
+          schema,
+          variableValues: params.variables,
+          contextValue: context,
+        });
+      } else {
+        result = await customExecute({
           document,
           schema,
           variableValues: params.variables,
@@ -588,12 +617,16 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
         });
       }
 
-      return await customExecute({
-        document,
-        schema,
-        variableValues: params.variables,
-        contextValue: context,
-      });
+      for (const doneFn of doneFns) {
+        doneFn({
+          result,
+          setResult: newResult => {
+            result = newResult;
+          },
+        });
+      }
+
+      return result;
     };
   };
 

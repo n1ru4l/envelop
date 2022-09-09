@@ -519,7 +519,9 @@ export type PerformFunction<ContextExtension = unknown> = (
   contextExtension?: ContextExtension
 ) => Promise<AsyncIterableIteratorOrValue<ExecutionResult>>;
 
-export type OnPerformEventPayload = {
+export type OnPerformEventPayload<ContextType> = {
+  context: Readonly<ContextType>;
+  extendContext: (contextExtension: Partial<ContextType>) => void;
   params: PerformParams;
   setParams: (newParams: PerformParams) => void;
 };
@@ -535,4 +537,6 @@ export type OnPerformHookResult = {
   onPerformDone?: OnPerformDoneHook;
 };
 
-export type OnPerformHook = (options: OnPerformEventPayload) => PromiseOrValue<void | OnPerformHookResult>;
+export type OnPerformHook<ContextType> = (
+  options: OnPerformEventPayload<ContextType>
+) => PromiseOrValue<void | OnPerformHookResult>;

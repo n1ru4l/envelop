@@ -1,5 +1,5 @@
 import { parse, validate, execute, subscribe } from 'graphql';
-import { envelop, useSchema } from '../src/index.js';
+import { envelop, OnPerformDoneHook, OnPerformHook, useSchema } from '../src/index.js';
 import { assertSingleExecutionValue, assertStreamExecutionValue } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
@@ -100,6 +100,42 @@ describe('perform', () => {
         "errors": Array [
           [GraphQLError: Cannot query field "idontexist" on type "Query".],
         ],
+      }
+    `);
+  });
+
+  it('should invoke onPerform plugin hooks', async () => {
+    const onPerformDoneFn = jest.fn((() => {
+      // noop
+    }) as OnPerformDoneHook);
+    const onPerformFn = jest.fn((() => ({
+      onPerformDone: onPerformDoneFn,
+    })) as OnPerformHook<any>);
+
+    const getEnveloped = envelop({
+      ...graphqlFuncs,
+      plugins: [
+        useSchema(schema),
+        {
+          onPerform: onPerformFn,
+        },
+      ],
+    });
+
+    const params = { query: '{ hello }' };
+    const { perform } = getEnveloped({ initial: 'context' });
+    await perform(params, { extension: 'context' });
+
+    expect(onPerformFn).toBeCalled();
+    expect(onPerformFn.mock.calls[0][0].context).toEqual({ initial: 'context', extension: 'context' });
+    expect(onPerformFn.mock.calls[0][0].params).toBe(params);
+
+    expect(onPerformDoneFn).toBeCalled();
+    expect(onPerformDoneFn.mock.calls[0][0].result).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "hello": "world",
+        },
       }
     `);
   });
