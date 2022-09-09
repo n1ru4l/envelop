@@ -189,4 +189,26 @@ describe('perform', () => {
 
     expect(result).toBe(replacedResult);
   });
+
+  it('should early result in onPerform plugin', async () => {
+    const earlyResult = { data: { hi: 'hello' } };
+
+    const getEnveloped = envelop({
+      ...graphqlFuncs,
+      plugins: [
+        useSchema(schema),
+        {
+          onPerform: ({ setResult }) => {
+            setResult(earlyResult);
+          },
+        },
+      ],
+    });
+
+    const { perform } = getEnveloped();
+    const result = await perform({ query: '{ hello }' });
+    assertSingleExecutionValue(result);
+
+    expect(result).toBe(earlyResult);
+  });
 });

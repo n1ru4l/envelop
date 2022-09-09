@@ -524,6 +524,10 @@ export type OnPerformEventPayload<ContextType> = {
   extendContext: (contextExtension: Partial<ContextType>) => void;
   params: PerformParams;
   setParams: (newParams: PerformParams) => void;
+  /**
+   * Set an early result which will be immediatelly returned. Useful for cached results.
+   */
+  setResult: (newResult: AsyncIterableIteratorOrValue<ExecutionResult>) => void;
 };
 
 export type OnPerformDoneEventPayload = {
