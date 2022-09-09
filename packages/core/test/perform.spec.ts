@@ -69,4 +69,38 @@ describe('perform', () => {
       i++;
     }
   });
+
+  it('should include parsing errors in result', async () => {
+    const getEnveloped = envelop({ ...graphqlFuncs, plugins: [useSchema(schema)] });
+
+    const { perform } = getEnveloped();
+
+    const result = await perform({ query: '{' });
+    assertSingleExecutionValue(result);
+
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "errors": Array [
+          [GraphQLError: Syntax Error: Expected Name, found <EOF>.],
+        ],
+      }
+    `);
+  });
+
+  it('should include validation errors in result', async () => {
+    const getEnveloped = envelop({ ...graphqlFuncs, plugins: [useSchema(schema)] });
+
+    const { perform } = getEnveloped();
+
+    const result = await perform({ query: '{ idontexist }' });
+    assertSingleExecutionValue(result);
+
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "errors": Array [
+          [GraphQLError: Cannot query field "idontexist" on type "Query".],
+        ],
+      }
+    `);
+  });
 });
