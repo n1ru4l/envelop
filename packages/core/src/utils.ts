@@ -219,3 +219,15 @@ export function errorAsyncIterator<TInput>(
 
   return stream;
 }
+
+export function isSubscriptionOperation(document: any, operationName?: string): boolean {
+  if (operationName) {
+    return document.definitions.some(
+      (def: any) =>
+        def.kind === 'OperationDefinition' && def.name?.value === operationName && def.operation === 'subscription'
+    );
+  }
+  return document.definitions.some(
+    (def: any) => def.kind === 'OperationDefinition' && def.operation === 'subscription'
+  );
+}

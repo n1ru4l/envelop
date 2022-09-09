@@ -39,6 +39,7 @@ import {
   makeSubscribe,
   mapAsyncIterator,
   isAsyncIterable,
+  isSubscriptionOperation,
 } from './utils.js';
 
 export type EnvelopOrchestrator<
@@ -579,15 +580,21 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
       // TODO: add context to perform
       const context = await contextFactory();
 
-      // TODO: handle subscriptions
-      const result = await customExecute({
+      if (isSubscriptionOperation(document, params.operationName)) {
+        return await customSubscribe({
+          document,
+          schema,
+          variableValues: params.variables,
+          contextValue: context,
+        });
+      }
+
+      return await customExecute({
         document,
         schema,
         variableValues: params.variables,
         contextValue: context,
       });
-
-      return result;
     };
   };
 

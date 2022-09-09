@@ -1,9 +1,37 @@
 import { parse, validate, execute, subscribe } from 'graphql';
 import { envelop, useSchema } from '../src/index.js';
-import { assertSingleExecutionValue } from '@envelop/testing';
-import { schema } from './common.js';
+import { assertSingleExecutionValue, assertStreamExecutionValue } from '@envelop/testing';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const graphqlFuncs = { parse, validate, execute, subscribe };
+
+const greetings = ['Hello', 'Bonjour', 'Ciao'];
+const schema = makeExecutableSchema({
+  typeDefs: /* GraphQL */ `
+    type Query {
+      hello: String!
+    }
+    type Subscription {
+      greetings: String!
+    }
+  `,
+  resolvers: {
+    Query: {
+      hello() {
+        return 'world';
+      },
+    },
+    Subscription: {
+      greetings: {
+        async *subscribe() {
+          for (const greet of greetings) {
+            yield { greetings: greet };
+          }
+        },
+      },
+    },
+  },
+});
 
 describe('perform', () => {
   it('should parse, validate, assemble context and execute', async () => {
@@ -11,15 +39,34 @@ describe('perform', () => {
 
     const { perform } = getEnveloped();
 
-    const result = await perform({ query: '{ me { id } }' });
+    const result = await perform({ query: '{ hello }' });
     assertSingleExecutionValue(result);
 
-    expect(result.data).toMatchInlineSnapshot(`
+    expect(result).toMatchInlineSnapshot(`
       Object {
-        "me": Object {
-          "id": "1",
+        "data": Object {
+          "hello": "world",
         },
       }
     `);
+  });
+
+  it('should parse, validate, assemble context and subscribe', async () => {
+    const getEnveloped = envelop({ ...graphqlFuncs, plugins: [useSchema(schema)] });
+
+    const { perform } = getEnveloped();
+
+    const result = await perform({ query: 'subscription { greetings }' });
+    assertStreamExecutionValue(result);
+
+    let i = 0;
+    for await (const part of result) {
+      expect(part).toEqual({
+        data: {
+          greetings: greetings[i],
+        },
+      });
+      i++;
+    }
   });
 });
