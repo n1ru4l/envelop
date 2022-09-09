@@ -572,9 +572,8 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     return async (params, contextExtension) => {
       const context = await contextFactory(contextExtension);
 
-      let result: AsyncIterableIteratorOrValue<ExecutionResult> | null = null;
-
-      const doneFns: OnPerformDoneHook[] = [];
+      let earlyResult: AsyncIterableIteratorOrValue<ExecutionResult> | null = null;
+      const onDones: OnPerformDoneHook[] = [];
       for (const onPerform of beforeCallbacks.perform) {
         const after = await onPerform({
           context,
@@ -585,59 +584,59 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
           setParams: newParams => {
             params = newParams;
           },
-          setResult: earlyResult => {
-            result = earlyResult;
+          setResult: result => {
+            earlyResult = result;
           },
         });
+        after?.onPerformDone && onDones.push(after.onPerformDone);
+      }
+      const done = (result: AsyncIterableIteratorOrValue<ExecutionResult>) => {
+        for (const onDone of onDones) {
+          onDone({
+            result,
+            setResult: newResult => {
+              result = newResult;
+            },
+          });
+        }
+        return result;
+      };
 
-        after?.onPerformDone && doneFns.push(after.onPerformDone);
+      if (earlyResult) {
+        return done(earlyResult);
       }
 
-      if (!result) {
-        let document;
-        try {
-          document = parse(params.query);
-        } catch (err) {
-          return { errors: [err] };
-        }
+      let document;
+      try {
+        document = parse(params.query);
+      } catch (err) {
+        return done({ errors: [err] });
+      }
 
-        const validationErrors = validate(schema, document);
-        if (validationErrors.length) {
-          return { errors: validationErrors };
-        }
+      const validationErrors = validate(schema, document);
+      if (validationErrors.length) {
+        return done({ errors: validationErrors });
+      }
 
-        if (isSubscriptionOperation(document, params.operationName)) {
-          result = await customSubscribe({
+      if (isSubscriptionOperation(document, params.operationName)) {
+        return done(
+          await customSubscribe({
             document,
             schema,
             variableValues: params.variables,
             contextValue: context,
-          });
-        } else {
-          result = await customExecute({
-            document,
-            schema,
-            variableValues: params.variables,
-            contextValue: context,
-          });
-        }
+          })
+        );
       }
 
-      if (!result) {
-        // should never happen
-        throw new Error('Result not available');
-      }
-
-      for (const doneFn of doneFns) {
-        doneFn({
-          result,
-          setResult: newResult => {
-            result = newResult;
-          },
-        });
-      }
-
-      return result;
+      return done(
+        await customExecute({
+          document,
+          schema,
+          variableValues: params.variables,
+          contextValue: context,
+        })
+      );
     };
   };
 

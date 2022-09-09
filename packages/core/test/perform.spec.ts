@@ -211,4 +211,34 @@ describe('perform', () => {
 
     expect(result).toBe(earlyResult);
   });
+
+  it('should provide result with parsing errors to onPerformDone hook', async () => {
+    const onPerformDoneFn = jest.fn((() => {
+      // noop
+    }) as OnPerformDoneHook);
+
+    const getEnveloped = envelop({
+      ...graphqlFuncs,
+      plugins: [
+        useSchema(schema),
+        {
+          onPerform: () => ({
+            onPerformDone: onPerformDoneFn,
+          }),
+        },
+      ],
+    });
+
+    const { perform } = getEnveloped();
+    await perform({ query: '{' });
+
+    expect(onPerformDoneFn).toBeCalled();
+    expect(onPerformDoneFn.mock.calls[0][0].result).toMatchInlineSnapshot(`
+      Object {
+        "errors": Array [
+          [GraphQLError: Syntax Error: Expected Name, found <EOF>.],
+        ],
+      }
+    `);
+  });
 });
