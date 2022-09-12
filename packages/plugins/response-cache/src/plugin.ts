@@ -1,20 +1,13 @@
-import { Plugin, Maybe, isAsyncIterable } from '@envelop/core';
+import type { Plugin, Maybe, PromiseOrValue } from '@envelop/core';
+import { isAsyncIterable } from '@envelop/core';
 import { visitResult } from '@graphql-tools/utils';
-import {
-  visit,
-  TypeInfo,
-  visitWithTypeInfo,
-  ExecutionArgs,
-  ExecutionResult,
-  getOperationAST,
-  Kind,
-  SelectionSetNode,
-} from 'graphql';
+import { visit, visitWithTypeInfo, getOperationAST, Kind, TypeInfo } from 'graphql';
+import type { ExecutionArgs, ExecutionResult, SelectionSetNode } from 'graphql';
 import jsonStableStringify from 'fast-json-stable-stringify';
 import type { Cache, CacheEntityRecord } from './cache.js';
 import { createInMemoryCache } from './in-memory-cache.js';
 import { hashSHA256 } from './hash-sha256.js';
-import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str.js';
+import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-string.js';
 
 /**
  * Function for building the response cache key based on the input parameters
@@ -120,6 +113,19 @@ export type UseResponseCacheParameter<C = any> = {
    * Use this function to customize the behavior, such as caching results that have an EnvelopError.
    */
   shouldCacheResult?: ShouldCacheResultFunction;
+  /**
+   * Register additional identifiers based on the execution result.
+   */
+  registerAdditionalIdentifiers?: (params: {
+    /** The execution result of the operation. */
+    result: ExecutionResult;
+    /** The variable values used for the execution. */
+    variableValues?: Maybe<Record<string, unknown>>;
+    /** The operation name used for the execution. */
+    operationName?: Maybe<string>;
+    /** Track an additional identifier for . */
+    trackIdentifier: (params: { typename: string; id: string }) => void;
+  }) => PromiseOrValue<void>;
 };
 
 /**
@@ -169,6 +175,7 @@ export function useResponseCache({
   shouldCacheResult = defaultShouldCacheResult,
   // eslint-disable-next-line dot-notation
   includeExtensionMetadata = typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false,
+  registerAdditionalIdentifiers,
 }: UseResponseCacheParameter): Plugin {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
 
@@ -219,6 +226,9 @@ export function useResponseCache({
 
       let currentTtl: number | undefined;
       let skip = false;
+
+      const trackIdentifier = (params: { typename: string; id: string }) =>
+        identifier.set(`${params.typename}:${params.id}`, { typename: params.typename, id: params.id });
 
       const processResult = (result: ExecutionResult): ExecutionResult =>
         visitResult(
@@ -273,7 +283,7 @@ export function useResponseCache({
                         return;
                       }
                       return (id: string) => {
-                        identifier.set(`${typename}:${id}`, { typename, id });
+                        trackIdentifier({ typename, id });
                         types.add(typename);
                         if (typename in ttlPerType) {
                           currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
@@ -365,7 +375,7 @@ export function useResponseCache({
       }
 
       return {
-        onExecuteDone({ result, setResult }) {
+        async onExecuteDone({ result, setResult }) {
           if (isAsyncIterable(result)) {
             // eslint-disable-next-line no-console
             console.warn('[useResponseCache] AsyncIterable returned from execute is currently unsupported.');
@@ -381,6 +391,13 @@ export function useResponseCache({
           if (!shouldCacheResult({ result: processedResult })) {
             return;
           }
+
+          await registerAdditionalIdentifiers?.({
+            result,
+            variableValues: onExecuteParams.args.variableValues,
+            operationName: onExecuteParams.args.operationName,
+            trackIdentifier,
+          });
 
           // we only use the global ttl if no currentTtl has been determined.
           const finalTtl = currentTtl ?? globalTtl;

@@ -2,10 +2,11 @@ import { getIntrospectionQuery, GraphQLObjectType } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useValidationCache } from '@envelop/validation-cache';
-import { useResponseCache, createInMemoryCache } from '../src/index.js';
+import { useResponseCache, Cache, createInMemoryCache } from '../src/index.js';
 import { useParserCache } from '@envelop/parser-cache';
 import { useLogger } from '@envelop/core';
 import { useGraphQlJit } from '@envelop/graphql-jit';
+import { InMemoryStore } from '@envelop/persisted-operations';
 
 describe('useResponseCache', () => {
   beforeEach(() => jest.useRealTimers());
@@ -1809,6 +1810,83 @@ describe('useResponseCache', () => {
     expect(result1).toBe(result2);
     // we had two invocations.
     expect(logs).toEqual(['execute-start', 'execute-end', 'execute-start', 'execute-end']);
+  });
+
+  it.only('does allow tracking additional resources via "registerAdditionalIdentifiers"', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          echo(str: String!): String
+        }
+      `,
+      resolvers: { Query: { echo: (_, { str }) => str } },
+    });
+
+    const cache = createInMemoryCache();
+
+    const testkit = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+          cache,
+          includeExtensionMetadata: true,
+          registerAdditionalIdentifiers: args => {
+            expect(args.operationName).toEqual(undefined);
+            expect(args.result).toEqual({
+              data: { echo: 'hi' },
+            });
+            expect(args.variableValues).toEqual({ str: 'hi' });
+            args.trackIdentifier({ typename: 'Bu', id: 'batz' });
+          },
+        }),
+      ],
+      schema
+    );
+
+    const operation = /* GraphQL */ `
+      query echo($str: String!) {
+        echo(str: $str)
+      }
+    `;
+
+    let result = await testkit.execute(operation, { str: 'hi' });
+    assertSingleExecutionValue(result);
+    expect(result).toEqual({
+      data: { echo: 'hi' },
+      extensions: {
+        responseCache: {
+          didCache: true,
+          hit: false,
+          ttl: Infinity,
+        },
+      },
+    });
+
+    result = await testkit.execute(operation, { str: 'hi' });
+    assertSingleExecutionValue(result);
+    expect(result).toEqual({
+      data: { echo: 'hi' },
+      extensions: {
+        responseCache: {
+          hit: true,
+        },
+      },
+    });
+
+    cache.invalidate([{ typename: 'Bu', id: 'batz' }]);
+
+    result = await testkit.execute(operation, { str: 'hi' });
+    assertSingleExecutionValue(result);
+    expect(result).toEqual({
+      data: { echo: 'hi' },
+      extensions: {
+        responseCache: {
+          didCache: true,
+          hit: false,
+          ttl: Infinity,
+        },
+      },
+    });
   });
 
   describe('__typename related concerns', () => {
