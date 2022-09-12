@@ -25,7 +25,7 @@ The plugin optionally accepts a configuration object:
 
 ```
 {
-  disableIf?: ({contest, params}) => boolean
+  disableIf?: ({context, params}) => boolean
 }
 ```
 
