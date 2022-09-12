@@ -2,7 +2,7 @@
 
 With new major version comes breaking changes. This section will guide you through the process of migrating from `v2` to `v3`.
 
-### 1\. Remove `graphql` as a peer dependency
+### 1. Remove `graphql` as a peer dependency
 
 We have designed the new `envelop` to be engine agnostic. This allows you to use any GraphQL engine you want. This means that `graphql` is no longer a peer dependency and `envelop` simply just wraps the `parse`, `validate`, `execute` and `subscribe` functions that you provide.
 
@@ -14,15 +14,15 @@ import { envelop } from '@envelop/core';
 + const getEnveloped = envelop({ parse, validate, execute, subscribe, plugins: [ ... ] })
 ```
 
-### 2\. Remove `useAsyncSchema` plugin
+### 2. Remove `useAsyncSchema` plugin
 
 This was a mistake from beginning as we cannot asynchronously `validate` and `parse` since with [`graphql`](https://github.com/graphql/graphql-js) these functions are synchronous in nature.
 
-### 3\. Rename `useLazyLoadedSchema` to `useSchemaByContext`
+### 3. Rename `useLazyLoadedSchema` to `useSchemaByContext`
 
 Oringinal name was very misleading since lazy loading could mean it can be asynchronous in nature. This plugin was renamed to better reflect its purpose. It is now called `useSchemaByContext`
 
-### 4\. Remove `enableIf` utility
+### 4. Remove `enableIf` utility
 
 This utility was used to enable plugins conditionally. For a better developer experience we have dropped this utility and favor more type safe way to conditionally enable plugins.
 
@@ -46,18 +46,18 @@ const getEnveloped = envelop({
  })
 ```
 
-### 5\. Update options for `useMaskedErrors` plugin
+### 5. Update options for `useMaskedErrors` plugin
 
 - We _removed_ `handleValidationErrors` and `handleParseErrors` options since ONLY masking validation errors OR ONLY disabling introspection errors does not make sense, as both can be abused for reverse-engineering the GraphQL schema (see https://github.com/nikitastupin/clairvoyance for reverse-engineering the schema based on validation error suggestions). Instead you should use `useErrorHandler` plugin where you can access each phase and decide what to do with the error.
 - Renamed `formatError` to `maskError`
 
-### 6\. Drop `useTiming` plugin
+### 6. Drop `useTiming` plugin
 
-### 7\. Drop support for Node.js v12
+### 7. Drop support for Node.js v12
 
 Node.js v12 is no longer supported by the Node.js team. https://github.com/nodejs/Release/#end-of-life-releases
 
-### 8\. Remove `onResolverCalled`
+### 8. Remove `onResolverCalled`
 
 We were wrapping the `GraphQLSchema` object but with the new version we no longer want to depend on a specific implmentation. So we decided to drop this and instead provide a new plugin that will let you hook into this phase.
 
