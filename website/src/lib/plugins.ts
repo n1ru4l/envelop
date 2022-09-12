@@ -18,6 +18,8 @@ export const ALL_TAGS = [
 
 export type Tags = typeof ALL_TAGS[number];
 
+const graphqlArmorLogoUrl = '/assets/logos/graphql-armor.svg';
+
 export const pluginsArr: Package<Tags>[] = [
   {
     identifier: 'use-sentry',
@@ -340,35 +342,35 @@ export const pluginsArr: Package<Tags>[] = [
     identifier: 'graphql-armor-max-aliases',
     title: 'maxAliasesPlugin',
     npmPackage: '@escape.tech/graphql-armor-max-aliases',
-    iconUrl: '/assets/logos/apollo.png',
+    iconUrl: graphqlArmorLogoUrl,
     tags: ['performance', 'security'],
   },
   {
     identifier: 'graphql-armor-max-depth',
     title: 'maxDepthPlugin',
     npmPackage: '@escape.tech/graphql-armor-max-depth',
-    iconUrl: '/assets/logos/apollo.png',
+    iconUrl: graphqlArmorLogoUrl,
     tags: ['performance', 'security'],
   },
   {
     identifier: 'graphql-armor-max-depth',
     title: 'maxDirectivesPlugin',
     npmPackage: '@escape.tech/graphql-armor-max-directives',
-    iconUrl: '/assets/logos/apollo.png',
+    iconUrl: graphqlArmorLogoUrl,
     tags: ['performance', 'security'],
   },
   {
     identifier: 'graphql-armor-max-tokens',
     title: 'maxTokensPlugin',
     npmPackage: '@escape.tech/graphql-armor-max-tokens',
-    iconUrl: '/assets/logos/apollo.png',
+    iconUrl: graphqlArmorLogoUrl,
     tags: ['performance', 'security'],
   },
   {
     identifier: 'graphql-armor-block-field-suggestions',
     title: 'blockFieldSuggestions',
     npmPackage: '@escape.tech/graphql-armor-block-field-suggestions',
-    iconUrl: '/assets/logos/apollo.png',
+    iconUrl: graphqlArmorLogoUrl,
     tags: ['security'],
   },
 ];
