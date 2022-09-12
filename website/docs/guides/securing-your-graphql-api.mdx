@@ -11,6 +11,196 @@ Libraries for making different aspects of a GraphQL server secure have existed s
 However, combining those tools is often cumbersome and results in messy code.
 With envelop securing your server is now as easy as pie!
 
+## Protection against malicious GraphQL operations
+
+One of the main benefits of GraphQL is that data can be requested individually. However, this also introduces the possibility for attackers to send operations with deeply nested selection sets that could block other requests being processed. Fortunately, infinite loops are not possible by design as a fragment cannot self-reference itself. Unfortunately, that still does not prevent possible attackers from sending selection sets that are hundreds of levels deep.
+
+The following schema
+
+```graphql
+type Query {
+  author(id: ID!): Author!
+}
+type Author {
+  id: ID!
+  posts: [Post!]!
+}
+type Post {
+  id: ID!
+  author: Author!
+}
+```
+
+Would allow sending and executing queries such as:
+
+```graphql
+query {
+  author(id: 42) {
+    posts {
+      author {
+        posts {
+          author {
+            posts {
+              author {
+                posts {
+                  author {
+                    posts {
+                      author {
+                        posts {
+                          author {
+                            id
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+There are a few measurements you can use for preventing the execution of such operations.
+
+### Persisted Operations
+
+Instead of allowing any arbitrary GraphQL operation in production usage, we could use an allow-list of operations that the server is allowed to execute. We can collect such a list by scanning the code-base and extracting the list of operations. This can be done with [GraphQL Codegen](https://www.npmjs.com/package/graphql-codegen-persisted-query-ids)
+
+With the [`usePersistedOperations`](/plugins/use-persisted-operations) plugin such an extracted map can easily be used for allow-listing such operations.
+
+```ts
+import { envelop } from '@envelop/core'
+import { usePersistedOperations, PersistedOperationsStore } from '@envelop/persisted-operations'
+import persistedOperations from './codegen-artifact'
+
+const store: PersistedOperationsStore = {
+  canHandle: key => key in persistedOperations,
+  get: key => persistedOperations[key]
+}
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    usePersistedOperations({
+      store: myStore,
+      // only allow the operations within our persistedOperations object
+      onlyPersistedOperations: true
+    })
+  ]
+})
+```
+
+### Reject Malicious Operation Documents
+
+Parsing a GraphQL operation document is a very expensive and compute intensitive operation that blocks the JavaScript event loop.
+If an attacker sends a very complex operation document with slight variations over and over again he can easily degrade the performance of the GraphQL server.
+Because of the variations simply having an LRU cache for parsed operation documents is not enough.
+
+A potential solution is to limit the maximal allowed count of tokens within a GraphQL document.
+
+In computer science, lexical analysis, lexing or tokenization is the process of converting a sequence of characters into a sequence of lexical tokens.
+
+E.g. given the following GraphQL operation.
+
+```graphql
+graphql {
+  me {
+    id
+    user
+  }
+}
+```
+
+The tokens are `query`, `{`, `me`, `{`, `id`, `user`, `}` and `}`.
+Having a total count of 8 tokens.
+
+The optimal maximum token count for your application depends on the complexity of the GrapHQL operations and documents.
+Usually 800-2000 tokens seems like a sane default.
+
+A handy tool for analyzing your existing GraphQL operations and finding the best defaults for your use case is [`graphql-inspector`](https://www.the-guild.dev/graphql/inspector).
+
+[Learn more about `graphql-inspector audit` here](https://www.the-guild.dev/graphql/inspector/docs/essentials/audit).
+
+You can limit the amount of allowed tokens per operation and automatically abort any further processing of a GraphQL operation document that exceeds the limit with the `maxTokensPlugin`.
+
+```ts
+import { envelop } from '@envelop/core'
+import { maxTokensPlugin } from '@escape.tech/graphql-armor-max-tokens'
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    maxTokensPlugin({
+      maxTokenCount: 1000 // Number of tokens allowed in a document
+    })
+  ]
+})
+```
+
+### Query Depth Limiting
+
+Sometimes persisted operations cannot be used. E.g. if you are building an API that is used by third party users. However, we can still apply some
+protection.
+
+The [`maxDepthPlugin`](/plugins/graphql-armor-max-depth) allows a maximum nesting level an operation is allowed to have.
+
+```ts
+import { envelop } from '@envelop/core'
+import { maxDepthPlugin } from '@escape.tech/graphql-armor-max-depth'
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    maxDepthPlugin({
+      n: 10 // Number of depth allowed
+    })
+  ]
+})
+```
+
+This can prevent malicious API users executing GraphQL operations with deeply nested selection sets. You need to tweak the maximum depth an operation selection set is allowed to have based on your schema and needs, as it could vary between users.
+
+A handy tool for analyzing your existing GraphQL operations and finding the best defaults is [`graphql-inspector`](https://www.the-guild.dev/graphql/inspector).
+
+[Learn more about `graphql-inspector audit` here](https://www.the-guild.dev/graphql/inspector/docs/essentials/audit).
+
+### Rate Limiting
+
+Rate-limiting is a common practice with APIs, and with GraphQL it gets more complicated because of the flexibility of the graph and the ability to choose what fields to query.
+
+The [`useRateLimiter`](/plugins/use-rate-limiter) to limit access to resources, by a field level.
+
+```ts
+import { envelop } from '@envelop/core'
+import { useRateLimiter } from '@envelop/rate-limiter'
+
+const getEnveloped = envelop({
+  plugins: [
+    // ... other plugins ...
+    useRateLimiter({
+      /// ...
+    })
+  ]
+})
+```
+
+And then in your GraphQL schema, you can define the limitations in a declarative way:
+
+```graphql
+type Query {
+  posts: [Post]! @rateLimit(
+    window: "5s", // time interval window for request limit quota
+    max: 10,  // maximum requests allowed in time window
+    message: "Too many calls!"  // quota reached error message
+  )
+}
+```
+
 ## Authentication
 
 Authentication is the process of identifying who is doing a request against your server.
@@ -211,194 +401,4 @@ import { blockFieldSuggestions } from '@escape.tech/graphql-armor-block-field-su
 const getEnveloped = envelop({
   plugins: [blockFieldSuggestions()]
 })
-```
-
-## Protection against malicious GraphQL operations
-
-One of the main benefits of GraphQL is that data can be requested individually. However, this also introduces the possibility for attackers to send operations with deeply nested selection sets that could block other requests being processed. Fortunately, infinite loops are not possible by design as a fragment cannot self-reference itself. Unfortunately, that still does not prevent possible attackers from sending selection sets that are hundreds of levels deep.
-
-The following schema
-
-```graphql
-type Query {
-  author(id: ID!): Author!
-}
-type Author {
-  id: ID!
-  posts: [Post!]!
-}
-type Post {
-  id: ID!
-  author: Author!
-}
-```
-
-Would allow sending and executing queries such as:
-
-```graphql
-query {
-  author(id: 42) {
-    posts {
-      author {
-        posts {
-          author {
-            posts {
-              author {
-                posts {
-                  author {
-                    posts {
-                      author {
-                        posts {
-                          author {
-                            id
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-```
-
-There are a few measurements you can use for preventing the execution of such operations.
-
-### Persisted Operations
-
-Instead of allowing any arbitrary GraphQL operation in production usage, we could use an allow-list of operations that the server is allowed to execute. We can collect such a list by scanning the code-base and extracting the list of operations. This can be done with [GraphQL Codegen](https://www.npmjs.com/package/graphql-codegen-persisted-query-ids)
-
-With the [`usePersistedOperations`](/plugins/use-persisted-operations) plugin such an extracted map can easily be used for allow-listing such operations.
-
-```ts
-import { envelop } from '@envelop/core'
-import { usePersistedOperations, PersistedOperationsStore } from '@envelop/persisted-operations'
-import persistedOperations from './codegen-artifact'
-
-const store: PersistedOperationsStore = {
-  canHandle: key => key in persistedOperations,
-  get: key => persistedOperations[key]
-}
-
-const getEnveloped = envelop({
-  plugins: [
-    // ... other plugins ...
-    usePersistedOperations({
-      store: myStore,
-      // only allow the operations within our persistedOperations object
-      onlyPersistedOperations: true
-    })
-  ]
-})
-```
-
-### Reject Malicious Operation Documents
-
-Parsing a GraphQL operation document is a very expensive and compute intensitive operation that blocks the JavaScript event loop.
-If an attacker sends a very complex operation document with slight variations over and over again he can easily degrade the performance of the GraphQL server.
-Because of the variations simply having an LRU cache for parsed operation documents is not enough.
-
-A potential solution is to limit the maximal allowed count of tokens within a GraphQL document.
-
-In computer science, lexical analysis, lexing or tokenization is the process of converting a sequence of characters into a sequence of lexical tokens.
-
-E.g. given the following GraphQL operation.
-
-```graphql
-graphql {
-  me {
-    id
-    user
-  }
-}
-```
-
-The tokens are `query`, `{`, `me`, `{`, `id`, `user`, `}` and `}`.
-Having a total count of 8 tokens.
-
-The optimal maximum token count for your application depends on the complexity of the GrapHQL operations and documents.
-Usually 800-2000 tokens seems like a sane default.
-
-A handy tool for analyzing your existing GraphQL operations and finding the best defaults for your use case is [`graphql-inspector`](https://www.the-guild.dev/graphql/inspector).
-
-[Learn more about `graphql-inspector audit` here](https://www.the-guild.dev/graphql/inspector/docs/essentials/audit).
-
-You can limit the amount of allowed tokens per operation and automatically abort any further processing of a GraphQL operation document that exceeds the limit with the `maxTokensPlugin`.
-
-```ts
-import { envelop } from '@envelop/core'
-import { maxTokensPlugin } from '@escape.tech/graphql-armor-max-tokens'
-
-const getEnveloped = envelop({
-  plugins: [
-    // ... other plugins ...
-    maxTokensPlugin({
-      maxTokenCount: 1000 // Number of tokens allowed in a document
-    })
-  ]
-})
-```
-
-### Query Depth Limiting
-
-Sometimes persisted operations cannot be used. E.g. if you are building an API that is used by third party users. However, we can still apply some
-protection.
-
-The [`maxDepthPlugin`](/plugins/graphql-armor-max-depth) allows a maximum nesting level an operation is allowed to have.
-
-```ts
-import { envelop } from '@envelop/core'
-import { maxDepthPlugin } from '@escape.tech/graphql-armor-max-depth'
-
-const getEnveloped = envelop({
-  plugins: [
-    // ... other plugins ...
-    maxDepthPlugin({
-      n: 10 // Number of depth allowed
-    })
-  ]
-})
-```
-
-This can prevent malicious API users executing GraphQL operations with deeply nested selection sets. You need to tweak the maximum depth an operation selection set is allowed to have based on your schema and needs, as it could vary between users.
-
-A handy tool for analyzing your existing GraphQL operations and finding the best defaults is [`graphql-inspector`](https://www.the-guild.dev/graphql/inspector).
-
-[Learn more about `graphql-inspector audit` here](https://www.the-guild.dev/graphql/inspector/docs/essentials/audit).
-
-### Rate Limiting
-
-Rate-limiting is a common practice with APIs, and with GraphQL it gets more complicated because of the flexibility of the graph and the ability to choose what fields to query.
-
-The [`useRateLimiter`](/plugins/use-rate-limiter) to limit access to resources, by a field level.
-
-```ts
-import { envelop } from '@envelop/core'
-import { useRateLimiter } from '@envelop/rate-limiter'
-
-const getEnveloped = envelop({
-  plugins: [
-    // ... other plugins ...
-    useRateLimiter({
-      /// ...
-    })
-  ]
-})
-```
-
-And then in your GraphQL schema, you can define the limitations in a declarative way:
-
-```graphql
-type Query {
-  posts: [Post]! @rateLimit(
-    window: "5s", // time interval window for request limit quota
-    max: 10,  // maximum requests allowed in time window
-    message: "Too many calls!"  // quota reached error message
-  )
-}
 ```
