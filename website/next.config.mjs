@@ -46,5 +46,10 @@ export default withGuildDocs({
       destination: '/docs/guides/adding-a-graphql-response-cache',
       permanent: true,
     },
+    {
+      source: '/plugins/use-depth-limit',
+      destination: '/plugins/graphql-armor-max-depth',
+      permanent: true,
+    },
   ],
 });
