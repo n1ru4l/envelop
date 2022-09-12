@@ -1,12 +1,13 @@
 import { Plugin, DefaultContext, TypedExecutionArgs, ExecutionResult } from '@envelop/types';
 import { handleStreamOrSingleExecutionResult } from '../utils.js';
+import { isGraphQLError, SerializableGraphQLErrorLike } from './use-masked-errors.js';
 
 export type ErrorHandler = ({
   errors,
   context,
   phase,
 }: {
-  errors: readonly Error[] | any[];
+  errors: readonly Error[] | readonly SerializableGraphQLErrorLike[];
   context: Readonly<DefaultContext>;
   phase: 'parse' | 'validate' | 'context' | 'execution';
 }) => void;
@@ -45,7 +46,12 @@ export const useErrorHandler = <ContextType extends Record<string, any>>(
     },
     onPluginInit(context) {
       context.registerContextErrorHandler(({ error }) => {
-        errorHandler({ errors: [error], context, phase: 'context' });
+        if (isGraphQLError(error)) {
+          errorHandler({ errors: [error], context, phase: 'context' });
+        } else {
+          // @ts-expect-error its not an error at this point so we just create a new one - can we handle this better?
+          errorHandler({ errors: [new Error(error)], context, phase: 'context' });
+        }
       });
     },
     onExecute() {
