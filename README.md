@@ -46,7 +46,7 @@ const getEnveloped = envelop({
 })
 ```
 
-The result of `envelop` is a function that allows you to get everything you need for the GraphQL execution: `parse`, `validate`, `contextBuilder` and `execute`. Use that to run the client's GraphQL queries. Here's a pseudo-code example of how it should look like:
+The result of `envelop` is a function that allows you to get everything you need for the GraphQL execution. It's recommended to use the `perform` function which does parsing, validation, context assembly and execution/subscription, and returns a ready result. Here's a pseudo-code example of how it should look like:
 
 ```ts
 const httpServer = createServer()
@@ -54,25 +54,13 @@ const httpServer = createServer()
 httpServer.on('request', async (req, res) => {
   // Here you get the alternative methods that are bundled with your plugins
   // You can also pass the "req" to make it available for your plugins or GraphQL context.
-  const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req })
+  const { perform } = getEnveloped({ req })
 
-  // Parse the initial request and validate it
+  // Parse the initial request
   const { query, variables } = JSON.parse(req.payload)
-  const document = parse(query)
-  const validationErrors = validate(schema, document)
 
-  if (validationErrors.length > 0) {
-    return res.end(JSON.stringify({ errors: validationErrors }))
-  }
-
-  // Build the context and execute
-  const context = await contextFactory(req)
-  const result = await execute({
-    document,
-    schema,
-    variableValues: variables,
-    contextValue: context
-  })
+  // Perform the GraphQL operation
+  const result = await perform({ query, variables })
 
   // Send the response
   res.end(JSON.stringify(result))

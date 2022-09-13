@@ -20,7 +20,7 @@ const getEnveloped = envelop({
 });
 
 const server = createServer((req, res) => {
-  const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req });
+  const { perform } = getEnveloped({ req });
   let payload = '';
 
   req.on('data', chunk => {
@@ -29,26 +29,8 @@ const server = createServer((req, res) => {
 
   req.on('end', async () => {
     const { query, variables } = JSON.parse(payload);
-    const document = parse(query);
-    const validationErrors = validate(schema, document);
 
-    if (validationErrors.length > 0) {
-      res.end(
-        JSON.stringify({
-          errors: validationErrors,
-        })
-      );
-
-      return;
-    }
-
-    const context = await contextFactory();
-    const result = await execute({
-      document,
-      schema,
-      variableValues: variables,
-      contextValue: context,
-    });
+    const result = await perform({ query, variables });
 
     res.end(JSON.stringify(result));
   });
