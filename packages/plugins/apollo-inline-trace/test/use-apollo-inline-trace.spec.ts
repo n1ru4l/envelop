@@ -12,50 +12,53 @@ describe('Apollo Inline Trace Plugin', () => {
     it('dummy', () => {});
     return;
   }
-  const schema = makeExecutableSchema({
-    typeDefs: /* GraphQL */ `
-      type Query {
-        hello: String!
-        boom: String!
-        person: Person!
-        people: [Person!]!
-      }
-      type Subscription {
-        hello: String!
-      }
-      type Person {
-        name: String!
-      }
-    `,
-    resolvers: {
-      Query: {
-        hello() {
-          return 'world';
+
+  // must create a new schema because on-resolve mutates the existing one
+  const getSchema = () =>
+    makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          hello: String!
+          boom: String!
+          person: Person!
+          people: [Person!]!
+        }
+        type Subscription {
+          hello: String!
+        }
+        type Person {
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          hello() {
+            return 'world';
+          },
+          boom() {
+            throw new Error('bam');
+          },
+          person() {
+            return { name: 'John' };
+          },
+          people() {
+            return [{ name: 'John' }, { name: 'Jane' }];
+          },
         },
-        boom() {
-          throw new Error('bam');
-        },
-        person() {
-          return { name: 'John' };
-        },
-        people() {
-          return [{ name: 'John' }, { name: 'Jane' }];
-        },
-      },
-      Subscription: {
-        hello: {
-          async *subscribe() {
-            yield { hello: 'world' };
+        Subscription: {
+          hello: {
+            async *subscribe() {
+              yield { hello: 'world' };
+            },
           },
         },
       },
-    },
-  });
+    });
 
   it('should add ftv1 tracing to result extensions', async () => {
     const { perform } = envelop({
       ...graphqlFuncs,
-      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+      plugins: [useSchema(getSchema()), useApolloInlineTrace({ shouldTrace: () => true })],
     })();
 
     const result = await perform({ query: '{ hello }' });
@@ -102,7 +105,7 @@ describe('Apollo Inline Trace Plugin', () => {
   it('should have proto tracing on flat query', async () => {
     const { perform } = envelop({
       ...graphqlFuncs,
-      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+      plugins: [useSchema(getSchema()), useApolloInlineTrace({ shouldTrace: () => true })],
     })();
 
     const result = await perform({ query: '{ hello }' });
@@ -125,7 +128,7 @@ describe('Apollo Inline Trace Plugin', () => {
   it('should have proto tracing on aliased flat query', async () => {
     const { perform } = envelop({
       ...graphqlFuncs,
-      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+      plugins: [useSchema(getSchema()), useApolloInlineTrace({ shouldTrace: () => true })],
     })();
 
     const result = await perform({ query: '{ hi: hello }' });
@@ -151,7 +154,7 @@ describe('Apollo Inline Trace Plugin', () => {
   it('should have proto tracing on nested query', async () => {
     const { perform } = envelop({
       ...graphqlFuncs,
-      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+      plugins: [useSchema(getSchema()), useApolloInlineTrace({ shouldTrace: () => true })],
     })();
 
     const result = await perform({ query: '{ person { name } }' });
@@ -180,7 +183,7 @@ describe('Apollo Inline Trace Plugin', () => {
   it('should have proto tracing on flat query with array field', async () => {
     const { perform } = envelop({
       ...graphqlFuncs,
-      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+      plugins: [useSchema(getSchema()), useApolloInlineTrace({ shouldTrace: () => true })],
     })();
 
     const result = await perform({ query: '{ people { name } }' });
@@ -228,7 +231,7 @@ describe('Apollo Inline Trace Plugin', () => {
   it('should have proto tracing on parse fail', async () => {
     const { perform } = envelop({
       ...graphqlFuncs,
-      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+      plugins: [useSchema(getSchema()), useApolloInlineTrace({ shouldTrace: () => true })],
     })();
 
     const result = await perform({ query: '{ he' });
@@ -248,7 +251,7 @@ describe('Apollo Inline Trace Plugin', () => {
   it('should have proto tracing on validation fail', async () => {
     const { perform } = envelop({
       ...graphqlFuncs,
-      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+      plugins: [useSchema(getSchema()), useApolloInlineTrace({ shouldTrace: () => true })],
     })();
 
     const result = await perform({ query: '{ henlo }' });
@@ -269,7 +272,7 @@ describe('Apollo Inline Trace Plugin', () => {
   it('should have proto tracing on execution fail', async () => {
     const { perform } = envelop({
       ...graphqlFuncs,
-      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+      plugins: [useSchema(getSchema()), useApolloInlineTrace({ shouldTrace: () => true })],
     })();
 
     const result = await perform({ query: '{ boom }' });
@@ -294,7 +297,7 @@ describe('Apollo Inline Trace Plugin', () => {
   it('should skip tracing errors through rewriteError', async () => {
     const { perform } = envelop({
       ...graphqlFuncs,
-      plugins: [useSchema(schema), useApolloInlineTrace({ shouldTrace: () => true })],
+      plugins: [useSchema(getSchema()), useApolloInlineTrace({ shouldTrace: () => true })],
     })();
 
     const result = await perform({ query: '{ boom }' });
@@ -316,7 +319,7 @@ describe('Apollo Inline Trace Plugin', () => {
     const { perform } = envelop({
       ...graphqlFuncs,
       plugins: [
-        useSchema(schema),
+        useSchema(getSchema()),
         useApolloInlineTrace({
           shouldTrace: () => true,
           rewriteError: () => new GraphQLError('bim', { extensions: { str: 'ing' } }),
@@ -353,7 +356,7 @@ describe('Apollo Inline Trace Plugin', () => {
     const { perform } = envelop({
       ...graphqlFuncs,
       plugins: [
-        useSchema(schema),
+        useSchema(getSchema()),
         useApolloInlineTrace({
           shouldTrace: () => true,
         }),
