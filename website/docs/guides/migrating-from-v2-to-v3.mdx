@@ -59,7 +59,7 @@ Node.js v12 is no longer supported by the Node.js team. https://github.com/nodej
 
 ### 8. Remove `onResolverCalled`
 
-We were wrapping the `GraphQLSchema` object but with the new version we no longer want to depend on a specific implmentation. So we decided to drop this and instead provide a new plugin that will let you hook into this phase.
+We were wrapping the `GraphQLSchema` object but with the new version we no longer want to depend on a specific implementation. So we decided to drop this and instead provide a new plugin that will let you hook into this phase.
 
 ```diff
 import { envelop, Plugin } from '@envelop/core';
