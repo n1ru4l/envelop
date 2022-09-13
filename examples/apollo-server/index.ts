@@ -24,13 +24,11 @@ const getEnveloped = envelop({
 const server = new ApolloServer({
   schema,
   executor: async requestContext => {
-    const { schema, execute, contextFactory } = getEnveloped({ req: requestContext.request.http });
+    const { perform } = getEnveloped({ req: requestContext.request.http });
 
-    return execute({
-      schema,
-      document: requestContext.document,
-      contextValue: await contextFactory(),
-      variableValues: requestContext.request.variables,
+    return perform({
+      query: requestContext.document,
+      variables: requestContext.request.variables,
       operationName: requestContext.operationName,
     });
   },
