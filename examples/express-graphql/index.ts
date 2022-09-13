@@ -31,12 +31,8 @@ app.use(
       graphiql: true,
       customParseFn: parse,
       customValidateFn: validate,
-      customExecuteFn: async args => {
-        return execute({
-          ...args,
-          contextValue: await contextFactory(),
-        });
-      },
+      context: await contextFactory(),
+      customExecuteFn: execute,
     };
   })
 );
