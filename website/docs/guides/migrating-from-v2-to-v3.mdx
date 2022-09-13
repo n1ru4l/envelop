@@ -1,6 +1,6 @@
 # Migrating from `v2` to `v3`
 
-With new major version comes breaking changes. This section will guide you through the process of migrating from `v2` to `v3`.
+With [new major version](https://github.com/n1ru4l/envelop/pull/1487) comes breaking changes. This section will guide you through the process of migrating from `v2` to `v3`.
 
 ### 1. Remove `graphql` as a peer dependency
 
@@ -34,16 +34,16 @@ import { parse, validate, execute, subscribe } from 'graphql'
 const isProd = process.env.NODE_ENV === 'production'
 
 const getEnveloped = envelop({
-	parse,
-   validate,
-   execute,
-   subscribe,
-   plugins: [
-     // This plugin is enabled only in production
--    enableIf(isProd, useMaskedErrors())
-+    isProd && useMaskedErrors()
-   ]
- })
+ parse,
+ validate,
+ execute,
+ subscribe,
+ plugins: [
+  // This plugin is enabled only in production
+-  enableIf(isProd, useMaskedErrors())
++  isProd && useMaskedErrors()
+ ]
+})
 ```
 
 ### 5. Update options for `useMaskedErrors` plugin
@@ -59,29 +59,32 @@ Node.js v12 is no longer supported by the Node.js team. https://github.com/nodej
 
 ### 8. Remove `onResolverCalled`
 
-We were wrapping the `GraphQLSchema` object but with the new version we no longer want to depend on a specific implementation. So we decided to drop this and instead provide a new plugin that will let you hook into this phase.
+We were wrapping the `GraphQLSchema` object but with the new version we no longer want to depend on a specific implementation. So we decided to drop this and instead [provide a new plugin](https://github.com/n1ru4l/envelop/pull/1500) that will let you hook into this phase.
 
 ```diff
-import { envelop, Plugin } from '@envelop/core';
-+ import { useOnResolve } from '@envelop/on-resolve';
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, Plugin } from '@envelop/core'
++ import { useOnResolve } from '@envelop/on-resolve'
 
-import { onResolverCalled } from './my-resolver';
+import { onResolverCalled } from './my-resolver'
 
 function useResolve(): Plugin {
   return {
 -   onResolverCalled: onResolverCalled,
 +   onPluginInit: ({ addPlugin }) => {
-+     addPlugin(useOnResolve(onResolverCalled));
++     addPlugin(useOnResolve(onResolverCalled))
 +   },
-  };
+  }
 }
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResolve(),
   ],
 });
 ```
-
-PR: https://github.com/n1ru4l/envelop/pull/1500
