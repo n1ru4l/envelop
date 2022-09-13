@@ -18,6 +18,13 @@ export type GetEnvelopedFn<PluginsContext> = {
       contextExtension?: ContextExtension
     ) => PromiseOrValue<Spread<[InitialContext, PluginsContext, ContextExtension]>>;
     schema: any;
+    /**
+     * Parse, validate, assemble context and execute/subscribe.
+     *
+     * Returns a ready-to-use GraphQL response.
+     *
+     * This function will NEVER throw GraphQL errors, it will instead place them in the result.
+     */
     perform: <ContextExtension = unknown>(
       params: PerformParams,
       contextExtension?: ContextExtension
