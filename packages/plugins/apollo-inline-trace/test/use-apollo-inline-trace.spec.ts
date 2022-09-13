@@ -237,7 +237,6 @@ describe('Apollo Inline Trace Plugin', () => {
     expect(result.errors).toBeDefined();
 
     //
-    console.log(result);
     const ftv1 = result.extensions?.ftv1 as string;
     expect(typeof ftv1).toBe('string');
     const trace = Trace.decode(Buffer.from(ftv1, 'base64'));
