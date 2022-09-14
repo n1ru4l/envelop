@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { ApolloServer } from 'apollo-server';
-import { envelop, isAsyncIterable, useSchema, useTiming } from '@envelop/core';
+import { envelop, useSchema, useTiming } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 
@@ -24,12 +24,15 @@ const getEnveloped = envelop({
 const server = new ApolloServer({
   schema,
   executor: async requestContext => {
-    const { perform } = getEnveloped({ req: requestContext.request.http });
-    const result = await perform(requestContext.request);
-    if (isAsyncIterable(result)) {
-      throw new Error('Unsupported streaming result');
-    }
-    return result;
+    const { schema, execute, contextFactory } = getEnveloped({ req: requestContext.request.http });
+
+    return execute({
+      schema,
+      document: requestContext.document,
+      contextValue: await contextFactory(),
+      variableValues: requestContext.request.variables,
+      operationName: requestContext.operationName,
+    });
   },
   plugins: [ApolloServerPluginLandingPageGraphQLPlayground({ endpoint: '/graphql' })],
 });
