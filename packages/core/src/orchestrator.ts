@@ -606,14 +606,11 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
         return done(earlyResult);
       }
 
-      let document = params.query;
-      if (typeof document === 'string') {
-        // query parameter can be a graphql document already, skip parsing in that case
-        try {
-          document = parse(params.query);
-        } catch (err) {
-          return done({ errors: [err] });
-        }
+      let document;
+      try {
+        document = parse(params.query);
+      } catch (err) {
+        return done({ errors: [err] });
       }
 
       const validationErrors = validate(schema, document);

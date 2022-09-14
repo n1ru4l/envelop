@@ -70,23 +70,6 @@ describe('perform', () => {
     }
   });
 
-  it('should accept graphql document as the query', async () => {
-    const getEnveloped = envelop({ ...graphqlFuncs, plugins: [useSchema(schema)] });
-
-    const { perform } = getEnveloped();
-
-    const result = await perform({ query: parse('{ hello }') });
-    assertSingleExecutionValue(result);
-
-    expect(result).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "hello": "world",
-        },
-      }
-    `);
-  });
-
   it('should include parsing errors in result', async () => {
     const getEnveloped = envelop({ ...graphqlFuncs, plugins: [useSchema(schema)] });
 

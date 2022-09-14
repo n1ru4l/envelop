@@ -505,10 +505,7 @@ export type OnSubscribeHook<ContextType> = (
 
 export interface PerformParams {
   operationName?: string;
-  /**
-   * Can either be a string query or a GraphQL document.
-   */
-  query: string | Record<string, any>;
+  query: string;
   variables?: Record<string, unknown>;
 }
 
