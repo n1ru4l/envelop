@@ -505,7 +505,7 @@ export type OnSubscribeHook<ContextType> = (
 
 export interface PerformParams {
   operationName?: string;
-  query: string;
+  query?: string;
   variables?: Record<string, unknown>;
 }
 
