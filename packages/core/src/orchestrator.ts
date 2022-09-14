@@ -563,16 +563,16 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     }
   }
 
-  const customPerform: EnvelopContextFnWrapper<PerformFunction> = initialContext => {
+  const customPerform: EnvelopContextFnWrapper<PerformFunction, any> = initialContext => {
     const parse = customParse(initialContext);
     const validate = customValidate(initialContext);
     const contextFactory = customContextFactory(initialContext);
 
     return async (params, contextExtension) => {
-      const context = await contextFactory(contextExtension);
+      let context = initialContext;
 
       let earlyResult: AsyncIterableIteratorOrValue<ExecutionResult> | null = null;
-      const onDones: OnPerformDoneHook[] = [];
+      const onDones: OnPerformDoneHook<any>[] = [];
       for (const onPerform of beforeCallbacks.perform) {
         const after = await onPerform({
           context,
@@ -592,6 +592,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
       const done = (result: AsyncIterableIteratorOrValue<ExecutionResult>) => {
         for (const onDone of onDones) {
           onDone({
+            context, // either the initial or factory context, depenends when done
             result,
             setResult: newResult => {
               result = newResult;
@@ -620,6 +621,8 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
       } catch (err) {
         return done({ errors: [err] });
       }
+
+      context = await contextFactory(contextExtension);
 
       if (isSubscriptionOperation(document, params.operationName)) {
         return done(

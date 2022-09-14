@@ -530,17 +530,18 @@ export type OnPerformEventPayload<ContextType> = {
   setResult: (newResult: AsyncIterableIteratorOrValue<ExecutionResult>) => void;
 };
 
-export type OnPerformDoneEventPayload = {
+export type OnPerformDoneEventPayload<ContextType> = {
+  context: Readonly<ContextType>;
   result: AsyncIterableIteratorOrValue<ExecutionResult>;
   setResult: (newResult: AsyncIterableIteratorOrValue<ExecutionResult>) => void;
 };
 
-export type OnPerformDoneHook = (options: OnPerformDoneEventPayload) => PromiseOrValue<void>;
+export type OnPerformDoneHook<ContextType> = (options: OnPerformDoneEventPayload<ContextType>) => PromiseOrValue<void>;
 
-export type OnPerformHookResult = {
-  onPerformDone?: OnPerformDoneHook;
+export type OnPerformHookResult<ContextType> = {
+  onPerformDone?: OnPerformDoneHook<ContextType>;
 };
 
 export type OnPerformHook<ContextType> = (
   options: OnPerformEventPayload<ContextType>
-) => PromiseOrValue<void | OnPerformHookResult>;
+) => PromiseOrValue<void | OnPerformHookResult<ContextType>>;

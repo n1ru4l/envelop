@@ -255,5 +255,6 @@ Called every time the `perform` function is invoked. Used for augmenting GraphQL
 
 **`onPerformDone` API**:
 
+- `context` - the context object built so far by other plugins.
 - `result` - the execution result, or AsyncIterable in case of stream response.
 - `setResult` - replaces the result.

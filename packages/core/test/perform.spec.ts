@@ -136,7 +136,7 @@ describe('perform', () => {
   it('should invoke onPerform plugin hooks', async () => {
     const onPerformDoneFn = jest.fn((() => {
       // noop
-    }) as OnPerformDoneHook);
+    }) as OnPerformDoneHook<any>);
     const onPerformFn = jest.fn((() => ({
       onPerformDone: onPerformDoneFn,
     })) as OnPerformHook<any>);
@@ -156,10 +156,11 @@ describe('perform', () => {
     await perform(params, { extension: 'context' });
 
     expect(onPerformFn).toBeCalled();
-    expect(onPerformFn.mock.calls[0][0].context).toEqual({ initial: 'context', extension: 'context' });
+    expect(onPerformFn.mock.calls[0][0].context).toEqual({ initial: 'context' });
     expect(onPerformFn.mock.calls[0][0].params).toBe(params);
 
     expect(onPerformDoneFn).toBeCalled();
+    expect(onPerformDoneFn.mock.calls[0][0].context).toEqual({ initial: 'context', extension: 'context' });
     expect(onPerformDoneFn.mock.calls[0][0].result).toMatchInlineSnapshot(`
       Object {
         "data": Object {
@@ -244,7 +245,7 @@ describe('perform', () => {
   it('should provide result with parsing errors to onPerformDone hook', async () => {
     const onPerformDoneFn = jest.fn((() => {
       // noop
-    }) as OnPerformDoneHook);
+    }) as OnPerformDoneHook<any>);
 
     const getEnveloped = envelop({
       ...graphqlFuncs,
