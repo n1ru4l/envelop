@@ -612,9 +612,13 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
         return done({ errors: [err] });
       }
 
-      const validationErrors = validate(schema, document);
-      if (validationErrors.length) {
-        return done({ errors: validationErrors });
+      try {
+        const validationErrors = validate(schema, document);
+        if (validationErrors.length) {
+          return done({ errors: validationErrors });
+        }
+      } catch (err) {
+        return done({ errors: [err] });
       }
 
       if (isSubscriptionOperation(document, params.operationName)) {

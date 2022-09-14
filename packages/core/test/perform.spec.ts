@@ -1,4 +1,4 @@
-import { parse, validate, execute, subscribe } from 'graphql';
+import { parse, validate, execute, subscribe, GraphQLError } from 'graphql';
 import { envelop, OnPerformDoneHook, OnPerformHook, useSchema } from '../src/index.js';
 import { assertSingleExecutionValue, assertStreamExecutionValue } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -99,6 +99,35 @@ describe('perform', () => {
       Object {
         "errors": Array [
           [GraphQLError: Cannot query field "idontexist" on type "Query".],
+        ],
+      }
+    `);
+  });
+
+  it('should include thrown validation errors in result', async () => {
+    const getEnveloped = envelop({
+      ...graphqlFuncs,
+      plugins: [
+        useSchema(schema),
+        {
+          onValidate: ({ addValidationRule }) => {
+            addValidationRule(() => {
+              throw new GraphQLError('Invalid!');
+            });
+          },
+        },
+      ],
+    });
+
+    const { perform } = getEnveloped();
+
+    const result = await perform({ query: '{ hello }' });
+    assertSingleExecutionValue(result);
+
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "errors": Array [
+          [GraphQLError: Invalid!],
         ],
       }
     `);
