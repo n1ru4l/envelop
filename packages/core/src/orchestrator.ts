@@ -32,7 +32,6 @@ import {
   ExecutionResult,
   PerformFunction,
   OnPerformHook,
-  OnPerformHookResult,
   OnPerformDoneHook,
 } from '@envelop/types';
 import {
