@@ -11,7 +11,7 @@ import {
   validate,
 } from 'graphql';
 import { useSchema, envelop, isAsyncIterable } from '@envelop/core';
-import { GetEnvelopedFn, Plugin } from '@envelop/types';
+import { GetEnvelopedFn, Plugin, PerformFunction } from '@envelop/types';
 import { mapSchema as cloneSchema, isDocumentNode } from '@graphql-tools/utils';
 
 export type ModifyPluginsFn = (plugins: Plugin<any>[]) => Plugin<any>[];
@@ -84,12 +84,19 @@ type MaybeAsyncIterableIterator<T> = T | AsyncIterableIterator<T>;
 type ExecutionReturn = MaybeAsyncIterableIterator<ExecutionResult>;
 
 export type TestkitInstance = {
+  perform: PerformFunction;
+  /** @deprecated Consider using `perform` instead. */
   execute: (
     operation: DocumentNode | string,
     variables?: Record<string, any>,
     initialContext?: any
   ) => MaybePromise<ExecutionReturn>;
   modifyPlugins: (modifyPluginsFn: ModifyPluginsFn) => void;
+  /**
+   * Works only when used with `execute`, will NOT work with `perform`.
+   *
+   * @deprecated Consider using plugins for mocking.
+   */
   mockPhase: (phaseReplacement: PhaseReplacementParams) => void;
   wait: (ms: number) => Promise<void>;
 };
@@ -131,6 +138,31 @@ export function createTestkit(
       phasesReplacements.push(phaseReplacement);
     },
     wait: ms => new Promise(resolve => setTimeout(resolve, ms)),
+    perform: (params, initialContext) => {
+      const { perform } = getEnveloped(initialContext as any);
+      return perform(params, {
+        request: {
+          headers: {},
+          method: 'POST',
+          query: '',
+          body: {
+            query: params.query,
+            variables: params.variables,
+          },
+        },
+        // TODO: how important is the document object?
+        get document() {
+          try {
+            return parse(params.query!);
+          } catch {
+            return {};
+          }
+        },
+        operation: params.query,
+        variables: params.variables,
+        // ...initialContext unnecessary spread
+      });
+    },
     execute: async (operation, variableValues = {}, initialContext = {}) => {
       const proxy = getEnveloped(initialContext);
 
