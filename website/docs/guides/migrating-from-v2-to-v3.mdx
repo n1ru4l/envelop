@@ -54,6 +54,10 @@ const getEnveloped = envelop({
 
 This plugin dependended on tracing the schema so we no longer support this out of the box. At this moment we do not have any alternative. We recommned using more advanced tracing solution. If you want to use this feel free to send in a pull request for new plugin!
 
+#### 3. Remove `EnvelopError`
+
+To keep the core agnostic from a specific implementation we no longer provide the `EnvelopError` class. To ensure an error is `GraphQLError` envelop check if it an `instanceOf Error` and the name of error is `GraphQLError`. We provide a helper utility `isGraphQLError` to check if an error is a `GraphQLError`.
+
 ### 3. Remove `useAsyncSchema` plugin
 
 This was a mistake from beginning as we cannot asynchronously `validate` and `parse` since with [`graphql`](https://github.com/graphql/graphql-js) these functions are synchronous in nature.
