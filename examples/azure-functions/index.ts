@@ -1,4 +1,5 @@
-import { envelop, useLogger, useSchema, useTiming } from '@envelop/core';
+import { envelop, useLogger, useSchema } from '@envelop/core';
+import { parse, validate, subscribe, execute } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { getGraphQLParameters, processRequest, Response } from 'graphql-helix';
@@ -17,7 +18,11 @@ const schema = makeExecutableSchema({
 });
 
 const getEnveloped = envelop({
-  plugins: [useSchema(schema), useLogger(), useTiming()],
+  parse,
+  validate,
+  execute,
+  subscribe,
+  plugins: [useSchema(schema), useLogger()],
 });
 
 export const index: AzureFunction = async (context: Context, req: HttpRequest): Promise<void> => {

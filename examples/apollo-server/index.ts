@@ -19,6 +19,10 @@ const schema = makeExecutableSchema({
 });
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  subscribe,
+  execute,
   plugins: [useSchema(schema)],
 });
 

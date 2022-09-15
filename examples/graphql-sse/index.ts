@@ -1,5 +1,6 @@
 import http from 'http';
-import { envelop, useSchema, useLogger, useTiming } from '@envelop/core';
+import { envelop, useSchema, useLogger } from '@envelop/core';
+import { parse, validate, execute, subscribe } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { createHandler } from 'graphql-sse';
 
@@ -30,7 +31,11 @@ const schema = makeExecutableSchema({
 });
 
 const getEnveloped = envelop({
-  plugins: [useSchema(schema), useLogger(), useTiming()],
+  parse,
+  validate,
+  execute,
+  subscribe,
+  plugins: [useSchema(schema), useLogger()],
 });
 
 const handler = createHandler({
