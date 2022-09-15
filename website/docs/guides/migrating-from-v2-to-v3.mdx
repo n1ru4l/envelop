@@ -58,31 +58,9 @@ This plugin dependended on tracing the schema so we no longer support this out o
 
 To keep the core agnostic from a specific implementation we no longer provide the `EnvelopError` class. To ensure an error is `GraphQLError` envelop check if it an `instanceOf Error` and the name of error is `GraphQLError`. We provide a helper utility `isGraphQLError` to check if an error is a `GraphQLError`.
 
-##### 1. Remove `defualtSkipError` from `@envelop/sentry`
+##### 1.`@envelop/sentry` default will skip all `GraphQLError`
 
-Since we no longer support `EnvelopError` we have removed the default in Sentry plugin to skip `EnvelopError`. We recmmend you provide custom `skipError` function to skip the errors you want.
-
-```diff
-- import { envelop } from '@envelop/core';
-+ import { envelop, isGraphQLError } from '@envelop/core';
-import { useSentry } from '@envelop/sentry';
-import { parse, validate, execute, subscribe } from 'graphql'
-
-const getEnvelop = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
-  plugins: [
-    useSentry({
-      skipError: (error) => {
-        // Skip any errors that are not `GraphQLError`
-        return !isGraphQLError(error)
-      },
-    })
-  ]
-})
-```
+Since we no longer support `EnvelopError` it will skip sending any errors to sentry that are `GraphQLError`.
 
 ### 3. Remove `useAsyncSchema` plugin
 

@@ -1,4 +1,9 @@
-import { Plugin, handleStreamOrSingleExecutionResult, OnExecuteDoneHookResultOnNextHook } from '@envelop/core';
+import {
+  Plugin,
+  handleStreamOrSingleExecutionResult,
+  OnExecuteDoneHookResultOnNextHook,
+  isGraphQLError,
+} from '@envelop/core';
 import { OnResolve, useOnResolve } from '@envelop/on-resolve';
 import * as Sentry from '@sentry/node';
 import type { Span, TraceparentData } from '@sentry/types';
@@ -75,9 +80,14 @@ export type SentryPluginOptions = {
   skip?: (args: ExecutionArgs) => boolean;
   /**
    * Indicates whether or not to skip Sentry exception reporting for a given error.
+   * By default, this plugin skips all `GraphQLError` errors and does not report it to Sentry.
    */
   skipError?: (args: Error) => boolean;
 };
+
+export function defaultSkipError(error: Error): boolean {
+  return isGraphQLError(error);
+}
 
 const sentryTracingSymbol = Symbol('sentryTracing');
 
@@ -99,7 +109,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const includeExecuteVariables = pick('includeExecuteVariables', false);
   const renameTransaction = pick('renameTransaction', false);
   const skipOperation = pick('skip', () => false);
-  const skipError = pick('skipError', () => false);
+  const skipError = pick('skipError', defaultSkipError);
 
   function addEventId(err: GraphQLError, eventId: string): GraphQLError {
     if (options.eventIdKey === null) {

@@ -2,4 +2,4 @@
 '@envelop/sentry': major
 ---
 
-No longer provide a default skip error function.
+Default skip reporting `GraphQLError`
