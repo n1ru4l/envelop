@@ -1,5 +1,6 @@
-import { envelop, useLogger, useSchema, useTiming } from '@envelop/core';
+import { envelop, useLogger, useSchema } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { parse, validate, execute, subscribe } from 'graphql';
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { getGraphQLParameters, processRequest, Response } from 'graphql-helix';
 
@@ -17,7 +18,11 @@ const schema = makeExecutableSchema({
 });
 
 const getEnveloped = envelop({
-  plugins: [useSchema(schema), useLogger(), useTiming()],
+  parse,
+  validate,
+  execute,
+  subscribe,
+  plugins: [useSchema(schema), useLogger()],
 });
 
 export const lambdaHandler: APIGatewayProxyHandler = async event => {

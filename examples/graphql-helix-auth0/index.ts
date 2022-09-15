@@ -2,6 +2,7 @@
 import fastify from 'fastify';
 import { getGraphQLParameters, processRequest, renderGraphiQL, sendResult, shouldRenderGraphiQL } from 'graphql-helix';
 import { envelop, useSchema } from '@envelop/core';
+import { parse, validate, execute, subscribe } from 'graphql';
 import { useAuth0 } from '@envelop/auth0';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
@@ -40,6 +41,10 @@ const auth0Config = {
 };
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     useSchema(schema),
     useAuth0({

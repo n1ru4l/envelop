@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { ApolloServer } from 'apollo-server';
-import { envelop, useSchema, useTiming } from '@envelop/core';
+import { envelop, useSchema } from '@envelop/core';
+import { parse, validate, subscribe, execute } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 
@@ -18,7 +19,11 @@ const schema = makeExecutableSchema({
 });
 
 const getEnveloped = envelop({
-  plugins: [useSchema(schema), useTiming()],
+  parse,
+  validate,
+  subscribe,
+  execute,
+  plugins: [useSchema(schema)],
 });
 
 const server = new ApolloServer({

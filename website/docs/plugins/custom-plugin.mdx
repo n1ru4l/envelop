@@ -56,6 +56,9 @@ const getEnveloped = envelop({
 Often plugins require additional configurartion. A common pattern for doing this is by creating a factor function that returns a `Plugin`.
 
 ```ts
+import { envelop } from '@envelop/core'
+import { parse, validate, subscribe, execute } from 'graphql'
+
 const myPlugin = (shouldPrintResult: boolean): Plugin => {
   return {
     onExecute({ args }) {
@@ -73,6 +76,10 @@ const myPlugin = (shouldPrintResult: boolean): Plugin => {
 }
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  subscribe,
+  execute,
   plugins: [
     /// ... other plugins ...,
     myPlugin(true)

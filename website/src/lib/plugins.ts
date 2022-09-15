@@ -18,6 +18,8 @@ export const ALL_TAGS = [
 
 export type Tags = typeof ALL_TAGS[number];
 
+const graphqlArmorLogoUrl = '/assets/logos/graphql-armor.svg';
+
 export const pluginsArr: Package<Tags>[] = [
   {
     identifier: 'use-sentry',
@@ -45,11 +47,11 @@ export const pluginsArr: Package<Tags>[] = [
     tags: ['core', 'schema'],
   },
   {
-    identifier: 'use-lazy-loaded-schema',
+    identifier: 'use-schema-by-context',
     title: 'useSchemaByContext',
     githubReadme: {
       repo: 'n1ru4l/envelop',
-      path: 'packages/core/docs/use-lazy-loaded-schema.md',
+      path: 'packages/core/docs/use-schema-by-context.md',
     },
     npmPackage: '@envelop/core',
     iconUrl: '/logo.png',
@@ -122,17 +124,6 @@ export const pluginsArr: Package<Tags>[] = [
     tags: ['core', 'utilities'],
   },
   {
-    identifier: 'use-timing',
-    title: 'useTiming',
-    githubReadme: {
-      repo: 'n1ru4l/envelop',
-      path: 'packages/core/docs/use-timing.md',
-    },
-    npmPackage: '@envelop/core',
-    iconUrl: '/logo.png',
-    tags: ['core', 'tracing', 'utilities'],
-  },
-  {
     identifier: 'use-graphql-jit',
     title: 'useGraphQLJit',
     npmPackage: '@envelop/graphql-jit',
@@ -152,13 +143,6 @@ export const pluginsArr: Package<Tags>[] = [
     npmPackage: '@envelop/validation-cache',
     iconUrl: '/logo.png',
     tags: ['performance', 'caching'],
-  },
-  {
-    identifier: 'use-depth-limit',
-    title: 'useDepthLimit',
-    npmPackage: '@envelop/depth-limit',
-    iconUrl: '/logo.png',
-    tags: ['performance', 'security'],
   },
   {
     identifier: 'use-data-loader',
@@ -331,5 +315,40 @@ export const pluginsArr: Package<Tags>[] = [
     npmPackage: '@envelop/apollo-federation',
     iconUrl: '/assets/logos/apollo.png',
     tags: ['schema', 'utilities'],
+  },
+  {
+    identifier: 'graphql-armor-max-aliases',
+    title: 'maxAliasesPlugin',
+    npmPackage: '@escape.tech/graphql-armor-max-aliases',
+    iconUrl: graphqlArmorLogoUrl,
+    tags: ['performance', 'security'],
+  },
+  {
+    identifier: 'graphql-armor-max-depth',
+    title: 'maxDepthPlugin',
+    npmPackage: '@escape.tech/graphql-armor-max-depth',
+    iconUrl: graphqlArmorLogoUrl,
+    tags: ['performance', 'security'],
+  },
+  {
+    identifier: 'graphql-armor-max-depth',
+    title: 'maxDirectivesPlugin',
+    npmPackage: '@escape.tech/graphql-armor-max-directives',
+    iconUrl: graphqlArmorLogoUrl,
+    tags: ['performance', 'security'],
+  },
+  {
+    identifier: 'graphql-armor-max-tokens',
+    title: 'maxTokensPlugin',
+    npmPackage: '@escape.tech/graphql-armor-max-tokens',
+    iconUrl: graphqlArmorLogoUrl,
+    tags: ['performance', 'security'],
+  },
+  {
+    identifier: 'graphql-armor-block-field-suggestions',
+    title: 'blockFieldSuggestions',
+    npmPackage: '@escape.tech/graphql-armor-block-field-suggestions',
+    iconUrl: graphqlArmorLogoUrl,
+    tags: ['security'],
   },
 ];

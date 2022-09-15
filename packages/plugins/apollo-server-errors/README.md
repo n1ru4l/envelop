@@ -11,7 +11,7 @@ yarn add @envelop/apollo-server-errors
 ## Usage Example
 
 ```ts
-import { parse, validate, execute, subscribe } from 'grapqhl'
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useApolloServerErrors } from '@envelop/apollo-server-errors'
 

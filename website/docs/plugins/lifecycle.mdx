@@ -38,8 +38,13 @@ In most cases, you'll pass the incoming HTTP request (or, just the relevant part
 
 ```ts
 import { envelop } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     /* ... plugins ... */
   ]

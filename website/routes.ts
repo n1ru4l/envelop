@@ -25,6 +25,7 @@ export function getRoutes(): IRoutes {
       'docs/guides': {
         $name: 'Guides',
         $routes: [
+          ['migrating-from-v2-to-v3', 'Migrating from `v2` to `v3`'],
           ['securing-your-graphql-api', 'Securing Your GraphQL API'],
           ['adding-authentication-with-auth0', 'Authentication with Auth0'],
           ['monitoring-and-tracing', 'Monitoring and Tracing'],
