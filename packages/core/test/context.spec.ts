@@ -6,7 +6,7 @@ describe('contextFactory', () => {
   it('Should call before parse and after parse correctly', async () => {
     const spiedPlugin = createSpiedPlugin();
     const teskit = createTestkit([spiedPlugin.plugin], schema);
-    await teskit.execute(query);
+    await teskit.perform({ query });
     expect(spiedPlugin.spies.beforeContextBuilding).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.beforeContextBuilding).toHaveBeenCalledWith({
       context: expect.any(Object),
@@ -24,7 +24,7 @@ describe('contextFactory', () => {
   it('Should set initial `createProxy` arguments as initial context', async () => {
     const spiedPlugin = createSpiedPlugin();
     const teskit = createTestkit([spiedPlugin.plugin], schema);
-    await teskit.execute(query, {}, { test: true });
+    await teskit.perform({ query }, { test: true });
     expect(spiedPlugin.spies.beforeContextBuilding).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.beforeContextBuilding).toHaveBeenCalledWith({
       context: expect.objectContaining({
@@ -55,7 +55,7 @@ describe('contextFactory', () => {
       schema
     );
 
-    await teskit.execute(query, {}, {});
+    await teskit.perform({ query });
     expect(afterContextSpy).toHaveBeenCalledWith({
       context: expect.objectContaining({
         test: true,
@@ -94,7 +94,7 @@ describe('contextFactory', () => {
       ],
       schema
     );
-    await teskit.execute(query, {}, {});
+    await teskit.perform({ query });
     expect(afterContextSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         context: expect.objectContaining({
@@ -140,7 +140,7 @@ describe('contextFactory', () => {
       schema
     );
 
-    const execution = teskit.execute(query, {}, { test: true });
+    const execution = teskit.perform({ query, variables: {} }, { test: true });
     return new Promise<void>((resolve, reject) => {
       if (execution instanceof Promise) {
         return execution.then().catch(() => {
@@ -165,7 +165,7 @@ describe('contextFactory', () => {
           return resolve();
         });
       } else {
-        return reject('Expected result of testkit.execute to return a promise');
+        return reject('Expected result of testkit.perform to return a promise');
       }
     });
   });

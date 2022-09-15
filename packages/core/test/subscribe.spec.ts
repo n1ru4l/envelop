@@ -31,11 +31,13 @@ describe('subscribe', () => {
       schema
     );
 
-    const result = await teskit.execute(/* GraphQL */ `
-      subscription {
-        alphabet
-      }
-    `);
+    const result = await teskit.perform({
+      query: /* GraphQL */ `
+        subscription {
+          alphabet
+        }
+      `,
+    });
     assertStreamExecutionValue(result);
     const values = await collectAsyncIteratorValues(result);
     expect(values).toEqual([
@@ -79,11 +81,13 @@ describe('subscribe', () => {
       schema
     );
 
-    const result = await teskit.execute(/* GraphQL */ `
-      subscription {
-        alphabet
-      }
-    `);
+    const result = await teskit.perform({
+      query: /* GraphQL */ `
+        subscription {
+          alphabet
+        }
+      `,
+    });
     assertStreamExecutionValue(result);
     await collectAsyncIteratorValues(result);
   });

@@ -11,7 +11,7 @@ describe('useRateLimiter', () => {
   const schemaWithDirective = makeExecutableSchema({
     typeDefs: `
     ${DIRECTIVE_SDL}
-    
+
     type Query {
       limited: String @rateLimit(
         max: 1,
@@ -39,9 +39,9 @@ describe('useRateLimiter', () => {
       schemaWithDirective
     );
 
-    testInstance.execute(`query { unlimited }`);
-    await testInstance.execute(`query { unlimited }`);
-    const result = await testInstance.execute(`query { unlimited }`);
+    testInstance.perform({ query: `query { unlimited }` });
+    await testInstance.perform({ query: `query { unlimited }` });
+    const result = await testInstance.perform({ query: `query { unlimited }` });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
     expect(result.data?.unlimited).toBe('unlimited');
@@ -57,9 +57,9 @@ describe('useRateLimiter', () => {
       schemaWithDirective
     );
 
-    await testInstance.execute(`query { limited }`);
+    await testInstance.perform({ query: `query { limited }` });
     await delay(300);
-    const result = await testInstance.execute(`query { limited }`);
+    const result = await testInstance.perform({ query: `query { limited }` });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
     expect(result.data?.limited).toBe('limited');
@@ -74,8 +74,8 @@ describe('useRateLimiter', () => {
       ],
       schemaWithDirective
     );
-    await testInstance.execute(`query { limited }`);
-    const result = await testInstance.execute(`query { limited }`);
+    await testInstance.perform({ query: `query { limited }` });
+    const result = await testInstance.perform({ query: `query { limited }` });
     assertSingleExecutionValue(result);
     expect(result.errors!.length).toBe(1);
     expect(result.errors![0].message).toBe('too many calls');
@@ -86,7 +86,7 @@ describe('useRateLimiter', () => {
     const schema = makeExecutableSchema({
       typeDefs: `
       ${DIRECTIVE_SDL}
-      
+
       type Query {
         limited: String @rateLimit(
           max: 1,
@@ -112,8 +112,8 @@ describe('useRateLimiter', () => {
       ],
       schema
     );
-    await testInstance.execute(`query { limited }`);
-    const result = await testInstance.execute(`query { limited }`);
+    await testInstance.perform({ query: `query { limited }` });
+    const result = await testInstance.perform({ query: `query { limited }` });
 
     assertSingleExecutionValue(result);
 

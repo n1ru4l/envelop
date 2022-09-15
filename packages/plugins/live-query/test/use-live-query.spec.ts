@@ -27,13 +27,14 @@ describe('useLiveQuery', () => {
     const contextValue = {
       greetings: ['Hi', 'Sup', 'Ola'],
     };
-    const result = await testKit.execute(
-      /* GraphQL */ `
-        query @live {
-          greetings
-        }
-      `,
-      undefined,
+    const result = await testKit.perform(
+      {
+        query: /* GraphQL */ `
+          query @live {
+            greetings
+          }
+        `,
+      },
       contextValue
     );
     assertStreamExecutionValue(result);
@@ -77,13 +78,14 @@ describe('useLiveQuery', () => {
     const contextValue = {
       greetings: ['Hi', 'Sup', 'Ola'],
     };
-    const result = await testKit.execute(
-      /* GraphQL */ `
-        query @live {
-          greetings
-        }
-      `,
-      undefined,
+    const result = await testKit.perform(
+      {
+        query: /* GraphQL */ `
+          query @live {
+            greetings
+          }
+        `,
+      },
       contextValue
     );
     assertStreamExecutionValue(result);

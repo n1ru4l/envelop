@@ -30,30 +30,30 @@ describe('useValidationCache', () => {
 
   it('Should call original validate when cache is empty', async () => {
     const testInstance = createTestkit([useTestPlugin, useValidationCache()], testSchema);
-    await testInstance.execute(`query { foo }`);
+    await testInstance.perform({ query: `query { foo }` });
     expect(testValidator).toHaveBeenCalledTimes(1);
   });
 
   it('Should call validate once once when operation is cached', async () => {
     const testInstance = createTestkit([useTestPlugin, useValidationCache()], testSchema);
-    await testInstance.execute(`query { foo }`);
-    await testInstance.execute(`query { foo }`);
-    await testInstance.execute(`query { foo }`);
+    await testInstance.perform({ query: `query { foo }` });
+    await testInstance.perform({ query: `query { foo }` });
+    await testInstance.perform({ query: `query { foo }` });
     expect(testValidator).toHaveBeenCalledTimes(1);
   });
 
   it('Should call validate once once when operation is cached and errored', async () => {
     const testInstance = createTestkit([useTestPlugin, useValidationCache()], testSchema);
-    const r1 = await testInstance.execute(`query { foo2 }`);
-    const r2 = await testInstance.execute(`query { foo2 }`);
+    const r1 = await testInstance.perform({ query: `query { foo2 }` });
+    const r2 = await testInstance.perform({ query: `query { foo2 }` });
     expect(testValidator).toHaveBeenCalledTimes(1);
     expect(r1).toEqual(r2);
   });
 
   it('Should call validate multiple times on different operations', async () => {
     const testInstance = createTestkit([useTestPlugin, useValidationCache()], testSchema);
-    await testInstance.execute(`query t { foo }`);
-    await testInstance.execute(`query t2 { foo }`);
+    await testInstance.perform({ query: `query t { foo }` });
+    await testInstance.perform({ query: `query t2 { foo }` });
     expect(testValidator).toHaveBeenCalledTimes(2);
   });
 
@@ -71,9 +71,9 @@ describe('useValidationCache', () => {
       ],
       testSchema
     );
-    await testInstance.execute(`query t { foo }`);
+    await testInstance.perform({ query: `query t { foo }` });
     await testInstance.wait(10);
-    await testInstance.execute(`query t { foo }`);
+    await testInstance.perform({ query: `query t { foo }` });
     expect(testValidator).toHaveBeenCalledTimes(2);
   });
 
@@ -90,8 +90,8 @@ describe('useValidationCache', () => {
       ],
       testSchema
     );
-    await testInstance.execute(`query { foo2 }`);
-    await testInstance.execute(`query { foo2 }`);
+    await testInstance.perform({ query: `query { foo2 }` });
+    await testInstance.perform({ query: `query { foo2 }` });
     expect(cache.get).toHaveBeenCalled();
     expect(cache.set).toHaveBeenCalled();
   });

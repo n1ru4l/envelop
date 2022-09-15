@@ -28,6 +28,6 @@ describe('useGraphQlJit', () => {
       schema
     );
 
-    await testkit.execute(`{ __typename}`);
+    await testkit.perform({ query: '{ __typename}' });
   });
 });

@@ -27,7 +27,7 @@ describe('useDataLoader', () => {
       schema
     );
 
-    const result = await testInstance.execute(`query { test }`);
+    const result = await testInstance.perform({ query: `query { test }` });
     assertSingleExecutionValue(result);
     expect(result.data?.test).toBe('myValue');
   });

@@ -30,23 +30,23 @@ describe('useParserCache', () => {
 
   it('Should call original parse when cache is empty', async () => {
     const testInstance = createTestkit([useTestPlugin, useParserCache()], testSchema);
-    await testInstance.execute(`query { foo }`);
+    await testInstance.perform({ query: `query { foo }` });
     expect(testParser).toHaveBeenCalledTimes(1);
   });
 
   it('Should call parse once once when operation is cached', async () => {
     const testInstance = createTestkit([useTestPlugin, useParserCache()], testSchema);
-    await testInstance.execute(`query { foo }`);
-    await testInstance.execute(`query { foo }`);
-    await testInstance.execute(`query { foo }`);
+    await testInstance.perform({ query: `query { foo }` });
+    await testInstance.perform({ query: `query { foo }` });
+    await testInstance.perform({ query: `query { foo }` });
     expect(testParser).toHaveBeenCalledTimes(1);
   });
 
   it('Should call parse once once when operation is cached and errored', async () => {
     const testInstance = createTestkit([useTestPlugin, useParserCache()], testSchema);
-    const r1 = await testInstance.execute(`FAILED\ { foo }`);
+    const r1 = await testInstance.perform({ query: `FAILED\ { foo }` });
     assertSingleExecutionValue(r1);
-    const r2 = await testInstance.execute(`FAILED\ { foo }`);
+    const r2 = await testInstance.perform({ query: `FAILED\ { foo }` });
     assertSingleExecutionValue(r2);
     expect(testParser).toHaveBeenCalledTimes(1);
     expect(r1.errors![0].message).toBe(`Syntax Error: Unexpected Name "FAILED".`);
@@ -56,8 +56,8 @@ describe('useParserCache', () => {
 
   it('Should call parse multiple times on different operations', async () => {
     const testInstance = createTestkit([useTestPlugin, useParserCache()], testSchema);
-    await testInstance.execute(`query t { foo }`);
-    await testInstance.execute(`query t2 { foo }`);
+    await testInstance.perform({ query: `query t { foo }` });
+    await testInstance.perform({ query: `query t2 { foo }` });
     expect(testParser).toHaveBeenCalledTimes(2);
   });
 
@@ -75,9 +75,9 @@ describe('useParserCache', () => {
       ],
       testSchema
     );
-    await testInstance.execute(`query t { foo }`);
+    await testInstance.perform({ query: `query t { foo }` });
     await testInstance.wait(10);
-    await testInstance.execute(`query t { foo }`);
+    await testInstance.perform({ query: `query t { foo }` });
     expect(testParser).toHaveBeenCalledTimes(2);
   });
 
@@ -95,7 +95,7 @@ describe('useParserCache', () => {
       testSchema
     );
 
-    await testInstance.execute(`query t { foo }`);
+    await testInstance.perform({ query: `query t { foo }` });
     expect(documentCache.get).toHaveBeenCalled();
     expect(documentCache.set).toHaveBeenCalled();
   });
@@ -114,7 +114,7 @@ describe('useParserCache', () => {
       testSchema
     );
 
-    await testInstance.execute(`FAILED\ { foo }`);
+    await testInstance.perform({ query: `FAILED\ { foo }` });
     expect(errorCache.get).toHaveBeenCalled();
     expect(errorCache.set).toHaveBeenCalled();
   });

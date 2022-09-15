@@ -48,7 +48,7 @@ describe('useGraphQlJit', () => {
       schema
     );
 
-    await testInstance.execute(`query { test }`);
+    await testInstance.perform({ query: `query { test }` });
 
     expect(onExecuteSpy).toHaveBeenCalledTimes(1);
     expect(onExecuteSpy.mock.calls[0][0].executeFn).not.toBe(execute);
@@ -67,7 +67,7 @@ describe('useGraphQlJit', () => {
       schema
     );
 
-    await testInstance.execute(`subscription { count }`);
+    await testInstance.perform({ query: `subscription { count }` });
 
     expect(onSubscribeSpy).toHaveBeenCalledTimes(1);
     expect(onSubscribeSpy.mock.calls[0][0].subscribeFn).not.toBe(subscribe);
@@ -91,7 +91,7 @@ describe('useGraphQlJit', () => {
       schema
     );
 
-    await testInstance.execute(`query { test }`);
+    await testInstance.perform({ query: `query { test }` });
 
     expect(onExecuteSpy).toHaveBeenCalledTimes(1);
     expect(onExecuteSpy.mock.calls[0][0].executeFn).toBe(execute);
@@ -116,7 +116,7 @@ describe('useGraphQlJit', () => {
       schema
     );
 
-    await testInstance.execute(`subscription { count }`);
+    await testInstance.perform({ query: `subscription { count }` });
 
     expect(onSubscribeSpy).toHaveBeenCalledTimes(1);
     expect(onSubscribeSpy.mock.calls[0][0].subscribeFn).toBe(subscribe);
@@ -125,14 +125,14 @@ describe('useGraphQlJit', () => {
 
   it('Should execute correctly', async () => {
     const testInstance = createTestkit([useGraphQlJit()], schema);
-    const result = await testInstance.execute(`query { test }`);
+    const result = await testInstance.perform({ query: `query { test }` });
     assertSingleExecutionValue(result);
     expect(result.data?.test).toBe('boop');
   });
 
   it('Should subscribe correctly', async () => {
     const testInstance = createTestkit([useGraphQlJit()], schema);
-    const result = await testInstance.execute(`subscription { count }`);
+    const result = await testInstance.perform({ query: `subscription { count }` });
     assertStreamExecutionValue(result);
     const values = await collectAsyncIteratorValues(result);
     for (let i = 0; i < 10; i++) {
@@ -157,7 +157,7 @@ describe('useGraphQlJit', () => {
       schema
     );
 
-    await testInstance.execute(`query { test }`);
+    await testInstance.perform({ query: `query { test }` });
     expect(cache.get).toHaveBeenCalled();
     expect(cache.set).toHaveBeenCalled();
   });

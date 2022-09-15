@@ -27,7 +27,7 @@ describe('useContextValuePerExecuteSubscriptionEvent', () => {
       schema
     );
 
-    const result = await testInstance.execute(subscriptionOperationString);
+    const result = await testInstance.perform({ query: subscriptionOperationString });
     assertStreamExecutionValue(result);
 
     pushValue({});
@@ -63,7 +63,7 @@ describe('useContextValuePerExecuteSubscriptionEvent', () => {
       schema
     );
 
-    const result = await testInstance.execute(subscriptionOperationString);
+    const result = await testInstance.perform({ query: subscriptionOperationString });
     assertStreamExecutionValue(result);
 
     pushValue({});

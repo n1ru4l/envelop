@@ -30,7 +30,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute(`persisted_1`, {}, {});
+    const result = await testInstance.perform({ query: `persisted_1` });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
     expect(result.data?.foo).toBe('test');
@@ -49,7 +49,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute(`persisted_1`);
+    const result = await testInstance.perform({ query: `persisted_1` });
     assertSingleExecutionValue(result);
     expect(result.errors![0].message).toBe(`Unable to match operation with id 'persisted_1'`);
   });
@@ -67,7 +67,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute(`persisted_2`);
+    const result = await testInstance.perform({ query: `persisted_2` });
     assertSingleExecutionValue(result);
     expect(result.errors![0].message).toBe(`Unable to match operation with id 'persisted_2'`);
   });
@@ -85,7 +85,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute(`invalid`);
+    const result = await testInstance.perform({ query: `invalid` });
     assertSingleExecutionValue(result);
     expect(result.errors![0].message).toBe(`Syntax Error: Unexpected Name "invalid".`);
   });
@@ -103,7 +103,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute(`query { foo }`);
+    const result = await testInstance.perform({ query: `query { foo }` });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
     expect(result.data?.foo).toBe('test');
@@ -122,7 +122,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute(`query { foo }`);
+    const result = await testInstance.perform({ query: `query { foo }` });
     assertSingleExecutionValue(result);
     expect(result.errors![0].message).toBe('Must provide operation id');
   });
@@ -139,7 +139,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute('persisted_1');
+    const result = await testInstance.perform({ query: 'persisted_1' });
     assertSingleExecutionValue(result);
     expect(result.errors![0].message).toBe('Must provide store for persisted-operations!');
   });
@@ -158,7 +158,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute('persisted_1', {}, initialContext);
+    const result = await testInstance.perform({ query: 'persisted_1' }, initialContext);
     assertSingleExecutionValue(result);
     expect(result.data?.foo).toBe('test');
   });
@@ -177,7 +177,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute('invalid', {}, initialContext);
+    const result = await testInstance.perform({ query: 'invalid' }, initialContext);
     assertSingleExecutionValue(result);
     expect(result.data?.foo).toBe('test');
   });
@@ -196,7 +196,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute(`query { bar }`, {}, initialContext);
+    const result = await testInstance.perform({ query: `query { bar }` }, initialContext);
     assertSingleExecutionValue(result);
     expect(result.data?.foo).toBe('test');
   });
@@ -216,7 +216,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute('persisted_1', {}, initialContext);
+    const result = await testInstance.perform({ query: 'persisted_1' }, initialContext);
     assertSingleExecutionValue(result);
     expect(mockOnMissingMatch).toHaveBeenCalledTimes(1);
     expect(mockOnMissingMatch).toHaveBeenCalledWith(initialContext, 'persisted_1');
@@ -237,7 +237,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute('persisted_1', {}, initialContext);
+    const result = await testInstance.perform({ query: 'persisted_1' }, initialContext);
     assertSingleExecutionValue(result);
     expect(mockOnMissingMatch).toHaveBeenCalledTimes(1);
     expect(mockOnMissingMatch).toHaveBeenCalledWith(initialContext, 'persisted_1');
@@ -257,7 +257,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute('persisted_1');
+    const result = await testInstance.perform({ query: 'persisted_1' });
     assertSingleExecutionValue(result);
     expect(mockOnMissingMatch).not.toHaveBeenCalled();
   });
@@ -276,7 +276,7 @@ describe('usePersistedOperations', () => {
       testSchema
     );
 
-    const result = await testInstance.execute('persisted_1');
+    const result = await testInstance.perform({ query: 'persisted_1' });
     assertSingleExecutionValue(result);
     expect(mockOnMissingMatch).not.toHaveBeenCalled();
   });

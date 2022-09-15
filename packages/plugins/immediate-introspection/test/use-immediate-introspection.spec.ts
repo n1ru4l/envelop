@@ -11,11 +11,13 @@ describe('useImmediateIntrospection', () => {
       schema
     );
 
-    await testInstance.execute(/* GraphQL */ `
-      query {
-        __typename
-      }
-    `);
+    await testInstance.perform({
+      query: /* GraphQL */ `
+        query {
+          __typename
+        }
+      `,
+    });
   });
   it('skips context building for introspection only operation (alias)', async () => {
     const testInstance = createTestkit(
@@ -23,11 +25,13 @@ describe('useImmediateIntrospection', () => {
       schema
     );
 
-    await testInstance.execute(/* GraphQL */ `
-      query {
-        some: __typename
-      }
-    `);
+    await testInstance.perform({
+      query: /* GraphQL */ `
+        query {
+          some: __typename
+        }
+      `,
+    });
   });
   it('runs context building for operation containing non introspection fields', async () => {
     const testInstance = createTestkit(
@@ -36,16 +40,18 @@ describe('useImmediateIntrospection', () => {
     );
 
     try {
-      await testInstance.execute(/* GraphQL */ `
-        query {
-          __schema {
-            aaa: __typename
+      await testInstance.perform({
+        query: /* GraphQL */ `
+          query {
+            __schema {
+              aaa: __typename
+            }
+            me {
+              id
+            }
           }
-          me {
-            id
-          }
-        }
-      `);
+        `,
+      });
       throw new Error('Should throw.');
     } catch (err) {
       if (err === 'This should reject') {
@@ -62,13 +68,15 @@ describe('useImmediateIntrospection', () => {
     );
 
     try {
-      await testInstance.execute(/* GraphQL */ `
-        mutation {
-          createUser {
-            id
+      await testInstance.perform({
+        query: /* GraphQL */ `
+          mutation {
+            createUser {
+              id
+            }
           }
-        }
-      `);
+        `,
+      });
       throw new Error('Should throw.');
     } catch (err) {
       if (err === 'This should reject') {
@@ -85,11 +93,13 @@ describe('useImmediateIntrospection', () => {
     );
 
     try {
-      await testInstance.execute(/* GraphQL */ `
-        subscription {
-          message
-        }
-      `);
+      await testInstance.perform({
+        query: /* GraphQL */ `
+          subscription {
+            message
+          }
+        `,
+      });
       throw new Error('Should throw.');
     } catch (err) {
       if (err === 'This should reject') {
@@ -106,16 +116,18 @@ describe('useImmediateIntrospection', () => {
     );
 
     try {
-      await testInstance.execute(/* GraphQL */ `
-        query {
-          __schema {
-            aaa: __typename
+      await testInstance.perform({
+        query: /* GraphQL */ `
+          query {
+            __schema {
+              aaa: __typename
+            }
+            me {
+              id
+            }
           }
-          me {
-            id
-          }
-        }
-      `);
+        `,
+      });
       throw new Error('Should throw.');
     } catch (err) {
       if (err === 'This should reject') {
@@ -134,6 +146,6 @@ describe('useImmediateIntrospection', () => {
       schema
     );
 
-    await testInstance.execute(getIntrospectionQuery());
+    await testInstance.perform({ query: getIntrospectionQuery() });
   });
 });
