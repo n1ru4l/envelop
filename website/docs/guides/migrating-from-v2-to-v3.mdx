@@ -62,6 +62,24 @@ To keep the core agnostic from a specific implementation we no longer provide th
 
 This was a mistake from beginning as we cannot asynchronously `validate` and `parse` since with [`graphql`](https://github.com/graphql/graphql-js) these functions are synchronous in nature.
 
+You should first load your schema and then create the envelop instance and pass the schema to it.
+
+```ts
+import { envelop, useSchema } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+
+// this assume you are running latest node js version where top-level await is supported
+const schema = await loadSchema()
+
+const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
+  plugins: [useSchema(schema)]
+})
+```
+
 ### 4. Rename `useLazyLoadedSchema` to `useSchemaByContext`
 
 Oringinal name was very misleading since lazy loading could mean it can be asynchronous in nature. This plugin was renamed to better reflect its purpose. It is now called `useSchemaByContext`
