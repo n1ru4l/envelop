@@ -51,5 +51,20 @@ export default withGuildDocs({
       destination: '/plugins/graphql-armor-max-depth',
       permanent: true,
     },
+    {
+      source: '/plugins/use-async-schema',
+      destination: '/docs/guides/migrating-from-v2-to-v3#3-remove-useasyncschema-plugin',
+      permanent: true,
+    },
+    {
+      source: '/plugins/use-timing',
+      destination: '/docs/guides/migrating-from-v2-to-v3#2-drop-usetiming-plugin',
+      permanent: true,
+    },
+    {
+      source: '/plugins/use-lazy-loaded-schema',
+      destination: '/docs/guides/migrating-from-v2-to-v3#4-rename-uselazyloadedschema-to-useschemabycontext',
+      permanent: true,
+    },
   ],
 });
