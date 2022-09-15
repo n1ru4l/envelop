@@ -70,7 +70,7 @@ describe('perform', () => {
     }
   });
 
-  it('should include parsing errors in result', async () => {
+  it('should include parsing GraphQL errors in result', async () => {
     const getEnveloped = envelop({ ...graphqlFuncs, plugins: [useSchema(schema)] });
 
     const { perform } = getEnveloped();
@@ -87,7 +87,21 @@ describe('perform', () => {
     `);
   });
 
-  it('should include validation errors in result', async () => {
+  it('should throw parsing non-GraphQL errors', async () => {
+    const getEnveloped = envelop({
+      ...graphqlFuncs,
+      parse: () => {
+        throw new Error('Oops!');
+      },
+      plugins: [useSchema(schema)],
+    });
+
+    const { perform } = getEnveloped();
+
+    expect(perform({ query: '{' })).rejects.toBeInstanceOf(Error);
+  });
+
+  it('should include validation GraphQL errors in result', async () => {
     const getEnveloped = envelop({ ...graphqlFuncs, plugins: [useSchema(schema)] });
 
     const { perform } = getEnveloped();
@@ -102,6 +116,20 @@ describe('perform', () => {
         ],
       }
     `);
+  });
+
+  it('should throw validation non-GraphQL errors', async () => {
+    const getEnveloped = envelop({
+      ...graphqlFuncs,
+      validate: () => {
+        throw new Error('Oops!');
+      },
+      plugins: [useSchema(schema)],
+    });
+
+    const { perform } = getEnveloped();
+
+    expect(perform({ query: '{ idontexist }' })).rejects.toBeInstanceOf(Error);
   });
 
   it('should include thrown validation errors in result', async () => {

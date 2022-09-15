@@ -23,7 +23,8 @@ export type GetEnvelopedFn<PluginsContext> = {
      *
      * Returns a ready-to-use GraphQL response.
      *
-     * This function will NEVER throw GraphQL errors, it will instead place them in the result.
+     * This function will NEVER throw GraphQL errors, it will instead place them
+     * in the result. However, non-GraphQL errors WILL bubble if thrown.
      */
     perform: <ContextExtension = unknown>(
       params: PerformParams,

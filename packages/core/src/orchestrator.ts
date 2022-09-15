@@ -610,7 +610,12 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
       try {
         document = parse(params.query);
       } catch (err) {
-        return done({ errors: [err] });
+        if (err instanceof Error && err.name === 'GraphQLError') {
+          // only graphql errors can be a part of the result
+          return done({ errors: [err] });
+        }
+        // everything else bubble
+        throw err;
       }
 
       try {
@@ -619,7 +624,12 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
           return done({ errors: validationErrors });
         }
       } catch (err) {
-        return done({ errors: [err] });
+        if (err instanceof Error && err.name === 'GraphQLError') {
+          // only graphql errors can be a part of the result
+          return done({ errors: [err] });
+        }
+        // everything else bubble
+        throw err;
       }
 
       context = await contextFactory(contextExtension);
