@@ -3,7 +3,7 @@
 This plugin is the simplest plugin for specifying your GraphQL schema. You can specify a schema created from any tool that emits `GraphQLSchema` object, and you can choose to load the schema based on the initial context (or the incoming request).
 
 ```ts
-import { envelop, useLazyLoadedSchema } from '@envelop/core'
+import { envelop, useSchemaByContext } from '@envelop/core'
 import { parse, validate, execute, subscribe } from 'graphql'
 
 async function getSchema({ req }): GraphQLSchema {
@@ -20,7 +20,7 @@ const getEnveloped = envelop({
   execute,
   subscribe,
   plugins: [
-    useLazyLoadedSchema(getSchema)
+    useSchemaByContext(getSchema)
     // ... other plugins ...
   ]
 })

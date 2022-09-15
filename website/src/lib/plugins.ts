@@ -47,11 +47,11 @@ export const pluginsArr: Package<Tags>[] = [
     tags: ['core', 'schema'],
   },
   {
-    identifier: 'use-lazy-loaded-schema',
+    identifier: 'use-schema-by-context',
     title: 'useSchemaByContext',
     githubReadme: {
       repo: 'n1ru4l/envelop',
-      path: 'packages/core/docs/use-lazy-loaded-schema.md',
+      path: 'packages/core/docs/use-schema-by-context.md',
     },
     npmPackage: '@envelop/core',
     iconUrl: '/logo.png',
@@ -122,17 +122,6 @@ export const pluginsArr: Package<Tags>[] = [
     npmPackage: '@envelop/core',
     iconUrl: '/logo.png',
     tags: ['core', 'utilities'],
-  },
-  {
-    identifier: 'use-timing',
-    title: 'useTiming',
-    githubReadme: {
-      repo: 'n1ru4l/envelop',
-      path: 'packages/core/docs/use-timing.md',
-    },
-    npmPackage: '@envelop/core',
-    iconUrl: '/logo.png',
-    tags: ['core', 'tracing', 'utilities'],
   },
   {
     identifier: 'use-graphql-jit',

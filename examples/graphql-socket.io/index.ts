@@ -1,7 +1,8 @@
 import { Server } from 'socket.io';
 import * as http from 'http';
 import { registerSocketIOGraphQLServer } from '@n1ru4l/socket-io-graphql-server';
-import { envelop, useLogger, useSchema, useTiming } from '@envelop/core';
+import { envelop, useLogger, useSchema } from '@envelop/core';
+import { parse, validate, execute, subscribe } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const schema = makeExecutableSchema({
@@ -17,9 +18,7 @@ const schema = makeExecutableSchema({
   },
 });
 
-const getEnveloped = envelop({
-  plugins: [useSchema(schema), useLogger(), useTiming()],
-});
+const getEnveloped = envelop({ parse, validate, execute, subscribe, plugins: [useSchema(schema), useLogger()] });
 
 const httpServer = http.createServer();
 const socketServer = new Server(httpServer);

@@ -1,5 +1,6 @@
-import { envelop, useSchema, useLogger, useTiming } from '@envelop/core';
+import { envelop, useSchema, useLogger } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { parse, validate, execute, subscribe } from 'graphql';
 import ws from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 
@@ -30,7 +31,11 @@ const schema = makeExecutableSchema({
 });
 
 const getEnveloped = envelop({
-  plugins: [useSchema(schema), useLogger(), useTiming()],
+  parse,
+  validate,
+  execute,
+  subscribe,
+  plugins: [useSchema(schema), useLogger()],
 });
 
 useServer(
