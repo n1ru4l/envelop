@@ -112,6 +112,9 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const skipError = pick('skipError', defaultSkipError);
 
   function addEventId(err: GraphQLError, eventId: string | null): GraphQLError {
+    if (eventId === null) {
+      return err;
+    }
     if (options.eventIdKey === null) {
       return err;
     }
