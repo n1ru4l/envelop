@@ -17,12 +17,13 @@ export function prepareTracedSchema(schema: GraphQLSchema | null | undefined): v
       const fields = Object.values(type.getFields());
 
       for (const field of fields) {
-        let resolverFn: ResolverFn = (field.resolve || defaultFieldResolver) as ResolverFn;
+        const originalResolver: ResolverFn = (field.resolve || defaultFieldResolver) as ResolverFn;
 
         field.resolve = async (root, args, context, info) => {
           if (context && context[resolversHooksSymbol]) {
             const hooks: OnResolverCalledHook[] = context[resolversHooksSymbol];
             const afterCalls: AfterResolverHook[] = [];
+            let resolverFn = originalResolver;
 
             for (const hook of hooks) {
               const afterFn = await hook({
@@ -66,7 +67,7 @@ export function prepareTracedSchema(schema: GraphQLSchema | null | undefined): v
               throw resultErr;
             }
           } else {
-            return resolverFn(root, args, context, info);
+            return originalResolver(root, args, context, info);
           }
         };
       }

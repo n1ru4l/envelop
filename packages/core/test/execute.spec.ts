@@ -9,6 +9,7 @@ import { OnExecuteDoneHookResult, OnSubscribeResultResult } from '@envelop/types
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { execute, ExecutionResult, GraphQLError, GraphQLSchema } from 'graphql';
 import { schema, query } from './common.js';
+import { equal } from 'assert';
 
 type Deferred<T = void> = {
   promise: Promise<T>;
@@ -269,6 +270,40 @@ describe('execute', () => {
       result: 'Dotan Simha',
       setResult: expect.any(Function),
     });
+  });
+
+  it.only('should allow to replace resolver', async () => {
+    const testKit = createTestkit(
+      [
+        {
+          onResolverCalled({ replaceResolverFn }) {
+            replaceResolverFn(() => 'replaced');
+          },
+        },
+      ],
+      schema
+    );
+    expect(await testKit.execute(query)).toEqual({ data: { me: { id: 'replaced', name: 'replaced' } } });
+  });
+
+  it('should reset resolver to original implementation for each call', async () => {
+    let replace = true;
+    const testKit = createTestkit(
+      [
+        {
+          onResolverCalled({ replaceResolverFn }) {
+            if (replace) {
+              replaceResolverFn(() => 'replaced');
+            }
+          },
+        },
+      ],
+      schema
+    );
+    expect(await testKit.execute(query)).toEqual({ data: { me: { id: 'replaced', name: 'replaced' } } });
+
+    replace = false;
+    expect(await testKit.execute(query)).toEqual({ data: { me: { id: '1', name: 'Dotan Simha' } } });
   });
 
   it('Should be able to manipulate streams', async () => {
