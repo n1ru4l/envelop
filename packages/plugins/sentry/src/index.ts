@@ -111,7 +111,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const skipOperation = pick('skip', () => false);
   const skipError = pick('skipError', defaultSkipError);
 
-  function addEventId(err: GraphQLError, eventId: string): GraphQLError {
+  function addEventId(err: GraphQLError, eventId: string | null): GraphQLError {
     if (options.eventIdKey === null) {
       return err;
     }
@@ -292,16 +292,19 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
                     .map(v => (typeof v === 'number' ? '$index' : v))
                     .join(' > ');
 
-                  const eventId = Sentry.captureException(err, {
-                    fingerprint: ['graphql', errorPathWithIndex, opName, operationType],
-                    contexts: {
-                      GraphQL: {
-                        operationName: opName,
-                        operationType,
-                        variables: args.variableValues,
-                      },
-                    },
-                  });
+                  const eventId =
+                    err.originalError && skipError(err.originalError)
+                      ? null
+                      : Sentry.captureException(err, {
+                          fingerprint: ['graphql', errorPathWithIndex, opName, operationType],
+                          contexts: {
+                            GraphQL: {
+                              operationName: opName,
+                              operationType,
+                              variables: args.variableValues,
+                            },
+                          },
+                        });
 
                   return addEventId(err, eventId);
                 });
