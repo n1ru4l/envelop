@@ -32,7 +32,7 @@ export type ValidateUserFnParams<UserType> = {
   /** The extensions used for authentication (If using an extension based flow). */
   fieldAuthExtension: unknown | undefined;
   /** The args passed to the execution function (including operation context and variables) **/
-  args: ExecutionArgs;
+  executionArgs: ExecutionArgs;
 };
 
 export type ValidateUserFn<UserType> = (params: ValidateUserFnParams<UserType>) => void | UnauthenticatedError;
@@ -179,7 +179,7 @@ export const useGenericAuth = <
                     objectType,
                     fieldAuthDirectiveNode,
                     fieldAuthExtension,
-                    args,
+                    executionArgs: args,
                   });
                   if (error) {
                     context.reportError(error);
