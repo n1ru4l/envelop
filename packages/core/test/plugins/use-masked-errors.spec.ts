@@ -477,7 +477,7 @@ describe('useMaskedErrors', () => {
     assertSingleExecutionValue(result);
     expect(result.errors?.[0].extensions).toEqual({
       message: 'Unexpected error value: "I\'m a teapot"',
-      stack: expect.stringMatching(/NonErrorThrown: Unexpected error value: \"I'm a teapot/),
+      stack: expect.stringMatching(/Unexpected error value: \"I'm a teapot/),
     });
   });
 });
