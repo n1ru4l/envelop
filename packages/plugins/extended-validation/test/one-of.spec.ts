@@ -529,7 +529,7 @@ describe('oneOf', () => {
           testSchema
         );
 
-        const result = await testInstance.execute(document, variables);
+        const result = await testInstance.perform({ query: document, variables });
         assertSingleExecutionValue(result);
         if (expectedError) {
           expect(result.errors).toBeDefined();
@@ -631,7 +631,7 @@ describe('oneOf', () => {
           testSchema
         );
 
-        const result = await testInstance.execute(document, variables);
+        const result = await testInstance.perform({ query: document, variables });
         assertSingleExecutionValue(result);
         if (expectedError) {
           expect(result.errors).toBeDefined();

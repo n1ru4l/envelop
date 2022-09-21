@@ -6,7 +6,7 @@ describe('validate', () => {
   it('Should call before validate and after validate correctly', async () => {
     const spiedPlugin = createSpiedPlugin();
     const teskit = createTestkit([spiedPlugin.plugin], schema);
-    await teskit.execute(query);
+    await teskit.perform({ query });
     expect(spiedPlugin.spies.beforeValidate).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.beforeValidate).toHaveBeenCalledWith({
       context: expect.any(Object),
@@ -46,7 +46,7 @@ describe('validate', () => {
       ],
       schema
     );
-    await teskit.execute(query);
+    await teskit.perform({ query });
     expect(replacementFn).toHaveBeenCalledTimes(1);
     expect(replacementFn).toHaveBeenCalledWith(
       expect.any(GraphQLSchema),
@@ -70,7 +70,7 @@ describe('validate', () => {
       ],
       schema
     );
-    await teskit.execute(query);
+    await teskit.perform({ query });
     expect(replacementFn).toHaveBeenCalledTimes(0);
   });
 
@@ -92,7 +92,7 @@ describe('validate', () => {
       ],
       schema
     );
-    await teskit.execute(query);
+    await teskit.perform({ query });
     expect(after).toHaveBeenCalledTimes(1);
     expect(after).toHaveBeenCalledWith({
       valid: false,
@@ -118,7 +118,7 @@ describe('validate', () => {
       schema
     );
 
-    const r = await teskit.execute(query);
+    const r = await teskit.perform({ query });
     assertSingleExecutionValue(r);
 
     expect(r.errors).toBeDefined();
@@ -140,7 +140,7 @@ describe('validate', () => {
       schema
     );
 
-    const r = await teskit.execute(query);
+    const r = await teskit.perform({ query });
     assertSingleExecutionValue(r);
 
     expect(r.errors).toBeDefined();

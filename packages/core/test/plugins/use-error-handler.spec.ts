@@ -28,7 +28,7 @@ describe('useErrorHandler', () => {
 
     const mockHandler = jest.fn();
     const testInstance = createTestkit([useErrorHandler(mockHandler)], schema);
-    await testInstance.execute(`query { foo }`, {}, { foo: 'bar' });
+    await testInstance.perform({ query: `query { foo }` }, { foo: 'bar' });
 
     expect(mockHandler).toHaveBeenCalledWith(expect.objectContaining({ phase: 'execution' }));
   });
@@ -121,7 +121,7 @@ describe('useErrorHandler', () => {
 
     const mockHandler = jest.fn();
     const testInstance = createTestkit([useErrorHandler(mockHandler)], schema);
-    const result = await testInstance.execute(`subscription { foo }`, {}, { foo: 'bar' });
+    const result = await testInstance.perform({ query: `subscription { foo }` }, { foo: 'bar' });
     assertStreamExecutionValue(result);
     await collectAsyncIteratorValues(result);
 

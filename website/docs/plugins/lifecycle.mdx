@@ -245,3 +245,21 @@ Some plugins (like gateway implementations) could potentially change the schema 
 
 - `schema` - the `GraphQLSchema`
 - `replaceSchema` - replaces the schema. Calling this will trigger `onSchemaChange` for all other plugins (except for the one that initiated the change);
+
+### `onPerform(api)`
+
+Called every time the `perform` function is invoked. Used for augmenting GraphQL parameters and/or setting an early result.
+
+**`before` API**:
+
+- `context` - the context object built so far by other plugins.
+- `extendContext` - extends the context object with additional fields.
+- `params` - GraphQL parameters passed to `perform`.
+- `setParams` - replace GraphQL parameters before performing.
+- `setResult` - sets an early result for immediate response.
+
+**`onPerformDone` API**:
+
+- `context` - the context object built so far by other plugins.
+- `result` - the execution result, or AsyncIterable in case of stream response.
+- `setResult` - replaces the result.

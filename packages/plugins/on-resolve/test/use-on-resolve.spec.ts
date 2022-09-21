@@ -23,7 +23,7 @@ describe('useOnResolve', () => {
     const onResolveFn = jest.fn((_opts: OnResolveOptions) => onResolveDoneFn);
     const testkit = createTestkit([useOnResolve(onResolveFn)], schema);
 
-    await testkit.execute('{ value1, value2 }');
+    await testkit.perform({ query: '{ value1, value2 }' });
 
     expect(onResolveFn).toBeCalledTimes(2);
     expect(onResolveDoneFn).toBeCalledTimes(2);
@@ -31,7 +31,6 @@ describe('useOnResolve', () => {
     let i = 0;
     for (const field of ['value1', 'value2']) {
       expect(onResolveFn.mock.calls[i][0].context).toBeDefined();
-      expect(onResolveFn.mock.calls[i][0].root).toBeDefined();
       expect(onResolveFn.mock.calls[i][0].args).toBeDefined();
       expect(onResolveFn.mock.calls[i][0].info).toBeDefined();
       expect(onResolveFn.mock.calls[i][0].info.fieldName).toBe(field);
@@ -55,7 +54,7 @@ describe('useOnResolve', () => {
       schema
     );
 
-    const result = await testkit.execute('{ value1 }');
+    const result = await testkit.perform({ query: '{ value1 }' });
     assertSingleExecutionValue(result);
 
     expect(result.data?.value1).toBe('value2');

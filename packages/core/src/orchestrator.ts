@@ -30,6 +30,9 @@ import {
   ParseFunction,
   ValidateFunction,
   ExecutionResult,
+  PerformFunction,
+  OnPerformHook,
+  OnPerformDoneHook,
 } from '@envelop/types';
 import {
   errorAsyncIterator,
@@ -38,6 +41,7 @@ import {
   makeSubscribe,
   mapAsyncIterator,
   isAsyncIterable,
+  isSubscriptionOperation,
 } from './utils.js';
 
 export type EnvelopOrchestrator<
@@ -51,6 +55,7 @@ export type EnvelopOrchestrator<
   subscribe: ReturnType<GetEnvelopedFn<PluginsContext>>['subscribe'];
   contextFactory: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['contextFactory'], PluginsContext>;
   getCurrentSchema: () => Maybe<any>;
+  perform: EnvelopContextFnWrapper<PerformFunction>;
 };
 
 type EnvelopOrchestratorOptions = {
@@ -115,15 +120,17 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     subscribe: [] as OnSubscribeHook<any>[],
     execute: [] as OnExecuteHook<any>[],
     context: [] as OnContextBuildingHook<any>[],
+    perform: [] as OnPerformHook<any>[],
   };
 
-  for (const { onContextBuilding, onExecute, onParse, onSubscribe, onValidate, onEnveloped } of plugins) {
+  for (const { onContextBuilding, onExecute, onParse, onSubscribe, onValidate, onEnveloped, onPerform } of plugins) {
     onEnveloped && beforeCallbacks.init.push(onEnveloped);
     onContextBuilding && beforeCallbacks.context.push(onContextBuilding);
     onExecute && beforeCallbacks.execute.push(onExecute);
     onParse && beforeCallbacks.parse.push(onParse);
     onSubscribe && beforeCallbacks.subscribe.push(onSubscribe);
     onValidate && beforeCallbacks.validate.push(onValidate);
+    onPerform && beforeCallbacks.perform.push(onPerform);
   }
 
   const init: EnvelopOrchestrator['init'] = initialContext => {
@@ -556,6 +563,99 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     }
   }
 
+  const customPerform: EnvelopContextFnWrapper<PerformFunction, any> = initialContext => {
+    const parse = customParse(initialContext);
+    const validate = customValidate(initialContext);
+    const contextFactory = customContextFactory(initialContext);
+
+    return async (params, contextExtension) => {
+      let context = initialContext;
+
+      let earlyResult: AsyncIterableIteratorOrValue<ExecutionResult> | null = null;
+      const onDones: OnPerformDoneHook<any>[] = [];
+      for (const onPerform of beforeCallbacks.perform) {
+        const after = await onPerform({
+          context,
+          extendContext: extension => {
+            Object.assign(context, extension);
+          },
+          params,
+          setParams: newParams => {
+            params = newParams;
+          },
+          setResult: result => {
+            earlyResult = result;
+          },
+        });
+        after?.onPerformDone && onDones.push(after.onPerformDone);
+      }
+      const done = (result: AsyncIterableIteratorOrValue<ExecutionResult>) => {
+        for (const onDone of onDones) {
+          onDone({
+            context, // either the initial or factory context, depenends when done
+            result,
+            setResult: newResult => {
+              result = newResult;
+            },
+          });
+        }
+        return result;
+      };
+
+      if (earlyResult) {
+        return done(earlyResult);
+      }
+
+      let document;
+      try {
+        document = parse(params.query);
+      } catch (err) {
+        if (err instanceof Error && err.name === 'GraphQLError') {
+          // only graphql errors can be a part of the result
+          return done({ errors: [err] });
+        }
+        // everything else bubble
+        throw err;
+      }
+
+      try {
+        const validationErrors = validate(schema, document);
+        if (validationErrors.length) {
+          return done({ errors: validationErrors });
+        }
+      } catch (err) {
+        if (err instanceof Error && err.name === 'GraphQLError') {
+          // only graphql errors can be a part of the result
+          return done({ errors: [err] });
+        }
+        // everything else bubble
+        throw err;
+      }
+
+      context = await contextFactory(contextExtension);
+
+      if (isSubscriptionOperation(document, params.operationName)) {
+        return done(
+          await customSubscribe({
+            document,
+            schema,
+            variableValues: params.variables,
+            contextValue: context,
+          })
+        );
+      }
+
+      return done(
+        await customExecute({
+          document,
+          schema,
+          variableValues: params.variables,
+          contextValue: context,
+        })
+      );
+    };
+  };
+
   return {
     getCurrentSchema() {
       return schema;
@@ -566,5 +666,6 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     execute: customExecute as ExecuteFunction,
     subscribe: customSubscribe,
     contextFactory: customContextFactory,
+    perform: customPerform,
   };
 }

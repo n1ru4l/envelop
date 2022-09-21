@@ -38,9 +38,11 @@ export const getEnveloped = envelop({
 
 ## Use your envelop
 
-The result of `envelop` is a factory function that allows you to get everything you need for the GraphQL execution: `parse`, `validate`, `contextBuilder`, `execute` and `subscribe`. It is usually named `getEnveloped`.
+The result of `envelop` is a factory function that allows you to get everything you need for the GraphQL execution: `parse`, `validate`, `contextBuilder`, `execute`, `subscribe` and `perform`. It is usually named `getEnveloped`.
 
 By calling the `getEnveloped` function you will get all the primitive functions required for the GraphQL execution layer.
+
+It's recommended to use the `perform` function which does parsing, validation, context assembly and execution/subscription, and returns a ready result. This function will NEVER throw GraphQL errors, it will instead place them in the result.
 
 ```ts
 // prettier-ignore
@@ -51,6 +53,7 @@ const {
   execute,
   subscribe,
   schema,
+  perform,
 } = getEnveloped()
 ```
 
@@ -115,32 +118,16 @@ const httpServer = http.createServer(async (req, res) => {
     })
 
     const {
-      // Get the GraphQL execution functions with attached plugin handlers
-      parse,
-      validate,
-      contextFactory,
-      execute,
-      schema
+      // Get the perform function that does parsing, validation, context assembly and execution/subscription, and returns a ready GraphQL operation result.
+      perform
       // pass in an initial context that all plugins can consume and extend
     } = getEnveloped({ req })
 
     // Parse request body JSON
     const { query, variables } = JSON.parse(req.body)
-    const document = parse(query)
-    const validationErrors = validate(schema, document)
 
-    if (validationErrors.length > 0) {
-      return res.end(JSON.stringify({ errors: validationErrors }))
-    }
-
-    // Build the context and execute
-    const contextValue = await contextFactory()
-    const result = await execute({
-      document,
-      schema,
-      variableValues: variables,
-      contextValue
-    })
+    // Perform the GraphQL operation. This function will NEVER throw GraphQL errors, it will instead place them in the result.
+    const result = await perform({ query, variables })
 
     // Send the response
     res.end(JSON.stringify(result))

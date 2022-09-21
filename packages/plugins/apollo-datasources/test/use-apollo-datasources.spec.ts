@@ -31,9 +31,8 @@ describe('useApolloDataSources', () => {
       ],
       schema
     );
-    const result = await testInstance.execute(
-      `query { foo }`,
-      {},
+    const result = await testInstance.perform(
+      { query: `query { foo }` },
       {
         initialContextValue: true,
       }
@@ -80,7 +79,7 @@ describe('useApolloDataSources', () => {
       ],
       schema
     );
-    const result = await testInstance.execute(`query { foo }`);
+    const result = await testInstance.perform({ query: `query { foo }` });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
     expect(result.data).toBeDefined();

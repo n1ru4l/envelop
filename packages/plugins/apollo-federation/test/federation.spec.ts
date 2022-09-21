@@ -62,7 +62,7 @@ describe('useApolloFederation', () => {
       },
     ]);
 
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
 
     expect(onExecuteSpy).toHaveBeenCalledTimes(1);
     expect(onExecuteSpy.mock.calls[0][0].executeFn).not.toBe(execute);
@@ -71,7 +71,7 @@ describe('useApolloFederation', () => {
 
   it('Should execute document string correctly', async () => {
     const testInstance = createTestkit([useTestFederation()]);
-    const result = await testInstance.execute(query);
+    const result = await testInstance.perform({ query });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeFalsy();
     expect(result.data).toMatchInlineSnapshot(`
@@ -101,7 +101,7 @@ Object {
 
   it('Should execute parsed document correctly', async () => {
     const testInstance = createTestkit([useTestFederation()]);
-    const result = await testInstance.execute(parse(query));
+    const result = await testInstance.perform({ query });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeFalsy();
     expect(result.data).toMatchInlineSnapshot(`

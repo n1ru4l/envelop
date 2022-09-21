@@ -52,7 +52,7 @@ describe('useOperationPermissions', () => {
       schema
     );
 
-    const result = await kit.execute(getIntrospectionQuery());
+    const result = await kit.perform({ query: getIntrospectionQuery() });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
   });
@@ -67,14 +67,16 @@ describe('useOperationPermissions', () => {
       schema
     );
 
-    const result = await kit.execute(/* GraphQL */ `
-      query {
-        __schema {
-          __typename
+    const result = await kit.perform({
+      query: /* GraphQL */ `
+        query {
+          __schema {
+            __typename
+          }
+          greetings
         }
-        greetings
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
       Array [
@@ -93,7 +95,7 @@ describe('useOperationPermissions', () => {
       schema
     );
 
-    const result = await kit.execute(query);
+    const result = await kit.perform({ query });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
   });
@@ -108,7 +110,7 @@ describe('useOperationPermissions', () => {
       schema
     );
 
-    const result = await kit.execute(query);
+    const result = await kit.perform({ query });
     assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
       Array [
@@ -128,7 +130,7 @@ describe('useOperationPermissions', () => {
       schema
     );
 
-    const result = await kit.execute(query);
+    const result = await kit.perform({ query });
     assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
       Array [
@@ -146,7 +148,7 @@ describe('useOperationPermissions', () => {
       schema
     );
 
-    const result = await kit.execute(query);
+    const result = await kit.perform({ query });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
   });
@@ -160,13 +162,15 @@ describe('useOperationPermissions', () => {
       schema
     );
 
-    const result = await kit.execute(/* GraphQL */ `
-      query {
-        postOrUser {
-          __typename
+    const result = await kit.perform({
+      query: /* GraphQL */ `
+        query {
+          postOrUser {
+            __typename
+          }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
       Array [
@@ -187,13 +191,15 @@ describe('useOperationPermissions', () => {
       schema
     );
 
-    const result = await kit.execute(/* GraphQL */ `
-      query {
-        node {
-          __typename
+    const result = await kit.perform({
+      query: /* GraphQL */ `
+        query {
+          node {
+            __typename
+          }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
       Array [
@@ -214,11 +220,13 @@ describe('useOperationPermissions', () => {
       schema
     );
 
-    const result = await kit.execute(/* GraphQL */ `
-      query {
-        __typename
-      }
-    `);
+    const result = await kit.perform({
+      query: /* GraphQL */ `
+        query {
+          __typename
+        }
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     const [error] = result.errors!;

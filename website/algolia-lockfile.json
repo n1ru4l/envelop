@@ -361,6 +361,11 @@
                 "children": [],
                 "title": "`onSchemaChange(api)`",
                 "anchor": "onschemachangeapi"
+              },
+              {
+                "children": [],
+                "title": "`onPerform(api)`",
+                "anchor": "onperformapi"
               }
             ],
             "title": "`onPluginInit(api)`",

@@ -49,7 +49,7 @@ describe('execute', () => {
   it('Should wrap and trigger events correctly', async () => {
     const spiedPlugin = createSpiedPlugin();
     const teskit = createTestkit([spiedPlugin.plugin], schema);
-    await teskit.execute(query, {}, { test: 1 });
+    await teskit.perform({ query, variables: {} }, { test: 1 });
     expect(spiedPlugin.spies.beforeExecute).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.beforeExecute).toHaveBeenCalledWith({
       executeFn: expect.any(Function),
@@ -58,7 +58,6 @@ describe('execute', () => {
       setResultAndStopExecution: expect.any(Function),
       args: {
         contextValue: expect.objectContaining({ test: 1 }),
-        rootValue: {},
         schema: expect.any(GraphQLSchema),
         operationName: undefined,
         fieldResolver: undefined,
@@ -97,7 +96,7 @@ describe('execute', () => {
       ],
       schema
     );
-    await teskit.execute(query);
+    await teskit.perform({ query });
     expect(altExecute).toHaveBeenCalledTimes(1);
   });
 
@@ -113,7 +112,7 @@ describe('execute', () => {
       ],
       schema
     );
-    await teskit.execute(query);
+    await teskit.perform({ query });
   });
 
   describe('setResultAndStopExecution', () => {
@@ -147,7 +146,7 @@ describe('execute', () => {
         ],
         schema
       );
-      const result = await teskit.execute(query);
+      const result = await teskit.perform({ query });
       assertSingleExecutionValue(result);
       expect(onExecuteCalled).toEqual(true);
       expect(onExecuteDoneCalled).toEqual(true);
@@ -192,7 +191,7 @@ describe('execute', () => {
         ],
         schema
       );
-      const result = await teskit.execute(query);
+      const result = await teskit.perform({ query });
       assertSingleExecutionValue(result);
       expect(onExecuteCalled).toEqual(false);
       expect(onExecuteDoneCalled).toEqual(false);
@@ -236,11 +235,13 @@ describe('execute', () => {
       schema
     );
 
-    const result = await teskit.execute(/* GraphQL */ `
-      query {
-        alphabet
-      }
-    `);
+    const result = await teskit.perform({
+      query: /* GraphQL */ `
+        query {
+          alphabet
+        }
+      `,
+    });
     assertStreamExecutionValue(result);
     const values = await collectAsyncIteratorValues(result);
     expect(values).toEqual([
@@ -284,11 +285,13 @@ describe('execute', () => {
       schema
     );
 
-    const result = await teskit.execute(/* GraphQL */ `
-      query {
-        alphabet
-      }
-    `);
+    const result = await teskit.perform({
+      query: /* GraphQL */ `
+        query {
+          alphabet
+        }
+      `,
+    });
     assertStreamExecutionValue(result);
     // run AsyncGenerator
     await collectAsyncIteratorValues(result);
@@ -343,11 +346,13 @@ describe('execute', () => {
       schema
     );
 
-    const result = await teskit.execute(/* GraphQL */ `
-      query {
-        alphabet
-      }
-    `);
+    const result = await teskit.perform({
+      query: /* GraphQL */ `
+        query {
+          alphabet
+        }
+      `,
+    });
     assertStreamExecutionValue(result);
     const iterator = result[Symbol.asyncIterator]();
     await iterator.next();
@@ -405,11 +410,13 @@ describe('execute', () => {
         schema
       );
 
-      const result = await teskit.execute(/* GraphQL */ `
-        query {
-          alphabet
-        }
-      `);
+      const result = await teskit.perform({
+        query: /* GraphQL */ `
+          query {
+            alphabet
+          }
+        `,
+      });
       assertStreamExecutionValue(result);
       const iterator = result[Symbol.asyncIterator]();
       const nextPromise = iterator.next();
@@ -444,7 +451,7 @@ describe('execute', () => {
       schema
     );
 
-    expect(await testkit.execute(query)).toEqual({ data: { test: 'test' } });
+    expect(await testkit.perform({ query })).toEqual({ data: { test: 'test' } });
   });
 
   it('hook into subscription phases with proper cleanup on the source', async () => {
@@ -520,7 +527,7 @@ describe('execute', () => {
       }
     `;
 
-    const result = await testkit.execute(document);
+    const result = await testkit.perform({ query: document });
     assertStreamExecutionValue(result);
     await result.next();
     await result.next();
@@ -597,11 +604,13 @@ it.each([
       schema
     );
 
-    const result = await teskit.execute(/* GraphQL */ `
-      subscription {
-        alphabet
-      }
-    `);
+    const result = await teskit.perform({
+      query: /* GraphQL */ `
+        subscription {
+          alphabet
+        }
+      `,
+    });
     assertStreamExecutionValue(result);
     const iterator = result[Symbol.asyncIterator]();
     const nextPromise = iterator.next();

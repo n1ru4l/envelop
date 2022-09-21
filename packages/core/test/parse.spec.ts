@@ -6,7 +6,7 @@ describe('parse', () => {
   it('Should call before parse and after parse correctly', async () => {
     const spiedPlugin = createSpiedPlugin();
     const teskit = createTestkit([spiedPlugin.plugin], schema);
-    await teskit.execute(query);
+    await teskit.perform({ query });
     expect(spiedPlugin.spies.beforeParse).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.beforeParse).toHaveBeenCalledWith({
       context: expect.any(Object),
@@ -41,7 +41,7 @@ describe('parse', () => {
       ],
       schema
     );
-    await teskit.execute(query);
+    await teskit.perform({ query });
     expect(replacementFn).toHaveBeenCalledTimes(1);
     expect(replacementFn).toHaveBeenCalledWith(query, undefined);
   });
@@ -63,7 +63,7 @@ describe('parse', () => {
       ],
       schema
     );
-    await teskit.execute(query);
+    await teskit.perform({ query });
     expect(replacementFn).toHaveBeenCalledTimes(0);
     expect(afterFn).toHaveBeenCalledTimes(1);
     expect(afterFn).toHaveBeenCalledWith({
@@ -103,7 +103,7 @@ describe('parse', () => {
       ],
       schema
     );
-    const result = await teskit.execute(query);
+    const result = await teskit.perform({ query });
     assertSingleExecutionValue(result);
     expect(afterFn).toHaveBeenCalledTimes(1);
     expect(result.data?.currentUser).toBeDefined();

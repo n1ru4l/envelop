@@ -57,19 +57,21 @@ const schema = makeExecutableSchema({
 describe('useResourceLimitations', () => {
   it('requires the usage of either the first or last field on fields that resolve to a Connection type.', async () => {
     const testkit = createTestkit([useResourceLimitations({ extensions: true })], schema);
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          repositories {
-            edges {
-              node {
-                name
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            repositories {
+              edges {
+                node {
+                  name
+                }
               }
             }
           }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
@@ -79,19 +81,21 @@ describe('useResourceLimitations', () => {
   });
   it('requires the usage of either the first or last field on fields that resolve to a Connection type (other argument provided).', async () => {
     const testkit = createTestkit([useResourceLimitations({ extensions: true })], schema);
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          repositories(after: "abc") {
-            edges {
-              node {
-                name
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            repositories(after: "abc") {
+              edges {
+                node {
+                  name
+                }
               }
             }
           }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
@@ -101,19 +105,21 @@ describe('useResourceLimitations', () => {
   });
   it('requires the first field to be at least 1', async () => {
     const testkit = createTestkit([useResourceLimitations({ extensions: true })], schema);
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          repositories(first: 0) {
-            edges {
-              node {
-                name
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            repositories(first: 0) {
+              edges {
+                node {
+                  name
+                }
               }
             }
           }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
@@ -123,19 +129,21 @@ describe('useResourceLimitations', () => {
   });
   it('requires the first field to be at least a custom minimum value', async () => {
     const testkit = createTestkit([useResourceLimitations({ paginationArgumentMinimum: 2, extensions: true })], schema);
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          repositories(first: 1) {
-            edges {
-              node {
-                name
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            repositories(first: 1) {
+              edges {
+                node {
+                  name
+                }
               }
             }
           }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
@@ -145,19 +153,21 @@ describe('useResourceLimitations', () => {
   });
   it('requires the first field to be not higher than 100', async () => {
     const testkit = createTestkit([useResourceLimitations({ extensions: true })], schema);
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          repositories(first: 101) {
-            edges {
-              node {
-                name
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            repositories(first: 101) {
+              edges {
+                node {
+                  name
+                }
               }
             }
           }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
@@ -170,19 +180,21 @@ describe('useResourceLimitations', () => {
       [useResourceLimitations({ paginationArgumentMaximum: 99, extensions: true })],
       schema
     );
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          repositories(first: 100) {
-            edges {
-              node {
-                name
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            repositories(first: 100) {
+              edges {
+                node {
+                  name
+                }
               }
             }
           }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
@@ -192,19 +204,21 @@ describe('useResourceLimitations', () => {
   });
   it('requires the last field to be at least 1', async () => {
     const testkit = createTestkit([useResourceLimitations({ extensions: true })], schema);
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          repositories(last: 0) {
-            edges {
-              node {
-                name
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            repositories(last: 0) {
+              edges {
+                node {
+                  name
+                }
               }
             }
           }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
@@ -214,19 +228,21 @@ describe('useResourceLimitations', () => {
   });
   it('requires the last field to be at least a custom minimum value', async () => {
     const testkit = createTestkit([useResourceLimitations({ paginationArgumentMinimum: 2, extensions: true })], schema);
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          repositories(last: 1) {
-            edges {
-              node {
-                name
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            repositories(last: 1) {
+              edges {
+                node {
+                  name
+                }
               }
             }
           }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
@@ -236,19 +252,21 @@ describe('useResourceLimitations', () => {
   });
   it('requires the last field to be not higher than 100', async () => {
     const testkit = createTestkit([useResourceLimitations({ extensions: true })], schema);
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          repositories(last: 101) {
-            edges {
-              node {
-                name
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            repositories(last: 101) {
+              edges {
+                node {
+                  name
+                }
               }
             }
           }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
@@ -261,19 +279,21 @@ describe('useResourceLimitations', () => {
       [useResourceLimitations({ paginationArgumentMaximum: 99, extensions: true })],
       schema
     );
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          repositories(last: 100) {
-            edges {
-              node {
-                name
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            repositories(last: 100) {
+              edges {
+                node {
+                  name
+                }
               }
             }
           }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
@@ -283,19 +303,21 @@ describe('useResourceLimitations', () => {
   });
   it('calculates node cost (single)', async () => {
     const testkit = createTestkit([useResourceLimitations({ extensions: true })], schema);
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          repositories(last: 100) {
-            edges {
-              node {
-                name
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            repositories(last: 100) {
+              edges {
+                node {
+                  name
+                }
               }
             }
           }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
     expect(result.extensions).toEqual({
@@ -309,19 +331,21 @@ describe('useResourceLimitations', () => {
       [useResourceLimitations({ paginationArgumentScalars: ['ConnectionInt'], extensions: true })],
       schema
     );
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          repositoriesCustom(first: 100) {
-            edges {
-              node {
-                name
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            repositoriesCustom(first: 100) {
+              edges {
+                node {
+                  name
+                }
               }
             }
           }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
     expect(result.extensions).toEqual({
@@ -332,18 +356,20 @@ describe('useResourceLimitations', () => {
   });
   it('calculates node cost (nested)', async () => {
     const testkit = createTestkit([useResourceLimitations({ extensions: true })], schema);
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          repositories(last: 100) {
-            edges {
-              node {
-                name
-                issues(first: 10) {
-                  edges {
-                    node {
-                      title
-                      bodyHTML
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            repositories(last: 100) {
+              edges {
+                node {
+                  name
+                  issues(first: 10) {
+                    edges {
+                      node {
+                        title
+                        bodyHTML
+                      }
                     }
                   }
                 }
@@ -351,8 +377,8 @@ describe('useResourceLimitations', () => {
             }
           }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
     expect(result.extensions).toEqual({
@@ -363,50 +389,52 @@ describe('useResourceLimitations', () => {
   });
   it('calculates node cost (multiple nested)', async () => {
     const testkit = createTestkit([useResourceLimitations({ extensions: true })], schema);
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          repositories(last: 100) {
-            edges {
-              node {
-                name
-                issues(first: 10) {
-                  edges {
-                    node {
-                      title
-                      bodyHTML
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            repositories(last: 100) {
+              edges {
+                node {
+                  name
+                  issues(first: 10) {
+                    edges {
+                      node {
+                        title
+                        bodyHTML
+                      }
                     }
                   }
                 }
               }
             }
-          }
-          more: repositories(last: 1) {
-            edges {
-              node {
-                name
-                issues(first: 2) {
-                  edges {
-                    node {
-                      title
-                      bodyHTML
+            more: repositories(last: 1) {
+              edges {
+                node {
+                  name
+                  issues(first: 2) {
+                    edges {
+                      node {
+                        title
+                        bodyHTML
+                      }
                     }
                   }
                 }
               }
             }
-          }
-          # These should not count towards the total due to invalid argument types
-          repositoriesCustom(first: 100) {
-            edges {
-              node {
-                name
+            # These should not count towards the total due to invalid argument types
+            repositoriesCustom(first: 100) {
+              edges {
+                node {
+                  name
+                }
               }
             }
           }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
     expect(result.extensions).toEqual({
@@ -417,18 +445,20 @@ describe('useResourceLimitations', () => {
   });
   it('stops execution if node cost limit is exceeded', async () => {
     const testkit = createTestkit([useResourceLimitations({ extensions: true, nodeCostLimit: 20 })], schema);
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          repositories(last: 19) {
-            edges {
-              node {
-                name
-                issues(first: 2) {
-                  edges {
-                    node {
-                      title
-                      bodyHTML
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            repositories(last: 19) {
+              edges {
+                node {
+                  name
+                  issues(first: 2) {
+                    edges {
+                      node {
+                        title
+                        bodyHTML
+                      }
                     }
                   }
                 }
@@ -436,8 +466,8 @@ describe('useResourceLimitations', () => {
             }
           }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.extensions).toEqual({
       resourceLimitations: {
@@ -451,13 +481,15 @@ describe('useResourceLimitations', () => {
   });
   it('minimum cost is always 1', async () => {
     const testkit = createTestkit([useResourceLimitations({ extensions: true, nodeCostLimit: 20 })], schema);
-    const result = await testkit.execute(/* GraphQL */ `
-      query {
-        viewer {
-          id
+    const result = await testkit.perform({
+      query: /* GraphQL */ `
+        query {
+          viewer {
+            id
+          }
         }
-      }
-    `);
+      `,
+    });
     assertSingleExecutionValue(result);
     expect(result.extensions).toEqual({
       resourceLimitations: {

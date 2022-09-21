@@ -70,7 +70,7 @@ describe('useGenericAuth', () => {
         schemaWithDirective
       );
 
-      const result = await testInstance.execute(getIntrospectionQuery());
+      const result = await testInstance.perform({ query: getIntrospectionQuery() });
       assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
     });
@@ -86,7 +86,7 @@ describe('useGenericAuth', () => {
         schemaWithDirective
       );
 
-      const result = await testInstance.execute(`query { test }`);
+      const result = await testInstance.perform({ query: `query { test }` });
       assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(result.data?.test).toBe('Dotan');
@@ -104,7 +104,7 @@ describe('useGenericAuth', () => {
       );
 
       try {
-        await testInstance.execute(`query { test }`);
+        await testInstance.perform({ query: `query { test }` });
       } catch (err) {
         expect(err).toMatchInlineSnapshot(`[GraphQLError: Unauthenticated!]`);
       }
@@ -125,7 +125,7 @@ describe('useGenericAuth', () => {
         schemaWithDirective
       );
 
-      const result = await testInstance.execute(`query { test }`);
+      const result = await testInstance.perform({ query: `query { test }` });
       assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(spyFn).toHaveBeenCalledWith(
@@ -153,7 +153,7 @@ describe('useGenericAuth', () => {
         schemaWithDirective
       );
 
-      const result = await testInstance.execute(`query { public }`);
+      const result = await testInstance.perform({ query: `query { public }` });
       assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(result.data?.public).toBe('public');
@@ -170,7 +170,7 @@ describe('useGenericAuth', () => {
         schemaWithDirective
       );
 
-      const result = await testInstance.execute(`query { public }`);
+      const result = await testInstance.perform({ query: `query { public }` });
       assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(result.data?.public).toBe('public');
@@ -189,7 +189,7 @@ describe('useGenericAuth', () => {
         schema
       );
 
-      const result = await testInstance.execute(`query { test }`);
+      const result = await testInstance.perform({ query: `query { test }` });
       assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(result.data?.test).toBe('Dotan');
@@ -206,7 +206,7 @@ describe('useGenericAuth', () => {
         schema
       );
 
-      const result = await testInstance.execute(`query { test }`);
+      const result = await testInstance.perform({ query: `query { test }` });
       assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(result.data?.test).toBe('');
@@ -227,7 +227,7 @@ describe('useGenericAuth', () => {
         schema
       );
 
-      const result = await testInstance.execute(`query { test }`);
+      const result = await testInstance.perform({ query: `query { test }` });
       assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(spyFn).toHaveBeenCalledWith(
@@ -259,7 +259,7 @@ describe('useGenericAuth', () => {
         schema
       );
 
-      const result = await testInstance.execute(`query { test }`);
+      const result = await testInstance.perform({ query: `query { test }` });
       assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(spyFn).toHaveBeenCalledWith(
@@ -304,7 +304,7 @@ describe('useGenericAuth', () => {
         schemaWithDirective
       );
 
-      const result = await testInstance.execute(`query { protected }`);
+      const result = await testInstance.perform({ query: `query { protected }` });
       assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(result.data?.protected).toBe('Dotan');
@@ -321,7 +321,7 @@ describe('useGenericAuth', () => {
         schemaWithDirective
       );
 
-      const result = await testInstance.execute(`query { public }`);
+      const result = await testInstance.perform({ query: `query { public }` });
       assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(result.data?.public).toBe('public');
@@ -338,7 +338,7 @@ describe('useGenericAuth', () => {
         schemaWithDirective
       );
 
-      const result = await testInstance.execute(`query { public }`);
+      const result = await testInstance.perform({ query: `query { public }` });
       assertSingleExecutionValue(result);
       expect(result.errors).toBeUndefined();
       expect(result.data?.public).toBe('public');
@@ -355,7 +355,7 @@ describe('useGenericAuth', () => {
         schemaWithDirective
       );
 
-      const result = await testInstance.execute(`query { protected }`);
+      const result = await testInstance.perform({ query: `query { protected }` });
       assertSingleExecutionValue(result);
       expect(result.errors?.length).toBe(1);
       expect(result.errors?.[0].message).toBe(`Accessing 'Query.protected' requires authentication.`);
@@ -442,7 +442,7 @@ describe('useGenericAuth', () => {
           schemaWithDirectiveWithRole
         );
 
-        const result = await testInstance.execute(`query { admin }`);
+        const result = await testInstance.perform({ query: `query { admin }` });
         assertSingleExecutionValue(result);
         expect(result.errors?.length).toBe(1);
         expect(result.errors?.[0].message).toBe(
@@ -462,7 +462,7 @@ describe('useGenericAuth', () => {
           schemaWithDirectiveWithRole
         );
 
-        const result = await testInstance.execute(`query { admin }`);
+        const result = await testInstance.perform({ query: `query { admin }` });
         assertSingleExecutionValue(result);
         expect(result.errors).toBeUndefined();
         expect(result.data?.admin).toBe('admin');

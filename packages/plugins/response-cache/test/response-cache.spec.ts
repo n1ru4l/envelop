@@ -120,13 +120,13 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await testInstance.execute(query);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(1);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(1);
     jest.advanceTimersByTime(201);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -186,8 +186,8 @@ describe('useResponseCache', () => {
         }
       }
     `;
-    await testInstance.execute(query);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
@@ -269,30 +269,30 @@ describe('useResponseCache', () => {
       }
     `;
 
-    let result = await testInstance.execute(query);
+    let result = await testInstance.perform({ query });
     assertSingleExecutionValue(result);
     expect(result.extensions?.responseCache).toEqual({ hit: false, didCache: true, ttl: Infinity });
-    result = await testInstance.execute(query);
+    result = await testInstance.perform({ query });
     assertSingleExecutionValue(result);
     expect(result.extensions?.responseCache).toEqual({ hit: true });
     expect(spy).toHaveBeenCalledTimes(1);
 
-    result = await testInstance.execute(
-      /* GraphQL */ `
+    result = await testInstance.perform({
+      query: /* GraphQL */ `
         mutation it($id: ID!) {
           updateUser(id: $id) {
             id
           }
         }
       `,
-      {
+      variables: {
         id: 1,
-      }
-    );
+      },
+    });
     assertSingleExecutionValue(result);
     expect(result?.extensions?.responseCache).toEqual({ invalidatedEntities: [{ id: '1', typename: 'User' }] });
 
-    result = await testInstance.execute(query);
+    result = await testInstance.perform({ query });
     assertSingleExecutionValue(result);
     expect(result.extensions?.responseCache).toEqual({ hit: false, didCache: true, ttl: Infinity });
     expect(spy).toHaveBeenCalledTimes(2);
@@ -382,30 +382,30 @@ describe('useResponseCache', () => {
       }
     `;
 
-    let result = await testInstance.execute(query);
+    let result = await testInstance.perform({ query });
     assertSingleExecutionValue(result);
     expect(result.extensions?.responseCache).toEqual({ hit: false, didCache: true, ttl: Infinity });
-    result = await testInstance.execute(query);
+    result = await testInstance.perform({ query });
     assertSingleExecutionValue(result);
     expect(result.extensions?.responseCache).toEqual({ hit: true });
     expect(spy).toHaveBeenCalledTimes(1);
 
-    result = await testInstance.execute(
-      /* GraphQL */ `
+    result = await testInstance.perform({
+      query: /* GraphQL */ `
         mutation it($id: ID!) {
           updateUser(id: $id) {
             id
           }
         }
       `,
-      {
+      variables: {
         id: 1,
-      }
-    );
+      },
+    });
     assertSingleExecutionValue(result);
     expect(result?.extensions?.responseCache).toEqual({ invalidatedEntities: [{ id: '1', typename: 'User' }] });
 
-    result = await testInstance.execute(query);
+    result = await testInstance.perform({ query });
     assertSingleExecutionValue(result);
     expect(result.extensions?.responseCache).toEqual({ hit: false, didCache: true, ttl: Infinity });
     expect(spy).toHaveBeenCalledTimes(2);
@@ -486,13 +486,13 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await testInstance.execute(query);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(1);
 
     cache.invalidate([{ typename: 'Comment', id: 2 }]);
 
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -571,13 +571,13 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await testInstance.execute(query);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(1);
 
     cache.invalidate([{ typename: 'Comment' }]);
 
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -647,10 +647,10 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await testInstance.execute(query, { limit: 2 });
-    await testInstance.execute(query, { limit: 2 });
+    await testInstance.perform({ query, variables: { limit: 2 } });
+    await testInstance.perform({ query, variables: { limit: 2 } });
     expect(spy).toHaveBeenCalledTimes(1);
-    await testInstance.execute(query, { limit: 1 });
+    await testInstance.perform({ query, variables: { limit: 1 } });
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -720,14 +720,14 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await testInstance.execute(query);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(1);
 
     // let's travel in time beyond the ttl of 100
     jest.advanceTimersByTime(150);
 
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -804,24 +804,21 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await testInstance.execute(
-      query,
-      {},
+    await testInstance.perform(
+      { query },
       {
         sessionId: 1,
       }
     );
-    await testInstance.execute(
-      query,
-      {},
+    await testInstance.perform(
+      { query },
       {
         sessionId: 1,
       }
     );
     expect(spy).toHaveBeenCalledTimes(1);
-    await testInstance.execute(
-      query,
-      {},
+    await testInstance.perform(
+      { query },
       {
         sessionId: 2,
       }
@@ -893,8 +890,8 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await testInstance.execute(query);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -974,11 +971,11 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await testInstance.execute(query);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(1);
     jest.advanceTimersByTime(201);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -1058,11 +1055,11 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await testInstance.execute(query);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(1);
     jest.advanceTimersByTime(201);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -1130,8 +1127,8 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await testInstance.execute(query);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -1257,7 +1254,7 @@ describe('useResponseCache', () => {
       }
     `;
 
-    let result = await testInstance.execute(userQuery);
+    let result = await testInstance.perform({ query: userQuery });
     assertSingleExecutionValue(result);
     expect(result.extensions).toEqual({
       responseCache: {
@@ -1266,7 +1263,7 @@ describe('useResponseCache', () => {
         ttl: 200,
       },
     });
-    result = await testInstance.execute(orderQuery);
+    result = await testInstance.perform({ query: orderQuery });
     assertSingleExecutionValue(result);
     expect(result.extensions).toEqual({
       responseCache: {
@@ -1277,12 +1274,12 @@ describe('useResponseCache', () => {
     });
 
     jest.advanceTimersByTime(2);
-    await testInstance.execute(userQuery);
-    await testInstance.execute(orderQuery);
+    await testInstance.perform({ query: userQuery });
+    await testInstance.perform({ query: orderQuery });
     expect(userSpy).toHaveBeenCalledTimes(1);
     expect(orderSpy).toHaveBeenCalledTimes(2);
     jest.advanceTimersByTime(201);
-    await testInstance.execute(userQuery);
+    await testInstance.perform({ query: userQuery });
     expect(userSpy).toHaveBeenCalledTimes(2);
   });
 
@@ -1363,7 +1360,7 @@ describe('useResponseCache', () => {
       }
     `;
 
-    let result = await testInstance.execute(userQuery);
+    let result = await testInstance.perform({ query: userQuery });
     assertSingleExecutionValue(result);
     expect(result.extensions).toEqual({
       responseCache: {
@@ -1374,7 +1371,7 @@ describe('useResponseCache', () => {
     });
 
     jest.advanceTimersByTime(2);
-    result = await testInstance.execute(userQuery);
+    result = await testInstance.perform({ query: userQuery });
     assertSingleExecutionValue(result);
     expect(result.extensions).toEqual({
       responseCache: {
@@ -1384,7 +1381,7 @@ describe('useResponseCache', () => {
 
     jest.advanceTimersByTime(200);
 
-    result = await testInstance.execute(userQuery);
+    result = await testInstance.perform({ query: userQuery });
     assertSingleExecutionValue(result);
     expect(result.extensions).toEqual({
       responseCache: {
@@ -1428,10 +1425,10 @@ describe('useResponseCache', () => {
         }
       }
     `;
-    await testInstance.execute(query);
-    await testInstance.execute(query);
-    await testInstance.execute(query);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(4);
   });
 
@@ -1477,10 +1474,10 @@ describe('useResponseCache', () => {
         }
       }
     `;
-    await testInstance.execute(query);
-    await testInstance.execute(query);
-    await testInstance.execute(query);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
     // the resolver is only called once as all following executions hit the cache
     expect(spy).toHaveBeenCalledTimes(1);
   });
@@ -1568,12 +1565,12 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await testInstance.execute(query);
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(1);
 
-    await testInstance.execute(
-      /* GraphQL */ `
+    await testInstance.perform({
+      query: /* GraphQL */ `
         mutation it($id: ID!) {
           updateUser(id: $id) {
             id
@@ -1581,14 +1578,14 @@ describe('useResponseCache', () => {
           }
         }
       `,
-      {
+      variables: {
         id: 1,
-      }
-    );
+      },
+    });
 
     expect(errorSpy).toHaveBeenCalledTimes(1);
 
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -1634,10 +1631,10 @@ describe('useResponseCache', () => {
     // after each execution the introspectionCounter should be incremented by 1
     // as we never cache the introspection
 
-    await testInstance.execute(introspectionQuery);
+    await testInstance.perform({ query: introspectionQuery });
     expect(introspectionCounter).toEqual(1);
 
-    await testInstance.execute(introspectionQuery);
+    await testInstance.perform({ query: introspectionQuery });
     expect(introspectionCounter).toEqual(2);
   });
 
@@ -1683,11 +1680,11 @@ describe('useResponseCache', () => {
       schema
     );
 
-    await testInstance.execute(introspectionQuery);
+    await testInstance.perform({ query: introspectionQuery });
     // after the first execution the introspectionCounter should be incremented by 1
     expect(introspectionCounter).toEqual(1);
 
-    await testInstance.execute(introspectionQuery);
+    await testInstance.perform({ query: introspectionQuery });
     // as we now cache the introspection the resolver shall not be called for further introspections
     expect(introspectionCounter).toEqual(1);
   });
@@ -1728,11 +1725,11 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
     expect(usersResolverInvocationCount).toEqual(1);
 
     const testInstance2 = createTestkit([useResponseCache({ session: () => null, cache })], schema);
-    await testInstance2.execute(query);
+    await testInstance2.perform({ query });
     expect(usersResolverInvocationCount).toEqual(2);
   });
 
@@ -1758,7 +1755,7 @@ describe('useResponseCache', () => {
       }
     `;
 
-    let result = await testkit.execute(document);
+    let result = await testkit.perform({ query: document });
     expect(result).toMatchInlineSnapshot(`
       Object {
         "data": Object {
@@ -1766,7 +1763,7 @@ describe('useResponseCache', () => {
         },
       }
     `);
-    result = await testkit.execute(document);
+    result = await testkit.perform({ query: document });
     expect(result).toMatchInlineSnapshot(`
       Object {
         "data": Object {
@@ -1801,9 +1798,9 @@ describe('useResponseCache', () => {
         foo
       }
     `;
-    const result1 = await testkit.execute(operation);
+    const result1 = await testkit.perform({ query: operation });
     assertSingleExecutionValue(result1);
-    const result2 = await testkit.execute(operation);
+    const result2 = await testkit.perform({ query: operation });
     assertSingleExecutionValue(result2);
     // ensure the response is served from the cache
     expect(result1).toBe(result2);
@@ -1831,18 +1828,20 @@ describe('useResponseCache', () => {
         },
       });
       const testkit = createTestkit([useResponseCache({ session: () => null })], schema);
-      const result = await testkit.execute(/* GraphQL */ `
-        query {
-          user {
-            __typename
-            id
-            friends {
+      const result = await testkit.perform({
+        query: /* GraphQL */ `
+          query {
+            user {
               __typename
               id
+              friends {
+                __typename
+                id
+              }
             }
           }
-        }
-      `);
+        `,
+      });
       assertSingleExecutionValue(result);
       expect(result).toEqual({
         data: {
@@ -1877,16 +1876,18 @@ describe('useResponseCache', () => {
         },
       });
       const testkit = createTestkit([useResponseCache({ session: () => null })], schema);
-      const result = await testkit.execute(/* GraphQL */ `
-        query {
-          user {
-            id
-            friends {
+      const result = await testkit.perform({
+        query: /* GraphQL */ `
+          query {
+            user {
               id
+              friends {
+                id
+              }
             }
           }
-        }
-      `);
+        `,
+      });
       assertSingleExecutionValue(result);
       expect(result).toEqual({
         data: {
@@ -1917,17 +1918,19 @@ describe('useResponseCache', () => {
         },
       });
       const testkit = createTestkit([useResponseCache({ session: () => null })], schema);
-      const result = await testkit.execute(/* GraphQL */ `
-        query {
-          user {
-            foo: __typename
-            id
-            friends {
+      const result = await testkit.perform({
+        query: /* GraphQL */ `
+          query {
+            user {
+              foo: __typename
               id
+              friends {
+                id
+              }
             }
           }
-        }
-      `);
+        `,
+      });
       assertSingleExecutionValue(result);
       expect(result).toEqual({
         data: {
@@ -1983,7 +1986,7 @@ describe('useResponseCache', () => {
         schema
       );
 
-      let result = await testkit.execute(operation);
+      let result = await testkit.perform({ query: operation });
       assertSingleExecutionValue(result);
       expect(result).toEqual({
         data: {
@@ -1999,13 +2002,13 @@ describe('useResponseCache', () => {
           },
         },
       });
-      result = await testkit.execute(operation);
+      result = await testkit.perform({ query: operation });
       assertSingleExecutionValue(result);
       expect(result.extensions?.['responseCache']).toEqual({
         hit: true,
       });
       await cache.invalidate([{ typename: 'Cat', id: '1' }]);
-      result = await testkit.execute(operation);
+      result = await testkit.perform({ query: operation });
       assertSingleExecutionValue(result);
       expect(result.extensions?.['responseCache']).toEqual({
         didCache: true,

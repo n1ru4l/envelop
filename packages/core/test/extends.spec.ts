@@ -33,7 +33,7 @@ describe('extending envelops', () => {
     });
 
     const teskit = createTestkit(instance);
-    await teskit.execute(query, {});
+    await teskit.perform({ query });
     expect(onExecuteChildSpy).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.beforeExecute).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.afterExecute).toHaveBeenCalledTimes(1);

@@ -45,7 +45,7 @@ describe('useExtendedValidation', () => {
       schema
     );
 
-    const result = await testInstance.execute(operation);
+    const result = await testInstance.perform({ query: operation });
     expect(result).toMatchInlineSnapshot(`
           Object {
             "data": null,
@@ -94,7 +94,7 @@ describe('useExtendedValidation', () => {
       schema
     );
 
-    await testInstance.execute(operation);
+    await testInstance.perform({ query: operation });
     expect(extendedValidationRunCount).toEqual(1);
   });
   it('execute throws an error if "contextFactory" has not been invoked', async () => {
@@ -169,7 +169,7 @@ describe('useExtendedValidation', () => {
       ],
       schema
     );
-    const result = await testkit.execute(operation);
+    const result = await testkit.perform({ query: operation });
     expect(calledExtendedValidationRule).toEqual(true);
   });
   it('subscribe does result in extended validation phase errors', async () => {
@@ -210,7 +210,7 @@ describe('useExtendedValidation', () => {
       ],
       schema
     );
-    const result = await testkit.execute(operation);
+    const result = await testkit.perform({ query: operation });
     assertSingleExecutionValue(result);
     expect(result).toMatchInlineSnapshot(`
       Object {

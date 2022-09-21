@@ -38,7 +38,7 @@ describe('useGraphQLModules', () => {
 
   it('Should work correctly and init all providers at the right time', async () => {
     const testInstance = createTestkit([useGraphQLModules(app)]);
-    const result = await testInstance.execute(`query { foo }`);
+    const result = await testInstance.perform({ query: `query { foo }` });
     assertSingleExecutionValue(result);
     expect(result.data?.foo).toBe('testFoo');
   });

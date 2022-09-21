@@ -7,6 +7,7 @@ import {
   OnSchemaChangeHook,
   OnSubscribeHook,
   OnValidateHook,
+  OnPerformHook,
 } from './hooks.js';
 
 export interface Plugin<PluginContext extends Record<string, any> = {}> {
@@ -42,4 +43,8 @@ export interface Plugin<PluginContext extends Record<string, any> = {}> {
    * Invoked for each time the context is builded.
    */
   onContextBuilding?: OnContextBuildingHook<PluginContext>;
+  /**
+   * Invoked for each perform call.
+   */
+  onPerform?: OnPerformHook<PluginContext>;
 }

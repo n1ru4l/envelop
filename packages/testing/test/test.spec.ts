@@ -82,7 +82,7 @@ describe('Test the testkit', () => {
     };
     const testkit = createTestkit([], createSchema());
     testkit.modifyPlugins(plugins => [addedPlugin]);
-    const result = await testkit.execute('query test { foo }');
+    const result = await testkit.perform({ query: 'query test { foo }' });
     assertSingleExecutionValue(result);
     expect(addedPlugin.onParse).toBeCalled();
     expect(addedPlugin.onValidate).toBeCalled();
@@ -98,10 +98,21 @@ describe('Test the testkit', () => {
     };
 
     const testkit = createTestkit([plugin1, false && plugin2], createSchema());
-    const result = await testkit.execute('query test { foo }');
+    const result = await testkit.perform({ query: 'query test { foo }' });
     assertSingleExecutionValue(result);
     expect(plugin1.onParse).toBeCalled();
     expect(plugin2.onValidate).not.toBeCalled();
     expect(result.data).toBeDefined();
+  });
+
+  it('Should use perform', async () => {
+    const testkit = createTestkit([], createSchema());
+    const result = await testkit.perform({ query: 'query test { foo }' });
+    assertSingleExecutionValue(result);
+    expect(result.data).toMatchInlineSnapshot(`
+      Object {
+        "foo": "1",
+      }
+    `);
   });
 });

@@ -20,7 +20,7 @@ describe('usePreloadAssets', () => {
 
   it('Should include assets to preload', async () => {
     const testInstance = createTestkit([usePreloadAssets()], schema);
-    const result = await testInstance.execute(`query { imageUrl }`);
+    const result = await testInstance.perform({ query: `query { imageUrl }` });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
     expect(result.extensions).toEqual({
@@ -30,7 +30,7 @@ describe('usePreloadAssets', () => {
 
   it('Should not include the preload extension if no asset should be preloaded', async () => {
     const testInstance = createTestkit([usePreloadAssets()], schema);
-    const result = await testInstance.execute(`query { noAsset }`);
+    const result = await testInstance.perform({ query: `query { noAsset }` });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
     expect(result.extensions).toBeUndefined();
@@ -44,7 +44,7 @@ describe('usePreloadAssets', () => {
       ],
       schema
     );
-    const result = await testInstance.execute(`query { imageUrl }`);
+    const result = await testInstance.perform({ query: `query { imageUrl }` });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
     expect(result.extensions).toBeUndefined();

@@ -46,7 +46,7 @@ describe('useOpenTelemetry', () => {
       schema
     );
 
-    const result = await testInstance.execute(query);
+    const result = await testInstance.perform({ query });
     assertSingleExecutionValue(result);
     expect(onExecuteSpy).toHaveBeenCalledTimes(1);
   });
@@ -55,7 +55,7 @@ describe('useOpenTelemetry', () => {
     const exporter = new InMemorySpanExporter();
     const testInstance = createTestkit([useTestOpenTelemetry(exporter)], schema);
 
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
     const actual = exporter.getFinishedSpans();
     expect(actual.length).toBe(1);
     expect(actual[0].name).toBe('Anonymous Operation');
@@ -65,7 +65,7 @@ describe('useOpenTelemetry', () => {
     const exporter = new InMemorySpanExporter();
     const testInstance = createTestkit([useTestOpenTelemetry(exporter, { resolvers: true })], schema);
 
-    await testInstance.execute(query);
+    await testInstance.perform({ query });
     const actual = exporter.getFinishedSpans();
     expect(actual.length).toBe(2);
     expect(actual[0].name).toBe('Query.ping');

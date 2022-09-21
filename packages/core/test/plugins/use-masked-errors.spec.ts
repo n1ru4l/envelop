@@ -97,7 +97,7 @@ describe('useMaskedErrors', () => {
 
   it('Should mask non GraphQLErrors', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
-    const result = await testInstance.execute(`query { secret }`);
+    const result = await testInstance.perform({ query: `query { secret }` });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toHaveLength(1);
@@ -107,7 +107,7 @@ describe('useMaskedErrors', () => {
 
   it('Should not mask expected errors', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
-    const result = await testInstance.execute(`query { secretEnvelop }`);
+    const result = await testInstance.perform({ query: `query { secretEnvelop }` });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toHaveLength(1);
@@ -118,7 +118,7 @@ describe('useMaskedErrors', () => {
 
   it('Should not mask GraphQL operation syntax errors (of course it does not since we are only hooking in after execute, but just to be sure)', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
-    const result = await testInstance.execute(`query { idonotexist }`);
+    const result = await testInstance.perform({ query: `query { idonotexist }` });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toHaveLength(1);
@@ -128,7 +128,7 @@ describe('useMaskedErrors', () => {
 
   it('Should forward extensions from GraphQLError to final GraphQLError in errors array', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
-    const result = await testInstance.execute(`query { secretWithExtensions }`);
+    const result = await testInstance.perform({ query: `query { secretWithExtensions }` });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toHaveLength(1);
@@ -154,7 +154,7 @@ describe('useMaskedErrors', () => {
       schema
     );
     try {
-      await testInstance.execute(`query { secretWithExtensions }`);
+      await testInstance.perform({ query: `query { secretWithExtensions }` });
     } catch (err) {
       expect(err).toMatchInlineSnapshot(`[GraphQLError: My Custom Error Message.]`);
     }
@@ -171,7 +171,7 @@ describe('useMaskedErrors', () => {
       schema
     );
     try {
-      await testInstance.execute(`query { secretWithExtensions }`);
+      await testInstance.perform({ query: `query { secretWithExtensions }` });
     } catch (err: any) {
       expect(err.message).toEqual(DEFAULT_ERROR_MESSAGE);
     }
@@ -189,7 +189,7 @@ describe('useMaskedErrors', () => {
       schema
     );
     try {
-      await testInstance.execute(`query { secretWithExtensions }`);
+      await testInstance.perform({ query: `query { secretWithExtensions }` });
     } catch (err) {
       if (err instanceof GraphQLError) {
         expect(err.message).toEqual(`No context for you!`);
@@ -202,7 +202,7 @@ describe('useMaskedErrors', () => {
 
   it('Should mask subscribe (sync/promise) subscription errors', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
-    const result = await testInstance.execute(`subscription { instantError }`);
+    const result = await testInstance.perform({ query: `subscription { instantError }` });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toHaveLength(1);
@@ -215,7 +215,7 @@ describe('useMaskedErrors', () => {
       [useMaskedErrors({ errorMessage: 'My Custom subscription error message.' })],
       schema
     );
-    const result = await testInstance.execute(`subscription { instantError }`);
+    const result = await testInstance.perform({ query: `subscription { instantError }` });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchInlineSnapshot(`
@@ -227,7 +227,7 @@ describe('useMaskedErrors', () => {
 
   it('Should not mask subscribe (sync/promise) subscription GraphQL errors', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
-    const result = await testInstance.execute(`subscription { instantGraphQLError }`);
+    const result = await testInstance.perform({ query: `subscription { instantGraphQLError }` });
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchInlineSnapshot(`
@@ -240,7 +240,7 @@ describe('useMaskedErrors', () => {
   it('Should mask subscribe (AsyncIterable) subscription errors', async () => {
     expect.assertions(1);
     const testInstance = createTestkit([useMaskedErrors()], schema);
-    const resultStream = await testInstance.execute(`subscription { streamError }`);
+    const resultStream = await testInstance.perform({ query: `subscription { streamError }` });
     assertStreamExecutionValue(resultStream);
     try {
       await collectAsyncIteratorValues(resultStream);
@@ -255,7 +255,7 @@ describe('useMaskedErrors', () => {
       [useMaskedErrors({ errorMessage: 'My AsyncIterable Custom Error Message.' })],
       schema
     );
-    const resultStream = await testInstance.execute(`subscription { streamError }`);
+    const resultStream = await testInstance.perform({ query: `subscription { streamError }` });
     assertStreamExecutionValue(resultStream);
     try {
       await collectAsyncIteratorValues(resultStream);
@@ -266,7 +266,7 @@ describe('useMaskedErrors', () => {
 
   it('Should not mask subscribe (AsyncIterable) subscription envelop errors', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
-    const resultStream = await testInstance.execute(`subscription { streamGraphQLError }`);
+    const resultStream = await testInstance.perform({ query: `subscription { streamGraphQLError }` });
     assertStreamExecutionValue(resultStream);
     try {
       await collectAsyncIteratorValues(resultStream);
@@ -277,7 +277,7 @@ describe('useMaskedErrors', () => {
 
   it('Should mask resolve subscription errors', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
-    const resultStream = await testInstance.execute(`subscription { streamResolveError }`);
+    const resultStream = await testInstance.perform({ query: `subscription { streamResolveError }` });
     assertStreamExecutionValue(resultStream);
     const allResults = await collectAsyncIteratorValues(resultStream);
     expect(allResults).toHaveLength(1);
@@ -293,7 +293,7 @@ describe('useMaskedErrors', () => {
       [useMaskedErrors({ errorMessage: 'Custom resolve subscription errors.' })],
       schema
     );
-    const resultStream = await testInstance.execute(`subscription { streamResolveError }`);
+    const resultStream = await testInstance.perform({ query: `subscription { streamResolveError }` });
     assertStreamExecutionValue(resultStream);
     const allResults = await collectAsyncIteratorValues(resultStream);
     expect(allResults).toHaveLength(1);
@@ -305,7 +305,7 @@ describe('useMaskedErrors', () => {
 
   it('Should not mask resolve subscription envelop errors', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
-    const resultStream = await testInstance.execute(`subscription { streamResolveGraphQLError }`);
+    const resultStream = await testInstance.perform({ query: `subscription { streamResolveGraphQLError }` });
     assertStreamExecutionValue(resultStream);
     const allResults = await collectAsyncIteratorValues(resultStream);
     expect(allResults).toHaveLength(1);
@@ -329,22 +329,24 @@ describe('useMaskedErrors', () => {
       tokenType: 'Bearer',
     };
     const testInstance = createTestkit([useMaskedErrors(), useAuth0(auto0Options)], schema);
-    try {
-      await testInstance.execute(`query { secret }`, {}, { request: { headers: { authorization: 'Something' } } });
-    } catch (err) {
-      expect(err).toMatchInlineSnapshot(`[GraphQLError: Unexpected error.]`);
-    }
+    let result = await testInstance.perform(
+      { query: `query { secret }` },
+      { request: { headers: { authorization: 'Something' } } }
+    );
+    assertSingleExecutionValue(result);
+    expect(result.errors?.[0]).toMatchInlineSnapshot(`[GraphQLError: Unexpected error.]`);
 
-    try {
-      await testInstance.execute(`query { secret }`, {}, { request: { headers: { authorization: 'Something else' } } });
-    } catch (err) {
-      expect(err).toMatchInlineSnapshot(`[GraphQLError: Unexpected error.]`);
-    }
+    result = await testInstance.perform(
+      { query: `query { secret }` },
+      { request: { headers: { authorization: 'Something else' } } }
+    );
+    assertSingleExecutionValue(result);
+    expect(result.errors?.[0]).toMatchInlineSnapshot(`[GraphQLError: Unexpected error.]`);
   });
 
   it('should not mask parse errors', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
-    const result = await testInstance.execute(`query { a `, {});
+    const result = await testInstance.perform({ query: `query { a ` });
     assertSingleExecutionValue(result);
     expect(result).toMatchInlineSnapshot(`
       Object {
@@ -357,7 +359,7 @@ describe('useMaskedErrors', () => {
 
   it('should not mask validation errors', async () => {
     const testInstance = createTestkit([useMaskedErrors()], schema);
-    const result = await testInstance.execute(`query { iDoNotExistsMyGuy }`, {});
+    const result = await testInstance.perform({ query: `query { iDoNotExistsMyGuy }` });
     assertSingleExecutionValue(result);
     expect(result).toMatchInlineSnapshot(`
       Object {
@@ -374,7 +376,7 @@ describe('useMaskedErrors', () => {
         custom: true,
       });
     const testInstance = createTestkit([useMaskedErrors({ maskError: customErrorMaskFn })], schema);
-    const result = await testInstance.execute(`query { secret }`);
+    const result = await testInstance.perform({ query: `query { secret }` });
     assertSingleExecutionValue(result);
     expect(result).toMatchInlineSnapshot(`
       Object {
@@ -400,7 +402,7 @@ describe('useMaskedErrors', () => {
       });
     expect.assertions(2);
     const testInstance = createTestkit([useMaskedErrors({ maskError: customErrorMaskFn })], schema);
-    const resultStream = await testInstance.execute(`subscription { streamError }`);
+    const resultStream = await testInstance.perform({ query: `subscription { streamError }` });
     assertStreamExecutionValue(resultStream);
     try {
       await collectAsyncIteratorValues(resultStream);
@@ -426,7 +428,7 @@ describe('useMaskedErrors', () => {
       schema
     );
     try {
-      await testInstance.execute(`query { secret }`, {}, {});
+      await testInstance.perform({ query: `query { secret }` });
     } catch (e) {
       expect((e as GraphQLError).message).toEqual('Custom error message for Custom error');
     }
@@ -449,7 +451,7 @@ describe('useMaskedErrors', () => {
       },
     });
     const testInstance = createTestkit([useMaskedErrors({ maskError: createDefaultMaskError(true) })], schema);
-    const result = await testInstance.execute(`query { foo }`, {}, {});
+    const result = await testInstance.perform({ query: `query { foo }` });
     assertSingleExecutionValue(result);
     expect(result.errors?.[0].extensions).toEqual({
       message: "I'm a teapot",
@@ -473,7 +475,7 @@ describe('useMaskedErrors', () => {
       },
     });
     const testInstance = createTestkit([useMaskedErrors({ maskError: createDefaultMaskError(true) })], schema);
-    const result = await testInstance.execute(`query { foo }`, {}, {});
+    const result = await testInstance.perform({ query: `query { foo }` });
     assertSingleExecutionValue(result);
     expect(result.errors?.[0].extensions).toEqual({
       message: 'Unexpected error value: "I\'m a teapot"',

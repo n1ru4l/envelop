@@ -50,6 +50,7 @@ export function envelop<PluginsType extends Optional<Plugin<any>>[]>(options: {
       execute: typedOrchestrator.execute,
       subscribe: typedOrchestrator.subscribe,
       schema: typedOrchestrator.getCurrentSchema(),
+      perform: typedOrchestrator.perform(initialContext),
     };
   };
 
