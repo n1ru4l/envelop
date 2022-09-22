@@ -10,9 +10,13 @@ import {
   subscribe,
   validate,
 } from 'graphql';
-import { useSchema, envelop, isAsyncIterable } from '@envelop/core';
+import { useSchema, envelop, isAsyncIterable, useEngine } from '@envelop/core';
 import { GetEnvelopedFn, Plugin } from '@envelop/types';
 import { mapSchema as cloneSchema, isDocumentNode } from '@graphql-tools/utils';
+
+export const useGraphQLJSEngine = () => {
+  return useEngine({ parse, validate, execute, subscribe });
+};
 
 export type ModifyPluginsFn = (plugins: Plugin<any>[]) => Plugin<any>[];
 export type PhaseReplacementParams =
@@ -109,22 +113,20 @@ export function createTestkit(
   const phasesReplacements: PhaseReplacementParams[] = [];
   let getEnveloped = Array.isArray(pluginsOrEnvelop)
     ? envelop({
-        plugins: [...(schema ? [useSchema(cloneSchema(schema))] : []), ...pluginsOrEnvelop],
-        parse,
-        execute,
-        validate,
-        subscribe,
+        plugins: [
+          ...(schema ? [useGraphQLJSEngine(), useSchema(cloneSchema(schema))] : [useGraphQLJSEngine()]),
+          ...pluginsOrEnvelop,
+        ],
       })
     : pluginsOrEnvelop;
 
   return {
     modifyPlugins(modifyPluginsFn: ModifyPluginsFn) {
       getEnveloped = envelop({
-        plugins: [...(schema ? [useSchema(cloneSchema(schema))] : []), ...modifyPluginsFn(getEnveloped._plugins)],
-        parse,
-        execute,
-        validate,
-        subscribe,
+        plugins: [
+          ...(schema ? [useGraphQLJSEngine(), useSchema(cloneSchema(schema))] : [useGraphQLJSEngine()]),
+          ...modifyPluginsFn(getEnveloped._plugins),
+        ],
       });
     },
     mockPhase(phaseReplacement: PhaseReplacementParams) {
