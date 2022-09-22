@@ -1,6 +1,7 @@
 import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/core';
 import {
   DirectiveNode,
+  ExecutionArgs,
   FieldNode,
   getNamedType,
   GraphQLError,
@@ -30,6 +31,8 @@ export type ValidateUserFnParams<UserType> = {
   fieldAuthDirectiveNode: DirectiveNode | undefined;
   /** The extensions used for authentication (If using an extension based flow). */
   fieldAuthExtension: unknown | undefined;
+  /** The args passed to the execution function (including operation context and variables) **/
+  executionArgs: ExecutionArgs;
 };
 
 export type ValidateUserFn<UserType> = (params: ValidateUserFnParams<UserType>) => void | UnauthenticatedError;
@@ -176,6 +179,7 @@ export const useGenericAuth = <
                     objectType,
                     fieldAuthDirectiveNode,
                     fieldAuthExtension,
+                    executionArgs: args,
                   });
                   if (error) {
                     context.reportError(error);
