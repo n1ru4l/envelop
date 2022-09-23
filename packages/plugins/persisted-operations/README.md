@@ -16,7 +16,7 @@ The most basic implementation can use an in-memory JS `Map` wrapper with a `Stor
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { usePersistedOperations, InMemoryStore } from '@envelop/persisted-operations'
 
 // You can retrieve the store in any way (e.g. from a remote source) and implement it with a simple Map / Key->Value
@@ -29,11 +29,8 @@ const store = new InMemoryStore({
 })
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     usePersistedOperations({
       store: myStore
@@ -64,7 +61,7 @@ usePersistedOperations({
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { usePersistedOperations, JsonFileStore } from '@envelop/persisted-operations'
 
 const persistedOperationsStore = new JsonFilesStore()
@@ -77,11 +74,8 @@ persistedOperationsStore.loadFromFileSync(filePath) // load and parse persisted-
 await persistedOperationsStore.loadFromFile(filePath) // load and parse persisted-operations files
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     usePersistedOperations({
       store: persistedOperationsStore
@@ -96,14 +90,11 @@ The `store` parameter accepts both a `Store` instance, or a function. If you nee
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     usePersistedOperations({
       store: context => {

@@ -7,11 +7,12 @@ With [new major version](https://github.com/n1ru4l/envelop/pull/1487) comes brea
 We have designed the new `envelop` to be engine agnostic. This allows you to use any GraphQL engine you want. This means that `graphql` is no longer a peer dependency and `envelop` simply just wraps the `parse`, `validate`, `execute` and `subscribe` functions that you provide.
 
 ```diff
-import { envelop } from '@envelop/core';
+- import { envelop } from '@envelop/core';
++ import { envelop, useEngine } from '@envelop/core';
 + import { parse, validate, execute, subscribe } from 'graphql';
 
 - const getEnveloped = envelop([ ... ])
-+ const getEnveloped = envelop({ parse, validate, execute, subscribe, plugins: [ ... ] })
++ const getEnveloped = envelop({ plugins: [ useEngine({ parse, validate, execute, subscribe }), ... ] })
 ```
 
 ### 2. Removed orchestrator tracing
@@ -24,7 +25,7 @@ We decided to drop this and instead [provide a new plugin](https://github.com/n1
 
 ```diff
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop, Plugin } from '@envelop/core'
+import { envelop, Plugin, useEngine } from '@envelop/core'
 + import { useOnResolve } from '@envelop/on-resolve'
 
 import { onResolverCalled } from './my-resolver'
@@ -39,11 +40,8 @@ function useResolve(): Plugin {
 }
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useResolve(),
   ],
@@ -73,18 +71,14 @@ This was a mistake from beginning as we cannot asynchronously `validate` and `pa
 You should first load your schema and then create the envelop instance and pass the schema to it.
 
 ```ts
-import { envelop, useSchema } from '@envelop/core'
+import { envelop, useSchema, useEngine } from '@envelop/core'
 import { parse, validate, execute, subscribe } from 'graphql'
 
 // this assume you are running latest node js version where top-level await is supported
 const schema = await loadSchema()
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
-  plugins: [useSchema(schema)]
+  plugins: [useEngine({ parse, validate, execute, subscribe }), useSchema(schema)]
 })
 ```
 
@@ -98,17 +92,14 @@ This utility was used to enable plugins conditionally. For a better developer ex
 
 ```diff
 - import { envelop, useMaskedErrors, enableIf } from '@envelop/core'
-+ import { envelop, useMaskedErrors } from '@envelop/core'
++ import { envelop, useMaskedErrors, useEngine } from '@envelop/core'
 import { parse, validate, execute, subscribe } from 'graphql'
 
 const isProd = process.env.NODE_ENV === 'production'
 
 const getEnveloped = envelop({
- parse,
- validate,
- execute,
- subscribe,
  plugins: [
+  useEngine({ parse, validate, execute, subscribe }),
   // This plugin is enabled only in production
 -  enableIf(isProd, useMaskedErrors())
 +  isProd && useMaskedErrors()

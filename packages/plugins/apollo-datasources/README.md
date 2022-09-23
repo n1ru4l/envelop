@@ -12,7 +12,7 @@ yarn add @envelop/apollo-datasources
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { useApolloDataSources } from '@envelop/apollo-datasources'
 import { RESTDataSource } from 'apollo-datasource-rest'
 
@@ -36,21 +36,18 @@ class MoviesAPI extends RESTDataSource {
 }
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
-    // ... other plugins ...
-    useApolloDataSources({
-      dataSources() {
-        return {
-          moviesAPI: new MoviesAPI()
+    useEngine({ parse, validate, execute, subscribe }),
+      // ... other plugins ...
+      .useApolloDataSources({
+        dataSources() {
+          return {
+            moviesAPI: new MoviesAPI()
+          }
         }
-      }
-      // To provide a custom cache, you can use the following code (InMemoryLRUCache is used by default):
-      // cache: new YourCustomCache()
-    })
+        // To provide a custom cache, you can use the following code (InMemoryLRUCache is used by default):
+        // cache: new YourCustomCache()
+      })
   ]
 })
 ```

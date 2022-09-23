@@ -18,7 +18,7 @@ After installing the `@envelop/core` package, you can use the `envelop` function
 
 ```ts
 import { parse, validate, execute, subcribe } from 'graphql'
-import { envelop, useSchema } from '@envelop/core'
+import { envelop, useSchema, useEngine } from '@envelop/core'
 import { buildSchema } from 'graphql'
 
 const schema = buildSchema(/* GraphQL */ `
@@ -28,11 +28,7 @@ const schema = buildSchema(/* GraphQL */ `
 `)
 
 export const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subcribe,
-  plugins: [useSchema(schema)]
+  plugins: [useEngine({ parse, validate, execute, subscribe }), useSchema(schema)]
 })
 ```
 
@@ -64,7 +60,7 @@ Let's add a parser and validation cache, so sending the same operation string se
 
 ```ts
 import { parse, validate, execute, subcribe } from 'graphql'
-import { envelop, useSchema } from '@envelop/core'
+import { envelop, useSchema, useEngine } from '@envelop/core'
 import { buildSchema } from 'graphql'
 import { useParserCache } from '@envelop/parser-cache'
 import { useValidationCache } from '@envelop/validation-cache'
@@ -76,11 +72,8 @@ const schema = buildSchema(/* GraphQL */ `
 `)
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subcribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // all enabled plugins
     useSchema(schema),
     useParserCache(),

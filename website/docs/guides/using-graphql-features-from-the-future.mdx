@@ -144,11 +144,13 @@ While the following input would be invalid and not pass the validation phase:
 Adding support to the existing envelop setup is straight-forward:
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useExtendedValidation, OneOfInputObjectsRule } from '@envelop/extended-validation'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins
     useExtendedValidation({
       rules: [OneOfInputObjectsRule]
@@ -286,11 +288,13 @@ There is a [pr for graphql.js](https://github.com/graphql/graphql-js/pull/3152) 
 Envelop already allows using fragment arguments by extending the GraphQL parser. We don't recommend using this for production usage! Please only use it for research or learning purposes!
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useFragmentArguments } from '@envelop/fragment-arguments'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useFragmentArguments()
   ]

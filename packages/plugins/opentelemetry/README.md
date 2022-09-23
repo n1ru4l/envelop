@@ -16,15 +16,12 @@ By default, this plugin prints the collected telemetry to the console:
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { useOpenTelemetry } from '@envelop/opentelemetry'
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useOpenTelemetry({
       resolvers: true, // Tracks resolvers calls, and tracks resolvers thrown errors
@@ -39,7 +36,7 @@ If you wish to use custom tracer/exporter, create it and pass it. This example i
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { useOpenTelemetry } from '@envelop/opentelemetry'
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger'
 import { SimpleSpanProcessor, BasicTracerProvider } from '@opentelemetry/tracing'
@@ -53,11 +50,8 @@ provider.addSpanProcessor(new SimpleSpanProcessor(exporter))
 provider.register()
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useOpenTelemetry(
       {

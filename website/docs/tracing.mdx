@@ -7,8 +7,12 @@ title: Tracing
 If you wish to enable it, pass `enableInternalTracing: true` to your envelop instance:
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
+
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe })
     // ...
   ],
   enableInternalTracing: true
