@@ -5,7 +5,6 @@ import { parse, validate } from 'graphql';
 
 describe('useEngine', () => {
   it('should invoke custom execute', async () => {
-    expect.assertions(1);
     const custom = jest.fn();
     const testInstance = createTestkit([useEngine({ execute: custom })], schema);
     await testInstance.execute(query);
@@ -13,7 +12,6 @@ describe('useEngine', () => {
   });
 
   it('should invoke custom subscribe', async () => {
-    expect.assertions(1);
     const custom = jest.fn();
     const testInstance = createTestkit([useEngine({ subscribe: custom })], schema);
     await testInstance.execute(subscriptionOperationString);
@@ -21,7 +19,6 @@ describe('useEngine', () => {
   });
 
   it('should invoke custom validate', async () => {
-    expect.assertions(1);
     const custom = jest.fn(validate);
     const testInstance = createTestkit([useEngine({ validate: custom })], schema);
     await testInstance.execute(query);
@@ -29,7 +26,6 @@ describe('useEngine', () => {
   });
 
   it('should invoke custom parse', async () => {
-    expect.assertions(1);
     const custom = jest.fn(parse);
     const testInstance = createTestkit([useEngine({ parse: custom })], schema);
     await testInstance.execute(query);
