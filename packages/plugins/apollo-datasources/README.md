@@ -39,7 +39,7 @@ const getEnveloped = envelop({
   plugins: [
     useEngine({ parse, validate, execute, subscribe }),
       // ... other plugins ...
-      .useApolloDataSources({
+      useApolloDataSources({
         dataSources() {
           return {
             moviesAPI: new MoviesAPI()
