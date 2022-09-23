@@ -3,7 +3,7 @@ import { oneLine, stripIndent } from 'common-tags';
 import { diff } from 'jest-diff';
 import { envelop, useSchema } from '@envelop/core';
 import { useFragmentArguments } from '../src/index.js';
-import { parse as gqlParse, execute as gqlExecute, validate as gqlValidate, subscribe as gqlSubscribe } from 'graphql';
+import { useGraphQLJSEngine } from '@envelop/testing';
 
 function compareStrings(a: string, b: string): boolean {
   return a.includes(b);
@@ -68,11 +68,7 @@ describe('useFragmentArguments', () => {
   `);
   test('can inline fragment with argument', () => {
     const { parse } = envelop({
-      plugins: [useFragmentArguments(), useSchema(schema)],
-      parse: gqlParse,
-      execute: gqlExecute,
-      validate: gqlValidate,
-      subscribe: gqlSubscribe,
+      plugins: [useGraphQLJSEngine(), useFragmentArguments(), useSchema(schema)],
     })({});
     const result = parse(/* GraphQL */ `
       fragment TestFragment($c: String) on Query {
