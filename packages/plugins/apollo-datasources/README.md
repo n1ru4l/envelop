@@ -38,16 +38,16 @@ class MoviesAPI extends RESTDataSource {
 const getEnveloped = envelop({
   plugins: [
     useEngine({ parse, validate, execute, subscribe }),
-      // ... other plugins ...
-      useApolloDataSources({
-        dataSources() {
-          return {
-            moviesAPI: new MoviesAPI()
-          }
+    // ... other plugins ...
+    useApolloDataSources({
+      dataSources() {
+        return {
+          moviesAPI: new MoviesAPI()
         }
-        // To provide a custom cache, you can use the following code (InMemoryLRUCache is used by default):
-        // cache: new YourCustomCache()
-      })
+      }
+      // To provide a custom cache, you can use the following code (InMemoryLRUCache is used by default):
+      // cache: new YourCustomCache()
+    })
   ]
 })
 ```
