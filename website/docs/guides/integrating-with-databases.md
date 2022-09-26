@@ -47,7 +47,7 @@ a plugin which adds a client to the context add release it at the end of the req
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { isAsyncIterable } from '@envelop/core'
+import { isAsyncIterable, useEngine } from '@envelop/core'
 import { useSchema } from './use-schema'
 
 const pool = new Pool({ maxClients: 10 })
@@ -74,11 +74,7 @@ const resolvers = {
 }
 
 const getEnvelop = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
-  plugins: [useSchema(/*...*/), databaseClientPlugin]
+  plugins: [useEngine({ parse, validate, execute, subscribe }), useSchema(/*...*/), databaseClientPlugin]
 })
 ```
 

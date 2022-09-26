@@ -52,16 +52,13 @@ As your project scales this, however, can become a tedious task. With the `useCo
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { useContextValuePerExecuteSubscriptionEvent } from '@envelop/execute-subscription-event'
 import { createContext, createDataLoaders } from './context'
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useContext(() => createContext()),
     useContextValuePerExecuteSubscriptionEvent(() => ({

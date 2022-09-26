@@ -37,15 +37,12 @@ While calling `getEnveloped` function (the result of `envelop({ plugins: [ ... ]
 In most cases, you'll pass the incoming HTTP request (or, just the relevant parts of it) to make it available for the plugins you use:
 
 ```ts
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { parse, validate, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe })
     /* ... plugins ... */
   ]
 })

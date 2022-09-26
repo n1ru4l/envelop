@@ -15,15 +15,12 @@ The `useImmediateIntrospection` can be used to short circuit any further context
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop, useImmediateIntrospection } from '@envelop/core'
+import { envelop, useImmediateIntrospection, useEngine } from '@envelop/core'
 import { schema } from './schema'
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     useSchema(schema),
     useImmediateIntrospection()
     // additional plugins
@@ -34,12 +31,14 @@ const getEnveloped = envelop({
 In case you want to authorize that an user is authenticated before allowing introspection the plugin must be placed in front of the `useImmediateIntrospection()` call.
 
 ```ts
-import { envelop, useImmediateIntrospection } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useImmediateIntrospection, useEngine } from '@envelop/core'
 import { schema } from './schema'
 import { useAuthorization } from './useAuthorization'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     useSchema(schema),
     useAuthorization(), // place this before
     useImmediateIntrospection()

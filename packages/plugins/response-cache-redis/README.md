@@ -23,7 +23,7 @@ In order to use the Redis cache, you need to:
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 import { createRedisCache } from '@envelop/response-cache-redis'
 import Redis from 'ioredis'
@@ -45,11 +45,8 @@ const redis = new Redis('rediss://:1234567890@my-redis-db.example.com:30652')
 const cache = createRedisCache({ redis })
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useResponseCache({ cache })
   ]
@@ -60,7 +57,7 @@ const getEnveloped = envelop({
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 import { createRedisCache } from '@envelop/response-cache-redis'
 
@@ -72,11 +69,8 @@ const redis = new Redis('rediss://:1234567890@my-redis-db.example.com:30652')
 const cache = createRedisCache({ redis })
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useResponseCache({
       ttl: 2000,

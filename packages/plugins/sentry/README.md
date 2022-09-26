@@ -31,17 +31,14 @@ yarn add @sentry/node @sentry/tracing @envelop/sentry
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { useSentry } from '@envelop/sentry'
 // do this only once in you entry file.
 import '@sentry/tracing'
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useSentry({
       includeRawResult: false, // set to `true` in order to include the execution result in the metadata collected

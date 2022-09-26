@@ -14,7 +14,7 @@ yarn add @envelop/graphql-modules
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { createApplication } from 'graphql-modules'
 import { useGraphQLModules } from '@envelop/graphql-modules'
 
@@ -25,11 +25,8 @@ const myApp = createApplication({
 })
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useGraphQLModules(myApp)
   ]

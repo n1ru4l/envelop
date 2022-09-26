@@ -20,18 +20,10 @@ function notEmpty<T>(value: Optional<T>): value is T {
 export function envelop<PluginsType extends Optional<Plugin<any>>[]>(options: {
   plugins: PluginsType;
   enableInternalTracing?: boolean;
-  parse: ParseFunction;
-  execute: ExecuteFunction;
-  validate: ValidateFunction;
-  subscribe: SubscribeFunction;
 }): GetEnvelopedFn<ComposeContext<ExcludeFalsy<PluginsType>>> {
   const plugins = options.plugins.filter(notEmpty);
   const orchestrator = createEnvelopOrchestrator<ComposeContext<ExcludeFalsy<PluginsType>>>({
     plugins,
-    parse: options.parse,
-    execute: options.execute,
-    validate: options.validate,
-    subscribe: options.subscribe,
   });
 
   const getEnveloped = <TInitialContext extends ArbitraryObject>(

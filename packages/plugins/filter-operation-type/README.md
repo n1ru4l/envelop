@@ -12,15 +12,11 @@ yarn add @envelop/filter-operation-type
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { useFilterAllowedOperations } from '@envelop/filter-operation-type'
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   // only allow execution of subscription operations
-  plugins: [useFilterAllowedOperations(['subscription'])]
+  plugins: [useEngine({ parse, validate, execute, subscribe }), useFilterAllowedOperations(['subscription'])]
 })
 ```
