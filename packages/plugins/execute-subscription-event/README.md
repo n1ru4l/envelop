@@ -8,16 +8,13 @@ Create a new context object per `ExecuteSubscriptionEvent` phase, allowing to by
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { useContextValuePerExecuteSubscriptionEvent } from '@envelop/execute-subscription-event'
 import { createContext, createDataLoaders } from './context'
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     useContext(() => createContext()),
     useContextValuePerExecuteSubscriptionEvent(() => ({
       // Existing context is merged with this context partial
@@ -34,12 +31,14 @@ const getEnveloped = envelop({
 Alternatively, you can also provide a callback that is invoked after each [`ExecuteSubscriptionEvent`](<https://spec.graphql.org/draft/#ExecuteSubscriptionEvent()>) phase.
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useContextValuePerExecuteSubscriptionEvent } from '@envelop/execute-subscription-event'
 import { createContext, createDataLoaders } from './context'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     useContext(() => createContext()),
     useContextValuePerExecuteSubscriptionEvent(({ args }) => ({
       onEnd: () => {

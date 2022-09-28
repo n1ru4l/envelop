@@ -39,15 +39,12 @@ The in-memory LRU cache is used by default.
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useResponseCache({
       // use global cache for all operations
@@ -61,17 +58,14 @@ Or, you may create the in-memory LRU cache explicitly.
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache, createInMemoryCache } from '@envelop/response-cache'
 
 const cache = createInMemoryCache()
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useResponseCache({
       cache,
@@ -87,15 +81,12 @@ const getEnveloped = envelop({
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useResponseCache({
       ttl: 2000,

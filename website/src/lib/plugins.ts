@@ -80,6 +80,17 @@ export const pluginsArr: Package<Tags>[] = [
     tags: ['core', 'errors', 'security'],
   },
   {
+    identifier: 'use-engine',
+    title: 'useEngine',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/core/docs/use-engine.md',
+    },
+    npmPackage: '@envelop/core',
+    iconUrl: '/logo.png',
+    tags: ['core', 'utilities'],
+  },
+  {
     identifier: 'use-extend-context',
     title: 'useExtendContext',
     githubReadme: {

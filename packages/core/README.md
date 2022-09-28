@@ -11,3 +11,4 @@ This is the core package for Envelop. You can find a complete documentation here
 - [`useLogger`](./docs/use-logger.md)
 - [`useMaskedErrors`](./docs/use-masked-errors.md)
 - [`usePayloadFormatter`](./docs/use-payload-formatter.md)
+- [`useEngine`](./docs/use-engine.md)

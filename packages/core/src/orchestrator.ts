@@ -55,21 +55,22 @@ export type EnvelopOrchestrator<
 
 type EnvelopOrchestratorOptions = {
   plugins: Plugin[];
-  parse: ParseFunction;
-  execute: ExecuteFunction;
-  subscribe: SubscribeFunction;
-  validate: ValidateFunction;
 };
+
+function throwEngineFunctionError(name: string) {
+  throw Error(`No \`${name}\` function found! Register it using "useEngine" plugin.`);
+}
 
 export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>({
   plugins,
-  parse,
-  execute,
-  subscribe,
-  validate,
 }: EnvelopOrchestratorOptions): EnvelopOrchestrator<any, PluginsContext> {
   let schema: any | undefined | null = null;
   let initDone = false;
+
+  const parse: ParseFunction = () => throwEngineFunctionError('parse');
+  const validate: ValidateFunction = () => throwEngineFunctionError('validate');
+  const execute: ExecuteFunction = () => throwEngineFunctionError('execute');
+  const subscribe: SubscribeFunction = () => throwEngineFunctionError('subscribe');
 
   // Define the initial method for replacing the GraphQL schema, this is needed in order
   // to allow setting the schema from the onPluginInit callback. We also need to make sure

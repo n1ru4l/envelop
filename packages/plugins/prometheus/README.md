@@ -27,15 +27,12 @@ yarn add prom-client @envelop/prometheus
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { usePrometheus } from '@envelop/prometheus'
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     usePrometheus({
       // all optional, and by default, all set to false, please opt-in to the metrics you wish to get
@@ -63,17 +60,14 @@ You can customize the `prom-client` `Registry` object if you are using a custom 
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { Registry } from 'prom-client'
 
 const myRegistry = new Registry()
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     usePrometheus({
       // ... config ...
@@ -96,15 +90,12 @@ Each tracing field supports custom `prom-client` objects, and custom `labels` a 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
 import { Histogram } from 'prom-client'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { createHistogram, usePrometheus } from '@envelop/prometheus'
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     usePrometheus({
       // all optional, and by default, all set to false, please opt-in to the metrics you wish to get

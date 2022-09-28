@@ -15,12 +15,14 @@ yarn add @envelop/on-resolve
 ### Custom field resolutions
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useOnResolve } from '@envelop/on-resolve'
 import { specialResolver } from './my-resolvers'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useOnResolve(async function onResolve({ context, root, args, info, replaceResolver }) {
       // replace special field's resolver
@@ -42,7 +44,8 @@ const getEnveloped = envelop({
 ### Tracing
 
 ```ts
-import { envelop, Plugin } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine, Plugin } from '@envelop/core'
 import { useOnResolve } from '@envelop/on-resolve'
 
 interface FieldTracingPluginContext {
@@ -91,6 +94,7 @@ function useFieldTracing() {
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useSpecialResolve()
   ]

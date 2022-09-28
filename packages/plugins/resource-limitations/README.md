@@ -12,15 +12,12 @@ yarn add @envelop/resource-limitations
 
 ```ts
 import { parse, validate, execute, subscribe } from 'graphql'
-import { envelop } from '@envelop/core'
+import { envelop, useEngine } from '@envelop/core'
 import { useResourceLimitations } from '@envelop/resource-limitations'
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useResourceLimitations({
       nodeCostLimit: 500000, // optional, default to 500000
