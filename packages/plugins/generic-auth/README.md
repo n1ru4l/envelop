@@ -262,7 +262,7 @@ const GraphQLQueryType = new GraphQLObjectType({
 
 > If you are using a different field extension for authentication, you can pass `directiveOrExtensionFieldName` configuration to customize it.
 
-##### Extend authentication with custom directive logic
+#### Extend authentication with custom logic
 
 You can also specify a custom `validateUser` function and get access to a handy object while using the `protect-all` and `protect-granular` mode:
 
@@ -280,7 +280,9 @@ const validateUser: ValidateUserFn<UserType> = async ({ user }) => {
 }
 ```
 
-And it's also possible to add custom parameters to your `@auth` directive. Here's an example for adding role-aware authentication:
+##### With a custom directive with arguments
+
+It is possible to add custom parameters to your `@auth` directive. Here's an example for adding role-aware authentication:
 
 ```graphql
 enum Role {
@@ -297,8 +299,8 @@ Then, you use the `directiveNode` parameter to check the arguments:
 import { ValidateUserFn } from '@envelop/generic-auth'
 
 const validateUser: ValidateUserFn<UserType> = async ({ user, fieldAuthDirectiveNode }) => {
-  // Now you can use the 3rd parameter to implement custom logic for user validation, with access
-  // to the resolver data and information.
+  // Now you can use the fieldAuthDirectiveNode parameter to implement custom logic for user validation, with access
+  // to the resolver auth directive arguments.
 
   if (!user) {
     throw new Error(`Unauthenticated!`)
@@ -309,6 +311,82 @@ const validateUser: ValidateUserFn<UserType> = async ({ user, fieldAuthDirective
 
   if (role !== user.role) {
     throw new Error(`No permissions!`)
+  }
+}
+```
+
+##### With a custom field extensions
+
+You can use custom field extension to pass data to your `validateUser` function instead of using a directive.
+Here's an example for adding role-aware authentication:
+
+```ts
+import { ValidateUserFn } from '@envelop/generic-auth'
+
+const validateUser: ValidateUserFn<UserType> = async ({ user, fieldAuthExtension }) => {
+  // Now you can use the fieldAuthDirectiveNode parameter to implement custom logic for user validation, with access
+  // to the resolver auth directive arguments.
+
+  if (!user) {
+    throw new Error(`Unauthenticated!`)
+  }
+
+  const role = fieldAuthExtension.role
+
+  if (role !== user.role) {
+    throw new Error(`No permissions!`)
+  }
+}
+
+const resolvers = {
+  Query: {
+    user: {
+      me: (_, __, { currentUser }) => currentUser,
+      extensions: {
+        auth: {
+          role: 'USER'
+        }
+      }
+    }
+  }
+}
+```
+
+##### With a custom validation function per field
+
+You can also have access to operation variables and context via the `executionArgs` parameter.
+This can be useful in conjunction with the `fieldAuthExtension` parameter to achieve custom per field validation.
+
+```ts
+import { ValidateUserFn } from '@envelop/generic-auth'
+
+const validateUser: ValidateUserFn<UserType> = async ({ user, executionArgs, fieldAuthExtension }) => {
+  if (!user) {
+    throw new Error(`Unauthenticated!`)
+  }
+
+  // You have access to the object define in the resolver tree, allowing to define any custom logic you want.
+  const validate = fieldAuthExtension?.validate
+  if (validate) {
+    await validate({ user, variables: executionArgs.variableValues, context: executionArgs.contextValue })
+  }
+}
+
+const resolvers = {
+  Query: {
+    user: {
+      resolve: (_, { userId }) => getUser(userId),
+      extensions: {
+        auth: {
+          validate: ({ user, variables, context }) => {
+            // We can now have access to the operation and variables to decide if the user can execute the query
+            if (user.id !== variables.userId) {
+              throw new Error(`Unauthorized`)
+            }
+          }
+        }
+      }
+    }
   }
 }
 ```

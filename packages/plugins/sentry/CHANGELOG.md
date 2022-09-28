@@ -1,5 +1,11 @@
 # @envelop/sentry
 
+## 3.8.1
+
+### Patch Changes
+
+- [#1526](https://github.com/n1ru4l/envelop/pull/1526) [`4a583b7a`](https://github.com/n1ru4l/envelop/commit/4a583b7aa81f23e8938d15a853949bdce420f178) Thanks [@kamilkisiela](https://github.com/kamilkisiela)! - fix: EnvelopError was not skipped by default
+
 ## 3.8.0
 
 ### Minor Changes
