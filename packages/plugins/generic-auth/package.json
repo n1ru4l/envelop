@@ -1,6 +1,6 @@
 {
   "name": "@envelop/generic-auth",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
