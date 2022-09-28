@@ -1,5 +1,47 @@
 # @envelop/generic-auth
 
+## 4.6.0
+
+### Minor Changes
+
+- [#1528](https://github.com/n1ru4l/envelop/pull/1528) [`50f214a2`](https://github.com/n1ru4l/envelop/commit/50f214a26cb6595f8ef4dda43cd32dd28d7fc67d) Thanks [@{](https://github.com/{)! - give access to execute args in `validateUser` function.
+
+  This is useful in conjunction with the `fieldAuthExtension` parameter to achieve custom per field validation:
+
+  ```ts
+  import { ValidateUserFn } from '@envelop/generic-auth'
+
+  const validateUser: ValidateUserFn<UserType> = async ({ user, executionArgs, fieldAuthExtension }) => {
+    if (!user) {
+      throw new Error(`Unauthenticated!`)
+    }
+
+    // You have access to the object define in the resolver tree, allowing to define any custom logic you want.
+    const validate = fieldAuthExtension?.validate
+    if (validate) {
+      await validate({ user, variables: executionArgs.variableValues, context: executionArgs.contextValue })
+    }
+  }
+
+  const resolvers = {
+    Query: {
+
+        resolve: (_, { userId }) => getUser(userId),
+        extensions: {
+          auth: {
+            validate: ({ user, variables, context }) => {
+              // We can now have access to the operation and variables to decide if the user can execute the query
+              if (user.id !== variables.userId) {
+                throw new Error(`Unauthorized`)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  ```
+
 ## 4.5.0
 
 ### Minor Changes
