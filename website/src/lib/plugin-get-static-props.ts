@@ -47,7 +47,10 @@ ${readme}`,
 
   return {
     props: {
-      ssg: mdx.result,
+      ssg: {
+        compiledSource: mdx.result,
+        title
+      },
     },
     // The page will be considered as stale and regenerated every 24 hours.
     revalidate: 60 * 60 * 24,

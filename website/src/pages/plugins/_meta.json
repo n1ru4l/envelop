@@ -5,7 +5,6 @@
     "theme": {
       "layout": "default",
       "sidebar": false,
-      "breadcrumb": false,
       "timestamp": false
     }
   }
