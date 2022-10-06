@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable */
 import 'reflect-metadata';
 import fastify from 'fastify';
 import { envelop, useLogger, useAsyncSchema, useTiming } from '@envelop/core';

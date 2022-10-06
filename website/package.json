@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "date-fns": "2.29.3",
-    "next-sitemap": "3.1.22",
+    "next-sitemap": "3.1.23",
     "@theguild/components": "4.2.0",
     "next": "12.3.1",
     "react": "18.2.0",
