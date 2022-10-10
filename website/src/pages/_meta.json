@@ -7,9 +7,15 @@
       "layout": "raw"
     }
   },
+  "v3": {
+    "title": "v3",
+    "type": "page",
+    "versioned": true
+  },
   "docs": {
-    "title": "Docs",
-    "type": "page"
+    "title": "v2",
+    "type": "page",
+    "versioned": true
   },
   "plugins": {
     "title": "Plugins",

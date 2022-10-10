@@ -8,7 +8,8 @@ This allows writing shareable pieces that can be used.
 Here's a small example for sharing envelops:
 
 ```ts
-import { envelop, useEnvelop, useSchema } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEnvelop, useSchema, useEngine } from '@envelop/core'
 
 // Somewhere where you wish to create the basics of what you wish to share
 // This defined the base plugins you wish to use as a base.
@@ -19,7 +20,17 @@ const myBaseEnvelop = envelop({
 // Later, when you create your own Envelop, you can extend that and add custom plugins.
 // You can also specify the schema only at this point
 const myEnvelop = envelop({
-  plugins: [useEnvelop(myBaseEnvelop), useSchema(myServerSchema), useMyCustomPlugin()]
+  plugins: [
+    useEngine({
+      parse,
+      validate,
+      execute,
+      subscribe
+    }),
+    useEnvelop(myBaseEnvelop),
+    useSchema(myServerSchema),
+    useMyCustomPlugin()
+  ]
 })
 ```
 

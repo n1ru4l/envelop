@@ -20,7 +20,8 @@ Start by adding the core of `envelop` and `graphql` to your codebase.
 After installing the `@envelop/core` package, you can use the `envelop` function for creating your `getEnveloped` function. We use a simple GraphQL schema that we build with the `buildSchema` function from `graphql`.
 
 ```ts
-import { envelop, useSchema } from '@envelop/core'
+import { parse, validate, execute, subcribe } from 'graphql'
+import { envelop, useSchema, useEngine } from '@envelop/core'
 import { buildSchema } from 'graphql'
 
 const schema = buildSchema(/* GraphQL */ `
@@ -30,7 +31,7 @@ const schema = buildSchema(/* GraphQL */ `
 `)
 
 export const getEnveloped = envelop({
-  plugins: [useSchema(schema)]
+  plugins: [useEngine({ parse, validate, execute, subscribe }), useSchema(schema)]
 })
 ```
 
@@ -61,7 +62,8 @@ Let's add a parser and validation cache, so sending the same operation string se
 <PackageCmd packages={['@envelop/parser-cache @envelop/validation-cache']} />
 
 ```ts
-import { envelop, useSchema } from '@envelop/core'
+import { parse, validate, execute, subcribe } from 'graphql'
+import { envelop, useSchema, useEngine } from '@envelop/core'
 import { buildSchema } from 'graphql'
 import { useParserCache } from '@envelop/parser-cache'
 import { useValidationCache } from '@envelop/validation-cache'
@@ -74,6 +76,7 @@ const schema = buildSchema(/* GraphQL */ `
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // all enabled plugins
     useSchema(schema),
     useParserCache(),
