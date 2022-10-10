@@ -168,6 +168,8 @@ const databaseClientPlugin = {
 
     // We can find in the context the kind of request we are executing
     if (contextValue?.operation?.operation === mutation) {
+      await Promise.all(clients.map(client => client.query('BEGIN')))
+    } else {
       await Promise.all(clients.map(client => client.query('BEGIN READ ONLY')))
     }
 
