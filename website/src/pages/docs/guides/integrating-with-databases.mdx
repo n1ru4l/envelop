@@ -170,7 +170,7 @@ const databaseClientPlugin = {
     if (contextValue?.operation?.operation === mutation) {
       await Promise.all(clients.map(client => client.query('BEGIN')))
     } else {
-      await Promise.all(clients.map(client => client.query('BEGIN')))
+      await Promise.all(clients.map(client => client.query('BEGIN READ ONLY')))
     }
 
     return {
