@@ -114,7 +114,7 @@ export const pluginsArr: {
       path: 'packages/core/docs/use-engine.md',
     },
     npmPackage: '@envelop/core',
-    iconUrl: '/logo.png',
+    icon: envelopIcon,
     tags: ['core', 'utilities'],
   },
   {
