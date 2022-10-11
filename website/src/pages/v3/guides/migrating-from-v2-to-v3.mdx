@@ -4,7 +4,8 @@ With [new major version](https://github.com/n1ru4l/envelop/pull/1487) comes brea
 
 ### 1. Remove `graphql` as a peer dependency
 
-We have designed the new `envelop` to be engine agnostic. This allows you to use any GraphQL engine you want. This means that `graphql` is no longer a peer dependency and `envelop` simply just wraps the `parse`, `validate`, `execute` and `subscribe` functions that you provide.
+We have designed the new `envelop` to be engine agnostic. This means that `graphql` is no longer a peer dependency and `envelop` simply just wraps the `parse`, `validate`, `execute` and `subscribe` functions that you provide.
+This allows you to use any GraphQL engine you want.
 
 ```diff
 - import { envelop } from '@envelop/core';
