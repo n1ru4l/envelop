@@ -56,6 +56,20 @@ This plugin dependended on tracing the schema so we no longer support this out o
 
 To keep the core agnostic from a specific implementation we no longer provide the `EnvelopError` class. To ensure an error is `GraphQLError` envelop check if it an `instanceOf Error` and the name of error is `GraphQLError`. We provide a helper utility `isGraphQLError` to check if an error is a `GraphQLError`.
 
+```diff
+- import {EnvelopError} from '@envelop/core'
++ import { GraphQLError } from 'graphql'
+
+const main () => {
+  try {
+    // ...
+  } catch (error) {
+- throw EnvelopError(error)
++ throw GraphQLError(error)
+  }
+}
+```
+
 #### 4. Drop `isIntrospectionDocument` and `isIntrospectionQuery` utility
 
 To keep core agnostic we recommend you create your own utiltiy for this.
