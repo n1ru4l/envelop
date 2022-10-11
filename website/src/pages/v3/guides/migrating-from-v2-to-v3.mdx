@@ -4,8 +4,7 @@ With [new major version](https://github.com/n1ru4l/envelop/pull/1487) comes brea
 
 ### 1. Remove `graphql` as a peer dependency
 
-We have designed the new `envelop` to be engine agnostic. This means that `graphql` is no longer a peer dependency and `envelop` simply just wraps the `parse`, `validate`, `execute` and `subscribe` functions that you provide.
-This allows you to use any GraphQL engine you want.
+We have designed the new `envelop` to be engine agnostic. This means that `graphql` is no longer a peer dependency. You still want to use `graphql-js` but you can easily use any GraphQL Engine since `envelop` now simply wraps the `parse`, `validate`, `execute` and `subscribe` functions that you provide.
 
 ```diff
 - import { envelop } from '@envelop/core';
@@ -18,7 +17,7 @@ This allows you to use any GraphQL engine you want.
 
 ### 2. Removed orchestrator tracing
 
-We were wrapping the `GraphQLSchema` object but with the new version we no longer want to depend on a specific implementation.
+We were wrapping the `GraphQLSchema` object. This was used to trace resolvers/fields on schema. This was very specific to implementation. With the new version we no longer want to depend on a specific implementation. Now users can wrap their schemas and add tracing themselves.
 
 #### 1. Remove `onResolverCalled`
 
