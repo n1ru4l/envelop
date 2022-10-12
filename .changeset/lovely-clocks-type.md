@@ -2,7 +2,7 @@
 '@envelop/core': major
 ---
 
-## Remove `graphql` as a peer dependency
+Remove `graphql` as a peer dependency
 
 We have built the new `envelop` to be engine agnostic. `graphql-js` is no longer a peer dependency. Now you can use any spec compliant GraphQL engine with `envelop` and get the benefit of building a plugin system. We have introduced a new plugin that can be used to customize the GraphQL Engine.
 

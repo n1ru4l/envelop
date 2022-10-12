@@ -3,7 +3,7 @@
 '@envelop/on-resolve': major
 ---
 
-## Remove `onResolverCalled`
+Remove `onResolverCalled`
 
 We decided to drop onResolverCalled hook and instead [provide a new plugin](https://github.com/n1ru4l/envelop/pull/1500) that will let you hook into this phase.
 
