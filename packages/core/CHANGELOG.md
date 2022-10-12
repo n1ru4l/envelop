@@ -1,5 +1,117 @@
 # @envelop/core
 
+## 3.0.0
+
+### Major Changes
+
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove `isIntrospectionQuery` utility
+
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove async schema loading plugin. This was a mistake from beginning as we cannot asynchronously `validate` and `parse` since with GraphQL.js are synchronous in nature.
+
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove `onResolverCalled`
+
+  We decided to drop onResolverCalled hook and instead [provide a new plugin](https://github.com/n1ru4l/envelop/pull/1500) that will let you hook into this phase.
+
+  ```diff
+  import { parse, validate, execute, subscribe } from 'graphql'
+  import { envelop, Plugin, useEngine } from '@envelop/core'
+  + import { useOnResolve } from '@envelop/on-resolve'
+
+  import { onResolverCalled } from './my-resolver'
+
+  function useResolve(): Plugin {
+    return {
+  -   onResolverCalled: onResolverCalled,
+  +   onPluginInit: ({ addPlugin }) => {
+  +     addPlugin(useOnResolve(onResolverCalled))
+  +   },
+    }
+  }
+
+  const getEnveloped = envelop({
+    plugins: [
+      useEngine({ parse, validate, execute, subscribe }),
+      // ... other plugins ...
+      useResolve(),
+    ],
+  });
+  ```
+
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Drop `useTiming` plugin
+
+  This plugin was dependent on tracing the schema. As we no longer support wrap the schema out of the box we decided to drop this plugin.
+
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove `isIntrospectionDocument` utility
+
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Drop Node v12 support
+
+  Node.js v12 is no longer supported by the Node.js team. https://github.com/nodejs/Release/#end-of-life-releases
+
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Drop `EnvelopError` class
+
+  To keep the core agnostic from a specific implementation we no longer provide the `EnvelopError` class.
+
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove `useAsyncSchema` plugin
+
+  This was a mistake from beginning as we cannot asynchronously validate and parse since with [graphql](https://github.com/graphql/graphql-js) these functions are synchronous in nature.
+
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove `graphql` as a peer dependency
+
+  We have built the new `envelop` to be engine agnostic. `graphql-js` is no longer a peer dependency. Now you can use any spec compliant GraphQL engine with `envelop` and get the benefit of building a plugin system. We have introduced a new plugin that can be used to customize the GraphQL Engine.
+
+  ```diff
+  - import { envelop } from '@envelop/core'
+  + import { envelop, useEngine } from '@envelop/core'
+  + import { parse, validate, execute, subscribe } from 'graphql';
+
+  - const getEnveloped = envelop([ ... ])
+  + const getEnveloped = envelop({ plugins: [useEngine({ parse, validate, execute, subscribe })] })
+
+  ```
+
+  Checkout the [migration guide](https://www.the-guild.dev/graphql/envelop/v3/guides/migrating-from-v2-to-v3) for more details.
+
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Rename `useLazyLoadedSchema` to `useSchemaByContext` since the original name was vert misleading.
+
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove `enableIf` utility in favor of more type safe way to conditionally enable plugins. It wasn't a great experience to have a utility
+
+  We can easily replace usage like this:
+
+  ```diff
+  - import { envelop, useMaskedErrors, enableIf } from '@envelop/core'
+  + import { envelop, useMaskedErrors } from '@envelop/core'
+  import { parse, validate, execute, subscribe } from 'graphql'
+
+  const isProd = process.env.NODE_ENV === 'production'
+
+  const getEnveloped = envelop({
+    parse,
+    validate,
+    execute,
+    subscribe,
+    plugins: [
+      // This plugin is enabled only in production
+  -    enableIf(isProd, useMaskedErrors())
+  +    isProd && useMaskedErrors()
+    ]
+  })
+  ```
+
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove `handleValidationErrors` and `handleParseErrors` options from `useMaskedErrors`.
+
+  > ONLY masking validation errors OR ONLY disabling introspection errors does not make sense, as both can be abused for reverse-engineering the GraphQL schema (see https://github.com/nikitastupin/clairvoyance for reverse-engineering the schema based on validation error suggestions).
+  > https://github.com/n1ru4l/envelop/issues/1482#issue-1340015060
+
+  Rename `formatError` function option to `maskError`
+
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Removed orchestrator tracing
+
+  `GraphQLSchema` was wrapped to provide resolvers/fields tracing from the schema. Issue with this approach was it was very specific to the underlying engine's implementation. With the new version we no longer want to depend to a specific implementation. Now users can wrap their schemas and add tracing themselves.
+
+### Minor Changes
+
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - respond to context, parse and validate errors in `useErrorHandler` plugin
+
 ## 2.6.0
 
 ### Minor Changes
