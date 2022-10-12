@@ -3,8 +3,8 @@
 This plugin is the simplest plugin for specifying your GraphQL schema. You can specify a schema created from any tool that emits `GraphQLSchema` object, and you can choose to load the schema based on the initial context (or the incoming request).
 
 ```ts
-import { envelop, useLazyLoadedSchema } from '@envelop/core'
-import { buildSchema } from 'graphql'
+import { envelop, useSchemaByContext, useEngine } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
 
 async function getSchema({ req }): GraphQLSchema {
   if (req.isAdmin) {
@@ -16,7 +16,8 @@ async function getSchema({ req }): GraphQLSchema {
 
 const getEnveloped = envelop({
   plugins: [
-    useLazyLoadedSchema(getSchema)
+    useEngine({ parse, validate, execute, subscribe }),
+    useSchemaByContext(getSchema)
     // ... other plugins ...
   ]
 })

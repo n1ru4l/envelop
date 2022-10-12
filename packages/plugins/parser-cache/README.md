@@ -13,11 +13,13 @@ yarn add @envelop/parser-cache
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useParserCache } from '@envelop/parser-cache'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useParserCache({
       // options goes here

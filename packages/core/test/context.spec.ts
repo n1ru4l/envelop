@@ -1,4 +1,4 @@
-import { ContextFactoryFn, EnvelopError, useExtendContext } from '@envelop/core';
+import { ContextFactoryFn, useExtendContext } from '@envelop/core';
 import { createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { schema, query } from './common.js';
 
@@ -122,7 +122,7 @@ describe('contextFactory', () => {
     };
 
     const throwingContextFactory: ContextFactoryFn = () => {
-      throw new EnvelopError('The server was about to step on a turtle');
+      throw new Error('The server was about to step on a turtle');
     };
 
     const teskit = createTestkit(
@@ -155,7 +155,7 @@ describe('contextFactory', () => {
                   test: true,
                   variables: expect.any(Object),
                 }),
-                error: new EnvelopError('The server was about to step on a turtle'),
+                error: new Error('The server was about to step on a turtle'),
                 setError: expect.any(Function),
               })
             );

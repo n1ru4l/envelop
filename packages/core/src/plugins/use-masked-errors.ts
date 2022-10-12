@@ -1,120 +1,95 @@
-import { Plugin } from '@envelop/types';
-import { ExecutionResult, GraphQLError, GraphQLErrorExtensions } from 'graphql';
+import { Plugin, ExecutionResult } from '@envelop/types';
 import { handleStreamOrSingleExecutionResult } from '../utils.js';
 
 export const DEFAULT_ERROR_MESSAGE = 'Unexpected error.';
 
-export class EnvelopError extends GraphQLError {
-  constructor(message: string, extensions?: GraphQLErrorExtensions) {
-    super(message, undefined, undefined, undefined, undefined, undefined, extensions);
-  }
-}
+export type MaskError = (error: unknown, message: string) => Error;
 
-export type FormatErrorHandler = (error: GraphQLError | unknown, message: string, isDev: boolean) => GraphQLError;
-
-export const formatError: FormatErrorHandler = (err, message, isDev) => {
-  if (err instanceof GraphQLError) {
-    if (
-      /** execution error */
-      (err.originalError && err.originalError instanceof EnvelopError === false) ||
-      /** validate and parse errors */
-      (err.originalError === undefined && err instanceof EnvelopError === false)
-    ) {
-      return new GraphQLError(
-        message,
-        err.nodes,
-        err.source,
-        err.positions,
-        err.path,
-        undefined,
-        isDev
-          ? {
-              originalError: {
-                message: err.originalError?.message ?? err.message,
-                stack: err.originalError?.stack ?? err.stack,
-              },
-            }
-          : undefined
-      );
-    }
-    return err;
-  }
-  return new GraphQLError(message);
+export type SerializableGraphQLErrorLike = Error & {
+  name: 'GraphQLError';
+  toJSON(): { message: string };
+  extensions?: Record<string, unknown>;
 };
 
+export function isGraphQLError(error: unknown): error is Error & { originalError?: Error } {
+  return error instanceof Error && error.name === 'GraphQLError';
+}
+
+function createSerializableGraphQLError(
+  message: string,
+  originalError: unknown,
+  isDev: boolean
+): SerializableGraphQLErrorLike {
+  const error = new Error(message) as SerializableGraphQLErrorLike;
+  error.name = 'GraphQLError';
+  if (isDev) {
+    const extensions =
+      originalError instanceof Error
+        ? { message: originalError.message, stack: originalError.stack }
+        : { message: String(originalError) };
+
+    Object.defineProperty(error, 'extensions', {
+      get() {
+        return extensions;
+      },
+    });
+  }
+
+  Object.defineProperty(error, 'toJSON', {
+    value() {
+      return {
+        message: error.message,
+        extensions: error.extensions,
+      };
+    },
+  });
+
+  return error as SerializableGraphQLErrorLike;
+}
+
+export const createDefaultMaskError =
+  (isDev: boolean): MaskError =>
+  (error, message) => {
+    if (isGraphQLError(error)) {
+      if (error?.originalError) {
+        if (isGraphQLError(error.originalError)) {
+          return error;
+        }
+        return createSerializableGraphQLError(message, error, isDev);
+      }
+      return error;
+    }
+    return createSerializableGraphQLError(message, error, isDev);
+  };
+
+const isDev = globalThis.process?.env?.NODE_ENV === 'development';
+
+export const defaultMaskError: MaskError = createDefaultMaskError(isDev);
+
 export type UseMaskedErrorsOpts = {
-  /** The function used for format/identify errors. */
-  formatError?: FormatErrorHandler;
+  /** The function used for identify and mask errors. */
+  maskError?: MaskError;
   /** The error message that shall be used for masked errors. */
   errorMessage?: string;
-  /**
-   * Additional information that is forwarded to the `formatError` function.
-   * The default value is `process.env['NODE_ENV'] === 'development'`
-   */
-  isDev?: boolean;
-  /**
-   * Whether parse errors should be processed by this plugin.
-   * In general it is not recommend to set this flag to `true`
-   * as a `parse` error contains useful information for debugging a GraphQL operation.
-   * A `parse` error never contains any sensitive information.
-   * @default false
-   */
-  handleParseErrors?: boolean;
-  /**
-   * Whether validation errors should processed by this plugin.
-   * In general we recommend against setting this flag to `true`
-   * as a `validate` error contains useful information for debugging a GraphQL operation.
-   * A `validate` error contains "did you mean x" suggestions that make it easier
-   * to reverse-introspect a GraphQL schema whose introspection capabilities got disabled.
-   * Instead of disabling introspection and masking validation errors, using persisted operations
-   * is a safer solution for avoiding the execution of unwanted/arbitrary operations.
-   * @default false
-   */
-  handleValidationErrors?: boolean;
 };
 
 const makeHandleResult =
-  (format: FormatErrorHandler, message: string, isDev: boolean) =>
+  (maskError: MaskError, message: string) =>
   ({ result, setResult }: { result: ExecutionResult; setResult: (result: ExecutionResult) => void }) => {
     if (result.errors != null) {
-      setResult({ ...result, errors: result.errors.map(error => format(error, message, isDev)) });
+      setResult({ ...result, errors: result.errors.map(error => maskError(error, message)) });
     }
   };
 
 export const useMaskedErrors = (opts?: UseMaskedErrorsOpts): Plugin => {
-  const format = opts?.formatError ?? formatError;
+  const maskError = opts?.maskError ?? defaultMaskError;
   const message = opts?.errorMessage || DEFAULT_ERROR_MESSAGE;
-  // eslint-disable-next-line dot-notation
-  const isDev = opts?.isDev ?? (typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false);
-  const handleResult = makeHandleResult(format, message, isDev);
+  const handleResult = makeHandleResult(maskError, message);
 
   return {
-    onParse:
-      opts?.handleParseErrors === true
-        ? function onParse() {
-            return function onParseEnd({ result, replaceParseResult }) {
-              if (result instanceof Error) {
-                replaceParseResult(format(result, message, isDev));
-              }
-            };
-          }
-        : undefined,
-    onValidate:
-      opts?.handleValidationErrors === true
-        ? function onValidate() {
-            return function onValidateEnd({ valid, result, setResult }) {
-              if (valid === false) {
-                setResult(result.map(error => format(error, message, isDev)));
-              }
-            };
-          }
-        : undefined,
     onPluginInit(context) {
       context.registerContextErrorHandler(({ error, setError }) => {
-        if (error instanceof GraphQLError === false && error instanceof Error) {
-          error = new GraphQLError(error.message, undefined, undefined, undefined, undefined, error);
-        }
-        setError(format(error, message, isDev));
+        setError(maskError(error, message));
       });
     },
     onExecute() {
@@ -130,7 +105,7 @@ export const useMaskedErrors = (opts?: UseMaskedErrorsOpts): Plugin => {
           return handleStreamOrSingleExecutionResult(payload, handleResult);
         },
         onSubscribeError({ error, setError }) {
-          setError(format(error, message, isDev));
+          setError(maskError(error, message));
         },
       };
     },

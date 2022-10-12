@@ -47,6 +47,7 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
+    "@envelop/on-resolve": "^1.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

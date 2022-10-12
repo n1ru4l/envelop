@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 import fastify from 'fastify';
 import { getGraphQLParameters, processRequest, renderGraphiQL, sendResult, shouldRenderGraphiQL } from 'graphql-helix';
-import { envelop, useLogger, useSchema, useTiming } from '@envelop/core';
+import { parse, validate, execute, subscribe } from 'graphql';
+import { envelop, useLogger, useSchema } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const sleep = (t = 1000) => new Promise(resolve => setTimeout(resolve, t));
@@ -140,7 +141,11 @@ const graphiQLContent = /* GraphQL */ `
 `;
 
 const getEnveloped = envelop({
-  plugins: [useSchema(schema), useLogger(), useTiming()],
+  parse,
+  validate,
+  execute,
+  subscribe,
+  plugins: [useSchema(schema), useLogger()],
 });
 const app = fastify();
 

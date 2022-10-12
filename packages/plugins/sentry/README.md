@@ -30,13 +30,15 @@ yarn add @sentry/node @sentry/tracing @envelop/sentry
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useSentry } from '@envelop/sentry'
 // do this only once in you entry file.
 import '@sentry/tracing'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useSentry({
       includeRawResult: false, // set to `true` in order to include the execution result in the metadata collected

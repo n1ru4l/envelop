@@ -9,7 +9,8 @@
     "@envelop/core": "*",
     "apollo-server": "3.5.0",
     "apollo-server-core": "3.5.0",
-    "@graphql-tools/schema": "8.5.0"
+    "@graphql-tools/schema": "8.5.0",
+    "graphql": "16.6.0"
   },
   "devDependencies": {
     "@types/node": "15.6.1",

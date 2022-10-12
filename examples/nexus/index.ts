@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 import 'reflect-metadata';
 import fastify from 'fastify';
-import { envelop, useLogger, useSchema, useTiming } from '@envelop/core';
+import { envelop, useLogger, useSchema } from '@envelop/core';
+import { parse, validate, execute, subscribe } from 'graphql';
 import { getGraphQLParameters, processRequest, renderGraphiQL, sendResult, shouldRenderGraphiQL } from 'graphql-helix';
 import { arg, enumType, intArg, interfaceType, makeSchema, objectType, queryType, stringArg, list } from 'nexus';
 
@@ -51,7 +52,11 @@ const schema = makeSchema({
 });
 
 const getEnveloped = envelop({
-  plugins: [useSchema(schema), useLogger(), useTiming()],
+  parse,
+  validate,
+  execute,
+  subscribe,
+  plugins: [useSchema(schema), useLogger()],
 });
 
 const app = fastify();

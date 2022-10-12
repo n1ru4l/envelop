@@ -3,8 +3,8 @@
 Prevent unexpected error messages from leaking to the GraphQL clients.
 
 ```ts
-import { envelop, useSchema, useMaskedErrors, EnvelopError } from '@envelop/core'
-import { makeExecutableSchema } from 'graphql'
+import { envelop, useSchema, useMaskedErrors, useEngine } from '@envelop/core'
+import { makeExecutableSchema, GraphQLError, parse, validate, execute, subscribe } from 'graphql'
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `
@@ -17,13 +17,13 @@ const schema = makeExecutableSchema({
   resolvers: {
     Query: {
       something: () => {
-        throw new EnvelopError('Error that is propagated to the clients.')
+        throw new GraphQLError('Error that is propagated to the clients.')
       },
       somethingElse: () => {
         throw new Error("Unsafe error that will be masked as 'Unexpected Error.'.")
       },
       somethingSpecial: () => {
-        throw new EnvelopError('The error will have an extensions field.', {
+        throw new GraphQLError('The error will have an extensions field.', {
           code: 'ERR_CODE',
           randomNumber: 123
         })
@@ -33,23 +33,34 @@ const schema = makeExecutableSchema({
 })
 
 const getEnveloped = envelop({
-  plugins: [useSchema(schema), useMaskedErrors()]
+  plugins: [useEngine({ parse, validate, execute, subscribe }), useSchema(schema), useMaskedErrors()]
 })
 ```
 
 You may customize the default error message `Unexpected error.` with your own `errorMessage`:
 
 ```ts
+import { envelop, useSchema, useMaskedErrors, useEngine } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+import { schema } from './schema'
+
 const getEnveloped = envelop({
-  plugins: [useSchema(schema), useMaskedErrors({ errorMessage: 'Something went wrong.' })]
+  plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
+    useSchema(schema),
+    useMaskedErrors({ errorMessage: 'Something went wrong.' })
+  ]
 })
 ```
 
 Or provide a custom formatter when masking the output:
 
 ```ts
-export const customFormatError: FormatErrorHandler = err => {
-  if (err.originalError && err.originalError instanceof EnvelopError === false) {
+import { isGraphQLError, MaskError, useEngine } from '@envelop/core'
+import { parse, validate, execute, subscribe, GraphQLError } from 'graphql'
+
+export const customFormatError: MaskError = err => {
+  if (isGraphQLError(err)) {
     return new GraphQLError('Sorry, something went wrong.')
   }
 
@@ -57,6 +68,10 @@ export const customFormatError: FormatErrorHandler = err => {
 }
 
 const getEnveloped = envelop({
-  plugins: [useSchema(schema), useMaskedErrors({ formatError: customFormatError })]
+  plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
+    useSchema(schema),
+    useMaskedErrors({ maskErrorFn: customFormatError })
+  ]
 })
 ```

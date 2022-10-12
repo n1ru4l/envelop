@@ -11,11 +11,13 @@ yarn add @envelop/depth-limit
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useDepthLimit } from '@envelop/depth-limit'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useDepthLimit({
       maxDepth: 10

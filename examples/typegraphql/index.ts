@@ -1,8 +1,9 @@
 /* eslint-disable */
 import 'reflect-metadata';
 import fastify from 'fastify';
-import { envelop, useLogger, useAsyncSchema, useTiming } from '@envelop/core';
-import { Field, ObjectType, buildSchema, ID, Resolver, Query, Arg } from 'type-graphql';
+import { envelop, useLogger, useSchema } from '@envelop/core';
+import { parse, validate, execute, subscribe } from 'graphql';
+import { Field, ObjectType, buildSchemaSync, ID, Resolver, Query, Arg } from 'type-graphql';
 import { getGraphQLParameters, processRequest, renderGraphiQL, sendResult, shouldRenderGraphiQL } from 'graphql-helix';
 
 @ObjectType()
@@ -40,16 +41,18 @@ class RecipeResolver {
   }
 }
 
-// You can also use `buildSchemaSync` and `useSchema` plugin
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
-    useAsyncSchema(
-      buildSchema({
+    useSchema(
+      buildSchemaSync({
         resolvers: [RecipeResolver],
       })
     ),
     useLogger(),
-    useTiming(),
   ],
 });
 

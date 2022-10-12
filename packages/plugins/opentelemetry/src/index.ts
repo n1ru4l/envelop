@@ -1,4 +1,5 @@
 import { Plugin, OnExecuteHookResult, isAsyncIterable } from '@envelop/core';
+import { useOnResolve } from '@envelop/on-resolve';
 import { SpanAttributes, SpanKind } from '@opentelemetry/api';
 import * as opentelemetry from '@opentelemetry/api';
 import { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/tracing';
@@ -45,41 +46,45 @@ export const useOpenTelemetry = (
   const tracer = tracingProvider.getTracer(serviceName);
 
   return {
-    onResolverCalled: options.resolvers
-      ? ({ info, context, args }) => {
-          if (context && typeof context === 'object' && context[tracingSpanSymbol]) {
-            tracer.getActiveSpanProcessor();
-            const ctx = opentelemetry.trace.setSpan(opentelemetry.context.active(), context[tracingSpanSymbol]);
-            const { fieldName, returnType, parentType } = info;
+    onPluginInit({ addPlugin }) {
+      if (options.resolvers) {
+        addPlugin(
+          useOnResolve(({ info, context, args }) => {
+            if (context && typeof context === 'object' && context[tracingSpanSymbol]) {
+              tracer.getActiveSpanProcessor();
+              const ctx = opentelemetry.trace.setSpan(opentelemetry.context.active(), context[tracingSpanSymbol]);
+              const { fieldName, returnType, parentType } = info;
 
-            const resolverSpan = tracer.startSpan(
-              `${parentType.name}.${fieldName}`,
-              {
-                attributes: {
-                  [AttributeName.RESOLVER_FIELD_NAME]: fieldName,
-                  [AttributeName.RESOLVER_TYPE_NAME]: parentType.toString(),
-                  [AttributeName.RESOLVER_RESULT_TYPE]: returnType.toString(),
-                  [AttributeName.RESOLVER_ARGS]: JSON.stringify(args || {}),
+              const resolverSpan = tracer.startSpan(
+                `${parentType.name}.${fieldName}`,
+                {
+                  attributes: {
+                    [AttributeName.RESOLVER_FIELD_NAME]: fieldName,
+                    [AttributeName.RESOLVER_TYPE_NAME]: parentType.toString(),
+                    [AttributeName.RESOLVER_RESULT_TYPE]: returnType.toString(),
+                    [AttributeName.RESOLVER_ARGS]: JSON.stringify(args || {}),
+                  },
                 },
-              },
-              ctx
-            );
+                ctx
+              );
 
-            return ({ result }) => {
-              if (result instanceof Error) {
-                resolverSpan.recordException({
-                  name: AttributeName.RESOLVER_EXCEPTION,
-                  message: JSON.stringify(result),
-                });
-              } else {
-                resolverSpan.end();
-              }
-            };
-          }
+              return ({ result }) => {
+                if (result instanceof Error) {
+                  resolverSpan.recordException({
+                    name: AttributeName.RESOLVER_EXCEPTION,
+                    message: JSON.stringify(result),
+                  });
+                } else {
+                  resolverSpan.end();
+                }
+              };
+            }
 
-          return () => {};
-        }
-      : undefined,
+            return () => {};
+          })
+        );
+      }
+    },
     onExecute({ args, extendContext }) {
       const executionSpan = tracer.startSpan(`${args.operationName || 'Anonymous Operation'}`, {
         kind: spanKind,

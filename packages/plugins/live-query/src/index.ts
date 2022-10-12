@@ -18,15 +18,11 @@ export const GraphQLLiveDirectiveSDL = print(GraphQLLiveDirectiveAST);
 export const useLiveQuery = (opts: UseLiveQueryOptions): Plugin => {
   return {
     onExecute: ({ executeFn, setExecuteFn }) => {
-      const execute = opts.liveQueryStore.makeExecute(executeFn);
+      const execute = opts.liveQueryStore.makeExecute(executeFn as any);
       if (opts.applyLiveQueryPatchGenerator) {
         const { applyLiveQueryPatchGenerator } = opts;
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore execute typings do not include AsyncIterable return right now
         setExecuteFn((...args) => applyLiveQueryPatchGenerator(execute(...args)));
       } else {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore execute typings do not include AsyncIterable return right now
         setExecuteFn(execute);
       }
     },

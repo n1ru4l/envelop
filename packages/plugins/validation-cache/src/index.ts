@@ -59,6 +59,7 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
       }
 
       return ({ result }) => {
+        // @ts-expect-error TODO: not sure how we will make it dev friendly
         resultCache.set(key, result);
       };
     },

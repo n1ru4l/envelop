@@ -1,47 +1,21 @@
-import type {
-  DocumentNode,
-  GraphQLFieldResolver,
-  GraphQLSchema,
-  SubscriptionArgs,
-  ExecutionArgs,
-  GraphQLTypeResolver,
-  subscribe,
-  execute,
-  parse,
-  validate,
-  GraphQLResolveInfo,
-} from 'graphql';
-import type { Maybe } from './utils.js';
-
-/** @private */
-export type PolymorphicExecuteArguments =
-  | [ExecutionArgs]
-  | [
-      GraphQLSchema,
-      DocumentNode,
-      any,
-      any,
-      Maybe<{ [key: string]: any }>,
-      Maybe<string>,
-      Maybe<GraphQLFieldResolver<any, any>>,
-      Maybe<GraphQLTypeResolver<any, any>>
-    ];
+import { ObjMap } from './utils.js';
+export interface ExecutionArgs {
+  schema: any;
+  document: any;
+  rootValue?: any;
+  contextValue?: any;
+  variableValues?: any;
+  operationName?: any;
+  fieldResolver?: any;
+  typeResolver?: any;
+  subscribeFieldResolver?: any;
+}
+declare function parse(source: any, options?: any): any;
+declare function execute(args: ExecutionArgs): any;
+declare function subscribe(args: ExecutionArgs): any;
+declare function validate(schema: any, documentAST: any, rules?: any, options?: any, typeInfo?: any): any;
 
 export type ExecuteFunction = typeof execute;
-
-/** @private */
-export type PolymorphicSubscribeArguments =
-  | [SubscriptionArgs]
-  | [
-      GraphQLSchema,
-      DocumentNode,
-      any?,
-      any?,
-      Maybe<{ [key: string]: any }>?,
-      Maybe<string>?,
-      Maybe<GraphQLFieldResolver<any, any>>?,
-      Maybe<GraphQLFieldResolver<any, any>>?
-    ];
 
 export type SubscribeFunction = typeof subscribe;
 
@@ -70,4 +44,31 @@ export type ValidateFunctionParameter = {
   options?: Parameters<ValidateFunction>[4];
 };
 
-export type Path = GraphQLResolveInfo['path'];
+/** @private */
+export type PolymorphicExecuteArguments =
+  | [ExecutionArgs]
+  | [
+      ExecutionArgs['schema'],
+      ExecutionArgs['document'],
+      ExecutionArgs['rootValue'],
+      ExecutionArgs['contextValue'],
+      ExecutionArgs['variableValues'],
+      ExecutionArgs['operationName'],
+      ExecutionArgs['fieldResolver'],
+      ExecutionArgs['typeResolver']
+    ];
+
+/** @private */
+export type PolymorphicSubscribeArguments = PolymorphicExecuteArguments;
+
+export type Path = {
+  readonly prev: Path | undefined;
+  readonly key: string | number;
+  readonly typename: string | undefined;
+};
+
+export interface ExecutionResult<TData = ObjMap<unknown>, TExtensions = ObjMap<unknown>> {
+  errors?: ReadonlyArray<any>;
+  data?: TData | null;
+  extensions?: TExtensions;
+}

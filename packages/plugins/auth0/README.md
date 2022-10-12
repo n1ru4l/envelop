@@ -14,11 +14,13 @@ We recommend using the [Adding Authentication with Auth0 guide](https://www.enve
 4. Setup Envelop with that plugin:
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useAuth0 } from '@envelop/auth0'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     useAuth0({
       onError: e => {}, // In case of an error, you can override it and customize the error your client will get.

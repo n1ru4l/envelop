@@ -1,10 +1,10 @@
 import {
   Plugin,
-  OnResolverCalledHook,
-  EnvelopError,
   handleStreamOrSingleExecutionResult,
   OnExecuteDoneHookResultOnNextHook,
+  isGraphQLError,
 } from '@envelop/core';
+import { OnResolve, useOnResolve } from '@envelop/on-resolve';
 import * as Sentry from '@sentry/node';
 import type { Span, TraceparentData } from '@sentry/types';
 import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
@@ -80,13 +80,16 @@ export type SentryPluginOptions = {
   skip?: (args: ExecutionArgs) => boolean;
   /**
    * Indicates whether or not to skip Sentry exception reporting for a given error.
-   * By default, this plugin skips all `EnvelopError` errors and does not report it to Sentry.
+   * By default, this plugin skips all `GraphQLError` errors and does not report it to Sentry.
    */
   skipError?: (args: Error) => boolean;
 };
 
 export function defaultSkipError(error: Error): boolean {
-  return error instanceof EnvelopError;
+  if (isGraphQLError(error)) {
+    return isGraphQLError(error.originalError);
+  }
+  return false;
 }
 
 const sentryTracingSymbol = Symbol('sentryTracing');
@@ -126,7 +129,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
     });
   }
 
-  const onResolverCalled: OnResolverCalledHook | undefined = trackResolvers
+  const onResolve: OnResolve | undefined = trackResolvers
     ? ({ args: resolversArgs, info, context }) => {
         const { rootSpan, opName, operationType } = context[sentryTracingSymbol] as SentryTracingContext;
         if (rootSpan) {
@@ -172,13 +175,18 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
     : undefined;
 
   return {
-    onResolverCalled,
+    onPluginInit({ addPlugin }) {
+      if (onResolve) {
+        addPlugin(useOnResolve(onResolve));
+      }
+    },
     onExecute({ args, extendContext }) {
       if (skipOperation(args)) {
         return;
       }
 
       const rootOperation = args.document.definitions.find(
+        // @ts-expect-error TODO: not sure how we will make it dev friendly
         o => o.kind === Kind.OPERATION_DEFINITION
       ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
@@ -247,7 +255,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
         Sentry.configureScope(scope => options.configureScope!(args, scope));
       }
 
-      if (onResolverCalled) {
+      if (onResolve) {
         const sentryContext: SentryTracingContext = {
           rootSpan,
           opName,
@@ -292,7 +300,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
 
                   // Map index values in list to $index for better grouping of events.
                   const errorPathWithIndex = (err.path ?? [])
-                    .map(v => (typeof v === 'number' ? '$index' : v))
+                    .map((v: any) => (typeof v === 'number' ? '$index' : v))
                     .join(' > ');
 
                   const eventId =

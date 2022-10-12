@@ -15,7 +15,8 @@ yarn add @envelop/persisted-operations
 The most basic implementation can use an in-memory JS `Map` wrapper with a `Store` object:
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { usePersistedOperations, InMemoryStore } from '@envelop/persisted-operations'
 
 // You can retrieve the store in any way (e.g. from a remote source) and implement it with a simple Map / Key->Value
@@ -29,6 +30,7 @@ const store = new InMemoryStore({
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     usePersistedOperations({
       store: myStore
@@ -58,6 +60,8 @@ usePersistedOperations({
 ## Usage Example with built-in JsonFileStore
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { usePersistedOperations, JsonFileStore } from '@envelop/persisted-operations'
 
 const persistedOperationsStore = new JsonFilesStore()
@@ -71,6 +75,7 @@ await persistedOperationsStore.loadFromFile(filePath) // load and parse persiste
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     usePersistedOperations({
       store: persistedOperationsStore
@@ -84,8 +89,12 @@ const getEnveloped = envelop({
 The `store` parameter accepts both a `Store` instance, or a function. If you need to support multiple stores (based on incoming GraphQL operation/HTTP request), you can provide a function to toggle between the stores, based on your needs:
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
+
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     // ... other plugins ...
     usePersistedOperations({
       store: context => {

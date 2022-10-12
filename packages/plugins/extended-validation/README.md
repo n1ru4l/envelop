@@ -17,10 +17,13 @@ yarn add @envelop/extended-validation
 Then, use the plugin with your validation rules:
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useExtendedValidation } from '@envelop/extended-validation'
 
-const getEnveloped = evelop({
+const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     useExtendedValidation({
       rules: [
         /* ... your rules here  */
@@ -59,10 +62,13 @@ You can use union inputs either via a the SDL flow, by annotating types and fiel
 First, make sure to add that rule to your plugin usage:
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useExtendedValidation, OneOfInputObjectsRule } from '@envelop/extended-validation'
 
-const getEnveloped = evelop({
+const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, execute, subscribe }),
     useExtendedValidation({
       rules: [OneOfInputObjectsRule]
     })

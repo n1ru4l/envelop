@@ -74,22 +74,11 @@ export const pluginsArr: {
     tags: ['core', 'schema'],
   },
   {
-    identifier: 'use-async-schema',
-    title: 'useAsyncSchema',
+    identifier: 'use-schema-by-context',
+    title: 'useSchemaByContext',
     githubReadme: {
       repo: 'n1ru4l/envelop',
-      path: 'packages/core/docs/use-async-schema.md',
-    },
-    npmPackage: '@envelop/core',
-    icon: envelopIcon,
-    tags: ['core', 'schema'],
-  },
-  {
-    identifier: 'use-lazy-loaded-schema',
-    title: 'useLazyLoadedSchema',
-    githubReadme: {
-      repo: 'n1ru4l/envelop',
-      path: 'packages/core/docs/use-lazy-loaded-schema.md',
+      path: 'packages/core/docs/use-schema-by-context.md',
     },
     npmPackage: '@envelop/core',
     icon: envelopIcon,
@@ -116,6 +105,17 @@ export const pluginsArr: {
     npmPackage: '@envelop/core',
     icon: envelopIcon,
     tags: ['core', 'errors', 'security'],
+  },
+  {
+    identifier: 'use-engine',
+    title: 'useEngine',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/core/docs/use-engine.md',
+    },
+    npmPackage: '@envelop/core',
+    icon: envelopIcon,
+    tags: ['core', 'utilities'],
   },
   {
     identifier: 'use-extend-context',
@@ -160,17 +160,6 @@ export const pluginsArr: {
     npmPackage: '@envelop/core',
     icon: envelopIcon,
     tags: ['core', 'utilities'],
-  },
-  {
-    identifier: 'use-timing',
-    title: 'useTiming',
-    githubReadme: {
-      repo: 'n1ru4l/envelop',
-      path: 'packages/core/docs/use-timing.md',
-    },
-    npmPackage: '@envelop/core',
-    icon: envelopIcon,
-    tags: ['core', 'tracing', 'utilities'],
   },
   {
     identifier: 'use-graphql-jit',

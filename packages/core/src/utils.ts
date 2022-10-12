@@ -1,16 +1,4 @@
 import {
-  ASTNode,
-  DocumentNode,
-  Kind,
-  OperationDefinitionNode,
-  visit,
-  BREAK,
-  Source,
-  ExecutionResult,
-  SubscriptionArgs,
-  ExecutionArgs,
-} from 'graphql';
-import {
   AsyncIterableIteratorOrValue,
   ExecuteFunction,
   PolymorphicExecuteArguments,
@@ -21,38 +9,16 @@ import {
   OnExecuteDoneEventPayload,
   OnExecuteDoneHookResult,
   OnExecuteDoneHookResultOnNextHook,
+  ExecutionArgs,
 } from '@envelop/types';
 
 export const envelopIsIntrospectionSymbol = Symbol('ENVELOP_IS_INTROSPECTION');
 
-export function isOperationDefinition(def: ASTNode): def is OperationDefinitionNode {
-  return def.kind === Kind.OPERATION_DEFINITION;
-}
-
-export function isIntrospectionOperation(operation: OperationDefinitionNode): boolean {
-  return isIntrospectionDocument({
-    kind: Kind.DOCUMENT,
-    definitions: [operation],
-  });
-}
-export function isIntrospectionDocument(document: DocumentNode): boolean {
-  let isIntrospectionOperation = false;
-  visit(document, {
-    Field: node => {
-      if (node.name.value === '__schema' || node.name.value === '__type') {
-        isIntrospectionOperation = true;
-        return BREAK;
-      }
-    },
-  });
-  return isIntrospectionOperation;
-}
-
-export function isIntrospectionOperationString(operation: string | Source): boolean {
+export function isIntrospectionOperationString(operation: string | any): boolean {
   return (typeof operation === 'string' ? operation : operation.body).indexOf('__schema') !== -1;
 }
 
-function getSubscribeArgs(args: PolymorphicSubscribeArguments): SubscriptionArgs {
+function getSubscribeArgs(args: PolymorphicSubscribeArguments): ExecutionArgs {
   return args.length === 1
     ? args[0]
     : {
@@ -70,10 +36,8 @@ function getSubscribeArgs(args: PolymorphicSubscribeArguments): SubscriptionArgs
 /**
  * Utility function for making a subscribe function that handles polymorphic arguments.
  */
-export const makeSubscribe = (
-  subscribeFn: (args: SubscriptionArgs) => PromiseOrValue<AsyncIterableIterator<ExecutionResult>>
-): SubscribeFunction =>
-  ((...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<ExecutionResult>> =>
+export const makeSubscribe = (subscribeFn: (args: ExecutionArgs) => any): SubscribeFunction =>
+  ((...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<any>> =>
     subscribeFn(getSubscribeArgs(polyArgs))) as SubscribeFunction;
 
 export function mapAsyncIterator<T, O>(
@@ -142,9 +106,9 @@ function getExecuteArgs(args: PolymorphicExecuteArguments): ExecutionArgs {
  * Utility function for making a execute function that handles polymorphic arguments.
  */
 export const makeExecute = (
-  executeFn: (args: ExecutionArgs) => PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>>
+  executeFn: (args: ExecutionArgs) => PromiseOrValue<AsyncIterableIteratorOrValue<any>>
 ): ExecuteFunction =>
-  ((...polyArgs: PolymorphicExecuteArguments): PromiseOrValue<AsyncIterableIteratorOrValue<ExecutionResult>> =>
+  ((...polyArgs: PolymorphicExecuteArguments): PromiseOrValue<AsyncIterableIteratorOrValue<any>> =>
     executeFn(getExecuteArgs(polyArgs))) as unknown as ExecuteFunction;
 
 /**

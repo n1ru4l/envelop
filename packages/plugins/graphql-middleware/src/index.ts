@@ -8,7 +8,6 @@ export const useGraphQLMiddleware = <TSource = any, TContext = any, TArgs = any>
 ): Plugin => {
   return {
     onSchemaChange({ schema, replaceSchema }) {
-      // @ts-expect-error See https://github.com/graphql/graphql-js/pull/3511 - remove this comments once merged
       if (schema.extensions?.[graphqlMiddlewareAppliedTransformSymbol]) {
         return;
       }

@@ -51,7 +51,6 @@ describe('execute', () => {
     const teskit = createTestkit([spiedPlugin.plugin], schema);
     await teskit.execute(query, {}, { test: 1 });
     expect(spiedPlugin.spies.beforeExecute).toHaveBeenCalledTimes(1);
-    expect(spiedPlugin.spies.beforeResolver).toHaveBeenCalledTimes(3);
     expect(spiedPlugin.spies.beforeExecute).toHaveBeenCalledWith({
       executeFn: expect.any(Function),
       setExecuteFn: expect.any(Function),
@@ -71,7 +70,6 @@ describe('execute', () => {
       },
     });
 
-    expect(spiedPlugin.spies.afterResolver).toHaveBeenCalledTimes(3);
     expect(spiedPlugin.spies.afterExecute).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.afterExecute).toHaveBeenCalledWith({
       args: expect.any(Object),
@@ -207,67 +205,6 @@ describe('execute', () => {
           ],
         }
       `);
-    });
-  });
-
-  it('Should allow to register to before and after resolver calls', async () => {
-    const afterResolver = jest.fn();
-    const onResolverCalled = jest.fn(() => afterResolver);
-
-    const teskit = createTestkit(
-      [
-        {
-          onResolverCalled,
-        },
-      ],
-      schema
-    );
-
-    await teskit.execute(query);
-    expect(onResolverCalled).toHaveBeenCalledTimes(3);
-    expect(onResolverCalled).toHaveBeenCalledWith({
-      root: {},
-      args: {},
-      context: expect.any(Object),
-      info: expect.objectContaining({
-        fieldName: 'me',
-      }),
-      resolverFn: expect.any(Function),
-      replaceResolverFn: expect.any(Function),
-    });
-    expect(onResolverCalled).toHaveBeenCalledWith({
-      root: { _id: 1, firstName: 'Dotan', lastName: 'Simha' },
-      args: {},
-      context: expect.any(Object),
-      info: expect.objectContaining({
-        fieldName: 'id',
-      }),
-      resolverFn: expect.any(Function),
-      replaceResolverFn: expect.any(Function),
-    });
-    expect(onResolverCalled).toHaveBeenCalledWith({
-      root: { _id: 1, firstName: 'Dotan', lastName: 'Simha' },
-      args: {},
-      context: expect.any(Object),
-      info: expect.objectContaining({
-        fieldName: 'name',
-      }),
-      resolverFn: expect.any(Function),
-      replaceResolverFn: expect.any(Function),
-    });
-
-    expect(afterResolver).toHaveBeenCalledTimes(3);
-    expect(afterResolver).toHaveBeenCalledWith({
-      result: { _id: 1, firstName: 'Dotan', lastName: 'Simha' },
-      setResult: expect.any(Function),
-    });
-    expect(afterResolver).toHaveBeenCalledWith({
-      result: 1,
-      setResult: expect.any(Function),
-    });
-    expect(afterResolver).toHaveBeenCalledWith({
-      result: 'Dotan Simha',
-      setResult: expect.any(Function),
     });
   });
 

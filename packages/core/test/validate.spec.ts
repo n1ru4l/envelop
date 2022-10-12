@@ -108,7 +108,7 @@ describe('validate', () => {
       [
         {
           onValidate: ({ addValidationRule }) => {
-            addValidationRule(context => {
+            addValidationRule((context: any) => {
               context.reportError(new GraphQLError('Invalid!'));
               return {};
             });

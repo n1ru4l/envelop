@@ -11,11 +11,12 @@ yarn add @envelop/disable-introspection
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useDisableIntrospection } from '@envelop/disable-introspection'
 
 const getEnveloped = envelop({
-  plugins: [useDisableIntrospection()]
+  plugins: [useEngine({ parse, validate, execute, subscribe }), useDisableIntrospection()]
 })
 ```
 
