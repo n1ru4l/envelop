@@ -2,4 +2,4 @@
 '@envelop/core': major
 ---
 
-## Remove `isIntrospectionDocument` utility
+Remove `isIntrospectionDocument` utility
