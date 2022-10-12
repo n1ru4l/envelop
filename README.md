@@ -18,6 +18,7 @@ and collaborate on GraphQL-related plugins while filling the missing pieces in G
 - Lightweight
 - Wraps the entire GraphQL pipeline, based on plugins
 - Low-level API for extending the execution layer
+- Agnostic to GraphQL Engine
 - Agnostic to the HTTP layer
 - Agnostic to the schema tools
 - Plugins-based usage
@@ -37,12 +38,13 @@ yarn add graphql @envelop/core
 Then, create a simple Envelop based on your GraphQL schema:
 
 ```ts
-import { envelop, useSchema } from '@envelop/core'
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop, useEngine, useSchema } from '@envelop/core'
 
 const mySchema = buildSchema(/* ... */) // GraphQLSchema
 
 const getEnveloped = envelop({
-  plugins: [useSchema(mySchema)]
+  plugins: [useEngine({ parse, validate, execute, subscribe }), useSchema(mySchema)]
 })
 ```
 
