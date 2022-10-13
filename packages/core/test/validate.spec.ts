@@ -147,4 +147,30 @@ describe('validate', () => {
     expect(r.errors!.length).toBe(1);
     expect(r.errors![0].message).toBe('Invalid!');
   });
+
+  it('Should not replace default rules when adding new ones', async () => {
+    const teskit = createTestkit(
+      [
+        {
+          onValidate: ({ addValidationRule }) => {
+            addValidationRule(
+              () => ({}) // noop
+            );
+          },
+        },
+      ],
+      schema
+    );
+
+    const r = await teskit.execute('{ woah }');
+    assertSingleExecutionValue(r);
+
+    expect(r).toMatchInlineSnapshot(`
+      Object {
+        "errors": Array [
+          [GraphQLError: Cannot query field "woah" on type "Query".],
+        ],
+      }
+    `);
+  });
 });
