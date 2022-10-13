@@ -1,5 +1,13 @@
 # @envelop/testing
 
+## 6.0.0
+
+### Major Changes
+
+- Updated dependencies [[`42f2e5c0`](https://github.com/n1ru4l/envelop/commit/42f2e5c0c0bbbce5fa7ffe077e50591acc0d03fc), [`1da52eef`](https://github.com/n1ru4l/envelop/commit/1da52eefcf198150b77db35733ad2b31018f9419)]:
+  - @envelop/types@3.0.0
+  - @envelop/core@4.0.0
+
 ## 5.0.0
 
 ### Major Changes

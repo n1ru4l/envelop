@@ -1,5 +1,11 @@
 # @envelop/types
 
+## 3.0.0
+
+### Major Changes
+
+- [#1550](https://github.com/n1ru4l/envelop/pull/1550) [`42f2e5c0`](https://github.com/n1ru4l/envelop/commit/42f2e5c0c0bbbce5fa7ffe077e50591acc0d03fc) Thanks [@saihaj](https://github.com/saihaj)! - see https://www.the-guild.dev/graphql/envelop/v3/guides/migrating-from-v2-to-v3
+
 ## 2.4.0
 
 ### Minor Changes

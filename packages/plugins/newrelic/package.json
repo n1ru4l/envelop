@@ -1,6 +1,6 @@
 {
   "name": "@envelop/newrelic",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "author": "Santino Puleio <santinopuleio@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -47,7 +47,7 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "@envelop/on-resolve": "^2.0.0",
+    "@envelop/on-resolve": "^3.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
@@ -57,7 +57,7 @@
     "typescript": "4.7.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^3.0.0",
+    "@envelop/core": "^4.0.0",
     "newrelic": "^7 || ^8.0.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },

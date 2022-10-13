@@ -1,5 +1,12 @@
 # @envelop/graphql-jit
 
+## 6.0.0
+
+### Major Changes
+
+- Updated dependencies [[`1da52eef`](https://github.com/n1ru4l/envelop/commit/1da52eefcf198150b77db35733ad2b31018f9419)]:
+  - @envelop/core@4.0.0
+
 ## 5.0.0
 
 ### Major Changes

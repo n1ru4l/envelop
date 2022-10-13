@@ -1,6 +1,6 @@
 {
   "name": "@envelop/core",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -56,7 +56,7 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "@envelop/types": "2.4.0",
+    "@envelop/types": "3.0.0",
     "tslib": "2.4.0"
   },
   "devDependencies": {
