@@ -7,7 +7,7 @@ const { useGraphQlJit } = require('../packages/plugins/graphql-jit');
 const { useValidationCache } = require('../packages/plugins/validation-cache');
 const { fastify } = require('fastify');
 const faker = require('faker');
-const { parse, validate, specifiedRules, subscribe, execute } = require('graphql');
+const GraphQLJS = require('graphql');
 const { monitorEventLoopDelay } = require('perf_hooks');
 const eventLoopMonitor = monitorEventLoopDelay({ resolution: 20 });
 
@@ -69,39 +69,23 @@ const createSchema = () =>
 
 const envelopsMap = {
   'graphql-js': envelop({
-    plugins: [useEngine({ parse, validate, specifiedRules, execute, subscribe }), useSchema(createSchema())],
+    plugins: [useEngine(GraphQLJS), useSchema(createSchema())],
     enableInternalTracing: true,
   }),
   'envelop-just-cache': envelop({
-    plugins: [
-      useEngine({ parse, validate, specifiedRules, execute, subscribe }),
-      useSchema(createSchema()),
-      useParserCache(),
-      useValidationCache(),
-    ],
+    plugins: [useEngine(GraphQLJS), useSchema(createSchema()), useParserCache(), useValidationCache()],
     enableInternalTracing: true,
   }),
   'envelop-cache-and-no-internal-tracing': envelop({
-    plugins: [
-      useEngine({ parse, validate, specifiedRules, execute, subscribe }),
-      useSchema(createSchema()),
-      useParserCache(),
-      useValidationCache(),
-    ],
+    plugins: [useEngine(GraphQLJS), useSchema(createSchema()), useParserCache(), useValidationCache()],
   }),
   'envelop-cache-jit': envelop({
-    plugins: [
-      useEngine({ parse, validate, specifiedRules, execute, subscribe }),
-      useSchema(createSchema()),
-      useGraphQlJit(),
-      useParserCache(),
-      useValidationCache(),
-    ],
+    plugins: [useEngine(GraphQLJS), useSchema(createSchema()), useGraphQlJit(), useParserCache(), useValidationCache()],
     enableInternalTracing: true,
   }),
   'prom-tracing': envelop({
     plugins: [
-      useEngine({ parse, validate, specifiedRules, execute, subscribe }),
+      useEngine(GraphQLJS),
       useSchema(createSchema()),
       useParserCache(),
       useValidationCache(),
