@@ -9,10 +9,10 @@ We have designed the new `envelop` to be engine agnostic. This means that `graph
 ```diff
 - import { envelop } from '@envelop/core';
 + import { envelop, useEngine } from '@envelop/core';
-+ import { parse, validate, execute, subscribe } from 'graphql';
++ import { parse, validate, specifiedRules, execute, subscribe } from 'graphql';
 
 - const getEnveloped = envelop([ ... ])
-+ const getEnveloped = envelop({ plugins: [ useEngine({ parse, validate, execute, subscribe }), ... ] })
++ const getEnveloped = envelop({ plugins: [ useEngine({ parse, validate, specifiedRules, execute, subscribe }), ... ] })
 ```
 
 ## 2. Removed orchestrator tracing
@@ -88,13 +88,13 @@ You should first load your schema and then create the envelop instance and pass 
 
 ```ts
 import { envelop, useSchema, useEngine } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 
 // This assumes you are using Node v14.8+ where top-level await is supported
 const schema = await loadSchema()
 
 const getEnveloped = envelop({
-  plugins: [useEngine({ parse, validate, execute, subscribe }), useSchema(schema)]
+  plugins: [useEngine({ parse, validate, specifiedRules, execute, subscribe }), useSchema(schema)]
 })
 ```
 
@@ -109,13 +109,13 @@ This utility was used to enable plugins conditionally. For a better developer ex
 ```diff
 - import { envelop, useMaskedErrors, enableIf } from '@envelop/core'
 + import { envelop, useMaskedErrors, useEngine } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules,execute, subscribe } from 'graphql'
 
 const isProd = process.env.NODE_ENV === 'production'
 
 const getEnveloped = envelop({
  plugins: [
-  useEngine({ parse, validate, execute, subscribe }),
+  useEngine({ parse, validate, specifiedRules, execute, subscribe }),
   // This plugin is enabled only in production
 -  enableIf(isProd, useMaskedErrors())
 +  isProd && useMaskedErrors()
@@ -130,7 +130,7 @@ const getEnveloped = envelop({
 
 ```diff
 import { envelop, useMaskedErrors, useEngine, isGraphQLError } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 
 export const customFormatError: MaskError = err => {
   if (isGraphQLError(err)) {
@@ -141,7 +141,7 @@ export const customFormatError: MaskError = err => {
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
 -   useMaskedErrors({ formatError: customFormatError })
 +   useMaskedErrors({ maskError: customFormatError })
   ]

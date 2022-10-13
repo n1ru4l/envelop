@@ -24,7 +24,7 @@ export const useMyPlugin = (): Plugin<{ myContext: string }> => {
 As a user of a plugin, you get type-inference based on the plugins that you use, for example:
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 
 // At this point, the context known to envelop is `{ pluginA: string, pluginB: string }`
@@ -33,6 +33,7 @@ const getEnveloped = envelop({
     useEngine({
       parse,
       validate,
+      specifiedRules,
       execute,
       subscribe
     }),

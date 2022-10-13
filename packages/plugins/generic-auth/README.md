@@ -78,7 +78,7 @@ This mode offers complete protection for the entire API. It protects your entire
 To setup this mode, use the following config:
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useGenericAuth, ResolveUserFn, ValidateUserFn } from '@envelop/generic-auth'
 
@@ -94,7 +94,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useGenericAuth({
       resolveUserFn,
@@ -149,7 +149,7 @@ const GraphQLQueryType = new GraphQLObjectType({
 This mode uses the plugin to inject the authenticated user into the `context`, and later you can verify it in your resolvers.
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useGenericAuth, ResolveUserFn, ValidateUserFn } from '@envelop/generic-auth'
 
@@ -165,7 +165,7 @@ const validateUser: ValidateUserFn<UserType> = async params => {
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useGenericAuth({
       resolveUserFn,
@@ -196,7 +196,7 @@ const resolvers = {
 This mode is similar to option #2, but it uses the `@auth` SDL directive or `auth` field extension for protecting specific GraphQL fields.
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useGenericAuth, ResolveUserFn, ValidateUserFn } from '@envelop/generic-auth'
 
@@ -212,7 +212,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useGenericAuth({
       resolveUserFn,

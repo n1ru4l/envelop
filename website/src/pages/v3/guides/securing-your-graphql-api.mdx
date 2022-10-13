@@ -68,7 +68,7 @@ Instead of allowing any arbitrary GraphQL operation in production usage, we coul
 With the [`usePersistedOperations`](/plugins/use-persisted-operations) plugin such an extracted map can easily be used for allow-listing such operations.
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { usePersistedOperations, PersistedOperationsStore } from '@envelop/persisted-operations'
 import persistedOperations from './codegen-artifact'
@@ -80,7 +80,7 @@ const store: PersistedOperationsStore = {
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     usePersistedOperations({
       store: myStore,
@@ -125,13 +125,13 @@ Learn more about `graphql-inspector audit` [here](https://the-guild.dev/graphql/
 You can limit the amount of allowed tokens per operation and automatically abort any further processing of a GraphQL operation document that exceeds the limit with the `maxTokensPlugin`.
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { maxTokensPlugin } from '@escape.tech/graphql-armor-max-tokens'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     maxTokensPlugin({
       maxTokenCount: 1000 // Number of tokens allowed in a document
@@ -148,13 +148,13 @@ protection.
 The [`maxDepthPlugin`](/plugins/graphql-armor-max-depth) allows a maximum nesting level an operation is allowed to have.
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { maxDepthPlugin } from '@escape.tech/graphql-armor-max-depth'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     maxDepthPlugin({
       n: 10 // Number of depth allowed
@@ -176,13 +176,13 @@ Rate-limiting is a common practice with APIs, and with GraphQL it gets more comp
 The [`useRateLimiter`](/plugins/use-rate-limiter) to limit access to resources, by a field level.
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useRateLimiter } from '@envelop/rate-limiter'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useRateLimiter({
       // ...
@@ -215,13 +215,13 @@ With the `@envelop/auth0` plugin, you can simply bootstrap the authorization pro
 
 ```tsx
 import { envelop, useExtendContext, useSchema, useEngine } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { useAuth0 } from '@envelop/auth0'
 import { schema } from './schema'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     useSchema(schema),
     useAuth0({
       domain: 'YOUR_AUTH0_DOMAIN_HERE',
@@ -273,13 +273,13 @@ With the `useSchemaByContext` plugin it is possible to dynamically select a sche
 Libraries such as [`graphql-public-schema-filter`](https://github.com/n1ru4l/graphql-public-schema-filter) can be used for generating a schema with only access to a sub part of the original schema using either SDL directives or schema field extensions.
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useSchemaByContext, useEngine } from '@envelop/core'
 import { privateSchema, publicSchema } from './schema'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins (e.g. useAuth0)
     useSchemaByContext(context => (context.isPrivateApiUser ? privateSchema : publicSchema))
   ]
@@ -293,14 +293,14 @@ With the `useOperationFieldPermissions` plugin you can automatically reject Grap
 This plugin is perfect for use-cases where you want the whole schema being introspectable, but restrict access to a certain part of the Graph only to specific users. E.g. in a payment subscription model, where API users should only have access to the data that is included within the plan.
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useSchema, useEngine } from '@envelop/core'
 import { useOperationFieldPermissions } from '@envelop/operation-field-permissions'
 import { schema } from './schema'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins (e.g. useAuth0)
     useSchema(schema),
     useOperationFieldPermissions({
@@ -346,7 +346,7 @@ In most GraphQL servers any thrown error or rejected promise will result in the 
 
 ```tsx
 import { envelop, useSchema, useMaskedErrors, EnvelopError, useEngine } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 
 const schema = makeExecutableSchema({
@@ -376,7 +376,7 @@ const schema = makeExecutableSchema({
 })
 
 const getEnveloped = envelop({
-  plugins: [useEngine({ parse, validate, execute, subscribe }), useSchema(schema), useMaskedErrors()]
+  plugins: [useEngine({ parse, validate, specifiedRules, execute, subscribe }), useSchema(schema), useMaskedErrors()]
 })
 ```
 
@@ -388,11 +388,11 @@ If your schema includes sensitive information that you want to hide from the out
 
 ```ts
 import { envelop, useEngine } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { useDisableIntrospection } from '@envelop/disable-introspection'
 
 const getEnveloped = envelop({
-  plugins: [useEngine({ parse, validate, execute, subscribe }), useDisableIntrospection()]
+  plugins: [useEngine({ parse, validate, specifiedRules, execute, subscribe }), useDisableIntrospection()]
 })
 ```
 
@@ -406,11 +406,11 @@ If you disabled schema introspection, you should also disable field suggestions 
 
 ```ts
 import { envelop, useEngine } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { useRateLimiter } from '@envelop/rate-limiter'
 import { blockFieldSuggestions } from '@escape.tech/graphql-armor-block-field-suggestions'
 
 const getEnveloped = envelop({
-  plugins: [useEngine({ parse, validate, execute, subscribe }), blockFieldSuggestions()]
+  plugins: [useEngine({ parse, validate, specifiedRules, execute, subscribe }), blockFieldSuggestions()]
 })
 ```

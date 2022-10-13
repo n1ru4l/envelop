@@ -11,7 +11,7 @@ yarn add @envelop/apollo-datasources
 ## Usage Example
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useApolloDataSources } from '@envelop/apollo-datasources'
 import { RESTDataSource } from 'apollo-datasource-rest'
@@ -37,7 +37,7 @@ class MoviesAPI extends RESTDataSource {
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useApolloDataSources({
       dataSources() {

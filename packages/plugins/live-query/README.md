@@ -27,7 +27,7 @@ yarn add @envelop/live-query @n1ru4l/in-memory-live-query-store
 ### `makeExecutableSchema` from `graphql-tools`
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useSchema, useExtendContext, useEngine } from '@envelop/core'
 import { useLiveQuery } from '@envelop/live-query'
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store'
@@ -61,7 +61,7 @@ setInterval(() => {
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     useSchema(schema),
     useLiveQuery({ liveQueryStore }),
     useExtendContext(() => ({ greetings }))

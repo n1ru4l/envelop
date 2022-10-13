@@ -15,7 +15,7 @@ describe('validate', () => {
         schema: expect.any(GraphQLSchema),
         documentAST: expect.any(Object),
         options: undefined,
-        rules: undefined,
+        rules: expect.any(Array),
         typeInfo: undefined,
       },
       addValidationRule: expect.any(Function),
@@ -51,7 +51,7 @@ describe('validate', () => {
     expect(replacementFn).toHaveBeenCalledWith(
       expect.any(GraphQLSchema),
       expect.any(Object),
-      undefined,
+      expect.any(Array),
       undefined,
       undefined
     );

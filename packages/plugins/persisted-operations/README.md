@@ -15,7 +15,7 @@ yarn add @envelop/persisted-operations
 The most basic implementation can use an in-memory JS `Map` wrapper with a `Store` object:
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { usePersistedOperations, InMemoryStore } from '@envelop/persisted-operations'
 
@@ -30,7 +30,7 @@ const store = new InMemoryStore({
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     usePersistedOperations({
       store: myStore
@@ -60,7 +60,7 @@ usePersistedOperations({
 ## Usage Example with built-in JsonFileStore
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { usePersistedOperations, JsonFileStore } from '@envelop/persisted-operations'
 
@@ -75,7 +75,7 @@ await persistedOperationsStore.loadFromFile(filePath) // load and parse persiste
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     usePersistedOperations({
       store: persistedOperationsStore
@@ -89,12 +89,12 @@ const getEnveloped = envelop({
 The `store` parameter accepts both a `Store` instance, or a function. If you need to support multiple stores (based on incoming GraphQL operation/HTTP request), you can provide a function to toggle between the stores, based on your needs:
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     usePersistedOperations({
       store: context => {
@@ -120,7 +120,7 @@ You can pass `onlyPersisted: true` when you want to allow persisted operations o
 
 ### onMissingMatch
 
-You might want to perform some actions, such as logging custom events, when your operation Id is not matched in your store/s; in this case you can use the `onMissingMatch` callback function.  
+You might want to perform some actions, such as logging custom events, when your operation Id is not matched in your store/s; in this case you can use the `onMissingMatch` callback function.
 The function receives the context and operationId as arguments, so you can use it like so:
 
 ```js

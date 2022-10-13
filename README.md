@@ -38,13 +38,13 @@ yarn add graphql @envelop/core
 Then, create a simple Envelop based on your GraphQL schema:
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine, useSchema } from '@envelop/core'
 
 const mySchema = buildSchema(/* ... */) // GraphQLSchema
 
 const getEnveloped = envelop({
-  plugins: [useEngine({ parse, validate, execute, subscribe }), useSchema(mySchema)]
+  plugins: [useEngine({ parse, validate, specifiedRules, execute, subscribe }), useSchema(mySchema)]
 })
 ```
 

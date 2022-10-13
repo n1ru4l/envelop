@@ -7,7 +7,7 @@ const { useGraphQlJit } = require('../packages/plugins/graphql-jit');
 const { useValidationCache } = require('../packages/plugins/validation-cache');
 const { fastify } = require('fastify');
 const faker = require('faker');
-const { parse, validate, subscribe, execute } = require('graphql');
+const { parse, validate, specifiedRules, subscribe, execute } = require('graphql');
 const { monitorEventLoopDelay } = require('perf_hooks');
 const eventLoopMonitor = monitorEventLoopDelay({ resolution: 20 });
 
@@ -69,12 +69,12 @@ const createSchema = () =>
 
 const envelopsMap = {
   'graphql-js': envelop({
-    plugins: [useEngine({ parse, validate, execute, subscribe }), useSchema(createSchema())],
+    plugins: [useEngine({ parse, validate, specifiedRules, execute, subscribe }), useSchema(createSchema())],
     enableInternalTracing: true,
   }),
   'envelop-just-cache': envelop({
     plugins: [
-      useEngine({ parse, validate, execute, subscribe }),
+      useEngine({ parse, validate, specifiedRules, execute, subscribe }),
       useSchema(createSchema()),
       useParserCache(),
       useValidationCache(),
@@ -83,7 +83,7 @@ const envelopsMap = {
   }),
   'envelop-cache-and-no-internal-tracing': envelop({
     plugins: [
-      useEngine({ parse, validate, execute, subscribe }),
+      useEngine({ parse, validate, specifiedRules, execute, subscribe }),
       useSchema(createSchema()),
       useParserCache(),
       useValidationCache(),
@@ -91,7 +91,7 @@ const envelopsMap = {
   }),
   'envelop-cache-jit': envelop({
     plugins: [
-      useEngine({ parse, validate, execute, subscribe }),
+      useEngine({ parse, validate, specifiedRules, execute, subscribe }),
       useSchema(createSchema()),
       useGraphQlJit(),
       useParserCache(),
@@ -101,7 +101,7 @@ const envelopsMap = {
   }),
   'prom-tracing': envelop({
     plugins: [
-      useEngine({ parse, validate, execute, subscribe }),
+      useEngine({ parse, validate, specifiedRules, execute, subscribe }),
       useSchema(createSchema()),
       useParserCache(),
       useValidationCache(),

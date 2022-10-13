@@ -227,9 +227,6 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
             validateFn,
             addValidationRule: rule => {
               if (!actualRules) {
-                // Ideally we should provide default validation rules here.
-                // eslint-disable-next-line no-console
-                console.warn('No default validation rules provided.');
                 actualRules = [];
               }
 

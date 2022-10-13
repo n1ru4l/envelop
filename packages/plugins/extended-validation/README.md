@@ -17,7 +17,7 @@ yarn add @envelop/extended-validation
 Then, use the plugin with your validation rules:
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useExtendedValidation } from '@envelop/extended-validation'
 
