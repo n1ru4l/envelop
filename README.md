@@ -38,13 +38,13 @@ yarn add graphql @envelop/core
 Then, create a simple Envelop based on your GraphQL schema:
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import * as GraphQLJS from 'graphql'
 import { envelop, useEngine, useSchema } from '@envelop/core'
 
 const mySchema = buildSchema(/* ... */) // GraphQLSchema
 
 const getEnveloped = envelop({
-  plugins: [useEngine({ parse, validate, specifiedRules, execute, subscribe }), useSchema(mySchema)]
+  plugins: [useEngine(GraphQLJS), useSchema(mySchema)]
 })
 ```
 
@@ -89,7 +89,7 @@ Here's a simple example for collecting metrics and log all incoming requests, us
 
 ```ts
 const getEnveloped = envelop({
-  plugins: [useSchema(schema), useLogger(), useTiming()]
+  plugins: [useEngine(GraphQLJS), useSchema(schema), useLogger(), useTiming()]
 })
 ```
 
