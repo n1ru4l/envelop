@@ -12,7 +12,7 @@ yarn add @envelop/apollo-federation
 
 ```ts
 import { envelop, useEngine } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { ApolloGateway } from '@apollo/gateway'
 import { useApolloFederation } from '@envelop/apollo-federation'
 
@@ -31,7 +31,7 @@ await gateway.load()
 // Then pass it to the plugin configuration
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useApolloFederation({ gateway })
   ]

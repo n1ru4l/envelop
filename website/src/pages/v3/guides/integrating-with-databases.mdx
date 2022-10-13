@@ -40,7 +40,7 @@ The better way to avoid this is to open only one client per request. With Envelo
 a plugin that adds a client to the context add releases it at the end of the request execution.
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { isAsyncIterable, useEngine } from '@envelop/core'
 import { useSchema } from './use-schema'
 
@@ -68,7 +68,11 @@ const resolvers = {
 }
 
 const getEnvelop = envelop({
-  plugins: [useEngine({ parse, validate, execute, subscribe }), useSchema(/*...*/), databaseClientPlugin]
+  plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
+    useSchema(/*...*/),
+    databaseClientPlugin
+  ]
 })
 ```
 

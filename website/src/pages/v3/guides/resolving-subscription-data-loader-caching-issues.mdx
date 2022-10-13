@@ -45,14 +45,14 @@ const GraphQLSubscriptionType = new GraphQLObjectType({
 As your project scales this, however, can become a tedious task. With the `useContextValuePerExecuteSubscriptionEvent` plugin we abstracted this away by having a generic solution for extending the original context with a new part before the subscription event is being executed.
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useContextValuePerExecuteSubscriptionEvent } from '@envelop/execute-subscription-event'
 import { createContext, createDataLoaders } from './context'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useContext(() => createContext()),
     useContextValuePerExecuteSubscriptionEvent(() => ({

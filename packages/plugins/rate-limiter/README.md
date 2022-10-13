@@ -11,7 +11,7 @@ yarn add @envelop/rate-limiter
 ## Usage Example
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useRateLimiter, IdentifyFn } from '@envelop/rate-limiter'
 
@@ -21,7 +21,7 @@ const identifyFn: IdentifyFn = async context => {
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useRateLimiter({
       identifyFn

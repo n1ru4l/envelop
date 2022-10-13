@@ -12,13 +12,13 @@ This plugin is the simplest plugin for specifying your GraphQL schema. You can s
 
 ```ts
 import { envelop, useSchema, useEngine } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 
 const mySchema = buildSchema(/* ... */)
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     useSchema(mySchema)
     // ... other plugins
   ]
@@ -31,11 +31,11 @@ This plugin invokes a custom function every time execution encounters an error.
 
 ```ts
 import { envelop, useErrorHandler, useEngine } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     useErrorHandler(error => {
       // This callback is called per each GraphQLError emitted during the execution phase
     })
@@ -55,11 +55,11 @@ Easily extends the context with custom fields.
 
 ```ts
 import { envelop, useExtendContext, useEngine } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     useExtendContext(async contextSoFar => {
       return {
         myCustomField: {
@@ -78,11 +78,11 @@ Logs parameters and information about the execution phases. You can easily plug 
 
 ```ts
 import { envelop, useLogger, useEngine } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     useLogger({
       logFn(eventName, args) {
         // Event could be `execute-start` / `execute-end` / `subscribe-start` / `subscribe-end`
@@ -102,11 +102,11 @@ The second argument `executionArgs` provides additional information for your for
 
 ```ts
 import { envelop, usePayloadFormatter, useEngine } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     usePayloadFormatter((result, executionArgs) => {
       // Return a modified result here,
       // Or `false`y value to keep it as-is.
@@ -122,7 +122,7 @@ This plugin can be used to customize the GraphQL Engine.
 
 ```ts
 import { envelop, useEngine } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { parser } from 'my-custom-graphql-parser'
 
 const getEnveloped = envelop({
@@ -130,6 +130,7 @@ const getEnveloped = envelop({
     useEngine({
       parse,
       validate,
+      specifiedRules,
       execute,
       subscribe
     })

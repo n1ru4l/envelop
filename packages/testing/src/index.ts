@@ -9,13 +9,14 @@ import {
   parse,
   subscribe,
   validate,
+  specifiedRules,
 } from 'graphql';
 import { useSchema, envelop, isAsyncIterable, useEngine } from '@envelop/core';
 import { GetEnvelopedFn, Plugin } from '@envelop/types';
 import { mapSchema as cloneSchema, isDocumentNode } from '@graphql-tools/utils';
 
 export const useGraphQLJSEngine = () => {
-  return useEngine({ parse, validate, execute, subscribe });
+  return useEngine({ parse, validate, specifiedRules, execute, subscribe });
 };
 
 export type ModifyPluginsFn = (plugins: Plugin<any>[]) => Plugin<any>[];

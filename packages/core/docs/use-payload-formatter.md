@@ -10,7 +10,7 @@ import { parse, validate, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     usePayloadFormatter((result, executionArgs) => {
       // Return a modified result here,
       // Or `false`y value to keep it as-is.

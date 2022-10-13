@@ -4,6 +4,7 @@ type UseEngineOptions = {
   execute?: ExecuteFunction;
   parse?: ParseFunction;
   validate?: ValidateFunction;
+  specifiedRules?: readonly any[];
   subscribe?: SubscribeFunction;
 };
 
@@ -19,10 +20,11 @@ export const useEngine = (engine: UseEngineOptions): Plugin => {
         setParseFn(engine.parse);
       }
     },
-    onValidate: ({ setValidationFn }) => {
+    onValidate: ({ setValidationFn, addValidationRule }) => {
       if (engine.validate) {
         setValidationFn(engine.validate);
       }
+      engine.specifiedRules?.map(addValidationRule);
     },
     onSubscribe: ({ setSubscribeFn }) => {
       if (engine.subscribe) {

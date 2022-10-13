@@ -4,7 +4,7 @@ This plugin is the simplest plugin for specifying your GraphQL schema. You can s
 
 ```ts
 import { envelop, useSchemaByContext, useEngine } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 
 async function getSchema({ req }): GraphQLSchema {
   if (req.isAdmin) {
@@ -16,7 +16,7 @@ async function getSchema({ req }): GraphQLSchema {
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     useSchemaByContext(getSchema)
     // ... other plugins ...
   ]

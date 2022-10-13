@@ -8,7 +8,7 @@ This allows writing shareable pieces that can be used.
 Here's a small example for sharing envelops:
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEnvelop, useSchema, useEngine } from '@envelop/core'
 
 // Somewhere where you wish to create the basics of what you wish to share
@@ -24,6 +24,7 @@ const myEnvelop = envelop({
     useEngine({
       parse,
       validate,
+      specifiedRules,
       execute,
       subscribe
     }),

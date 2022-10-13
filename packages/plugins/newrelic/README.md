@@ -1,6 +1,6 @@
 ## `@envelop/newrelic`
 
-Instrument your GraphQL application with New Relic reporting.  
+Instrument your GraphQL application with New Relic reporting.
 Take advantage of Distributed tracing to monitor performance and errors whilst ultimately getting to the root cause of issues.
 
 Below are some screenshots to show how tracking looks like in New Relic, in these examples all plugin options were set to `true`.
@@ -31,13 +31,13 @@ yarn add newrelic @envelop/newrelic
 ## Basic usage Example
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useNewRelic } from '@envelop/newrelic'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useNewRelic({
       includeOperationDocument: true, // default `false`. When set to `true`, includes the GraphQL document defining the operations and fragments
@@ -59,10 +59,10 @@ const getEnveloped = envelop({
 
 ## Advanced usage
 
-The plugin allows you to keep control over the variables and arguments that are tracked in New Relic.  
+The plugin allows you to keep control over the variables and arguments that are tracked in New Relic.
 In addition to the basic `true/false` boolean value, `includeExecuteVariables` and `includeResolverArgs` also accept a RegEx pattern. This allows you to implement white and black listing of properties to be tracked in New Relic.
 
-This is particularly useful if you have properties coming through variables and arguments that are useful for debugging, but you don't want to leak users' data (such as PII).  
+This is particularly useful if you have properties coming through variables and arguments that are useful for debugging, but you don't want to leak users' data (such as PII).
 Below is a quick example of how you can use RegEx to set up white/black listing functionalities.
 
 ```ts
@@ -88,7 +88,7 @@ The main methods to configure the New Relic Agent is through:
 
 If you choose to use the newrelic.js file, then you need this file located in the root of your application. You can look [here](https://github.com/newrelic/node-newrelic/blob/main/newrelic.js) for a basic example of what this file can look like.
 
-If you choose to configure the New Relic Agent through environment variables, then you can follow your preferred strategy to make sure the variables are set and available when your application starts.  
+If you choose to configure the New Relic Agent through environment variables, then you can follow your preferred strategy to make sure the variables are set and available when your application starts.
 The variables are the same you can set in newrelic.js file, you just need to know that they need to start with `NEW_RELIC_`, obviously, the variables name must be fully uppercase.
 
 The two variables that are always required are:

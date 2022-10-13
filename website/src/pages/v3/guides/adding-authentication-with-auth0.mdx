@@ -21,13 +21,13 @@ We start by installing the package into our envelop setup with your favorite Pac
 ```ts
 import { engine, useSchema, useEngine } from '@envelop/core'
 import { useAuth0 } from '@envelop/auth0'
-import { parse, execute, subcribe, validate } from 'graphql'
+import { parse, execute, subcribe, validate, specifiedRules } from 'graphql'
 
 // ... other imports and code
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     useSchema(schema),
     useAuth0({
       domain: 'TODO',
@@ -85,14 +85,14 @@ Let's quickly add this information to our envelop setup.
 
 ```ts
 import { envelop, useEngine, useSchema } from '@envelop/core'
-import { parse, execute, subcribe, validate } from 'graphql'
+import { parse, execute, subcribe, validate, specifiedRules } from 'graphql'
 import { useAuth0 } from '@envelop/auth0'
 
 // ... other imports and code
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     useSchema(schema),
     useAuth0({
       domain: '{account_name}.{region}.auth0.com',
@@ -270,13 +270,13 @@ In the GraphQL schema of this guide, we only re-expose the auth0 authentication 
 A full user object could be loaded when building the context via the [`useExtendContext` plugin](/plugins/use-extend-context).
 
 ```ts
-import { parse, execute, subcribe, validate } from 'graphql'
+import { parse, execute, subcribe, validate, specifiedRules } from 'graphql'
 import { envelop, useEngine, useSchema, useExtendContext } from '@envelop/core'
 import { useAuth0 } from '@envelop/auth0'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     useSchema(schema),
     useAuth0(auth0Config),
     useExtendContext(async context => {

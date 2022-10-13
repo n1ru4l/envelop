@@ -35,11 +35,11 @@ In most cases, you'll pass the incoming HTTP request (or, just the relevant part
 
 ```ts
 import { envelop, useEngine } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
   plugins: [
-    useEngine({ parse, validate, execute, subscribe })
+    useEngine({ parse, validate, specifiedRules, execute, subscribe })
     /* ... plugins ... */
   ]
 })
