@@ -25,7 +25,7 @@ export const useEngine = (engine: UseEngineOptions): Plugin => {
         setValidationFn(engine.validate);
       }
       if (engine.specifiedRules?.length) {
-        engine.specifiedRules.map(rule => addValidationRule(rule));
+        engine.specifiedRules.map(addValidationRule);
       }
     },
     onSubscribe: ({ setSubscribeFn }) => {
