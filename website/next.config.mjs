@@ -18,6 +18,7 @@ export default withGuildDocs({
       '/docs/plugins/introduction': '/docs/plugins',
       '/plugins/use-async-schema': '/docs/guides/migrating-from-v2-to-v3#3-remove-useasyncschema-plugin',
       '/plugins/use-timing': '/docs/guides/migrating-from-v2-to-v3#2-drop-usetiming-plugin',
+      '/docs/guides/migrating-from-v2-to-v3': '/v3/guides/migrating-from-v2-to-v3',
       '/plugins/use-lazy-loaded-schema':
         '/docs/guides/migrating-from-v2-to-v3#4-rename-uselazyloadedschema-to-useschemabycontext',
     }).map(([from, to]) => ({
