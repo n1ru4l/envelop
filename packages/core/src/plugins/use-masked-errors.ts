@@ -81,7 +81,9 @@ const makeHandleResult =
     }
   };
 
-export const useMaskedErrors = (opts?: UseMaskedErrorsOpts): Plugin => {
+export function useMaskedErrors<PluginContext extends Record<string, any> = {}>(
+  opts?: UseMaskedErrorsOpts
+): Plugin<PluginContext> {
   const maskError = opts?.maskError ?? defaultMaskError;
   const message = opts?.errorMessage || DEFAULT_ERROR_MESSAGE;
   const handleResult = makeHandleResult(maskError, message);
@@ -110,4 +112,4 @@ export const useMaskedErrors = (opts?: UseMaskedErrorsOpts): Plugin => {
       };
     },
   };
-};
+}
