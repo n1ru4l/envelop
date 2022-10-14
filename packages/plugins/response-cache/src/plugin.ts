@@ -34,7 +34,7 @@ export type GetDocumentStringFunction = (executionArgs: ExecutionArgs) => string
 
 export type ShouldCacheResultFunction = (params: { result: ExecutionResult }) => Boolean;
 
-export type UseResponseCacheParameter<C = any> = {
+export type UseResponseCacheParameter<PluginContext extends Record<string, any> = {}> = {
   cache?: Cache;
   /**
    * Maximum age in ms. Defaults to `Infinity`. Set it to 0 for disabling the global TTL.
@@ -76,12 +76,12 @@ export type UseResponseCacheParameter<C = any> = {
    * });
    * ```
    */
-  session(context: C): string | undefined | null;
+  session(context: PluginContext): string | undefined | null;
   /**
    * Specify whether the cache should be used based on the context.
    * By default any request uses the cache.
    */
-  enabled?(context: C): boolean;
+  enabled?(context: PluginContext): boolean;
   /**
    * Skip caching of following the types.
    */
@@ -154,7 +154,7 @@ export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boo
   return true;
 };
 
-export function useResponseCache({
+export function useResponseCache<PluginContext extends Record<string, any> = {}>({
   cache = createInMemoryCache(),
   ttl: globalTtl = Infinity,
   session,
@@ -169,7 +169,7 @@ export function useResponseCache({
   shouldCacheResult = defaultShouldCacheResult,
   // eslint-disable-next-line dot-notation
   includeExtensionMetadata = typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false,
-}: UseResponseCacheParameter): Plugin {
+}: UseResponseCacheParameter<PluginContext>): Plugin<PluginContext> {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
 
   // never cache Introspections
