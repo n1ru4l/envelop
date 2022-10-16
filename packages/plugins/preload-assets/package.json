@@ -1,6 +1,6 @@
 {
   "name": "@envelop/preload-assets",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -54,7 +54,7 @@
     "typescript": "4.7.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^3.0.1"
+    "@envelop/core": "^3.0.2"
   },
   "buildOptions": {
     "input": "./src/index.ts"
