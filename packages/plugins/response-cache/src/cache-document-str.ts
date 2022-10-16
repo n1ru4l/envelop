@@ -3,7 +3,7 @@ import { Plugin } from '@envelop/core';
 
 const documentStringByDocument = new WeakMap<DocumentNode, string>();
 
-export function useCacheDocumentString(): Plugin {
+export function useCacheDocumentString<PluginContext extends Record<string, any> = {}>(): Plugin<PluginContext> {
   return {
     onParse({ params: { source } }) {
       return function onParseEnd({ result }) {
