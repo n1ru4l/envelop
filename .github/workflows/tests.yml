@@ -79,7 +79,7 @@ jobs:
       matrix:
         os: [ubuntu-latest] # remove windows to speed up the tests
         node-version: [14, 16, 17, 18]
-        graphql_version: [15, 16, 'npm:@graphql-tools/graphql@0.1.0-alpha-20220815193214-83898018']
+        graphql_version: [15, 16, 'npm:@graphql-tools/graphql@0.0.1']
     steps:
       - name: Checkout Master
         uses: actions/checkout@v2
