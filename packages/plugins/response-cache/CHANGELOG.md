@@ -1,5 +1,14 @@
 # @envelop/response-cache
 
+## 4.0.2
+
+### Patch Changes
+
+- [#1560](https://github.com/n1ru4l/envelop/pull/1560) [`22f5ccfb`](https://github.com/n1ru4l/envelop/commit/22f5ccfbe69eb052cda6c1908425b63e3d906243) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Plugins with context generic for correct inheritance
+
+- Updated dependencies [[`22f5ccfb`](https://github.com/n1ru4l/envelop/commit/22f5ccfbe69eb052cda6c1908425b63e3d906243)]:
+  - @envelop/core@3.0.2
+
 ## 4.0.0
 
 ### Major Changes
