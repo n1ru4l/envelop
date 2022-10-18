@@ -1,4 +1,6 @@
-import { EnvelopLogo, defineConfig } from '@theguild/components';
+/* eslint sort-keys: error */
+import { defineConfig, EnvelopLogo, Giscus, useTheme } from '@theguild/components';
+import { useRouter } from 'next/router';
 
 const SITE_NAME = 'GraphQL Envelop';
 
@@ -18,6 +20,28 @@ export default defineConfig({
       <h1 className="md:text-md text-sm font-medium">{SITE_NAME}</h1>
     </>
   ),
+  main: {
+    extraContent() {
+      const { resolvedTheme } = useTheme();
+      const { route } = useRouter();
+
+      if (route === '/') {
+        return null;
+      }
+      return (
+        <Giscus
+          // ensure giscus is reloaded when client side route is changed
+          key={route}
+          repo="n1ru4l/envelop"
+          repoId="MDEwOlJlcG9zaXRvcnkzMzk2NzQ1NjU="
+          category="Docs Discussions"
+          categoryId="DIC_kwDOFD8Fxc4CSDSX"
+          mapping="pathname"
+          theme={resolvedTheme}
+        />
+      );
+    },
+  },
 });
 
 // const defaultSeo: AppSeoProps = {
