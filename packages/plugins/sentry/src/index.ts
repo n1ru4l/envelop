@@ -184,7 +184,15 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
     },
     onExecute({ args, extendContext }) {
       if (skipOperation(args)) {
-        extendContext({ [sentryTracingSymbol]: { skip: true } });
+        extendContext({
+          [sentryTracingSymbol]: {
+            // We don't care about any of these values if skip: true
+            rootSpan: undefined,
+            opName: "",
+            operationType: "",
+            skip: true
+          }
+        });
         return;
       }
 
