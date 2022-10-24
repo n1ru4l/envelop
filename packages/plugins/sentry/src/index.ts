@@ -98,6 +98,7 @@ type SentryTracingContext = {
   rootSpan: Span | undefined;
   opName: string;
   operationType: string;
+  skip: boolean;
 };
 
 export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
@@ -131,7 +132,8 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
 
   const onResolve: OnResolve | undefined = trackResolvers
     ? ({ args: resolversArgs, info, context }) => {
-        const { rootSpan, opName, operationType } = context[sentryTracingSymbol] as SentryTracingContext;
+        const { rootSpan, opName, operationType, skip } = context[sentryTracingSymbol] as SentryTracingContext;
+        if (skip) return;
         if (rootSpan) {
           const { fieldName, returnType, parentType } = info;
           const parent = rootSpan;
@@ -182,6 +184,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
     },
     onExecute({ args, extendContext }) {
       if (skipOperation(args)) {
+        extendContext({ [sentryTracingSymbol]: { skip: true } });
         return;
       }
 
@@ -260,6 +263,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
           rootSpan,
           opName,
           operationType,
+          skip: false
         };
         extendContext({ [sentryTracingSymbol]: sentryContext });
       }
