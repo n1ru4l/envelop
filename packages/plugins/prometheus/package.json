@@ -1,6 +1,6 @@
 {
   "name": "@envelop/prometheus",
-  "version": "7.0.2",
+  "version": "7.0.3",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "repository": {
@@ -47,7 +47,7 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "@envelop/on-resolve": "^2.0.2",
+    "@envelop/on-resolve": "^2.0.3",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
@@ -57,7 +57,7 @@
     "typescript": "4.7.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^3.0.2",
+    "@envelop/core": "^3.0.3",
     "prom-client": "^13 || ^14.0.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },

@@ -1,5 +1,16 @@
 # @envelop/sentry
 
+## 4.0.3
+
+### Patch Changes
+
+- [#1571](https://github.com/n1ru4l/envelop/pull/1571) [`6b48ef96`](https://github.com/n1ru4l/envelop/commit/6b48ef962020eb7dfd2918626b8a394bff673e4f) Thanks [@ardatan](https://github.com/ardatan)! - Deeply check if it is an original GraphQL Error
+
+- Updated dependencies [[`6b48ef96`](https://github.com/n1ru4l/envelop/commit/6b48ef962020eb7dfd2918626b8a394bff673e4f)]:
+  - @envelop/core@3.0.3
+- Updated dependencies []:
+  - @envelop/on-resolve@2.0.3
+
 ## 4.0.2
 
 ### Patch Changes

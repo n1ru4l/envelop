@@ -1,5 +1,11 @@
 # @envelop/core
 
+## 3.0.3
+
+### Patch Changes
+
+- [#1571](https://github.com/n1ru4l/envelop/pull/1571) [`6b48ef96`](https://github.com/n1ru4l/envelop/commit/6b48ef962020eb7dfd2918626b8a394bff673e4f) Thanks [@ardatan](https://github.com/ardatan)! - Deeply check if it is an original GraphQL Error
+
 ## 3.0.2
 
 ### Patch Changes
