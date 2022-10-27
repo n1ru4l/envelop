@@ -15,6 +15,16 @@ export function isGraphQLError(error: unknown): error is Error & { originalError
   return error instanceof Error && error.name === 'GraphQLError';
 }
 
+export function isOriginalGraphQLError(error: unknown): error is Error & { originalError?: Error } {
+  if (isGraphQLError(error)) {
+    if (error.originalError != null) {
+      return isOriginalGraphQLError(error.originalError);
+    }
+    return true;
+  }
+  return false;
+}
+
 function createSerializableGraphQLError(
   message: string,
   originalError: unknown,
@@ -50,13 +60,7 @@ function createSerializableGraphQLError(
 export const createDefaultMaskError =
   (isDev: boolean): MaskError =>
   (error, message) => {
-    if (isGraphQLError(error)) {
-      if (error?.originalError) {
-        if (isGraphQLError(error.originalError)) {
-          return error;
-        }
-        return createSerializableGraphQLError(message, error, isDev);
-      }
+    if (isOriginalGraphQLError(error)) {
       return error;
     }
     return createSerializableGraphQLError(message, error, isDev);

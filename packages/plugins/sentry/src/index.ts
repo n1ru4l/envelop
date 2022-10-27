@@ -3,6 +3,7 @@ import {
   handleStreamOrSingleExecutionResult,
   OnExecuteDoneHookResultOnNextHook,
   isGraphQLError,
+  isOriginalGraphQLError,
 } from '@envelop/core';
 import { OnResolve, useOnResolve } from '@envelop/on-resolve';
 import * as Sentry from '@sentry/node';
@@ -85,12 +86,7 @@ export type SentryPluginOptions = {
   skipError?: (args: Error) => boolean;
 };
 
-export function defaultSkipError(error: Error): boolean {
-  if (isGraphQLError(error)) {
-    return isGraphQLError(error.originalError);
-  }
-  return false;
-}
+export const defaultSkipError = isOriginalGraphQLError;
 
 const sentryTracingSymbol = Symbol('sentryTracing');
 
