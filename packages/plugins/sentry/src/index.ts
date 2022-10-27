@@ -86,10 +86,7 @@ export type SentryPluginOptions = {
 };
 
 export function defaultSkipError(error: Error): boolean {
-  if (isGraphQLError(error)) {
-    return isGraphQLError(error.originalError);
-  }
-  return false;
+  return isGraphQLError(error);
 }
 
 const sentryTracingSymbol = Symbol('sentryTracing');
