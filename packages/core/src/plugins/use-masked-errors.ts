@@ -18,7 +18,7 @@ export function isGraphQLError(error: unknown): error is Error & { originalError
 export function isOriginalGraphQLError(error: unknown): error is Error & { originalError?: Error } {
   if (isGraphQLError(error)) {
     if (error.originalError != null) {
-      return isGraphQLError(error.originalError);
+      return isOriginalGraphQLError(error.originalError);
     }
     return true;
   }
