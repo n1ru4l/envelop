@@ -136,7 +136,7 @@ export const ResourceLimitationValidationRule =
                     // eslint-disable-next-line dot-notation
                     nodeCost = argumentValues['first'] as number;
                   }
-                } else if ('last' in argumentValues === true && 'false' in argumentValues === false) {
+                } else if ('last' in argumentValues === true && 'first' in argumentValues === false) {
                   if (
                     argumentValues.last < paginationArgumentMinimum ||
                     argumentValues.last > paginationArgumentMaximum
