@@ -4,6 +4,8 @@ This plugin allow you to enforce execution of persisted (hashed) operation, usin
 
 The idea behind running persisted operations is to allow clients to run only specific queries, that defined ahead of time. This provides an enhances security and disables (optionally) the execution of other operations. This plugin is useful if you are looking for a way to improve security and reduce network traffic.
 
+**Note:** If you are using **GraphQL Yoga**, please use the [dedicated Persisted Operations plugin](https://the-guild.dev/graphql/yoga-server/v3/features/persisted-operations) instead.
+
 ## Getting Started
 
 ```
