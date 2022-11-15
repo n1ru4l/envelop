@@ -1,5 +1,11 @@
 # @envelop/resource-limitations
 
+## 3.0.4
+
+### Patch Changes
+
+- [#1578](https://github.com/n1ru4l/envelop/pull/1578) [`a3fc54d8`](https://github.com/n1ru4l/envelop/commit/a3fc54d8879b88c0796f05af3be93a473b09547d) Thanks [@avaly](https://github.com/avaly)! - Handle null argument values
+
 ## 3.0.3
 
 ### Patch Changes
