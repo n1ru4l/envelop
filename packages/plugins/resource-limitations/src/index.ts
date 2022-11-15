@@ -58,7 +58,7 @@ const buildInvalidPaginationRangeErrorMessage = (params: {
   paginationArgumentMaximum: number;
   paginationArgumentMinimum: number;
 }) =>
-  `Invalid pagination argument for field ${params.fieldName}. ` +
+  `Invalid pagination argument for field '${params.fieldName}'. ` +
   `The value for the '${params.argumentName}' argument must be an integer within ${params.paginationArgumentMinimum}-${params.paginationArgumentMaximum}.`;
 
 export const defaultNodeCostLimit = 500000;
@@ -105,7 +105,10 @@ export const ResourceLimitationValidationRule =
                 // eslint-disable-next-line no-console
                 console.warn('Encountered paginated field without pagination arguments.');
               } else if (hasFirst === true || hasLast === true) {
-                if ('first' in argumentValues === false && 'last' in argumentValues === false) {
+                if (
+                  ('first' in argumentValues === false && 'last' in argumentValues === false) ||
+                  (argumentValues.first === null && argumentValues.last === null)
+                ) {
                   context.reportError(
                     new GraphQLError(
                       buildMissingPaginationFieldErrorMessage({
@@ -116,7 +119,7 @@ export const ResourceLimitationValidationRule =
                       fieldNode
                     )
                   );
-                } else if ('first' in argumentValues === true && 'last' in argumentValues === false) {
+                } else if ('first' in argumentValues && !argumentValues.last) {
                   if (
                     argumentValues.first < paginationArgumentMinimum ||
                     argumentValues.first > paginationArgumentMaximum
@@ -136,7 +139,7 @@ export const ResourceLimitationValidationRule =
                     // eslint-disable-next-line dot-notation
                     nodeCost = argumentValues['first'] as number;
                   }
-                } else if ('last' in argumentValues === true && 'false' in argumentValues === false) {
+                } else if (!argumentValues.first && 'last' in argumentValues) {
                   if (
                     argumentValues.last < paginationArgumentMinimum ||
                     argumentValues.last > paginationArgumentMaximum
