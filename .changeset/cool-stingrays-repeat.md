@@ -1,5 +1,5 @@
 ---
-"@envelop/resource-limitations": patch
+'@envelop/resource-limitations': patch
 ---
 
 Handle null argument values
