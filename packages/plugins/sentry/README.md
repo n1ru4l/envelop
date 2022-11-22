@@ -4,15 +4,15 @@ This plugins collects errors and performance tracing for your execution flow, an
 
 This is how it looks like in Sentry for error tracking:
 
-![Example](./error1.png)
-![Example](./error2.png)
+![Example](error1.png)
+![Example](error2.png)
 
 > The operation name, document, variables are collected on errors, and the breadcrumbs that led to the error. You can also add any custom values that you need.
 
 And for performance tracking:
 
-![Example](./perf1.png)
-![Example](./perf2.png)
+![Example](perf1.png)
+![Example](perf2.png)
 
 > You can get information about each resolver (including field and type names), it's execution time and arguments. Also, in case of an error, the performance log and info are attached automatically to the reported Sentry error.
 
