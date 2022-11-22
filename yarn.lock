@@ -12482,6 +12482,14 @@ send@0.6.0:
     ms "0.6.2"
     range-parser "~1.0.0"
 
+sentry-testkit@5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/sentry-testkit/-/sentry-testkit-5.0.3.tgz#c9211d3c2ac1368ebe8064f556f20bb432f35534"
+  integrity sha512-w+PN2kXdXJe01cYY2MpHPgXLaU9JwDC8AwfTKx7Y6XhKFFi39Hu3DpG1VmX9Dh+2jpeOeVz1SRTybzv5PONVxA==
+  dependencies:
+    body-parser "^1.19.0"
+    express "^4.17.1"
+
 serve-favicon@2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/serve-favicon/-/serve-favicon-2.0.1.tgz#4826975d9f173ca3a4158e9698161f75dec7afec"

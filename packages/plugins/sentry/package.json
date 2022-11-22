@@ -47,14 +47,14 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "@envelop/on-resolve": "^2.0.4",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@sentry/node": "7.0.0",
     "@sentry/tracing": "7.0.0",
     "graphql": "16.3.0",
-    "typescript": "4.8.4"
+    "typescript": "4.8.4",
+    "sentry-testkit": "5.0.3"
   },
   "peerDependencies": {
     "@envelop/core": "^3.0.4",
