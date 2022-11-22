@@ -22,7 +22,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": false,
     "resolveJsonModule": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "paths": {
       "@envelop/core": ["packages/core/src/index.ts"],
       "@envelop/testing": ["packages/testing/src/index.ts"],
