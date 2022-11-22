@@ -212,4 +212,48 @@ describe('sentry', () => {
       sentryEventId: expect.any(String),
     });
   });
+
+  test('reports runtime error', async () => {
+    const { testkit: sentryTestkit, sentryTransport } = createSentryTestkit();
+    Sentry.init({
+      dsn: 'https://public@sentry.example.com/1',
+      transport: sentryTransport,
+    });
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          hello: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          hello: async () => {
+            return null;
+          },
+        },
+      },
+    });
+
+    const envelopTestkit = createTestkit([useSentry()], schema);
+    const result = await envelopTestkit.execute('{ hello }');
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "data": null,
+        "errors": Array [
+          [GraphQLError: Cannot return null for non-nullable field Query.hello.],
+        ],
+      }
+    `);
+
+    // run sentry flush
+    await new Promise(res => setTimeout(res, 10));
+
+    const reports = sentryTestkit.reports();
+    expect(reports).toHaveLength(1);
+    expect(reports[0].error).toMatchObject({
+      message: 'Cannot return null for non-nullable field Query.hello.',
+      name: 'Error',
+    });
+  });
 });
