@@ -22,7 +22,7 @@ and collaborate on GraphQL-related plugins while filling the missing pieces in G
 - Agnostic to the HTTP layer
 - Agnostic to the schema tools
 - Plugins-based usage
-- No vendor-locking
+- No vendor lock-in
 - Amazing TypeScript support
 
 [You can read more about the key concepts or Envelop here](https://www.envelop.dev/docs#key-concepts)
