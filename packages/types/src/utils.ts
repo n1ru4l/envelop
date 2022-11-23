@@ -2,6 +2,9 @@ export type OptionalPropertyNames<T> = { [K in keyof T]-?: {} extends { [P in K]
 
 export type SpreadProperties<L, R, K extends keyof L & keyof R> = { [P in K]: L[P] | Exclude<R[P], undefined> };
 
+/** @deprecated Because it can cause https://github.com/n1ru4l/envelop/issues/1120. */
+export type Id<T> = T extends infer U ? { [K in keyof U]: U[K] } : never;
+
 export type SpreadTwo<L, R> = Pick<L, Exclude<keyof L, keyof R>> &
   Pick<R, Exclude<keyof R, OptionalPropertyNames<R>>> &
   Pick<R, Exclude<OptionalPropertyNames<R>, keyof L>> &
