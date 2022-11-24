@@ -1,5 +1,12 @@
 # @envelop/core
 
+## 3.0.4
+
+### Patch Changes
+
+- Updated dependencies [[`e2ff77ed`](https://github.com/n1ru4l/envelop/commit/e2ff77edbc8c38d2854fc019f1d71ad4cf948d5f)]:
+  - @envelop/types@3.0.1
+
 ## 3.0.3
 
 ### Patch Changes

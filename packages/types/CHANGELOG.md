@@ -1,5 +1,11 @@
 # @envelop/types
 
+## 3.0.1
+
+### Patch Changes
+
+- [#1587](https://github.com/n1ru4l/envelop/pull/1587) [`e2ff77ed`](https://github.com/n1ru4l/envelop/commit/e2ff77edbc8c38d2854fc019f1d71ad4cf948d5f) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Don't use `Id` TypeScript generic utility that can cause a circular constraint error
+
 ## 2.4.0
 
 ### Minor Changes
