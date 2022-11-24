@@ -1,6 +1,6 @@
 {
   "name": "@envelop/testing",
-  "version": "5.0.3",
+  "version": "5.0.4",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -55,8 +55,8 @@
     "typescript": "4.8.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^3.0.3",
-    "@envelop/types": "^3.0.0",
+    "@envelop/core": "^3.0.4",
+    "@envelop/types": "^3.0.1",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {
