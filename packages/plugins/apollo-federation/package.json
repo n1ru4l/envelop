@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "graphql": "16.3.0",
-    "typescript": "4.7.4",
+    "typescript": "4.8.4",
     "@apollo/gateway": "0.43.1",
     "@apollo/federation": "0.33.6",
     "graphql-tag": "2.12.6"
