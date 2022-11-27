@@ -2,7 +2,6 @@ import {
   Plugin,
   handleStreamOrSingleExecutionResult,
   OnExecuteDoneHookResultOnNextHook,
-  isGraphQLError,
   isOriginalGraphQLError,
 } from '@envelop/core';
 import { OnResolve, useOnResolve } from '@envelop/on-resolve';
