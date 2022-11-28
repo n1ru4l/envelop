@@ -49,7 +49,7 @@
     "@changesets/changelog-github": "0.4.6",
     "@changesets/cli": "2.24.2",
     "@graphql-tools/schema": "8.5.0",
-    "@theguild/prettier-config": "0.0.2",
+    "@theguild/prettier-config": "0.1.1",
     "@types/benchmark": "2.1.1",
     "@types/jest": "27.4.1",
     "@types/k6": "0.36.0",

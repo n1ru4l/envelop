@@ -4,10 +4,9 @@ import {
   OnExecuteDoneHookResultOnNextHook,
   isOriginalGraphQLError,
 } from '@envelop/core';
-import { OnResolve, useOnResolve } from '@envelop/on-resolve';
 import * as Sentry from '@sentry/node';
 import type { Span, TraceparentData } from '@sentry/types';
-import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print, responsePathAsArray } from 'graphql';
+import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 
 export type SentryPluginOptions = {
   /**
@@ -22,11 +21,6 @@ export type SentryPluginOptions = {
    * @default false
    */
   renameTransaction?: boolean;
-  /**
-   * Creates a Span for every resolve function
-   * @default true
-   */
-  trackResolvers?: boolean;
   /**
    * Adds result of each resolver and operation to Span's data (available under "result")
    * @default false
@@ -87,95 +81,30 @@ export type SentryPluginOptions = {
 
 export const defaultSkipError = isOriginalGraphQLError;
 
-const sentryTracingSymbol = Symbol('sentryTracing');
-
-type SentryTracingContext = {
-  rootSpan: Span | undefined;
-  opName: string;
-  operationType: string;
-};
-
 export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   function pick<K extends keyof SentryPluginOptions>(key: K, defaultValue: NonNullable<SentryPluginOptions[K]>) {
     return options[key] ?? defaultValue;
   }
 
   const startTransaction = pick('startTransaction', true);
-  const trackResolvers = pick('trackResolvers', true);
-  const includeResolverArgs = pick('includeResolverArgs', false);
   const includeRawResult = pick('includeRawResult', false);
   const includeExecuteVariables = pick('includeExecuteVariables', false);
   const renameTransaction = pick('renameTransaction', false);
   const skipOperation = pick('skip', () => false);
   const skipError = pick('skipError', defaultSkipError);
 
-  function addEventId(err: GraphQLError, eventId: string | null): GraphQLError {
-    if (eventId === null) {
-      return err;
-    }
-    if (options.eventIdKey === null) {
-      return err;
-    }
-    const eventIdKey = options.eventIdKey ?? 'sentryEventId';
+  const eventIdKey = options.eventIdKey === null ? null : 'sentryEventId';
 
-    return new GraphQLError(err.message, err.nodes, err.source, err.positions, err.path, undefined, {
-      ...err.extensions,
-      [eventIdKey]: eventId,
-    });
+  function addEventId(err: GraphQLError, eventId: string | null): GraphQLError {
+    if (eventIdKey !== null && eventId !== null) {
+      err.extensions[eventIdKey] = eventId;
+    }
+
+    return err;
   }
 
-  const onResolve: OnResolve | undefined = trackResolvers
-    ? ({ args: resolversArgs, info, context }) => {
-        const { rootSpan, opName, operationType } = context[sentryTracingSymbol] as SentryTracingContext;
-        if (rootSpan) {
-          const { fieldName, returnType, parentType } = info;
-          const parent = rootSpan;
-          const tags: Record<string, string> = {
-            fieldName,
-            parentType: parentType.toString(),
-            returnType: returnType.toString(),
-          };
-
-          if (includeResolverArgs) {
-            tags.args = JSON.stringify(resolversArgs || {});
-          }
-
-          const childSpan = parent.startChild({
-            op: `${parentType.name}.${fieldName}`,
-            tags,
-          });
-
-          return ({ result }) => {
-            if (includeRawResult) {
-              childSpan.setData('result', result);
-            }
-
-            if (result instanceof Error && !skipError(result)) {
-              // Map index values in list to $index for better grouping of events.
-              const errorPath = responsePathAsArray(info.path)
-                .map(v => (typeof v === 'number' ? '$index' : v))
-                .join(' > ');
-
-              Sentry.captureException(result, {
-                fingerprint: ['graphql', errorPath, opName, operationType],
-              });
-            }
-
-            childSpan.finish();
-          };
-        }
-
-        return () => {};
-      }
-    : undefined;
-
   return {
-    onPluginInit({ addPlugin }) {
-      if (onResolve) {
-        addPlugin(useOnResolve(onResolve));
-      }
-    },
-    onExecute({ args, extendContext }) {
+    onExecute({ args }) {
       if (skipOperation(args)) {
         return;
       }
@@ -250,15 +179,6 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
         Sentry.configureScope(scope => options.configureScope!(args, scope));
       }
 
-      if (onResolve) {
-        const sentryContext: SentryTracingContext = {
-          rootSpan,
-          opName,
-          operationType,
-        };
-        extendContext({ [sentryTracingSymbol]: sentryContext });
-      }
-
       return {
         onExecuteDone(payload) {
           const handleResult: OnExecuteDoneHookResultOnNextHook<{}> = ({ result, setResult }) => {
@@ -284,7 +204,14 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
                 }
 
                 const errors = result.errors?.map(err => {
-                  const errorPath = (err.path ?? []).join(' > ');
+                  if (skipError(err) === true) {
+                    return err;
+                  }
+
+                  const errorPath = (err.path ?? [])
+                    .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
+                    .join(' > ');
+
                   if (errorPath) {
                     scope.addBreadcrumb({
                       category: 'execution-path',
@@ -293,24 +220,16 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
                     });
                   }
 
-                  // Map index values in list to $index for better grouping of events.
-                  const errorPathWithIndex = (err.path ?? [])
-                    .map((v: any) => (typeof v === 'number' ? '$index' : v))
-                    .join(' > ');
-
-                  const eventId =
-                    err.originalError && skipError(err.originalError)
-                      ? null
-                      : Sentry.captureException(err, {
-                          fingerprint: ['graphql', errorPathWithIndex, opName, operationType],
-                          contexts: {
-                            GraphQL: {
-                              operationName: opName,
-                              operationType,
-                              variables: args.variableValues,
-                            },
-                          },
-                        });
+                  const eventId = Sentry.captureException(err.originalError, {
+                    fingerprint: ['graphql', errorPath, opName, operationType],
+                    contexts: {
+                      GraphQL: {
+                        operationName: opName,
+                        operationType,
+                        variables: args.variableValues,
+                      },
+                    },
+                  });
 
                   return addEventId(err, eventId);
                 });

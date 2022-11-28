@@ -480,4 +480,25 @@ describe('useMaskedErrors', () => {
       stack: expect.stringMatching(/Unexpected error value: \"I'm a teapot/),
     });
   });
+
+  it('mask schema implementation error', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          foo: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          foo: () => {
+            return null;
+          },
+        },
+      },
+    });
+    const testInstance = createTestkit([useMaskedErrors()], schema);
+    const result = await testInstance.execute(`query { foo }`, {}, {});
+    assertSingleExecutionValue(result);
+    expect(result.errors?.[0]).toMatchInlineSnapshot(`[GraphQLError: Unexpected error.]`);
+  });
 });

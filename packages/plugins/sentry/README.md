@@ -56,7 +56,6 @@ const getEnveloped = envelop({
 
 - `startTransaction` (default: `true`) - Starts a new transaction for every GraphQL Operation. When disabled, an already existing Transaction will be used.
 - `renameTransaction` (default: `false`) - Creates a Span for every resolve function.
-- `trackResolvers` (default: `true`) - Wraps resolvers with tracing functionality, and creates a Span for every resolve function.
 - `includeRawResult` (default: `false`) - Adds result of each resolver and operation to Span's data (available under "result")
 - `includeResolverArgs` (default: `false`) - Adds arguments of each resolver to Span's tag called "args"
 - `includeExecuteVariables` (default: `false`) - Adds operation's variables to a Scope (only in case of errors)
