@@ -1,5 +1,22 @@
 # @envelop/sentry
 
+## 5.0.0
+
+### Major Changes
+
+- [#1583](https://github.com/n1ru4l/envelop/pull/1583) [`f6361e86`](https://github.com/n1ru4l/envelop/commit/f6361e864e8d0a434a539a78679b263fc78964f7) Thanks [@n1ru4l](https://github.com/n1ru4l)! - Remove `trackResolvers` functionality.
+
+  This feature resulted in errors being reported multiple times.
+  In the future we might re-add it as a standalone plugin, right now we don't see any benefit from it.
+
+### Patch Changes
+
+- [#1583](https://github.com/n1ru4l/envelop/pull/1583) [`f6361e86`](https://github.com/n1ru4l/envelop/commit/f6361e864e8d0a434a539a78679b263fc78964f7) Thanks [@n1ru4l](https://github.com/n1ru4l)! - dependencies updates:
+
+  - Removed dependency [`@envelop/on-resolve@^2.0.4` ↗︎](https://www.npmjs.com/package/@envelop/on-resolve/v/2.0.4) (from `dependencies`)
+
+- [#1583](https://github.com/n1ru4l/envelop/pull/1583) [`f6361e86`](https://github.com/n1ru4l/envelop/commit/f6361e864e8d0a434a539a78679b263fc78964f7) Thanks [@n1ru4l](https://github.com/n1ru4l)! - Fix synergy together with the masked error plugin by copying over the original error when attaching the sentry event id
+
 ## 4.0.4
 
 ### Patch Changes
