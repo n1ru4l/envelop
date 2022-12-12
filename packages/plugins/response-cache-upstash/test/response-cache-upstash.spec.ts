@@ -1,12 +1,10 @@
 import { createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { Redis } from '@upstash/redis';
-import 'isomorphic-fetch';
-
 import { createUpstashCache, defaultBuildRedisEntityId, defaultBuildRedisOperationResultCacheKey } from '../src';
 import { useResponseCache } from '@envelop/response-cache';
 
-describe('useResponseCache with Upstash cache', () => {
+describe('useResponseCache with Redis cache', () => {
   const redis = Redis.fromEnv();
   const cache = createUpstashCache({ redis });
 
@@ -72,7 +70,7 @@ describe('useResponseCache with Upstash cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -150,7 +148,7 @@ describe('useResponseCache with Upstash cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -245,7 +243,7 @@ describe('useResponseCache with Upstash cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -379,7 +377,7 @@ describe('useResponseCache with Upstash cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -492,7 +490,10 @@ describe('useResponseCache with Upstash cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache, includeExtensionMetadata: true })], schema);
+    const testInstance = createTestkit(
+      [useResponseCache({ session: () => null, cache, includeExtensionMetadata: true })],
+      schema
+    );
 
     const query = /* GraphQL */ `
       query test {
@@ -595,7 +596,10 @@ describe('useResponseCache with Upstash cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache, includeExtensionMetadata: true })], schema);
+    const testInstance = createTestkit(
+      [useResponseCache({ session: () => null, cache, includeExtensionMetadata: true })],
+      schema
+    );
 
     const result = await testInstance.execute(
       /* GraphQL */ `
@@ -672,7 +676,7 @@ describe('useResponseCache with Upstash cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
 
     const query = /* GraphQL */ `
       query test($limit: Int!) {
@@ -755,7 +759,7 @@ describe('useResponseCache with Upstash cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache, ttl: 100 })], schema);
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache, ttl: 100 })], schema);
 
     const query = /* GraphQL */ `
       query test {
@@ -941,7 +945,10 @@ describe('useResponseCache with Upstash cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ cache, ignoredTypes: ['Comment'] })], schema);
+    const testInstance = createTestkit(
+      [useResponseCache({ session: () => null, cache, ignoredTypes: ['Comment'] })],
+      schema
+    );
 
     const query = /* GraphQL */ `
       query test {
@@ -1030,6 +1037,7 @@ describe('useResponseCache with Upstash cache', () => {
     const testInstance = createTestkit(
       [
         useResponseCache({
+          session: () => null,
           cache,
           ttl: 500,
           ttlPerType: {
@@ -1120,6 +1128,7 @@ describe('useResponseCache with Upstash cache', () => {
     const testInstance = createTestkit(
       [
         useResponseCache({
+          session: () => null,
           cache,
           ttl: 500,
           ttlPerSchemaCoordinate: {

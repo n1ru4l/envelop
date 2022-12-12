@@ -1,7 +1,6 @@
-import type { Redis } from '@upstash/redis';
+import { Redis } from '@upstash/redis';
 import type { Cache } from '@envelop/response-cache';
-import { Maybe, PromiseOrValue } from '@envelop/types';
-import type { ExecutionResult } from 'graphql';
+import 'isomorphic-fetch';
 
 export type BuildRedisEntityId = (typename: string, id: number | string) => string;
 export type BuildRedisOperationResultCacheKey = (responseId: string) => string;
@@ -28,7 +27,8 @@ export const createUpstashCache = (params: RedisCacheParameter): Cache => {
   const store = params.redis;
 
   const buildRedisEntityId = params?.buildRedisEntityId ?? defaultBuildRedisEntityId;
-  const buildRedisOperationResultCacheKey = params?.buildRedisOperationResultCacheKey ?? defaultBuildRedisOperationResultCacheKey;
+  const buildRedisOperationResultCacheKey =
+    params?.buildRedisOperationResultCacheKey ?? defaultBuildRedisOperationResultCacheKey;
 
   async function buildEntityInvalidationsKeys(entity: string): Promise<string[]> {
     const keysToInvalidate: string[] = [entity];
@@ -64,44 +64,44 @@ export const createUpstashCache = (params: RedisCacheParameter): Cache => {
 
   return {
     async set(responseId, result, collectedEntities, ttl) {
-      const pipeline = store.pipeline();
+      const tx = store.multi();
 
       if (ttl === Infinity) {
-        pipeline.set(responseId, result);
+        tx.set(responseId, result);
       } else {
         // set the ttl in milliseconds
-        pipeline.set(responseId, result, { px: ttl });
+        tx.set(responseId, result, { px: ttl });
       }
 
       const responseKey = buildRedisOperationResultCacheKey(responseId);
 
       for (const { typename, id } of collectedEntities) {
         // Adds a key for the typename => response
-        pipeline.sadd(typename, responseId);
+        tx.sadd(typename, responseId);
         // Adds a key for the operation => typename
-        pipeline.sadd(responseKey, typename);
+        tx.sadd(responseKey, typename);
 
         if (id) {
           const entityId = buildRedisEntityId(typename, id);
           // Adds a key for the typename:id => response
-          pipeline.sadd(entityId, responseId);
+          tx.sadd(entityId, responseId);
           // Adds a key for the operation => typename:id
-          pipeline.sadd(responseKey, entityId);
+          tx.sadd(responseKey, entityId);
         }
       }
 
-      await pipeline.exec();
+      await tx.exec();
     },
     async get(responseId) {
-      const result = await store.get<PromiseOrValue<Maybe<ExecutionResult>>>(responseId);
-
-      return result;
+      return store.get(responseId);
     },
     async invalidate(entitiesToRemove) {
       const invalidationKeys: string[][] = [];
 
       for (const { typename, id } of entitiesToRemove) {
-        invalidationKeys.push(await buildEntityInvalidationsKeys(id != null ? buildRedisEntityId(typename, id) : typename));
+        invalidationKeys.push(
+          await buildEntityInvalidationsKeys(id != null ? buildRedisEntityId(typename, id) : typename)
+        );
       }
 
       const keys = invalidationKeys.flat();
