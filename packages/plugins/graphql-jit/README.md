@@ -11,11 +11,13 @@ yarn add @envelop/graphql-jit
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useGraphQlJit } from '@envelop/graphql-jit'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useGraphQlJit(
       {
@@ -34,11 +36,13 @@ const getEnveloped = envelop({
 If you wish to conditionally use the JIT executor based on the incoming request, you can use `enableIf` config flag and return a `boolean` based on the `ExecutionArgs`:
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useGraphQlJit } from '@envelop/graphql-jit'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useGraphQlJit(
       {
@@ -57,11 +61,13 @@ const getEnveloped = envelop({
 You can configure the JIT cache with the following options:
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useGraphQlJit } from '@envelop/graphql-jit'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useGraphQlJit(
       {

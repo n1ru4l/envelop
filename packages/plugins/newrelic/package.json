@@ -1,6 +1,6 @@
 {
   "name": "@envelop/newrelic",
-  "version": "4.1.0",
+  "version": "5.0.4",
   "author": "Santino Puleio <santinopuleio@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -14,7 +14,7 @@
   "exports": {
     ".": {
       "require": {
-        "types": "./dist/typings/index.d.ts",
+        "types": "./dist/typings/index.d.cts",
         "default": "./dist/cjs/index.js"
       },
       "import": {
@@ -28,7 +28,7 @@
     },
     "./*": {
       "require": {
-        "types": "./dist/typings/*.d.ts",
+        "types": "./dist/typings/*.d.cts",
         "default": "./dist/cjs/*.js"
       },
       "import": {
@@ -46,15 +46,18 @@
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@envelop/on-resolve": "^2.0.4",
+    "tslib": "^2.4.0"
+  },
   "devDependencies": {
     "@types/newrelic": "7.0.3",
     "graphql": "16.3.0",
     "newrelic": "8.8.0",
-    "typescript": "4.7.4"
+    "typescript": "4.8.4"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.4.0",
+    "@envelop/core": "^3.0.4",
     "newrelic": "^7 || ^8.0.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },

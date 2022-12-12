@@ -61,6 +61,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
   // This method is being triggered in different flows, based on the mode you chose to implement.
 
   // If you are using the `protect-auth-directive` mode, you'll also get 2 additional parameters: the resolver parameters as object and the DirectiveNode of the auth directive.
+  // In `protect-auth-directive` mode, this function will always get called and you can use these parameters to check if the field has the `@auth` or `@skipAuth` directive
 
   if (!user) {
     throw new Error(`Unauthenticated!`)
@@ -77,7 +78,8 @@ This mode offers complete protection for the entire API. It protects your entire
 To setup this mode, use the following config:
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useGenericAuth, ResolveUserFn, ValidateUserFn } from '@envelop/generic-auth'
 
 type UserType = {
@@ -92,6 +94,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useGenericAuth({
       resolveUserFn,
@@ -106,7 +109,7 @@ const getEnveloped = envelop({
 
 > By default, we assume that you have the GraphQL directive definition as part of your GraphQL schema (`directive @skipAuth on FIELD_DEFINITION`).
 
-Then, in your GraphQL schema SDL, you can add `@skipAuth` directive to your fields, and the `validateUser` will not get called while resolving that specific field:
+Then, in your GraphQL schema SDL, you can add `@skipAuth` directive to your fields, and the default `validateUser` function will not get called while resolving that specific field:
 
 ```graphql
 type Query {
@@ -146,7 +149,8 @@ const GraphQLQueryType = new GraphQLObjectType({
 This mode uses the plugin to inject the authenticated user into the `context`, and later you can verify it in your resolvers.
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useGenericAuth, ResolveUserFn, ValidateUserFn } from '@envelop/generic-auth'
 
 type UserType = {
@@ -161,6 +165,7 @@ const validateUser: ValidateUserFn<UserType> = async params => {
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useGenericAuth({
       resolveUserFn,
@@ -191,7 +196,8 @@ const resolvers = {
 This mode is similar to option #2, but it uses the `@auth` SDL directive or `auth` field extension for protecting specific GraphQL fields.
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useGenericAuth, ResolveUserFn, ValidateUserFn } from '@envelop/generic-auth'
 
 type UserType = {
@@ -206,6 +212,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useGenericAuth({
       resolveUserFn,
@@ -255,7 +262,7 @@ const GraphQLQueryType = new GraphQLObjectType({
 
 > If you are using a different field extension for authentication, you can pass `directiveOrExtensionFieldName` configuration to customize it.
 
-##### Extend authentication with custom directive logic
+#### Extend authentication with custom logic
 
 You can also specify a custom `validateUser` function and get access to a handy object while using the `protect-all` and `protect-granular` mode:
 
@@ -273,7 +280,9 @@ const validateUser: ValidateUserFn<UserType> = async ({ user }) => {
 }
 ```
 
-And it's also possible to add custom parameters to your `@auth` directive. Here's an example for adding role-aware authentication:
+##### With a custom directive with arguments
+
+It is possible to add custom parameters to your `@auth` directive. Here's an example for adding role-aware authentication:
 
 ```graphql
 enum Role {
@@ -290,8 +299,8 @@ Then, you use the `directiveNode` parameter to check the arguments:
 import { ValidateUserFn } from '@envelop/generic-auth'
 
 const validateUser: ValidateUserFn<UserType> = async ({ user, fieldAuthDirectiveNode }) => {
-  // Now you can use the 3rd parameter to implement custom logic for user validation, with access
-  // to the resolver data and information.
+  // Now you can use the fieldAuthDirectiveNode parameter to implement custom logic for user validation, with access
+  // to the resolver auth directive arguments.
 
   if (!user) {
     throw new Error(`Unauthenticated!`)
@@ -302,6 +311,82 @@ const validateUser: ValidateUserFn<UserType> = async ({ user, fieldAuthDirective
 
   if (role !== user.role) {
     throw new Error(`No permissions!`)
+  }
+}
+```
+
+##### With a custom field extensions
+
+You can use custom field extension to pass data to your `validateUser` function instead of using a directive.
+Here's an example for adding role-aware authentication:
+
+```ts
+import { ValidateUserFn } from '@envelop/generic-auth'
+
+const validateUser: ValidateUserFn<UserType> = async ({ user, fieldAuthExtension }) => {
+  // Now you can use the fieldAuthDirectiveNode parameter to implement custom logic for user validation, with access
+  // to the resolver auth directive arguments.
+
+  if (!user) {
+    throw new Error(`Unauthenticated!`)
+  }
+
+  const role = fieldAuthExtension.role
+
+  if (role !== user.role) {
+    throw new Error(`No permissions!`)
+  }
+}
+
+const resolvers = {
+  Query: {
+    user: {
+      me: (_, __, { currentUser }) => currentUser,
+      extensions: {
+        auth: {
+          role: 'USER'
+        }
+      }
+    }
+  }
+}
+```
+
+##### With a custom validation function per field
+
+You can also have access to operation variables and context via the `executionArgs` parameter.
+This can be useful in conjunction with the `fieldAuthExtension` parameter to achieve custom per field validation.
+
+```ts
+import { ValidateUserFn } from '@envelop/generic-auth'
+
+const validateUser: ValidateUserFn<UserType> = async ({ user, executionArgs, fieldAuthExtension }) => {
+  if (!user) {
+    throw new Error(`Unauthenticated!`)
+  }
+
+  // You have access to the object define in the resolver tree, allowing to define any custom logic you want.
+  const validate = fieldAuthExtension?.validate
+  if (validate) {
+    await validate({ user, variables: executionArgs.variableValues, context: executionArgs.contextValue })
+  }
+}
+
+const resolvers = {
+  Query: {
+    user: {
+      resolve: (_, { userId }) => getUser(userId),
+      extensions: {
+        auth: {
+          validate: ({ user, variables, context }) => {
+            // We can now have access to the operation and variables to decide if the user can execute the query
+            if (user.id !== variables.userId) {
+              throw new Error(`Unauthorized`)
+            }
+          }
+        }
+      }
+    }
   }
 }
 ```

@@ -27,7 +27,8 @@ yarn add @envelop/live-query @n1ru4l/in-memory-live-query-store
 ### `makeExecutableSchema` from `graphql-tools`
 
 ```ts
-import { envelop, useSchema, useExtendContext } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useSchema, useExtendContext, useEngine } from '@envelop/core'
 import { useLiveQuery } from '@envelop/live-query'
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store'
 import { makeExecutableSchema } from '@graphql-tools/schema'
@@ -60,6 +61,7 @@ setInterval(() => {
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     useSchema(schema),
     useLiveQuery({ liveQueryStore }),
     useExtendContext(() => ({ greetings }))
@@ -79,6 +81,24 @@ import { GraphQLLiveDirective } from '@envelop/live-query'
 const schema = new GraphQLSchema({
   directives: [...specifiedDirectives, GraphQLLiveDirective]
 })
+```
+
+### Applying a patch middleware
+
+By using a patch middleware you can significantly reduce the size of the GraphQL execution result payload that is sent over the wire from the server to the client.
+We recommend using the `@n1ru4l/graphql-live-query-patch-jsondiffpatch` patch generator. [You can learn more about it here](https://github.com/n1ru4l/graphql-live-query/tree/main/packages/graphql-live-query-patch-jsondiffpatch).
+
+```bash
+yarn add @n1ru4l/graphql-live-query-patch-jsondiffpatch
+```
+
+```ts
+import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store'
+import { applyLiveQueryJSONDiffPatchGenerator } from '@n1ru4l/graphql-live-query-patch-jsondiffpatch'
+
+const liveQueryStore = new InMemoryLiveQueryStore()
+
+const plugin = useLiveQuery({ liveQueryStore, applyLiveQueryPatchGenerator: applyLiveQueryJSONDiffPatchGenerator })
 ```
 
 ## Further information

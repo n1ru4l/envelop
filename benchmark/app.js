@@ -1,12 +1,13 @@
 /// @ts-check
 const { makeExecutableSchema } = require('@graphql-tools/schema');
-const { envelop, useSchema } = require('../packages/core');
+const { envelop, useSchema, useEngine } = require('../packages/core');
 const { useParserCache } = require('../packages/plugins/parser-cache');
 const { usePrometheus } = require('../packages/plugins/prometheus');
 const { useGraphQlJit } = require('../packages/plugins/graphql-jit');
 const { useValidationCache } = require('../packages/plugins/validation-cache');
 const { fastify } = require('fastify');
 const faker = require('faker');
+const GraphQLJS = require('graphql');
 const { monitorEventLoopDelay } = require('perf_hooks');
 const eventLoopMonitor = monitorEventLoopDelay({ resolution: 20 });
 
@@ -68,22 +69,23 @@ const createSchema = () =>
 
 const envelopsMap = {
   'graphql-js': envelop({
-    plugins: [useSchema(createSchema())],
+    plugins: [useEngine(GraphQLJS), useSchema(createSchema())],
     enableInternalTracing: true,
   }),
   'envelop-just-cache': envelop({
-    plugins: [useSchema(createSchema()), useParserCache(), useValidationCache()],
+    plugins: [useEngine(GraphQLJS), useSchema(createSchema()), useParserCache(), useValidationCache()],
     enableInternalTracing: true,
   }),
   'envelop-cache-and-no-internal-tracing': envelop({
-    plugins: [useSchema(createSchema()), useParserCache(), useValidationCache()],
+    plugins: [useEngine(GraphQLJS), useSchema(createSchema()), useParserCache(), useValidationCache()],
   }),
   'envelop-cache-jit': envelop({
-    plugins: [useSchema(createSchema()), useGraphQlJit(), useParserCache(), useValidationCache()],
+    plugins: [useEngine(GraphQLJS), useSchema(createSchema()), useGraphQlJit(), useParserCache(), useValidationCache()],
     enableInternalTracing: true,
   }),
   'prom-tracing': envelop({
     plugins: [
+      useEngine(GraphQLJS),
       useSchema(createSchema()),
       useParserCache(),
       useValidationCache(),

@@ -1,6 +1,6 @@
 {
   "name": "@envelop/apollo-federation",
-  "version": "2.4.0",
+  "version": "3.0.4",
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -14,7 +14,7 @@
   "exports": {
     ".": {
       "require": {
-        "types": "./dist/typings/index.d.ts",
+        "types": "./dist/typings/index.d.cts",
         "default": "./dist/cjs/index.js"
       },
       "import": {
@@ -28,7 +28,7 @@
     },
     "./*": {
       "require": {
-        "types": "./dist/typings/*.d.ts",
+        "types": "./dist/typings/*.d.cts",
         "default": "./dist/cjs/*.js"
       },
       "import": {
@@ -48,17 +48,18 @@
   },
   "dependencies": {
     "apollo-server-caching": "^3.1.0",
-    "apollo-server-types": "^3.2.0"
+    "apollo-server-types": "^3.2.0",
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "graphql": "16.3.0",
-    "typescript": "4.7.4",
+    "typescript": "4.8.4",
     "@apollo/gateway": "0.43.1",
     "@apollo/federation": "0.33.6",
     "graphql-tag": "2.12.6"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.4.0",
+    "@envelop/core": "^3.0.4",
     "@apollo/gateway": "^0.41.0 || ^0.42.0 || ^0.43.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },

@@ -18,7 +18,7 @@ export type ContextFactoryType<TContextValue = DefaultContext> = (
   options: ContextFactoryOptions
 ) => PromiseOrValue<ContextFactoryHook<TContextValue> | void>;
 
-export const useExtendContextValuePerExecuteSubscriptionEvent = <TContextValue = unknown>(
+export const useExtendContextValuePerExecuteSubscriptionEvent = <TContextValue extends Record<any, any>>(
   createContext: ContextFactoryType<TContextValue>
 ): Plugin<TContextValue> => {
   return {

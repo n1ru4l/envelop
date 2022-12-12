@@ -2,14 +2,13 @@ export type OptionalPropertyNames<T> = { [K in keyof T]-?: {} extends { [P in K]
 
 export type SpreadProperties<L, R, K extends keyof L & keyof R> = { [P in K]: L[P] | Exclude<R[P], undefined> };
 
+/** @deprecated Because it can cause https://github.com/n1ru4l/envelop/issues/1120. */
 export type Id<T> = T extends infer U ? { [K in keyof U]: U[K] } : never;
 
-export type SpreadTwo<L, R> = Id<
-  Pick<L, Exclude<keyof L, keyof R>> &
-    Pick<R, Exclude<keyof R, OptionalPropertyNames<R>>> &
-    Pick<R, Exclude<OptionalPropertyNames<R>, keyof L>> &
-    SpreadProperties<L, R, OptionalPropertyNames<R> & keyof L>
->;
+export type SpreadTwo<L, R> = Pick<L, Exclude<keyof L, keyof R>> &
+  Pick<R, Exclude<keyof R, OptionalPropertyNames<R>>> &
+  Pick<R, Exclude<OptionalPropertyNames<R>, keyof L>> &
+  SpreadProperties<L, R, OptionalPropertyNames<R> & keyof L>;
 
 export type Spread<A extends readonly [...any]> = A extends [infer L, ...infer R] ? SpreadTwo<L, Spread<R>> : {};
 
@@ -29,3 +28,20 @@ export type ArbitraryObject = Record<string | number | symbol, any>;
 export type PromiseOrValue<T> = T | Promise<T>;
 export type AsyncIterableIteratorOrValue<T> = T | AsyncIterableIterator<T>;
 export type Maybe<T> = T | null | undefined;
+export type Optional<T> = T | Maybe<T> | false;
+export interface ObjMap<T> {
+  [key: string]: T;
+}
+export type ObjMapLike<T> =
+  | ObjMap<T>
+  | {
+      [key: string]: T;
+    };
+export interface ReadOnlyObjMap<T> {
+  readonly [key: string]: T;
+}
+export type ReadOnlyObjMapLike<T> =
+  | ReadOnlyObjMap<T>
+  | {
+      readonly [key: string]: T;
+    };

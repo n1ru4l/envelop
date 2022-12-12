@@ -1,7 +1,12 @@
+import * as GraphQLJS from 'graphql';
 import { DocumentNode, ExecutionResult, getOperationAST, GraphQLError, GraphQLSchema, print } from 'graphql';
-import { useSchema, envelop, PluginOrDisabledPlugin, isAsyncIterable } from '@envelop/core';
+import { useSchema, envelop, isAsyncIterable, useEngine } from '@envelop/core';
 import { GetEnvelopedFn, Plugin } from '@envelop/types';
 import { mapSchema as cloneSchema, isDocumentNode } from '@graphql-tools/utils';
+
+export const useGraphQLJSEngine = () => {
+  return useEngine(GraphQLJS);
+};
 
 export type ModifyPluginsFn = (plugins: Plugin<any>[]) => Plugin<any>[];
 export type PhaseReplacementParams =
@@ -48,7 +53,6 @@ export function createSpiedPlugin() {
     beforeExecute: jest.fn(() => ({
       onExecuteDone: baseSpies.afterExecute,
     })),
-    onResolverCalled: baseSpies.beforeResolver,
   };
 
   return {
@@ -64,7 +68,6 @@ export function createSpiedPlugin() {
       onValidate: spies.beforeValidate,
       onExecute: spies.beforeExecute,
       onContextBuilding: spies.beforeContextBuilding,
-      onResolverCalled: spies.beforeResolver,
     },
   };
 }
@@ -86,7 +89,7 @@ export type TestkitInstance = {
 };
 
 export function createTestkit(
-  pluginsOrEnvelop: GetEnvelopedFn<any> | Array<PluginOrDisabledPlugin>,
+  pluginsOrEnvelop: GetEnvelopedFn<any> | Parameters<typeof envelop>['0']['plugins'],
   schema?: GraphQLSchema
 ): TestkitInstance {
   const toGraphQLErrorOrThrow = (thrownThing: unknown): GraphQLError => {
@@ -100,14 +103,20 @@ export function createTestkit(
   const phasesReplacements: PhaseReplacementParams[] = [];
   let getEnveloped = Array.isArray(pluginsOrEnvelop)
     ? envelop({
-        plugins: [...(schema ? [useSchema(cloneSchema(schema))] : []), ...pluginsOrEnvelop],
+        plugins: [
+          ...(schema ? [useGraphQLJSEngine(), useSchema(cloneSchema(schema))] : [useGraphQLJSEngine()]),
+          ...pluginsOrEnvelop,
+        ],
       })
     : pluginsOrEnvelop;
 
   return {
     modifyPlugins(modifyPluginsFn: ModifyPluginsFn) {
       getEnveloped = envelop({
-        plugins: [...(schema ? [useSchema(cloneSchema(schema))] : []), ...modifyPluginsFn(getEnveloped._plugins)],
+        plugins: [
+          ...(schema ? [useGraphQLJSEngine(), useSchema(cloneSchema(schema))] : [useGraphQLJSEngine()]),
+          ...modifyPluginsFn(getEnveloped._plugins),
+        ],
       });
     },
     mockPhase(phaseReplacement: PhaseReplacementParams) {

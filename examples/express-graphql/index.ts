@@ -1,4 +1,5 @@
-import { envelop, useLogger, useSchema, useTiming } from '@envelop/core';
+import { envelop, useLogger, useSchema, useEngine } from '@envelop/core';
+import * as GraphQLJS from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import express from 'express';
 import { graphqlHTTP } from 'express-graphql';
@@ -17,7 +18,7 @@ const schema = makeExecutableSchema({
 });
 
 const getEnveloped = envelop({
-  plugins: [useSchema(schema), useLogger(), useTiming()],
+  plugins: [useEngine(GraphQLJS), useSchema(schema), useLogger()],
 });
 
 const app = express();
@@ -31,12 +32,8 @@ app.use(
       graphiql: true,
       customParseFn: parse,
       customValidateFn: validate,
-      customExecuteFn: async args => {
-        return execute({
-          ...args,
-          contextValue: await contextFactory(),
-        });
-      },
+      context: await contextFactory(),
+      customExecuteFn: execute,
     };
   })
 );

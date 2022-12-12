@@ -7,12 +7,14 @@ Utilities for hooking into the [ExecuteSubscriptionEvent](<https://spec.graphql.
 Create a new context object per `ExecuteSubscriptionEvent` phase, allowing to bypass common issues with context objects such as [`DataLoader`](https://github.com/n1ru4l/envelop/issues/80) [caching](https://github.com/graphql/graphql-js/issues/894) [issues](https://github.com/apollographql/subscriptions-transport-ws/issues/330).
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useContextValuePerExecuteSubscriptionEvent } from '@envelop/execute-subscription-event'
 import { createContext, createDataLoaders } from './context'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     useContext(() => createContext()),
     useContextValuePerExecuteSubscriptionEvent(() => ({
       // Existing context is merged with this context partial
@@ -29,12 +31,14 @@ const getEnveloped = envelop({
 Alternatively, you can also provide a callback that is invoked after each [`ExecuteSubscriptionEvent`](<https://spec.graphql.org/draft/#ExecuteSubscriptionEvent()>) phase.
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useContextValuePerExecuteSubscriptionEvent } from '@envelop/execute-subscription-event'
 import { createContext, createDataLoaders } from './context'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     useContext(() => createContext()),
     useContextValuePerExecuteSubscriptionEvent(({ args }) => ({
       onEnd: () => {

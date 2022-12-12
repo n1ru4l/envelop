@@ -1,5 +1,4 @@
 import { Plugin, AfterParseEventPayload, isIntrospectionOperationString, isAsyncIterable } from '@envelop/core';
-import { DocumentNode, Kind, OperationDefinitionNode } from 'graphql';
 import type { StatsD } from 'hot-shots';
 
 export interface StatsDPluginOptions {
@@ -31,8 +30,8 @@ interface PluginInternalContext {
   [statsDPluginExecutionStartTimeSymbol]: number;
 }
 
-function getOperation(document: DocumentNode) {
-  return document.definitions.find(def => def.kind === Kind.OPERATION_DEFINITION) as OperationDefinitionNode;
+function getOperation(document: any) {
+  return document.definitions.find((def: any) => def.kind === 'OperationDefinition');
 }
 
 function isParseFailure(parseResult: AfterParseEventPayload<any>['result']): parseResult is Error | null {

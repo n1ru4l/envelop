@@ -3,7 +3,7 @@ import { ApolloServerBase } from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
 import { envelop, useSchema } from '@envelop/core';
 import { useApolloServerErrors } from '../src/index.js';
-import { assertSingleExecutionValue } from '@envelop/testing';
+import { assertSingleExecutionValue, useGraphQLJSEngine } from '@envelop/testing';
 
 // Fix compat by mocking broken function
 // we can remove this once apollo fixed legacy usages of execute(schema, ...args)
@@ -15,7 +15,9 @@ jest.mock('../../../../node_modules/apollo-server-core/dist/utils/schemaHash', (
 describe('useApolloServerErrors', () => {
   const executeBoth = async (schema: GraphQLSchema, query: string, debug: boolean) => {
     const apolloServer = new ApolloServerBase({ schema, debug });
-    const envelopRuntime = envelop({ plugins: [useSchema(schema), useApolloServerErrors({ debug })] })({});
+    const envelopRuntime = envelop({
+      plugins: [useGraphQLJSEngine(), useSchema(schema), useApolloServerErrors({ debug })],
+    })({});
 
     return {
       apollo: await apolloServer.executeOperation({ query }),

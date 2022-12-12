@@ -15,11 +15,13 @@ yarn add @envelop/opentelemetry
 By default, this plugin prints the collected telemetry to the console:
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useOpenTelemetry } from '@envelop/opentelemetry'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useOpenTelemetry({
       resolvers: true, // Tracks resolvers calls, and tracks resolvers thrown errors
@@ -33,7 +35,8 @@ const getEnveloped = envelop({
 If you wish to use custom tracer/exporter, create it and pass it. This example integrates Jaeger tracer:
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useOpenTelemetry } from '@envelop/opentelemetry'
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger'
 import { SimpleSpanProcessor, BasicTracerProvider } from '@opentelemetry/tracing'
@@ -48,6 +51,7 @@ provider.register()
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useOpenTelemetry(
       {

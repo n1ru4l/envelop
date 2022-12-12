@@ -1,6 +1,6 @@
 {
   "name": "@envelop/fragment-arguments",
-  "version": "3.4.0",
+  "version": "4.0.4",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "repository": {
@@ -13,7 +13,7 @@
   "exports": {
     ".": {
       "require": {
-        "types": "./dist/typings/index.d.ts",
+        "types": "./dist/typings/index.d.cts",
         "default": "./dist/cjs/index.js"
       },
       "import": {
@@ -27,7 +27,7 @@
     },
     "./*": {
       "require": {
-        "types": "./dist/typings/*.d.ts",
+        "types": "./dist/typings/*.d.cts",
         "default": "./dist/cjs/*.js"
       },
       "import": {
@@ -45,18 +45,20 @@
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "tslib": "^2.4.0"
+  },
   "devDependencies": {
     "@types/common-tags": "1.8.1",
     "@graphql-tools/utils": "8.8.0",
     "@graphql-tools/schema": "8.5.0",
     "graphql": "16.3.0",
-    "typescript": "4.7.4",
+    "typescript": "4.8.4",
     "oneline": "1.0.3",
     "common-tags": "1.8.2"
   },
   "peerDependencies": {
-    "@envelop/core": "^2.4.0",
+    "@envelop/core": "^3.0.4",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {

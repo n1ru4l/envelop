@@ -1,5 +1,5 @@
-import { createSpiedPlugin, createTestkit } from '@envelop/testing';
-import { envelop, useExtendContext, useLogger, useSchema } from '../src/index.js';
+import { createSpiedPlugin, createTestkit, useGraphQLJSEngine } from '@envelop/testing';
+import { envelop, useLogger, useSchema } from '../src/index.js';
 import { useEnvelop } from '../src/plugins/use-envelop.js';
 import { schema, query } from './common.js';
 
@@ -8,7 +8,7 @@ describe('extending envelops', () => {
     const spiedPlugin = createSpiedPlugin();
 
     const baseEnvelop = envelop({
-      plugins: [useLogger(), spiedPlugin.plugin],
+      plugins: [useGraphQLJSEngine(), useLogger(), spiedPlugin.plugin],
     });
 
     const onExecuteChildSpy = jest.fn();

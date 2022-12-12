@@ -103,9 +103,11 @@ dist
 # TernJS port file
 .tern-port
 
-.bob
+.bob/
 temp
-.idea
+.idea/
 .history
 
 /.husky/_/
+website/public/_redirects
+website/public/sitemap.xml

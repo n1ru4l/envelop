@@ -1,0 +1,11 @@
+{
+  "[name]": {
+    "title": "Plugin",
+    "hidden": true,
+    "theme": {
+      "layout": "default",
+      "sidebar": false,
+      "timestamp": false
+    }
+  }
+}

@@ -4,15 +4,15 @@ This plugins collects errors and performance tracing for your execution flow, an
 
 This is how it looks like in Sentry for error tracking:
 
-![Example](./error1.png)
-![Example](./error2.png)
+![Example](./packages/plugins/sentry/error1.png)
+![Example](./packages/plugins/sentry/error2.png)
 
 > The operation name, document, variables are collected on errors, and the breadcrumbs that led to the error. You can also add any custom values that you need.
 
 And for performance tracking:
 
-![Example](./perf1.png)
-![Example](./perf2.png)
+![Example](./packages/plugins/sentry/perf1.png)
+![Example](./packages/plugins/sentry/perf2.png)
 
 > You can get information about each resolver (including field and type names), it's execution time and arguments. Also, in case of an error, the performance log and info are attached automatically to the reported Sentry error.
 
@@ -30,13 +30,15 @@ yarn add @sentry/node @sentry/tracing @envelop/sentry
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useSentry } from '@envelop/sentry'
 // do this only once in you entry file.
 import '@sentry/tracing'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useSentry({
       includeRawResult: false, // set to `true` in order to include the execution result in the metadata collected
@@ -54,7 +56,6 @@ const getEnveloped = envelop({
 
 - `startTransaction` (default: `true`) - Starts a new transaction for every GraphQL Operation. When disabled, an already existing Transaction will be used.
 - `renameTransaction` (default: `false`) - Creates a Span for every resolve function.
-- `trackResolvers` (default: `true`) - Wraps resolvers with tracing functionality, and creates a Span for every resolve function.
 - `includeRawResult` (default: `false`) - Adds result of each resolver and operation to Span's data (available under "result")
 - `includeResolverArgs` (default: `false`) - Adds arguments of each resolver to Span's tag called "args"
 - `includeExecuteVariables` (default: `false`) - Adds operation's variables to a Scope (only in case of errors)

@@ -1,23 +1,28 @@
-import { GetEnvelopedFn, ComposeContext, Plugin, ArbitraryObject } from '@envelop/types';
-import { isPluginEnabled, PluginOrDisabledPlugin } from './enable-if.js';
+import { GetEnvelopedFn, ComposeContext, Plugin, ArbitraryObject, Optional } from '@envelop/types';
 import { createEnvelopOrchestrator, EnvelopOrchestrator } from './orchestrator.js';
-import { traceOrchestrator } from './traced-orchestrator.js';
 
-export function envelop<PluginsType extends Plugin<any>[]>(options: {
-  plugins: Array<PluginOrDisabledPlugin>;
+type ExcludeFalsy<TArray extends any[]> = Exclude<TArray[0], null | undefined | false>[];
+
+function notEmpty<T>(value: Optional<T>): value is T {
+  return value != null;
+}
+
+export function envelop<PluginsType extends Optional<Plugin<any>>[]>(options: {
+  plugins: PluginsType;
   enableInternalTracing?: boolean;
-}): GetEnvelopedFn<ComposeContext<PluginsType>> {
-  const plugins = options.plugins.filter(isPluginEnabled);
-  let orchestrator = createEnvelopOrchestrator<ComposeContext<PluginsType>>(plugins);
-
-  if (options.enableInternalTracing) {
-    orchestrator = traceOrchestrator(orchestrator);
-  }
+}): GetEnvelopedFn<ComposeContext<ExcludeFalsy<PluginsType>>> {
+  const plugins = options.plugins.filter(notEmpty);
+  const orchestrator = createEnvelopOrchestrator<ComposeContext<ExcludeFalsy<PluginsType>>>({
+    plugins,
+  });
 
   const getEnveloped = <TInitialContext extends ArbitraryObject>(
     initialContext: TInitialContext = {} as TInitialContext
   ) => {
-    const typedOrchestrator = orchestrator as EnvelopOrchestrator<TInitialContext, ComposeContext<PluginsType>>;
+    const typedOrchestrator = orchestrator as EnvelopOrchestrator<
+      TInitialContext,
+      ComposeContext<ExcludeFalsy<PluginsType>>
+    >;
     typedOrchestrator.init(initialContext);
 
     return {
@@ -32,5 +37,5 @@ export function envelop<PluginsType extends Plugin<any>[]>(options: {
 
   getEnveloped._plugins = plugins;
 
-  return getEnveloped as GetEnvelopedFn<ComposeContext<PluginsType>>;
+  return getEnveloped as GetEnvelopedFn<ComposeContext<ExcludeFalsy<PluginsType>>>;
 }

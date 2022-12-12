@@ -11,16 +11,18 @@ yarn add @envelop/apollo-server-errors
 ## Usage Example
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useApolloServerErrors } from '@envelop/apollo-server-errors'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useApolloServerErrors({
       // All fields are optional, and should match what you pass today to ApolloServer
       debug: true, //
-      formatError: () => {}
+      formatter: () => {}
     })
   ]
 })

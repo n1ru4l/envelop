@@ -1,6 +1,7 @@
 import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/core';
 import {
   DirectiveNode,
+  ExecutionArgs,
   FieldNode,
   getNamedType,
   GraphQLError,
@@ -30,6 +31,8 @@ export type ValidateUserFnParams<UserType> = {
   fieldAuthDirectiveNode: DirectiveNode | undefined;
   /** The extensions used for authentication (If using an extension based flow). */
   fieldAuthExtension: unknown | undefined;
+  /** The args passed to the execution function (including operation context and variables) **/
+  executionArgs: ExecutionArgs;
 };
 
 export type ValidateUserFn<UserType> = (params: ValidateUserFnParams<UserType>) => void | UnauthenticatedError;
@@ -126,7 +129,7 @@ export function defaultProtectSingleValidateFn<UserType>(
 
 export const useGenericAuth = <
   UserType extends {} = {},
-  ContextType = DefaultContext,
+  ContextType extends Record<any, any> = DefaultContext,
   CurrentUserKey extends string = 'currentUser'
 >(
   options: GenericAuthPluginOptions<UserType, ContextType, CurrentUserKey>
@@ -176,6 +179,7 @@ export const useGenericAuth = <
                     objectType,
                     fieldAuthDirectiveNode,
                     fieldAuthExtension,
+                    executionArgs: args,
                   });
                   if (error) {
                     context.reportError(error);
@@ -212,7 +216,7 @@ export const useGenericAuth = <
         const user = await options.resolveUserFn(context as unknown as ContextType);
         extendContext({
           [contextFieldName]: user,
-        } as unknown as ContextType);
+        } as any);
       },
     };
   }
@@ -223,7 +227,7 @@ export const useGenericAuth = <
 
         extendContext({
           [contextFieldName]: user,
-        } as unknown as ContextType);
+        } as any);
       },
     };
   }

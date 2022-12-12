@@ -1,5 +1,42 @@
 # @envelop/types
 
+## 3.0.1
+
+### Patch Changes
+
+- [#1587](https://github.com/n1ru4l/envelop/pull/1587) [`e2ff77ed`](https://github.com/n1ru4l/envelop/commit/e2ff77edbc8c38d2854fc019f1d71ad4cf948d5f) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Don't use `Id` TypeScript generic utility that can cause a circular constraint error
+
+## 2.4.0
+
+### Minor Changes
+
+- [#1499](https://github.com/n1ru4l/envelop/pull/1499) [`1f7af02b`](https://github.com/n1ru4l/envelop/commit/1f7af02b9f1a16058a6d69fcd48425a93be655c6) Thanks [@viniciuspalma](https://github.com/viniciuspalma)! - Adding tslib to package dependencies
+
+  Projects that currently are using yarn Berry with PnP or any strict dependency
+  resolver, that requires that all dependencies are specified on
+  package.json otherwise it would endue in an error if not treated correct
+
+  Since https://www.typescriptlang.org/tsconfig#importHelpers is currently
+  being used, tslib should be exported as a dependency to external runners
+  get the proper import.
+
+  Change on each package:
+
+  ```json
+  // package.json
+  {
+    "dependencies": {
+      "tslib": "^2.4.0"
+    }
+  }
+  ```
+
+## 2.3.1
+
+### Patch Changes
+
+- 071f946: Fix CommonJS TypeScript resolution with `moduleResolution` `node16` or `nodenext`
+
 ## 2.3.0
 
 ### Minor Changes

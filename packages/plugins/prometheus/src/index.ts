@@ -9,6 +9,7 @@ import {
   isIntrospectionOperationString,
   isAsyncIterable,
 } from '@envelop/core';
+import { useOnResolve } from '@envelop/on-resolve';
 import { TypeInfo } from 'graphql';
 import { Summary, Counter, Histogram, register as defaultRegistry } from 'prom-client';
 import {
@@ -324,30 +325,34 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
     : undefined;
 
   return {
-    onResolverCalled: resolversHistogram
-      ? ({ info, context }) => {
-          const shouldTrace = shouldTraceFieldResolver(info, config.resolversWhitelist);
-
-          if (!shouldTrace) {
-            return undefined;
-          }
-
-          const startTime = Date.now();
-
-          return () => {
-            const totalTime = (Date.now() - startTime) / 1000;
-            const paramsCtx = {
-              ...context[promPluginContext],
-              info,
-            };
-            resolversHistogram.histogram.observe(resolversHistogram.fillLabelsFn(paramsCtx, context), totalTime);
-          };
-        }
-      : undefined,
     onEnveloped({ extendContext }) {
       extendContext({
         [promPluginExecutionStartTimeSymbol]: Date.now(),
       });
+    },
+    onPluginInit({ addPlugin }) {
+      if (resolversHistogram) {
+        addPlugin(
+          useOnResolve(({ info, context }) => {
+            const shouldTrace = shouldTraceFieldResolver(info, config.resolversWhitelist);
+
+            if (!shouldTrace) {
+              return undefined;
+            }
+
+            const startTime = Date.now();
+
+            return () => {
+              const totalTime = (Date.now() - startTime) / 1000;
+              const paramsCtx = {
+                ...context[promPluginContext],
+                info,
+              };
+              resolversHistogram.histogram.observe(resolversHistogram.fillLabelsFn(paramsCtx, context), totalTime);
+            };
+          })
+        );
+      }
     },
     onSchemaChange({ schema }) {
       typeInfo = new TypeInfo(schema);

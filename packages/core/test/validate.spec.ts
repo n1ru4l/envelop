@@ -15,7 +15,7 @@ describe('validate', () => {
         schema: expect.any(GraphQLSchema),
         documentAST: expect.any(Object),
         options: undefined,
-        rules: undefined,
+        rules: expect.any(Array),
         typeInfo: undefined,
       },
       addValidationRule: expect.any(Function),
@@ -51,7 +51,7 @@ describe('validate', () => {
     expect(replacementFn).toHaveBeenCalledWith(
       expect.any(GraphQLSchema),
       expect.any(Object),
-      undefined,
+      expect.any(Array),
       undefined,
       undefined
     );
@@ -108,7 +108,7 @@ describe('validate', () => {
       [
         {
           onValidate: ({ addValidationRule }) => {
-            addValidationRule(context => {
+            addValidationRule((context: any) => {
               context.reportError(new GraphQLError('Invalid!'));
               return {};
             });
@@ -146,5 +146,31 @@ describe('validate', () => {
     expect(r.errors).toBeDefined();
     expect(r.errors!.length).toBe(1);
     expect(r.errors![0].message).toBe('Invalid!');
+  });
+
+  it('Should not replace default rules when adding new ones', async () => {
+    const teskit = createTestkit(
+      [
+        {
+          onValidate: ({ addValidationRule }) => {
+            addValidationRule(
+              () => ({}) // noop
+            );
+          },
+        },
+      ],
+      schema
+    );
+
+    const r = await teskit.execute('{ woah }');
+    assertSingleExecutionValue(r);
+
+    expect(r).toMatchInlineSnapshot(`
+      Object {
+        "errors": Array [
+          [GraphQLError: Cannot query field "woah" on type "Query".],
+        ],
+      }
+    `);
   });
 });

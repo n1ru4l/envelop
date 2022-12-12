@@ -12,7 +12,8 @@ yarn add @envelop/preload-assets
 ```
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { usePreloadAssets } from '@envelop/preload-asset'
 import { makeExecutableSchema } from 'graphql'
 
@@ -34,7 +35,7 @@ const schema = makeExecutableSchema({
 })
 
 const getEnveloped = envelop({
-  plugins: [usePreloadAssets()]
+  plugins: [useEngine({ parse, validate, specifiedRules, execute, subscribe }), usePreloadAssets()]
 })
 ```
 

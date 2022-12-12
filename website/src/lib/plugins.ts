@@ -1,4 +1,21 @@
-import type { Package } from '@guild-docs/server/npm';
+import { StaticImageData } from 'next/image';
+
+import sentryIcon from '../../public/assets/logos/sentry.png';
+import datadogIcon from '../../public/assets/logos/datadog.png';
+import graphqlIcon from '../../public/assets/logos/graphql.png';
+import apolloIcon from '../../public/assets/logos/apollo.png';
+import opentelemetryIcon from '../../public/assets/logos/opentelemetry.png';
+import genericAuthIcon from '../../public/assets/logos/generic_auth.png';
+import rateLimiterIcon from '../../public/assets/logos/rate_limiter.png';
+import graphqlArmorIcon from '../../public/assets/logos/graphql-armor.svg';
+import prometheusIcon from '../../public/assets/logos/prometheus.png';
+import newrelicIcon from '../../public/assets/logos/newrelic.png';
+import modulesIcon from '../../public/assets/logos/modules.svg';
+import auth0Icon from '../../public/assets/logos/auth0.png';
+import persistedOperationsIcon from '../../public/assets/logos/persisted_operations.png';
+import assetsIcon from '../../public/assets/logos/assets.png';
+import envelopIcon from '../../public/logo.png';
+import hiveIcon from 'https://the-guild.dev/static/shared-logos/products/hive.svg';
 
 export const ALL_TAGS = [
   'tracing',
@@ -18,19 +35,31 @@ export const ALL_TAGS = [
 
 export type Tags = typeof ALL_TAGS[number];
 
-export const pluginsArr: Package<Tags>[] = [
+export const pluginsArr: {
+  identifier: string;
+  title: string;
+  npmPackage: string;
+  icon: StaticImageData;
+  tags: Tags[];
+  githubReadme?: {
+    repo: string;
+    path: string;
+  };
+  className?: string;
+}[] = [
   {
     identifier: 'use-sentry',
     title: 'useSentry',
     npmPackage: '@envelop/sentry',
-    iconUrl: '/assets/logos/sentry.png',
+    icon: sentryIcon,
+    className: 'dark:invert',
     tags: ['tracing', 'metrics', 'errors'],
   },
   {
     identifier: 'use-statsd',
     title: 'useStatsD',
     npmPackage: '@envelop/statsd',
-    iconUrl: '/assets/logos/datadog.png',
+    icon: datadogIcon,
     tags: ['metrics', 'errors'],
   },
   {
@@ -41,29 +70,18 @@ export const pluginsArr: Package<Tags>[] = [
       path: 'packages/core/docs/use-schema.md',
     },
     npmPackage: '@envelop/core',
-    iconUrl: '/logo.png',
+    icon: envelopIcon,
     tags: ['core', 'schema'],
   },
   {
-    identifier: 'use-async-schema',
-    title: 'useAsyncSchema',
+    identifier: 'use-schema-by-context',
+    title: 'useSchemaByContext',
     githubReadme: {
       repo: 'n1ru4l/envelop',
-      path: 'packages/core/docs/use-async-schema.md',
+      path: 'packages/core/docs/use-schema-by-context.md',
     },
     npmPackage: '@envelop/core',
-    iconUrl: '/logo.png',
-    tags: ['core', 'schema'],
-  },
-  {
-    identifier: 'use-lazy-loaded-schema',
-    title: 'useLazyLoadedSchema',
-    githubReadme: {
-      repo: 'n1ru4l/envelop',
-      path: 'packages/core/docs/use-lazy-loaded-schema.md',
-    },
-    npmPackage: '@envelop/core',
-    iconUrl: '/logo.png',
+    icon: envelopIcon,
     tags: ['core', 'schema'],
   },
   {
@@ -74,7 +92,7 @@ export const pluginsArr: Package<Tags>[] = [
       path: 'packages/core/docs/use-error-handler.md',
     },
     npmPackage: '@envelop/core',
-    iconUrl: '/logo.png',
+    icon: envelopIcon,
     tags: ['core', 'errors'],
   },
   {
@@ -85,8 +103,19 @@ export const pluginsArr: Package<Tags>[] = [
       path: 'packages/core/docs/use-masked-errors.md',
     },
     npmPackage: '@envelop/core',
-    iconUrl: '/logo.png',
+    icon: envelopIcon,
     tags: ['core', 'errors', 'security'],
+  },
+  {
+    identifier: 'use-engine',
+    title: 'useEngine',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/core/docs/use-engine.md',
+    },
+    npmPackage: '@envelop/core',
+    icon: envelopIcon,
+    tags: ['core', 'utilities'],
   },
   {
     identifier: 'use-extend-context',
@@ -96,7 +125,7 @@ export const pluginsArr: Package<Tags>[] = [
       path: 'packages/core/docs/use-extend-context.md',
     },
     npmPackage: '@envelop/core',
-    iconUrl: '/logo.png',
+    icon: envelopIcon,
     tags: ['core', 'utilities'],
   },
   {
@@ -107,7 +136,7 @@ export const pluginsArr: Package<Tags>[] = [
       path: 'packages/core/docs/use-immediate-introspection.md',
     },
     npmPackage: '@envelop/core',
-    iconUrl: '/logo.png',
+    icon: envelopIcon,
     tags: ['core', 'utilities', 'performance'],
   },
   {
@@ -118,7 +147,7 @@ export const pluginsArr: Package<Tags>[] = [
       path: 'packages/core/docs/use-logger.md',
     },
     npmPackage: '@envelop/core',
-    iconUrl: '/logo.png',
+    icon: envelopIcon,
     tags: ['core', 'utilities'],
   },
   {
@@ -129,193 +158,182 @@ export const pluginsArr: Package<Tags>[] = [
       path: 'packages/core/docs/use-payload-formatter.md',
     },
     npmPackage: '@envelop/core',
-    iconUrl: '/logo.png',
+    icon: envelopIcon,
     tags: ['core', 'utilities'],
-  },
-  {
-    identifier: 'use-timing',
-    title: 'useTiming',
-    githubReadme: {
-      repo: 'n1ru4l/envelop',
-      path: 'packages/core/docs/use-timing.md',
-    },
-    npmPackage: '@envelop/core',
-    iconUrl: '/logo.png',
-    tags: ['core', 'tracing', 'utilities'],
   },
   {
     identifier: 'use-graphql-jit',
     title: 'useGraphQLJit',
     npmPackage: '@envelop/graphql-jit',
-    iconUrl: '/assets/logos/graphql.png',
+    icon: graphqlIcon,
     tags: ['performance'],
   },
   {
     identifier: 'use-parser-cache',
     title: 'useParserCache',
     npmPackage: '@envelop/parser-cache',
-    iconUrl: '/logo.png',
+    icon: envelopIcon,
     tags: ['performance', 'caching'],
   },
   {
     identifier: 'use-validation-cache',
     title: 'useValidationCache',
     npmPackage: '@envelop/validation-cache',
-    iconUrl: '/logo.png',
+    icon: envelopIcon,
     tags: ['performance', 'caching'],
-  },
-  {
-    identifier: 'use-depth-limit',
-    title: 'useDepthLimit',
-    npmPackage: '@envelop/depth-limit',
-    iconUrl: '/logo.png',
-    tags: ['performance', 'security'],
   },
   {
     identifier: 'use-data-loader',
     title: 'useDataLoader',
     npmPackage: '@envelop/dataloader',
-    iconUrl: '/assets/logos/graphql.png',
+    icon: graphqlIcon,
     tags: ['performance', 'caching'],
   },
   {
     identifier: 'use-apollo-tracing',
     title: 'useApolloTracing',
     npmPackage: '@envelop/apollo-tracing',
-    iconUrl: '/assets/logos/apollo.png',
+    icon: apolloIcon,
+    className: 'dark:invert',
     tags: ['devtool', 'metrics'],
   },
   {
     identifier: 'use-apollo-datasources',
     title: 'useApolloDataSources',
     npmPackage: '@envelop/apollo-datasources',
-    iconUrl: '/assets/logos/apollo.png',
+    icon: apolloIcon,
+    className: 'dark:invert',
     tags: ['devtool', 'utilities'],
   },
   {
     identifier: 'use-open-telemetry',
     title: 'useOpenTelemetry',
     npmPackage: '@envelop/opentelemetry',
-    iconUrl: '/assets/logos/opentelemetry.png',
+    icon: opentelemetryIcon,
     tags: ['tracing', 'metrics', 'errors'],
   },
   {
     identifier: 'use-generic-auth',
     title: 'useGenericAuth',
     npmPackage: '@envelop/generic-auth',
-    iconUrl: '/assets/logos/generic_auth.png',
+    icon: genericAuthIcon,
+    className: 'dark:invert',
     tags: ['security', 'authentication', 'authorization'],
   },
   {
     identifier: 'use-auth0',
     title: 'useAuth0',
     npmPackage: '@envelop/auth0',
-    iconUrl: '/assets/logos/auth0.png',
+    icon: auth0Icon,
     tags: ['security', 'authentication', 'authorization'],
   },
   {
     identifier: 'use-graphql-modules',
     title: 'useGraphQLModules',
     npmPackage: '@envelop/graphql-modules',
-    iconUrl: '/assets/logos/modules.svg',
+    icon: modulesIcon,
     tags: ['schema', 'utilities', 'devtool'],
   },
   {
     identifier: 'use-rate-limiter',
     title: 'useRateLimiter',
     npmPackage: '@envelop/rate-limiter',
-    iconUrl: '/assets/logos/rate_limiter.png',
+    icon: rateLimiterIcon,
+    className: 'dark:invert',
     tags: ['schema', 'utilities', 'security'],
   },
   {
     identifier: 'use-disable-introspection',
     title: 'useDisableIntrospection',
     npmPackage: '@envelop/disable-introspection',
-    iconUrl: '/assets/logos/graphql.png',
+    icon: graphqlIcon,
     tags: ['utilities', 'security'],
   },
   {
     identifier: 'use-filter-allowed-operations',
     title: 'useFilterAllowedOperations',
     npmPackage: '@envelop/filter-operation-type',
-    iconUrl: '/assets/logos/graphql.png',
+    icon: graphqlIcon,
     tags: ['utilities', 'security'],
   },
   {
     identifier: 'use-preload-assets',
     title: 'usePreloadAssets',
     npmPackage: '@envelop/preload-assets',
-    iconUrl: '/assets/logos/assets.png',
+    icon: assetsIcon,
+    className: 'dark:invert',
     tags: ['utilities'],
   },
   {
     identifier: 'use-persisted-operations',
     title: 'usePersistedOperations',
     npmPackage: '@envelop/persisted-operations',
-    iconUrl: '/assets/logos/persisted_operations.png',
+    icon: persistedOperationsIcon,
+    className: 'dark:invert',
     tags: ['security', 'performance'],
   },
   {
     identifier: 'use-graphql-hive',
     title: 'useHive',
     npmPackage: '@graphql-hive/client',
-    iconUrl: 'https://the-guild.dev/static/shared-logos/products/hive.svg',
+    icon: hiveIcon,
     tags: ['tracing', 'metrics', 'devtool'],
   },
   {
     identifier: 'use-newrelic',
     title: 'useNewRelic',
     npmPackage: '@envelop/newrelic',
-    iconUrl: '/assets/logos/newrelic.png',
+    icon: newrelicIcon,
     tags: ['tracing', 'metrics', 'errors'],
   },
   {
     identifier: 'use-live-query',
     title: 'useLiveQuery',
     npmPackage: '@envelop/live-query',
-    iconUrl: '/assets/logos/graphql.png',
+    icon: graphqlIcon,
     tags: ['utilities'],
   },
   {
     identifier: 'use-fragment-arguments',
     title: 'useFragmentArguments',
     npmPackage: '@envelop/fragment-arguments',
-    iconUrl: '/assets/logos/graphql.png',
+    icon: graphqlIcon,
     tags: ['utilities'],
   },
   {
     identifier: 'use-apollo-server-errors',
     title: 'useApolloServerErrors',
     npmPackage: '@envelop/apollo-server-errors',
-    iconUrl: '/assets/logos/apollo.png',
+    icon: apolloIcon,
+    className: 'dark:invert',
     tags: ['utilities', 'errors'],
   },
   {
     identifier: 'use-operation-field-permissions',
     title: 'useOperationFieldPermissions',
     npmPackage: '@envelop/operation-field-permissions',
-    iconUrl: '/assets/logos/graphql.png',
+    icon: graphqlIcon,
     tags: ['security', 'authorization'],
   },
   {
     identifier: 'use-extended-validation',
     title: 'useExtendedValidation',
     npmPackage: '@envelop/extended-validation',
-    iconUrl: '/assets/logos/graphql.png',
+    icon: graphqlIcon,
     tags: ['devtool', 'utilities'],
   },
   {
     identifier: 'use-prometheus',
     title: 'usePrometheus',
     npmPackage: '@envelop/prometheus',
-    iconUrl: '/assets/logos/prometheus.png',
+    icon: prometheusIcon,
     tags: ['metrics', 'errors'],
   },
   {
     identifier: 'use-context-value-per-execute-subscription-event',
     title: 'useContextValuePerExecuteSubscriptionEvent',
     npmPackage: '@envelop/execute-subscription-event',
-    iconUrl: '/assets/logos/graphql.png',
+    icon: graphqlIcon,
     tags: ['utilities', 'subscription'],
     githubReadme: {
       repo: 'n1ru4l/envelop',
@@ -326,21 +344,58 @@ export const pluginsArr: Package<Tags>[] = [
     identifier: 'use-resource-limitations',
     title: 'useResourceLimitations',
     npmPackage: '@envelop/resource-limitations',
-    iconUrl: '/assets/logos/rate_limiter.png',
+    icon: rateLimiterIcon,
+    className: 'dark:invert',
     tags: ['schema', 'utilities', 'security'],
   },
   {
     identifier: 'use-response-cache',
     title: 'useResponseCache',
     npmPackage: '@envelop/response-cache',
-    iconUrl: '/logo.png',
+    icon: envelopIcon,
     tags: ['caching', 'performance'],
   },
   {
     identifier: 'use-apollo-federation',
     title: 'useApolloFederation',
     npmPackage: '@envelop/apollo-federation',
-    iconUrl: '/assets/logos/apollo.png',
+    icon: apolloIcon,
+    className: 'dark:invert',
     tags: ['schema', 'utilities'],
+  },
+  {
+    identifier: 'graphql-armor-max-aliases',
+    title: 'maxAliasesPlugin',
+    npmPackage: '@escape.tech/graphql-armor-max-aliases',
+    icon: graphqlArmorIcon,
+    tags: ['performance', 'security'],
+  },
+  {
+    identifier: 'graphql-armor-max-depth',
+    title: 'maxDepthPlugin',
+    npmPackage: '@escape.tech/graphql-armor-max-depth',
+    icon: graphqlArmorIcon,
+    tags: ['performance', 'security'],
+  },
+  {
+    identifier: 'graphql-armor-max-depth',
+    title: 'maxDirectivesPlugin',
+    npmPackage: '@escape.tech/graphql-armor-max-directives',
+    icon: graphqlArmorIcon,
+    tags: ['performance', 'security'],
+  },
+  {
+    identifier: 'graphql-armor-max-tokens',
+    title: 'maxTokensPlugin',
+    npmPackage: '@escape.tech/graphql-armor-max-tokens',
+    icon: graphqlArmorIcon,
+    tags: ['performance', 'security'],
+  },
+  {
+    identifier: 'graphql-armor-block-field-suggestions',
+    title: 'blockFieldSuggestions',
+    npmPackage: '@escape.tech/graphql-armor-block-field-suggestions',
+    icon: graphqlArmorIcon,
+    tags: ['security'],
   },
 ];

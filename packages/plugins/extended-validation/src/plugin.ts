@@ -24,13 +24,13 @@ type OnValidationFailedCallback = (params: {
   setResult: (result: ExecutionResult) => void;
 }) => void;
 
-export const useExtendedValidation = (options: {
+export const useExtendedValidation = <PluginContext extends Record<string, any> = {}>(options: {
   rules: Array<ExtendedValidationRule>;
   /**
    * Callback that is invoked if the extended validation yields any errors.
    */
   onValidationFailed?: OnValidationFailedCallback;
-}): Plugin => {
+}): Plugin<PluginContext & { [symbolExtendedValidationRules]?: ExtendedValidationContext }> => {
   let schemaTypeInfo: TypeInfo;
 
   function getTypeInfo(): TypeInfo | undefined {
@@ -50,6 +50,7 @@ export const useExtendedValidation = (options: {
           didRun: false,
         };
         extendContext({
+          ...context,
           [symbolExtendedValidationRules]: validationRulesContext,
         });
       }

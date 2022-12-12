@@ -38,11 +38,13 @@ When configuring the `useResponseCache`, you can choose the type of cache:
 The in-memory LRU cache is used by default.
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useResponseCache({
       // use global cache for all operations
@@ -55,13 +57,15 @@ const getEnveloped = envelop({
 Or, you may create the in-memory LRU cache explicitly.
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache, createInMemoryCache } from '@envelop/response-cache'
 
 const cache = createInMemoryCache()
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useResponseCache({
       cache,
@@ -76,11 +80,13 @@ const getEnveloped = envelop({
 ### Cache based on session/user
 
 ```ts
-import { envelop } from '@envelop/core'
+import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // ... other plugins ...
     useResponseCache({
       ttl: 2000,
@@ -105,6 +111,7 @@ In order to use the Redis cache, you need to:
 - Create an instance of the Redis Cache and set to the `useResponseCache` plugin options
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 import { createRedisCache } from '@envelop/response-cache-redis'
@@ -122,6 +129,10 @@ const redis = new Redis('rediss://:1234567890@my-redis-db.example.com:30652')
 const cache = createRedisCache({ redis })
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({
@@ -139,10 +150,15 @@ const getEnveloped = envelop({
 ### Cache with maximum TTL
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({
@@ -158,10 +174,15 @@ const getEnveloped = envelop({
 ### Cache with custom TTL per object type
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({
@@ -178,10 +199,15 @@ const getEnveloped = envelop({
 ### Cache with custom TTL per schema coordinate
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({
@@ -198,10 +224,15 @@ const getEnveloped = envelop({
 ### Disable cache based on session/user
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({
@@ -228,6 +259,7 @@ cache results with certain error types.
 By default, the `defaultShouldCacheResult` function is used which never caches any query operation execution results that includes any errors (unexpected, EnvelopError, or GraphQLError).
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache, ShouldCacheResultFunction } from '@envelop/response-cache'
 
@@ -238,6 +270,10 @@ export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boo
 }
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({
@@ -255,10 +291,15 @@ By default introspection query operations are not cached. In case you want to ca
 **Infinite caching**
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({
@@ -274,10 +315,15 @@ const getEnveloped = envelop({
 **TTL caching**
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({
@@ -293,10 +339,15 @@ const getEnveloped = envelop({
 ### Cache with maximum TTL
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({
@@ -310,10 +361,15 @@ const getEnveloped = envelop({
 ### Customize the fields that are used for building the cache ID
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({
@@ -329,10 +385,15 @@ const getEnveloped = envelop({
 ### Disable automatic cache invalidation via mutations
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({
@@ -348,6 +409,7 @@ const getEnveloped = envelop({
 ### Invalidate Cache based on custom logic
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache, createInMemoryCache } from '@envelop/response-cache'
 import { emitter } from './eventEmitter'
@@ -356,6 +418,10 @@ import { emitter } from './eventEmitter'
 const cache = createInMemoryCache()
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({
@@ -380,6 +446,7 @@ emitter.on('invalidate', resource => {
 ### Customize how cache ids are built
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache, createInMemoryCache } from '@envelop/response-cache'
 import { emitter } from './eventEmitter'
@@ -391,6 +458,10 @@ const cache = createInMemoryCache({
 })
 
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({
@@ -408,7 +479,14 @@ const getEnveloped = envelop({
 For debugging or monitoring it might be useful to know whether a response got served from the cache or not.
 
 ```ts
+import { parse, validate, execute, subscribe } from 'graphql'
+import { envelop } from '@envelop/core'
+
 const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
   plugins: [
     // ... other plugins ...
     useResponseCache({
