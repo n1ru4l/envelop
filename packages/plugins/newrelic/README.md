@@ -6,13 +6,13 @@ Take advantage of Distributed tracing to monitor performance and errors whilst u
 Below are some screenshots to show how tracking looks like in New Relic, in these examples all plugin options were set to `true`.
 
 Error tracking, operation and resolver views:
-![newrelic_error_operation_screenshot](./error_operation.png)
-![newrelic_error_resolver_screenshot](./error_resolver.png)
+![newrelic_error_operation_screenshot](error_operation.png)
+![newrelic_error_resolver_screenshot](error_resolver.png)
 
 Successful operation tracking, operation plus root-field and sub-field resolvers:
-![newrelic_successful_operation_screenshot](./success_operation.png)
-![newrelic_successful_root-field_resolver_screenshot](./success_rootfield_resolver.png)
-![newrelic_successful_sub-field_resolver_screenshot](./success_subfield_resolver.png)
+![newrelic_successful_operation_screenshot](success_operation.png)
+![newrelic_successful_root-field_resolver_screenshot](success_rootfield_resolver.png)
+![newrelic_successful_sub-field_resolver_screenshot](success_subfield_resolver.png)
 
 ## Getting Started
 
