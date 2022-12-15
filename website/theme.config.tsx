@@ -31,7 +31,7 @@ export default defineConfig({
   },
   siteName: 'ENVELOP',
   editLink: {
-    // @ts-expect-error -- Don't know what's wording with types here
+    // @ts-expect-error -- Don't know what's wrong with types here
     component({ children, className, filePath }) {
       const router = useRouter();
 
