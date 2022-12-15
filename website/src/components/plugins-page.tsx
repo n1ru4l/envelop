@@ -3,7 +3,7 @@ import { StaticImageData } from 'next/image';
 import { useSSG } from 'nextra/ssg';
 import { compareDesc } from 'date-fns';
 import { MarketplaceSearch, fetchPackageInfo } from '@theguild/components';
-import { pluginsArr, ALL_TAGS } from '@/lib/plugins';
+import { PLUGINS, ALL_TAGS } from '@/lib/plugins';
 
 type Plugin = {
   title: string;
@@ -20,7 +20,7 @@ type Plugin = {
 
 export const getStaticProps = async () => {
   const plugins: Plugin[] = await Promise.all(
-    pluginsArr.map(async ({ identifier, npmPackage, title, icon, tags, githubReadme, className = '' }) => {
+    PLUGINS.map(async ({ identifier, npmPackage, title, icon, tags, githubReadme, className = '' }) => {
       const {
         readme,
         createdAt,

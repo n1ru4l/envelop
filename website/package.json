@@ -25,17 +25,17 @@
   },
   "dependencies": {
     "date-fns": "2.29.3",
-    "next-sitemap": "3.1.23",
-    "@theguild/components": "4.3.6",
-    "next": "12.3.1",
+    "next-sitemap": "3.1.42",
+    "@theguild/components": "4.4.4",
+    "next": "13.0.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "next-mdx-remote": "4.1.0"
+    "next-mdx-remote": "4.2.0"
   },
   "devDependencies": {
-    "@theguild/algolia": "1.0.1",
+    "@theguild/algolia": "1.0.2",
     "@theguild/tailwind-config": "0.2.1",
-    "@types/node": "18.6.2",
-    "@types/react": "18.0.18"
+    "@types/node": "18.11.15",
+    "@types/react": "18.0.26"
   }
 }

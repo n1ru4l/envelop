@@ -1,28 +1,28 @@
 ## `@envelop/sentry`
 
-This plugins collects errors and performance tracing for your execution flow, and reports it to [Sentry](https://sentry.io/).
+This plugin collects errors and performance tracing for your execution flow, and reports it to [Sentry](https://sentry.io).
 
 This is how it looks like in Sentry for error tracking:
 
-![Example](./packages/plugins/sentry/error1.png)
-![Example](./packages/plugins/sentry/error2.png)
+![Example](./error1.png)
+![Example](./error2.png)
 
 > The operation name, document, variables are collected on errors, and the breadcrumbs that led to the error. You can also add any custom values that you need.
 
 And for performance tracking:
 
-![Example](./packages/plugins/sentry/perf1.png)
-![Example](./packages/plugins/sentry/perf2.png)
+![Example](./perf1.png)
+![Example](./perf2.png)
 
 > You can get information about each resolver (including field and type names), it's execution time and arguments. Also, in case of an error, the performance log and info are attached automatically to the reported Sentry error.
 
 ## Getting Started
 
-```
+```sh
 yarn add @sentry/node @sentry/tracing @envelop/sentry
 ```
 
-1. Start by creating an account and a project in https://sentry.io/
+1. Start by creating an account and a project in https://sentry.io
 2. Follow the instructions to setup your Sentry instance in your application.
 3. Setup Sentry global instance configuration.
 4. Setup the Envelop plugin.

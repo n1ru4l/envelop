@@ -4,7 +4,7 @@ import sentryIcon from '../../public/assets/logos/sentry.png';
 import datadogIcon from '../../public/assets/logos/datadog.png';
 import graphqlIcon from '../../public/assets/logos/graphql.png';
 import apolloIcon from '../../public/assets/logos/apollo.png';
-import opentelemetryIcon from '../../public/assets/logos/opentelemetry.png';
+import openTelemetryIcon from '../../public/assets/logos/opentelemetry.png';
 import genericAuthIcon from '../../public/assets/logos/generic_auth.png';
 import rateLimiterIcon from '../../public/assets/logos/rate_limiter.png';
 import graphqlArmorIcon from '../../public/assets/logos/graphql-armor.svg';
@@ -35,13 +35,13 @@ export const ALL_TAGS = [
 
 export type Tags = typeof ALL_TAGS[number];
 
-export const pluginsArr: {
+export const PLUGINS: {
   identifier: string;
   title: string;
   npmPackage: string;
   icon: StaticImageData;
   tags: Tags[];
-  githubReadme?: {
+  githubReadme: {
     repo: string;
     path: string;
   };
@@ -50,6 +50,10 @@ export const pluginsArr: {
   {
     identifier: 'use-sentry',
     title: 'useSentry',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/sentry/README.md',
+    },
     npmPackage: '@envelop/sentry',
     icon: sentryIcon,
     className: 'dark:invert',
@@ -58,6 +62,10 @@ export const pluginsArr: {
   {
     identifier: 'use-statsd',
     title: 'useStatsD',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/statsd/README.md',
+    },
     npmPackage: '@envelop/statsd',
     icon: datadogIcon,
     tags: ['metrics', 'errors'],
@@ -133,11 +141,11 @@ export const pluginsArr: {
     title: 'useImmediateIntrospection',
     githubReadme: {
       repo: 'n1ru4l/envelop',
-      path: 'packages/core/docs/use-immediate-introspection.md',
+      path: 'packages/plugins/immediate-introspection/README.md',
     },
-    npmPackage: '@envelop/core',
+    npmPackage: '@envelop/immediate-introspection',
     icon: envelopIcon,
-    tags: ['core', 'utilities', 'performance'],
+    tags: ['utilities', 'performance'],
   },
   {
     identifier: 'use-logger',
@@ -164,6 +172,10 @@ export const pluginsArr: {
   {
     identifier: 'use-graphql-jit',
     title: 'useGraphQLJit',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/graphql-jit/README.md',
+    },
     npmPackage: '@envelop/graphql-jit',
     icon: graphqlIcon,
     tags: ['performance'],
@@ -171,6 +183,10 @@ export const pluginsArr: {
   {
     identifier: 'use-parser-cache',
     title: 'useParserCache',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/parser-cache/README.md',
+    },
     npmPackage: '@envelop/parser-cache',
     icon: envelopIcon,
     tags: ['performance', 'caching'],
@@ -178,6 +194,10 @@ export const pluginsArr: {
   {
     identifier: 'use-validation-cache',
     title: 'useValidationCache',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/validation-cache/README.md',
+    },
     npmPackage: '@envelop/validation-cache',
     icon: envelopIcon,
     tags: ['performance', 'caching'],
@@ -185,6 +205,10 @@ export const pluginsArr: {
   {
     identifier: 'use-data-loader',
     title: 'useDataLoader',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/dataloader/README.md',
+    },
     npmPackage: '@envelop/dataloader',
     icon: graphqlIcon,
     tags: ['performance', 'caching'],
@@ -192,6 +216,10 @@ export const pluginsArr: {
   {
     identifier: 'use-apollo-tracing',
     title: 'useApolloTracing',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/apollo-tracing/README.md',
+    },
     npmPackage: '@envelop/apollo-tracing',
     icon: apolloIcon,
     className: 'dark:invert',
@@ -200,6 +228,10 @@ export const pluginsArr: {
   {
     identifier: 'use-apollo-datasources',
     title: 'useApolloDataSources',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/apollo-datasources/README.md',
+    },
     npmPackage: '@envelop/apollo-datasources',
     icon: apolloIcon,
     className: 'dark:invert',
@@ -208,13 +240,21 @@ export const pluginsArr: {
   {
     identifier: 'use-open-telemetry',
     title: 'useOpenTelemetry',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/opentelemetry/README.md',
+    },
     npmPackage: '@envelop/opentelemetry',
-    icon: opentelemetryIcon,
+    icon: openTelemetryIcon,
     tags: ['tracing', 'metrics', 'errors'],
   },
   {
     identifier: 'use-generic-auth',
     title: 'useGenericAuth',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/generic-auth/README.md',
+    },
     npmPackage: '@envelop/generic-auth',
     icon: genericAuthIcon,
     className: 'dark:invert',
@@ -223,6 +263,10 @@ export const pluginsArr: {
   {
     identifier: 'use-auth0',
     title: 'useAuth0',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/auth0/README.md',
+    },
     npmPackage: '@envelop/auth0',
     icon: auth0Icon,
     tags: ['security', 'authentication', 'authorization'],
@@ -230,6 +274,10 @@ export const pluginsArr: {
   {
     identifier: 'use-graphql-modules',
     title: 'useGraphQLModules',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/graphql-modules/README.md',
+    },
     npmPackage: '@envelop/graphql-modules',
     icon: modulesIcon,
     tags: ['schema', 'utilities', 'devtool'],
@@ -237,6 +285,10 @@ export const pluginsArr: {
   {
     identifier: 'use-rate-limiter',
     title: 'useRateLimiter',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/rate-limiter/README.md',
+    },
     npmPackage: '@envelop/rate-limiter',
     icon: rateLimiterIcon,
     className: 'dark:invert',
@@ -245,6 +297,10 @@ export const pluginsArr: {
   {
     identifier: 'use-disable-introspection',
     title: 'useDisableIntrospection',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/disable-introspection/README.md',
+    },
     npmPackage: '@envelop/disable-introspection',
     icon: graphqlIcon,
     tags: ['utilities', 'security'],
@@ -252,6 +308,10 @@ export const pluginsArr: {
   {
     identifier: 'use-filter-allowed-operations',
     title: 'useFilterAllowedOperations',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/filter-operation-type/README.md',
+    },
     npmPackage: '@envelop/filter-operation-type',
     icon: graphqlIcon,
     tags: ['utilities', 'security'],
@@ -259,6 +319,10 @@ export const pluginsArr: {
   {
     identifier: 'use-preload-assets',
     title: 'usePreloadAssets',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/preload-assets/README.md',
+    },
     npmPackage: '@envelop/preload-assets',
     icon: assetsIcon,
     className: 'dark:invert',
@@ -267,6 +331,10 @@ export const pluginsArr: {
   {
     identifier: 'use-persisted-operations',
     title: 'usePersistedOperations',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/persisted-operations/README.md',
+    },
     npmPackage: '@envelop/persisted-operations',
     icon: persistedOperationsIcon,
     className: 'dark:invert',
@@ -275,6 +343,10 @@ export const pluginsArr: {
   {
     identifier: 'use-graphql-hive',
     title: 'useHive',
+    githubReadme: {
+      repo: 'kamilkisiela/graphql-hive',
+      path: 'packages/libraries/client/README.md',
+    },
     npmPackage: '@graphql-hive/client',
     icon: hiveIcon,
     tags: ['tracing', 'metrics', 'devtool'],
@@ -282,6 +354,10 @@ export const pluginsArr: {
   {
     identifier: 'use-newrelic',
     title: 'useNewRelic',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/newrelic/README.md',
+    },
     npmPackage: '@envelop/newrelic',
     icon: newrelicIcon,
     tags: ['tracing', 'metrics', 'errors'],
@@ -289,6 +365,10 @@ export const pluginsArr: {
   {
     identifier: 'use-live-query',
     title: 'useLiveQuery',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/live-query/README.md',
+    },
     npmPackage: '@envelop/live-query',
     icon: graphqlIcon,
     tags: ['utilities'],
@@ -296,6 +376,10 @@ export const pluginsArr: {
   {
     identifier: 'use-fragment-arguments',
     title: 'useFragmentArguments',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/fragment-arguments/README.md',
+    },
     npmPackage: '@envelop/fragment-arguments',
     icon: graphqlIcon,
     tags: ['utilities'],
@@ -303,6 +387,10 @@ export const pluginsArr: {
   {
     identifier: 'use-apollo-server-errors',
     title: 'useApolloServerErrors',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/apollo-server-errors/README.md',
+    },
     npmPackage: '@envelop/apollo-server-errors',
     icon: apolloIcon,
     className: 'dark:invert',
@@ -311,6 +399,10 @@ export const pluginsArr: {
   {
     identifier: 'use-operation-field-permissions',
     title: 'useOperationFieldPermissions',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/operation-field-permissions/README.md',
+    },
     npmPackage: '@envelop/operation-field-permissions',
     icon: graphqlIcon,
     tags: ['security', 'authorization'],
@@ -318,6 +410,10 @@ export const pluginsArr: {
   {
     identifier: 'use-extended-validation',
     title: 'useExtendedValidation',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/extended-validation/README.md',
+    },
     npmPackage: '@envelop/extended-validation',
     icon: graphqlIcon,
     tags: ['devtool', 'utilities'],
@@ -325,6 +421,10 @@ export const pluginsArr: {
   {
     identifier: 'use-prometheus',
     title: 'usePrometheus',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/prometheus/README.md',
+    },
     npmPackage: '@envelop/prometheus',
     icon: prometheusIcon,
     tags: ['metrics', 'errors'],
@@ -337,12 +437,16 @@ export const pluginsArr: {
     tags: ['utilities', 'subscription'],
     githubReadme: {
       repo: 'n1ru4l/envelop',
-      path: '/packages/plugins/execute-subscription-event/README.md',
+      path: 'packages/plugins/execute-subscription-event/README.md',
     },
   },
   {
     identifier: 'use-resource-limitations',
     title: 'useResourceLimitations',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/resource-limitations/README.md',
+    },
     npmPackage: '@envelop/resource-limitations',
     icon: rateLimiterIcon,
     className: 'dark:invert',
@@ -351,6 +455,10 @@ export const pluginsArr: {
   {
     identifier: 'use-response-cache',
     title: 'useResponseCache',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/response-cache/README.md',
+    },
     npmPackage: '@envelop/response-cache',
     icon: envelopIcon,
     tags: ['caching', 'performance'],
@@ -358,6 +466,10 @@ export const pluginsArr: {
   {
     identifier: 'use-apollo-federation',
     title: 'useApolloFederation',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/apollo-federation/README.md',
+    },
     npmPackage: '@envelop/apollo-federation',
     icon: apolloIcon,
     className: 'dark:invert',
@@ -366,6 +478,10 @@ export const pluginsArr: {
   {
     identifier: 'graphql-armor-max-aliases',
     title: 'maxAliasesPlugin',
+    githubReadme: {
+      repo: 'Escape-Technologies/graphql-armor',
+      path: 'packages/plugins/max-aliases/README.md',
+    },
     npmPackage: '@escape.tech/graphql-armor-max-aliases',
     icon: graphqlArmorIcon,
     tags: ['performance', 'security'],
@@ -373,13 +489,21 @@ export const pluginsArr: {
   {
     identifier: 'graphql-armor-max-depth',
     title: 'maxDepthPlugin',
+    githubReadme: {
+      repo: 'Escape-Technologies/graphql-armor',
+      path: 'packages/plugins/max-depth/README.md',
+    },
     npmPackage: '@escape.tech/graphql-armor-max-depth',
     icon: graphqlArmorIcon,
     tags: ['performance', 'security'],
   },
   {
-    identifier: 'graphql-armor-max-depth',
+    identifier: 'graphql-armor-max-directives',
     title: 'maxDirectivesPlugin',
+    githubReadme: {
+      repo: 'Escape-Technologies/graphql-armor',
+      path: 'packages/plugins/max-directives/README.md',
+    },
     npmPackage: '@escape.tech/graphql-armor-max-directives',
     icon: graphqlArmorIcon,
     tags: ['performance', 'security'],
@@ -387,6 +511,10 @@ export const pluginsArr: {
   {
     identifier: 'graphql-armor-max-tokens',
     title: 'maxTokensPlugin',
+    githubReadme: {
+      repo: 'Escape-Technologies/graphql-armor',
+      path: 'packages/plugins/max-tokens/README.md',
+    },
     npmPackage: '@escape.tech/graphql-armor-max-tokens',
     icon: graphqlArmorIcon,
     tags: ['performance', 'security'],
@@ -394,6 +522,10 @@ export const pluginsArr: {
   {
     identifier: 'graphql-armor-block-field-suggestions',
     title: 'blockFieldSuggestions',
+    githubReadme: {
+      repo: 'Escape-Technologies/graphql-armor',
+      path: 'packages/plugins/block-field-suggestions/README.md',
+    },
     npmPackage: '@escape.tech/graphql-armor-block-field-suggestions',
     icon: graphqlArmorIcon,
     tags: ['security'],
