@@ -35,7 +35,7 @@ export default defineConfig({
     component({ children, className, filePath }) {
       const router = useRouter();
 
-      let url = `n1ru4l/envelop/tree/main/website${filePath}`;
+      let url = `n1ru4l/envelop/tree/main/website/${filePath}`;
 
       if (router.route === '/plugins/[name]') {
         const { name } = router.query;
