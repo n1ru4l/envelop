@@ -111,7 +111,6 @@ describe('Apollo Inline Trace Plugin', () => {
     const result = await perform({ query: '{ hello }' });
     assertSingleExecutionValue(result);
 
-    //
 
     const ftv1 = result.extensions?.ftv1 as string as string;
     expect(typeof ftv1).toBe('string');
