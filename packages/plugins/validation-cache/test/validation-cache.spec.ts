@@ -1,5 +1,5 @@
-import { buildSchema, GraphQLError, validate } from 'graphql';
-import { createTestkit } from '@envelop/testing';
+import { buildSchema, GraphQLError, NoSchemaIntrospectionCustomRule, validate } from 'graphql';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useValidationCache } from '../src/index.js';
 import { Plugin } from '@envelop/types';
 import LRU from 'lru-cache';
@@ -94,5 +94,25 @@ describe('useValidationCache', () => {
     await testInstance.execute(`query { foo2 }`);
     expect(cache.get).toHaveBeenCalled();
     expect(cache.set).toHaveBeenCalled();
+  });
+
+  it('does not share cache across different validation rules', async () => {
+    let counter = 0;
+    const plugin: Plugin = {
+      onValidate(ctx) {
+        counter = counter + 1;
+        if (counter > 1) {
+          ctx.addValidationRule(NoSchemaIntrospectionCustomRule);
+        }
+      },
+    };
+
+    const testInstance = createTestkit([plugin, useValidationCache()], testSchema);
+    let result = await testInstance.execute(`{ __schema { types { name } } }`);
+    assertSingleExecutionValue(result);
+    expect(result.errors).toBeUndefined();
+    result = await testInstance.execute(`{ __schema { types { name } } }`);
+    assertSingleExecutionValue(result);
+    expect(result.errors).toBeDefined();
   });
 });

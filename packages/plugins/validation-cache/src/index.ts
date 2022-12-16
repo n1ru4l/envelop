@@ -51,7 +51,15 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
       extendContext({ [rawDocumentSymbol]: params.source.toString() });
     },
     onValidate({ params, context, setResult }) {
-      const key: string = context[rawDocumentSymbol] ?? print(params.documentAST);
+      let ruleKey = '';
+      if (Array.isArray(params.rules)) {
+        // Note: We could also order them... but that might be too much
+        for (const rule of params.rules) {
+          ruleKey = ruleKey + rule.name;
+        }
+      }
+
+      const key: string = ruleKey + (context[rawDocumentSymbol] ?? print(params.documentAST));
       const cachedResult = resultCache.get(key);
 
       if (cachedResult !== undefined) {
