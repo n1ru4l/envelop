@@ -3,7 +3,7 @@ import { Plugin } from './plugin';
 import { Spread, TuplifyUnion, Unarray } from './utils';
 
 // We are using `interface` instead of `type` in order to allow type augmentation
-export interface DefaultContext {}
+export interface DefaultContext { }
 
 export type ComposeContextArray<V extends unknown> = V extends []
   ? []
