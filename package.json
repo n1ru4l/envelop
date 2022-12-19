@@ -27,7 +27,7 @@
     "postinstall": "patch-package",
     "lint": "eslint --config .eslintrc.json --ext .ts . --max-warnings 0",
     "ci:lint": "eslint --config .eslintrc.json --ext .ts . --max-warnings 0 --output-file eslint_report.json --format json",
-    "lint:prettier": "prettier --ignore-path .gitignore --check .",
+    "lint:prettier": "prettier --cache --ignore-path .gitignore --check .",
     "prebuild": "rimraf packages/*/dist packages/plugins/*/dist",
     "build": "bob build",
     "ts:check": "tsc --noEmit",
@@ -38,7 +38,7 @@
     "release": "changeset publish",
     "loadtest:start-server": "NODE_ENV=production node ./benchmark/app.js",
     "loadtest:run": "k6 -e GRAPHQL_HOSTNAME=0.0.0.0 run ./benchmark/k6.js",
-    "prettier": "prettier --ignore-path .gitignore --write --list-different ."
+    "prettier": "prettier --cache --ignore-path .gitignore --write --list-different ."
   },
   "devDependencies": {
     "@babel/core": "7.17.5",

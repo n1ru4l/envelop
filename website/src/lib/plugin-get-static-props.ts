@@ -1,19 +1,19 @@
 import { compileMdx } from 'nextra/compile';
 import { fetchPackageInfo } from '@theguild/components';
-import { pluginsArr } from './plugins';
+import { PLUGINS } from './plugins';
 import { format } from 'date-fns';
 import { GetStaticProps, GetStaticPaths } from 'next';
 
 export const getStaticPaths: GetStaticPaths = () => ({
   fallback: 'blocking',
-  paths: pluginsArr.map(({ identifier }) => ({
+  paths: PLUGINS.map(({ identifier }) => ({
     params: { name: identifier },
   })),
 });
 
 export const getStaticProps: GetStaticProps = async ctx => {
   const pluginPath = ctx.params?.name;
-  const plugin = pluginsArr.find(v => v.identifier === pluginPath);
+  const plugin = PLUGINS.find(v => v.identifier === pluginPath);
 
   if (!plugin) {
     throw new Error(`Unknown "${pluginPath}" plugin identifier`);
@@ -32,16 +32,9 @@ export const getStaticProps: GetStaticProps = async ctx => {
       'MMM do, yyyy'
     )}|
 
-## Installation
-
-<PackageCmd packages={["${npmPackage}"]} />
-
 ${readme}`,
     {
-      mdxOptions: {
-        outputFormat: 'function-body',
-        jsx: false,
-      },
+      unstable_defaultShowCopyCode: true,
     }
   );
 
