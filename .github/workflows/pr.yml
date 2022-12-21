@@ -7,6 +7,10 @@ on:
 jobs:
   dependencies:
     uses: the-guild-org/shared-config/.github/workflows/changesets-dependencies.yaml@main
+    with:
+      installDependencies: true
+      packageManager: yarn
+      nodeVersion: 18
     secrets:
       githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
 
