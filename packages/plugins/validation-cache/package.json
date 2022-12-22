@@ -1,6 +1,6 @@
 {
   "name": "@envelop/validation-cache",
-  "version": "5.0.4",
+  "version": "5.0.5",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
