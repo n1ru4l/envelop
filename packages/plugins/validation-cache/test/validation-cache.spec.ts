@@ -115,4 +115,36 @@ describe('useValidationCache', () => {
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
   });
+
+  it('includes schema in the cache key', async () => {
+    const schema1 = buildSchema(/* GraphQL */ `
+      type Query {
+        foo: String
+      }
+    `);
+    const schema2 = buildSchema(/* GraphQL */ `
+      type Query {
+        foo1: String
+      }
+    `);
+
+    let currentSchema = schema1;
+    const dynamicSchema: Plugin = {
+      onEnveloped({ setSchema }) {
+        setSchema(currentSchema);
+      },
+    };
+
+    const testInstance = createTestkit([useTestPlugin, dynamicSchema, useValidationCache()], testSchema);
+    await testInstance.execute(`{ __schema { types { name } } }`);
+    expect(testValidator).toHaveBeenCalledTimes(1);
+
+    currentSchema = schema2;
+    await testInstance.execute(`{ __schema { types { name } } }`);
+    expect(testValidator).toHaveBeenCalledTimes(2);
+    currentSchema = schema1;
+    await testInstance.execute(`{ __schema { types { name } } }`);
+    // should still be two, because the cache key includes the schema
+    expect(testValidator).toHaveBeenCalledTimes(2);
+  });
 });
