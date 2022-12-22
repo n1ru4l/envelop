@@ -50,18 +50,30 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
     onParse({ params, extendContext }) {
       extendContext({ [rawDocumentSymbol]: params.source.toString() });
     },
-    onValidate({ params, context, setResult }) {
-      const key: string = context[rawDocumentSymbol] ?? print(params.documentAST);
-      const cachedResult = resultCache.get(key);
+    onValidate({ params, context, setValidationFn, validateFn }) {
+      // We use setValidateFn over accessing params.rules directly, as other plugins in the chain might add more rules.
+      // This would cause an issue if we are constructing the cache key here already.
+      setValidationFn((...args) => {
+        let ruleKey = '';
+        if (Array.isArray(args[2])) {
+          // Note: We could also order them... but that might be too much
+          for (const rule of args[2]) {
+            ruleKey = ruleKey + rule.name;
+          }
+        }
 
-      if (cachedResult !== undefined) {
-        setResult(cachedResult);
-      }
+        const key: string = ruleKey + (context[rawDocumentSymbol] ?? print(params.documentAST));
+        const cachedResult = resultCache.get(key);
 
-      return ({ result }) => {
-        // @ts-expect-error TODO: not sure how we will make it dev friendly
+        if (cachedResult !== undefined) {
+          return cachedResult;
+        }
+
+        const result = validateFn(...args);
         resultCache.set(key, result);
-      };
+
+        return result;
+      });
     },
   };
 };
