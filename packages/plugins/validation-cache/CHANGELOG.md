@@ -1,5 +1,14 @@
 # @envelop/validation-cache
 
+## 5.0.5
+
+### Patch Changes
+
+- [#1598](https://github.com/n1ru4l/envelop/pull/1598) [`21a758de`](https://github.com/n1ru4l/envelop/commit/21a758de9324f3cd9accc9c08f69a3ed41de5f77) Thanks [@n1ru4l](https://github.com/n1ru4l)! - Include the validation rule names within the operation cache key.
+
+  This prevents skipping conditional validation rules in other plugins.
+  Please make sure your validation rules always have a unique `name` property.
+
 ## 5.0.4
 
 ### Patch Changes
