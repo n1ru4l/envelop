@@ -61,4 +61,4 @@ type Query {
 
 ## Notes
 
-You can find more details here: hhttps://github.com/teamplanes/graphql-rate-limit#readme
+You can find more details here: https://github.com/teamplanes/graphql-rate-limit#readme
