@@ -257,3 +257,41 @@ describe('sentry', () => {
     });
   });
 });
+
+test('sets the span in the query context', async () => {
+  const { testkit: sentryTestkit, sentryTransport } = createSentryTestkit();
+  Sentry.init({
+    dsn: 'https://public@sentry.example.com/2',
+    transport: sentryTransport,
+  });
+
+  // The test verifies that the span is set in the context, which would be
+  // available as the third argument
+  const schema = makeExecutableSchema({
+    typeDefs: /* GraphQL */ `
+      type Query {
+        hasSentryInContext: String!
+      }
+    `,
+    resolvers: {
+      Query: {
+        hasSentryInContext: async (args, info, ctx) => {
+          return !!ctx.sentry;
+        },
+      },
+    },
+  });
+
+  const envelopTestkit = createTestkit([useSentry()], schema);
+  const result = await envelopTestkit.execute('{ hasSentryInContext }');
+  expect(result).toMatchInlineSnapshot(`
+    Object {
+      "data": Object {
+        "hasSentryInContext": "true",
+      },
+    }
+  `);
+
+  // run sentry flush
+  await new Promise(res => setTimeout(res, 10));
+});
