@@ -1,7 +1,7 @@
 {
   "[name]": {
     "title": "Plugin",
-    "hidden": true,
+    "display": "hidden",
     "theme": {
       "layout": "default",
       "sidebar": false,
