@@ -19,7 +19,7 @@ Available metrics:
 ## Getting Started
 
 ```
-yarn add hot-shots @envelop/stats
+yarn add hot-shots @envelop/statsd
 ```
 
 ## Usage Example
