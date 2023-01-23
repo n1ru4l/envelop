@@ -15,12 +15,12 @@ const extractOperationName = (options: InngestEventOptions): string => {
   ) as OperationDefinitionNode;
   const operationName = args.operationName || rootOperation.name?.value || undefined;
 
-  options.logger.info({ operationName }, '>>>>>>>>>>> in data');
+  options.logger.info({ operationName }, '>>>>>>>>>>> in extractOperationName');
 
   return operationName;
 };
 
-const buildOperationId = async (options: InngestEventOptions): Promise<string> => {
+export const buildOperationId = async (options: InngestEventOptions): Promise<string> => {
   const tokens = [
     options.documentString,
     extractOperationName(options) ?? '',
