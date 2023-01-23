@@ -6,7 +6,7 @@ export const shouldSendEvent = (options: InngestDataOptions) => {
 
   const isAnonymous = isAnonymousOperation(options.params);
   const isIntrospection = isIntrospectionQuery(options.params);
-  const hasErrors = options.result?.errors && options.result.errors.length > 0;
+  const hasErrors = options.result?.errors !== undefined && options.result.errors.length > 0;
 
   if (isAnonymous && options.skipAnonymousOperations) {
     options.logger.warn('blocking event because it is an anonymous operation and we want to skip them');

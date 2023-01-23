@@ -5,7 +5,7 @@ import { buildDataPayload, buildEventName, buildUserContext } from './builders';
 import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str';
 import { createInngestClient } from './client';
 import { buildLogger } from './logger';
-import { shouldSendEvent } from './shouldSendEvent';
+import { shouldSendEvent } from './should-send-event';
 import type { UseInngestPluginOptions } from './types';
 
 /**
