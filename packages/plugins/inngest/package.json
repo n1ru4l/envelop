@@ -63,8 +63,7 @@
   },
   "peerDependencies": {
     "@envelop/core": "^3.0.4",
-    "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0",
-    "graphql-yoga": "^3.3.0"
+    "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {
     "input": "./src/index.ts"

@@ -1,7 +1,11 @@
 import type { ExecutionResult, OnExecuteEventPayload } from '@envelop/core';
 import type { RedactOptions } from 'fast-redact';
-import type { YogaLogger, LogLevel } from 'graphql-yoga';
+
 import type { Inngest, ClientOptions, EventPayload } from 'inngest';
+
+export type UseInngestLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error';
+
+export type UseInngestLogger = Record<UseInngestLogLevel, (...args: any[]) => void>;
 
 export type InngestUserContext = Pick<EventPayload, 'user'>;
 
@@ -15,12 +19,12 @@ export type UseInngestPluginOptions = {
   skipAnonymousOperations?: boolean;
   omitData?: boolean;
   redaction?: RedactOptions;
-  logging?: boolean | YogaLogger | LogLevel;
+  logging?: boolean | UseInngestLogger | UseInngestLogLevel;
   userContext?: InngestUserContextFunction;
 };
 
 export type InngestLoggerOptions = {
-  logger: YogaLogger;
+  logger: UseInngestLogger;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
