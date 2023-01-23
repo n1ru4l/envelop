@@ -1,6 +1,6 @@
 # useInngest
 
-`useInngest` is an [Envelop]((https://envelop.dev/) plugin for [GraphQL Yoga](https://envelop.dev/) and servers or frameworks powered by Yoda, such as [RedwoodJS](https://www.redwoodjs.com).
+`useInngest` is an [Envelop](https://envelop.dev/) plugin for [GraphQL Yoga](https://envelop.dev/) and servers or frameworks powered by Yoda, such as [RedwoodJS](https://www.redwoodjs.com).
 
 It's philosophy is to "instrument everything" by sending events for each GraphQL execution results to [Inngest](https://www.inngest.com) to effortlessly build event-driven applications.
 
