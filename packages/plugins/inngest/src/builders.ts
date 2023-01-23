@@ -20,7 +20,7 @@ export const buildOperationId = async (options: InngestEventOptions): Promise<st
   return operationId;
 };
 
-const buildOperationNameForEventName = async (options: InngestEventOptions) => {
+export const buildOperationNameForEventName = async (options: InngestEventOptions) => {
   options.logger.debug({ custom: options.params?.args }, '>>>>>>>>>>> args');
 
   let operationName = extractOperationName(options);
@@ -42,9 +42,9 @@ export const buildDataPayload = async (options: InngestDataOptions) => {
     ...options.result.data,
     __graphql: {
       operation: getOperation(options.params),
-      operationName: extractOperationName(options),
+      operationName: extractOperationName(options) || '',
       operationId: await buildOperationNameForEventName(options),
-      variables: options.params.args.variableValues,
+      variables: options.params.args.variableValues || {},
     },
   };
 
