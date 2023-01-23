@@ -1,10 +1,30 @@
-import { visit, getNamedType, getOperationAST, isIntrospectionType, TypeInfo, visitWithTypeInfo, BREAK } from 'graphql';
-
+import {
+  Kind,
+  OperationDefinitionNode,
+  visit,
+  getNamedType,
+  getOperationAST,
+  isIntrospectionType,
+  TypeInfo,
+  visitWithTypeInfo,
+  BREAK,
+} from 'graphql';
 import type { OnExecuteEventPayload } from '@envelop/core';
-import type { ContextType } from './types';
+import type { ContextType, InngestEventExecuteOptions } from './types';
+
+export const extractOperationName = (options: Pick<InngestEventExecuteOptions, 'params'>): string => {
+  const args = options.params.args;
+  const rootOperation = args.document.definitions.find(
+    // @ts-expect-error TODO: not sure how we will make it dev friendly
+    definitionNode => definitionNode.kind === Kind.OPERATION_DEFINITION
+  ) as OperationDefinitionNode;
+  const operationName = args.operationName || rootOperation.name?.value || undefined;
+
+  return operationName;
+};
 
 export const isAnonymousOperation = (params: OnExecuteEventPayload<ContextType>) => {
-  return params?.args?.operationName === undefined;
+  return extractOperationName({ params }) === undefined;
 };
 
 export const isIntrospectionQuery = (params: OnExecuteEventPayload<ContextType>) => {

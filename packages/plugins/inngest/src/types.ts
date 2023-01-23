@@ -13,7 +13,7 @@ export type UseInngestPluginOptions = {
   includeErrors?: boolean;
   includeIntrospection?: boolean;
   skipAnonymousOperations?: boolean;
-  skipData?: boolean;
+  omitData?: boolean;
   redaction?: RedactOptions;
   logging?: boolean | YogaLogger | LogLevel;
   userContext?: InngestUserContextFunction;

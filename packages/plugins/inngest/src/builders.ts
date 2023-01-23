@@ -3,22 +3,8 @@ import fastRedact from 'fast-redact';
 
 import { decamelize } from 'humps';
 import { hashSHA256 } from './hash-sha256';
-import { Kind, OperationDefinitionNode } from 'graphql';
-import { getOperation } from './tools';
+import { extractOperationName, getOperation } from './tools';
 import type { InngestDataOptions, InngestEventOptions, InngestUserContextOptions } from './types';
-
-const extractOperationName = (options: InngestEventOptions): string => {
-  const args = options.params.args;
-  const rootOperation = args.document.definitions.find(
-    // @ts-expect-error TODO: not sure how we will make it dev friendly
-    definitionNode => definitionNode.kind === Kind.OPERATION_DEFINITION
-  ) as OperationDefinitionNode;
-  const operationName = args.operationName || rootOperation.name?.value || undefined;
-
-  options.logger.info({ operationName }, '>>>>>>>>>>> in extractOperationName');
-
-  return operationName;
-};
 
 export const buildOperationId = async (options: InngestEventOptions): Promise<string> => {
   const tokens = [
@@ -29,13 +15,13 @@ export const buildOperationId = async (options: InngestEventOptions): Promise<st
 
   const operationId = await hashSHA256(tokens);
 
-  options.logger.info({ custom: { tokens, operationId } }, '>>>>>>>>>>> buildOperationId tokens');
+  options.logger.debug({ custom: { tokens, operationId } }, '>>>>>>>>>>> buildOperationId tokens');
 
   return operationId;
 };
 
 const buildOperationNameForEventName = async (options: InngestEventOptions) => {
-  options.logger.info({ custom: options.params?.args }, '>>>>>>>>>>> args');
+  options.logger.debug({ custom: options.params?.args }, '>>>>>>>>>>> args');
 
   let operationName = extractOperationName(options);
 
@@ -50,7 +36,7 @@ const buildOperationNameForEventName = async (options: InngestEventOptions) => {
 };
 
 export const buildDataPayload = async (options: InngestDataOptions) => {
-  options.logger.info('>>>>>>>>>>> in data');
+  options.logger.debug('>>>>>>>>>>> in data');
 
   const payload = {
     ...options.result.data,
@@ -63,37 +49,37 @@ export const buildDataPayload = async (options: InngestDataOptions) => {
   };
 
   if (options.redaction) {
-    options.logger.info({ custom: options.redaction }, '>>>>>>>>>>> REDACTing with options');
+    options.logger.debug({ custom: options.redaction }, '>>>>>>>>>>> REDACTing with options');
 
     const redact = fastRedact(options.redaction);
 
     const redactedData = JSON.parse(redact(payload) as string);
 
-    options.logger.info({ custom: redactedData }, '>>>>>>>>>>> REDACTED data');
+    options.logger.debug({ custom: redactedData }, '>>>>>>>>>>> REDACTED data');
 
     return redactedData;
   }
 
-  options.logger.info({ custom: payload }, '>>>>>>>>>>> payload data');
+  options.logger.debug({ custom: payload }, '>>>>>>>>>>> payload data');
 
   return payload;
 };
 
 export const buildEventName = async (options: InngestEventOptions) => {
-  options.logger.info('>> in eventName');
+  options.logger.debug('>> in eventName');
 
   const operationName = await buildOperationNameForEventName(options);
   const operation = getOperation(options.params);
 
   const name = `${options.eventNamePrefix}/${operationName}.${operation}`.toLowerCase();
-  options.logger.info({ custom: name }, '>>>>>>>>>>> buildEventName');
+  options.logger.debug({ custom: name }, '>>>>>>>>>>> buildEventName');
 
   return name as string;
 };
 
 // TODO: support a custom user context function
 export const buildUserContext = (options: InngestUserContextOptions) => {
-  options.logger.info('>> in user');
+  options.logger.debug('>> in user');
   return {
     currentUser: options.params.args.contextValue.currentUser,
   };

@@ -51,7 +51,7 @@ export const useInngest = (options: UseInngestPluginOptions): Plugin => {
                   eventNamePrefix,
                   logger,
                 }),
-                data: options.skipData
+                data: options.omitData
                   ? {}
                   : await buildDataPayload({
                       params: onExecuteParams,
