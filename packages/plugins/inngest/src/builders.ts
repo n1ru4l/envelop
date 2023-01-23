@@ -35,6 +35,18 @@ export const buildOperationNameForEventName = async (options: InngestEventOption
   });
 };
 
+export const buildEventName = async (options: InngestEventOptions) => {
+  options.logger.debug('>> in eventName');
+
+  const operationName = await buildOperationNameForEventName(options);
+  const operation = getOperation(options.params);
+
+  const name = `${options.eventNamePrefix}/${operationName}.${operation}`.toLowerCase();
+  options.logger.debug({ custom: name }, '>>>>>>>>>>> buildEventName');
+
+  return name as string;
+};
+
 export const buildDataPayload = async (options: InngestDataOptions) => {
   options.logger.debug('>>>>>>>>>>> in data');
 
@@ -63,18 +75,6 @@ export const buildDataPayload = async (options: InngestDataOptions) => {
   options.logger.debug({ custom: payload }, '>>>>>>>>>>> payload data');
 
   return payload;
-};
-
-export const buildEventName = async (options: InngestEventOptions) => {
-  options.logger.debug('>> in eventName');
-
-  const operationName = await buildOperationNameForEventName(options);
-  const operation = getOperation(options.params);
-
-  const name = `${options.eventNamePrefix}/${operationName}.${operation}`.toLowerCase();
-  options.logger.debug({ custom: name }, '>>>>>>>>>>> buildEventName');
-
-  return name as string;
 };
 
 // TODO: support a custom user context function

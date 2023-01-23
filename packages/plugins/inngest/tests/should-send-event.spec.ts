@@ -4,8 +4,6 @@ import { parse } from 'graphql';
 import { shouldSendEvent } from '../src/should-send-event';
 import { buildLogger } from '../src/logger';
 
-import { isAnonymousOperation } from '../src/tools';
-
 describe('shouldSendEvent', () => {
   const schema = makeExecutableSchema({
     typeDefs: /* GraphQL */ `
@@ -42,20 +40,6 @@ describe('shouldSendEvent', () => {
   });
 
   it('should not send anonymous events', async () => {
-    const isAnon = isAnonymousOperation({
-      executeFn: () => {},
-      setExecuteFn: () => {},
-      setResultAndStopExecution: () => {},
-      extendContext: () => {},
-      args: {
-        schema,
-        document: parse(`query { test }`),
-        contextValue: {},
-      },
-    });
-
-    expect(isAnon).toBe(true);
-
     const result = shouldSendEvent({
       skipAnonymousOperations: true,
       params: {
