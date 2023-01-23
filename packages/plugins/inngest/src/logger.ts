@@ -15,6 +15,7 @@ export const warnPrefix = ansiCodes.yellow + 'WARN' + ansiCodes.reset;
 export const infoPrefix = ansiCodes.cyan + 'INFO' + ansiCodes.reset;
 export const errorPrefix = ansiCodes.red + 'ERR' + ansiCodes.reset;
 export const debugPrefix = ansiCodes.magenta + 'DEBUG' + ansiCodes.reset;
+export const tracePrefix = ansiCodes.cyan + 'TRACE' + ansiCodes.reset;
 
 const logLevelScores: Record<UseInngestLogLevel | 'silent', number> = {
   trace: 0,
