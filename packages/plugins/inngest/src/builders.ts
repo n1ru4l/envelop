@@ -4,9 +4,14 @@ import fastRedact from 'fast-redact';
 import { decamelize } from 'humps';
 import { hashSHA256 } from './hash-sha256';
 import { extractOperationName, getOperation, buildTypeIdentifiers } from './tools';
-import type { InngestDataOptions, InngestEventOptions, InngestUserContextOptions } from './types';
+import type {
+  UseInngestDataOptions,
+  UseInngestEventOptions,
+  UseInngestUserContextOptions,
+  BuildEventNameFunction,
+} from './types';
 
-export const buildOperationId = async (options: InngestEventOptions): Promise<string> => {
+export const buildOperationId = async (options: UseInngestEventOptions): Promise<string> => {
   const tokens = [
     options.documentString,
     extractOperationName(options) ?? '',
@@ -20,7 +25,7 @@ export const buildOperationId = async (options: InngestEventOptions): Promise<st
   return operationId;
 };
 
-export const buildOperationNameForEventName = async (options: InngestEventOptions) => {
+export const buildOperationNameForEventName = async (options: UseInngestEventOptions) => {
   // options.logger.debug({ custom: options.params?.args }, '>>>>>>>>>>> args');
 
   let operationName = extractOperationName(options);
@@ -35,8 +40,8 @@ export const buildOperationNameForEventName = async (options: InngestEventOption
   });
 };
 
-export const buildEventName = async (options: InngestEventOptions) => {
-  options.logger.debug('>> in eventName');
+export const buildEventName: BuildEventNameFunction = async (options: UseInngestEventOptions) => {
+  options.logger.trace('>> in eventName');
 
   const operationName = await buildOperationNameForEventName(options);
   const operation = getOperation(options.params);
@@ -47,8 +52,8 @@ export const buildEventName = async (options: InngestEventOptions) => {
   return name as string;
 };
 
-export const buildEventPayload = async (options: InngestDataOptions) => {
-  options.logger.debug('>>>>>>>>>>> in buildEventPayload');
+export const buildEventPayload = async (options: UseInngestDataOptions) => {
+  options.logger.trace('>>>>>>>>>>> in buildEventPayload');
 
   const { identifiers, types } = await buildTypeIdentifiers(options);
 
@@ -86,8 +91,8 @@ export const buildEventPayload = async (options: InngestDataOptions) => {
 };
 
 // TODO: support a custom user context function
-export const buildUserContext = (options: InngestUserContextOptions) => {
-  options.logger.debug('>> in user');
+export const buildUserContext = (options: UseInngestUserContextOptions) => {
+  options.logger.trace('>> in user');
   return {
     currentUser: options.params.args.contextValue.currentUser,
   };

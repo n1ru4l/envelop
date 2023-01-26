@@ -1,9 +1,8 @@
-import { buildEventName } from './builders';
 import { allowOperation, isAnonymousOperation, isIntrospectionQuery } from './tools';
-import { InngestDataOptions } from './types';
+import { UseInngestDataOptions } from './types';
 
 // TODO: skip list of schema coordinates -- response  c Query.findPost 4000
-export const shouldSendEvent = async (options: InngestDataOptions) => {
+export const shouldSendEvent = async (options: UseInngestDataOptions) => {
   options.logger.debug('>> in shouldSendEvent');
 
   const allowedOperation = allowOperation(options);
@@ -11,7 +10,7 @@ export const shouldSendEvent = async (options: InngestDataOptions) => {
   const isIntrospection = isIntrospectionQuery(options.params);
   const hasErrors = options.result?.errors !== undefined && options.result.errors.length > 0;
 
-  const eventName = await buildEventName(options);
+  const eventName = options.buildEventNameFunction ? await options.buildEventNameFunction(options) : 'unknown';
 
   if (!allowedOperation) {
     options.logger.warn(`Blocking event ${eventName} because it is not an allowed operation.`);
@@ -40,8 +39,8 @@ export const shouldSendEvent = async (options: InngestDataOptions) => {
   const shouldSend = !isIntrospection && !hasErrors;
 
   if (shouldSend) {
-    options.logger.debug(
-      `Sending event${eventName} because it is allowed due to introspection ${isIntrospection} or errors ${hasErrors}`
+    options.logger.warn(
+      `Sending event ${eventName} because it is allowed due to introspection ${isIntrospection} or errors ${hasErrors}`
     );
   } else {
     options.logger.warn(

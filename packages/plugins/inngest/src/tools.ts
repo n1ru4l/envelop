@@ -15,13 +15,13 @@ import { visitResult } from '@graphql-tools/utils';
 import type { OnExecuteEventPayload } from '@envelop/core';
 import type {
   ContextType,
-  InngestEventExecuteOptions,
-  InngestEventOptions,
-  InngestDataOptions,
+  UseInngestExecuteOptions,
+  UseInngestEventOptions,
+  UseInngestDataOptions,
   UseInngestEntityRecord,
 } from './types';
 
-export const allowOperation = (options: InngestEventOptions): boolean => {
+export const allowOperation = (options: UseInngestEventOptions): boolean => {
   if (!options.allowedOperations === undefined) {
     options.logger.warn('No operations are allowed.');
   }
@@ -44,7 +44,7 @@ export const allowOperation = (options: InngestEventOptions): boolean => {
   return allow;
 };
 
-export const extractOperationName = (options: Pick<InngestEventExecuteOptions, 'params'>): string => {
+export const extractOperationName = (options: Pick<UseInngestExecuteOptions, 'params'>): string => {
   const args = options.params.args;
   const rootOperation = args.document.definitions.find(
     // @ts-expect-error TODO: not sure how we will make it dev friendly
@@ -84,7 +84,7 @@ export const getOperation = (params: OnExecuteEventPayload<ContextType>) => {
   return operationAST?.operation ?? 'unknown';
 };
 
-export const buildTypeIdentifiers = async (options: InngestDataOptions) => {
+export const buildTypeIdentifiers = async (options: UseInngestDataOptions) => {
   const idFields: Array<string> = ['id'];
 
   const documentChanged = false; // todo?
@@ -97,7 +97,7 @@ export const buildTypeIdentifiers = async (options: InngestDataOptions) => {
     {
       document: options.params.args.document,
       variables: options.params.args.variableValues as any,
-      operationName: extractOperationName(options), // options.params.args.operationName ?? undefined,
+      operationName: extractOperationName(options),
       rootValue: options.params.args.rootValue,
       context: options.params.args.contextValue,
     },

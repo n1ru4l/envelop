@@ -5,10 +5,12 @@ import { buildEventPayload, buildEventName, buildUserContext } from './builders'
 import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str';
 import { buildLogger } from './logger';
 import { shouldSendEvent } from './should-send-event';
-import type { UseInngestPluginOptions, UseInngestCommonOptions } from './types';
+import type { UseInngestPluginOptions, UseInngestConfig } from './types';
 
-export const defaultUseInngestPluginOptions: UseInngestCommonOptions = {
+export const defaultUseInngestPluginOptions: UseInngestConfig = {
   eventNamePrefix: 'graphql', // functioin to build the event name and default the the one i have already
+  buildEventNameFunction: buildEventName, // remove the prefix???
+  // buildUserContextFunction: buildUserContext,
   allowedOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
   allowAnonymousOperations: false, // change allow to
   allowErrors: false,
@@ -22,31 +24,16 @@ export const defaultUseInngestPluginOptions: UseInngestCommonOptions = {
  * @param options UseInngestPluginOptions
  */
 export const useInngest = (options: UseInngestPluginOptions): Plugin => {
-  // console.log(typeof options.inngestClient);
   const client = options.inngestClient;
 
-  // if (client === undefined) {
-  //   throw new Error('Inngest client is not defined');
-  // }
+  const config = { ...defaultUseInngestPluginOptions, ...options };
+  const buildEventNameFunction = config.buildEventNameFunction ?? defaultUseInngestPluginOptions.buildEventNameFunction;
 
-  // clean up this code
-  // const optionsToUSe = {
-  //   ...defaultUseInngestPluginOptions,
-  //   ...options,
-  // }
+  if (!buildEventNameFunction) {
+    throw Error('buildEventNameFunction is required');
+  }
 
-  const allowedOperations = options.allowedOperations ?? defaultUseInngestPluginOptions.allowedOperations;
-
-  const allowAnonymousOperations =
-    options.allowAnonymousOperations ?? defaultUseInngestPluginOptions.allowAnonymousOperations;
-  const allowErrors = options.allowErrors ?? defaultUseInngestPluginOptions.allowErrors;
-  const allowIntrospection = options.allowIntrospection ?? defaultUseInngestPluginOptions.allowIntrospection;
-  const includeResultData = options.includeResultData ?? defaultUseInngestPluginOptions.includeResultData;
-
-  const eventNamePrefix = options.eventNamePrefix ?? defaultUseInngestPluginOptions.eventNamePrefix;
-  const redaction = options.redaction ?? defaultUseInngestPluginOptions.redaction;
-
-  const logger = buildLogger(options);
+  const logger = buildLogger(config);
 
   const getDocumentString = defaultGetDocumentString;
 
@@ -55,39 +42,37 @@ export const useInngest = (options: UseInngestPluginOptions): Plugin => {
       addPlugin(useCacheDocumentString());
     },
     async onExecute(onExecuteParams) {
-      logger.debug('>>>>>>>>>>> in useInngest onExecute');
       return {
-        onExecuteDone(payload) {
-          logger.debug('>>>>>>>>>>> in onExecuteDone');
-
+        async onExecuteDone(payload) {
           return handleStreamOrSingleExecutionResult(payload, async ({ result }) => {
             if (
               await shouldSendEvent({
                 params: onExecuteParams,
                 result,
-                allowedOperations,
-                allowErrors,
-                allowIntrospection,
-                allowAnonymousOperations,
+                allowedOperations: config.allowedOperations,
+                allowErrors: config.allowErrors,
+                allowIntrospection: config.allowIntrospection,
+                allowAnonymousOperations: config.allowAnonymousOperations,
                 logger,
               })
             ) {
               await client.send({
-                name: await buildEventName({
+                name: await buildEventNameFunction({
                   params: onExecuteParams,
                   documentString: getDocumentString(onExecuteParams.args),
-                  eventNamePrefix,
+                  eventNamePrefix: config.eventNamePrefix,
                   logger,
                 }),
                 data: await buildEventPayload({
                   params: onExecuteParams,
+                  buildEventNameFunction,
                   result,
                   logger,
-                  redaction,
-                  includeResultData,
+                  redaction: config.redaction,
+                  includeResultData: config.includeResultData,
                 }),
-                // TODO: support a custom user context function
 
+                // TODO: support a custom user context function
                 user: buildUserContext({ params: onExecuteParams, logger }),
               });
             }

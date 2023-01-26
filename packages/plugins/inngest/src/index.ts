@@ -1,10 +1,10 @@
 export type {
   UseInngestPluginOptions,
-  InngestDataOptions,
-  InngestEventExecuteOptions,
-  InngestEventOptions,
-  InngestLoggerOptions,
-  InngestUserContextOptions,
+  UseInngestDataOptions as InngestDataOptions,
+  UseInngestExecuteOptions as InngestEventExecuteOptions,
+  UseInngestEventOptions as InngestEventOptions,
+  UseInngestLoggerOptions as InngestLoggerOptions,
+  UseInngestUserContextOptions as InngestUserContextOptions,
   InngestUserContext,
   InngestUserContextFunction,
 } from './types';

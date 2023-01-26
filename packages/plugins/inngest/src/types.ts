@@ -18,8 +18,13 @@ export type InngestUserContext = Pick<EventPayload, 'user'>;
 
 export type InngestUserContextFunction = () => InngestUserContext | Promise<InngestUserContext>;
 
-export interface UseInngestCommonOptions {
+export type EventNamePrefixFunction = (options: UseInngestEventOptions) => Promise<string>;
+
+export type BuildEventNameFunction = (options: UseInngestEventOptions) => Promise<string>;
+
+export interface UseInngestConfig {
   eventNamePrefix?: string;
+  buildEventNameFunction?: BuildEventNameFunction;
   allowedOperations?: AllowedOperations; // change to include?
   allowErrors?: boolean;
   allowIntrospection?: boolean;
@@ -31,35 +36,35 @@ export interface UseInngestCommonOptions {
   logging?: boolean | UseInngestLogger | UseInngestLogLevel;
 }
 
-export interface UseInngestPluginOptions extends UseInngestCommonOptions {
+export interface UseInngestPluginOptions extends UseInngestConfig {
   inngestClient: Inngest<Record<string, EventPayload>>;
   userContext?: InngestUserContextFunction;
 }
 
-export type InngestLoggerOptions = {
+export type UseInngestLoggerOptions = {
   logger: UseInngestLogger;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ContextType = Record<string, any>;
 
-export type InngestEventExecuteOptions = {
+export type UseInngestExecuteOptions = {
   params: OnExecuteEventPayload<ContextType>;
 };
 
-export type InngestEventOptions = {
+export type UseInngestEventOptions = {
   documentString?: string;
-} & InngestEventExecuteOptions &
-  InngestLoggerOptions &
+} & UseInngestExecuteOptions &
+  UseInngestLoggerOptions &
   Pick<UseInngestPluginOptions, 'eventNamePrefix' | 'allowedOperations'>;
 
-// maybe omit
-export type InngestDataOptions = {
+export type UseInngestDataOptions = {
   result: ExecutionResult;
-} & InngestEventExecuteOptions &
-  InngestLoggerOptions &
+} & UseInngestExecuteOptions &
+  UseInngestLoggerOptions &
   Pick<
     UseInngestPluginOptions,
+    | 'buildEventNameFunction'
     | 'allowedOperations'
     | 'allowErrors'
     | 'allowIntrospection'
@@ -68,4 +73,4 @@ export type InngestDataOptions = {
     | 'redaction'
   >;
 
-export type InngestUserContextOptions = InngestEventExecuteOptions & InngestLoggerOptions;
+export type UseInngestUserContextOptions = UseInngestExecuteOptions & UseInngestLoggerOptions;
