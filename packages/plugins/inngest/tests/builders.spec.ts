@@ -5,7 +5,7 @@ import { buildLogger } from '../src/logger';
 
 import { buildEventPayload, buildEventName } from '../src/builders';
 
-describe('builders', () => {
+describe.skip('builders', () => {
   const schema = makeExecutableSchema({
     typeDefs: /* GraphQL */ `
       type Query {

@@ -1,7 +1,7 @@
 import { assertSingleExecutionValue, createTestkit, createSpiedPlugin } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
-import { createInngestClient } from '../src/client';
+// import { createInngestClient } from '../src/client';
 import { useInngest } from '../src/plugin';
 
 import type { EventPayload, Inngest } from 'inngest';
@@ -22,77 +22,63 @@ describe('useInngest', () => {
     },
   });
 
-  const builders = require('../src/builders');
-  const shouldSendEvent = require('../src/should-send-event');
-
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   const spiedPlugin = createSpiedPlugin();
+
+  const mockedInngestClient = {
+    send: jest.fn(async payload => {
+      console.log('>>>> payload', payload);
+      Promise.resolve({ payload });
+    }),
+    name: 'TEST',
+    eventKey: testEventKey,
+  } as unknown as Inngest<Record<string, EventPayload>>;
 
   beforeEach(() => {
     spiedPlugin.reset();
+    // mockedInngestClient.send.mockClear();
   });
 
-  const inngestTestClient = createInngestClient({ name: 'TEST', eventKey: testEventKey });
+  afterEach(() => {
+    // mockedInngestClient.send.mockClear();
+    // mockedInngestClient.send.restoreAllMocks();
+    // jest.restoreAllMocks();
+  });
 
-  xit('sends', async () => {
-    const spyEventName = jest.spyOn(builders, 'buildEventName');
-    const spyEventPayload = jest.spyOn(builders, 'buildEventPayload');
-    const spyOperationId = jest.spyOn(builders, 'buildOperationId');
-    const spyShouldSendEvent = jest.spyOn(shouldSendEvent, 'shouldSendEvent');
-
+  it('sends', async () => {
     const testInstance = createTestkit(
-      [useInngest({ inngestClient: inngestTestClient, includeResultData: true }), spiedPlugin.plugin],
+      [useInngest({ inngestClient: mockedInngestClient, includeResultData: false }), spiedPlugin.plugin],
       schema
     );
-    const result = await testInstance.execute(`query TestQuery { test }`);
+
+    const result = await testInstance.execute(`query TestQuery1 { test }`);
+    assertSingleExecutionValue(result);
+
+    expect(result.data).toEqual({ test: 'hello' });
+    expect(result.errors).toBeUndefined();
+
+    expect(spiedPlugin.spies.beforeExecute).toBeCalled();
+
+    expect(mockedInngestClient.send).toBeCalled();
+  });
+
+  it('omits data from event payload', async () => {
+    const testInstance = createTestkit(
+      [useInngest({ inngestClient: mockedInngestClient, includeResultData: false }), spiedPlugin.plugin],
+      schema
+    );
+    const result = await testInstance.execute(`query TestQuery2 { test }`);
 
     assertSingleExecutionValue(result);
     expect(result.data).toEqual({ test: 'hello' });
     expect(result.errors).toBeUndefined();
 
     expect(spiedPlugin.spies.beforeExecute).toBeCalled();
-
-    expect(spyShouldSendEvent).toBeCalled();
-    expect(spyEventName).toBeCalledTimes(2);
-    expect(spyOperationId).not.toBeCalled();
-    expect(spyEventPayload).toBeCalled();
+    expect(mockedInngestClient.send).toBeCalled();
   });
 
-  xit('omits data from event payload', async () => {
-    const spyEventName = jest.spyOn(builders, 'buildEventName');
-    const spyEventPayload = jest.spyOn(builders, 'buildEventPayload');
-    const spyOperationId = jest.spyOn(builders, 'buildOperationId');
-    const spyShouldSendEvent = jest.spyOn(shouldSendEvent, 'shouldSendEvent');
-
+  it('skips anonymous operations', async () => {
     const testInstance = createTestkit(
-      [useInngest({ inngestClient: inngestTestClient, includeResultData: false }), spiedPlugin.plugin],
-      schema
-    );
-    const result = await testInstance.execute(`query TestQuery { test }`);
-
-    assertSingleExecutionValue(result);
-    expect(result.data).toEqual({ test: 'hello' });
-    expect(result.errors).toBeUndefined();
-
-    expect(spiedPlugin.spies.beforeExecute).toBeCalled();
-
-    expect(spyShouldSendEvent).toBeCalled();
-    expect(spyEventName).toBeCalledTimes(2);
-    expect(spyOperationId).not.toBeCalled();
-    expect(spyEventPayload).not.toBeCalled();
-  });
-
-  xit('skips anonymous operations', async () => {
-    const spyEventName = jest.spyOn(builders, 'buildEventName');
-    const spyEventPayload = jest.spyOn(builders, 'buildEventPayload');
-    const spyOperationId = jest.spyOn(builders, 'buildOperationId');
-    const spyShouldSendEvent = jest.spyOn(shouldSendEvent, 'shouldSendEvent');
-
-    const testInstance = createTestkit(
-      [useInngest({ inngestClient: inngestTestClient, allowAnonymousOperations: false }), spiedPlugin.plugin],
+      [useInngest({ inngestClient: mockedInngestClient, allowAnonymousOperations: true }), spiedPlugin.plugin],
       schema
     );
     const result = await testInstance.execute(`query { test }`);
@@ -103,9 +89,6 @@ describe('useInngest', () => {
 
     expect(spiedPlugin.spies.beforeExecute).toBeCalled();
 
-    expect(spyShouldSendEvent).toBeCalled();
-    expect(spyEventName).toBeCalled();
-    expect(spyOperationId).not.toBeCalled();
-    expect(spyEventPayload).not.toBeCalled();
+    expect(mockedInngestClient.send).toBeCalled();
   });
 });

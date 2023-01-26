@@ -1,19 +1,16 @@
-import type { ClientOptions } from 'inngest';
-
 import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/core';
 import { OperationTypeNode } from 'graphql';
 
 import { buildEventPayload, buildEventName, buildUserContext } from './builders';
 import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str';
-import { createInngestClient } from './client';
 import { buildLogger } from './logger';
 import { shouldSendEvent } from './should-send-event';
-import type { UseInngestPluginOptions } from './types';
+import type { UseInngestPluginOptions, UseInngestCommonOptions } from './types';
 
-export const defaultUseInngestPluginOptions: UseInngestPluginOptions = {
-  eventNamePrefix: 'graphql',
+export const defaultUseInngestPluginOptions: UseInngestCommonOptions = {
+  eventNamePrefix: 'graphql', // functioin to build the event name and default the the one i have already
   allowedOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
-  allowAnonymousOperations: false,
+  allowAnonymousOperations: false, // change allow to
   allowErrors: false,
   allowIntrospection: false,
   includeResultData: false,
@@ -25,14 +22,18 @@ export const defaultUseInngestPluginOptions: UseInngestPluginOptions = {
  * @param options UseInngestPluginOptions
  */
 export const useInngest = (options: UseInngestPluginOptions): Plugin => {
-  const client =
-    typeof options.inngestClient === 'object'
-      ? createInngestClient(options.inngestClient as ClientOptions)
-      : options.inngestClient;
+  // console.log(typeof options.inngestClient);
+  const client = options.inngestClient;
 
-  if (client === undefined) {
-    throw new Error('Inngest client is not defined');
-  }
+  // if (client === undefined) {
+  //   throw new Error('Inngest client is not defined');
+  // }
+
+  // clean up this code
+  // const optionsToUSe = {
+  //   ...defaultUseInngestPluginOptions,
+  //   ...options,
+  // }
 
   const allowedOperations = options.allowedOperations ?? defaultUseInngestPluginOptions.allowedOperations;
 

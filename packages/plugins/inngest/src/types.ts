@@ -1,7 +1,7 @@
 import type { ExecutionResult, OnExecuteEventPayload } from '@envelop/core';
 import type { RedactOptions } from 'fast-redact';
 import type { OperationTypeNode } from 'graphql';
-import type { Inngest, ClientOptions, EventPayload } from 'inngest';
+import type { Inngest, EventPayload } from 'inngest';
 
 export type AllowedOperations = Iterable<OperationTypeNode>;
 
@@ -18,10 +18,9 @@ export type InngestUserContext = Pick<EventPayload, 'user'>;
 
 export type InngestUserContextFunction = () => InngestUserContext | Promise<InngestUserContext>;
 
-export type UseInngestPluginOptions = {
-  inngestClient?: Inngest<Record<string, EventPayload>> | ClientOptions;
+export interface UseInngestCommonOptions {
   eventNamePrefix?: string;
-  allowedOperations?: AllowedOperations;
+  allowedOperations?: AllowedOperations; // change to include?
   allowErrors?: boolean;
   allowIntrospection?: boolean;
   allowAnonymousOperations?: boolean;
@@ -30,8 +29,12 @@ export type UseInngestPluginOptions = {
   // skip some schema coordinate queries to blacklist
   // option to send specific graphqlerror events to inngest
   logging?: boolean | UseInngestLogger | UseInngestLogLevel;
+}
+
+export interface UseInngestPluginOptions extends UseInngestCommonOptions {
+  inngestClient: Inngest<Record<string, EventPayload>>;
   userContext?: InngestUserContextFunction;
-};
+}
 
 export type InngestLoggerOptions = {
   logger: UseInngestLogger;
@@ -48,18 +51,21 @@ export type InngestEventOptions = {
   documentString?: string;
 } & InngestEventExecuteOptions &
   InngestLoggerOptions &
-  Pick<UseInngestPluginOptions, 'eventNamePrefix'> &
-  Pick<UseInngestPluginOptions, 'allowedOperations'>;
+  Pick<UseInngestPluginOptions, 'eventNamePrefix' | 'allowedOperations'>;
 
+// maybe omit
 export type InngestDataOptions = {
   result: ExecutionResult;
 } & InngestEventExecuteOptions &
   InngestLoggerOptions &
-  Pick<UseInngestPluginOptions, 'allowedOperations'> &
-  Pick<UseInngestPluginOptions, 'allowErrors'> &
-  Pick<UseInngestPluginOptions, 'allowIntrospection'> &
-  Pick<UseInngestPluginOptions, 'allowAnonymousOperations'> &
-  Pick<UseInngestPluginOptions, 'includeResultData'> &
-  Pick<UseInngestPluginOptions, 'redaction'>;
+  Pick<
+    UseInngestPluginOptions,
+    | 'allowedOperations'
+    | 'allowErrors'
+    | 'allowIntrospection'
+    | 'allowAnonymousOperations'
+    | 'includeResultData'
+    | 'redaction'
+  >;
 
 export type InngestUserContextOptions = InngestEventExecuteOptions & InngestLoggerOptions;

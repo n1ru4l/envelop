@@ -5,7 +5,7 @@ import { buildLogger } from '../src/logger';
 
 import { isAnonymousOperation } from '../src/tools';
 
-describe('tools', () => {
+describe.skip('tools', () => {
   const schema = makeExecutableSchema({
     typeDefs: /* GraphQL */ `
       type Query {

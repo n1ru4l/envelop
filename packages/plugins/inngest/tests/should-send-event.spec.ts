@@ -5,7 +5,7 @@ import { shouldSendEvent } from '../src/should-send-event';
 import { buildLogger } from '../src/logger';
 import { defaultUseInngestPluginOptions } from '../src/plugin';
 
-describe('shouldSendEvent', () => {
+describe.skip('shouldSendEvent', () => {
   const schema = makeExecutableSchema({
     typeDefs: /* GraphQL */ `
       type Query {

@@ -40,7 +40,7 @@ export const shouldSendEvent = async (options: InngestDataOptions) => {
   const shouldSend = !isIntrospection && !hasErrors;
 
   if (shouldSend) {
-    options.logger.warn(
+    options.logger.debug(
       `Sending event${eventName} because it is allowed due to introspection ${isIntrospection} or errors ${hasErrors}`
     );
   } else {
