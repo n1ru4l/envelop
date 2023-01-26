@@ -84,15 +84,13 @@ export const getOperation = (params: OnExecuteEventPayload<ContextType>) => {
   return operationAST?.operation ?? 'unknown';
 };
 
-export const buildTypeIds = async (options: InngestDataOptions) => {
-  // options.logger.debug({ custom: options.result }, '>>>>>>> buildTypeIds');
-
+export const buildTypeIdentifiers = async (options: InngestDataOptions) => {
   const idFields: Array<string> = ['id'];
 
   const documentChanged = false; // todo?
 
-  const identifier = new Map<string, UseInngestEntityRecord>();
-  const types = new Set<string>();
+  const identifierSet = new Map<string, UseInngestEntityRecord>();
+  const typeSet = new Set<string>();
 
   visitResult(
     options.result,
@@ -138,24 +136,15 @@ export const buildTypeIds = async (options: InngestDataOptions) => {
                   };
                 }
               }
-              options.logger.debug({ custom: fieldName }, '>>>>>>> buildTypeIds >> fieldName');
 
               if (idFields.includes(fieldName)) {
-                options.logger.debug({ custom: fieldName }, '>>>>>>> buildTypeIds >> fieldName INCLUDED!');
-
                 return (id: string) => {
-                  options.logger.debug(
-                    { custom: { typename, id } },
-                    '>>>>>>> buildTypeIds >> SETTING IDENTIFIER AD TYPE INCLUDED!'
-                  );
-
-                  identifier.set(`${typename}:${id}`, { typename, id });
-                  types.add(typename);
+                  identifierSet.set(`${typename}:${id}`, { typename, id });
+                  typeSet.add(typename);
                   return id;
                 };
               }
 
-              options.logger.debug({ custom: fieldName }, '>>>>>>> buildTypeIds >> fieldName NOT FOUND in IDS!');
               return undefined;
             },
           });
@@ -164,11 +153,8 @@ export const buildTypeIds = async (options: InngestDataOptions) => {
     )
   );
 
-  const identifiers = Array.from(identifier.values());
-
-  options.logger.debug({ custom: { idFields } }, 'buildTypeIds >> idFields >>');
-  options.logger.debug({ custom: { types } }, 'buildTypeIds >> types >>');
-  options.logger.debug({ custom: { identifiers: Array.from(identifier.values()) } }, 'buildTypeIds >> identifier >>');
+  const identifiers = Array.from(identifierSet.values());
+  const types = Array.from(typeSet.values());
 
   return { types, identifiers };
 };

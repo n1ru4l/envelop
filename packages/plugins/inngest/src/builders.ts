@@ -3,7 +3,7 @@ import fastRedact from 'fast-redact';
 
 import { decamelize } from 'humps';
 import { hashSHA256 } from './hash-sha256';
-import { extractOperationName, getOperation, buildTypeIds } from './tools';
+import { extractOperationName, getOperation, buildTypeIdentifiers } from './tools';
 import type { InngestDataOptions, InngestEventOptions, InngestUserContextOptions } from './types';
 
 export const buildOperationId = async (options: InngestEventOptions): Promise<string> => {
@@ -50,7 +50,7 @@ export const buildEventName = async (options: InngestEventOptions) => {
 export const buildEventPayload = async (options: InngestDataOptions) => {
   options.logger.debug('>>>>>>>>>>> in buildEventPayload');
 
-  const { identifiers, types } = await buildTypeIds(options);
+  const { identifiers, types } = await buildTypeIdentifiers(options);
 
   let variables = options.params.args.variableValues || {};
   let result = {};
@@ -60,14 +60,10 @@ export const buildEventPayload = async (options: InngestDataOptions) => {
   }
 
   if (options.redaction) {
-    // an improvement for  result redaction would be to use the visitor pattern to omit or modify field values
-    options.logger.debug({ custom: options.redaction }, '>>>>>>>>>>> REDACTing with options');
-
+    // an improvement for result redaction would be to use the visitor pattern to omit or modify field values
     const redact = fastRedact(options.redaction);
 
     result = JSON.parse(redact(result) as string);
-
-    options.logger.debug({ custom: result }, '>>>>>>>>>>> REDACTED result data');
 
     variables = JSON.parse(redact(variables) as string);
   }
