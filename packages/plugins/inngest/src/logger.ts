@@ -40,7 +40,7 @@ const infoLog = console.info ? (...args: Array<any>) => console.info(infoPrefix,
 const warnLog = console.warn ? (...args: Array<any>) => console.warn(warnPrefix, ...args) : consoleLog(warnPrefix);
 const errorLog = console.error ? (...args: Array<any>) => console.error(errorPrefix, ...args) : consoleLog(errorPrefix);
 
-export const createLogger = (
+const createLogger = (
   logLevel: UseInngestLogLevel | 'silent' = globalThis.process?.env.DEBUG === '1' ? 'debug' : 'info'
 ) => {
   const score = logLevelScores[logLevel];

@@ -3,7 +3,7 @@ import fastRedact from 'fast-redact';
 
 import { decamelize } from 'humps';
 import { hashSHA256 } from './hash-sha256';
-import { extractOperationName, getOperation } from './tools';
+import { extractOperationName, getOperation, buildTypeIds } from './tools';
 import type { InngestDataOptions, InngestEventOptions, InngestUserContextOptions } from './types';
 
 export const buildOperationId = async (options: InngestEventOptions): Promise<string> => {
@@ -21,7 +21,7 @@ export const buildOperationId = async (options: InngestEventOptions): Promise<st
 };
 
 export const buildOperationNameForEventName = async (options: InngestEventOptions) => {
-  options.logger.debug({ custom: options.params?.args }, '>>>>>>>>>>> args');
+  // options.logger.debug({ custom: options.params?.args }, '>>>>>>>>>>> args');
 
   let operationName = extractOperationName(options);
 
@@ -47,30 +47,42 @@ export const buildEventName = async (options: InngestEventOptions) => {
   return name as string;
 };
 
-export const buildDataPayload = async (options: InngestDataOptions) => {
-  options.logger.debug('>>>>>>>>>>> in data');
+export const buildEventPayload = async (options: InngestDataOptions) => {
+  options.logger.debug('>>>>>>>>>>> in buildEventPayload');
 
-  const payload = {
-    ...options.result.data,
-    __graphql: {
-      operation: getOperation(options.params),
-      operationName: extractOperationName(options) || '',
-      operationId: await buildOperationNameForEventName(options),
-      variables: options.params.args.variableValues || {},
-    },
-  };
+  const { identifiers, types } = await buildTypeIds(options);
+
+  let variables = options.params.args.variableValues || {};
+  let result = {};
+
+  if (options.includeResultData) {
+    result = options.result;
+  }
 
   if (options.redaction) {
+    // an improvement for  result redaction would be to use the visitor pattern to omit or modify field values
     options.logger.debug({ custom: options.redaction }, '>>>>>>>>>>> REDACTing with options');
 
     const redact = fastRedact(options.redaction);
 
-    const redactedData = JSON.parse(redact(payload) as string);
+    result = JSON.parse(redact(result) as string);
 
-    options.logger.debug({ custom: redactedData }, '>>>>>>>>>>> REDACTED data');
+    options.logger.debug({ custom: result }, '>>>>>>>>>>> REDACTED result data');
 
-    return redactedData;
+    variables = JSON.parse(redact(variables) as string);
   }
+
+  const payload = {
+    variables,
+    identifiers,
+    types,
+    result,
+    operation: {
+      id: await buildOperationNameForEventName(options),
+      name: extractOperationName(options) || '',
+      type: getOperation(options.params),
+    },
+  };
 
   options.logger.debug({ custom: payload }, '>>>>>>>>>>> payload data');
 

@@ -1,12 +1,23 @@
-import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/core';
 import type { ClientOptions } from 'inngest';
 
-import { buildDataPayload, buildEventName, buildUserContext } from './builders';
+import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/core';
+import { OperationTypeNode } from 'graphql';
+
+import { buildEventPayload, buildEventName, buildUserContext } from './builders';
 import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str';
 import { createInngestClient } from './client';
 import { buildLogger } from './logger';
 import { shouldSendEvent } from './should-send-event';
 import type { UseInngestPluginOptions } from './types';
+
+export const defaultUseInngestPluginOptions: UseInngestPluginOptions = {
+  eventNamePrefix: 'graphql',
+  allowedOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
+  allowAnonymousOperations: false,
+  allowErrors: false,
+  allowIntrospection: false,
+  includeResultData: false,
+};
 
 /**
  * Sends GraphQL operation events to Inngest
@@ -18,10 +29,25 @@ export const useInngest = (options: UseInngestPluginOptions): Plugin => {
     typeof options.inngestClient === 'object'
       ? createInngestClient(options.inngestClient as ClientOptions)
       : options.inngestClient;
-  const getDocumentString = defaultGetDocumentString;
-  const eventNamePrefix = options.eventNamePrefix || 'graphql';
+
+  if (client === undefined) {
+    throw new Error('Inngest client is not defined');
+  }
+
+  const allowedOperations = options.allowedOperations ?? defaultUseInngestPluginOptions.allowedOperations;
+
+  const allowAnonymousOperations =
+    options.allowAnonymousOperations ?? defaultUseInngestPluginOptions.allowAnonymousOperations;
+  const allowErrors = options.allowErrors ?? defaultUseInngestPluginOptions.allowErrors;
+  const allowIntrospection = options.allowIntrospection ?? defaultUseInngestPluginOptions.allowIntrospection;
+  const includeResultData = options.includeResultData ?? defaultUseInngestPluginOptions.includeResultData;
+
+  const eventNamePrefix = options.eventNamePrefix ?? defaultUseInngestPluginOptions.eventNamePrefix;
+  const redaction = options.redaction ?? defaultUseInngestPluginOptions.redaction;
 
   const logger = buildLogger(options);
+
+  const getDocumentString = defaultGetDocumentString;
 
   return {
     onPluginInit({ addPlugin }) {
@@ -35,12 +61,13 @@ export const useInngest = (options: UseInngestPluginOptions): Plugin => {
 
           return handleStreamOrSingleExecutionResult(payload, async ({ result }) => {
             if (
-              shouldSendEvent({
+              await shouldSendEvent({
                 params: onExecuteParams,
                 result,
-                includeErrors: options.includeErrors,
-                includeIntrospection: options.includeIntrospection,
-                skipAnonymousOperations: options.skipAnonymousOperations,
+                allowedOperations,
+                allowErrors,
+                allowIntrospection,
+                allowAnonymousOperations,
                 logger,
               })
             ) {
@@ -51,14 +78,13 @@ export const useInngest = (options: UseInngestPluginOptions): Plugin => {
                   eventNamePrefix,
                   logger,
                 }),
-                data: options.omitData
-                  ? {}
-                  : await buildDataPayload({
-                      params: onExecuteParams,
-                      result,
-                      logger,
-                      redaction: options.redaction,
-                    }),
+                data: await buildEventPayload({
+                  params: onExecuteParams,
+                  result,
+                  logger,
+                  redaction,
+                  includeResultData,
+                }),
                 // TODO: support a custom user context function
 
                 user: buildUserContext({ params: onExecuteParams, logger }),

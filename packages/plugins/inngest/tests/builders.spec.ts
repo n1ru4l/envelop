@@ -3,7 +3,7 @@ import { parse } from 'graphql';
 
 import { buildLogger } from '../src/logger';
 
-import { buildDataPayload, buildEventName } from '../src/builders';
+import { buildEventPayload, buildEventName } from '../src/builders';
 
 describe('builders', () => {
   const schema = makeExecutableSchema({
@@ -85,9 +85,9 @@ describe('builders', () => {
     });
   });
 
-  describe('buildDataPayload', () => {
-    it('builds named query', async () => {
-      const payload = await buildDataPayload({
+  describe('buildEventPayload', () => {
+    it('builds named query with data', async () => {
+      const payload = await buildEventPayload({
         params: {
           executeFn: () => {},
           setExecuteFn: () => {},
@@ -101,16 +101,20 @@ describe('builders', () => {
         },
         result: { errors: [], data: { test: 'hello' } },
         logger: buildLogger({ logging: false }),
+        includeResultData: true,
       });
 
       expect(payload).toEqual({
-        __graphql: { operation: 'query', operationId: 'test-query', operationName: 'TestQuery', variables: {} },
-        test: 'hello',
+        operation: { type: 'query', id: 'test-query', name: 'TestQuery' },
+        identifiers: [],
+        result: { data: { test: 'hello' }, errors: [] },
+        types: new Set(),
+        variables: {},
       });
     });
 
     it('builds anonymous query', async () => {
-      const payload = await buildDataPayload({
+      const payload = await buildEventPayload({
         params: {
           executeFn: () => {},
           setExecuteFn: () => {},
@@ -122,24 +126,31 @@ describe('builders', () => {
             contextValue: {},
           },
         },
+        allowAnonymousOperations: true,
+        includeResultData: true,
         result: { errors: [], data: { test: 'hello' } },
         logger: buildLogger({ logging: false }),
       });
 
       expect(payload).toEqual({
-        __graphql: {
-          operation: 'query',
-          operationId: 'anonymous-d32327f2ad0fef67462baf2b8410a2b4b2cc8db57e67bb5b3c95efa595b39f30',
-          operationName: '',
-          variables: {},
+        identifiers: [],
+        operation: {
+          type: 'query',
+          id: 'anonymous-d32327f2ad0fef67462baf2b8410a2b4b2cc8db57e67bb5b3c95efa595b39f30',
+          name: '',
         },
-        test: 'hello',
+        result: {
+          data: { test: 'hello' },
+          errors: [],
+        },
+        types: new Set(),
+        variables: {},
       });
     });
   });
 
   it('builds data for a redacted query', async () => {
-    const payload = await buildDataPayload({
+    const payload = await buildEventPayload({
       params: {
         executeFn: () => {},
         setExecuteFn: () => {},
@@ -151,19 +162,25 @@ describe('builders', () => {
           contextValue: {},
         },
       },
-      redaction: { paths: ['test'], censor: '***' },
+      redaction: { paths: ['*.test'], censor: '***' },
       result: { errors: [], data: { test: 'hello' } },
       logger: buildLogger({ logging: false }),
+      includeResultData: true,
     });
 
     expect(payload).toEqual({
-      __graphql: {
-        operation: 'query',
-        operationId: 'test-redacted-query',
-        operationName: 'TestRedactedQuery',
-        variables: {},
+      identifiers: [],
+      operation: {
+        type: 'query',
+        id: 'test-redacted-query',
+        name: 'TestRedactedQuery',
       },
-      test: '***',
+      result: {
+        data: { test: '***' },
+        errors: [],
+      },
+      types: new Set(),
+      variables: {},
     });
   });
 });

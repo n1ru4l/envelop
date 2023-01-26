@@ -1,27 +1,38 @@
-import { isAnonymousOperation, isIntrospectionQuery } from './tools';
+import { buildEventName } from './builders';
+import { allowOperation, isAnonymousOperation, isIntrospectionQuery } from './tools';
 import { InngestDataOptions } from './types';
 
-export const shouldSendEvent = (options: InngestDataOptions) => {
+// TODO: skip list of schema coordinates -- response  c Query.findPost 4000
+export const shouldSendEvent = async (options: InngestDataOptions) => {
   options.logger.debug('>> in shouldSendEvent');
 
+  const allowedOperation = allowOperation(options);
   const isAnonymous = isAnonymousOperation(options.params);
   const isIntrospection = isIntrospectionQuery(options.params);
   const hasErrors = options.result?.errors !== undefined && options.result.errors.length > 0;
 
-  if (isAnonymous && options.skipAnonymousOperations) {
-    options.logger.debug('blocking event because it is an anonymous operation and we want to skip them');
+  const eventName = await buildEventName(options);
+
+  if (!allowedOperation) {
+    options.logger.warn(`Blocking event ${eventName} because it is not an allowed operation.`);
 
     return false;
   }
 
-  if (isIntrospection && options.includeIntrospection) {
-    options.logger.debug('sending event because it is an including introspection query');
+  if (isAnonymous && options.allowAnonymousOperations) {
+    options.logger.warn(`Sending event ${eventName} because anonymous operations are allowed.`);
 
     return true;
   }
 
-  if (hasErrors && options.includeErrors) {
-    options.logger.debug('sending event because it want to send errors');
+  if (isIntrospection && options.allowIntrospection) {
+    options.logger.warn(`Sending event ${eventName} because introspection queries are allowed.`);
+
+    return true;
+  }
+
+  if (hasErrors && options.allowErrors) {
+    options.logger.warn(`Sending event ${eventName} because sending errors is allowed.`);
 
     return true;
   }
@@ -29,11 +40,13 @@ export const shouldSendEvent = (options: InngestDataOptions) => {
   const shouldSend = !isIntrospection && !hasErrors;
 
   if (shouldSend) {
-    options.logger.debug(
-      `sending event because it is allowed due to introspection ${isIntrospection} or errors ${hasErrors}`
+    options.logger.warn(
+      `Sending event${eventName} because it is allowed due to introspection ${isIntrospection} or errors ${hasErrors}`
     );
   } else {
-    options.logger.debug(`blocking event because introspection ${isIntrospection} or errors ${hasErrors}`);
+    options.logger.warn(
+      `Blocking event ${eventName} because it is not allowed due to introspection ${isIntrospection} or errors ${hasErrors}`
+    );
   }
 
   return shouldSend;

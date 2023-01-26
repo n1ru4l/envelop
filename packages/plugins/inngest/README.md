@@ -40,11 +40,77 @@ TODO
 
 ## Setup and Installation
 
-TODO
+Event Key? https://www.inngest.com/docs/events/creating-an-event-key
+
+The client ...
+
+```ts
+import { Inngest } from 'inngest'
+export const INNGEST_APP_NAME = 'My RedwoodJS App'
+
+export const inngest = new Inngest({ name: INNGEST_APP_NAME })
+```
+
+### Yoga
+
+### RedwoodJS
+
+```ts
+import { logger } from 'src/lib/logger'
+import { useRedwoodInngest } from 'src/plugins/useRedwoodInngest'
+
+export const handler = createGraphQLHandler({
+  authDecoder,
+  getCurrentUser,
+  loggerConfig: { logger, options: {} },
+  directives,
+  sdls,
+  services,
+  extraPlugins: [
+    useRedwoodInngest({
+      inngestClient: inngest,
+      logging: logger.child({ level: 'warn' }),
+      // inngestClient: { name: 'RWApp' },
+      // includeIntrospection: true,
+      // eventNamePrefix: 'rw-inn-ql',
+      // skipAnonymousOperations: true,
+      redaction: {
+        remove: true,
+        paths: ['*.id', 'post.title', 'posts[*].title', 'posts[*].id'],
+        censor: '***'
+      }
+      // userContext: buildUserContext,
+    })
+  ],
+  onException: () => {
+    // Disconnect from your database with an unhandled exception.
+    db.$disconnect()
+  }
+})
+```
 
 ## Configuration Options
 
-TODO
+allowedOperations
+allowErrors
+allowIntrospection
+allowAnonymousOperations
+
+excludeSchemaCoordinates
+
+```ts
+  inngestClient: Inngest<Record<string, EventPayload>> | ClientOptions;
+  eventNamePrefix?: string;
+  includeErrors?: boolean;
+  includeIntrospection?: boolean;
+  skipAnonymousOperations?: boolean;
+  omitData?: boolean;
+  redaction?: RedactOptions;
+  // skip some schema coordinate queries to blacklist
+  // option to send specific graphqlerror events to inngest
+  logging?: boolean | UseInngestLogger | UseInngestLogLevel;
+  userContext?: InngestUserContextFunction;
+```
 
 ## Future Considerations
 
