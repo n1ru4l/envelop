@@ -11,6 +11,7 @@ import type {
   BuildEventNameFunction,
   UseInngestEventNameFunctionOptions,
   BuildEventNamePrefixFunction,
+  BuildUserContextFunction,
   UseInngestEventNamePrefixFunctionOptions,
 } from './types';
 
@@ -99,10 +100,7 @@ export const buildEventPayload = async (options: UseInngestDataOptions) => {
   return payload;
 };
 
-// TODO: support a custom user context function
-export const buildUserContext = (options: UseInngestUserContextOptions) => {
-  options.logger.trace('>> in user');
-  return {
-    currentUser: options.params.args.contextValue.currentUser,
-  };
+export const buildUserContext: BuildUserContextFunction = (options: UseInngestUserContextOptions) => {
+  options.logger.trace('>> in buildUserContext');
+  return {};
 };

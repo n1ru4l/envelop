@@ -14,9 +14,13 @@ export type UseInngestLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error';
 
 export type UseInngestLogger = Record<UseInngestLogLevel, (...args: any[]) => void>;
 
-export type InngestUserContext = Pick<EventPayload, 'user'>;
+export type InngestUserContext = Record<string, any> | undefined;
 
-export type BuildUserContextFunction = () => InngestUserContext | Promise<InngestUserContext>;
+export type UseInngestUserContextOptions = UseInngestExecuteOptions & UseInngestLoggerOptions;
+
+export type BuildUserContextFunction = (
+  options: UseInngestUserContextOptions
+) => InngestUserContext | Promise<InngestUserContext>;
 
 export type BuildEventNamePrefixFunction = (options: UseInngestEventNamePrefixFunctionOptions) => Promise<string>;
 
@@ -25,6 +29,7 @@ export type BuildEventNameFunction = (options: UseInngestEventNameFunctionOption
 export interface UseInngestConfig {
   buildEventNameFunction?: BuildEventNameFunction;
   buildEventNamePrefixFunction?: BuildEventNamePrefixFunction;
+  buildUserContextFunction?: BuildUserContextFunction;
   sendOperations?: AllowedOperations; // change to include?
   sendErrors?: boolean;
   sendIntrospection?: boolean;
@@ -81,5 +86,3 @@ export type UseInngestDataOptions = {
     | 'includeResultData'
     | 'redaction'
   >;
-
-export type UseInngestUserContextOptions = UseInngestExecuteOptions & UseInngestLoggerOptions;

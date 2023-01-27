@@ -10,7 +10,7 @@ import type { UseInngestPluginOptions, UseInngestConfig } from './types';
 export const defaultUseInngestPluginOptions: UseInngestConfig = {
   buildEventNameFunction: buildEventName,
   buildEventNamePrefixFunction: buildEventNamePrefix,
-  // buildUserContextFunction: buildUserContext,
+  buildUserContextFunction: buildUserContext,
   sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
   sendAnonymousOperations: false,
   sendErrors: false,
@@ -30,6 +30,8 @@ export const useInngest = (options: UseInngestPluginOptions): Plugin => {
   const buildEventNameFunction = config.buildEventNameFunction ?? defaultUseInngestPluginOptions.buildEventNameFunction;
   const buildEventNamePrefixFunction =
     config.buildEventNamePrefixFunction ?? defaultUseInngestPluginOptions.buildEventNamePrefixFunction;
+  const buildUserContextFunction =
+    config.buildUserContextFunction ?? defaultUseInngestPluginOptions.buildUserContextFunction;
 
   if (!buildEventNameFunction) {
     throw Error('buildEventNameFunction is required');
@@ -38,6 +40,11 @@ export const useInngest = (options: UseInngestPluginOptions): Plugin => {
   if (!buildEventNamePrefixFunction) {
     throw Error('buildEventNamePrefixFunction is required');
   }
+
+  if (!buildUserContextFunction) {
+    throw Error('buildUserContextFunction is required');
+  }
+
   const logger = buildLogger(config);
 
   const getDocumentString = defaultGetDocumentString;
@@ -80,9 +87,7 @@ export const useInngest = (options: UseInngestPluginOptions): Plugin => {
                   redaction: config.redaction,
                   includeResultData: config.includeResultData,
                 }),
-
-                // TODO: support a custom user context function
-                user: buildUserContext({ params: onExecuteParams, logger }),
+                user: await buildUserContextFunction({ params: onExecuteParams, logger }),
               });
             }
           });
