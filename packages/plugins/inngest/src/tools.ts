@@ -22,10 +22,10 @@ import type {
 } from './types';
 
 export const allowOperation = (options: UseInngestEventOptions): boolean => {
-  if (!options.allowedOperations === undefined) {
+  if (!options.sendOperations === undefined) {
     options.logger.warn('No operations are allowed.');
   }
-  const ops = new Set(options.allowedOperations);
+  const ops = new Set(options.sendOperations);
 
   const operation = getOperation(options.params);
 

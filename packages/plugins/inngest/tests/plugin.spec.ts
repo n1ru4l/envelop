@@ -100,7 +100,7 @@ describe('useInngest', () => {
 
   it('skips anonymous operations', async () => {
     const testInstance = createTestkit(
-      [useInngest({ inngestClient: mockedInngestClient, allowAnonymousOperations: true }), spiedPlugin.plugin],
+      [useInngest({ inngestClient: mockedInngestClient, sendAnonymousOperations: true }), spiedPlugin.plugin],
       schema
     );
     const result = await testInstance.execute(`query { test }`);

@@ -16,19 +16,19 @@ export type UseInngestLogger = Record<UseInngestLogLevel, (...args: any[]) => vo
 
 export type InngestUserContext = Pick<EventPayload, 'user'>;
 
-export type InngestUserContextFunction = () => InngestUserContext | Promise<InngestUserContext>;
+export type BuildUserContextFunction = () => InngestUserContext | Promise<InngestUserContext>;
 
-export type EventNamePrefixFunction = (options: UseInngestEventOptions) => Promise<string>;
+export type BuildEventNamePrefixFunction = (options: UseInngestEventNamePrefixFunctionOptions) => Promise<string>;
 
-export type BuildEventNameFunction = (options: UseInngestEventOptions) => Promise<string>;
+export type BuildEventNameFunction = (options: UseInngestEventNameFunctionOptions) => Promise<string>;
 
 export interface UseInngestConfig {
-  eventNamePrefix?: string;
   buildEventNameFunction?: BuildEventNameFunction;
-  allowedOperations?: AllowedOperations; // change to include?
-  allowErrors?: boolean;
-  allowIntrospection?: boolean;
-  allowAnonymousOperations?: boolean;
+  buildEventNamePrefixFunction?: BuildEventNamePrefixFunction;
+  sendOperations?: AllowedOperations; // change to include?
+  sendErrors?: boolean;
+  sendIntrospection?: boolean;
+  sendAnonymousOperations?: boolean;
   includeResultData?: boolean;
   redaction?: RedactOptions;
   // skip some schema coordinate queries to blacklist
@@ -38,7 +38,7 @@ export interface UseInngestConfig {
 
 export interface UseInngestPluginOptions extends UseInngestConfig {
   inngestClient: Inngest<Record<string, EventPayload>>;
-  userContext?: InngestUserContextFunction;
+  userContext?: BuildUserContextFunction;
 }
 
 export type UseInngestLoggerOptions = {
@@ -48,27 +48,36 @@ export type UseInngestLoggerOptions = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ContextType = Record<string, any>;
 
-export type UseInngestExecuteOptions = {
+export interface UseInngestExecuteOptions {
   params: OnExecuteEventPayload<ContextType>;
-};
+  logger: UseInngestLogger;
+}
+
+export interface UseInngestEventNameFunctionOptions extends UseInngestExecuteOptions {
+  documentString?: string;
+  eventNamePrefix: string;
+}
+
+export interface UseInngestEventNamePrefixFunctionOptions extends UseInngestExecuteOptions {}
 
 export type UseInngestEventOptions = {
   documentString?: string;
 } & UseInngestExecuteOptions &
-  UseInngestLoggerOptions &
-  Pick<UseInngestPluginOptions, 'eventNamePrefix' | 'allowedOperations'>;
+  Pick<UseInngestPluginOptions, 'sendOperations' | 'buildEventNamePrefixFunction'>;
 
 export type UseInngestDataOptions = {
+  eventName: string;
   result: ExecutionResult;
 } & UseInngestExecuteOptions &
   UseInngestLoggerOptions &
   Pick<
     UseInngestPluginOptions,
-    | 'buildEventNameFunction'
-    | 'allowedOperations'
-    | 'allowErrors'
-    | 'allowIntrospection'
-    | 'allowAnonymousOperations'
+    // | 'buildEventNameFunction'
+    // | 'buildEventNamePrefixFunction'
+    | 'sendOperations'
+    | 'sendErrors'
+    | 'sendIntrospection'
+    | 'sendAnonymousOperations'
     | 'includeResultData'
     | 'redaction'
   >;

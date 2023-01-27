@@ -1,20 +1,20 @@
 import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/core';
 import { OperationTypeNode } from 'graphql';
 
-import { buildEventPayload, buildEventName, buildUserContext } from './builders';
+import { buildEventPayload, buildEventName, buildEventNamePrefix, buildUserContext } from './builders';
 import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str';
 import { buildLogger } from './logger';
 import { shouldSendEvent } from './should-send-event';
 import type { UseInngestPluginOptions, UseInngestConfig } from './types';
 
 export const defaultUseInngestPluginOptions: UseInngestConfig = {
-  eventNamePrefix: 'graphql', // functioin to build the event name and default the the one i have already
-  buildEventNameFunction: buildEventName, // remove the prefix???
+  buildEventNameFunction: buildEventName,
+  buildEventNamePrefixFunction: buildEventNamePrefix,
   // buildUserContextFunction: buildUserContext,
-  allowedOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
-  allowAnonymousOperations: false, // change allow to
-  allowErrors: false,
-  allowIntrospection: false,
+  sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
+  sendAnonymousOperations: false,
+  sendErrors: false,
+  sendIntrospection: false,
   includeResultData: false,
 };
 
@@ -28,11 +28,16 @@ export const useInngest = (options: UseInngestPluginOptions): Plugin => {
 
   const config = { ...defaultUseInngestPluginOptions, ...options };
   const buildEventNameFunction = config.buildEventNameFunction ?? defaultUseInngestPluginOptions.buildEventNameFunction;
+  const buildEventNamePrefixFunction =
+    config.buildEventNamePrefixFunction ?? defaultUseInngestPluginOptions.buildEventNamePrefixFunction;
 
   if (!buildEventNameFunction) {
     throw Error('buildEventNameFunction is required');
   }
 
+  if (!buildEventNamePrefixFunction) {
+    throw Error('buildEventNamePrefixFunction is required');
+  }
   const logger = buildLogger(config);
 
   const getDocumentString = defaultGetDocumentString;
@@ -42,30 +47,34 @@ export const useInngest = (options: UseInngestPluginOptions): Plugin => {
       addPlugin(useCacheDocumentString());
     },
     async onExecute(onExecuteParams) {
+      const eventNamePrefix = await buildEventNamePrefixFunction({ params: onExecuteParams, logger });
+      const eventName = await buildEventNameFunction({
+        params: onExecuteParams,
+        documentString: getDocumentString(onExecuteParams.args),
+        eventNamePrefix,
+        logger,
+      });
+
       return {
         async onExecuteDone(payload) {
           return handleStreamOrSingleExecutionResult(payload, async ({ result }) => {
             if (
               await shouldSendEvent({
+                eventName,
                 params: onExecuteParams,
                 result,
-                allowedOperations: config.allowedOperations,
-                allowErrors: config.allowErrors,
-                allowIntrospection: config.allowIntrospection,
-                allowAnonymousOperations: config.allowAnonymousOperations,
+                sendOperations: config.sendOperations,
+                sendErrors: config.sendErrors,
+                sendIntrospection: config.sendIntrospection,
+                sendAnonymousOperations: config.sendAnonymousOperations,
                 logger,
               })
             ) {
               await client.send({
-                name: await buildEventNameFunction({
-                  params: onExecuteParams,
-                  documentString: getDocumentString(onExecuteParams.args),
-                  eventNamePrefix: config.eventNamePrefix,
-                  logger,
-                }),
+                name: eventName,
                 data: await buildEventPayload({
+                  eventName,
                   params: onExecuteParams,
-                  buildEventNameFunction,
                   result,
                   logger,
                   redaction: config.redaction,

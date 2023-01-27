@@ -6,7 +6,9 @@ export type {
   UseInngestLoggerOptions as InngestLoggerOptions,
   UseInngestUserContextOptions as InngestUserContextOptions,
   InngestUserContext,
-  InngestUserContextFunction,
+  BuildEventNameFunction,
+  BuildEventNamePrefixFunction,
+  BuildUserContextFunction,
 } from './types';
 
 export { useInngest } from './plugin';

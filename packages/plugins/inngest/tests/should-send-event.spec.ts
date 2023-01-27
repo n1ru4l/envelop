@@ -33,7 +33,8 @@ describe.skip('shouldSendEvent', () => {
           contextValue: {},
         },
       },
-      allowedOperations: defaultUseInngestPluginOptions.allowedOperations,
+      sendOperations: defaultUseInngestPluginOptions.sendOperations,
+      eventName: 'graphql-test/test-query.query',
       result: { errors: [], data: {} },
       logger: buildLogger({ logging: false }),
     });
@@ -45,7 +46,7 @@ describe.skip('shouldSendEvent', () => {
 
   xit('should not send anonymous events', async () => {
     const result = await shouldSendEvent({
-      allowAnonymousOperations: false,
+      sendAnonymousOperations: false,
       params: {
         executeFn: () => {},
         setExecuteFn: () => {},
@@ -58,6 +59,7 @@ describe.skip('shouldSendEvent', () => {
         },
       },
       result: { errors: [], data: {} },
+      eventName: 'graphql-test/test-query.query',
       logger: buildLogger({ logging: false }),
     });
 

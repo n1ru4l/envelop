@@ -9,6 +9,9 @@ import type {
   UseInngestEventOptions,
   UseInngestUserContextOptions,
   BuildEventNameFunction,
+  UseInngestEventNameFunctionOptions,
+  BuildEventNamePrefixFunction,
+  UseInngestEventNamePrefixFunctionOptions,
 } from './types';
 
 export const buildOperationId = async (options: UseInngestEventOptions): Promise<string> => {
@@ -40,7 +43,13 @@ export const buildOperationNameForEventName = async (options: UseInngestEventOpt
   });
 };
 
-export const buildEventName: BuildEventNameFunction = async (options: UseInngestEventOptions) => {
+export const buildEventNamePrefix: BuildEventNamePrefixFunction = async (
+  options: UseInngestEventNamePrefixFunctionOptions
+) => {
+  return 'graphql';
+};
+
+export const buildEventName: BuildEventNameFunction = async (options: UseInngestEventNameFunctionOptions) => {
   options.logger.trace('>> in eventName');
 
   const operationName = await buildOperationNameForEventName(options);

@@ -10,28 +10,28 @@ export const shouldSendEvent = async (options: UseInngestDataOptions) => {
   const isIntrospection = isIntrospectionQuery(options.params);
   const hasErrors = options.result?.errors !== undefined && options.result.errors.length > 0;
 
-  const eventName = options.buildEventNameFunction ? await options.buildEventNameFunction(options) : 'unknown';
+  const eventName = options.eventName;
 
   if (!allowedOperation) {
-    options.logger.warn(`Blocking event ${eventName} because it is not an allowed operation.`);
+    options.logger.warn(`Blocking event ${eventName} because it is not an configured operation.`);
 
     return false;
   }
 
-  if (isAnonymous && options.allowAnonymousOperations) {
-    options.logger.warn(`Sending event ${eventName} because anonymous operations are allowed.`);
+  if (isAnonymous && options.sendAnonymousOperations) {
+    options.logger.warn(`Sending event ${eventName} because anonymous operations are configured.`);
 
     return true;
   }
 
-  if (isIntrospection && options.allowIntrospection) {
-    options.logger.warn(`Sending event ${eventName} because introspection queries are allowed.`);
+  if (isIntrospection && options.sendIntrospection) {
+    options.logger.warn(`Sending event ${eventName} because introspection queries are configured.`);
 
     return true;
   }
 
-  if (hasErrors && options.allowErrors) {
-    options.logger.warn(`Sending event ${eventName} because sending errors is allowed.`);
+  if (hasErrors && options.sendErrors) {
+    options.logger.warn(`Sending event ${eventName} because sending errors is configured.`);
 
     return true;
   }
@@ -40,11 +40,11 @@ export const shouldSendEvent = async (options: UseInngestDataOptions) => {
 
   if (shouldSend) {
     options.logger.warn(
-      `Sending event ${eventName} because it is allowed due to introspection ${isIntrospection} or errors ${hasErrors}`
+      `Sending event ${eventName} because it is an introspection ${isIntrospection} or error ${hasErrors}`
     );
   } else {
     options.logger.warn(
-      `Blocking event ${eventName} because it is not allowed due to introspection ${isIntrospection} or errors ${hasErrors}`
+      `Blocking event ${eventName} because it is not an introspection ${isIntrospection} or error ${hasErrors}`
     );
   }
 
