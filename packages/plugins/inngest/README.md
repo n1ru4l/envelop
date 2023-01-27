@@ -90,29 +90,3 @@ export const handler = createGraphQLHandler({
 ```
 
 ## Configuration Options
-
-allowedOperations
-allowErrors
-allowIntrospection
-allowAnonymousOperations
-
-excludeSchemaCoordinates
-
-```ts
-  inngestClient: Inngest<Record<string, EventPayload>> | ClientOptions;
-  eventNamePrefix?: string;
-  includeErrors?: boolean;
-  includeIntrospection?: boolean;
-  skipAnonymousOperations?: boolean;
-  omitData?: boolean;
-  redaction?: RedactOptions;
-  // skip some schema coordinate queries to blacklist
-  // option to send specific graphqlerror events to inngest
-  logging?: boolean | UseInngestLogger | UseInngestLogLevel;
-  userContext?: InngestUserContextFunction;
-```
-
-## Future Considerations
-
-- Consider sending `graphql/operation-mutation` or `graphql/operation-query` or `graphql/operation-subscription` for operation events where, fo example the mutation with teh typename and operation and variables could be used for cache invalidation
-- Consider using `__typename` for nouns in event
