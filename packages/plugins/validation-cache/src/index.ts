@@ -1,6 +1,8 @@
 import { Plugin } from '@envelop/core';
-import { GraphQLError, print } from 'graphql';
+import { GraphQLError, print, introspectionFromSchema, type GraphQLSchema } from 'graphql';
+import jsonStableStringify from 'fast-json-stable-stringify';
 import LRU from 'lru-cache';
+import sha1 from 'js-sha1';
 
 export interface ValidationCache {
   /**
@@ -11,14 +13,6 @@ export interface ValidationCache {
    * Set a result to the validation cache.
    */
   set(key: string, value: readonly GraphQLError[]): void;
-  /**
-   * @deprecated Provide a `reset` implementation instead.
-   */
-  clear?(): void;
-  /**
-   * Reset the cache by clearing all entries.
-   */
-  reset?(): void;
 }
 
 export type ValidationCacheOptions = {
@@ -29,6 +23,18 @@ const DEFAULT_MAX = 1000;
 const DEFAULT_TTL = 3600000;
 
 const rawDocumentSymbol = Symbol('rawDocument');
+const schemaHashCache = new WeakMap<GraphQLSchema, string>();
+
+function getSchemaHash(schema: GraphQLSchema) {
+  let hash = schemaHashCache.get(schema);
+  if (hash) {
+    return hash;
+  }
+  const introspection = introspectionFromSchema(schema);
+  hash = sha1(jsonStableStringify(introspection.__schema));
+  schemaHashCache.set(schema, hash);
+  return hash;
+}
 
 export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): Plugin => {
   const resultCache =
@@ -40,13 +46,6 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
         });
 
   return {
-    onSchemaChange() {
-      if (resultCache.reset) {
-        resultCache.reset?.();
-      } else if ('clear' in resultCache) {
-        resultCache.clear?.();
-      }
-    },
     onParse({ params, extendContext }) {
       extendContext({ [rawDocumentSymbol]: params.source.toString() });
     },
@@ -54,6 +53,8 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
       // We use setValidateFn over accessing params.rules directly, as other plugins in the chain might add more rules.
       // This would cause an issue if we are constructing the cache key here already.
       setValidationFn((...args) => {
+        const schemaHashKey = getSchemaHash(args[0]);
+
         let ruleKey = '';
         if (Array.isArray(args[2])) {
           // Note: We could also order them... but that might be too much
@@ -62,7 +63,9 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
           }
         }
 
-        const key: string = ruleKey + (context[rawDocumentSymbol] ?? print(params.documentAST));
+        const key: string =
+          schemaHashKey + `|` + ruleKey + `|` + (context[rawDocumentSymbol] ?? print(params.documentAST));
+
         const cachedResult = resultCache.get(key);
 
         if (cachedResult !== undefined) {
