@@ -70,13 +70,7 @@ export type UseInngestDataOptions = {
   result: ExecutionResult;
 } & UseInngestExecuteOptions &
   UseInngestLoggerOptions &
-  Pick<
+  Omit<
     UseInngestPluginOptions,
-    | 'sendOperations'
-    | 'sendErrors'
-    | 'sendIntrospection'
-    | 'sendAnonymousOperations'
-    | 'denylist'
-    | 'includeResultData'
-    | 'redaction'
+    'inngestClient' | 'buildEventNameFunction' | 'buildEventNamePrefixFunction' | 'buildUserContextFunction'
   >;

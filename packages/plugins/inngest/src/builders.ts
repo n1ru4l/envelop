@@ -3,6 +3,7 @@ import fastRedact from 'fast-redact';
 
 import { decamelize } from 'humps';
 import { hashSHA256 } from './hash-sha256';
+import { USE_INNGEST_DEFAULT_EVENT_PREFIX } from './index';
 import { extractOperationName, getOperation, buildTypeIdentifiers } from './tools';
 import type {
   UseInngestDataOptions,
@@ -24,14 +25,10 @@ export const buildOperationId = async (options: UseInngestEventOptions): Promise
 
   const operationId = await hashSHA256(tokens);
 
-  options.logger.debug({ custom: { tokens, operationId } }, '>>>>>>>>>>> buildOperationId tokens');
-
   return operationId;
 };
 
 export const buildOperationNameForEventName = async (options: UseInngestEventOptions) => {
-  // options.logger.debug({ custom: options.params?.args }, '>>>>>>>>>>> args');
-
   let operationName = extractOperationName(options);
 
   if (!operationName) {
@@ -47,24 +44,19 @@ export const buildOperationNameForEventName = async (options: UseInngestEventOpt
 export const buildEventNamePrefix: BuildEventNamePrefixFunction = async (
   options: UseInngestEventNamePrefixFunctionOptions
 ) => {
-  return 'graphql';
+  return USE_INNGEST_DEFAULT_EVENT_PREFIX;
 };
 
 export const buildEventName: BuildEventNameFunction = async (options: UseInngestEventNameFunctionOptions) => {
-  options.logger.trace('>> in eventName');
-
   const operationName = await buildOperationNameForEventName(options);
   const operation = getOperation(options.params);
 
   const name = `${options.eventNamePrefix}/${operationName}.${operation}`.toLowerCase();
-  options.logger.debug({ custom: name }, '>>>>>>>>>>> buildEventName');
 
   return name as string;
 };
 
 export const buildEventPayload = async (options: UseInngestDataOptions) => {
-  options.logger.trace('>>>>>>>>>>> in buildEventPayload');
-
   const { identifiers, types } = await buildTypeIdentifiers(options);
 
   let variables = options.params.args.variableValues || {};
@@ -75,11 +67,8 @@ export const buildEventPayload = async (options: UseInngestDataOptions) => {
   }
 
   if (options.redaction) {
-    // an improvement for result redaction would be to use the visitor pattern to omit or modify field values
     const redact = fastRedact(options.redaction);
-
     result = JSON.parse(redact(result) as string);
-
     variables = JSON.parse(redact(variables) as string);
   }
 
@@ -95,12 +84,9 @@ export const buildEventPayload = async (options: UseInngestDataOptions) => {
     },
   };
 
-  options.logger.debug({ custom: payload }, '>>>>>>>>>>> payload data');
-
   return payload;
 };
 
 export const buildUserContext: BuildUserContextFunction = (options: UseInngestUserContextOptions) => {
-  options.logger.trace('>> in buildUserContext');
   return {};
 };
