@@ -3,23 +3,56 @@ import { parse } from 'graphql';
 
 import { buildLogger } from '../src/logger';
 
-import { isAnonymousOperation, allowOperation, extractOperationName, getOperation } from '../src/tools';
+import {
+  isAnonymousOperation,
+  isIntrospectionQuery,
+  allowOperation,
+  extractOperationName,
+  getOperation,
+  buildTypeIdentifiers,
+  denySchemaCoordinate,
+  denyType,
+} from '../src/tools';
 
 import { SendableOperation } from '../index';
 import type { UseInngestExecuteOptions } from '../src/types';
 
-describe.only('tools', () => {
+describe('tools', () => {
   const logger = buildLogger({ logging: true });
 
   const schema = makeExecutableSchema({
     typeDefs: /* GraphQL */ `
+      type Post {
+        id: ID!
+        title: String!
+        comments: [Comment!]!
+      }
+
+      type Comment {
+        id: ID!
+        body: String!
+      }
+
+      type User {
+        id: ID!
+        name: String!
+        email: String!
+      }
+
       type Query {
         test: String!
+        post: Post!
+        posts: [Post!]!
       }
     `,
     resolvers: {
       Query: {
         test: () => 'hello',
+        post: () => ({ id: '1', title: 'hello', comments: [{ id: 1, body: 'message' }] }),
+        posts: () => [
+          { id: '1', title: 'hello' },
+          { id: '2', title: 'world' },
+        ],
       },
     },
   });
@@ -253,6 +286,284 @@ describe.only('tools', () => {
       });
 
       expect(allowed).toBe(false);
+    });
+  });
+
+  describe('isIntrospectionQuery', () => {
+    it('knows if a schema introspection', () => {
+      const options = {
+        executeFn: () => {},
+        setExecuteFn: () => {},
+        setResultAndStopExecution: () => {},
+        extendContext: () => {},
+        args: {
+          schema,
+          document: parse(`{
+            __schema {
+              types {
+                name
+              }
+            }
+          }`),
+          contextValue: {},
+        },
+      };
+
+      const isIntrospection = isIntrospectionQuery(options);
+
+      expect(isIntrospection).toBe(true);
+    });
+
+    it('knows if not a schema introspection', () => {
+      const options = {
+        executeFn: () => {},
+        setExecuteFn: () => {},
+        setResultAndStopExecution: () => {},
+        extendContext: () => {},
+        args: {
+          schema,
+          document: parse(`{
+            query {
+              test {
+                name
+              }
+            }
+          }`),
+          contextValue: {},
+        },
+      };
+
+      const isIntrospection = isIntrospectionQuery(options);
+
+      expect(isIntrospection).toBe(false);
+    });
+  });
+
+  describe('buildTypeIdentifiers', () => {
+    describe('with a simple query', () => {
+      it('builds type identifiers from a query', async () => {
+        const executeOptions = {
+          executeFn: () => {},
+          setExecuteFn: () => {},
+          setResultAndStopExecution: () => {},
+          extendContext: () => {},
+          args: {
+            schema,
+            document: parse(`query { post { id, title } }`),
+            contextValue: {},
+          },
+        };
+
+        const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
+
+        const { types, identifiers } = await buildTypeIdentifiers({
+          params: executeOptions,
+          eventName: '',
+          logger,
+          result: { data: { post: { id: 4, title: 'hello', __typename: 'Post' } }, errors: [], extensions: {} },
+        });
+
+        expect(types).toEqual(['Post']);
+        expect(identifiers).toEqual([{ id: 4, typename: 'Post' }]);
+      });
+    });
+
+    describe('with a nested query', () => {
+      it('builds type identifiers from a query', async () => {
+        const executeOptions = {
+          executeFn: () => {},
+          setExecuteFn: () => {},
+          setResultAndStopExecution: () => {},
+          extendContext: () => {},
+          args: {
+            schema,
+            document: parse(`query { post { id, title, comments { id, body } } }`),
+            contextValue: {},
+          },
+        };
+
+        const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
+
+        const { types, identifiers } = await buildTypeIdentifiers({
+          params: executeOptions,
+          eventName: '',
+          logger,
+          result: {
+            data: {
+              post: {
+                id: 2,
+                title: 'hello',
+                __typename: 'Post',
+                comments: [{ id: 3, body: 'message', __typename: 'Comment' }],
+              },
+            },
+            errors: [],
+            extensions: {},
+          },
+        });
+
+        expect(types).toEqual(['Post', 'Comment']);
+        expect(identifiers).toEqual([
+          { id: 2, typename: 'Post' },
+          { id: 3, typename: 'Comment' },
+        ]);
+      });
+    });
+  });
+
+  describe('denyType', () => {
+    describe('based on the query and a list of types to deny', () => {
+      it('determines that query is denied', () => {
+        const executeOptions = {
+          executeFn: () => {},
+          setExecuteFn: () => {},
+          setResultAndStopExecution: () => {},
+          extendContext: () => {},
+          args: {
+            schema,
+            document: parse(`query { post { id, title, comments { id, body } } }`),
+            contextValue: {},
+          },
+        };
+
+        const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
+
+        const denied = denyType({
+          params: executeOptions,
+          eventName: '',
+          logger,
+          denylist: { types: ['Comment'] },
+          result: {
+            data: {
+              post: {
+                id: 2,
+                title: 'hello',
+                __typename: 'Post',
+                comments: [{ id: 3, body: 'message', __typename: 'Comment' }],
+              },
+            },
+            errors: [],
+            extensions: {},
+          },
+        });
+
+        expect(denied).toBe(true);
+      });
+
+      it('determines that query is allowed', () => {
+        const executeOptions = {
+          executeFn: () => {},
+          setExecuteFn: () => {},
+          setResultAndStopExecution: () => {},
+          extendContext: () => {},
+          args: {
+            schema,
+            document: parse(`query { post { id, title, comments { id, body } } }`),
+            contextValue: {},
+          },
+        };
+
+        const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
+
+        const denied = denyType({
+          params: executeOptions,
+          eventName: '',
+          denylist: { types: ['User'] },
+          logger,
+          result: {
+            data: {
+              post: {
+                id: 2,
+                title: 'hello',
+                __typename: 'Post',
+                comments: [{ id: 3, body: 'message', __typename: 'Comment' }],
+              },
+            },
+            errors: [],
+            extensions: {},
+          },
+        });
+
+        expect(denied).toBe(false);
+      });
+    });
+  });
+
+  describe('denySchemaCoordinate', () => {
+    describe('based on the query and a list of schema coordinates to deny', () => {
+      it('determines that query is denied', () => {
+        const executeOptions = {
+          executeFn: () => {},
+          setExecuteFn: () => {},
+          setResultAndStopExecution: () => {},
+          extendContext: () => {},
+          args: {
+            schema,
+            document: parse(`query { post { id, title, comments { id, body } } }`),
+            contextValue: {},
+          },
+        };
+
+        const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
+
+        const denied = denySchemaCoordinate({
+          params: executeOptions,
+          eventName: '',
+          logger,
+          denylist: { schemaCoordinates: ['Comment.body'] },
+          result: {
+            data: {
+              post: {
+                id: 2,
+                title: 'hello',
+                __typename: 'Post',
+                comments: [{ id: 3, body: 'message', __typename: 'Comment' }],
+              },
+            },
+            errors: [],
+            extensions: {},
+          },
+        });
+
+        expect(denied).toBe(true);
+      });
+
+      it('determines that query is allowed', () => {
+        const executeOptions = {
+          executeFn: () => {},
+          setExecuteFn: () => {},
+          setResultAndStopExecution: () => {},
+          extendContext: () => {},
+          args: {
+            schema,
+            document: parse(`query { post { id, title, comments { id, body } } }`),
+            contextValue: {},
+          },
+        };
+
+        const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
+
+        const denied = denySchemaCoordinate({
+          params: executeOptions,
+          eventName: '',
+          logger,
+          denylist: { schemaCoordinates: ['Query.user'] },
+          result: {
+            data: {
+              post: {
+                id: 2,
+                title: 'hello',
+                __typename: 'Post',
+                comments: [{ id: 3, body: 'message', __typename: 'Comment' }],
+              },
+            },
+            errors: [],
+            extensions: {},
+          },
+        });
+
+        expect(denied).toBe(false);
+      });
     });
   });
 });
