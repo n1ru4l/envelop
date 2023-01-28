@@ -1,5 +1,3 @@
-// import { decamelize } from 'humps';
-
 import {
   Kind,
   OperationDefinitionNode,
