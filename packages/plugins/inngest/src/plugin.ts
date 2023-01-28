@@ -5,48 +5,28 @@ import { buildEventPayload, buildEventName, buildEventNamePrefix, buildUserConte
 import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str';
 import { buildLogger } from './logger';
 import { shouldSendEvent } from './should-send-event';
-import type { UseInngestPluginOptions, UseInngestConfig } from './types';
-
-export const defaultUseInngestPluginOptions: UseInngestConfig = {
-  buildEventNameFunction: buildEventName,
-  buildEventNamePrefixFunction: buildEventNamePrefix,
-  buildUserContextFunction: buildUserContext,
-  sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
-  sendAnonymousOperations: false,
-  sendErrors: false,
-  sendIntrospection: false,
-  includeResultData: false,
-};
+import type { UseInngestPluginOptions } from './types';
 
 /**
  * Sends GraphQL operation events to Inngest
  *
  * @param options UseInngestPluginOptions
  */
-export const useInngest = (options: UseInngestPluginOptions): Plugin => {
-  const client = options.inngestClient;
-
-  const config = { ...defaultUseInngestPluginOptions, ...options };
-  const buildEventNameFunction = config.buildEventNameFunction ?? defaultUseInngestPluginOptions.buildEventNameFunction;
-  const buildEventNamePrefixFunction =
-    config.buildEventNamePrefixFunction ?? defaultUseInngestPluginOptions.buildEventNamePrefixFunction;
-  const buildUserContextFunction =
-    config.buildUserContextFunction ?? defaultUseInngestPluginOptions.buildUserContextFunction;
-
-  if (!buildEventNameFunction) {
-    throw Error('buildEventNameFunction is required');
-  }
-
-  if (!buildEventNamePrefixFunction) {
-    throw Error('buildEventNamePrefixFunction is required');
-  }
-
-  if (!buildUserContextFunction) {
-    throw Error('buildUserContextFunction is required');
-  }
-
-  const logger = buildLogger(config);
-
+export const useInngest = ({
+  inngestClient,
+  buildEventNameFunction = buildEventName,
+  buildEventNamePrefixFunction = buildEventNamePrefix,
+  buildUserContextFunction = buildUserContext,
+  sendOperations = [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
+  sendAnonymousOperations = false,
+  sendErrors = false,
+  sendIntrospection = false,
+  denylist,
+  includeResultData = false,
+  redaction = undefined,
+  logging,
+}: UseInngestPluginOptions): Plugin => {
+  const logger = buildLogger({ logging });
   const getDocumentString = defaultGetDocumentString;
 
   return {
@@ -70,22 +50,22 @@ export const useInngest = (options: UseInngestPluginOptions): Plugin => {
                 eventName,
                 params: onExecuteParams,
                 result,
-                sendOperations: config.sendOperations,
-                sendErrors: config.sendErrors,
-                sendIntrospection: config.sendIntrospection,
-                sendAnonymousOperations: config.sendAnonymousOperations,
+                sendOperations,
+                sendErrors,
+                sendIntrospection,
+                sendAnonymousOperations,
                 logger,
               })
             ) {
-              await client.send({
+              await inngestClient.send({
                 name: eventName,
                 data: await buildEventPayload({
                   eventName,
                   params: onExecuteParams,
                   result,
                   logger,
-                  redaction: config.redaction,
-                  includeResultData: config.includeResultData,
+                  redaction,
+                  includeResultData,
                 }),
                 user: await buildUserContextFunction({ params: onExecuteParams, logger }),
               });

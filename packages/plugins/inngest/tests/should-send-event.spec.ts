@@ -1,9 +1,8 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { parse } from 'graphql';
+import { parse, OperationTypeNode } from 'graphql';
 
 import { shouldSendEvent } from '../src/should-send-event';
 import { buildLogger } from '../src/logger';
-import { defaultUseInngestPluginOptions } from '../src/plugin';
 
 describe.skip('shouldSendEvent', () => {
   const schema = makeExecutableSchema({
@@ -33,7 +32,7 @@ describe.skip('shouldSendEvent', () => {
           contextValue: {},
         },
       },
-      sendOperations: defaultUseInngestPluginOptions.sendOperations,
+      sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
       eventName: 'graphql-test/test-query.query',
       result: { errors: [], data: {} },
       logger: buildLogger({ logging: false }),
