@@ -158,3 +158,50 @@ export const buildTypeIdentifiers = async (options: UseInngestDataOptions) => {
 
   return { types, identifiers };
 };
+
+export const denyType = (options: UseInngestDataOptions) => {
+  const typeInfo = new TypeInfo(options.params?.args?.schema);
+  let hasType = false;
+  const typeDenyList = options.denylist?.types ?? [];
+
+  visit(
+    options.params.args.document,
+    visitWithTypeInfo(typeInfo, {
+      Field() {
+        const type = getNamedType(typeInfo.getType());
+        if (type && typeDenyList.includes(type?.name)) {
+          hasType = true;
+          return BREAK;
+        }
+      },
+    })
+  );
+
+  return hasType;
+
+  return false;
+};
+
+export const denySchemaCoordinate = (options: UseInngestDataOptions) => {
+  let hasSchemaCoordinate = false;
+  const typeInfo = new TypeInfo(options.params.args.schema);
+  const schemaCoordinateDenyList = options.denylist?.schemaCoordinates ?? [];
+
+  visit(
+    options.params.args.document,
+    visitWithTypeInfo(typeInfo, {
+      Field(fieldNode) {
+        const parentType = typeInfo.getParentType();
+        if (parentType) {
+          const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
+          if (schemaCoordinateDenyList.includes(schemaCoordinate)) {
+            hasSchemaCoordinate = true;
+            return BREAK;
+          }
+        }
+      },
+    })
+  );
+
+  return hasSchemaCoordinate;
+};

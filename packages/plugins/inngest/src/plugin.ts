@@ -54,6 +54,7 @@ export const useInngest = ({
                 sendErrors,
                 sendIntrospection,
                 sendAnonymousOperations,
+                denylist,
                 logger,
               })
             ) {
