@@ -9,6 +9,9 @@ export type {
   BuildEventNameFunction,
   BuildEventNamePrefixFunction,
   BuildUserContextFunction,
+  SendableOperations,
 } from './types';
+
+export { OperationTypeNode as SendableOperation } from 'graphql';
 
 export { useInngest } from './plugin';

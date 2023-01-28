@@ -3,7 +3,7 @@ import type { RedactOptions } from 'fast-redact';
 import type { OperationTypeNode } from 'graphql';
 import type { Inngest, EventPayload } from 'inngest';
 
-export type AllowedOperations = Iterable<OperationTypeNode>;
+export type SendableOperations = Iterable<OperationTypeNode>;
 
 export type UseInngestEntityRecord = {
   typename: string;
@@ -32,7 +32,7 @@ export interface UseInngestPluginOptions {
   buildUserContextFunction?: BuildUserContextFunction;
   userContext?: BuildUserContextFunction;
   logging?: boolean | UseInngestLogger | UseInngestLogLevel;
-  sendOperations?: AllowedOperations;
+  sendOperations?: SendableOperations;
   sendErrors?: boolean;
   sendIntrospection?: boolean;
   sendAnonymousOperations?: boolean;
