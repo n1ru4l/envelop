@@ -35,14 +35,14 @@ export const sendOperation = (options: UseInngestEventOptions): boolean => {
   const allow = ops.has(operation);
 
   if (!allow) {
-    const operationName = extractOperationName(options);
+    const operationName = getOperationName(options);
     options.logger.warn(`Operation ${operation} named ${operationName} is not allowed`);
   }
 
   return allow;
 };
 
-export const extractOperationName = (options: Pick<UseInngestExecuteOptions, 'params'>): string => {
+export const getOperationName = (options: Pick<UseInngestExecuteOptions, 'params'>): string => {
   const args = options.params.args;
   const rootOperation = args.document.definitions.find(
     // @ts-expect-error TODO: not sure how we will make it dev friendly
@@ -54,7 +54,7 @@ export const extractOperationName = (options: Pick<UseInngestExecuteOptions, 'pa
 };
 
 export const isAnonymousOperation = (params: OnExecuteEventPayload<ContextType>) => {
-  return extractOperationName({ params }) === undefined;
+  return getOperationName({ params }) === undefined;
 };
 
 export const isIntrospectionQuery = (params: OnExecuteEventPayload<ContextType>) => {
@@ -95,7 +95,7 @@ export const buildTypeIdentifiers = async (options: UseInngestDataOptions) => {
     {
       document: options.params.args.document,
       variables: options.params.args.variableValues as any,
-      operationName: extractOperationName(options),
+      operationName: getOperationName(options),
       rootValue: options.params.args.rootValue,
       context: options.params.args.contextValue,
     },

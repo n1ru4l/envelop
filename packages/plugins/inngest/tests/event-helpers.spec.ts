@@ -3,7 +3,12 @@ import { parse } from 'graphql';
 
 import { buildLogger } from '../src/logger';
 
-import { buildOperationId, buildOperationNameForEventName, buildEventPayload, buildEventName } from '../src/builders';
+import {
+  buildOperationId,
+  buildOperationNameForEventName,
+  buildEventPayload,
+  buildEventName,
+} from '../src/event-helpers';
 
 describe('builders', () => {
   const schema = makeExecutableSchema({

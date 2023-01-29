@@ -1,4 +1,10 @@
-import { sendOperation, denySchemaCoordinate, denyType, isAnonymousOperation, isIntrospectionQuery } from './tools';
+import {
+  sendOperation,
+  denySchemaCoordinate,
+  denyType,
+  isAnonymousOperation,
+  isIntrospectionQuery,
+} from './schema-helpers';
 import { UseInngestDataOptions } from './types';
 
 export const shouldSendEvent = async (options: UseInngestDataOptions) => {

@@ -4,7 +4,7 @@ import fastRedact from 'fast-redact';
 import { decamelize } from 'humps';
 import { hashSHA256 } from './hash-sha256';
 import { USE_INNGEST_DEFAULT_EVENT_PREFIX, USE_INNGEST_ANONYMOUS_EVENT_PREFIX } from './index';
-import { extractOperationName, getOperation, buildTypeIdentifiers } from './tools';
+import { getOperationName, getOperation, buildTypeIdentifiers } from './schema-helpers';
 import type {
   UseInngestDataOptions,
   UseInngestEventOptions,
@@ -19,7 +19,7 @@ import type {
 export const buildOperationId = async (options: UseInngestEventOptions): Promise<string> => {
   const tokens = [
     options.documentString,
-    extractOperationName(options) ?? '',
+    getOperationName(options) ?? '',
     jsonStableStringify(options.params.args.variableValues ?? {}),
   ].join('|');
 
@@ -29,7 +29,7 @@ export const buildOperationId = async (options: UseInngestEventOptions): Promise
 };
 
 export const buildOperationNameForEventName = async (options: UseInngestEventOptions) => {
-  let operationName = extractOperationName(options);
+  let operationName = getOperationName(options);
 
   if (!operationName) {
     const operationId = await buildOperationId(options);
@@ -79,7 +79,7 @@ export const buildEventPayload = async (options: UseInngestDataOptions) => {
     result,
     operation: {
       id: await buildOperationNameForEventName(options),
-      name: extractOperationName(options) || '',
+      name: getOperationName(options) || '',
       type: getOperation(options.params),
     },
   };

@@ -7,18 +7,18 @@ import {
   isAnonymousOperation,
   isIntrospectionQuery,
   sendOperation,
-  extractOperationName,
+  getOperationName,
   getOperation,
   buildTypeIdentifiers,
   denySchemaCoordinate,
   denyType,
-} from '../src/tools';
+} from '../src/schema-helpers';
 
 import { SendableOperation } from '../index';
 import type { UseInngestExecuteOptions } from '../src/types';
 
 describe('tools', () => {
-  const logger = buildLogger({ logging: true });
+  const logger = buildLogger({ logging: false });
 
   const schema = makeExecutableSchema({
     typeDefs: /* GraphQL */ `
@@ -162,7 +162,7 @@ describe('tools', () => {
         },
       };
       const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
-      const operationName = extractOperationName(options);
+      const operationName = getOperationName(options);
 
       expect(operationName).toBe('TestQuery');
     });
@@ -180,7 +180,7 @@ describe('tools', () => {
         },
       };
       const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
-      const operationName = extractOperationName(options);
+      const operationName = getOperationName(options);
 
       expect(operationName).toBe('TestMutation');
     });
@@ -198,7 +198,7 @@ describe('tools', () => {
         },
       };
       const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
-      const operationName = extractOperationName(options);
+      const operationName = getOperationName(options);
 
       expect(operationName).toBe('TestSubscription');
     });
@@ -216,7 +216,7 @@ describe('tools', () => {
         },
       };
       const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
-      const operationName = extractOperationName(options);
+      const operationName = getOperationName(options);
 
       expect(operationName).toBeUndefined();
     });

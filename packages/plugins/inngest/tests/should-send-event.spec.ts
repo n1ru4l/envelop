@@ -92,7 +92,7 @@ describe('shouldSendEvent', () => {
       });
     });
 
-    describe('and the name does not matches', () => {
+    describe('and the name does not match', () => {
       it('should send event', async () => {
         const should = await shouldSendEvent({
           params: {

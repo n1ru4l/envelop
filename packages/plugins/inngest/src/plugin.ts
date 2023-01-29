@@ -1,7 +1,7 @@
 import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/core';
 import { OperationTypeNode } from 'graphql';
 
-import { buildEventPayload, buildEventName, buildEventNamePrefix, buildUserContext } from './builders';
+import { buildEventPayload, buildEventName, buildEventNamePrefix, buildUserContext } from './event-helpers';
 import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str';
 import { buildLogger } from './logger';
 import { shouldSendEvent } from './should-send-event';
