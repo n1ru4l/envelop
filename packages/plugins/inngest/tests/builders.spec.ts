@@ -30,6 +30,10 @@ describe('builders', () => {
         post: Post!
         posts: [Post!]!
       }
+
+      type Mutation {
+        updatePost(id: ID!, title: String!): Post!
+      }
     `,
     resolvers: {
       Query: {
@@ -39,6 +43,9 @@ describe('builders', () => {
           { id: '1', title: 'hello' },
           { id: '2', title: 'world' },
         ],
+      },
+      Mutation: {
+        updatePost: ({ id, title }) => ({ id, title }),
       },
     },
   });
@@ -198,6 +205,45 @@ describe('builders', () => {
       });
     });
 
+    it('builds named query with just types and identifiers', async () => {
+      const payload = await buildEventPayload({
+        params: {
+          executeFn: () => {},
+          setExecuteFn: () => {},
+          setResultAndStopExecution: () => {},
+          extendContext: () => {},
+          args: {
+            schema,
+            document: parse(`query FindPosts { posts { id } }`),
+            contextValue: {},
+          },
+        },
+        eventName: 'graphql-test/test-query.query',
+        result: {
+          data: {
+            posts: [
+              { id: 5, __typename: 'Post' },
+              { id: 7, __typename: 'Post' },
+              { id: 11, __typename: 'Post' },
+            ],
+          },
+        },
+        logger: buildLogger({ logging: false }),
+      });
+
+      expect(payload).toEqual({
+        operation: { type: 'query', id: 'find-posts', name: 'FindPosts' },
+        result: {},
+        identifiers: [
+          { typename: 'Post', id: 5 },
+          { typename: 'Post', id: 7 },
+          { typename: 'Post', id: 11 },
+        ],
+        types: ['Post'],
+        variables: {},
+      });
+    });
+
     it('builds named query with data and types and identifiers', async () => {
       const payload = await buildEventPayload({
         params: {
@@ -248,6 +294,40 @@ describe('builders', () => {
       });
     });
 
+    it('builds payload for a mutation', async () => {
+      const payload = await buildEventPayload({
+        params: {
+          executeFn: () => {},
+          setExecuteFn: () => {},
+          setResultAndStopExecution: () => {},
+          extendContext: () => {},
+          args: {
+            schema,
+            document: parse(
+              `mutation UpdatePost($id: Int!, $title: String!) { updatePost(id: $id, title: $title) { id title } }`
+            ),
+            variableValues: { id: 1, title: 'updated title' },
+            contextValue: {},
+          },
+        },
+        eventName: 'graphql-test/update-post.mutation',
+        result: { errors: [], data: { updatePost: { id: 1, title: 'updated title', __typename: 'Post' } } },
+        logger: buildLogger({ logging: false }),
+      });
+
+      expect(payload).toEqual({
+        operation: {
+          type: 'mutation',
+          id: 'update-post',
+          name: 'UpdatePost',
+        },
+        result: {},
+        identifiers: [{ typename: 'Post', id: 1 }],
+        types: ['Post'],
+        variables: { id: 1, title: 'updated title' },
+      });
+    });
+
     it('builds anonymous query', async () => {
       const payload = await buildEventPayload({
         params: {
@@ -284,6 +364,7 @@ describe('builders', () => {
       });
     });
   });
+
   describe('redaction', () => {
     it('builds payload for a redacted query', async () => {
       const payload = await buildEventPayload({
@@ -318,6 +399,41 @@ describe('builders', () => {
         identifiers: [],
         types: [],
         variables: {},
+      });
+    });
+
+    it('builds payload for a redacted mutation', async () => {
+      const payload = await buildEventPayload({
+        params: {
+          executeFn: () => {},
+          setExecuteFn: () => {},
+          setResultAndStopExecution: () => {},
+          extendContext: () => {},
+          args: {
+            schema,
+            document: parse(
+              `mutation UpdatePost($id: Int!, $title: String!) { updatePost(id: $id, title: $title) { id title } }`
+            ),
+            variableValues: { id: 1, title: 'updated title' },
+            contextValue: {},
+          },
+        },
+        redaction: { paths: ['title'], censor: '***' },
+        eventName: 'graphql-test/update-post.mutation',
+        result: { errors: [], data: { updatePost: { id: 1, title: 'updated title', __typename: 'Post' } } },
+        logger: buildLogger({ logging: false }),
+      });
+
+      expect(payload).toEqual({
+        operation: {
+          type: 'mutation',
+          id: 'update-post',
+          name: 'UpdatePost',
+        },
+        result: {},
+        identifiers: [{ typename: 'Post', id: 1 }],
+        types: ['Post'],
+        variables: { id: 1, title: '***' },
       });
     });
   });

@@ -44,6 +44,10 @@ describe('tools', () => {
         post: Post!
         posts: [Post!]!
       }
+
+      type Mutation {
+        updatePost(id: ID!, title: String!): Post!
+      }
     `,
     resolvers: {
       Query: {
@@ -53,6 +57,9 @@ describe('tools', () => {
           { id: '1', title: 'hello' },
           { id: '2', title: 'world' },
         ],
+      },
+      Mutation: {
+        updatePost: ({ id, title }) => ({ id, title }),
       },
     },
   });
@@ -407,6 +414,34 @@ describe('tools', () => {
           { id: 2, typename: 'Post' },
           { id: 3, typename: 'Comment' },
         ]);
+      });
+    });
+
+    describe('with a simple mutation', () => {
+      it('builds type identifiers from a mutation', async () => {
+        const executeOptions = {
+          executeFn: () => {},
+          setExecuteFn: () => {},
+          setResultAndStopExecution: () => {},
+          extendContext: () => {},
+          args: {
+            schema,
+            document: parse(`mutation UpdatePost { updatePost(id: 1, title: "updated title") {  id title } }`),
+            contextValue: {},
+          },
+        };
+
+        const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
+
+        const { types, identifiers } = await buildTypeIdentifiers({
+          params: executeOptions,
+          eventName: 'graphql-test/update-post.mutation',
+          result: { errors: [], data: { updatePost: { id: 19, title: 'updated title', __typename: 'Post' } } },
+          logger,
+        });
+
+        expect(types).toEqual(['Post']);
+        expect(identifiers).toEqual([{ id: 19, typename: 'Post' }]);
       });
     });
   });
