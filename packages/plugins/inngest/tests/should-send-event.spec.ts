@@ -59,7 +59,7 @@ describe('shouldSendEvent', () => {
         sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
         eventName: 'graphql-test/test-query.query',
         result: { errors: [], data: { test: 'hello' } },
-        logger: buildLogger({ logging: true }),
+        logger: buildLogger({ logging: false }),
       });
 
       expect(should).toBe(true);
@@ -85,7 +85,7 @@ describe('shouldSendEvent', () => {
           sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
           eventName: 'graphql-test/test-query.query',
           result: { errors: [], data: { test: 'hello' } },
-          logger: buildLogger({ logging: true }),
+          logger: buildLogger({ logging: false }),
         });
 
         expect(should).toBe(true);
@@ -110,7 +110,7 @@ describe('shouldSendEvent', () => {
           sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
           eventName: 'graphql-test/test-query.query',
           result: { errors: [], data: { test: 'hello' } },
-          logger: buildLogger({ logging: true }),
+          logger: buildLogger({ logging: false }),
         });
 
         expect(should).toBe(false);
@@ -136,7 +136,7 @@ describe('shouldSendEvent', () => {
         sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
         result: { errors: [], data: { test: 'hello' } },
         eventName: 'graphql-test/test-query.query',
-        logger: buildLogger({ logging: true }),
+        logger: buildLogger({ logging: false }),
       });
 
       expect(should).toBe(false);
@@ -159,7 +159,7 @@ describe('shouldSendEvent', () => {
         sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
         result: { errors: [], data: { test: 'hello' } },
         eventName: 'graphql-test/test-query.query',
-        logger: buildLogger({ logging: true }),
+        logger: buildLogger({ logging: false }),
       });
 
       expect(should).toBe(true);
@@ -190,7 +190,7 @@ describe('shouldSendEvent', () => {
         sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
         result: { errors: [], data: {} },
         eventName: '',
-        logger: buildLogger({ logging: true }),
+        logger: buildLogger({ logging: false }),
       });
 
       expect(should).toBe(false);
@@ -219,7 +219,7 @@ describe('shouldSendEvent', () => {
         sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
         result: { errors: [], data: {} },
         eventName: '',
-        logger: buildLogger({ logging: true }),
+        logger: buildLogger({ logging: false }),
       });
 
       expect(should).toBe(true);
@@ -245,7 +245,7 @@ describe('shouldSendEvent', () => {
           sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
           eventName: 'graphql-test/test-query.query',
           result: { errors: [], data: { posts: [{ id: 1, __typename: 'Post' }] } },
-          logger: buildLogger({ logging: true }),
+          logger: buildLogger({ logging: false }),
         });
 
         expect(should).toBe(false);
@@ -269,7 +269,7 @@ describe('shouldSendEvent', () => {
           sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
           eventName: 'graphql-test/test-query.query',
           result: { errors: [], data: { posts: [{ id: 1, __typename: 'Post' }] } },
-          logger: buildLogger({ logging: true }),
+          logger: buildLogger({ logging: false }),
         });
 
         expect(should).toBe(false);
@@ -294,7 +294,7 @@ describe('shouldSendEvent', () => {
           sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
           eventName: 'graphql-test/test-query.query',
           result: { errors: [], data: { posts: [{ id: 1, __typename: 'Post' }] } },
-          logger: buildLogger({ logging: true }),
+          logger: buildLogger({ logging: false }),
         });
 
         expect(should).toBe(true);
@@ -318,7 +318,7 @@ describe('shouldSendEvent', () => {
           sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
           eventName: 'graphql-test/test-query.query',
           result: { errors: [], data: { posts: [{ id: 1, __typename: 'Post' }] } },
-          logger: buildLogger({ logging: true }),
+          logger: buildLogger({ logging: false }),
         });
 
         expect(should).toBe(true);
@@ -343,7 +343,7 @@ describe('shouldSendEvent', () => {
         sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
         eventName: 'graphql-test/test-query.query',
         result: { errors: [{ message: 'Oops' }], data: {} },
-        logger: buildLogger({ logging: true }),
+        logger: buildLogger({ logging: false }),
       });
 
       expect(should).toBe(false);
@@ -366,7 +366,7 @@ describe('shouldSendEvent', () => {
         sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
         eventName: 'graphql-test/test-query.query',
         result: { errors: [{ message: 'Oops' }], data: {} },
-        logger: buildLogger({ logging: true }),
+        logger: buildLogger({ logging: false }),
       });
 
       expect(should).toBe(true);
