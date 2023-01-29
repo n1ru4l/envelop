@@ -3,7 +3,7 @@ import fastRedact from 'fast-redact';
 
 import { decamelize } from 'humps';
 import { hashSHA256 } from './hash-sha256';
-import { USE_INNGEST_DEFAULT_EVENT_PREFIX } from './index';
+import { USE_INNGEST_DEFAULT_EVENT_PREFIX, USE_INNGEST_ANONYMOUS_EVENT_PREFIX } from './index';
 import { extractOperationName, getOperation, buildTypeIdentifiers } from './tools';
 import type {
   UseInngestDataOptions,
@@ -33,7 +33,7 @@ export const buildOperationNameForEventName = async (options: UseInngestEventOpt
 
   if (!operationName) {
     const operationId = await buildOperationId(options);
-    operationName = `anonymous-${operationId}`;
+    operationName = `${USE_INNGEST_ANONYMOUS_EVENT_PREFIX}-${operationId}`;
   }
 
   return decamelize(operationName, {

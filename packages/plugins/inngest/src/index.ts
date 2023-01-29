@@ -15,5 +15,6 @@ export type {
 export { OperationTypeNode as SendableOperation } from 'graphql';
 
 export const USE_INNGEST_DEFAULT_EVENT_PREFIX = 'graphql';
+export const USE_INNGEST_ANONYMOUS_EVENT_PREFIX = 'anonymous';
 
 export { useInngest } from './plugin';
