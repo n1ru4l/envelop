@@ -19,7 +19,7 @@ import type {
   UseInngestEntityRecord,
 } from './types';
 
-export const allowOperation = (options: UseInngestEventOptions): boolean => {
+export const sendOperation = (options: UseInngestEventOptions): boolean => {
   if (!options.sendOperations === undefined) {
     options.logger.warn('No operations are allowed.');
   }

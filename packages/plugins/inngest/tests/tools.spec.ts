@@ -6,7 +6,7 @@ import { buildLogger } from '../src/logger';
 import {
   isAnonymousOperation,
   isIntrospectionQuery,
-  allowOperation,
+  sendOperation,
   extractOperationName,
   getOperation,
   buildTypeIdentifiers,
@@ -231,7 +231,7 @@ describe('tools', () => {
 
       const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
 
-      const allowed = allowOperation({
+      const allowed = sendOperation({
         params: options.params,
         sendOperations: [SendableOperation.QUERY],
         logger,
@@ -255,7 +255,7 @@ describe('tools', () => {
 
       const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
 
-      const allowed = allowOperation({
+      const allowed = sendOperation({
         params: options.params,
         sendOperations: [SendableOperation.MUTATION],
         logger,
@@ -279,7 +279,7 @@ describe('tools', () => {
 
       const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
 
-      const allowed = allowOperation({
+      const allowed = sendOperation({
         params: options.params,
         sendOperations: [SendableOperation.MUTATION],
         logger,

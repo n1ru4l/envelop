@@ -1,15 +1,15 @@
-import { allowOperation, denySchemaCoordinate, denyType, isAnonymousOperation, isIntrospectionQuery } from './tools';
+import { sendOperation, denySchemaCoordinate, denyType, isAnonymousOperation, isIntrospectionQuery } from './tools';
 import { UseInngestDataOptions } from './types';
 
 export const shouldSendEvent = async (options: UseInngestDataOptions) => {
-  const allowedOperation = allowOperation(options);
+  const shouldSendOperation = sendOperation(options);
   const isAnonymous = isAnonymousOperation(options.params);
   const isIntrospection = isIntrospectionQuery(options.params);
   const hasErrors = options.result?.errors !== undefined && options.result.errors.length > 0;
   const shouldDenyType = denyType(options);
   const shouldDenySchemaCoordinate = denySchemaCoordinate(options);
 
-  if (!allowedOperation) {
+  if (!shouldSendOperation) {
     options.logger.warn(`Blocking event ${options.eventName} because it is not an configured operation.`);
 
     return false;
@@ -46,7 +46,7 @@ export const shouldSendEvent = async (options: UseInngestDataOptions) => {
     return true;
   }
 
-  const shouldSend = !isIntrospection && !hasErrors;
+  const shouldSend = !isAnonymous && !isIntrospection && !hasErrors;
 
   if (shouldSend) {
     options.logger.warn(

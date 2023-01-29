@@ -5,7 +5,7 @@ import { buildLogger } from '../src/logger';
 
 import { buildEventPayload, buildEventName } from '../src/builders';
 
-describe.skip('builders', () => {
+describe('builders', () => {
   const schema = makeExecutableSchema({
     typeDefs: /* GraphQL */ `
       type Query {
@@ -40,7 +40,7 @@ describe.skip('builders', () => {
       expect(result).toEqual('graphql-test/test-query.query');
     });
 
-    xit('builds an event name from a given operation name', async () => {
+    it('builds an event name from a given operation name', async () => {
       const result = await buildEventName({
         params: {
           executeFn: () => {},
