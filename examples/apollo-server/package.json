@@ -6,9 +6,9 @@
   "author": "Dotan Simha",
   "license": "MIT",
   "dependencies": {
+    "@apollo/server": "^4.3.2",
+    "@apollo/server-plugin-landing-page-graphql-playground": "^4.0.0",
     "@envelop/core": "*",
-    "apollo-server": "3.5.0",
-    "apollo-server-core": "3.5.0",
     "@graphql-tools/schema": "8.5.0",
     "graphql": "16.6.0"
   },
