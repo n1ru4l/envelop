@@ -53,6 +53,12 @@ const createLogger = (
   };
 };
 
+/**
+ * buildLogger
+
+ * @param options Pick<UseInngestPluginOptions, 'logging'>
+ * @returns UseInngestLogger
+ */
 export const buildLogger = (options: Pick<UseInngestPluginOptions, 'logging'>): UseInngestLogger => {
   const logging = options?.logging != null ? options.logging : true;
 

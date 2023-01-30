@@ -20,6 +20,12 @@ import type {
   UseInngestEntityRecord,
 } from './types';
 
+/**
+ * sendOperation
+ *
+ * @param options UseInngestEventOptions
+ * @returns boolean
+ */
 export const sendOperation = (options: UseInngestEventOptions): boolean => {
   if (!options.sendOperations === undefined) {
     options.logger.warn('No operations are allowed.');
@@ -43,6 +49,12 @@ export const sendOperation = (options: UseInngestEventOptions): boolean => {
   return allow;
 };
 
+/**
+ * getOperationName
+ *
+ * @param options Pick<UseInngestExecuteOptions, 'params'>
+ * @returns string | undefined
+ */
 export const getOperationName = (options: Pick<UseInngestExecuteOptions, 'params'>): string => {
   const args = options.params.args;
   const rootOperation = args.document.definitions.find(
@@ -54,10 +66,22 @@ export const getOperationName = (options: Pick<UseInngestExecuteOptions, 'params
   return operationName;
 };
 
+/**
+ * isAnonymousOperation
+ *
+ * @param params
+ * @returns boolean
+ */
 export const isAnonymousOperation = (params: OnExecuteEventPayload<ContextType>) => {
   return getOperationName({ params }) === undefined;
 };
 
+/**
+ * isIntrospectionQuery
+ *
+ * @param params
+ * @returns boolean
+ */
 export const isIntrospectionQuery = (params: OnExecuteEventPayload<ContextType>) => {
   const typeInfo = new TypeInfo(params?.args?.schema);
   let isIntrospection = false;
@@ -78,11 +102,27 @@ export const isIntrospectionQuery = (params: OnExecuteEventPayload<ContextType>)
   return isIntrospection;
 };
 
+/**
+ * getOperation
+ *
+ * @param params
+ * @returns OperationTypeNode | 'unknown'
+ */
 export const getOperation = (params: OnExecuteEventPayload<ContextType>) => {
   const operationAST = getOperationAST(params.args.document, params.args.operationName);
   return operationAST?.operation ?? 'unknown';
 };
 
+/**
+ * buildTypeIdentifiers
+ *
+ *
+ * @param options UseInngestDataOptions
+ * @returns Object with list of types and identifiers
+ *
+ * Example: { types: ['Post'], identifiers: [{ id: 1, typename: 'Post }] }
+ *
+ */
 export const buildTypeIdentifiers = async (options: UseInngestDataOptions) => {
   const idFields: Array<string> = ['id'];
 
@@ -158,6 +198,12 @@ export const buildTypeIdentifiers = async (options: UseInngestDataOptions) => {
   return { types, identifiers };
 };
 
+/**
+ * denyType
+ *
+ * @param options UseInngestDataOptions
+ * @returns boolean
+ */
 export const denyType = (options: UseInngestDataOptions) => {
   const typeInfo = new TypeInfo(options.params?.args?.schema);
   let hasType = false;
@@ -181,6 +227,12 @@ export const denyType = (options: UseInngestDataOptions) => {
   return false;
 };
 
+/**
+ * denySchemaCoordinate
+ *
+ * @param options UseInngestDataOptions
+ * @returns boolean
+ */
 export const denySchemaCoordinate = (options: UseInngestDataOptions) => {
   let hasSchemaCoordinate = false;
   const typeInfo = new TypeInfo(options.params.args.schema);

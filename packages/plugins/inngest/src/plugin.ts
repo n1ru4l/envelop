@@ -24,7 +24,7 @@ export const useInngest = ({
   denylist,
   includeResultData = false,
   redaction = undefined,
-  logging,
+  logging = false,
 }: UseInngestPluginOptions): Plugin => {
   const logger = buildLogger({ logging });
   const getDocumentString = defaultGetDocumentString;
@@ -34,16 +34,16 @@ export const useInngest = ({
       addPlugin(useCacheDocumentString());
     },
     async onExecute(onExecuteParams) {
-      const eventNamePrefix = await buildEventNamePrefixFunction({ params: onExecuteParams, logger });
-      const eventName = await buildEventNameFunction({
-        params: onExecuteParams,
-        documentString: getDocumentString(onExecuteParams.args),
-        eventNamePrefix,
-        logger,
-      });
-
       return {
         async onExecuteDone({ result }) {
+          const eventNamePrefix = await buildEventNamePrefixFunction({ params: onExecuteParams, logger });
+          const eventName = await buildEventNameFunction({
+            params: onExecuteParams,
+            documentString: getDocumentString(onExecuteParams.args),
+            eventNamePrefix,
+            logger,
+          });
+
           if (
             await shouldSendEvent({
               eventName,

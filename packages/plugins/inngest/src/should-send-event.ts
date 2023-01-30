@@ -7,6 +7,12 @@ import {
 } from './schema-helpers';
 import { UseInngestDataOptions } from './types';
 
+/**
+ * shouldSendEvent
+ *
+ * @param options UseInngestDataOptions
+ * @returns boolean If event should be send
+ */
 export const shouldSendEvent = async (options: UseInngestDataOptions) => {
   const shouldSendOperation = sendOperation(options);
   const isAnonymous = isAnonymousOperation(options.params);

@@ -16,6 +16,12 @@ import type {
   UseInngestEventNamePrefixFunctionOptions,
 } from './types';
 
+/**
+ * buildOperationId
+ *
+ * @param options UseInngestDataEventOptions
+ * @returns string Operation ID
+ */
 export const buildOperationId = async (options: UseInngestEventOptions): Promise<string> => {
   const tokens = [
     options.documentString,
@@ -28,6 +34,12 @@ export const buildOperationId = async (options: UseInngestEventOptions): Promise
   return operationId;
 };
 
+/**
+ * buildOperationNameForEventName
+ *
+ * @param options UseInngestDataEventOptions
+ * @returns string Operation name for event
+ */
 export const buildOperationNameForEventName = async (options: UseInngestEventOptions) => {
   let operationName = getOperationName(options);
 
@@ -41,21 +53,12 @@ export const buildOperationNameForEventName = async (options: UseInngestEventOpt
   });
 };
 
-export const buildEventNamePrefix: BuildEventNamePrefixFunction = async (
-  options: UseInngestEventNamePrefixFunctionOptions
-) => {
-  return USE_INNGEST_DEFAULT_EVENT_PREFIX;
-};
-
-export const buildEventName: BuildEventNameFunction = async (options: UseInngestEventNameFunctionOptions) => {
-  const operationName = await buildOperationNameForEventName(options);
-  const operation = getOperation(options.params);
-
-  const name = `${options.eventNamePrefix}/${operationName}.${operation}`.toLowerCase();
-
-  return name as string;
-};
-
+/**
+ * buildEventPayload
+ *
+ * @param options UseInngestDataOptions
+ * @returns Object Event payload
+ */
 export const buildEventPayload = async (options: UseInngestDataOptions) => {
   const { identifiers, types } = await buildTypeIdentifiers(options);
 
@@ -87,6 +90,39 @@ export const buildEventPayload = async (options: UseInngestDataOptions) => {
   return payload;
 };
 
+/**
+ * buildEventNamePrefix
+ *
+ * @param options UseInngestEventNamePrefixFunctionOptions
+ * @returns string Prefix for event name
+ */
+export const buildEventNamePrefix: BuildEventNamePrefixFunction = async (
+  options: UseInngestEventNamePrefixFunctionOptions
+) => {
+  return USE_INNGEST_DEFAULT_EVENT_PREFIX;
+};
+
+/**
+ * buildEventName
+ *
+ * @param options UseInngestEventNameFunctionOptions
+ * @returns string Event name
+ */
+export const buildEventName: BuildEventNameFunction = async (options: UseInngestEventNameFunctionOptions) => {
+  const operationName = await buildOperationNameForEventName(options);
+  const operation = getOperation(options.params);
+
+  const name = `${options.eventNamePrefix}/${operationName}.${operation}`.toLowerCase();
+
+  return name as string;
+};
+
+/**
+ * buildUserContext
+ *
+ * @param options UseInngestUserContextOptions
+ * @returns Object User info
+ */
 export const buildUserContext: BuildUserContextFunction = (options: UseInngestUserContextOptions) => {
   return {};
 };

@@ -3,28 +3,23 @@ import type { RedactOptions } from 'fast-redact';
 import type { OperationTypeNode } from 'graphql';
 import type { Inngest, EventPayload } from 'inngest';
 
-export type SendableOperations = Iterable<OperationTypeNode>;
-
-export type UseInngestEntityRecord = {
-  typename: string;
-  id?: number | string;
-};
-
-export type UseInngestLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error';
-
-export type UseInngestLogger = Record<UseInngestLogLevel, (...args: any[]) => void>;
-
-export type InngestUserContext = Record<string, any> | undefined;
-
-export type UseInngestUserContextOptions = UseInngestExecuteOptions & UseInngestLoggerOptions;
-
-export type BuildUserContextFunction = (
-  options: UseInngestUserContextOptions
-) => InngestUserContext | Promise<InngestUserContext>;
-
-export type BuildEventNamePrefixFunction = (options: UseInngestEventNamePrefixFunctionOptions) => Promise<string>;
-
-export type BuildEventNameFunction = (options: UseInngestEventNameFunctionOptions) => Promise<string>;
+/**
+ * UseInngestPluginOptions
+ *
+ * @param inngestClient Inngest client
+ * @param buildEventNameFunction Function to build the event name
+ * @param buildEventNamePrefixFunction Function to build the event name prefix
+ * @param buildUserContextFunction Function to build the user context
+ * @param userContext User context
+ * @param logging Logging
+ * @param sendOperations Sendable operations
+ * @param sendErrors Send errors
+ * @param sendIntrospection Send introspection
+ * @param sendAnonymousOperations Send anonymous operations
+ * @param denylist Denylist
+ * @param includeResultData Include result data
+ * @param redaction Redaction
+ */
 export interface UseInngestPluginOptions {
   inngestClient: Inngest<Record<string, EventPayload>>;
   buildEventNameFunction?: BuildEventNameFunction;
@@ -41,30 +36,55 @@ export interface UseInngestPluginOptions {
   redaction?: RedactOptions;
 }
 
-export type UseInngestLoggerOptions = {
-  logger: UseInngestLogger;
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ContextType = Record<string, any>;
-
+/**
+ * UseInngestExecuteOptions
+ *
+ * @param params OnExecuteEventPayload
+ * @param logger Logger
+ */
 export interface UseInngestExecuteOptions {
   params: OnExecuteEventPayload<ContextType>;
   logger: UseInngestLogger;
 }
 
+/**
+ * UseInngestEventNameFunctionOptions
+ *
+ * @extends UseInngestExecuteOptions
+ * @param documentString Document string
+ * @param eventNamePrefix Event name prefix
+ */
 export interface UseInngestEventNameFunctionOptions extends UseInngestExecuteOptions {
   documentString?: string;
   eventNamePrefix: string;
 }
 
+/**
+ * UseInngestEventNamePrefixFunctionOptions
+ *
+ * @extends UseInngestExecuteOptions
+ */
 export interface UseInngestEventNamePrefixFunctionOptions extends UseInngestExecuteOptions {}
 
+/**
+ * UseInngestEventOptions
+ *
+ * @extends UseInngestExecuteOptions
+ * @param sendOperations Sendable operations
+ * @param buildEventNamePrefixFunction Function to build the event name prefix
+ */
 export type UseInngestEventOptions = {
   documentString?: string;
 } & UseInngestExecuteOptions &
   Pick<UseInngestPluginOptions, 'sendOperations' | 'buildEventNamePrefixFunction'>;
 
+/**
+ * UseInngestDataOptions
+ *
+ * @extends UseInngestExecuteOptions
+ * @extends UseInngestLoggerOptions
+ * @omit inngestClient
+ */
 export type UseInngestDataOptions = {
   eventName: string;
   result: ExecutionResult;
@@ -74,3 +94,85 @@ export type UseInngestDataOptions = {
     UseInngestPluginOptions,
     'inngestClient' | 'buildEventNameFunction' | 'buildEventNamePrefixFunction' | 'buildUserContextFunction'
   >;
+
+/**
+ * SendableOperations
+ *
+ * Sendable GraphQL operations are QUERY, MUTATION, SUBSCRIPTION
+ */
+export type SendableOperations = Iterable<OperationTypeNode>;
+
+/**
+ * UseInngestEntityRecord
+ *
+ * @param typename Entity typename
+ * @param id Entity id
+ */
+export type UseInngestEntityRecord = {
+  typename: string;
+  id?: number | string;
+};
+
+/**
+ * UseInngestLogLevel
+ *
+ * 'trace' | 'debug' | 'info' | 'warn' | 'error'
+ */
+export type UseInngestLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error';
+
+/**
+ * UseInngestLogger
+ *
+ */
+export type UseInngestLogger = Record<UseInngestLogLevel, (...args: any[]) => void>;
+
+/**
+ * InngestUserContext
+ *
+ */
+export type InngestUserContext = Record<string, any> | undefined;
+
+/**
+ * UseInngestUserContextOptions
+ */
+export type UseInngestUserContextOptions = UseInngestExecuteOptions & UseInngestLoggerOptions;
+
+/**
+ * BuildUserContextFunction
+ *
+ * @param options UseInngestUserContextOptions
+ */
+export type BuildUserContextFunction = (
+  options: UseInngestUserContextOptions
+) => InngestUserContext | Promise<InngestUserContext>;
+
+/**
+ * BuildEventNamePrefixFunction
+ *
+ * @param options UseInngestEventNamePrefixFunctionOptions
+ * @returns Event name prefix
+ */
+export type BuildEventNamePrefixFunction = (options: UseInngestEventNamePrefixFunctionOptions) => Promise<string>;
+
+/**
+ * BuildEventNameFunction
+ *
+ * @param options UseInngestEventNameFunctionOptions
+ * @returns Event name
+ */
+
+export type BuildEventNameFunction = (options: UseInngestEventNameFunctionOptions) => Promise<string>;
+
+/**
+ * UseInngestLoggerOptions
+ *
+ * @param logger Logger
+ */
+export type UseInngestLoggerOptions = {
+  logger: UseInngestLogger;
+};
+/**
+ * ContextType
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ContextType = Record<string, any>;
