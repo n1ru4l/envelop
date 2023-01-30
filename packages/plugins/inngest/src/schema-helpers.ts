@@ -8,6 +8,7 @@ import {
   TypeInfo,
   visitWithTypeInfo,
   BREAK,
+  ExecutionResult,
 } from 'graphql';
 import { visitResult } from '@graphql-tools/utils';
 import type { OnExecuteEventPayload } from '@envelop/core';
@@ -91,7 +92,7 @@ export const buildTypeIdentifiers = async (options: UseInngestDataOptions) => {
   const typeSet = new Set<string>();
 
   visitResult(
-    options.result,
+    options.result as ExecutionResult,
     {
       document: options.params.args.document,
       variables: options.params.args.variableValues as any,

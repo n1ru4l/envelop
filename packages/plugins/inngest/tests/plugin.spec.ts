@@ -21,30 +21,20 @@ describe('useInngest', () => {
     },
   });
 
-  const spiedPlugin = createSpiedPlugin();
-
   const mockedInngestClient = {
-    send: jest.fn(payload => {
-      console.log('>>>> payload', payload);
-      return payload;
-    }),
     name: 'TEST',
     eventKey: testEventKey,
-    setEventKey: jest.fn(payload => {
-      console.log('>>>> payload', payload);
-      return payload;
-    }),
+    send: jest.fn(),
+    setEventKey: jest.fn(),
   } as unknown as Inngest<Record<string, EventPayload>>;
 
-  beforeEach(() => {
-    spiedPlugin.reset();
-  });
-
   afterEach(() => {
-    jest.restoreAllMocks();
+    jest.resetAllMocks();
   });
 
-  it.only('sends', async () => {
+  it('sends', async () => {
+    const spiedPlugin = createSpiedPlugin();
+
     const testInstance = createTestkit(
       [useInngest({ inngestClient: mockedInngestClient, includeResultData: false }), spiedPlugin.plugin],
       schema
@@ -57,21 +47,68 @@ describe('useInngest', () => {
     expect(result.errors).toBeUndefined();
 
     expect(spiedPlugin.spies.beforeExecute).toBeCalled();
+    expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
 
-    expect(spiedPlugin.spies.beforeExecute).toHaveBeenCalledWith({
-      onExecuteDone: expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled(),
-      // expect(mockedInngestClient.send).toHaveBeenCalledWith({
-      //   name: 'graphql/test-query1.query',
-      //   data: {
-      //     variables: {},
-      //     identifiers: [],
-      //     types: [],
-      //     result: {},
-      //     operation: { id: 'test-query1', name: 'TestQuery1', type: 'query' },
-      //   },
-      //   user: { currentUser: undefined },
-      // });
-      // },
+    expect(mockedInngestClient.send).toHaveBeenCalledWith({
+      name: 'graphql/test-query1.query',
+      data: {
+        variables: {},
+        identifiers: [],
+        types: [],
+        result: {},
+        operation: { id: 'test-query1', name: 'TestQuery1', type: 'query' },
+      },
+      user: { currentUser: undefined },
     });
+  });
+
+  it('sends', async () => {
+    const spiedPlugin = createSpiedPlugin();
+
+    const testInstance = createTestkit(
+      [useInngest({ inngestClient: mockedInngestClient, includeResultData: false }), spiedPlugin.plugin],
+      schema
+    );
+
+    const result = await testInstance.execute(`query TestQuery2 { test }`);
+    assertSingleExecutionValue(result);
+
+    expect(result.data).toEqual({ test: 'hello' });
+    expect(result.errors).toBeUndefined();
+
+    expect(spiedPlugin.spies.beforeExecute).toBeCalled();
+    expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+
+    expect(mockedInngestClient.send).toHaveBeenCalledWith({
+      name: 'graphql/test-query2.query',
+      data: {
+        variables: {},
+        identifiers: [],
+        types: [],
+        result: {},
+        operation: { id: 'test-query2', name: 'TestQuery2', type: 'query' },
+      },
+      user: { currentUser: undefined },
+    });
+  });
+
+  it('does not send anonymous operations', async () => {
+    const spiedPlugin = createSpiedPlugin();
+
+    const testInstance = createTestkit(
+      [useInngest({ inngestClient: mockedInngestClient, includeResultData: false }), spiedPlugin.plugin],
+      schema
+    );
+
+    const result = await testInstance.execute(`query { test }`);
+    assertSingleExecutionValue(result);
+
+    expect(result.data).toEqual({ test: 'hello' });
+    expect(result.errors).toBeUndefined();
+
+    expect(spiedPlugin.spies.beforeExecute).toBeCalled();
+    expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+
+    expect(mockedInngestClient.send).not.toHaveBeenCalled();
   });
 });

@@ -1,4 +1,4 @@
-import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/core';
+import { ExecutionResult, Plugin } from '@envelop/core';
 import { OperationTypeNode } from 'graphql';
 
 import { buildEventPayload, buildEventName, buildEventNamePrefix, buildUserContext } from './event-helpers';
@@ -43,35 +43,33 @@ export const useInngest = ({
       });
 
       return {
-        async onExecuteDone(payload) {
-          return handleStreamOrSingleExecutionResult(payload, async ({ result }) => {
-            if (
-              await shouldSendEvent({
+        async onExecuteDone({ result }) {
+          if (
+            await shouldSendEvent({
+              eventName,
+              params: onExecuteParams,
+              result: result as ExecutionResult,
+              sendOperations,
+              sendErrors,
+              sendIntrospection,
+              sendAnonymousOperations,
+              denylist,
+              logger,
+            })
+          ) {
+            await inngestClient.send({
+              name: eventName,
+              data: await buildEventPayload({
                 eventName,
                 params: onExecuteParams,
-                result,
-                sendOperations,
-                sendErrors,
-                sendIntrospection,
-                sendAnonymousOperations,
-                denylist,
+                result: result as ExecutionResult,
                 logger,
-              })
-            ) {
-              await inngestClient.send({
-                name: eventName,
-                data: await buildEventPayload({
-                  eventName,
-                  params: onExecuteParams,
-                  result,
-                  logger,
-                  redaction,
-                  includeResultData,
-                }),
-                user: await buildUserContextFunction({ params: onExecuteParams, logger }),
-              });
-            }
-          });
+                redaction,
+                includeResultData,
+              }),
+              user: await buildUserContextFunction({ params: onExecuteParams, logger }),
+            });
+          }
         },
       };
     },
