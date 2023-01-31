@@ -52,9 +52,8 @@ describe('useInngest', () => {
         },
       },
       Mutation: {
-        updatePost: ({ id, title }) => {
-          console.error('updatePost', { id, title });
-          return { id, title };
+        updatePost: (id, title) => {
+          return { id: '99', title: 'Title TK' };
         },
       },
     },
@@ -175,7 +174,7 @@ describe('useInngest', () => {
   });
 
   describe('mutations', () => {
-    it.only('sends', async () => {
+    it('sends', async () => {
       const spiedPlugin = createSpiedPlugin();
 
       const testInstance = createTestkit(
@@ -184,13 +183,12 @@ describe('useInngest', () => {
       );
 
       const result = await testInstance.execute(
-        parse(`mutation UpdateMyPost($id: Int!, $title: String!) { updatePost(id: $id, title: $title) { id title } }`),
+        parse(`mutation UpdateMyPost($id: ID!, $title: String!) { updatePost(id: $id, title: $title) { id title } }`),
         { id: 99, title: 'Title TK' }
       );
       assertSingleExecutionValue(result);
-      console.debug('result', result);
 
-      expect(result.data).toEqual({ updatePost: { id: 99, title: 'Title TK' } });
+      expect(result.data).toEqual({ updatePost: { id: '99', title: 'Title TK' } });
       expect(result.errors).toBeUndefined();
 
       expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
@@ -199,8 +197,8 @@ describe('useInngest', () => {
         name: 'graphql/update-my-post.mutation',
         data: {
           variables: { id: 99, title: 'Title TK' },
-          identifiers: [],
-          types: [],
+          identifiers: [{ id: '99', typename: 'Post' }],
+          types: ['Post'],
           result: {},
           operation: { id: 'update-my-post', name: 'UpdateMyPost', type: 'mutation' },
         },
@@ -583,7 +581,38 @@ describe('useInngest', () => {
     });
 
     it('sends with redacted mutation variables', async () => {
-      throw new Error('Not implemented yet');
+      const spiedPlugin = createSpiedPlugin();
+
+      const testInstance = createTestkit(
+        [
+          useInngest({ inngestClient: mockedInngestClient, logging: true, redaction: { paths: ['title'] } }),
+          spiedPlugin.plugin,
+        ],
+        schema
+      );
+
+      const result = await testInstance.execute(
+        parse(`mutation UpdateMyPost($id: ID!, $title: String!) { updatePost(id: $id, title: $title) { id title } }`),
+        { id: 99, title: 'Title TK' }
+      );
+      assertSingleExecutionValue(result);
+
+      expect(result.data).toEqual({ updatePost: { id: '99', title: 'Title TK' } });
+      expect(result.errors).toBeUndefined();
+
+      expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+
+      expect(mockedInngestClient.send).toHaveBeenCalledWith({
+        name: 'graphql/update-my-post.mutation',
+        data: {
+          variables: { id: 99, title: '[REDACTED]' },
+          identifiers: [{ id: '99', typename: 'Post' }],
+          types: ['Post'],
+          result: {},
+          operation: { id: 'update-my-post', name: 'UpdateMyPost', type: 'mutation' },
+        },
+        user: {},
+      });
     });
   });
 
