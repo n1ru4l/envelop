@@ -25,7 +25,6 @@ export interface UseInngestPluginOptions {
   buildEventNameFunction?: BuildEventNameFunction;
   buildEventNamePrefixFunction?: BuildEventNamePrefixFunction;
   buildUserContextFunction?: BuildUserContextFunction;
-  userContext?: BuildUserContextFunction;
   logging?: boolean | UseInngestLogger | UseInngestLogLevel;
   sendOperations?: SendableOperations;
   sendErrors?: boolean;

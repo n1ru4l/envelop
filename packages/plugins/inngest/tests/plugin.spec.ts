@@ -1,6 +1,7 @@
 import { assertSingleExecutionValue, createTestkit, createSpiedPlugin } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-
+import { createGraphQLError } from '@graphql-tools/utils';
+import { parse } from 'graphql';
 import { useInngest } from '../src/plugin';
 
 import type { EventPayload, Inngest } from 'inngest';
@@ -31,6 +32,7 @@ describe('useInngest', () => {
         test: String!
         post: Post!
         posts: [Post!]!
+        fails: String!
       }
 
       type Mutation {
@@ -45,9 +47,15 @@ describe('useInngest', () => {
           { id: '1', title: 'hello' },
           { id: '2', title: 'world' },
         ],
+        fails: () => {
+          throw createGraphQLError('test error');
+        },
       },
       Mutation: {
-        updatePost: ({ id, title }) => ({ id, title }),
+        updatePost: ({ id, title }) => {
+          console.error('updatePost', { id, title });
+          return { id, title };
+        },
       },
     },
   });
@@ -89,7 +97,7 @@ describe('useInngest', () => {
           result: {},
           operation: { id: 'test-query2', name: 'TestQuery2', type: 'query' },
         },
-        user: { currentUser: undefined },
+        user: {},
       });
     });
 
@@ -123,7 +131,7 @@ describe('useInngest', () => {
           result: {},
           operation: { id: 'find-post', name: 'FindPost', type: 'query' },
         },
-        user: { currentUser: undefined },
+        user: {},
       });
     });
 
@@ -161,110 +169,417 @@ describe('useInngest', () => {
           result: {},
           operation: { id: 'find-post', name: 'FindPost', type: 'query' },
         },
-        user: { currentUser: undefined },
+        user: {},
       });
     });
+  });
 
-    describe('mutations', () => {
-      it('sends', async () => {
-        throw new Error('Not implemented yet');
+  describe('mutations', () => {
+    it.only('sends', async () => {
+      const spiedPlugin = createSpiedPlugin();
+
+      const testInstance = createTestkit(
+        [useInngest({ inngestClient: mockedInngestClient, logging: true }), spiedPlugin.plugin],
+        schema
+      );
+
+      const result = await testInstance.execute(
+        parse(`mutation UpdateMyPost($id: Int!, $title: String!) { updatePost(id: $id, title: $title) { id title } }`),
+        { id: 99, title: 'Title TK' }
+      );
+      assertSingleExecutionValue(result);
+      console.debug('result', result);
+
+      expect(result.data).toEqual({ updatePost: { id: 99, title: 'Title TK' } });
+      expect(result.errors).toBeUndefined();
+
+      expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+
+      expect(mockedInngestClient.send).toHaveBeenCalledWith({
+        name: 'graphql/update-my-post.mutation',
+        data: {
+          variables: { id: 99, title: 'Title TK' },
+          identifiers: [],
+          types: [],
+          result: {},
+          operation: { id: 'update-my-post', name: 'UpdateMyPost', type: 'mutation' },
+        },
+        user: {},
       });
     });
+  });
 
-    describe('with anonymous operations', () => {
-      it('does not send anonymous operations', async () => {
-        const spiedPlugin = createSpiedPlugin();
+  describe('with anonymous operations', () => {
+    it('does not send anonymous operations', async () => {
+      const spiedPlugin = createSpiedPlugin();
 
-        const testInstance = createTestkit(
-          [useInngest({ inngestClient: mockedInngestClient }), spiedPlugin.plugin],
-          schema
-        );
+      const testInstance = createTestkit(
+        [useInngest({ inngestClient: mockedInngestClient }), spiedPlugin.plugin],
+        schema
+      );
 
-        const result = await testInstance.execute(`query { test }`);
-        assertSingleExecutionValue(result);
+      const result = await testInstance.execute(`query { test }`);
+      assertSingleExecutionValue(result);
 
-        expect(result.data).toEqual({ test: 'hello' });
-        expect(result.errors).toBeUndefined();
+      expect(result.data).toEqual({ test: 'hello' });
+      expect(result.errors).toBeUndefined();
 
-        expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+      expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
 
-        expect(mockedInngestClient.send).not.toHaveBeenCalled();
-      });
+      expect(mockedInngestClient.send).not.toHaveBeenCalled();
+    });
 
-      it('send anonymous operations when configured to send anonymous operations', async () => {
-        const spiedPlugin = createSpiedPlugin();
+    it('send anonymous operations when configured to send anonymous operations', async () => {
+      const spiedPlugin = createSpiedPlugin();
 
-        const testInstance = createTestkit(
-          [useInngest({ inngestClient: mockedInngestClient, sendAnonymousOperations: true }), spiedPlugin.plugin],
-          schema
-        );
+      const testInstance = createTestkit(
+        [useInngest({ inngestClient: mockedInngestClient, sendAnonymousOperations: true }), spiedPlugin.plugin],
+        schema
+      );
 
-        const result = await testInstance.execute(`query { test }`);
-        assertSingleExecutionValue(result);
+      const result = await testInstance.execute(`query { test }`);
+      assertSingleExecutionValue(result);
 
-        expect(result.data).toEqual({ test: 'hello' });
-        expect(result.errors).toBeUndefined();
+      expect(result.data).toEqual({ test: 'hello' });
+      expect(result.errors).toBeUndefined();
 
-        expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+      expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
 
-        expect(mockedInngestClient.send).toHaveBeenCalledWith({
-          data: {
-            identifiers: [],
-            operation: {
-              id: 'anonymous-d32327f2ad0fef67462baf2b8410a2b4b2cc8db57e67bb5b3c95efa595b39f30',
-              name: '',
-              type: 'query',
-            },
-            result: {},
-            types: [],
-            variables: {},
+      expect(mockedInngestClient.send).toHaveBeenCalledWith({
+        data: {
+          identifiers: [],
+          operation: {
+            id: 'anonymous-d32327f2ad0fef67462baf2b8410a2b4b2cc8db57e67bb5b3c95efa595b39f30',
+            name: '',
+            type: 'query',
           },
-          name: 'graphql/anonymous-7b06f59976962bf7b47e2f2f29142661407818808663d8cf5a68c9cee38c11ff.query',
-          user: {},
-        });
+          result: {},
+          types: [],
+          variables: {},
+        },
+        name: 'graphql/anonymous-7b06f59976962bf7b47e2f2f29142661407818808663d8cf5a68c9cee38c11ff.query',
+        user: {},
+      });
+    });
+  });
+
+  describe('with introspection', () => {
+    it('sends', async () => {
+      const spiedPlugin = createSpiedPlugin();
+
+      const testInstance = createTestkit(
+        [useInngest({ inngestClient: mockedInngestClient, sendIntrospection: true }), spiedPlugin.plugin],
+        schema
+      );
+
+      const result = await testInstance.execute(`{
+        __schema {
+          types {
+            name
+          }
+        }
+      }`);
+      assertSingleExecutionValue(result);
+
+      expect(result.data).toEqual({
+        __schema: {
+          types: [
+            {
+              name: 'Post',
+            },
+            {
+              name: 'ID',
+            },
+            {
+              name: 'String',
+            },
+            {
+              name: 'Comment',
+            },
+            {
+              name: 'User',
+            },
+            {
+              name: 'Query',
+            },
+            {
+              name: 'Mutation',
+            },
+            {
+              name: 'Boolean',
+            },
+            {
+              name: '__Schema',
+            },
+            {
+              name: '__Type',
+            },
+            {
+              name: '__TypeKind',
+            },
+            {
+              name: '__Field',
+            },
+            {
+              name: '__InputValue',
+            },
+            {
+              name: '__EnumValue',
+            },
+            {
+              name: '__Directive',
+            },
+            {
+              name: '__DirectiveLocation',
+            },
+          ],
+        },
+      });
+      expect(result.errors).toBeUndefined();
+
+      expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+
+      expect(mockedInngestClient.send).toHaveBeenCalledWith({
+        data: {
+          identifiers: [],
+          operation: {
+            id: 'anonymous-d32327f2ad0fef67462baf2b8410a2b4b2cc8db57e67bb5b3c95efa595b39f30',
+            name: '',
+            type: 'query',
+          },
+          result: {},
+          types: [],
+          variables: {},
+        },
+        name: 'graphql/anonymous-5108c04af181e341370ee067909f9cd8ecc3b3fde333c2205cbede1d3d6f1ec5.query',
+        user: {},
       });
     });
 
-    describe('with introspection', () => {
-      it('sends', async () => {
-        throw new Error('Not implemented yet');
-      });
+    it('blocks', async () => {
+      const spiedPlugin = createSpiedPlugin();
 
-      it('blocks', async () => {
-        throw new Error('Not implemented yet');
+      const testInstance = createTestkit(
+        [useInngest({ inngestClient: mockedInngestClient, sendIntrospection: false }), spiedPlugin.plugin],
+        schema
+      );
+
+      const result = await testInstance.execute(`{
+        __schema {
+          types {
+            name
+          }
+        }
+      }`);
+      assertSingleExecutionValue(result);
+
+      expect(result.data).toEqual({
+        __schema: {
+          types: [
+            {
+              name: 'Post',
+            },
+            {
+              name: 'ID',
+            },
+            {
+              name: 'String',
+            },
+            {
+              name: 'Comment',
+            },
+            {
+              name: 'User',
+            },
+            {
+              name: 'Query',
+            },
+            {
+              name: 'Mutation',
+            },
+            {
+              name: 'Boolean',
+            },
+            {
+              name: '__Schema',
+            },
+            {
+              name: '__Type',
+            },
+            {
+              name: '__TypeKind',
+            },
+            {
+              name: '__Field',
+            },
+            {
+              name: '__InputValue',
+            },
+            {
+              name: '__EnumValue',
+            },
+            {
+              name: '__Directive',
+            },
+            {
+              name: '__DirectiveLocation',
+            },
+          ],
+        },
       });
+      expect(result.errors).toBeUndefined();
+
+      expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+
+      expect(mockedInngestClient.send).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('with errors', () => {
+    it('sends', async () => {
+      const spiedPlugin = createSpiedPlugin();
+
+      const testInstance = createTestkit(
+        [useInngest({ inngestClient: mockedInngestClient, sendErrors: true }), spiedPlugin.plugin],
+        schema
+      );
+
+      const result = await testInstance.execute(`query FailQuery { fails }`);
+      assertSingleExecutionValue(result);
+
+      expect(result.data).toBeNull();
+      expect(result.errors).not.toBeNull();
+
+      expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+
+      expect(mockedInngestClient.send).toHaveBeenCalled();
     });
 
-    describe('with errors', () => {
-      it('sends', async () => {
-        throw new Error('Not implemented yet');
-      });
+    it('blocks', async () => {
+      const spiedPlugin = createSpiedPlugin();
 
-      it('blocks', async () => {
-        throw new Error('Not implemented yet');
-      });
+      const testInstance = createTestkit(
+        [useInngest({ inngestClient: mockedInngestClient }), spiedPlugin.plugin],
+        schema
+      );
+
+      const result = await testInstance.execute(`query FailQuery { fails }`);
+      assertSingleExecutionValue(result);
+
+      expect(result.data).toBeNull();
+      expect(result.errors).not.toBeNull();
+
+      expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+
+      expect(mockedInngestClient.send).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('with deny lists', () => {
+    it('blocks types', async () => {
+      const spiedPlugin = createSpiedPlugin();
+
+      const testInstance = createTestkit(
+        [useInngest({ inngestClient: mockedInngestClient, denylist: { types: ['Post'] } }), spiedPlugin.plugin],
+        schema
+      );
+
+      const result = await testInstance.execute(`query FindPost { post { id title } }`);
+      assertSingleExecutionValue(result);
+
+      expect(result.data).toEqual({ post: { id: '1', title: 'hello' } });
+      expect(result.errors).toBeUndefined();
+
+      expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+
+      expect(mockedInngestClient.send).not.toHaveBeenCalled();
     });
 
-    describe('with deny lists', () => {
-      it('blocks types', async () => {
-        throw new Error('Not implemented yet');
-      });
+    it('blocks schema coordinates', async () => {
+      const spiedPlugin = createSpiedPlugin();
 
-      it('blocks schema coordinates', async () => {
-        throw new Error('Not implemented yet');
-      });
+      const testInstance = createTestkit(
+        [
+          useInngest({ inngestClient: mockedInngestClient, denylist: { schemaCoordinates: ['Query.post'] } }),
+          spiedPlugin.plugin,
+        ],
+        schema
+      );
+
+      const result = await testInstance.execute(`query FindPost { post { id title } }`);
+      assertSingleExecutionValue(result);
+
+      expect(result.data).toEqual({ post: { id: '1', title: 'hello' } });
+      expect(result.errors).toBeUndefined();
+
+      expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+
+      expect(mockedInngestClient.send).not.toHaveBeenCalled();
     });
   });
 
   describe('when including result data', () => {
     it('sends with data', async () => {
-      throw new Error('Not implemented yet');
+      const spiedPlugin = createSpiedPlugin();
+
+      const testInstance = createTestkit(
+        [useInngest({ inngestClient: mockedInngestClient, includeResultData: true }), spiedPlugin.plugin],
+        schema
+      );
+
+      const result = await testInstance.execute(`query TestQuery2 { test }`);
+      assertSingleExecutionValue(result);
+
+      expect(result.data).toEqual({ test: 'hello' });
+      expect(result.errors).toBeUndefined();
+
+      expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+
+      expect(mockedInngestClient.send).toHaveBeenCalledWith({
+        name: 'graphql/test-query2.query',
+        data: {
+          variables: {},
+          identifiers: [],
+          types: [],
+          result: { data: { test: 'hello' } },
+          operation: { id: 'test-query2', name: 'TestQuery2', type: 'query' },
+        },
+        user: {},
+      });
     });
   });
 
   describe('when redacting', () => {
     it('sends with redacted data', async () => {
-      throw new Error('Not implemented yet');
+      const spiedPlugin = createSpiedPlugin();
+
+      const testInstance = createTestkit(
+        [
+          useInngest({ inngestClient: mockedInngestClient, includeResultData: true, redaction: { paths: ['*.test'] } }),
+          spiedPlugin.plugin,
+        ],
+        schema
+      );
+
+      const result = await testInstance.execute(`query TestQuery2 { test }`);
+      assertSingleExecutionValue(result);
+
+      expect(result.data).toEqual({ test: 'hello' });
+      expect(result.errors).toBeUndefined();
+
+      expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+
+      expect(mockedInngestClient.send).toHaveBeenCalledWith({
+        name: 'graphql/test-query2.query',
+        data: {
+          variables: {},
+          identifiers: [],
+          types: [],
+          result: { data: { test: '[REDACTED]' } },
+          operation: { id: 'test-query2', name: 'TestQuery2', type: 'query' },
+        },
+        user: {},
+      });
     });
 
     it('sends with redacted mutation variables', async () => {
@@ -274,19 +589,114 @@ describe('useInngest', () => {
 
   describe('with a custom event prefix function', () => {
     it('sends', async () => {
-      throw new Error('Not implemented yet');
+      const spiedPlugin = createSpiedPlugin();
+
+      const testInstance = createTestkit(
+        [
+          useInngest({
+            inngestClient: mockedInngestClient,
+            buildEventNamePrefixFunction: async () => 'custom-prefix-graphql',
+          }),
+          spiedPlugin.plugin,
+        ],
+        schema
+      );
+
+      const result = await testInstance.execute(`query TestQuery5 { test }`);
+      assertSingleExecutionValue(result);
+
+      expect(result.data).toEqual({ test: 'hello' });
+      expect(result.errors).toBeUndefined();
+
+      expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+
+      expect(mockedInngestClient.send).toHaveBeenCalledWith({
+        name: 'custom-prefix-graphql/test-query5.query',
+        data: {
+          variables: {},
+          identifiers: [],
+          types: [],
+          result: {},
+          operation: { id: 'test-query5', name: 'TestQuery5', type: 'query' },
+        },
+        user: {},
+      });
     });
   });
 
   describe('with a custom event name function', () => {
     it('sends', async () => {
-      throw new Error('Not implemented yet');
+      const spiedPlugin = createSpiedPlugin();
+
+      const testInstance = createTestkit(
+        [
+          useInngest({
+            inngestClient: mockedInngestClient,
+            buildEventNameFunction: async () => 'custom-graphql/noun.verb',
+          }),
+          spiedPlugin.plugin,
+        ],
+        schema
+      );
+
+      const result = await testInstance.execute(`query TestQuery6 { test }`);
+      assertSingleExecutionValue(result);
+
+      expect(result.data).toEqual({ test: 'hello' });
+      expect(result.errors).toBeUndefined();
+
+      expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+
+      expect(mockedInngestClient.send).toHaveBeenCalledWith({
+        name: 'custom-graphql/noun.verb',
+        data: {
+          variables: {},
+          identifiers: [],
+          types: [],
+          result: {},
+          operation: { id: 'test-query6', name: 'TestQuery6', type: 'query' },
+        },
+        user: {},
+      });
     });
   });
 
   describe('with a custom user context function', () => {
     it('sends', async () => {
-      throw new Error('Not implemented yet');
+      const spiedPlugin = createSpiedPlugin();
+
+      const testInstance = createTestkit(
+        [
+          useInngest({
+            inngestClient: mockedInngestClient,
+            buildUserContextFunction: async () => {
+              return { currentUser: { id: '123', name: 'Usuario Clave' } };
+            },
+          }),
+          spiedPlugin.plugin,
+        ],
+        schema
+      );
+
+      const result = await testInstance.execute(`query TestQuery6 { test }`);
+      assertSingleExecutionValue(result);
+
+      expect(result.data).toEqual({ test: 'hello' });
+      expect(result.errors).toBeUndefined();
+
+      expect(spiedPlugin.spies.afterExecute).toHaveBeenCalled();
+
+      expect(mockedInngestClient.send).toHaveBeenCalledWith({
+        name: 'graphql/test-query6.query',
+        data: {
+          variables: {},
+          identifiers: [],
+          types: [],
+          result: {},
+          operation: { id: 'test-query6', name: 'TestQuery6', type: 'query' },
+        },
+        user: { currentUser: { id: '123', name: 'Usuario Clave' } },
+      });
     });
   });
 });

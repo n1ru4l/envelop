@@ -36,39 +36,43 @@ export const useInngest = ({
     async onExecute(onExecuteParams) {
       return {
         async onExecuteDone({ result }) {
-          const eventNamePrefix = await buildEventNamePrefixFunction({ params: onExecuteParams, logger });
-          const eventName = await buildEventNameFunction({
-            params: onExecuteParams,
-            documentString: getDocumentString(onExecuteParams.args),
-            eventNamePrefix,
-            logger,
-          });
-
-          if (
-            await shouldSendEvent({
-              eventName,
+          try {
+            const eventNamePrefix = await buildEventNamePrefixFunction({ params: onExecuteParams, logger });
+            const eventName = await buildEventNameFunction({
               params: onExecuteParams,
-              result: result as ExecutionResult,
-              sendOperations,
-              sendErrors,
-              sendIntrospection,
-              sendAnonymousOperations,
-              denylist,
+              documentString: getDocumentString(onExecuteParams.args),
+              eventNamePrefix,
               logger,
-            })
-          ) {
-            await inngestClient.send({
-              name: eventName,
-              data: await buildEventPayload({
+            });
+
+            if (
+              await shouldSendEvent({
                 eventName,
                 params: onExecuteParams,
                 result: result as ExecutionResult,
+                sendOperations,
+                sendErrors,
+                sendIntrospection,
+                sendAnonymousOperations,
+                denylist,
                 logger,
-                redaction,
-                includeResultData,
-              }),
-              user: await buildUserContextFunction({ params: onExecuteParams, logger }),
-            });
+              })
+            ) {
+              await inngestClient.send({
+                name: eventName,
+                data: await buildEventPayload({
+                  eventName,
+                  params: onExecuteParams,
+                  result: result as ExecutionResult,
+                  logger,
+                  redaction,
+                  includeResultData,
+                }),
+                user: await buildUserContextFunction({ params: onExecuteParams, logger }),
+              });
+            }
+          } catch (error) {
+            logger.error(error, 'Error sending event to Inngest');
           }
         },
       };

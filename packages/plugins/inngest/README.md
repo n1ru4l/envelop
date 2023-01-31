@@ -2,7 +2,11 @@
 
 `useInngest` is an [Envelop](https://envelop.dev/) plugin for [GraphQL Yoga](https://envelop.dev/) and servers or frameworks powered by Yoga, such as [RedwoodJS](https://www.redwoodjs.com).
 
-It's philosophy is to "instrument everything" by sending events for each GraphQL execution results to [Inngest](https://www.inngest.com) to effortlessly build event-driven applications.
+It's philosophy is to:
+
+- "instrument everything" by sending events for each GraphQL execution results to [Inngest](https://www.inngest.com) to effortlessly build event-driven applications.
+- provide fine-grained control over what events are sent such as operations (queries, mutations, or subscriptions), introspection events, when GraphQL errors occur, if result data should be included, type and schema coordinate denylists ... and more.
+- be customized with event prefix, name and user context functions
 
 ## About Inngest
 
@@ -53,40 +57,56 @@ export const inngest = new Inngest({ name: INNGEST_APP_NAME })
 
 ### Yoga
 
-### RedwoodJS
-
 ```ts
-import { logger } from 'src/lib/logger'
-import { useRedwoodInngest } from 'src/plugins/useRedwoodInngest'
+import { Inngest } from 'inngest'
 
-export const handler = createGraphQLHandler({
-  authDecoder,
-  getCurrentUser,
-  loggerConfig: { logger, options: {} },
-  directives,
-  sdls,
-  services,
-  extraPlugins: [
-    useRedwoodInngest({
-      inngestClient: inngest,
-      logging: logger.child({ level: 'warn' }),
-      // inngestClient: { name: 'RWApp' },
-      // includeIntrospection: true,
-      // eventNamePrefix: 'rw-inn-ql',
-      // skipAnonymousOperations: true,
-      redaction: {
-        remove: true,
-        paths: ['*.id', 'post.title', 'posts[*].title', 'posts[*].id'],
-        censor: '***'
+import { useInngest } from '@envelop/graphql-jit'
+import { createYoga, createSchema } from 'graphql-yoga'
+
+// Provide your schema
+const yoga = createYoga({
+  schema: createSchema({
+    typeDefs: /* GraphQL */ `
+      type Query {
+        greetings: String!
       }
-      // userContext: buildUserContext,
-    })
-  ],
-  onException: () => {
-    // Disconnect from your database with an unhandled exception.
-    db.$disconnect()
-  }
+    `,
+    resolvers: {
+      Query: {
+        greetings: () => 'Hello World!'
+      }
+    }
+  }),
+  plugins: [useInngest(inngestClient: new Inngest({ name: 'My App Name' }))]
+})
+
+// Start the server and explore http://localhost:4000/graphql
+const server = createServer(yoga)
+server.listen(4000, () => {
+  console.info('Server is running on http://localhost:4000/graphql')
 })
 ```
 
 ## Configuration Options
+
+inngestClient: Inngest<Record<string, EventPayload>>;
+logging?: boolean | UseInngestLogger | UseInngestLogLevel;
+
+### Custom Event Payload Functions
+
+buildEventNameFunction?: BuildEventNameFunction;
+buildEventNamePrefixFunction?: BuildEventNamePrefixFunction;
+buildUserContextFunction?: BuildUserContextFunction;
+
+### Control What Events Sent
+
+sendOperations?: SendableOperations;
+sendErrors?: boolean;
+sendIntrospection?: boolean;
+sendAnonymousOperations?: boolean;
+denylist?: { types?: string[]; schemaCoordinates?: string[] };
+
+### Result Data Payload
+
+includeResultData?: boolean;
+redaction?: RedactOptions;
