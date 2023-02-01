@@ -1,6 +1,6 @@
 # @envelop/inngest
 
-This plugin sends GraphQL response data Inngest to build event-driven applications.
+This plugin sends GraphQL response data to Inngest to help build event-driven applications.
 
 `useInngest` is an [Envelop](https://envelop.dev/) plugin for [GraphQL Yoga](https://envelop.dev/) and servers or frameworks powered by Yoga, such as [RedwoodJS](https://www.redwoodjs.com).
 

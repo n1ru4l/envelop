@@ -1,6 +1,6 @@
 {
   "name": "@envelop/inngest",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "author": "A. David Thyresson <dthyresson@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
