@@ -15,6 +15,7 @@ import auth0Icon from '../../public/assets/logos/auth0.png';
 import persistedOperationsIcon from '../../public/assets/logos/persisted_operations.png';
 import assetsIcon from '../../public/assets/logos/assets.png';
 import envelopIcon from '../../public/logo.png';
+import inngestIcon from '../../public/assets/logos/inngest.png';
 import hiveIcon from 'https://the-guild.dev/static/shared-logos/products/hive.svg';
 
 export const ALL_TAGS = [
@@ -529,5 +530,16 @@ export const PLUGINS: {
     npmPackage: '@escape.tech/graphql-armor-block-field-suggestions',
     icon: graphqlArmorIcon,
     tags: ['security'],
+  },
+  {
+    identifier: 'use-inngest',
+    title: 'useInngest',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/plugins/inngest/README.md',
+    },
+    npmPackage: '@envelop/inngest',
+    icon: inngestIcon,
+    tags: ['tracing', 'metrics'],
   },
 ];
