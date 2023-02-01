@@ -299,7 +299,7 @@ There are options that give you control over the defaults that:
 - never sends errors
 - never sends anonymous events
 
-### Only Send Certain Operations
+#### Only Send Certain Operations
 
 To send only queries, configure the `sendOperations` option:
 
@@ -329,7 +329,7 @@ const yoga = createYoga({
 })
 ```
 
-### Send Errors
+#### Send Errors
 
 If you want to send the event even when an GraphQL Error occurs, you can set `sendErrors` to true.
 
@@ -361,7 +361,7 @@ const yoga = createYoga({
 })
 ```
 
-### Send Introspection Queries
+#### Send Introspection Queries
 
 If you want to send an event when an introspection query occurs, you can set `sendIntrospection` to `true`:
 
@@ -391,7 +391,7 @@ const yoga = createYoga({
 })
 ```
 
-### Send Anonymous Queries
+#### Send Anonymous Queries
 
 If you want to send an event when an anonymous query occurs, you can set `sendAnonymousOperations` to `true`.
 
@@ -423,11 +423,11 @@ const yoga = createYoga({
 })
 ```
 
-### Do Not Send Events where Types or Schema Coordinates are in a Denylist
+#### Do Not Send Events where Types or Schema Coordinates are in a Denylist
 
 There may a reason to block sending the event if the result data contains information for a certain type (like a `User`) or a particular schema coordinate (`Query.user`)
 
-#### Deny list of Types
+##### Deny list of Types
 
 ```ts
 import { Inngest } from 'inngest'
@@ -455,7 +455,7 @@ const yoga = createYoga({
 })
 ```
 
-#### Deny list of Schema Coordinates
+##### Deny list of Schema Coordinates
 
 ```ts
 import { Inngest } from 'inngest'
