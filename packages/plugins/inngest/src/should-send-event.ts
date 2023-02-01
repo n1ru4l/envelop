@@ -10,6 +10,8 @@ import { UseInngestDataOptions } from './types';
 /**
  * shouldSendEvent
  *
+ * Determines if an event should be sent to Inngest
+ *
  * @param options UseInngestDataOptions
  * @returns boolean If event should be send
  */

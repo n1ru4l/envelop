@@ -55,7 +55,9 @@ const createLogger = (
 
 /**
  * buildLogger
-
+ *
+ * Builds a logger
+ *
  * @param options Pick<UseInngestPluginOptions, 'logging'>
  * @returns UseInngestLogger
  */

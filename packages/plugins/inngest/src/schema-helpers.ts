@@ -23,6 +23,8 @@ import type {
 /**
  * sendOperation
  *
+ * Determines if the operation is allowed to be sent to Inngest
+ *
  * @param options UseInngestEventOptions
  * @returns boolean
  */
@@ -52,6 +54,8 @@ export const sendOperation = (options: UseInngestEventOptions): boolean => {
 /**
  * getOperationName
  *
+ * Gets the operation name from Execution params
+ *
  * @param options Pick<UseInngestExecuteOptions, 'params'>
  * @returns string | undefined
  */
@@ -69,6 +73,8 @@ export const getOperationName = (options: Pick<UseInngestExecuteOptions, 'params
 /**
  * isAnonymousOperation
  *
+ * Determines if the operation is anonymous
+ *
  * @param params
  * @returns boolean
  */
@@ -78,6 +84,8 @@ export const isAnonymousOperation = (params: OnExecuteEventPayload<ContextType>)
 
 /**
  * isIntrospectionQuery
+ *
+ * Determines if the operation is an introspection query
  *
  * @param params
  * @returns boolean
@@ -105,6 +113,8 @@ export const isIntrospectionQuery = (params: OnExecuteEventPayload<ContextType>)
 /**
  * getOperation
  *
+ * Gets the operation document or execution params
+ *
  * @param params
  * @returns OperationTypeNode | 'unknown'
  */
@@ -116,11 +126,13 @@ export const getOperation = (params: OnExecuteEventPayload<ContextType>) => {
 /**
  * buildTypeIdentifiers
  *
+ * Builds a list of types and identifiers from the result data.
  *
+ * Example: { types: ['Post'], identifiers: [{ id: 1, typename: 'Post }] }
+
  * @param options UseInngestDataOptions
  * @returns Object with list of types and identifiers
  *
- * Example: { types: ['Post'], identifiers: [{ id: 1, typename: 'Post }] }
  *
  */
 export const buildTypeIdentifiers = async (options: UseInngestDataOptions) => {
@@ -201,6 +213,8 @@ export const buildTypeIdentifiers = async (options: UseInngestDataOptions) => {
 /**
  * denyType
  *
+ * Determines if the event should be sent based on a deny list of types
+ *
  * @param options UseInngestDataOptions
  * @returns boolean
  */
@@ -229,6 +243,8 @@ export const denyType = (options: UseInngestDataOptions) => {
 
 /**
  * denySchemaCoordinate
+ *
+ * Determines if the event should be sent based on a deny list of schema coordinates
  *
  * @param options UseInngestDataOptions
  * @returns boolean

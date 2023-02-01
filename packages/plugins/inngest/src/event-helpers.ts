@@ -19,6 +19,10 @@ import type {
 /**
  * buildOperationId
  *
+ * Builds a unique operation ID from the document, operation name, and variables.
+ *
+ * Used to generate an anonymous operation name for events.
+ *
  * @param options UseInngestDataEventOptions
  * @returns string Operation ID
  */
@@ -36,6 +40,14 @@ export const buildOperationId = async (options: UseInngestEventOptions): Promise
 
 /**
  * buildOperationNameForEventName
+ *
+ * Builds an operation name for an event based on the convention:
+ *
+ * <prefix>-<operationId>.<operationType>
+ *
+ * For example:
+ *
+ * graphql/test-query.query
  *
  * @param options UseInngestDataEventOptions
  * @returns string Operation name for event
@@ -55,6 +67,9 @@ export const buildOperationNameForEventName = async (options: UseInngestEventOpt
 
 /**
  * buildEventPayload
+ *
+ * Builds the event payload for an event.
+ * Redacts result data and variables if redactRawResultOptions is provided.
  *
  * @param options UseInngestDataOptions
  * @returns Object Event payload
@@ -93,6 +108,8 @@ export const buildEventPayload = async (options: UseInngestDataOptions) => {
 /**
  * buildEventNamePrefix
  *
+ * Custom function to build the event name prefix.
+ *
  * @param options UseInngestEventNamePrefixFunctionOptions
  * @returns string Prefix for event name
  */
@@ -104,6 +121,8 @@ export const buildEventNamePrefix: BuildEventNamePrefixFunction = async (
 
 /**
  * buildEventName
+ *
+ * Custom function to build the event name.
  *
  * @param options UseInngestEventNameFunctionOptions
  * @returns string Event name
@@ -119,6 +138,8 @@ export const buildEventName: BuildEventNameFunction = async (options: UseInngest
 
 /**
  * buildUserContext
+ *
+ * Custom function to build the user context.
  *
  * @param options UseInngestUserContextOptions
  * @returns Object User info
