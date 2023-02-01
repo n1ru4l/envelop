@@ -65,12 +65,12 @@ export const buildEventPayload = async (options: UseInngestDataOptions) => {
   let variables = options.params.args.variableValues || {};
   let result = {};
 
-  if (options.includeResultData) {
+  if (options.includeRawResult) {
     result = options.result;
   }
 
-  if (options.redaction) {
-    const redact = fastRedact(options.redaction);
+  if (options.redactRawResultOptions) {
+    const redact = fastRedact(options.redactRawResultOptions);
     result = JSON.parse(redact(result) as string);
     variables = JSON.parse(redact(variables) as string);
   }

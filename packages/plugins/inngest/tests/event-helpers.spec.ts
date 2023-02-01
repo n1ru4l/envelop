@@ -198,7 +198,7 @@ describe('builders', () => {
         eventName: 'graphql-test/test-query.query',
         result: { errors: [], data: { test: 'hello' } },
         logger: buildLogger({ logging: false }),
-        includeResultData: true,
+        includeRawResult: true,
       });
 
       expect(payload).toEqual({
@@ -274,7 +274,7 @@ describe('builders', () => {
           },
         },
         logger: buildLogger({ logging: false }),
-        includeResultData: true,
+        includeRawResult: true,
       });
 
       expect(payload).toEqual({
@@ -347,7 +347,7 @@ describe('builders', () => {
           },
         },
         sendAnonymousOperations: true,
-        includeResultData: true,
+        includeRawResult: true,
         eventName: 'graphql-test/test-query.query',
         result: { errors: [], data: { test: 'hello' } },
         logger: buildLogger({ logging: false }),
@@ -384,11 +384,11 @@ describe('builders', () => {
             contextValue: {},
           },
         },
-        redaction: { paths: ['*.test'], censor: '***' },
+        redactRawResultOptions: { paths: ['*.test'], censor: '***' },
         eventName: 'graphql-test/test-query.query',
         result: { errors: [], data: { test: 'hello' } },
         logger: buildLogger({ logging: false }),
-        includeResultData: true,
+        includeRawResult: true,
       });
 
       expect(payload).toEqual({
@@ -423,7 +423,7 @@ describe('builders', () => {
             contextValue: {},
           },
         },
-        redaction: { paths: ['title'], censor: '***' },
+        redactRawResultOptions: { paths: ['title'], censor: '***' },
         eventName: 'graphql-test/update-post.mutation',
         result: { errors: [], data: { updatePost: { id: 1, title: 'updated title', __typename: 'Post' } } },
         logger: buildLogger({ logging: false }),

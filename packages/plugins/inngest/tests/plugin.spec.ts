@@ -521,7 +521,7 @@ describe('useInngest', () => {
       const spiedPlugin = createSpiedPlugin();
 
       const testInstance = createTestkit(
-        [useInngest({ inngestClient: mockedInngestClient, includeResultData: true }), spiedPlugin.plugin],
+        [useInngest({ inngestClient: mockedInngestClient, includeRawResult: true }), spiedPlugin.plugin],
         schema
       );
 
@@ -553,7 +553,11 @@ describe('useInngest', () => {
 
       const testInstance = createTestkit(
         [
-          useInngest({ inngestClient: mockedInngestClient, includeResultData: true, redaction: { paths: ['*.test'] } }),
+          useInngest({
+            inngestClient: mockedInngestClient,
+            includeRawResult: true,
+            redactRawResultOptions: { paths: ['*.test'] },
+          }),
           spiedPlugin.plugin,
         ],
         schema
@@ -585,7 +589,11 @@ describe('useInngest', () => {
 
       const testInstance = createTestkit(
         [
-          useInngest({ inngestClient: mockedInngestClient, logging: true, redaction: { paths: ['title'] } }),
+          useInngest({
+            inngestClient: mockedInngestClient,
+            logging: true,
+            redactRawResultOptions: { paths: ['title'] },
+          }),
           spiedPlugin.plugin,
         ],
         schema

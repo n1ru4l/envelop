@@ -17,8 +17,8 @@ import type { Inngest, EventPayload } from 'inngest';
  * @param sendIntrospection Send introspection
  * @param sendAnonymousOperations Send anonymous operations
  * @param denylist Denylist
- * @param includeResultData Include result data
- * @param redaction Redaction
+ * @param includeRawResult Include result data
+ * @param redactRawResultOptions Redaction
  */
 export interface UseInngestPluginOptions {
   inngestClient: Inngest<Record<string, EventPayload>>;
@@ -31,8 +31,8 @@ export interface UseInngestPluginOptions {
   sendIntrospection?: boolean;
   sendAnonymousOperations?: boolean;
   denylist?: { types?: string[]; schemaCoordinates?: string[] };
-  includeResultData?: boolean;
-  redaction?: RedactOptions;
+  includeRawResult?: boolean;
+  redactRawResultOptions?: RedactOptions;
 }
 
 /**

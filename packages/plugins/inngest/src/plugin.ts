@@ -22,8 +22,8 @@ export const useInngest = ({
   sendErrors = false,
   sendIntrospection = false,
   denylist,
-  includeResultData = false,
-  redaction = undefined,
+  includeRawResult = false,
+  redactRawResultOptions = undefined,
   logging = false,
 }: UseInngestPluginOptions): Plugin => {
   const logger = buildLogger({ logging });
@@ -64,9 +64,9 @@ export const useInngest = ({
                   eventName,
                   params: onExecuteParams,
                   result: result as ExecutionResult,
+                  includeRawResult,
+                  redactRawResultOptions,
                   logger,
-                  redaction,
-                  includeResultData,
                 }),
                 user: await buildUserContextFunction({ params: onExecuteParams, logger }),
               });
