@@ -1,5 +1,5 @@
-import { getIntrospectionQuery, GraphQLObjectType } from 'graphql';
-import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import { getIntrospectionQuery, GraphQLObjectType, GraphQLSchema } from 'graphql';
+import { assertSingleExecutionValue, createTestkit, TestkitInstance } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useValidationCache } from '@envelop/validation-cache';
 import { useResponseCache, createInMemoryCache } from '../src/index.js';
@@ -2011,6 +2011,169 @@ describe('useResponseCache', () => {
         didCache: true,
         hit: false,
         ttl: Infinity,
+      });
+    });
+  });
+
+  describe('ignoring and ttl per type for types without id field', () => {
+    let spyWithId: jest.Mock<{ id: Number; field: String }, []>;
+    let spyWithoutId: jest.Mock<{ field: String }, []>;
+    let schema: GraphQLSchema;
+
+    beforeEach(() => {
+      spyWithId = jest.fn(() => ({
+        field: 'Hello World!',
+        id: 1,
+      }));
+
+      spyWithoutId = jest.fn(() => ({
+        field: 'Hello World!',
+      }));
+
+      schema = makeExecutableSchema({
+        typeDefs: /* GraphQL */ `
+          type TypeWithId {
+            id: Int!
+            field: String!
+          }
+          type TypeWithoutId {
+            field: String!
+          }
+
+          type Query {
+            withId: TypeWithId!
+            withoutId: TypeWithoutId!
+          }
+        `,
+        resolvers: {
+          Query: {
+            withId: spyWithId,
+            withoutId: spyWithoutId,
+          },
+        },
+      });
+    });
+
+    describe('ignoredTypes', () => {
+      let testInstance: TestkitInstance;
+
+      beforeEach(() => {
+        testInstance = createTestkit(
+          [
+            useResponseCache({
+              session: () => null,
+              ttl: 500,
+              ignoredTypes: ['TypeWithId', 'TypeWithoutId'],
+            }),
+          ],
+          schema
+        );
+      });
+
+      it('types with id field can be ignored when id is queried', async () => {
+        const query = /* GraphQL */ `
+          query test {
+            withId {
+              field
+              id
+            }
+          }
+        `;
+
+        await testInstance.execute(query);
+        await testInstance.execute(query);
+        expect(spyWithId).toHaveBeenCalledTimes(2);
+      });
+
+      it('types with id field can be ignored when id is not queried', async () => {
+        const query = /* GraphQL */ `
+          query test {
+            withId {
+              field
+            }
+          }
+        `;
+
+        await testInstance.execute(query);
+        await testInstance.execute(query);
+        expect(spyWithId).toHaveBeenCalledTimes(2);
+      });
+
+      it('types without id field can be ignored', async () => {
+        const query = /* GraphQL */ `
+          query test {
+            withoutId {
+              field
+            }
+          }
+        `;
+
+        await testInstance.execute(query);
+        await testInstance.execute(query);
+        expect(spyWithoutId).toHaveBeenCalledTimes(2);
+      });
+    });
+
+    describe('ttlPerType', () => {
+      let testInstance: TestkitInstance;
+
+      beforeEach(() => {
+        testInstance = createTestkit(
+          [
+            useResponseCache({
+              session: () => null,
+              ttl: 0,
+              ttlPerType: {
+                TypeWithId: 500,
+                TypeWithoutId: 500,
+              },
+            }),
+          ],
+          schema
+        );
+      });
+
+      it('ttl can be set for types with id field when id is queried', async () => {
+        const query = /* GraphQL */ `
+          query test {
+            withId {
+              field
+              id
+            }
+          }
+        `;
+
+        await testInstance.execute(query);
+        await testInstance.execute(query);
+        expect(spyWithId).toHaveBeenCalledTimes(1);
+      });
+
+      it('ttl can be set for types with id field when id is not queried', async () => {
+        const query = /* GraphQL */ `
+          query test {
+            withId {
+              field
+            }
+          }
+        `;
+
+        await testInstance.execute(query);
+        await testInstance.execute(query);
+        expect(spyWithId).toHaveBeenCalledTimes(1);
+      });
+
+      it('ttl can be set for types without id', async () => {
+        const query = /* GraphQL */ `
+          query test {
+            withoutId {
+              field
+            }
+          }
+        `;
+
+        await testInstance.execute(query);
+        await testInstance.execute(query);
+        expect(spyWithoutId).toHaveBeenCalledTimes(1);
       });
     });
   });
