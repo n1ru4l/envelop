@@ -7,6 +7,7 @@ import {
   visitWithTypeInfo,
   BREAK,
   ExecutionResult,
+  GraphQLType,
 } from 'graphql';
 import { visitResult } from '@graphql-tools/utils';
 import type { OnExecuteEventPayload } from '@envelop/core';
@@ -90,7 +91,7 @@ export const isIntrospectionQuery = (params: OnExecuteEventPayload<ContextType>)
     params.args.document,
     visitWithTypeInfo(typeInfo, {
       Field() {
-        const type = typeInfo && getNamedType(typeInfo.getType());
+        const type = typeInfo && getNamedType(typeInfo.getType() as GraphQLType);
         if (type && isIntrospectionType(type)) {
           isIntrospection = true;
           return BREAK;
@@ -206,7 +207,7 @@ export const denyType = (options: UseInngestDataOptions) => {
     options.params.args.document,
     visitWithTypeInfo(typeInfo, {
       Field() {
-        const type = typeInfo && getNamedType(typeInfo.getType());
+        const type = typeInfo && getNamedType(typeInfo.getType() as GraphQLType);
         if (type && typeDenyList.includes(type?.name)) {
           hasType = true;
           return BREAK;
