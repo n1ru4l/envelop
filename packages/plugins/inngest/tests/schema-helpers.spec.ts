@@ -248,7 +248,7 @@ describe('schema-helpers', () => {
 
       const allowed = sendOperation({
         params: options.params,
-        sendOperations: [SendableOperation.QUERY],
+        sendOperations: ['query'],
         logger,
       });
 
@@ -272,7 +272,7 @@ describe('schema-helpers', () => {
 
       const allowed = sendOperation({
         params: options.params,
-        sendOperations: [SendableOperation.MUTATION],
+        sendOperations: ['mutation'],
         logger,
       });
 
@@ -296,7 +296,7 @@ describe('schema-helpers', () => {
 
       const allowed = sendOperation({
         params: options.params,
-        sendOperations: [SendableOperation.MUTATION],
+        sendOperations: ['mutation'],
         logger,
       });
 

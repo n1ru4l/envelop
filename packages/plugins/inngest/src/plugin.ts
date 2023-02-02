@@ -1,5 +1,5 @@
 import { ExecutionResult, Plugin } from '@envelop/core';
-import { OperationTypeNode } from 'graphql';
+// import type { OperationTypeNode } from 'graphql';
 
 import { buildEventPayload, buildEventName, buildEventNamePrefix, buildUserContext } from './event-helpers';
 import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str';
@@ -17,7 +17,7 @@ export const useInngest = ({
   buildEventNameFunction = buildEventName,
   buildEventNamePrefixFunction = buildEventNamePrefix,
   buildUserContextFunction = buildUserContext,
-  sendOperations = [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
+  sendOperations = ['query', 'mutation'],
   sendAnonymousOperations = false,
   sendErrors = false,
   sendIntrospection = false,

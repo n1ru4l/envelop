@@ -97,9 +97,9 @@ export type UseInngestDataOptions = {
 /**
  * SendableOperations
  *
- * Sendable GraphQL operations are QUERY, MUTATION, SUBSCRIPTION
+ * Sendable GraphQL operations are query, mutation, subscription
  */
-export type SendableOperations = Iterable<OperationTypeNode>;
+export type SendableOperations = Iterable<'query' | 'mutation' | 'subscription'>;
 
 /**
  * UseInngestEntityRecord

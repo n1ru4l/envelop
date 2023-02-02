@@ -90,7 +90,7 @@ export const isIntrospectionQuery = (params: OnExecuteEventPayload<ContextType>)
     params.args.document,
     visitWithTypeInfo(typeInfo, {
       Field() {
-        const type = getNamedType(typeInfo.getType());
+        const type = typeInfo && getNamedType(typeInfo.getType());
         if (type && isIntrospectionType(type)) {
           isIntrospection = true;
           return BREAK;
@@ -206,7 +206,7 @@ export const denyType = (options: UseInngestDataOptions) => {
     options.params.args.document,
     visitWithTypeInfo(typeInfo, {
       Field() {
-        const type = getNamedType(typeInfo.getType());
+        const type = typeInfo && getNamedType(typeInfo.getType());
         if (type && typeDenyList.includes(type?.name)) {
           hasType = true;
           return BREAK;

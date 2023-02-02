@@ -62,11 +62,7 @@ export const shouldSendEvent = async (options: UseInngestDataOptions) => {
 
   const shouldSend = !isAnonymous && !isIntrospection && !hasErrors;
 
-  if (shouldSend) {
-    options.logger.warn(
-      `Sending event ${options.eventName} because it is an introspection ${isIntrospection} or error ${hasErrors}`
-    );
-  } else {
+  if (!shouldSend) {
     options.logger.warn(
       `Blocking event ${options.eventName} because it is not an introspection ${isIntrospection} or error ${hasErrors}`
     );
