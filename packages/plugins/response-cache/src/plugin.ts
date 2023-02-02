@@ -265,22 +265,26 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
                         };
                       }
                     }
+
+                    if (ignoredTypesMap.has(typename)) {
+                      skip = true;
+                    }
+                    if (skip === true) {
+                      return;
+                    }
+
+                    types.add(typename);
+                    if (typename in ttlPerType) {
+                      currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
+                    }
+
                     if (idFields.includes(fieldName)) {
-                      if (ignoredTypesMap.has(typename)) {
-                        skip = true;
-                      }
-                      if (skip === true) {
-                        return;
-                      }
                       return (id: string) => {
                         identifier.set(`${typename}:${id}`, { typename, id });
-                        types.add(typename);
-                        if (typename in ttlPerType) {
-                          currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
-                        }
                         return id;
                       };
                     }
+
                     return undefined;
                   },
                 });
