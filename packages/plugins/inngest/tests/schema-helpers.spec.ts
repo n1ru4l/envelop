@@ -17,7 +17,7 @@ import {
 import { SendableOperation } from '../index';
 import type { UseInngestExecuteOptions } from '../src/types';
 
-describe('tools', () => {
+describe('schema-helpers', () => {
   const logger = buildLogger({ logging: false });
 
   const schema = makeExecutableSchema({

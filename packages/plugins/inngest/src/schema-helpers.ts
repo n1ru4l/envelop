@@ -1,6 +1,4 @@
 import {
-  Kind,
-  OperationDefinitionNode,
   visit,
   getNamedType,
   getOperationAST,
@@ -41,15 +39,9 @@ export const getOperation = (params: OnExecuteEventPayload<ContextType>) => {
  * @param options Pick<UseInngestExecuteOptions, 'params'>
  * @returns string | undefined
  */
-export const getOperationName = (options: Pick<UseInngestExecuteOptions, 'params'>): string => {
-  const args = options.params.args;
-  const rootOperation = args.document.definitions.find(
-    // @ts-expect-error TODO: not sure how we will make it dev friendly
-    definitionNode => definitionNode.kind === Kind.OPERATION_DEFINITION
-  ) as OperationDefinitionNode;
-  const operationName = args.operationName || rootOperation.name?.value || undefined;
-
-  return operationName;
+export const getOperationName = (options: Pick<UseInngestExecuteOptions, 'params'>): string | undefined => {
+  const operationAST = getOperationAST(options.params.args.document);
+  return operationAST?.name?.value || undefined;
 };
 
 /**

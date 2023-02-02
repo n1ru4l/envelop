@@ -10,7 +10,7 @@ import {
   buildEventName,
 } from '../src/event-helpers';
 
-describe('builders', () => {
+describe('event-helpers', () => {
   const schema = makeExecutableSchema({
     typeDefs: /* GraphQL */ `
       type Post {
