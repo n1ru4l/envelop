@@ -21,6 +21,38 @@ import type {
 } from './types';
 
 /**
+ * getOperation
+ *
+ * Gets the operation document or execution params
+ *
+ * @param params
+ * @returns OperationTypeNode | 'unknown'
+ */
+export const getOperation = (params: OnExecuteEventPayload<ContextType>) => {
+  const operationAST = getOperationAST(params.args.document, params.args.operationName);
+  return operationAST?.operation ?? 'unknown';
+};
+
+/**
+ * getOperationName
+ *
+ * Gets the operation name from Execution params
+ *
+ * @param options Pick<UseInngestExecuteOptions, 'params'>
+ * @returns string | undefined
+ */
+export const getOperationName = (options: Pick<UseInngestExecuteOptions, 'params'>): string => {
+  const args = options.params.args;
+  const rootOperation = args.document.definitions.find(
+    // @ts-expect-error TODO: not sure how we will make it dev friendly
+    definitionNode => definitionNode.kind === Kind.OPERATION_DEFINITION
+  ) as OperationDefinitionNode;
+  const operationName = args.operationName || rootOperation.name?.value || undefined;
+
+  return operationName;
+};
+
+/**
  * sendOperation
  *
  * Determines if the operation is allowed to be sent to Inngest
@@ -49,25 +81,6 @@ export const sendOperation = (options: UseInngestEventOptions): boolean => {
   }
 
   return allow;
-};
-
-/**
- * getOperationName
- *
- * Gets the operation name from Execution params
- *
- * @param options Pick<UseInngestExecuteOptions, 'params'>
- * @returns string | undefined
- */
-export const getOperationName = (options: Pick<UseInngestExecuteOptions, 'params'>): string => {
-  const args = options.params.args;
-  const rootOperation = args.document.definitions.find(
-    // @ts-expect-error TODO: not sure how we will make it dev friendly
-    definitionNode => definitionNode.kind === Kind.OPERATION_DEFINITION
-  ) as OperationDefinitionNode;
-  const operationName = args.operationName || rootOperation.name?.value || undefined;
-
-  return operationName;
 };
 
 /**
@@ -108,19 +121,6 @@ export const isIntrospectionQuery = (params: OnExecuteEventPayload<ContextType>)
   );
 
   return isIntrospection;
-};
-
-/**
- * getOperation
- *
- * Gets the operation document or execution params
- *
- * @param params
- * @returns OperationTypeNode | 'unknown'
- */
-export const getOperation = (params: OnExecuteEventPayload<ContextType>) => {
-  const operationAST = getOperationAST(params.args.document, params.args.operationName);
-  return operationAST?.operation ?? 'unknown';
 };
 
 /**
