@@ -1,11 +1,14 @@
 import { ExecutionResult, Plugin } from '@envelop/core';
-// import type { OperationTypeNode } from 'graphql';
+import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str.js';
+import { buildEventPayload, buildEventName, buildEventNamePrefix, buildUserContext } from './event-helpers.js';
+import { buildLogger } from './logger.js';
+import { shouldSendEvent } from './should-send-event.js';
+import type { UseInngestPluginOptions } from './types.js';
 
-import { buildEventPayload, buildEventName, buildEventNamePrefix, buildUserContext } from './event-helpers';
-import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str';
-import { buildLogger } from './logger';
-import { shouldSendEvent } from './should-send-event';
-import type { UseInngestPluginOptions } from './types';
+export { OperationTypeNode as SendableOperation } from 'graphql';
+
+export const USE_INNGEST_DEFAULT_EVENT_PREFIX = 'graphql';
+export const USE_INNGEST_ANONYMOUS_EVENT_PREFIX = 'anonymous';
 
 /**
  * Sends GraphQL operation events to Inngest

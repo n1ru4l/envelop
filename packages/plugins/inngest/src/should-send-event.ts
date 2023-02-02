@@ -4,8 +4,8 @@ import {
   denyType,
   isAnonymousOperation,
   isIntrospectionQuery,
-} from './schema-helpers';
-import { UseInngestDataOptions } from './types';
+} from './schema-helpers.js';
+import { UseInngestDataOptions } from './types.js';
 
 /**
  * shouldSendEvent

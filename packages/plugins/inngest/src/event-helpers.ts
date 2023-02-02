@@ -1,10 +1,9 @@
 import jsonStableStringify from 'fast-json-stable-stringify';
 import fastRedact from 'fast-redact';
-
-import { decamelize } from 'humps';
-import { hashSHA256 } from './hash-sha256';
-import { USE_INNGEST_DEFAULT_EVENT_PREFIX, USE_INNGEST_ANONYMOUS_EVENT_PREFIX } from './index';
-import { getOperationInfo, buildTypeIdentifiers } from './schema-helpers';
+import pkg from 'humps';
+import { hashSHA256 } from './hash-sha256.js';
+import { USE_INNGEST_DEFAULT_EVENT_PREFIX, USE_INNGEST_ANONYMOUS_EVENT_PREFIX } from './plugin.js';
+import { getOperationInfo, buildTypeIdentifiers } from './schema-helpers.js';
 import type {
   UseInngestDataOptions,
   UseInngestEventOptions,
@@ -14,7 +13,9 @@ import type {
   BuildEventNamePrefixFunction,
   BuildUserContextFunction,
   UseInngestEventNamePrefixFunctionOptions,
-} from './types';
+} from './types.js';
+
+const { decamelize } = pkg;
 
 /**
  * buildOperationId

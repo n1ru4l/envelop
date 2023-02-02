@@ -1,4 +1,4 @@
-import type { UseInngestPluginOptions, UseInngestLogger, UseInngestLogLevel } from './types';
+import type { UseInngestPluginOptions, UseInngestLogger, UseInngestLogLevel } from './types.js';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */

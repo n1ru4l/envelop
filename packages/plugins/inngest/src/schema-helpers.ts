@@ -18,7 +18,7 @@ import type {
   UseInngestDataOptions,
   UseInngestEntityRecord,
   OperationInfo,
-} from './types';
+} from './types.js';
 
 /**
  * getOperationInfo

@@ -13,7 +13,6 @@ import {
   denyType,
 } from '../src/schema-helpers';
 
-import { SendableOperation } from '../index';
 import type { UseInngestExecuteOptions } from '../src/types';
 
 describe('schema-helpers', () => {
