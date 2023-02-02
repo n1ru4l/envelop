@@ -1,6 +1,6 @@
+import { OperationTypeNode } from 'graphql';
 import type { ExecutionResult, OnExecuteEventPayload } from '@envelop/core';
 import type { RedactOptions } from 'fast-redact';
-import type { OperationTypeNode } from 'graphql';
 import type { Inngest, EventPayload } from 'inngest';
 
 /**
