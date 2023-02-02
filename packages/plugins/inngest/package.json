@@ -55,10 +55,11 @@
   },
   "dependencies": {
     "@graphql-tools/utils": "^8.8.0",
+    "@whatwg-node/fetch": "^0.6.5",
     "fast-json-stable-stringify": "^2.1.0",
     "fast-redact": "^3.1.2",
     "humps": "^2.0.1",
-    "inngest": "^0.9.2",
+    "inngest": "^0.9.3",
     "tslib": "^2.4.0"
   },
   "peerDependencies": {
