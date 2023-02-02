@@ -7,8 +7,7 @@ import {
   isAnonymousOperation,
   isIntrospectionQuery,
   sendOperation,
-  getOperationName,
-  getOperation,
+  getOperationInfo,
   buildTypeIdentifiers,
   denySchemaCoordinate,
   denyType,
@@ -100,7 +99,7 @@ describe('schema-helpers', () => {
 
   describe('getOperation', () => {
     it('gets a query', () => {
-      const operation = getOperation({
+      const executeOptions = {
         executeFn: () => {},
         setExecuteFn: () => {},
         setResultAndStopExecution: () => {},
@@ -110,13 +109,16 @@ describe('schema-helpers', () => {
           document: parse(`query TestQuery { test }`),
           contextValue: {},
         },
-      });
+      };
 
-      expect(operation).toBe('query');
+      const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
+      const { operationType } = getOperationInfo(options);
+
+      expect(operationType).toBe('query');
     });
 
     it('gets a mutation', () => {
-      const operation = getOperation({
+      const executeOptions = {
         executeFn: () => {},
         setExecuteFn: () => {},
         setResultAndStopExecution: () => {},
@@ -126,13 +128,16 @@ describe('schema-helpers', () => {
           document: parse(`mutation TestMutation { test }`),
           contextValue: {},
         },
-      });
+      };
 
-      expect(operation).toBe('mutation');
+      const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
+      const { operationType } = getOperationInfo(options);
+
+      expect(operationType).toBe('mutation');
     });
 
     it('gets a subscription', () => {
-      const operation = getOperation({
+      const executeOptions = {
         executeFn: () => {},
         setExecuteFn: () => {},
         setResultAndStopExecution: () => {},
@@ -142,9 +147,12 @@ describe('schema-helpers', () => {
           document: parse(`subscription TestSubscription { test }`),
           contextValue: {},
         },
-      });
+      };
 
-      expect(operation).toBe('subscription');
+      const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
+      const { operationType } = getOperationInfo(options);
+
+      expect(operationType).toBe('subscription');
     });
   });
 
@@ -162,7 +170,7 @@ describe('schema-helpers', () => {
         },
       };
       const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
-      const operationName = getOperationName(options);
+      const { operationName } = getOperationInfo(options);
 
       expect(operationName).toBe('TestQuery');
     });
@@ -180,7 +188,7 @@ describe('schema-helpers', () => {
         },
       };
       const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
-      const operationName = getOperationName(options);
+      const { operationName } = getOperationInfo(options);
 
       expect(operationName).toBe('TestMutation');
     });
@@ -198,7 +206,7 @@ describe('schema-helpers', () => {
         },
       };
       const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
-      const operationName = getOperationName(options);
+      const { operationName } = getOperationInfo(options);
 
       expect(operationName).toBe('TestSubscription');
     });
@@ -216,7 +224,7 @@ describe('schema-helpers', () => {
         },
       };
       const options: Pick<UseInngestExecuteOptions, 'params'> = { params: executeOptions };
-      const operationName = getOperationName(options);
+      const { operationName } = getOperationInfo(options);
 
       expect(operationName).toBeUndefined();
     });

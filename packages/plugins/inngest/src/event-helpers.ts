@@ -4,7 +4,7 @@ import fastRedact from 'fast-redact';
 import { decamelize } from 'humps';
 import { hashSHA256 } from './hash-sha256';
 import { USE_INNGEST_DEFAULT_EVENT_PREFIX, USE_INNGEST_ANONYMOUS_EVENT_PREFIX } from './index';
-import { getOperationName, getOperation, buildTypeIdentifiers } from './schema-helpers';
+import { getOperationInfo, buildTypeIdentifiers } from './schema-helpers';
 import type {
   UseInngestDataOptions,
   UseInngestEventOptions,
@@ -29,7 +29,7 @@ import type {
 export const buildOperationId = async (options: UseInngestEventOptions): Promise<string> => {
   const tokens = [
     options.documentString,
-    getOperationName(options) ?? '',
+    getOperationInfo(options).operationName ?? '',
     jsonStableStringify(options.params.args.variableValues ?? {}),
   ].join('|');
 
@@ -53,7 +53,7 @@ export const buildOperationId = async (options: UseInngestEventOptions): Promise
  * @returns string Operation name for event
  */
 export const buildOperationNameForEventName = async (options: UseInngestEventOptions) => {
-  let operationName = getOperationName(options);
+  let { operationName } = getOperationInfo(options);
 
   if (!operationName) {
     const operationId = await buildOperationId(options);
@@ -90,6 +90,8 @@ export const buildEventPayload = async (options: UseInngestDataOptions) => {
     variables = JSON.parse(redact(variables) as string);
   }
 
+  const { operationName, operationType } = getOperationInfo(options);
+
   const payload = {
     variables,
     identifiers,
@@ -97,8 +99,8 @@ export const buildEventPayload = async (options: UseInngestDataOptions) => {
     result,
     operation: {
       id: await buildOperationNameForEventName(options),
-      name: getOperationName(options) || '',
-      type: getOperation(options.params),
+      name: operationName || '',
+      type: operationType,
     },
   };
 
@@ -129,9 +131,9 @@ export const buildEventNamePrefix: BuildEventNamePrefixFunction = async (
  */
 export const buildEventName: BuildEventNameFunction = async (options: UseInngestEventNameFunctionOptions) => {
   const operationName = await buildOperationNameForEventName(options);
-  const operation = getOperation(options.params);
+  const { operationType } = getOperationInfo(options);
 
-  const name = `${options.eventNamePrefix}/${operationName}.${operation}`.toLowerCase();
+  const name = `${options.eventNamePrefix}/${operationName}.${operationType}`.toLowerCase();
 
   return name as string;
 };

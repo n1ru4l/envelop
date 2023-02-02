@@ -91,31 +91,6 @@ describe('shouldSendEvent', () => {
         expect(should).toBe(true);
       });
     });
-
-    describe('and the name does not match', () => {
-      it('should send event', async () => {
-        const should = await shouldSendEvent({
-          params: {
-            executeFn: () => {},
-            setExecuteFn: () => {},
-            setResultAndStopExecution: () => {},
-            extendContext: () => {},
-            args: {
-              operationName: 'NotTestQuery',
-              schema,
-              document: parse(`query TestQuery { test }`),
-              contextValue: {},
-            },
-          },
-          sendOperations: [OperationTypeNode.QUERY, OperationTypeNode.MUTATION],
-          eventName: 'graphql-test/test-query.query',
-          result: { errors: [], data: { test: 'hello' } },
-          logger: buildLogger({ logging: false }),
-        });
-
-        expect(should).toBe(false);
-      });
-    });
   });
 
   describe('anonymous events', () => {

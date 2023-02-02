@@ -175,3 +175,10 @@ export type UseInngestLoggerOptions = {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ContextType = Record<string, any>;
+
+/**
+ * OperationInfo
+ *
+ * @returns operationName and operationType
+ */
+export type OperationInfo = { operationName: string | undefined; operationType: OperationTypeNode | 'unknown' };

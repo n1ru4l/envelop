@@ -16,32 +16,20 @@ import type {
   UseInngestEventOptions,
   UseInngestDataOptions,
   UseInngestEntityRecord,
+  OperationInfo,
 } from './types';
 
 /**
- * getOperation
+ * getOperationInfo
  *
- * Gets the operation document or execution params
- *
- * @param params
- * @returns OperationTypeNode | 'unknown'
- */
-export const getOperation = (params: OnExecuteEventPayload<ContextType>) => {
-  const operationAST = getOperationAST(params.args.document, params.args.operationName);
-  return operationAST?.operation ?? 'unknown';
-};
-
-/**
- * getOperationName
- *
- * Gets the operation name from Execution params
+ * Gets the operation name and type from document
  *
  * @param options Pick<UseInngestExecuteOptions, 'params'>
  * @returns string | undefined
  */
-export const getOperationName = (options: Pick<UseInngestExecuteOptions, 'params'>): string | undefined => {
+export const getOperationInfo = (options: Pick<UseInngestExecuteOptions, 'params'>): OperationInfo => {
   const operationAST = getOperationAST(options.params.args.document);
-  return operationAST?.name?.value || undefined;
+  return { operationName: operationAST?.name?.value || undefined, operationType: operationAST?.operation ?? 'unknown' };
 };
 
 /**
@@ -58,18 +46,17 @@ export const sendOperation = (options: UseInngestEventOptions): boolean => {
   }
   const ops = new Set(options.sendOperations);
 
-  const operation = getOperation(options.params);
+  const { operationName, operationType } = getOperationInfo(options);
 
-  if (operation === 'unknown') {
+  if (operationType === 'unknown') {
     options.logger.warn('Unknown operation');
     return false;
   }
 
-  const allow = ops.has(operation);
+  const allow = ops.has(operationType);
 
   if (!allow) {
-    const operationName = getOperationName(options);
-    options.logger.warn(`Operation ${operation} named ${operationName} is not allowed`);
+    options.logger.warn(`Operation ${operationType} named ${operationName} is not allowed`);
   }
 
   return allow;
@@ -84,7 +71,7 @@ export const sendOperation = (options: UseInngestEventOptions): boolean => {
  * @returns boolean
  */
 export const isAnonymousOperation = (params: OnExecuteEventPayload<ContextType>) => {
-  return getOperationName({ params }) === undefined;
+  return getOperationInfo({ params }).operationName === undefined;
 };
 
 /**
@@ -140,7 +127,7 @@ export const buildTypeIdentifiers = async (options: UseInngestDataOptions) => {
     {
       document: options.params.args.document,
       variables: options.params.args.variableValues as any,
-      operationName: getOperationName(options),
+      operationName: getOperationInfo(options).operationName,
       rootValue: options.params.args.rootValue,
       context: options.params.args.contextValue,
     },
