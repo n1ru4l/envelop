@@ -1,5 +1,18 @@
 # @envelop/validation-cache
 
+## 5.1.0
+
+### Minor Changes
+
+- [#1602](https://github.com/n1ru4l/envelop/pull/1602) [`109ae870`](https://github.com/n1ru4l/envelop/commit/109ae870571f821c20507bcfe9ca2699b4533122) Thanks [@n1ru4l](https://github.com/n1ru4l)! - Include the schema introspection sha1 hash in the validation cache key instead of resetting the cache when a different GraphQL schema is consumed.
+
+### Patch Changes
+
+- [#1602](https://github.com/n1ru4l/envelop/pull/1602) [`109ae870`](https://github.com/n1ru4l/envelop/commit/109ae870571f821c20507bcfe9ca2699b4533122) Thanks [@n1ru4l](https://github.com/n1ru4l)! - dependencies updates:
+
+  - Added dependency [`fast-json-stable-stringify@^2.1.0` ↗︎](https://www.npmjs.com/package/fast-json-stable-stringify/v/2.1.0) (to `dependencies`)
+  - Added dependency [`js-sha1@^0.6.0` ↗︎](https://www.npmjs.com/package/js-sha1/v/0.6.0) (to `dependencies`)
+
 ## 5.0.5
 
 ### Patch Changes
