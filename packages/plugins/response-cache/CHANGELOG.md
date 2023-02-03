@@ -1,5 +1,17 @@
 # @envelop/response-cache
 
+## 4.0.5
+
+### Patch Changes
+
+- [#1623](https://github.com/n1ru4l/envelop/pull/1623) [`d50fa6f0`](https://github.com/n1ru4l/envelop/commit/d50fa6f0b71e9ceb13b492e3a0961a6e9d75824f) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency [`@whatwg-node/fetch@^0.6.5` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.6.5) (to `dependencies`)
+
+- [#1625](https://github.com/n1ru4l/envelop/pull/1625) [`8a90f541`](https://github.com/n1ru4l/envelop/commit/8a90f5411dce07ae23915cced951708517bb6da5) Thanks [@mayrn-techdivision](https://github.com/mayrn-techdivision)! - Fix ignoredTypes and ttlPerType not working for types without id field
+
+- [#1623](https://github.com/n1ru4l/envelop/pull/1623) [`d50fa6f0`](https://github.com/n1ru4l/envelop/commit/d50fa6f0b71e9ceb13b492e3a0961a6e9d75824f) Thanks [@ardatan](https://github.com/ardatan)! - Use WhatWG crypto
+
 ## 4.0.4
 
 ### Patch Changes
