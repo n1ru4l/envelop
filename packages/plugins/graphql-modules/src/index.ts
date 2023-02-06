@@ -29,5 +29,15 @@ export const useGraphQLModules = (app: Application): Plugin => {
         },
       };
     },
+    onSubscribe({ args }) {
+      return {
+        onSubscribeResult: () => {
+          if (args.contextValue && args.contextValue[graphqlModulesControllerSymbol]) {
+            args.contextValue[graphqlModulesControllerSymbol].destroy();
+            args.contextValue[graphqlModulesControllerSymbol] = null;
+          }
+        },
+      };
+    },
   };
 };
