@@ -9,63 +9,79 @@ import {
 } from '@envelop/testing';
 import { useGraphQLModules } from '../src/index.js';
 
-describe('useGraphQLModules', () => {
-  let app: Application;
+function createApp(onDestroy: () => void) {
+  @Injectable({
+    scope: Scope.Operation,
+  })
+  class TestProvider {
+    constructor() {}
 
-  beforeEach(() => {
-    @Injectable({
-      scope: Scope.Operation,
-    })
-    class TestProvider {
-      constructor() {}
-
-      getFoo() {
-        return 'testFoo';
-      }
+    getFoo() {
+      return 'testFoo';
     }
 
-    app = createApplication({
-      modules: [
-        createModule({
-          id: 'test',
-          typeDefs: parse(`
-            type Query { foo: String }
+    onDestroy() {
+      onDestroy();
+    }
+  }
 
-            type Subscription { bar: String }
-          `),
-          providers: [TestProvider],
-          resolvers: {
-            Query: {
-              foo: (root: never, args: never, { injector }: GraphQLModules.Context) =>
-                injector.get(TestProvider).getFoo(),
-            },
-            Subscription: {
-              bar: {
-                subscribe: async function* () {
-                  yield 'testBar';
-                },
-                resolve: _ => _,
+  return createApplication({
+    modules: [
+      createModule({
+        id: 'test',
+        typeDefs: parse(/* GraphQL */ `
+          type Query {
+            foo: String
+          }
+
+          type Subscription {
+            bar: String
+          }
+        `),
+        providers: [TestProvider],
+        resolvers: {
+          Query: {
+            foo: (root: never, args: never, { injector }: GraphQLModules.Context) =>
+              injector.get(TestProvider).getFoo(),
+          },
+          Subscription: {
+            bar: {
+              subscribe: async function* () {
+                yield 'testBar';
               },
+              resolve: (id: unknown) => id,
             },
           },
-        }),
-      ],
-    });
+        },
+      }),
+    ],
   });
+}
 
-  it('Should work correctly and init all providers at the right time', async () => {
+describe('useGraphQLModules', () => {
+  it('query operation', async () => {
+    let isDestroyed = false;
+    const app = createApp(() => {
+      isDestroyed = true;
+    });
     const testInstance = createTestkit([useGraphQLModules(app)]);
     const result = await testInstance.execute(`query { foo }`);
     assertSingleExecutionValue(result);
     expect(result.data?.foo).toBe('testFoo');
+    expect(isDestroyed).toEqual(true);
   });
 
-  it('Should work for subscripions, too', async () => {
+  it('subscription operation', async () => {
+    let isDestroyed = false;
+    const app = createApp(() => {
+      isDestroyed = true;
+    });
     const testInstance = createTestkit([useGraphQLModules(app)]);
     const resultStream = await testInstance.execute(`subscription { bar }`);
     assertStreamExecutionValue(resultStream);
     const allResults = await collectAsyncIteratorValues(resultStream);
     expect(allResults).toHaveLength(1);
     expect(allResults[0]?.data?.bar).toEqual('testBar');
+    expect(isDestroyed).toEqual(true);
   });
 });

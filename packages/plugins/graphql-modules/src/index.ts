@@ -22,7 +22,7 @@ export const useGraphQLModules = (app: Application): Plugin => {
     onExecute({ args }) {
       return {
         onExecuteDone: () => {
-          if (args.contextValue && args.contextValue[graphqlModulesControllerSymbol]) {
+          if (args.contextValue?.[graphqlModulesControllerSymbol]) {
             args.contextValue[graphqlModulesControllerSymbol].destroy();
             args.contextValue[graphqlModulesControllerSymbol] = null;
           }
@@ -31,8 +31,18 @@ export const useGraphQLModules = (app: Application): Plugin => {
     },
     onSubscribe({ args }) {
       return {
-        onSubscribeResult: () => {
-          if (args.contextValue && args.contextValue[graphqlModulesControllerSymbol]) {
+        onSubscribeResult: ({ args }) => {
+          return {
+            onEnd() {
+              if (args.contextValue?.[graphqlModulesControllerSymbol]) {
+                args.contextValue[graphqlModulesControllerSymbol].destroy();
+                args.contextValue[graphqlModulesControllerSymbol] = null;
+              }
+            },
+          };
+        },
+        onSubscribeError: () => {
+          if (args.contextValue?.[graphqlModulesControllerSymbol]) {
             args.contextValue[graphqlModulesControllerSymbol].destroy();
             args.contextValue[graphqlModulesControllerSymbol] = null;
           }
