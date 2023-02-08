@@ -179,7 +179,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
         Sentry.configureScope(scope => options.configureScope!(args, scope));
       }
 
-      extendContext({ sentry: { span: rootSpan } });
+      extendContext({ sentry: { scope } });
 
       return {
         onExecuteDone(payload) {
