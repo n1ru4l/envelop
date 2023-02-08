@@ -43,8 +43,7 @@ describe('sentry', () => {
       }
     `);
 
-    // run sentry flush
-    await new Promise(res => setTimeout(res, 10));
+    await Sentry.flush();
 
     const reports = sentryTestkit.reports();
     expect(reports).toHaveLength(1);
@@ -89,8 +88,7 @@ describe('sentry', () => {
       }
     `);
 
-    // run sentry flush
-    await new Promise(res => setTimeout(res, 10));
+    await Sentry.flush();
 
     expect(sentryTestkit.reports()).toHaveLength(0);
   });
@@ -130,8 +128,7 @@ describe('sentry', () => {
       }
     `);
 
-    // run sentry flush
-    await new Promise(res => setTimeout(res, 10));
+    await Sentry.flush();
 
     const reports = sentryTestkit.reports();
     expect(reports).toHaveLength(1);
@@ -176,8 +173,7 @@ describe('sentry', () => {
       }
     `);
 
-    // run sentry flush
-    await new Promise(res => setTimeout(res, 10));
+    await Sentry.flush();
 
     expect(sentryTestkit.reports()).toHaveLength(0);
   });
@@ -246,8 +242,7 @@ describe('sentry', () => {
       }
     `);
 
-    // run sentry flush
-    await new Promise(res => setTimeout(res, 10));
+    await Sentry.flush();
 
     const reports = sentryTestkit.reports();
     expect(reports).toHaveLength(1);
@@ -292,6 +287,5 @@ test('sets the span in the query context', async () => {
     }
   `);
 
-  // run sentry flush
-  await new Promise(res => setTimeout(res, 10));
+  await Sentry.flush();
 });
