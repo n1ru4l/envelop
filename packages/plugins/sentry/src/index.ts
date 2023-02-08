@@ -7,6 +7,8 @@ import {
 import * as Sentry from '@sentry/node';
 import type { Span, TraceparentData } from '@sentry/types';
 import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
+import LRU from 'lru-cache';
+
 
 export type SentryPluginOptions = {
   /**
@@ -81,6 +83,9 @@ export type SentryPluginOptions = {
 
 export const defaultSkipError = isOriginalGraphQLError;
 
+const DEFAULT_MAX = 1000;
+const DEFAULT_TTL = 3600000;
+
 export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   function pick<K extends keyof SentryPluginOptions>(key: K, defaultValue: NonNullable<SentryPluginOptions[K]>) {
     return options[key] ?? defaultValue;
@@ -92,6 +97,8 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const renameTransaction = pick('renameTransaction', false);
   const skipOperation = pick('skip', () => false);
   const skipError = pick('skipError', defaultSkipError);
+
+  const printedDocumentsCache = new LRU<string, string>({ max: DEFAULT_MAX, maxAge: DEFAULT_TTL });
 
   const eventIdKey = options.eventIdKey === null ? null : 'sentryEventId';
 
@@ -114,7 +121,13 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
         o => o.kind === Kind.OPERATION_DEFINITION
       ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
-      const document = print(args.document);
+
+      let document = printedDocumentsCache.get(args.document);
+      if (!document) {
+        document = print(args.document);
+        printedDocumentsCache.set(args.document, document);
+      }
+
       const opName = args.operationName || rootOperation.name?.value || 'Anonymous Operation';
       const addedTags: Record<string, any> = (options.appendTags && options.appendTags(args)) || {};
       const traceparentData = (options.traceparentData && options.traceparentData(args)) || {};
@@ -145,8 +158,12 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
           throw new Error(error.join('\n'));
         }
       } else {
-        const scope = Sentry.getCurrentHub().getScope();
-        const parentSpan = scope?.getSpan();
+        let parentSpan = options.parentSpan;
+        if (!parentSpan) {
+          const scope = Sentry.getCurrentHub().getScope();
+          parentSpan = scope?.getSpan();
+        }
+
         const span = parentSpan?.startChild({
           description: transactionName,
           op,
@@ -157,7 +174,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
           // eslint-disable-next-line no-console
           console.warn(
             [
-              `Flag "startTransaction" is enabled but Sentry failed to find a transaction.`,
+              `Flag "startTransaction" is disabled but Sentry failed to find a transaction.`,
               `Try to create a transaction before GraphQL execution phase is started.`,
             ].join('\n')
           );
