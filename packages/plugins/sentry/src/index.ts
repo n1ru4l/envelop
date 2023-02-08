@@ -9,7 +9,6 @@ import type { Span, TraceparentData } from '@sentry/types';
 import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 import LRU from 'lru-cache';
 
-
 export type SentryPluginOptions = {
   /**
    * Starts a new transaction for every GraphQL Operation.
@@ -79,6 +78,14 @@ export type SentryPluginOptions = {
    * By default, this plugin skips all `GraphQLError` errors and does not report it to Sentry.
    */
   skipError?: (args: Error) => boolean;
+  /**
+   * Indicates whether or not to cache `print()` results.
+   *
+   * Note that this cache only works if the `document` object is the same for the same query (e.g. by caching the parsing step).
+   *
+   * @default false
+   */
+  cachePrintedDocuments?: boolean;
 };
 
 export const defaultSkipError = isOriginalGraphQLError;
@@ -97,8 +104,12 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const renameTransaction = pick('renameTransaction', false);
   const skipOperation = pick('skip', () => false);
   const skipError = pick('skipError', defaultSkipError);
+  const cachePrintedDocuments = pick('cachePrintedDocuments', false);
 
-  const printedDocumentsCache = new LRU<any, string>({ max: DEFAULT_MAX, maxAge: DEFAULT_TTL });
+  let printedDocumentsCache: LRU<any, string> | null = null;
+  if (cachePrintedDocuments) {
+    printedDocumentsCache = new LRU({ max: DEFAULT_MAX, maxAge: DEFAULT_TTL });
+  }
 
   const eventIdKey = options.eventIdKey === null ? null : 'sentryEventId';
 
@@ -122,10 +133,15 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
       ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
 
-      let document = printedDocumentsCache.get(args.document);
-      if (!document) {
+      let document: string;
+      if (printedDocumentsCache) {
+        document = printedDocumentsCache.get(args.document)!;
+        if (!document) {
+          document = print(args.document);
+          printedDocumentsCache.set(args.document, document);
+        }
+      } else {
         document = print(args.document);
-        printedDocumentsCache.set(args.document, document);
       }
 
       const opName = args.operationName || rootOperation.name?.value || 'Anonymous Operation';
