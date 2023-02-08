@@ -47,7 +47,6 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "lru-cache": "^6.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

@@ -7,7 +7,6 @@ import {
 import * as Sentry from '@sentry/node';
 import type { Span, TraceparentData } from '@sentry/types';
 import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
-import LRU from 'lru-cache';
 
 export type SentryPluginOptions = {
   /**
@@ -78,20 +77,9 @@ export type SentryPluginOptions = {
    * By default, this plugin skips all `GraphQLError` errors and does not report it to Sentry.
    */
   skipError?: (args: Error) => boolean;
-  /**
-   * Indicates whether or not to cache `print()` results.
-   *
-   * Note that this cache only works if the `document` object is the same for the same query (e.g. by caching the parsing step).
-   *
-   * @default false
-   */
-  cachePrintedDocuments?: boolean;
 };
 
 export const defaultSkipError = isOriginalGraphQLError;
-
-const DEFAULT_MAX = 1000;
-const DEFAULT_TTL = 3600000;
 
 export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   function pick<K extends keyof SentryPluginOptions>(key: K, defaultValue: NonNullable<SentryPluginOptions[K]>) {
@@ -104,12 +92,8 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const renameTransaction = pick('renameTransaction', false);
   const skipOperation = pick('skip', () => false);
   const skipError = pick('skipError', defaultSkipError);
-  const cachePrintedDocuments = pick('cachePrintedDocuments', false);
 
-  let printedDocumentsCache: LRU<any, string> | null = null;
-  if (cachePrintedDocuments) {
-    printedDocumentsCache = new LRU({ max: DEFAULT_MAX, maxAge: DEFAULT_TTL });
-  }
+  const printedDocumentsCache = new WeakMap<any, string>();
 
   const eventIdKey = options.eventIdKey === null ? null : 'sentryEventId';
 
@@ -133,15 +117,10 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
       ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
 
-      let document: string;
-      if (printedDocumentsCache) {
-        document = printedDocumentsCache.get(args.document)!;
-        if (!document) {
-          document = print(args.document);
-          printedDocumentsCache.set(args.document, document);
-        }
-      } else {
+      let document = printedDocumentsCache.get(args.document);
+      if (!document) {
         document = print(args.document);
+        printedDocumentsCache.set(args.document, document);
       }
 
       const opName = args.operationName || rootOperation.name?.value || 'Anonymous Operation';
