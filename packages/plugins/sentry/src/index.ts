@@ -158,12 +158,8 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
           throw new Error(error.join('\n'));
         }
       } else {
-        let parentSpan = options.parentSpan;
-        if (!parentSpan) {
-          const scope = Sentry.getCurrentHub().getScope();
-          parentSpan = scope?.getSpan();
-        }
-
+        const scope = Sentry.getCurrentHub().getScope();
+        const parentSpan = scope?.getSpan();
         const span = parentSpan?.startChild({
           description: transactionName,
           op,
