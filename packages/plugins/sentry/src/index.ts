@@ -98,7 +98,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const skipOperation = pick('skip', () => false);
   const skipError = pick('skipError', defaultSkipError);
 
-  const printedDocumentsCache = new LRU<string, string>({ max: DEFAULT_MAX, maxAge: DEFAULT_TTL });
+  const printedDocumentsCache = new LRU<any, string>({ max: DEFAULT_MAX, maxAge: DEFAULT_TTL });
 
   const eventIdKey = options.eventIdKey === null ? null : 'sentryEventId';
 
