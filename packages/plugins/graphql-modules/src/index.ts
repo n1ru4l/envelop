@@ -29,25 +29,25 @@ export const useGraphQLModules = (app: Application): Plugin => {
         },
       };
     },
-    onSubscribe({ args }) {
-      return {
-        onSubscribeResult: ({ args }) => {
-          return {
-            onEnd() {
-              if (args.contextValue?.[graphqlModulesControllerSymbol]) {
-                args.contextValue[graphqlModulesControllerSymbol].destroy();
-                args.contextValue[graphqlModulesControllerSymbol] = null;
-              }
-            },
-          };
-        },
-        onSubscribeError: () => {
-          if (args.contextValue?.[graphqlModulesControllerSymbol]) {
-            args.contextValue[graphqlModulesControllerSymbol].destroy();
-            args.contextValue[graphqlModulesControllerSymbol] = null;
-          }
-        },
-      };
-    },
+    // onSubscribe({ args }) {
+    //   return {
+    //     onSubscribeResult: ({ args }) => {
+    //       return {
+    //         onEnd() {
+    //           if (args.contextValue?.[graphqlModulesControllerSymbol]) {
+    //             args.contextValue[graphqlModulesControllerSymbol].destroy();
+    //             args.contextValue[graphqlModulesControllerSymbol] = null;
+    //           }
+    //         },
+    //       };
+    //     },
+    //     onSubscribeError: () => {
+    //       if (args.contextValue?.[graphqlModulesControllerSymbol]) {
+    //         args.contextValue[graphqlModulesControllerSymbol].destroy();
+    //         args.contextValue[graphqlModulesControllerSymbol] = null;
+    //       }
+    //     },
+    //   };
+    // },
   };
 };

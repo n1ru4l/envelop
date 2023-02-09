@@ -20,6 +20,10 @@ function createApp(onDestroy: () => void) {
       return 'testFoo';
     }
 
+    getBar() {
+      return 'testBar';
+    }
+
     onDestroy() {
       onDestroy();
     }
@@ -46,8 +50,8 @@ function createApp(onDestroy: () => void) {
           },
           Subscription: {
             bar: {
-              subscribe: async function* () {
-                yield 'testBar';
+              subscribe: async function* (root: never, args: never, { injector }: GraphQLModules.Context) {
+                yield injector.get(TestProvider).getBar();
               },
               resolve: (id: unknown) => id,
             },
@@ -59,7 +63,7 @@ function createApp(onDestroy: () => void) {
 }
 
 describe('useGraphQLModules', () => {
-  it('query operation', async () => {
+  test('query operation', async () => {
     let isDestroyed = false;
     const app = createApp(() => {
       isDestroyed = true;
@@ -71,8 +75,9 @@ describe('useGraphQLModules', () => {
     expect(isDestroyed).toEqual(true);
   });
 
-  it('subscription operation', async () => {
+  test('subscription operation', async () => {
     let isDestroyed = false;
+
     const app = createApp(() => {
       isDestroyed = true;
     });
