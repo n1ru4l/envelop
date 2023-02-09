@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { parse } from 'graphql';
-import { Application, createApplication, createModule, Injectable, Scope } from 'graphql-modules';
+import { createApplication, createModule, Injectable, Scope } from 'graphql-modules';
 import {
   assertSingleExecutionValue,
   assertStreamExecutionValue,
