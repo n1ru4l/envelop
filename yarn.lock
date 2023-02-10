@@ -3352,10 +3352,10 @@
   resolved "https://registry.yarnpkg.com/@types/ms/-/ms-0.7.31.tgz#31b7ca6407128a3d2bbc27fe2d21b345397f6197"
   integrity sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==
 
-"@types/newrelic@7.0.3":
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/@types/newrelic/-/newrelic-7.0.3.tgz#07ae3d0175f712e0fcaef69564dbe06b6039febb"
-  integrity sha512-MAaZYpJ9HEumg8MR4OFNDu8Cy4LnNc89aZ4pqXcBiQyo8SaQVv0sPj2JzzR1rQ/Rk86WL9vLjrDjuEg2vDMimg==
+"@types/newrelic@7.0.4":
+  version "7.0.4"
+  resolved "https://registry.yarnpkg.com/@types/newrelic/-/newrelic-7.0.4.tgz#ccb65ce1dd5cae9f6bbf9248630a9ed316fd257f"
+  integrity sha512-Y4jdcdi5h+mD6yRe9JIe8jSWMmnx0C451r62sWndkkM3ZRYQ44N+kvZfAlBUP2tIaVdZweX+T3n3+uDxMg7xfw==
 
 "@types/node-fetch@2.5.12":
   version "2.5.12"
