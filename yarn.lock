@@ -14247,10 +14247,10 @@ wordwrap@~0.0.2:
   resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-0.0.3.tgz#a3d5da6cd5c0bc0008d37234bbaf1bed63059107"
   integrity sha512-1tMA907+V4QmxV7dbRvb4/8MaRALK6q9Abid3ndMYnbyo8piisCmeONVqVSXqQA3KaP4SLt5b7ud6E2sqP8TFw==
 
-worktop@0.7.0:
-  version "0.7.0"
-  resolved "https://registry.npmjs.org/worktop/-/worktop-0.7.0.tgz#d88fd3dcc894715f656d3b80d24433652f455a55"
-  integrity sha512-kLLov4ChDvC9OhSDHYX5kWEoo1zt3OZWykXkpmTHsfZ1axFfSRDeD/vZcEKLOngGRMFR7PuYaf4Q94fNFkMeIQ==
+worktop@0.7.3:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/worktop/-/worktop-0.7.3.tgz#7dbf85f0add229cf261759bf3855820814b99cba"
+  integrity sha512-WBHP1hk8pLP7ahAw13fugDWcO0SUAOiCD6DHT/bfLWoCIA/PL9u7GKdudT2nGZ8EGR1APbGCAI6ZzKG1+X+PnQ==
   dependencies:
     regexparam "^2.0.0"
 
