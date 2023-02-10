@@ -1714,10 +1714,15 @@
     tslib "~2.3.0"
     value-or-promise "1.0.11"
 
-"@graphql-typed-document-node/core@3.1.0", "@graphql-typed-document-node/core@^3.1.0":
+"@graphql-typed-document-node/core@^3.1.0":
   version "3.1.0"
   resolved "https://registry.npmjs.org/@graphql-typed-document-node/core/-/core-3.1.0.tgz#0eee6373e11418bfe0b5638f654df7a4ca6a3950"
   integrity sha512-wYn6r8zVZyQJ6rQaALBEln5B1pzxb9shV5Ef97kTvn6yVGrqyXVnDqnU24MXnFubR+rZjBY9NWuxX3FB2sTsjg==
+
+"@graphql-typed-document-node/core@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
+  integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
 "@grpc/grpc-js@^1.5.5":
   version "1.5.7"
@@ -6872,9 +6877,9 @@ fast-json-stable-stringify@2.x, fast-json-stable-stringify@^2.0.0, fast-json-sta
   resolved "https://registry.yarnpkg.com/fast-json-stable-stringify/-/fast-json-stable-stringify-2.1.0.tgz#874bf69c6f404c2b5d99c481341399fd55892633"
   integrity sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==
 
-fast-json-stringify@^1.13.0:
+fast-json-stringify@^1.21.0:
   version "1.21.0"
-  resolved "https://registry.npmjs.org/fast-json-stringify/-/fast-json-stringify-1.21.0.tgz#51bc8c6d77d8c7b2cc7e5fa754f7f909f9e1262f"
+  resolved "https://registry.yarnpkg.com/fast-json-stringify/-/fast-json-stringify-1.21.0.tgz#51bc8c6d77d8c7b2cc7e5fa754f7f909f9e1262f"
   integrity sha512-xY6gyjmHN3AK1Y15BCbMpeO9+dea5ePVsp3BouHCdukcx0hOHbXwFhRodhcI0NpZIgDChSeAKkHW9YjKvhwKBA==
   dependencies:
     ajv "^6.11.0"
@@ -7556,15 +7561,15 @@ graphql-helix@1.8.3:
   resolved "https://registry.yarnpkg.com/graphql-helix/-/graphql-helix-1.8.3.tgz#2161c4550ff971e0065d0931e2ca9d5950522796"
   integrity sha512-xZ1y3KlinPAnBmi9GpFvTBXdY64HH98QbjRmStLp/FMvIxryv3hYqeoJO72uBKdh2BCgubxHa91LoD1J57lmSg==
 
-graphql-jit@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.7.0.tgz#c406b65b193218db512e4fdc5a9605a53ca3b436"
-  integrity sha512-NN0e8tl6S46zcDGbTp5B9pWSARDx8cmrGds5V0t5X8RqsLqckJG1cr4HvpVBsSjbuphj2PXBlnk49L3ddFGJhw==
+graphql-jit@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.8.0.tgz#0f8fb7240cbd0dc1ab45f3684ff296193bb2d2a5"
+  integrity sha512-mxdV9ohO6jKt1o9erb+7RpmnDKQFQCcJlYVfGa3j4+ieP0ITDsAlm194+pfvdv5F4zgrgZfSe5xx5Rf98epJmg==
   dependencies:
-    "@graphql-typed-document-node/core" "3.1.0"
-    fast-json-stringify "^1.13.0"
+    "@graphql-typed-document-node/core" "^3.1.1"
+    fast-json-stringify "^1.21.0"
     generate-function "^2.3.1"
-    json-schema "^0.2.3"
+    json-schema "^0.4.0"
     lodash.memoize "^4.1.2"
     lodash.merge "4.6.2"
     lodash.mergewith "4.6.2"
@@ -8923,10 +8928,10 @@ json-schema-traverse@^0.4.1:
   resolved "https://registry.npmjs.org/json-schema-traverse/-/json-schema-traverse-0.4.1.tgz#69f6a87d9513ab8bb8fe63bdb0979c448e684660"
   integrity sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==
 
-json-schema@^0.2.3:
-  version "0.2.3"
-  resolved "https://registry.npmjs.org/json-schema/-/json-schema-0.2.3.tgz#b480c892e59a2f05954ce727bd3f2a4e882f9e13"
-  integrity sha1-tIDIkuWaLwWVTOcnvT8qTogvnhM=
+json-schema@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/json-schema/-/json-schema-0.4.0.tgz#f7de4cf6efab838ebaeb3236474cbba5a1930ab5"
+  integrity sha512-es94M3nTIfsEPisRafak+HDLfHXnKBhV3vU5eqPcS3flIWqcxJWgXHXiey3YrpaNsanY5ei1VoYEbOzijuq9BA==
 
 json-stable-stringify-without-jsonify@^1.0.1:
   version "1.0.1"
