@@ -93,6 +93,8 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const skipOperation = pick('skip', () => false);
   const skipError = pick('skipError', defaultSkipError);
 
+  const printedDocumentsCache = new WeakMap<any, string>();
+
   const eventIdKey = options.eventIdKey === null ? null : 'sentryEventId';
 
   function addEventId(err: GraphQLError, eventId: string | null): GraphQLError {
@@ -114,7 +116,13 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
         o => o.kind === Kind.OPERATION_DEFINITION
       ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
-      const document = print(args.document);
+
+      let document = printedDocumentsCache.get(args.document);
+      if (!document) {
+        document = print(args.document);
+        printedDocumentsCache.set(args.document, document);
+      }
+
       const opName = args.operationName || rootOperation.name?.value || 'Anonymous Operation';
       const addedTags: Record<string, any> = (options.appendTags && options.appendTags(args)) || {};
       const traceparentData = (options.traceparentData && options.traceparentData(args)) || {};
@@ -157,7 +165,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
           // eslint-disable-next-line no-console
           console.warn(
             [
-              `Flag "startTransaction" is enabled but Sentry failed to find a transaction.`,
+              `Flag "startTransaction" is disabled but Sentry failed to find a transaction.`,
               `Try to create a transaction before GraphQL execution phase is started.`,
             ].join('\n')
           );
