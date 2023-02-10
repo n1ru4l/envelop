@@ -2,4 +2,4 @@
 '@envelop/graphql-jit': patch
 ---
 
-chore: update graphql-jit
+Update `graphql-jit` for supporting `@include` and `@skip` directives.
