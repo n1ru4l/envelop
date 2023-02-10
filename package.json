@@ -50,7 +50,7 @@
     "@changesets/cli": "2.24.2",
     "@graphql-tools/schema": "8.5.0",
     "@theguild/prettier-config": "0.1.1",
-    "@types/benchmark": "2.1.1",
+    "@types/benchmark": "2.1.2",
     "@types/jest": "27.4.1",
     "@types/k6": "0.36.0",
     "@types/node": "16.11.26",
