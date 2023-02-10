@@ -1,7 +1,14 @@
-import { Plugin } from '@envelop/core';
-import { Application } from 'graphql-modules';
+import type { Plugin, TypedExecutionArgs } from '@envelop/core';
+import type { Application } from 'graphql-modules';
 
 const graphqlModulesControllerSymbol = Symbol('GRAPHQL_MODULES');
+
+function destroy<T>(context: TypedExecutionArgs<T>) {
+  if (context.contextValue?.[graphqlModulesControllerSymbol]) {
+    context.contextValue[graphqlModulesControllerSymbol].destroy();
+    context.contextValue[graphqlModulesControllerSymbol] = null;
+  }
+}
 
 export const useGraphQLModules = (app: Application): Plugin => {
   return {
@@ -21,11 +28,22 @@ export const useGraphQLModules = (app: Application): Plugin => {
     },
     onExecute({ args }) {
       return {
-        onExecuteDone: () => {
-          if (args.contextValue && args.contextValue[graphqlModulesControllerSymbol]) {
-            args.contextValue[graphqlModulesControllerSymbol].destroy();
-            args.contextValue[graphqlModulesControllerSymbol] = null;
-          }
+        onExecuteDone() {
+          destroy(args);
+        },
+      };
+    },
+    onSubscribe({ args }) {
+      return {
+        onSubscribeResult({ args }) {
+          return {
+            onEnd() {
+              destroy(args);
+            },
+          };
+        },
+        onSubscribeError() {
+          destroy(args);
         },
       };
     },
