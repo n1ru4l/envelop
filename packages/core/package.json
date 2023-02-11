@@ -57,7 +57,7 @@
   },
   "dependencies": {
     "@envelop/types": "3.0.1",
-    "tslib": "2.4.0"
+    "tslib": "2.5.0"
   },
   "devDependencies": {
     "@graphql-tools/utils": "8.8.0",
