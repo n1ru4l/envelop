@@ -6,7 +6,7 @@
   "author": "Dotan Simha",
   "license": "MIT",
   "dependencies": {
-    "graphql-helix": "1.8.3",
+    "graphql-helix": "1.13.0",
     "@envelop/core": "*",
     "@graphql-tools/schema": "8.5.0",
     "graphql": "16.6.0"
