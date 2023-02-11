@@ -3384,10 +3384,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/k6@0.36.0":
-  version "0.36.0"
-  resolved "https://registry.yarnpkg.com/@types/k6/-/k6-0.36.0.tgz#9e8b01bef7e5d41f897de7a5a9c15955a882aff5"
-  integrity sha512-VyPK2Nl4CeQ6MPcwt6pev0knT+2XeN0fsu+o/okPYpnMttyTmAzqU7r+1qnYzdLm7pfU5z2Rtd40aRgRiLAh5A==
+"@types/k6@0.42.0":
+  version "0.42.0"
+  resolved "https://registry.yarnpkg.com/@types/k6/-/k6-0.42.0.tgz#4e670579f8becd2032838d8760dd90914093d60f"
+  integrity sha512-btIVh1X3aC3iiYHL3J6vnWx65tFhTZyA6c3RjsizlVRAk80a83mL9ybwClUpxo/gl8C7nii1NGMGmmN7yH5doQ==
 
 "@types/lodash@^4.14.175":
   version "4.14.191"
