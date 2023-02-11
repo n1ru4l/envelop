@@ -83,7 +83,7 @@
     "wait-on": "6.0.1"
   },
   "resolutions": {
-    "esbuild": "^0.14.0",
+    "esbuild": "^0.17.0",
     "graphql": "16.3.0",
     "prettier": "2.7.1"
   },
