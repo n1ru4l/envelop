@@ -6,7 +6,7 @@
   "author": "Laurin Quast <laurinquast@googlemail.com>",
   "license": "MIT",
   "dependencies": {
-    "fastify": "3.14.0",
+    "fastify": "3.29.5",
     "@envelop/core": "*",
     "@envelop/auth0": "*",
     "graphql-helix": "1.8.3",

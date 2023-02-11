@@ -6,7 +6,7 @@
   "author": "Dotan Simha",
   "license": "MIT",
   "dependencies": {
-    "fastify": "3.29.0",
+    "fastify": "3.29.5",
     "@envelop/core": "*",
     "graphql-helix": "1.12.0",
     "@graphql-tools/schema": "8.5.0",
