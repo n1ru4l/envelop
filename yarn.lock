@@ -7746,10 +7746,10 @@ graphql-executor@0.0.18:
   resolved "https://registry.yarnpkg.com/graphql-executor/-/graphql-executor-0.0.18.tgz#6aa4b39e1ca773e159c2a602621e90606df0109a"
   integrity sha512-upUSl7tfZCZ5dWG1XkOvpG70Yk3duZKcCoi/uJso4WxJVT6KIrcK4nZ4+2X/hzx46pL8wAukgYHY6iNmocRN+g==
 
-graphql-helix@1.8.3:
-  version "1.8.3"
-  resolved "https://registry.yarnpkg.com/graphql-helix/-/graphql-helix-1.8.3.tgz#2161c4550ff971e0065d0931e2ca9d5950522796"
-  integrity sha512-xZ1y3KlinPAnBmi9GpFvTBXdY64HH98QbjRmStLp/FMvIxryv3hYqeoJO72uBKdh2BCgubxHa91LoD1J57lmSg==
+graphql-helix@1.13.0:
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/graphql-helix/-/graphql-helix-1.13.0.tgz#e64dad5ef5f622ef38c97fa033f56f3d953c0104"
+  integrity sha512-cqDKMoRywKjnL0ZWCTB0GOiBgsH6d3nU4JGDF6RuzAyd35tmalzKpSxkx3NNp4H5RvnKWnrukWzR51wUq277ng==
 
 graphql-jit@^0.8.0:
   version "0.8.0"
