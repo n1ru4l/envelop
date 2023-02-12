@@ -52,7 +52,7 @@
     "@theguild/prettier-config": "0.1.1",
     "@types/benchmark": "2.1.2",
     "@types/jest": "27.4.1",
-    "@types/k6": "0.36.0",
+    "@types/k6": "0.42.0",
     "@types/node": "18.13.0",
     "@typescript-eslint/eslint-plugin": "5.36.2",
     "@typescript-eslint/parser": "5.36.2",
