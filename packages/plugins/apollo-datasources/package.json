@@ -47,7 +47,7 @@
     "definition": "dist/typings/index.d.ts"
   },
   "devDependencies": {
-    "@graphql-tools/schema": "8.5.0",
+    "@graphql-tools/schema": "8.5.1",
     "apollo-server-caching": "3.3.0",
     "apollo-datasource": "3.3.1",
     "graphql": "16.3.0",
