@@ -9,7 +9,7 @@
     "graphql-helix": "1.13.0",
     "@envelop/core": "*",
     "@graphql-tools/schema": "8.5.0",
-    "aws-sdk": "2.918.0",
+    "aws-sdk": "2.1313.0",
     "graphql": "16.6.0"
   },
   "devDependencies": {
