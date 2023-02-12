@@ -9,7 +9,7 @@
     "fastify": "3.29.5",
     "@envelop/core": "*",
     "graphql-helix": "1.13.0",
-    "@graphql-tools/schema": "8.5.0",
+    "@graphql-tools/schema": "8.5.1",
     "graphql": "experimental-stream-defer"
   },
   "devDependencies": {
