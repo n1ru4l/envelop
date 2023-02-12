@@ -12,8 +12,8 @@
     "@n1ru4l/socket-io-graphql-client": "0.9.5",
     "graphql-ws": "^4.4.2",
     "ws": "7.5.9",
-    "socket.io": "4.1.2",
-    "socket.io-client": "4.1.2",
+    "socket.io": "4.6.0",
+    "socket.io-client": "4.6.0",
     "graphql": "16.6.0"
   },
   "devDependencies": {
