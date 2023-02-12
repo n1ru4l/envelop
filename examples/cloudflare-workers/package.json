@@ -9,7 +9,7 @@
     "graphql-helix": "1.13.0",
     "@envelop/core": "*",
     "@graphql-tools/schema": "8.5.0",
-    "worktop": "0.7.0",
+    "worktop": "0.7.3",
     "graphql": "16.6.0"
   },
   "devDependencies": {
