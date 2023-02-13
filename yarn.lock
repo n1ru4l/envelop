@@ -2370,10 +2370,10 @@
     globby "^11.0.0"
     read-yaml-file "^1.1.0"
 
-"@mdx-js/mdx@^2.0.0", "@mdx-js/mdx@^2.1.3":
-  version "2.1.3"
-  resolved "https://registry.yarnpkg.com/@mdx-js/mdx/-/mdx-2.1.3.tgz#d5821920ebe546b45192f4c7a64dcc68a658f7f9"
-  integrity sha512-ahbb47HJIJ4xnifaL06tDJiSyLEy1EhFAStO7RZIm3GTa7yGW3NGhZaj+GUCveFgl5oI54pY4BgiLmYm97y+zg==
+"@mdx-js/mdx@^2.1.3", "@mdx-js/mdx@^2.2.1":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@mdx-js/mdx/-/mdx-2.3.0.tgz#d65d8c3c28f3f46bb0e7cb3bf7613b39980671a9"
+  integrity sha512-jLuwRlz8DQfQNiUCJR50Y09CGPq3fLtmtUQfVrj79E0JWu3dvsVcxVIcfhR5h0iXu+/z++zDrYeiJqifRynJkA==
   dependencies:
     "@types/estree-jsx" "^1.0.0"
     "@types/mdx" "^2.0.0"
@@ -2393,10 +2393,10 @@
     unist-util-visit "^4.0.0"
     vfile "^5.0.0"
 
-"@mdx-js/react@^2.0.0", "@mdx-js/react@^2.1.5":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@mdx-js/react/-/react-2.2.1.tgz#5a70592418d52b1b01538c37e795034601c96ec5"
-  integrity sha512-YdXcMcEnqZhzql98RNrqYo9cEhTTesBiCclEtoiQUbJwx87q9453GTapYU6kJ8ZZ2ek1Vp25SiAXEFy5O/eAPw==
+"@mdx-js/react@^2.1.5", "@mdx-js/react@^2.2.1":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@mdx-js/react/-/react-2.3.0.tgz#4208bd6d70f0d0831def28ef28c26149b03180b3"
+  integrity sha512-zQH//gdOmuu7nt2oJR29vFhDv88oGPmVw6BggmrHeMI+xgEkp1B2dX9/bMBSYtK0dyLX/aOmesKS09g222K1/g==
   dependencies:
     "@types/mdx" "^2.0.0"
     "@types/react" ">=16"
@@ -10741,13 +10741,13 @@ newrelic@8.17.1:
   optionalDependencies:
     "@newrelic/native-metrics" "^8.0.0"
 
-next-mdx-remote@4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/next-mdx-remote/-/next-mdx-remote-4.2.0.tgz#322aaa601d00e34bd27302443c793d432ae16db8"
-  integrity sha512-X5RhD7f7b78pH2abbuusObSGgII5l54OdusS/2iXljN7WN1cel6ToLlZeCZcyxx9cR4wmBGQYGongIttDYNmAA==
+next-mdx-remote@4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/next-mdx-remote/-/next-mdx-remote-4.3.0.tgz#34c5223c8a6465ab4484e8b22efff840c510316a"
+  integrity sha512-fbxkY03pM2Wx5bDNTVKpYD5Hx3QVZGH+6xDtVIxlxXz4HTifP1yI2DrkDvxXbTz0SYGIbluRMIW81IOOa8pigA==
   dependencies:
-    "@mdx-js/mdx" "^2.0.0"
-    "@mdx-js/react" "^2.0.0"
+    "@mdx-js/mdx" "^2.2.1"
+    "@mdx-js/react" "^2.2.1"
     vfile "^5.3.0"
     vfile-matter "^3.0.1"
 
