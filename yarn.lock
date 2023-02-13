@@ -4715,7 +4715,7 @@ bytes@3.1.2:
   resolved "https://registry.yarnpkg.com/bytes/-/bytes-3.1.2.tgz#8b0beeb98605adf1b128fa4386403c009e0221a5"
   integrity sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==
 
-cac@^6.7.12, cac@^6.7.2:
+cac@^6.7.12:
   version "6.7.12"
   resolved "https://registry.yarnpkg.com/cac/-/cac-6.7.12.tgz#6fb5ea2ff50bd01490dbda497f4ae75a99415193"
   integrity sha512-rM7E2ygtMkJqD9c7WnFU6fruFcN3xe4FM5yUmgxhZzIKJk4uHl9U/fhwdajGFQbQuv43FAUo1Fe8gX/oIKDeSA==
@@ -6554,7 +6554,7 @@ es-to-primitive@^1.2.1:
     is-date-object "^1.0.1"
     is-symbol "^1.0.2"
 
-esbuild@^0.11.12, esbuild@^0.17.0, esbuild@^0.17.6:
+esbuild@^0.17.0, esbuild@^0.17.6:
   version "0.17.7"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.17.7.tgz#a7ace55f2bf82fdb1c9013a924620ce2596984fa"
   integrity sha512-+5hHlrK108fT6C6/40juy0w4DYKtyZ5NjfBlTccBdsFutR7WBxpIY633JzZJewdsCy8xWA/u2z0MSniIJwufYg==
@@ -12412,7 +12412,7 @@ rollup-plugin-typescript2@^0.33.0:
     fs-extra "^10.0.0"
     tslib "^2.4.0"
 
-rollup@^2.45.2, rollup@^2.75.6:
+rollup@^2.75.6:
   version "2.75.7"
   resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.75.7.tgz#221ff11887ae271e37dcc649ba32ce1590aaa0b9"
   integrity sha512-VSE1iy0eaAYNCxEXaleThdFXqZJ42qDBatAwrfnPlENEZ8erQ+0LYX4JXOLPceWfZpV1VtZwZ3dFCuOZiSyFtQ==
@@ -13209,7 +13209,7 @@ stylis@^4.1.2:
   resolved "https://registry.yarnpkg.com/stylis/-/stylis-4.1.3.tgz#fd2fbe79f5fed17c55269e16ed8da14c84d069f7"
   integrity sha512-GP6WDNWf+o403jrEp9c5jibKavrtLW+/qYGhFxFrG8maXhwTBI7gLLhiBb0o7uFccWN+EOS9aMO6cGHWAO07OA==
 
-sucrase@^3.18.1, sucrase@^3.20.3:
+sucrase@^3.20.3:
   version "3.20.3"
   resolved "https://registry.yarnpkg.com/sucrase/-/sucrase-3.20.3.tgz#424f1e75b77f955724b06060f1ae708f5f0935cf"
   integrity sha512-azqwq0/Bs6RzLAdb4dXxsCgMtAaD2hzmUr4UhSfsxO46JFPAwMnnb441B/qsudZiS6Ylea3JXZe3Q497lsgXzQ==
@@ -13620,29 +13620,10 @@ tsscmp@1.0.5:
   resolved "https://registry.yarnpkg.com/tsscmp/-/tsscmp-1.0.5.tgz#7dc4a33af71581ab4337da91d85ca5427ebd9a97"
   integrity sha512-aP/vy9xYiYGvtpW4xBkxdoeqbT+nNeo/37cdQk3iSiGz0xKb20XwOgBSqYo1DzEqt1ycPubEfPU3oHgzsRRL3g==
 
-tsup@4.11.2:
-  version "4.11.2"
-  resolved "https://registry.yarnpkg.com/tsup/-/tsup-4.11.2.tgz#135c69ff1b0ef9357d5e0076d1d6c29118904b43"
-  integrity sha512-cp+gy0TGzFm/3PkPNeiZ2Fvi4MKI8jj6Xq6gVpSQ+Og+6GPqfws2K4zYo11OJoccuk2LnlJIJt8xwnoYCVGpSA==
-  dependencies:
-    cac "^6.7.2"
-    chalk "^4.1.0"
-    chokidar "^3.5.1"
-    debug "^4.3.1"
-    esbuild "^0.11.12"
-    execa "^5.0.0"
-    globby "^11.0.3"
-    joycon "^3.0.1"
-    postcss-load-config "^3.0.1"
-    resolve-from "^5.0.0"
-    rollup "^2.45.2"
-    sucrase "^3.18.1"
-    tree-kill "^1.2.2"
-
-tsup@^6.5.0:
-  version "6.6.0"
-  resolved "https://registry.yarnpkg.com/tsup/-/tsup-6.6.0.tgz#94a949fa282dd1a36b981741d95a30eda2eda871"
-  integrity sha512-HxZE7Hj5yNxLFftCXdcJ+Jsax8dI4oKb0bt8fIvd1g/W0FZ46sU1pFBVo15WpOERFcEMH7Hykey/Q+hKO4s9RQ==
+tsup@6.6.2, tsup@^6.5.0:
+  version "6.6.2"
+  resolved "https://registry.yarnpkg.com/tsup/-/tsup-6.6.2.tgz#c45b5333e15b6ca85dd41146430d4cedecbbdfc6"
+  integrity sha512-+yQ6SI4rVtp1+YpcYOePumJLEVQ896CDNRt9dJ2L/DeMnLf1+FTOCVw5eioLBH0xLdHgogO9NQ6vPNF5MfkSJw==
   dependencies:
     bundle-require "^4.0.0"
     cac "^6.7.12"
