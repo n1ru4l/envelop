@@ -2447,10 +2447,10 @@
   dependencies:
     "@n1ru4l/push-pull-async-iterable-iterator" "^3.2.0"
 
-"@n1ru4l/socket-io-graphql-server@0.9.2":
-  version "0.9.2"
-  resolved "https://registry.yarnpkg.com/@n1ru4l/socket-io-graphql-server/-/socket-io-graphql-server-0.9.2.tgz#082e58e249893cf6483c4c74aa1a2931bbd1e458"
-  integrity sha512-HodRe0SRDXGdnVEBRCHnblnGeM2ArybjsTuW560FW9eK/OdONJRXwVIpxHrjBlmsHwmEqVuw4eGjlErot9FNvw==
+"@n1ru4l/socket-io-graphql-server@0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@n1ru4l/socket-io-graphql-server/-/socket-io-graphql-server-0.13.0.tgz#b6988ec5d3eeb0b9e4fbdc29e4721d42880ad045"
+  integrity sha512-lgfEX9nwQcJlL8ZV+wmd5XWuIvaj81WH/Iq0SLaGGW0Sn7lSvSkSidAR0nmkIySCgXK0UIcEMn/OMrZJisK5Rg==
 
 "@napi-rs/simple-git-android-arm-eabi@0.1.8":
   version "0.1.8"
