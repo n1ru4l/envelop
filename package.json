@@ -80,7 +80,7 @@
     "ts-jest": "27.1.5",
     "ts-node": "10.9.1",
     "typescript": "4.8.4",
-    "wait-on": "6.0.1"
+    "wait-on": "7.0.1"
   },
   "resolutions": {
     "esbuild": "^0.17.0",
