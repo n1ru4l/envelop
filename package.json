@@ -70,7 +70,7 @@
     "eslint-plugin-unicorn": "45.0.2",
     "faker": "5.5.3",
     "globby": "11.1.0",
-    "husky": "7.0.4",
+    "husky": "8.0.3",
     "jest": "27.5.1",
     "lint-staged": "12.5.0",
     "patch-package": "6.5.1",
