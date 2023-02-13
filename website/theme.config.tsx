@@ -31,14 +31,13 @@ export default defineConfig({
   },
   siteName: 'ENVELOP',
   editLink: {
-    // @ts-expect-error -- Don't know what's wrong with types here
     component({ children, className, filePath }) {
-      const router = useRouter();
+      const { route, query } = useRouter();
 
       let url = `n1ru4l/envelop/tree/main/website/${filePath}`;
 
-      if (router.route === '/plugins/[name]') {
-        const { name } = router.query;
+      if (route === '/plugins/[name]') {
+        const { name } = query;
         const plugin = PLUGINS.find(p => p.identifier === name);
         if (!plugin) {
           return null;

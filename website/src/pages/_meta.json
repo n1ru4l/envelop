@@ -9,13 +9,11 @@
   },
   "v3": {
     "title": "v3",
-    "type": "page",
-    "versioned": true
+    "type": "page"
   },
   "docs": {
     "title": "v2",
-    "type": "page",
-    "versioned": true
+    "type": "page"
   },
   "plugins": {
     "title": "Plugins",

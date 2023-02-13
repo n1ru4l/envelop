@@ -33,9 +33,7 @@ export const getStaticProps: GetStaticProps = async ctx => {
     )}|
 
 ${readme}`,
-    {
-      unstable_defaultShowCopyCode: true,
-    }
+    { defaultShowCopyCode: true }
   );
 
   return {
