@@ -9,10 +9,12 @@
   },
   "v3": {
     "title": "v3",
+    "versioned": true,
     "type": "page"
   },
   "docs": {
     "title": "v2",
+    "versioned": true,
     "type": "page"
   },
   "plugins": {
