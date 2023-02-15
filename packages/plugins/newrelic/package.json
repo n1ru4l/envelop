@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@types/newrelic": "7.0.4",
-    "graphql": "16.3.0",
+    "graphql": "16.6.0",
     "newrelic": "8.17.1",
     "typescript": "4.8.4"
   },
