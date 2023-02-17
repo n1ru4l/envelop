@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "lru-cache": "^6.0.0",
-    "tslib": "^2.4.0",
+    "tslib": "^2.5.0",
     "fast-json-stable-stringify": "^2.1.0",
     "js-sha1": "^0.6.0"
   },

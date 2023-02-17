@@ -49,7 +49,7 @@
   "dependencies": {
     "@envelop/on-resolve": "^2.0.5",
     "apollo-tracing": "^0.15.0",
-    "tslib": "^2.4.0"
+    "tslib": "^2.5.0"
   },
   "devDependencies": {
     "@graphql-tools/schema": "8.5.1",

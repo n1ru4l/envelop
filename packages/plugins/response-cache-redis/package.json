@@ -54,7 +54,7 @@
   "dependencies": {
     "@envelop/response-cache": "^4.0.6",
     "ioredis": "^4.27.9",
-    "tslib": "^2.4.0"
+    "tslib": "^2.5.0"
   },
   "peerDependencies": {},
   "buildOptions": {

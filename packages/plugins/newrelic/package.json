@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@envelop/on-resolve": "^2.0.5",
-    "tslib": "^2.4.0"
+    "tslib": "^2.5.0"
   },
   "devDependencies": {
     "@types/newrelic": "7.0.4",
