@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "graphql-depth-limit": "^1.1.0",
-    "tslib": "^2.4.0"
+    "tslib": "^2.5.0"
   },
   "devDependencies": {
     "@envelop/core": "^3.0.5",

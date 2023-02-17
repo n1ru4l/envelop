@@ -58,7 +58,7 @@
     "@whatwg-node/fetch": "^0.6.5",
     "lru-cache": "^6.0.0",
     "fast-json-stable-stringify": "^2.1.0",
-    "tslib": "^2.4.0"
+    "tslib": "^2.5.0"
   },
   "peerDependencies": {
     "@envelop/core": "^3.0.5",
