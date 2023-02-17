@@ -1,15 +1,6 @@
-import { Plugin, Maybe, isAsyncIterable } from '@envelop/core';
+import { Plugin, Maybe, isAsyncIterable, ExecutionResult, ObjMap } from '@envelop/core';
 import { visitResult } from '@graphql-tools/utils';
-import {
-  visit,
-  TypeInfo,
-  visitWithTypeInfo,
-  ExecutionArgs,
-  ExecutionResult,
-  getOperationAST,
-  Kind,
-  SelectionSetNode,
-} from 'graphql';
+import { visit, TypeInfo, visitWithTypeInfo, ExecutionArgs, getOperationAST, Kind, SelectionSetNode } from 'graphql';
 import jsonStableStringify from 'fast-json-stable-stringify';
 import type { Cache, CacheEntityRecord } from './cache.js';
 import { createInMemoryCache } from './in-memory-cache.js';
@@ -32,7 +23,7 @@ export type BuildResponseCacheKeyFunction = (params: {
 
 export type GetDocumentStringFunction = (executionArgs: ExecutionArgs) => string;
 
-export type ShouldCacheResultFunction = (params: { result: ExecutionResult }) => Boolean;
+export type ShouldCacheResultFunction = (params: { cacheKey: string; result: ExecutionResult }) => Boolean;
 
 export type UseResponseCacheParameter<PluginContext extends Record<string, any> = {}> = {
   cache?: Cache;
@@ -153,6 +144,28 @@ export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boo
 
   return true;
 };
+
+export type ResponseCacheExtensions =
+  | {
+      hit: true;
+    }
+  | {
+      hit: false;
+      didCache: false;
+    }
+  | {
+      hit: false;
+      didCache: true;
+      ttl: number;
+    }
+  | {
+      invalidatedEntities: string[];
+    };
+
+export type ResponseCacheExecutionResult = ExecutionResult<
+  ObjMap<unknown>,
+  { responseCache?: ResponseCacheExtensions }
+>;
 
 export function useResponseCache<PluginContext extends Record<string, any> = {}>({
   cache = createInMemoryCache(),
@@ -304,7 +317,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
               return;
             }
 
-            const processedResult = processResult(result);
+            const processedResult = processResult(result) as ResponseCacheExecutionResult;
 
             cache.invalidate(identifier.values());
             if (includeExtensionMetadata) {
@@ -313,6 +326,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
                 extensions: {
                   ...processedResult.extensions,
                   responseCache: {
+                    ...processedResult.extensions?.responseCache,
                     invalidatedEntities: Array.from(identifier.values()),
                   },
                 },
@@ -322,7 +336,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         };
       }
 
-      const operationId = await buildResponseCacheKey({
+      const cacheKey = await buildResponseCacheKey({
         documentString: getDocumentString(onExecuteParams.args),
         variableValues: onExecuteParams.args.variableValues,
         operationName: onExecuteParams.args.operationName,
@@ -330,14 +344,16 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       });
 
       if ((enabled?.(onExecuteParams.args.contextValue) ?? true) === true) {
-        const cachedResponse = await cache.get(operationId);
+        const cachedResponse = (await cache.get(cacheKey)) as ResponseCacheExecutionResult;
 
         if (cachedResponse != null) {
           if (includeExtensionMetadata) {
             onExecuteParams.setResultAndStopExecution({
               ...cachedResponse,
               extensions: {
+                ...cachedResponse.extensions,
                 responseCache: {
+                  ...cachedResponse.extensions?.responseCache,
                   hit: true,
                 },
               },
@@ -376,13 +392,13 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
             return;
           }
 
-          const processedResult = processResult(result);
+          const processedResult = processResult(result) as ResponseCacheExecutionResult;
 
           if (skip) {
             return;
           }
 
-          if (!shouldCacheResult({ result: processedResult })) {
+          if (!shouldCacheResult({ cacheKey, result: processedResult })) {
             return;
           }
 
@@ -394,7 +410,9 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
               setResult({
                 ...processedResult,
                 extensions: {
+                  ...processedResult.extensions,
                   responseCache: {
+                    ...processedResult.extensions?.responseCache,
                     hit: false,
                     didCache: false,
                   },
@@ -404,12 +422,14 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
             return;
           }
 
-          cache.set(operationId, processedResult, identifier.values(), finalTtl);
+          cache.set(cacheKey, processedResult, identifier.values(), finalTtl);
           if (includeExtensionMetadata) {
             setResult({
               ...processedResult,
               extensions: {
+                ...processedResult.extensions,
                 responseCache: {
+                  ...processedResult.extensions?.responseCache,
                   hit: false,
                   didCache: true,
                   ttl: finalTtl,
