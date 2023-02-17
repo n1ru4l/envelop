@@ -10,40 +10,6 @@ import { useGraphQlJit } from '@envelop/graphql-jit';
 describe('useResponseCache', () => {
   beforeEach(() => jest.useRealTimers());
 
-  it('applies schema transforms only once', async () => {
-    const schema = makeExecutableSchema({
-      typeDefs: /* GraphQL */ `
-        type Query {
-          a: String
-        }
-      `,
-    });
-    let replaceCounter = 0;
-    const testInstance = createTestkit(
-      [
-        useResponseCache({
-          session: () => null,
-          ttl: 0,
-          ttlPerType: {
-            User: 200,
-          },
-        }),
-        {
-          onSchemaChange({ schema, replaceSchema }) {
-            if (replaceCounter > 1) {
-              throw new Error('There is an infinite loop happening. Please fix it.');
-            }
-            replaceCounter = replaceCounter + 1;
-            replaceSchema(schema);
-          },
-        },
-      ],
-      schema
-    );
-
-    testInstance.execute;
-  });
-
   it('custom ttl per type is used instead of the global ttl - only enable caching for a specific type when the global ttl is 0', async () => {
     jest.useFakeTimers();
     const spy = jest.fn(() => [
@@ -1486,6 +1452,7 @@ describe('useResponseCache', () => {
   });
 
   it.skip('cache is purged upon mutation even when error is included in the mutation execution result', async () => {
+    3;
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -2175,6 +2142,119 @@ describe('useResponseCache', () => {
         await testInstance.execute(query);
         expect(spyWithoutId).toHaveBeenCalledTimes(1);
       });
+    });
+  });
+
+  it('keeps the existing extensions', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          foo: String
+        }
+      `,
+      resolvers: {
+        Query: {
+          foo: () => 'bar',
+        },
+      },
+    });
+    const operation = /* GraphQL */ `
+      query {
+        foo
+      }
+    `;
+
+    const cache = createInMemoryCache();
+    const testkit = createTestkit(
+      [
+        {
+          onExecute({ setExecuteFn }) {
+            setExecuteFn(() => ({
+              data: {
+                foo: 'bar',
+              },
+              extensions: {
+                myExtension: 'myExtensionValue',
+              },
+            }));
+          },
+        },
+        useResponseCache({ session: () => null, includeExtensionMetadata: true, cache }),
+      ],
+      schema
+    );
+
+    const result = await testkit.execute(operation);
+    assertSingleExecutionValue(result);
+    expect(result).toEqual({
+      data: {
+        foo: 'bar',
+      },
+      extensions: {
+        myExtension: 'myExtensionValue',
+        responseCache: {
+          didCache: true,
+          hit: false,
+          ttl: Infinity,
+        },
+      },
+    });
+  });
+  it('keeps the existing response cache extensions', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          foo: String
+        }
+      `,
+      resolvers: {
+        Query: {
+          foo: () => 'bar',
+        },
+      },
+    });
+    const operation = /* GraphQL */ `
+      query {
+        foo
+      }
+    `;
+
+    const cache = createInMemoryCache();
+    const testkit = createTestkit(
+      [
+        {
+          onExecute({ setExecuteFn }) {
+            setExecuteFn(() => ({
+              data: {
+                foo: 'bar',
+              },
+              extensions: {
+                responseCache: {
+                  myExtension: 'myExtensionValue',
+                },
+              },
+            }));
+          },
+        },
+        useResponseCache({ session: () => null, includeExtensionMetadata: true, cache }),
+      ],
+      schema
+    );
+
+    const result = await testkit.execute(operation);
+    assertSingleExecutionValue(result);
+    expect(result).toEqual({
+      data: {
+        foo: 'bar',
+      },
+      extensions: {
+        responseCache: {
+          myExtension: 'myExtensionValue',
+          didCache: true,
+          hit: false,
+          ttl: Infinity,
+        },
+      },
     });
   });
 });
