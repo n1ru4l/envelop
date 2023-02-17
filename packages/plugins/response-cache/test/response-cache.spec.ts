@@ -2,7 +2,7 @@ import { getIntrospectionQuery, GraphQLObjectType, GraphQLSchema } from 'graphql
 import { assertSingleExecutionValue, createTestkit, TestkitInstance } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useValidationCache } from '@envelop/validation-cache';
-import { useResponseCache, createInMemoryCache } from '../src/index.js';
+import { useResponseCache, createInMemoryCache, defaultBuildResponseCacheKey } from '../src/index.js';
 import { useParserCache } from '@envelop/parser-cache';
 import { useLogger } from '@envelop/core';
 import { useGraphQlJit } from '@envelop/graphql-jit';
@@ -2255,6 +2255,50 @@ describe('useResponseCache', () => {
           ttl: Infinity,
         },
       },
+    });
+  });
+  it('calls shouldCacheResult with correct parameters', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          foo: String
+        }
+      `,
+      resolvers: {
+        Query: {
+          foo: () => 'bar',
+        },
+      },
+    });
+    const operation = /* GraphQL */ `
+      query {
+        foo
+      }
+    `;
+
+    const shouldCacheResult = jest.fn(() => true);
+    const cache = createInMemoryCache();
+    const testkit = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+          cache,
+          shouldCacheResult,
+        }),
+      ],
+      schema
+    );
+
+    const result = await testkit.execute(operation);
+    assertSingleExecutionValue(result);
+    const cacheKey = await defaultBuildResponseCacheKey({
+      documentString: operation,
+      variableValues: {},
+      sessionId: null,
+    });
+    expect(shouldCacheResult).toHaveBeenCalledWith({
+      cacheKey,
+      result,
     });
   });
 });
