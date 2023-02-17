@@ -1,6 +1,6 @@
 {
   "name": "@envelop/response-cache",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "author": "Kamil Kisiela <kamilkisiela@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -61,7 +61,7 @@
     "tslib": "^2.4.0"
   },
   "peerDependencies": {
-    "@envelop/core": "^3.0.4",
+    "@envelop/core": "^3.0.5",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {

@@ -1,5 +1,14 @@
 # @envelop/response-cache
 
+## 4.0.6
+
+### Patch Changes
+
+- [#1724](https://github.com/n1ru4l/envelop/pull/1724) [`94e39a5d`](https://github.com/n1ru4l/envelop/commit/94e39a5de56409fdda58e9dd5c9472366e95171a) Thanks [@ardatan](https://github.com/ardatan)! - - Respect existing extensions in the result
+  - Add `cacheKey` to `shouldCacheResult` function
+- Updated dependencies [[`270249cf`](https://github.com/n1ru4l/envelop/commit/270249cfb7650f8ad64f0167bb45a99475a03b04)]:
+  - @envelop/core@3.0.5
+
 ## 4.0.5
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @envelop/graphql-jit
 
+## 5.0.5
+
+### Patch Changes
+
+- [#1633](https://github.com/n1ru4l/envelop/pull/1633) [`b581fddd`](https://github.com/n1ru4l/envelop/commit/b581fddd71c2fc882925a4e2a1124540065a0b1a) Thanks [@jeengbe](https://github.com/jeengbe)! - Update `graphql-jit` for supporting `@include` and `@skip` directives.
+
+- Updated dependencies [[`270249cf`](https://github.com/n1ru4l/envelop/commit/270249cfb7650f8ad64f0167bb45a99475a03b04)]:
+  - @envelop/core@3.0.5
+
 ## 5.0.4
 
 ### Patch Changes

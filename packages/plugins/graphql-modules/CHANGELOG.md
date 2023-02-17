@@ -1,5 +1,14 @@
 # @envelop/graphql-modules
 
+## 4.0.5
+
+### Patch Changes
+
+- [#1630](https://github.com/n1ru4l/envelop/pull/1630) [`d90d3615`](https://github.com/n1ru4l/envelop/commit/d90d36155727a3734381174db4f9b986dce44cb4) Thanks [@n1ru4l](https://github.com/n1ru4l)! - Cleanup reference to context value on subscription completion
+
+- Updated dependencies [[`270249cf`](https://github.com/n1ru4l/envelop/commit/270249cfb7650f8ad64f0167bb45a99475a03b04)]:
+  - @envelop/core@3.0.5
+
 ## 4.0.4
 
 ### Patch Changes

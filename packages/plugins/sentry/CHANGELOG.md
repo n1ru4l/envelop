@@ -1,5 +1,16 @@
 # @envelop/sentry
 
+## 5.1.0
+
+### Minor Changes
+
+- [#1632](https://github.com/n1ru4l/envelop/pull/1632) [`2a175b47`](https://github.com/n1ru4l/envelop/commit/2a175b476a47d17225946277ff00f0a90ae50044) Thanks [@jeengbe](https://github.com/jeengbe)! - feat: add cache for printed documents
+
+### Patch Changes
+
+- Updated dependencies [[`270249cf`](https://github.com/n1ru4l/envelop/commit/270249cfb7650f8ad64f0167bb45a99475a03b04)]:
+  - @envelop/core@3.0.5
+
 ## 5.0.0
 
 ### Major Changes
