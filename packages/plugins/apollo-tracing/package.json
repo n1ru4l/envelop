@@ -1,6 +1,6 @@
 {
   "name": "@envelop/apollo-tracing",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "repository": {
@@ -47,7 +47,7 @@
     "definition": "dist/typings/index.d.ts"
   },
   "dependencies": {
-    "@envelop/on-resolve": "^2.0.5",
+    "@envelop/on-resolve": "^2.0.6",
     "apollo-tracing": "^0.15.0",
     "tslib": "^2.5.0"
   },
@@ -57,8 +57,8 @@
     "typescript": "4.8.4"
   },
   "peerDependencies": {
-    "@envelop/types": "^3.0.1",
-    "@envelop/core": "^3.0.5",
+    "@envelop/types": "^3.0.2",
+    "@envelop/core": "^3.0.6",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {

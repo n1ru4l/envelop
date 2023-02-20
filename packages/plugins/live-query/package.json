@@ -1,6 +1,6 @@
 {
   "name": "@envelop/live-query",
-  "version": "5.0.5",
+  "version": "5.0.6",
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -59,7 +59,7 @@
     "@n1ru4l/graphql-live-query-patch-jsondiffpatch": "0.8.0"
   },
   "peerDependencies": {
-    "@envelop/core": "^3.0.5",
+    "@envelop/core": "^3.0.6",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "buildOptions": {
