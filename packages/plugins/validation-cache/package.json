@@ -50,7 +50,7 @@
     "lru-cache": "^6.0.0",
     "tslib": "^2.5.0",
     "fast-json-stable-stringify": "^2.1.0",
-    "js-sha1": "^0.6.0"
+    "sha1-es": "^1.8.2"
   },
   "devDependencies": {
     "graphql": "16.6.0",
