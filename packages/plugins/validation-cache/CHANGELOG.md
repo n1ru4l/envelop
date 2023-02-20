@@ -1,5 +1,23 @@
 # @envelop/validation-cache
 
+## 5.1.2
+
+### Patch Changes
+
+- [#1725](https://github.com/n1ru4l/envelop/pull/1725) [`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957) Thanks [@n1ru4l](https://github.com/n1ru4l)! - dependencies updates:
+
+  - Updated dependency [`tslib@^2.5.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.5.0) (from `^2.4.0`, in `dependencies`)
+
+- [#1727](https://github.com/n1ru4l/envelop/pull/1727) [`c80fe926`](https://github.com/n1ru4l/envelop/commit/c80fe926231269a62b05324d4939b96ac8240548) Thanks [@n1ru4l](https://github.com/n1ru4l)! - dependencies updates:
+
+  - Added dependency [`sha1-es@^1.8.2` ↗︎](https://www.npmjs.com/package/sha1-es/v/1.8.2) (to `dependencies`)
+  - Removed dependency [`js-sha1@^0.6.0` ↗︎](https://www.npmjs.com/package/js-sha1/v/0.6.0) (from `dependencies`)
+
+- [#1727](https://github.com/n1ru4l/envelop/pull/1727) [`c80fe926`](https://github.com/n1ru4l/envelop/commit/c80fe926231269a62b05324d4939b96ac8240548) Thanks [@n1ru4l](https://github.com/n1ru4l)! - fix broken edge runtime support
+
+- Updated dependencies [[`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957)]:
+  - @envelop/core@3.0.6
+
 ## 5.1.1
 
 ### Patch Changes

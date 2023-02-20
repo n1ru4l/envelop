@@ -1,6 +1,6 @@
 {
   "name": "@envelop/apollo-federation",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
@@ -59,7 +59,7 @@
     "graphql-tag": "2.12.6"
   },
   "peerDependencies": {
-    "@envelop/core": "^3.0.5",
+    "@envelop/core": "^3.0.6",
     "@apollo/gateway": "^0.41.0 || ^0.42.0 || ^0.43.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },

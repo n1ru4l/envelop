@@ -1,5 +1,12 @@
 # @envelop/on-resolve
 
+## 2.0.6
+
+### Patch Changes
+
+- Updated dependencies [[`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957)]:
+  - @envelop/core@3.0.6
+
 ## 2.0.5
 
 ### Patch Changes

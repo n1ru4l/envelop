@@ -1,5 +1,16 @@
 # @envelop/graphql-jit
 
+## 5.0.6
+
+### Patch Changes
+
+- [#1725](https://github.com/n1ru4l/envelop/pull/1725) [`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957) Thanks [@n1ru4l](https://github.com/n1ru4l)! - dependencies updates:
+
+  - Updated dependency [`tslib@^2.5.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.5.0) (from `^2.4.0`, in `dependencies`)
+
+- Updated dependencies [[`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957)]:
+  - @envelop/core@3.0.6
+
 ## 5.0.5
 
 ### Patch Changes
