@@ -6,7 +6,7 @@ import {
   OperationDefinitionNode,
   print,
 } from 'graphql';
-import { DefaultContext, isAsyncIterable, Path, Plugin } from '@envelop/core';
+import { DefaultContext, getDocumentString, isAsyncIterable, Path, Plugin } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
 
 enum AttributeName {
@@ -148,7 +148,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
         definitionNode => definitionNode.kind === Kind.OPERATION_DEFINITION,
       ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
-      const document = print(args.document);
+      const document = getDocumentString(args.document, print);
       const operationName =
         options.extractOperationName?.(args.contextValue) ||
         args.operationName ||

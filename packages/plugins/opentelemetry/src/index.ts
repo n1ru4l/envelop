@@ -1,5 +1,5 @@
 import { print } from 'graphql';
-import { isAsyncIterable, OnExecuteHookResult, Plugin } from '@envelop/core';
+import { getDocumentString, isAsyncIterable, OnExecuteHookResult, Plugin } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
 import { SpanAttributes, SpanKind, TracerProvider } from '@opentelemetry/api';
 import * as opentelemetry from '@opentelemetry/api';
@@ -98,7 +98,7 @@ export const useOpenTelemetry = (
         attributes: {
           ...spanAdditionalAttributes,
           [AttributeName.EXECUTION_OPERATION_NAME]: args.operationName ?? undefined,
-          [AttributeName.EXECUTION_OPERATION_DOCUMENT]: print(args.document),
+          [AttributeName.EXECUTION_OPERATION_DOCUMENT]: getDocumentString(args.document, print),
           ...(options.variables
             ? { [AttributeName.EXECUTION_VARIABLES]: JSON.stringify(args.variableValues ?? {}) }
             : {}),

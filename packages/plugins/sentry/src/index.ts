@@ -1,9 +1,10 @@
 import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 import {
+  getDocumentString,
   handleStreamOrSingleExecutionResult,
   isOriginalGraphQLError,
   OnExecuteDoneHookResultOnNextHook,
-  Plugin,
+  type Plugin,
 } from '@envelop/core';
 import * as Sentry from '@sentry/node';
 import type { Span, TraceparentData } from '@sentry/types';
@@ -96,8 +97,6 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   const skipOperation = pick('skip', () => false);
   const skipError = pick('skipError', defaultSkipError);
 
-  const printedDocumentsCache = new WeakMap<any, string>();
-
   const eventIdKey = options.eventIdKey === null ? null : 'sentryEventId';
 
   function addEventId(err: GraphQLError, eventId: string | null): GraphQLError {
@@ -120,11 +119,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
       ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
 
-      let document = printedDocumentsCache.get(args.document);
-      if (!document) {
-        document = print(args.document);
-        printedDocumentsCache.set(args.document, document);
-      }
+      const document = getDocumentString(args.document, print);
 
       const opName = args.operationName || rootOperation.name?.value || 'Anonymous Operation';
       const addedTags: Record<string, any> = (options.appendTags && options.appendTags(args)) || {};

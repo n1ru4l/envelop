@@ -1,16 +1,24 @@
 import jsonStableStringify from 'fast-json-stable-stringify';
 import {
+  DocumentNode,
   ExecutionArgs,
   getOperationAST,
   Kind,
+  print,
   SelectionSetNode,
   TypeInfo,
   visit,
   visitWithTypeInfo,
 } from 'graphql';
-import { ExecutionResult, isAsyncIterable, Maybe, ObjMap, Plugin } from '@envelop/core';
-import { visitResult } from '@graphql-tools/utils';
-import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str.js';
+import {
+  ExecutionResult,
+  getDocumentString,
+  isAsyncIterable,
+  Maybe,
+  ObjMap,
+  Plugin,
+} from '@envelop/core';
+import { memoize1, visitResult } from '@graphql-tools/utils';
 import type { Cache, CacheEntityRecord } from './cache.js';
 import { hashSHA256 } from './hash-sha256.js';
 import { createInMemoryCache } from './in-memory-cache.js';
@@ -156,6 +164,10 @@ export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boo
   return true;
 };
 
+export function defaultGetDocumentString(executionArgs: ExecutionArgs): string {
+  return getDocumentString(executionArgs.document, print);
+}
+
 export type ResponseCacheExtensions =
   | {
       hit: true;
@@ -177,6 +189,42 @@ export type ResponseCacheExecutionResult = ExecutionResult<
   ObjMap<unknown>,
   { responseCache?: ResponseCacheExtensions }
 >;
+
+const originalDocumentMap = new WeakMap<DocumentNode, DocumentNode>();
+const addTypeNameToDocument = memoize1(function addTypeNameToDocument(
+  document: DocumentNode,
+): DocumentNode {
+  let documentChanged = false;
+  const newDocument = visit(document, {
+    SelectionSet(node): SelectionSetNode {
+      if (
+        !node.selections.some(
+          selection => selection.kind === Kind.FIELD && selection.name.value === '__typename',
+        )
+      ) {
+        documentChanged = true;
+        return {
+          ...node,
+          selections: [
+            {
+              kind: Kind.FIELD,
+              name: {
+                kind: Kind.NAME,
+                value: '__typename',
+              },
+            },
+            ...node.selections,
+          ],
+        };
+      }
+      return node;
+    },
+  });
+  if (documentChanged) {
+    originalDocumentMap.set(newDocument, document);
+  }
+  return newDocument;
+});
 
 export function useResponseCache<PluginContext extends Record<string, any> = {}>({
   cache = createInMemoryCache(),
@@ -200,59 +248,28 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
   // never cache Introspections
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
-
   return {
-    onPluginInit({ addPlugin }) {
-      if (getDocumentString === defaultGetDocumentString) {
-        addPlugin(useCacheDocumentString());
-      }
+    onParse() {
+      return ({ result, replaceParseResult }) => {
+        if (result.kind === Kind.DOCUMENT) {
+          const newDocument = addTypeNameToDocument(result);
+          replaceParseResult(newDocument);
+        }
+      };
     },
     async onExecute(onExecuteParams) {
-      let documentChanged = false;
-      const newDocument = visit(onExecuteParams.args.document, {
-        SelectionSet(node): SelectionSetNode {
-          if (
-            !node.selections.some(
-              selection => selection.kind === Kind.FIELD && selection.name.value === '__typename',
-            )
-          ) {
-            documentChanged = true;
-            return {
-              ...node,
-              selections: [
-                {
-                  kind: Kind.FIELD,
-                  name: {
-                    kind: Kind.NAME,
-                    value: '__typename',
-                  },
-                },
-                ...node.selections,
-              ],
-            };
-          }
-          return node;
-        },
-      });
-      if (documentChanged) {
-        onExecuteParams.setExecuteFn(function typeNameAddedExecute() {
-          return onExecuteParams.executeFn({
-            ...onExecuteParams.args,
-            document: newDocument,
-          });
-        });
-      }
       const identifier = new Map<string, CacheEntityRecord>();
       const types = new Set<string>();
 
       let currentTtl: number | undefined;
       let skip = false;
-
       const processResult = (result: ExecutionResult): ExecutionResult =>
         visitResult(
           result,
           {
-            document: onExecuteParams.args.document,
+            document:
+              originalDocumentMap.get(onExecuteParams.args.document) ??
+              onExecuteParams.args.document,
             variables: onExecuteParams.args.variableValues as any,
             operationName: onExecuteParams.args.operationName ?? undefined,
             rootValue: onExecuteParams.args.rootValue,
@@ -271,27 +288,25 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
                     return val;
                   },
                   get(_, fieldName: string) {
-                    if (documentChanged) {
-                      if (fieldName === '__typename') {
-                        typenameCalled++;
-                      }
-                      if (
-                        fieldName === '__leave' &&
-                        /**
-                         * The visitResult function is called for each field in the selection set.
-                         * But visitResult function looks for __typename field visitor even if it is not there in the document
-                         * So it calls __typename field visitor twice if it is also in the selection set.
-                         * That's why we need to count the number of times it is called.
-                         *
-                         * Default call of __typename https://github.com/ardatan/graphql-tools/blob/master/packages/utils/src/visitResult.ts#L277
-                         * Call for the field node https://github.com/ardatan/graphql-tools/blob/master/packages/utils/src/visitResult.ts#L272
-                         */ typenameCalled < 2
-                      ) {
-                        return (root: any) => {
-                          delete root.__typename;
-                          return root;
-                        };
-                      }
+                    if (fieldName === '__typename') {
+                      typenameCalled++;
+                    }
+                    if (
+                      fieldName === '__leave' &&
+                      /**
+                       * The visitResult function is called for each field in the selection set.
+                       * But visitResult function looks for __typename field visitor even if it is not there in the document
+                       * So it calls __typename field visitor twice if it is also in the selection set.
+                       * That's why we need to count the number of times it is called.
+                       *
+                       * Default call of __typename https://github.com/ardatan/graphql-tools/blob/master/packages/utils/src/visitResult.ts#L277
+                       * Call for the field node https://github.com/ardatan/graphql-tools/blob/master/packages/utils/src/visitResult.ts#L272
+                       */ typenameCalled < 2
+                    ) {
+                      return (root: any) => {
+                        delete root.__typename;
+                        return root;
+                      };
                     }
 
                     if (ignoredTypesMap.has(typename)) {
@@ -321,39 +336,40 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           ),
         );
 
-      const operationAST = getOperationAST(
-        onExecuteParams.args.document,
-        onExecuteParams.args.operationName,
-      );
+      if (invalidateViaMutation !== false) {
+        const operationAST = getOperationAST(
+          onExecuteParams.args.document,
+          onExecuteParams.args.operationName,
+        );
+        if (operationAST?.operation === 'mutation') {
+          return {
+            onExecuteDone({ result, setResult }) {
+              if (isAsyncIterable(result)) {
+                // eslint-disable-next-line no-console
+                console.warn(
+                  '[useResponseCache] AsyncIterable returned from execute is currently unsupported.',
+                );
+                return;
+              }
 
-      if (invalidateViaMutation !== false && operationAST?.operation === 'mutation') {
-        return {
-          onExecuteDone({ result, setResult }) {
-            if (isAsyncIterable(result)) {
-              // eslint-disable-next-line no-console
-              console.warn(
-                '[useResponseCache] AsyncIterable returned from execute is currently unsupported.',
-              );
-              return;
-            }
+              const processedResult = processResult(result) as ResponseCacheExecutionResult;
 
-            const processedResult = processResult(result) as ResponseCacheExecutionResult;
-
-            cache.invalidate(identifier.values());
-            if (includeExtensionMetadata) {
-              setResult({
-                ...processedResult,
-                extensions: {
-                  ...processedResult.extensions,
-                  responseCache: {
-                    ...processedResult.extensions?.responseCache,
-                    invalidatedEntities: Array.from(identifier.values()),
+              cache.invalidate(identifier.values());
+              if (includeExtensionMetadata) {
+                setResult({
+                  ...processedResult,
+                  extensions: {
+                    ...processedResult.extensions,
+                    responseCache: {
+                      ...processedResult.extensions?.responseCache,
+                      invalidatedEntities: Array.from(identifier.values()),
+                    },
                   },
-                },
-              });
-            }
-          },
-        };
+                });
+              }
+            },
+          };
+        }
       }
 
       const cacheKey = await buildResponseCacheKey({
