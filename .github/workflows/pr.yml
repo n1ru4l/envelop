@@ -11,6 +11,7 @@ jobs:
       installDependencies: true
       packageManager: yarn
       nodeVersion: 18
+      preCommit: 'yarn prettier'
     secrets:
       githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
 
