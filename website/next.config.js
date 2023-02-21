@@ -2,7 +2,7 @@ import { withGuildDocs } from '@theguild/components/next.config';
 
 export default withGuildDocs({
   transformPageOpts(pageOpts) {
-    // TODO: temporal fixes to show link for versioned folder in navbar (otherwise you can see only when navigated to it directly)
+    // TODO: temporal fix to show link for versioned folder in navbar (otherwise you can see only when navigated to it directly)
     pageOpts.pageMap
       .find(o => o.kind === 'Folder' && o.name === 'v2')
       .children.push({

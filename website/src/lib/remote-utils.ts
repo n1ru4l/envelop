@@ -5,10 +5,12 @@ import http from 'isomorphic-git/http/node';
 
 const CACHE_DIR = '.next/cache/nextra-remote/';
 
+const LAST_SHA = '15ab9b6ef9a8d55b713de02596ac5718638d7cd0';
+
 export async function listFiles({ repo, rootDir }: { repo: string; rootDir: string }): Promise<string[]> {
   const dir = path.join(CACHE_DIR, repo.split('/').pop()!);
   await git.clone({ fs, http, dir, url: repo });
-
+  await git.checkout({ fs, ref: LAST_SHA, dir });
   const filenames = await git.listFiles({ fs, dir });
   return filenames.filter(filename => filename.startsWith(rootDir)).map(filename => filename.replace(rootDir, ''));
 }
