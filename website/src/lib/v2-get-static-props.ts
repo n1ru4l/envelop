@@ -15,14 +15,14 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const filePath = await findPathWithExtension({
     repo: 'https://github.com/n1ru4l/envelop',
     rootDir: 'website/src/pages/docs/',
-    slug: params.slug,
+    slug: params!.slug as string[],
   });
   const content = await readFile(filePath, 'utf8');
   const mdx = await buildDynamicMDX(content, {
     defaultShowCopyCode: true,
     remarkLinkRewriteOptions: {
       pattern: /^\/docs(\/.*)?$/,
-      replace: '/docs/2$1',
+      replace: '/docs/v2$1',
     },
   });
 

@@ -5,11 +5,11 @@ import http from 'isomorphic-git/http/node';
 
 const CACHE_DIR = '.next/cache/nextra-remote/';
 
-export async function listFiles({ repo, rootDir }: { repo: string; rootDir: string }): string[] {
-  const dir = path.join(CACHE_DIR, repo.split('/').pop());
+export async function listFiles({ repo, rootDir }: { repo: string; rootDir: string }): Promise<string[]> {
+  const dir = path.join(CACHE_DIR, repo.split('/').pop()!);
   await git.clone({ fs, http, dir, url: repo });
 
-  const filenames = await git.listFiles({ fs, http, dir });
+  const filenames = await git.listFiles({ fs, dir });
   return filenames.filter(filename => filename.startsWith(rootDir)).map(filename => filename.replace(rootDir, ''));
 }
 
@@ -23,7 +23,7 @@ export async function findPathWithExtension({
   slug: string[];
 }): Promise<string> {
   const dirs = slug.slice(0, -1);
-  const dirPath = path.join(CACHE_DIR, repo.split('/').pop(), rootDir, ...dirs);
+  const dirPath = path.join(CACHE_DIR, repo.split('/').pop()!, rootDir, ...dirs);
 
   const files = await fs.promises.readdir(dirPath, { withFileTypes: true });
   const filename = slug.at(-1);
