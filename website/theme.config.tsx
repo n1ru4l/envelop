@@ -36,6 +36,10 @@ export default defineConfig({
 
       let url = `n1ru4l/envelop/tree/main/website/${filePath}`;
 
+      if (router.route.startsWith('/docs/')) {
+        return null;
+      }
+
       if (router.route === '/plugins/[name]') {
         const { name } = router.query;
         const plugin = PLUGINS.find(p => p.identifier === name);
