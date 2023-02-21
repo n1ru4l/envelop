@@ -22,7 +22,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     defaultShowCopyCode: true,
     remarkLinkRewriteOptions: {
       pattern: /^\/docs(\/.*)?$/,
-      replace: '/docs/v2$1',
+      replace: '/v2$1',
     },
   });
 

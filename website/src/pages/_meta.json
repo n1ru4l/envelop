@@ -11,9 +11,8 @@
     "title": "v3",
     "type": "page"
   },
-  "": {
-    "title": "v2",
-    "href": "/docs/v2",
+  "v2": {
+    "href": "/v2",
     "type": "page"
   },
   "plugins": {

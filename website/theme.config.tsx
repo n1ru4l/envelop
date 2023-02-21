@@ -36,7 +36,7 @@ export default defineConfig({
 
       let url = `n1ru4l/envelop/tree/main/website/${filePath}`;
 
-      if (router.route.startsWith('/docs/v2/')) {
+      if (router.route.startsWith('/v2/')) {
         return null;
       }
 
