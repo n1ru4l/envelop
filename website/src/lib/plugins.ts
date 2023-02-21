@@ -33,7 +33,7 @@ export const ALL_TAGS = [
   'subscription',
 ] as const;
 
-export type Tags = typeof ALL_TAGS[number];
+export type Tags = (typeof ALL_TAGS)[number];
 
 export const PLUGINS: {
   identifier: string;

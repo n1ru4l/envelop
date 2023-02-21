@@ -51,8 +51,8 @@ export const getStaticProps = async () => {
       // which will be provided to the Nextra's `useSSG` hook.
       ssg: plugins,
     },
-    // Revalidate at most once every 1 hour
-    revalidate: 60 * 60,
+    // Revalidate at most once every 1 week
+    revalidate: 60 * 60 * 24 * 7,
   };
 };
 

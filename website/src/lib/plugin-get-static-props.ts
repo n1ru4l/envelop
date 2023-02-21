@@ -41,6 +41,7 @@ ${readme}`,
       ...mdx,
       ...(await buildDynamicMeta()),
     },
-    revalidate: 10,
+    // Revalidate at most once every 1 week
+    revalidate: 60 * 60 * 24 * 7,
   };
 };
