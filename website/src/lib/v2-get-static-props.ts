@@ -2,19 +2,17 @@ import { readFile } from 'node:fs/promises';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import { buildDynamicMDX, buildDynamicMeta } from 'nextra/remote';
 import { findPathWithExtension, findStaticPaths } from '@/lib/remote-utils';
+import { REPO, BRANCH, ROOT_DIR } from '@/lib/constants';
 
 export const getStaticPaths: GetStaticPaths = async () => ({
   fallback: 'blocking',
-  paths: await findStaticPaths({
-    repo: 'https://github.com/n1ru4l/envelop',
-    rootDir: 'website/src/pages/docs/',
-  }),
+  paths: await findStaticPaths({ repo: REPO, rootDir: ROOT_DIR, ref: BRANCH }),
 });
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const filePath = await findPathWithExtension({
-    repo: 'https://github.com/n1ru4l/envelop',
-    rootDir: 'website/src/pages/docs/',
+    repo: REPO,
+    rootDir: ROOT_DIR,
     slug: params!.slug as string[],
   });
   const content = await readFile(filePath, 'utf8');

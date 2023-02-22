@@ -5,12 +5,26 @@ import http from 'isomorphic-git/http/node';
 
 const CACHE_DIR = '.next/cache/nextra-remote/';
 
-const LAST_SHA = '15ab9b6ef9a8d55b713de02596ac5718638d7cd0';
-
-export async function listFiles({ repo, rootDir }: { repo: string; rootDir: string }): Promise<string[]> {
+export async function listFiles({
+  repo,
+  rootDir,
+  ref,
+}: {
+  repo: string;
+  rootDir: string;
+  ref: string;
+}): Promise<string[]> {
   const dir = path.join(CACHE_DIR, repo.split('/').pop()!);
-  await git.clone({ fs, http, dir, url: repo });
-  await git.checkout({ fs, ref: LAST_SHA, dir, force: true });
+  await git.clone({
+    fs,
+    dir,
+    http,
+    url: repo,
+    singleBranch: true,
+    noTags: true,
+    depth: 1,
+    ref,
+  });
   const filenames = await git.listFiles({ fs, dir });
   return filenames.filter(filename => filename.startsWith(rootDir)).map(filename => filename.replace(rootDir, ''));
 }
@@ -53,11 +67,13 @@ export async function findPathWithExtension({
 export async function findStaticPaths({
   repo,
   rootDir,
+  ref,
 }: {
   repo: string;
   rootDir: string;
+  ref: string;
 }): Promise<{ params: { slug: string[] } }[]> {
-  const filePaths = await listFiles({ repo, rootDir });
+  const filePaths = await listFiles({ repo, rootDir, ref });
   return filePaths
     .filter(filename => /\.mdx?$/.test(filename))
     .map(filename => ({

@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint sort-keys: error */
-import { defineConfig, Giscus, useTheme } from '@theguild/components';
+import { defineConfig, Giscus, useTheme, Callout } from '@theguild/components';
 import { useRouter } from 'next/router';
 import { PLUGINS } from '@/lib/plugins';
+import { BRANCH } from '@/lib/constants';
 
 export default defineConfig({
   docsRepositoryBase: 'https://github.com/n1ru4l/envelop/tree/main/website',
@@ -10,7 +11,9 @@ export default defineConfig({
     const { resolvedTheme } = useTheme();
     const { route } = useRouter();
 
-    const comments = route !== '/' && (
+    const isV2 = route.startsWith('/v2');
+
+    const comments = !isV2 && route !== '/' && (
       <Giscus
         // ensure giscus is reloaded when client side route is changed
         key={route}
@@ -24,6 +27,13 @@ export default defineConfig({
     );
     return (
       <>
+        {isV2 && (
+          <Callout type="warning">
+            This is the documentation for the <b>old</b> GraphQL Envelop version 2.
+            <br />
+            We recommend upgrading to the latest version 3.
+          </Callout>
+        )}
         {children}
         {comments}
       </>
@@ -36,10 +46,6 @@ export default defineConfig({
 
       let url = `n1ru4l/envelop/tree/main/website/${filePath}`;
 
-      if (router.route.startsWith('/v2/')) {
-        return null;
-      }
-
       if (router.route === '/plugins/[name]') {
         const { name } = router.query;
         const plugin = PLUGINS.find(p => p.identifier === name);
@@ -47,7 +53,13 @@ export default defineConfig({
           return null;
         }
         const { repo, path } = plugin.githubReadme;
-        url = `${repo}/tree/main/${path}`;
+        url = `https://github.com/${repo}/tree/main/${path}`;
+      } else if (router.route.startsWith('/v2/')) {
+        url = url
+          //
+          .replace('[[...slug]].mdx', '')
+          .replace('/v2/', '/docs/')
+          .replace('/main/', `/${BRANCH}/`);
       }
 
       return (
