@@ -2,10 +2,12 @@ import { createCatchAllMeta } from 'nextra/catch-all';
 
 export default async () => {
   const { listFiles } = await import('../../lib/remote-utils');
+  const { BRANCH, REPO, ROOT_DIR } = await import('../../lib/constants');
 
   const files = await listFiles({
-    repo: 'https://github.com/n1ru4l/envelop',
-    rootDir: 'website/src/pages/docs/',
+    repo: REPO,
+    rootDir: ROOT_DIR,
+    ref: BRANCH,
   });
 
   return createCatchAllMeta(files, {
