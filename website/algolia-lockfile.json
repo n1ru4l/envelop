@@ -1,10 +1,10 @@
 [
   {
-    "objectID": "envelop-index",
+    "objectID": "envelop-",
     "headings": [],
     "toc": [],
     "content": "d41d8cd98f00b204e9800998ecf8427e",
-    "url": "https://www.the-guild.dev/graphql/envelop//index",
+    "url": "https://www.the-guild.dev/graphql/envelop//",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
     "hierarchy": [],
     "source": "Envelop",
@@ -24,19 +24,52 @@
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-plugins-name",
-    "headings": [],
-    "toc": [],
-    "content": "5d95974a9244cda10f2501a4a5ac30e5",
-    "url": "https://www.the-guild.dev/graphql/envelop/plugins/[name]",
+    "objectID": "envelop-v3-latest-",
+    "headings": ["Key Concepts"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Community",
+                "anchor": "community"
+              },
+              {
+                "children": [],
+                "title": "Adoption",
+                "anchor": "adoption"
+              },
+              {
+                "children": [],
+                "title": "Lightweight and Flexible",
+                "anchor": "lightweight-and-flexible"
+              },
+              {
+                "children": [],
+                "title": "No Vendor Lock-In",
+                "anchor": "no-vendor-lock-in"
+              }
+            ],
+            "title": "Plugins",
+            "anchor": "plugins"
+          }
+        ],
+        "title": "Key Concepts",
+        "anchor": "key-concepts"
+      }
+    ],
+    "content": "1c5f0179c1f4defa9ad4a0d6412c8901",
+    "url": "https://www.the-guild.dev/graphql/envelop/docs/",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["Plugins"],
+    "hierarchy": ["v3 (latest)"],
     "source": "Envelop",
-    "title": "Plugin",
+    "title": "Introduction",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v2-composing-envelop",
+    "objectID": "envelop-v3-latest-composing-envelop",
     "headings": ["Sharing / Composing `envelop` Instances"],
     "toc": [
       {
@@ -48,24 +81,19 @@
     "content": "9a51bb770d645582b7752e9b85b4a801",
     "url": "https://www.the-guild.dev/graphql/envelop/docs/composing-envelop",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2"],
+    "hierarchy": ["v3 (latest)"],
     "source": "Envelop",
     "title": "Sharing Envelops",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v2-core",
-    "headings": ["Built-In Plugins", "Utilities"],
+    "objectID": "envelop-v3-latest-core",
+    "headings": ["Built-In Plugins"],
     "toc": [
       {
         "children": [
           {
             "children": [
-              {
-                "children": [],
-                "title": "`useAsyncSchema`",
-                "anchor": "useasyncschema"
-              },
               {
                 "children": [],
                 "title": "`useErrorHandler`",
@@ -88,8 +116,8 @@
               },
               {
                 "children": [],
-                "title": "`useTiming`",
-                "anchor": "usetiming"
+                "title": "`useEngine`",
+                "anchor": "useengine"
               },
               {
                 "children": [],
@@ -103,29 +131,18 @@
         ],
         "title": "Built-In Plugins",
         "anchor": "built-in-plugins"
-      },
-      {
-        "children": [
-          {
-            "children": [],
-            "title": "`enableIf`",
-            "anchor": "enableif"
-          }
-        ],
-        "title": "Utilities",
-        "anchor": "utilities"
       }
     ],
-    "content": "be35a0d51bf7f908ec48edc1fd8d706b",
+    "content": "a0ff5527449f1bafa7655a68a2444aad",
     "url": "https://www.the-guild.dev/graphql/envelop/docs/core",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2"],
+    "hierarchy": ["v3 (latest)"],
     "source": "Envelop",
     "title": "@envelop/core",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v2-getting-started",
+    "objectID": "envelop-v3-latest-getting-started",
     "headings": [
       "Installation",
       "Create Your First Envelop",
@@ -163,13 +180,13 @@
     "content": "134cbc98495bb19879abd8b3dfb716f2",
     "url": "https://www.the-guild.dev/graphql/envelop/docs/getting-started",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2"],
+    "hierarchy": ["v3 (latest)"],
     "source": "Envelop",
     "title": "First Steps",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v2-guides-adding-a-graphql-response-cache",
+    "objectID": "envelop-v3-latest-guides-adding-a-graphql-response-cache",
     "headings": [
       "A Brief Introduction to Caching",
       "How Does GraphQL Response Caching Work?",
@@ -207,13 +224,13 @@
     "content": "cbb8a7be7c8499a5fe6e8068f2b53712",
     "url": "https://www.the-guild.dev/graphql/envelop/docs/guides/adding-a-graphql-response-cache",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2", "Guides"],
+    "hierarchy": ["v3 (latest)", "Guides"],
     "source": "Envelop",
     "title": "Adding a GraphQL Response Cache",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v2-guides-adding-authentication-with-auth0",
+    "objectID": "envelop-v3-latest-guides-adding-authentication-with-auth0",
     "headings": [
       "Prerequisites",
       "Installing Dependencies",
@@ -269,13 +286,13 @@
     "content": "8bbfb8e69f55fd0ee0e48e4a5f172400",
     "url": "https://www.the-guild.dev/graphql/envelop/docs/guides/adding-authentication-with-auth0",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2", "Guides"],
+    "hierarchy": ["v3 (latest)", "Guides"],
     "source": "Envelop",
     "title": "Adding Authentication with Auth0",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v2-guides-integrating-with-databases",
+    "objectID": "envelop-v3-latest-guides-integrating-with-databases",
     "headings": [
       "Use Only One Client per Request",
       "Wrap Every Request in a Transaction",
@@ -307,734 +324,13 @@
     "content": "cf80c05af2892cfd1f0eaaf171cf5a7c",
     "url": "https://www.the-guild.dev/graphql/envelop/docs/guides/integrating-with-databases",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2", "Guides"],
+    "hierarchy": ["v3 (latest)", "Guides"],
     "source": "Envelop",
     "title": "Integrating with Databases",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v2-guides-monitoring-and-tracing",
-    "headings": [
-      "Sentry",
-      "DataDog, InfluxDB, Telegraf, StatsD",
-      "OpenTelemetry",
-      "Prometheus",
-      "New Relic",
-      "Apollo-Tracing"
-    ],
-    "toc": [
-      {
-        "children": [],
-        "title": "Sentry",
-        "anchor": "sentry"
-      },
-      {
-        "children": [],
-        "title": "DataDog, InfluxDB, Telegraf, StatsD",
-        "anchor": "datadog-influxdb-telegraf-statsd"
-      },
-      {
-        "children": [],
-        "title": "OpenTelemetry",
-        "anchor": "opentelemetry"
-      },
-      {
-        "children": [],
-        "title": "Prometheus",
-        "anchor": "prometheus"
-      },
-      {
-        "children": [],
-        "title": "New Relic",
-        "anchor": "new-relic"
-      },
-      {
-        "children": [],
-        "title": "Apollo-Tracing",
-        "anchor": "apollo-tracing"
-      }
-    ],
-    "content": "e40ce27d13eb2052bcdf5f0ec196a12c",
-    "url": "https://www.the-guild.dev/graphql/envelop/docs/guides/monitoring-and-tracing",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2", "Guides"],
-    "source": "Envelop",
-    "title": "Monitoring and Tracing",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v2-guides-resolving-subscription-data-loader-caching-issues",
-    "headings": [],
-    "toc": [],
-    "content": "99208ef40613d9704ae5334b4b47345f",
-    "url": "https://www.the-guild.dev/graphql/envelop/docs/guides/resolving-subscription-data-loader-caching-issues",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2", "Guides"],
-    "source": "Envelop",
-    "title": "Resolving Subscription DataLoader Caching Issues",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v2-guides-securing-your-graphql-api",
-    "headings": [
-      "Protection against Malicious GraphQL Operations",
-      "Authentication",
-      "Authorization",
-      "Prevent Leaking Sensitive Information"
-    ],
-    "toc": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Reject Malicious Operation Documents",
-                "anchor": "reject-malicious-operation-documents"
-              },
-              {
-                "children": [],
-                "title": "Query Depth Limiting",
-                "anchor": "query-depth-limiting"
-              },
-              {
-                "children": [],
-                "title": "Rate Limiting",
-                "anchor": "rate-limiting"
-              }
-            ],
-            "title": "Persisted Operations",
-            "anchor": "persisted-operations"
-          }
-        ],
-        "title": "Protection against Malicious GraphQL Operations",
-        "anchor": "protection-against-malicious-graphql-operations"
-      },
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Generic Auth",
-                "anchor": "generic-auth"
-              }
-            ],
-            "title": "Auth0",
-            "anchor": "auth0"
-          }
-        ],
-        "title": "Authentication",
-        "anchor": "authentication"
-      },
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Allow-List Operation Fields",
-                "anchor": "allow-list-operation-fields"
-              }
-            ],
-            "title": "Schema Based on Context",
-            "anchor": "schema-based-on-context"
-          }
-        ],
-        "title": "Authorization",
-        "anchor": "authorization"
-      },
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Disable Schema Introspection",
-                "anchor": "disable-schema-introspection"
-              },
-              {
-                "children": [],
-                "title": "Block Field Suggestions",
-                "anchor": "block-field-suggestions"
-              }
-            ],
-            "title": "Error Masking",
-            "anchor": "error-masking"
-          }
-        ],
-        "title": "Prevent Leaking Sensitive Information",
-        "anchor": "prevent-leaking-sensitive-information"
-      }
-    ],
-    "content": "82a223cb2d2c14f6550a23e574ae023c",
-    "url": "https://www.the-guild.dev/graphql/envelop/docs/guides/securing-your-graphql-api",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2", "Guides"],
-    "source": "Envelop",
-    "title": "Securing Your GraphQL API",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v2-guides-using-graphql-features-from-the-future",
-    "headings": ["OneOf Input Objects and OneOf Fields", "Fragment Arguments"],
-    "toc": [
-      {
-        "children": [],
-        "title": "OneOf Input Objects and OneOf Fields",
-        "anchor": "oneof-input-objects-and-oneof-fields"
-      },
-      {
-        "children": [],
-        "title": "Fragment Arguments",
-        "anchor": "fragment-arguments"
-      }
-    ],
-    "content": "7ab322d195078fb38634ad883f328597",
-    "url": "https://www.the-guild.dev/graphql/envelop/docs/guides/using-graphql-features-from-the-future",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2", "Guides"],
-    "source": "Envelop",
-    "title": "Using GraphQL Features from the Future",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v2-index",
-    "headings": ["Key Concepts"],
-    "toc": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Community",
-                "anchor": "community"
-              },
-              {
-                "children": [],
-                "title": "Adoption",
-                "anchor": "adoption"
-              },
-              {
-                "children": [],
-                "title": "Lightweight and Flexible",
-                "anchor": "lightweight-and-flexible"
-              },
-              {
-                "children": [],
-                "title": "No Vendor Lock-In",
-                "anchor": "no-vendor-lock-in"
-              }
-            ],
-            "title": "Plugins",
-            "anchor": "plugins"
-          }
-        ],
-        "title": "Key Concepts",
-        "anchor": "key-concepts"
-      }
-    ],
-    "content": "9eead5e02beee1589b8371608af600ac",
-    "url": "https://www.the-guild.dev/graphql/envelop/docs/index",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2"],
-    "source": "Envelop",
-    "title": "Introduction",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v2-integrations",
-    "headings": ["Compatibility Table"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Compatibility Table",
-        "anchor": "compatibility-table"
-      }
-    ],
-    "content": "ca66d1031ca196e79c0ca515d5e1f20e",
-    "url": "https://www.the-guild.dev/graphql/envelop/docs/integrations",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2"],
-    "source": "Envelop",
-    "title": "Integrations and Examples",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v2-plugins-custom-plugin",
-    "headings": [
-      "The Plugin Interface",
-      "Building Your First Plugin",
-      "Adding Config Options to Your Plugin",
-      "Sharing Envelop Plugins"
-    ],
-    "toc": [
-      {
-        "children": [],
-        "title": "The Plugin Interface",
-        "anchor": "the-plugin-interface"
-      },
-      {
-        "children": [],
-        "title": "Building Your First Plugin",
-        "anchor": "building-your-first-plugin"
-      },
-      {
-        "children": [],
-        "title": "Adding Config Options to Your Plugin",
-        "anchor": "adding-config-options-to-your-plugin"
-      },
-      {
-        "children": [],
-        "title": "Sharing Envelop Plugins",
-        "anchor": "sharing-envelop-plugins"
-      }
-    ],
-    "content": "a277534112276c6c30dcc9e3fea26072",
-    "url": "https://www.the-guild.dev/graphql/envelop/docs/plugins/custom-plugin",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2", "Plugins"],
-    "source": "Envelop",
-    "title": "Building Plugins",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v2-plugins-index",
-    "headings": ["How Do Envelop Plugins Work?", "What Plugins Can Do?", "What Plugins Are Available?"],
-    "toc": [
-      {
-        "children": [],
-        "title": "How Do Envelop Plugins Work?",
-        "anchor": "how-do-envelop-plugins-work"
-      },
-      {
-        "children": [],
-        "title": "What Plugins Can Do?",
-        "anchor": "what-plugins-can-do"
-      },
-      {
-        "children": [],
-        "title": "What Plugins Are Available?",
-        "anchor": "what-plugins-are-available"
-      }
-    ],
-    "content": "32550954ff0b710725049b14558d0d89",
-    "url": "https://www.the-guild.dev/graphql/envelop/docs/plugins/index",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2", "Plugins"],
-    "source": "Envelop",
-    "title": "Introduction",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v2-plugins-lifecycle",
-    "headings": ["Plugins API"],
-    "toc": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "`onEnveloped(api)`",
-                "anchor": "onenvelopedapi"
-              },
-              {
-                "children": [],
-                "title": "`onParse(api)`",
-                "anchor": "onparseapi"
-              },
-              {
-                "children": [],
-                "title": "`onValidate(api)`",
-                "anchor": "onvalidateapi"
-              },
-              {
-                "children": [],
-                "title": "`onContext(api)`",
-                "anchor": "oncontextapi"
-              },
-              {
-                "children": [],
-                "title": "`onExecute(api)`",
-                "anchor": "onexecuteapi"
-              },
-              {
-                "children": [],
-                "title": "`onSubscribe(api)`",
-                "anchor": "onsubscribeapi"
-              },
-              {
-                "children": [],
-                "title": "`onSchemaChange(api)`",
-                "anchor": "onschemachangeapi"
-              },
-              {
-                "children": [],
-                "title": "`onResolverCalled(api)`",
-                "anchor": "onresolvercalledapi"
-              }
-            ],
-            "title": "`onPluginInit(api)`",
-            "anchor": "onplugininitapi"
-          }
-        ],
-        "title": "Plugins API",
-        "anchor": "plugins-api"
-      }
-    ],
-    "content": "6f6c6b32cbba90ce0315afed22404e4d",
-    "url": "https://www.the-guild.dev/graphql/envelop/docs/plugins/lifecycle",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2", "Plugins"],
-    "source": "Envelop",
-    "title": "Lifecycle",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v2-plugins-testing",
-    "headings": ["Testing a Plugin", "Testing Envelop Instance", "Additional Resources"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Testing a Plugin",
-        "anchor": "testing-a-plugin"
-      },
-      {
-        "children": [],
-        "title": "Testing Envelop Instance",
-        "anchor": "testing-envelop-instance"
-      },
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Mocking Phases",
-                "anchor": "mocking-phases"
-              },
-              {
-                "children": [],
-                "title": "Spying on Phases",
-                "anchor": "spying-on-phases"
-              }
-            ],
-            "title": "Manipulating Envelops",
-            "anchor": "manipulating-envelops"
-          }
-        ],
-        "title": "Additional Resources",
-        "anchor": "additional-resources"
-      }
-    ],
-    "content": "c258034021ea98fa42f2baba21391820",
-    "url": "https://www.the-guild.dev/graphql/envelop/docs/plugins/testing",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2", "Plugins"],
-    "source": "Envelop",
-    "title": "Testing",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v2-plugins-typescript",
-    "headings": ["For Plugin Developers", "For Plugins Users"],
-    "toc": [
-      {
-        "children": [],
-        "title": "For Plugin Developers",
-        "anchor": "for-plugin-developers"
-      },
-      {
-        "children": [],
-        "title": "For Plugins Users",
-        "anchor": "for-plugins-users"
-      }
-    ],
-    "content": "ddf085738f6442ce9dd89d8632e289d0",
-    "url": "https://www.the-guild.dev/graphql/envelop/docs/plugins/typescript",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2", "Plugins"],
-    "source": "Envelop",
-    "title": "TypeScript Support",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v2-tracing",
-    "headings": [],
-    "toc": [],
-    "content": "653c6947e77e5847d560d26674548837",
-    "url": "https://www.the-guild.dev/graphql/envelop/docs/tracing",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v2"],
-    "source": "Envelop",
-    "title": "Tracing",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v3-composing-envelop",
-    "headings": ["Sharing / Composing `envelop` Instances"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Sharing / Composing `envelop` Instances",
-        "anchor": "sharing--composing-envelop-instances"
-      }
-    ],
-    "content": "9a51bb770d645582b7752e9b85b4a801",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/composing-envelop",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3"],
-    "source": "Envelop",
-    "title": "Sharing Envelops",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v3-core",
-    "headings": ["Built-In Plugins"],
-    "toc": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "`useErrorHandler`",
-                "anchor": "useerrorhandler"
-              },
-              {
-                "children": [],
-                "title": "`useExtendContext`",
-                "anchor": "useextendcontext"
-              },
-              {
-                "children": [],
-                "title": "`useLogger`",
-                "anchor": "uselogger"
-              },
-              {
-                "children": [],
-                "title": "`usePayloadFormatter`",
-                "anchor": "usepayloadformatter"
-              },
-              {
-                "children": [],
-                "title": "`useEngine`",
-                "anchor": "useengine"
-              },
-              {
-                "children": [],
-                "title": "`useMaskedErrors`",
-                "anchor": "usemaskederrors"
-              }
-            ],
-            "title": "`useSchema`",
-            "anchor": "useschema"
-          }
-        ],
-        "title": "Built-In Plugins",
-        "anchor": "built-in-plugins"
-      }
-    ],
-    "content": "a0ff5527449f1bafa7655a68a2444aad",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/core",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3"],
-    "source": "Envelop",
-    "title": "@envelop/core",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v3-getting-started",
-    "headings": [
-      "Installation",
-      "Create Your First Envelop",
-      "Use Your Envelop",
-      "Add Plugins to Your Envelop",
-      "Use Your Envelop with an HTTP Server"
-    ],
-    "toc": [
-      {
-        "children": [],
-        "title": "Installation",
-        "anchor": "installation"
-      },
-      {
-        "children": [],
-        "title": "Create Your First Envelop",
-        "anchor": "create-your-first-envelop"
-      },
-      {
-        "children": [],
-        "title": "Use Your Envelop",
-        "anchor": "use-your-envelop"
-      },
-      {
-        "children": [],
-        "title": "Add Plugins to Your Envelop",
-        "anchor": "add-plugins-to-your-envelop"
-      },
-      {
-        "children": [],
-        "title": "Use Your Envelop with an HTTP Server",
-        "anchor": "use-your-envelop-with-an-http-server"
-      }
-    ],
-    "content": "134cbc98495bb19879abd8b3dfb716f2",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/getting-started",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3"],
-    "source": "Envelop",
-    "title": "First Steps",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v3-guides-adding-a-graphql-response-cache",
-    "headings": [
-      "A Brief Introduction to Caching",
-      "How Does GraphQL Response Caching Work?",
-      "Envelop Response Cache"
-    ],
-    "toc": [
-      {
-        "children": [],
-        "title": "A Brief Introduction to Caching",
-        "anchor": "a-brief-introduction-to-caching"
-      },
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Invalidating Cached GraphQL Query Operations",
-                "anchor": "invalidating-cached-graphql-query-operations"
-              }
-            ],
-            "title": "Caching Query Operations",
-            "anchor": "caching-query-operations"
-          }
-        ],
-        "title": "How Does GraphQL Response Caching Work?",
-        "anchor": "how-does-graphql-response-caching-work"
-      },
-      {
-        "children": [],
-        "title": "Envelop Response Cache",
-        "anchor": "envelop-response-cache"
-      }
-    ],
-    "content": "cbb8a7be7c8499a5fe6e8068f2b53712",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/guides/adding-a-graphql-response-cache",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3", "Guides"],
-    "source": "Envelop",
-    "title": "Adding a GraphQL Response Cache",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v3-guides-adding-authentication-with-auth0",
-    "headings": [
-      "Prerequisites",
-      "Installing Dependencies",
-      "Adding the Auth0 Plugin to the Envelop Setup",
-      "Setting up the Auth0 API",
-      "Expose Authentication Information via GraphQL Schema",
-      "Generating an Auth0 Access Token",
-      "Sending an Authenticated Request",
-      "Next Steps"
-    ],
-    "toc": [
-      {
-        "children": [],
-        "title": "Prerequisites",
-        "anchor": "prerequisites"
-      },
-      {
-        "children": [],
-        "title": "Installing Dependencies",
-        "anchor": "installing-dependencies"
-      },
-      {
-        "children": [],
-        "title": "Adding the Auth0 Plugin to the Envelop Setup",
-        "anchor": "adding-the-auth0-plugin-to-the-envelop-setup"
-      },
-      {
-        "children": [],
-        "title": "Setting up the Auth0 API",
-        "anchor": "setting-up-the-auth0-api"
-      },
-      {
-        "children": [],
-        "title": "Expose Authentication Information via GraphQL Schema",
-        "anchor": "expose-authentication-information-via-graphql-schema"
-      },
-      {
-        "children": [],
-        "title": "Generating an Auth0 Access Token",
-        "anchor": "generating-an-auth0-access-token"
-      },
-      {
-        "children": [],
-        "title": "Sending an Authenticated Request",
-        "anchor": "sending-an-authenticated-request"
-      },
-      {
-        "children": [],
-        "title": "Next Steps",
-        "anchor": "next-steps"
-      }
-    ],
-    "content": "8bbfb8e69f55fd0ee0e48e4a5f172400",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/guides/adding-authentication-with-auth0",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3", "Guides"],
-    "source": "Envelop",
-    "title": "Adding Authentication with Auth0",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v3-guides-integrating-with-databases",
-    "headings": [
-      "Use Only One Client per Request",
-      "Wrap Every Request in a Transaction",
-      "Enforcing Read-Only Queries",
-      "Transactions over Multiple Databases"
-    ],
-    "toc": [
-      {
-        "children": [],
-        "title": "Use Only One Client per Request",
-        "anchor": "use-only-one-client-per-request"
-      },
-      {
-        "children": [],
-        "title": "Wrap Every Request in a Transaction",
-        "anchor": "wrap-every-request-in-a-transaction"
-      },
-      {
-        "children": [],
-        "title": "Enforcing Read-Only Queries",
-        "anchor": "enforcing-read-only-queries"
-      },
-      {
-        "children": [],
-        "title": "Transactions over Multiple Databases",
-        "anchor": "transactions-over-multiple-databases"
-      }
-    ],
-    "content": "cf80c05af2892cfd1f0eaaf171cf5a7c",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/guides/integrating-with-databases",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3", "Guides"],
-    "source": "Envelop",
-    "title": "Integrating with Databases",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v3-guides-migrating-from-v2-to-v3",
+    "objectID": "envelop-v3-latest-guides-migrating-from-v2-to-v3",
     "headings": [
       "1. Remove `graphql` as a peer dependency",
       "2. Removed orchestrator tracing",
@@ -1112,15 +408,15 @@
       }
     ],
     "content": "4595b70a4afc4aa14fe23deca5dc0e16",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/guides/migrating-from-v2-to-v3",
+    "url": "https://www.the-guild.dev/graphql/envelop/docs/guides/migrating-from-v2-to-v3",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3", "Guides"],
+    "hierarchy": ["v3 (latest)", "Guides"],
     "source": "Envelop",
     "title": "Migrating from v2 to v3",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v3-guides-monitoring-and-tracing",
+    "objectID": "envelop-v3-latest-guides-monitoring-and-tracing",
     "headings": [
       "Sentry",
       "DataDog, InfluxDB, Telegraf, StatsD",
@@ -1162,27 +458,27 @@
       }
     ],
     "content": "e40ce27d13eb2052bcdf5f0ec196a12c",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/guides/monitoring-and-tracing",
+    "url": "https://www.the-guild.dev/graphql/envelop/docs/guides/monitoring-and-tracing",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3", "Guides"],
+    "hierarchy": ["v3 (latest)", "Guides"],
     "source": "Envelop",
     "title": "Monitoring and Tracing",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v3-guides-resolving-subscription-data-loader-caching-issues",
+    "objectID": "envelop-v3-latest-guides-resolving-subscription-data-loader-caching-issues",
     "headings": [],
     "toc": [],
     "content": "99208ef40613d9704ae5334b4b47345f",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/guides/resolving-subscription-data-loader-caching-issues",
+    "url": "https://www.the-guild.dev/graphql/envelop/docs/guides/resolving-subscription-data-loader-caching-issues",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3", "Guides"],
+    "hierarchy": ["v3 (latest)", "Guides"],
     "source": "Envelop",
     "title": "Resolving Subscription DataLoader Caching Issues",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v3-guides-securing-your-graphql-api",
+    "objectID": "envelop-v3-latest-guides-securing-your-graphql-api",
     "headings": [
       "Protection against Malicious GraphQL Operations",
       "Authentication",
@@ -1275,15 +571,15 @@
       }
     ],
     "content": "46e0f4c15a19b21cadc44ef2d49ff77b",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/guides/securing-your-graphql-api",
+    "url": "https://www.the-guild.dev/graphql/envelop/docs/guides/securing-your-graphql-api",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3", "Guides"],
+    "hierarchy": ["v3 (latest)", "Guides"],
     "source": "Envelop",
     "title": "Securing Your GraphQL API",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v3-guides-using-graphql-features-from-the-future",
+    "objectID": "envelop-v3-latest-guides-using-graphql-features-from-the-future",
     "headings": ["OneOf Input Objects and OneOf Fields", "Fragment Arguments"],
     "toc": [
       {
@@ -1298,60 +594,15 @@
       }
     ],
     "content": "7ab322d195078fb38634ad883f328597",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/guides/using-graphql-features-from-the-future",
+    "url": "https://www.the-guild.dev/graphql/envelop/docs/guides/using-graphql-features-from-the-future",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3", "Guides"],
+    "hierarchy": ["v3 (latest)", "Guides"],
     "source": "Envelop",
     "title": "Using GraphQL Features from the Future",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v3-index",
-    "headings": ["Key Concepts"],
-    "toc": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Community",
-                "anchor": "community"
-              },
-              {
-                "children": [],
-                "title": "Adoption",
-                "anchor": "adoption"
-              },
-              {
-                "children": [],
-                "title": "Lightweight and Flexible",
-                "anchor": "lightweight-and-flexible"
-              },
-              {
-                "children": [],
-                "title": "No Vendor Lock-In",
-                "anchor": "no-vendor-lock-in"
-              }
-            ],
-            "title": "Plugins",
-            "anchor": "plugins"
-          }
-        ],
-        "title": "Key Concepts",
-        "anchor": "key-concepts"
-      }
-    ],
-    "content": "1c5f0179c1f4defa9ad4a0d6412c8901",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/index",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3"],
-    "source": "Envelop",
-    "title": "Introduction",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v3-integrations",
+    "objectID": "envelop-v3-latest-integrations",
     "headings": ["Compatibility Table"],
     "toc": [
       {
@@ -1361,53 +612,15 @@
       }
     ],
     "content": "ca66d1031ca196e79c0ca515d5e1f20e",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/integrations",
+    "url": "https://www.the-guild.dev/graphql/envelop/docs/integrations",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3"],
+    "hierarchy": ["v3 (latest)"],
     "source": "Envelop",
     "title": "Integrations and Examples",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v3-plugins-custom-plugin",
-    "headings": [
-      "The Plugin Interface",
-      "Building Your First Plugin",
-      "Adding Config Options to Your Plugin",
-      "Sharing Envelop Plugins"
-    ],
-    "toc": [
-      {
-        "children": [],
-        "title": "The Plugin Interface",
-        "anchor": "the-plugin-interface"
-      },
-      {
-        "children": [],
-        "title": "Building Your First Plugin",
-        "anchor": "building-your-first-plugin"
-      },
-      {
-        "children": [],
-        "title": "Adding Config Options to Your Plugin",
-        "anchor": "adding-config-options-to-your-plugin"
-      },
-      {
-        "children": [],
-        "title": "Sharing Envelop Plugins",
-        "anchor": "sharing-envelop-plugins"
-      }
-    ],
-    "content": "a277534112276c6c30dcc9e3fea26072",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/plugins/custom-plugin",
-    "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3", "Plugins"],
-    "source": "Envelop",
-    "title": "Building Plugins",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "envelop-v3-plugins-index",
+    "objectID": "envelop-v3-latest-plugins-",
     "headings": [
       "How Do Envelop Plugins Work?",
       "What Plugins Can Do?",
@@ -1437,15 +650,53 @@
       }
     ],
     "content": "ffb765ade71947e8a1874914fa096958",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/plugins/index",
+    "url": "https://www.the-guild.dev/graphql/envelop/docs/plugins/",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3", "Plugins"],
+    "hierarchy": ["v3 (latest)", "Plugins"],
     "source": "Envelop",
     "title": "Introduction",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v3-plugins-lifecycle",
+    "objectID": "envelop-v3-latest-plugins-custom-plugin",
+    "headings": [
+      "The Plugin Interface",
+      "Building Your First Plugin",
+      "Adding Config Options to Your Plugin",
+      "Sharing Envelop Plugins"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "The Plugin Interface",
+        "anchor": "the-plugin-interface"
+      },
+      {
+        "children": [],
+        "title": "Building Your First Plugin",
+        "anchor": "building-your-first-plugin"
+      },
+      {
+        "children": [],
+        "title": "Adding Config Options to Your Plugin",
+        "anchor": "adding-config-options-to-your-plugin"
+      },
+      {
+        "children": [],
+        "title": "Sharing Envelop Plugins",
+        "anchor": "sharing-envelop-plugins"
+      }
+    ],
+    "content": "a277534112276c6c30dcc9e3fea26072",
+    "url": "https://www.the-guild.dev/graphql/envelop/docs/plugins/custom-plugin",
+    "domain": "https://www.the-guild.dev/graphql/envelop/",
+    "hierarchy": ["v3 (latest)", "Plugins"],
+    "source": "Envelop",
+    "title": "Building Plugins",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "envelop-v3-latest-plugins-lifecycle",
     "headings": ["Plugins API"],
     "toc": [
       {
@@ -1497,15 +748,15 @@
       }
     ],
     "content": "565e31d4b2567f68186322afe8d23664",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/plugins/lifecycle",
+    "url": "https://www.the-guild.dev/graphql/envelop/docs/plugins/lifecycle",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3", "Plugins"],
+    "hierarchy": ["v3 (latest)", "Plugins"],
     "source": "Envelop",
     "title": "Lifecycle",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v3-plugins-testing",
+    "objectID": "envelop-v3-latest-plugins-testing",
     "headings": ["Testing a Plugin", "Testing Envelop Instance", "Additional Resources"],
     "toc": [
       {
@@ -1542,15 +793,15 @@
       }
     ],
     "content": "c258034021ea98fa42f2baba21391820",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/plugins/testing",
+    "url": "https://www.the-guild.dev/graphql/envelop/docs/plugins/testing",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3", "Plugins"],
+    "hierarchy": ["v3 (latest)", "Plugins"],
     "source": "Envelop",
     "title": "Testing",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v3-plugins-typescript",
+    "objectID": "envelop-v3-latest-plugins-typescript",
     "headings": ["For Plugin Developers", "For Plugins Users"],
     "toc": [
       {
@@ -1565,21 +816,21 @@
       }
     ],
     "content": "ddf085738f6442ce9dd89d8632e289d0",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/plugins/typescript",
+    "url": "https://www.the-guild.dev/graphql/envelop/docs/plugins/typescript",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3", "Plugins"],
+    "hierarchy": ["v3 (latest)", "Plugins"],
     "source": "Envelop",
     "title": "TypeScript Support",
     "type": "Documentation"
   },
   {
-    "objectID": "envelop-v3-tracing",
+    "objectID": "envelop-v3-latest-tracing",
     "headings": [],
     "toc": [],
     "content": "653c6947e77e5847d560d26674548837",
-    "url": "https://www.the-guild.dev/graphql/envelop/v3/tracing",
+    "url": "https://www.the-guild.dev/graphql/envelop/docs/tracing",
     "domain": "https://www.the-guild.dev/graphql/envelop/",
-    "hierarchy": ["v3"],
+    "hierarchy": ["v3 (latest)"],
     "source": "Envelop",
     "title": "Tracing",
     "type": "Documentation"
