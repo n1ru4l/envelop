@@ -24,18 +24,18 @@
     ]
   },
   "dependencies": {
+    "@theguild/components": "4.5.4",
     "date-fns": "2.29.3",
+    "isomorphic-git": "1.21.0",
+    "next": "13.1.6",
     "next-sitemap": "3.1.52",
-    "@theguild/components": "4.4.4",
-    "next": "13.0.7",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "next-mdx-remote": "4.3.0"
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@theguild/algolia": "1.0.2",
+    "@theguild/algolia": "1.1.3-alpha-20230222232956-855e126",
     "@theguild/tailwind-config": "0.2.1",
-    "@types/node": "18.13.0",
-    "@types/react": "18.0.27"
+    "@types/node": "18.14.0",
+    "@types/react": "18.0.28"
   }
 }

@@ -44,7 +44,7 @@ describe('sentry', () => {
     `);
 
     // run sentry flush
-    await new Promise(res => setTimeout(res, 10));
+    await new Promise(res => setTimeout(res, 50));
 
     const reports = sentryTestkit.reports();
     expect(reports).toHaveLength(1);

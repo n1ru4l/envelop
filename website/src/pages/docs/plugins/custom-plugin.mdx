@@ -19,6 +19,8 @@ https://github.com/n1ru4l/envelop/blob/main/packages/types/src/plugin.ts
 Here's a simple example that allows you to print the execution and parsing parameters.
 
 ```ts
+import * as GraphQLJS from 'graphql'
+import { useEngine } from '@envelop/core'
 import type { Plugin } from '@envelop/core'
 
 const myPlugin: Plugin = {
@@ -42,7 +44,8 @@ const myPlugin: Plugin = {
 
 const getEnveloped = envelop({
   plugins: [
-    // ... other plugins
+    useEngine(GraphQLJS),
+    /// ... other plugins ...,
     myPlugin
   ]
 })
@@ -53,6 +56,9 @@ const getEnveloped = envelop({
 Often plugins require additional configuration. A common pattern for doing this is by creating a factor function that returns a `Plugin`.
 
 ```ts
+import { envelop, useEngine } from '@envelop/core'
+import * as GraphQLJS from 'graphql'
+
 const myPlugin = (shouldPrintResult: boolean): Plugin => {
   return {
     onExecute({ args }) {
@@ -71,7 +77,8 @@ const myPlugin = (shouldPrintResult: boolean): Plugin => {
 
 const getEnveloped = envelop({
   plugins: [
-    // ... other plugins
+    useEngine(GraphQLJS),
+    /// ... other plugins ...,
     myPlugin(true)
   ]
 })

@@ -190,12 +190,14 @@ The goal of the response cache plugin is to educate how such mechanisms are impl
 Adding a response cache to an existing envelop GraphQL server setup is as easy as adding the plugin:
 
 ```ts
-import { envelop } from '@envelop/core'
+import * as GraphQLJS from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
-    // ... other plugins
+    useEngine(GraphQLJS),
+    // ... other plugins ...
     useResponseCache()
   ]
 })
@@ -204,7 +206,8 @@ const getEnveloped = envelop({
 If you need to imperatively invalidate you can do that by providing the cache to the plugin:
 
 ```ts
-import { envelop } from '@envelop/core'
+import * as GraphQLJS from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache, createInMemoryCache } from '@envelop/response-cache'
 import { emitter } from './event-emitter'
 
@@ -221,7 +224,8 @@ emitter.on('invalidate', entity => {
 
 const getEnveloped = envelop({
   plugins: [
-    // ... other plugins
+    useEngine(GraphQLJS),
+    // ... other plugins ...
     useResponseCache({ cache })
   ]
 })
@@ -230,12 +234,14 @@ const getEnveloped = envelop({
 The caching behavior can be fully customized. A TTL can be provided as global or more granular per type or schema coordinate.
 
 ```ts
-import { envelop } from '@envelop/core'
+import * as GraphQLJS from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
-    // ... other plugins
+    useEngine(GraphQLJS),
+    // ... other plugins ...
     useResponseCache({
       // cache operations for 1 hour by default
       ttl: 60 * 1000 * 60,
@@ -257,12 +263,14 @@ const getEnveloped = envelop({
 Need to cache based on the user? No problem.
 
 ```ts
-import { envelop } from '@envelop/core'
+import * as GraphQLJS from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
-    // ... other plugins
+    useEngine(GraphQLJS),
+    // ... other plugins ...
     useResponseCache({
       // context is the GraphQL context that would be used for execution
       session: context => (context.user ? String(context.user.id) : null),
@@ -276,12 +284,14 @@ const getEnveloped = envelop({
 Don't want to automatically invalidate based on mutations? Also configurable!
 
 ```ts
-import { envelop } from '@envelop/core'
+import * as GraphQLJS from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
 const getEnveloped = envelop({
   plugins: [
-    // ... other plugins
+    useEngine(GraphQLJS),
+    // ... other plugins ...
     useResponseCache({
       // some might prefer invalidating only based on a database write log
       invalidateViaMutation: false
@@ -303,7 +313,8 @@ Once you have that, gather up the necessary connection settings (e.g., `host`, `
 Then, with that instance of the Redis Cache setup, provide it to the `useResponseCache` plugin options, and you're done. Here's an example:
 
 ```ts
-import { envelop } from '@envelop/core'
+import * as GraphQLJS from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 import { createRedisCache } from '@envelop/response-cache-redis'
 import Redis from 'ioredis'
@@ -320,7 +331,8 @@ const cache = createRedisCache({ redis })
 
 const getEnveloped = envelop({
   plugins: [
-    // ... other plugins
+    useEngine(GraphQLJS),
+    // ... other plugins ...
     useResponseCache({ cache })
   ]
 })

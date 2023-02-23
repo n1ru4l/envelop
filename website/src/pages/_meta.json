@@ -7,14 +7,12 @@
       "layout": "raw"
     }
   },
-  "v3": {
-    "title": "v3",
-    "versioned": true,
+  "docs": {
+    "title": "v3 (latest)",
     "type": "page"
   },
-  "docs": {
-    "title": "v2",
-    "versioned": true,
+  "v2": {
+    "href": "/v2",
     "type": "page"
   },
   "plugins": {
