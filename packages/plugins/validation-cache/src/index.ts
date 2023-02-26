@@ -1,8 +1,7 @@
 import { Plugin } from '@envelop/core';
 import { GraphQLError, print, introspectionFromSchema, type GraphQLSchema } from 'graphql';
-import jsonStableStringify from 'fast-json-stable-stringify';
 import LRU from 'lru-cache';
-import SHA1 from 'sha1-es';
+import hashIt from 'hash-it';
 
 export interface ValidationCache {
   /**
@@ -31,7 +30,7 @@ function getSchemaHash(schema: GraphQLSchema) {
     return hash;
   }
   const introspection = introspectionFromSchema(schema);
-  hash = SHA1.hash(jsonStableStringify(introspection.__schema));
+  hash = String(hashIt(introspection.__schema));
   schemaHashCache.set(schema, hash);
   return hash;
 }
