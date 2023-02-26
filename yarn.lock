@@ -3511,12 +3511,7 @@
   resolved "https://registry.npmjs.org/@types/mime/-/mime-1.3.2.tgz#93e25bf9ee75fe0fd80b594bc4feb0e862111b5a"
   integrity sha512-YATxVxgRqNH6nHEIsvg6k2Boc1JHI9ZbH5iWFFv/MTkchz3b1ieGDa5T0a9RznNdI0KhVbdbWSN+KWWrQZRxTw==
 
-"@types/minimatch@*":
-  version "5.1.2"
-  resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-5.1.2.tgz#07508b45797cb81ec3f273011b054cd0755eddca"
-  integrity sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==
-
-"@types/minimatch@^3.0.3":
+"@types/minimatch@*", "@types/minimatch@^3.0.3":
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.5.tgz#1001cc5e6a3704b83c236027e77f2f58ea010f40"
   integrity sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==
@@ -3799,29 +3794,31 @@
   resolved "https://registry.yarnpkg.com/@vercel/ncc/-/ncc-0.34.0.tgz#d0139528320e46670d949c82967044a8f66db054"
   integrity sha512-G9h5ZLBJ/V57Ou9vz5hI8pda/YQX5HQszCs3AmIus3XzsmRn/0Ptic5otD3xVST8QLKk7AMk7AqpsyQGN7MZ9A==
 
-"@whatwg-node/events@0.0.2":
+"@whatwg-node/events@^0.0.2":
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/@whatwg-node/events/-/events-0.0.2.tgz#7b7107268d2982fc7b7aff5ee6803c64018f84dd"
   integrity sha512-WKj/lI4QjnLuPrim0cfO7i+HsDSXHxNv1y0CrJhdntuO3hxWZmnXCwNDnwOvry11OjRin6cgWNF+j/9Pn8TN4w==
 
-"@whatwg-node/fetch@^0.6.5":
-  version "0.6.5"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.6.5.tgz#ff96288e9a6295faafac79f13e3b3fd831cad11f"
-  integrity sha512-3XQ78RAMX8Az0LlUqMoGM3jbT+FE0S+IKr4yiTiqzQ5S/pNxD52K/kFLcLQiEbL+3rkk/glCHqjxF1QI5155Ig==
+"@whatwg-node/fetch@^0.8.0":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.8.1.tgz#ee3c94746132f217e17f78f9e073bb342043d630"
+  integrity sha512-Fkd1qQHK2tAWxKlC85h9L86Lgbq3BzxMnHSnTsnzNZMMzn6Xi+HlN8/LJ90LxorhSqD54td+Q864LgwUaYDj1Q==
   dependencies:
     "@peculiar/webcrypto" "^1.4.0"
-    "@whatwg-node/node-fetch" "0.0.1"
+    "@whatwg-node/node-fetch" "^0.3.0"
     busboy "^1.6.0"
     urlpattern-polyfill "^6.0.2"
     web-streams-polyfill "^3.2.1"
 
-"@whatwg-node/node-fetch@0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/node-fetch/-/node-fetch-0.0.1.tgz#ffad65f3f8b73d6d2c2e8b179d557a5863b0db13"
-  integrity sha512-dMbh604yf2jl37IzvYGA6z3heQg3dMzlqoNsiNToe46SVmKusfJXGf4KYIuiJTzh9mEEu/uVF//QakUfsLJpwA==
+"@whatwg-node/node-fetch@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/node-fetch/-/node-fetch-0.3.0.tgz#7c7e90d03fa09d0ddebff29add6f16d923327d58"
+  integrity sha512-mPM8WnuHiI/3kFxDeE0SQQXAElbz4onqmm64fEGCwYEcBes2UsvIDI8HwQIqaXCH42A9ajJUPv4WsYoN/9oG6w==
   dependencies:
-    "@whatwg-node/events" "0.0.2"
-    busboy "1.6.0"
+    "@whatwg-node/events" "^0.0.2"
+    busboy "^1.6.0"
+    fast-querystring "^1.1.1"
+    fast-url-parser "^1.1.3"
     tslib "^2.3.1"
 
 "@yarnpkg/lockfile@^1.1.0":
@@ -4733,7 +4730,7 @@ bundle-require@^4.0.0:
   dependencies:
     load-tsconfig "^0.2.3"
 
-busboy@1.6.0, busboy@^1.6.0:
+busboy@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/busboy/-/busboy-1.6.0.tgz#966ea36a9502e43cdb9146962523b92f531f6893"
   integrity sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==
@@ -6996,6 +6993,13 @@ fast-levenshtein@^2.0.6, fast-levenshtein@~2.0.6:
   resolved "https://registry.npmjs.org/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
+fast-querystring@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/fast-querystring/-/fast-querystring-1.1.1.tgz#f4c56ef56b1a954880cfd8c01b83f9e1a3d3fda2"
+  integrity sha512-qR2r+e3HvhEFmpdHMv//U8FnFlnYjaC6QKDuaXALDkw2kvHO8WDjxH+f/rHGR4Me4pnk8p9JAkRNTjYHAKRn2Q==
+  dependencies:
+    fast-decode-uri-component "^1.0.1"
+
 fast-redact@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/fast-redact/-/fast-redact-3.0.0.tgz#ac2f9e36c9f4976f5db9fb18c6ffbaf308cf316d"
@@ -7010,6 +7014,13 @@ fast-text-encoding@^1.0.0, fast-text-encoding@^1.0.3:
   version "1.0.3"
   resolved "https://registry.npmjs.org/fast-text-encoding/-/fast-text-encoding-1.0.3.tgz#ec02ac8e01ab8a319af182dae2681213cfe9ce53"
   integrity sha512-dtm4QZH9nZtcDt8qJiOH9fcQd1NAgi+K1O2DbE6GG1PPCK/BWfOH3idCTRQ4ImXRUOyopDEgDEnVEE7Y/2Wrig==
+
+fast-url-parser@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/fast-url-parser/-/fast-url-parser-1.1.3.tgz#f4af3ea9f34d8a271cf58ad2b3759f431f0b318d"
+  integrity sha512-5jOCVXADYNuRkKFzNJ0dCCewsZiYo0dz8QNYljkOpFC6r2U4OBmKtvm/Tsuh4w1YYdDqDb31a8TVhBJ2OJKdqQ==
+  dependencies:
+    punycode "^1.3.2"
 
 fastify-warning@^0.2.0:
   version "0.2.0"
@@ -11923,7 +11934,7 @@ pump@^3.0.0:
     end-of-stream "^1.1.0"
     once "^1.3.1"
 
-punycode@1.3.2:
+punycode@1.3.2, punycode@^1.3.2:
   version "1.3.2"
   resolved "https://registry.npmjs.org/punycode/-/punycode-1.3.2.tgz#9653a036fb7c1ee42342f2325cceefea3926c48d"
   integrity sha1-llOgNvt8HuQjQvIyXM7v6jkmxI0=
