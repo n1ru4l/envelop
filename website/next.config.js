@@ -33,7 +33,7 @@ export default withGuildDocs({
       '/docs/guides/migrating-from-v2-to-v3': '/v3/guides/migrating-from-v2-to-v3',
       '/plugins/use-lazy-loaded-schema':
         '/docs/guides/migrating-from-v2-to-v3#4-rename-uselazyloadedschema-to-useschemabycontext',
-      '/v3/:slug': '/docs/:slug',
+      '/v3/:path': '/docs/:path',
     }).map(([from, to]) => ({
       source: from,
       destination: to,
