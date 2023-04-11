@@ -1,6 +1,6 @@
 import { Plugin, OnExecuteHookResult, isAsyncIterable } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
-import { SpanAttributes, SpanKind } from '@opentelemetry/api';
+import { SpanAttributes, SpanKind, TracerProvider } from '@opentelemetry/api';
 import * as opentelemetry from '@opentelemetry/api';
 import { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { print } from 'graphql';
@@ -32,7 +32,7 @@ type PluginContext = {
 
 export const useOpenTelemetry = (
   options: TracingOptions,
-  tracingProvider?: BasicTracerProvider,
+  tracingProvider?: TracerProvider,
   spanKind: SpanKind = SpanKind.SERVER,
   spanAdditionalAttributes: SpanAttributes = {},
   serviceName = 'graphql'
