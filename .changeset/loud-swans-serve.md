@@ -2,4 +2,4 @@
 '@envelop/opentelemetry': minor
 ---
 
-Upgrade opentelemetry
+chore: upgrade opentelemetry
