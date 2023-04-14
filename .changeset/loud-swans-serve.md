@@ -1,5 +1,5 @@
 ---
-"@envelop/opentelemetry": minor
+'@envelop/opentelemetry': minor
 ---
 
 Upgrade opentelemetry
