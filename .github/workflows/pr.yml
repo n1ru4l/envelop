@@ -41,6 +41,7 @@ jobs:
 
   algolia:
     uses: the-guild-org/shared-config/.github/workflows/algolia-integrity.yml@main
+    if: ${{ github.event.pull_request.head.repo.full_name == 'org/repo' }}
     with:
       domain: https://www.the-guild.dev/graphql/envelop/
       source: 'Envelop'
