@@ -39,7 +39,7 @@ import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useOpenTelemetry } from '@envelop/opentelemetry'
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger'
-import { SimpleSpanProcessor, BasicTracerProvider } from '@opentelemetry/tracing'
+import { SimpleSpanProcessor, BasicTracerProvider } from '@opentelemetry/sdk-trace-base'
 
 const exporter = new JaegerExporter({
   serviceName: 'my-service-name'

@@ -1,5 +1,5 @@
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { BasicTracerProvider, SimpleSpanProcessor, InMemorySpanExporter } from '@opentelemetry/tracing';
+import { BasicTracerProvider, SimpleSpanProcessor, InMemorySpanExporter } from '@opentelemetry/sdk-trace-base';
 import { buildSchema } from 'graphql';
 import { useOpenTelemetry } from '../src/index.js';
 

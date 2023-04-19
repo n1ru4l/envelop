@@ -1,8 +1,8 @@
 import { Plugin, OnExecuteHookResult, isAsyncIterable } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
-import { SpanAttributes, SpanKind } from '@opentelemetry/api';
+import { SpanAttributes, SpanKind, TracerProvider } from '@opentelemetry/api';
 import * as opentelemetry from '@opentelemetry/api';
-import { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/tracing';
+import { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { print } from 'graphql';
 
 export enum AttributeName {
@@ -32,15 +32,16 @@ type PluginContext = {
 
 export const useOpenTelemetry = (
   options: TracingOptions,
-  tracingProvider?: BasicTracerProvider,
+  tracingProvider?: TracerProvider,
   spanKind: SpanKind = SpanKind.SERVER,
   spanAdditionalAttributes: SpanAttributes = {},
   serviceName = 'graphql'
 ): Plugin<PluginContext> => {
   if (!tracingProvider) {
-    tracingProvider = new BasicTracerProvider();
-    tracingProvider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
-    tracingProvider.register();
+    const basicTraceProvider = new BasicTracerProvider();
+    basicTraceProvider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
+    basicTraceProvider.register();
+    tracingProvider = basicTraceProvider;
   }
 
   const tracer = tracingProvider.getTracer(serviceName);
@@ -51,7 +52,6 @@ export const useOpenTelemetry = (
         addPlugin(
           useOnResolve(({ info, context, args }) => {
             if (context && typeof context === 'object' && context[tracingSpanSymbol]) {
-              tracer.getActiveSpanProcessor();
               const ctx = opentelemetry.trace.setSpan(opentelemetry.context.active(), context[tracingSpanSymbol]);
               const { fieldName, returnType, parentType } = info;
 
