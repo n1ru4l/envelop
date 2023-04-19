@@ -1,6 +1,6 @@
 {
   "name": "@envelop/response-cache",
-  "version": "4.0.7",
+  "version": "4.0.8",
   "author": "Kamil Kisiela <kamilkisiela@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
