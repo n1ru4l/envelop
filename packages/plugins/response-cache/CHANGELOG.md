@@ -1,5 +1,13 @@
 # @envelop/response-cache
 
+## 4.0.8
+
+### Patch Changes
+
+- [#1735](https://github.com/n1ru4l/envelop/pull/1735) [`972c087f`](https://github.com/n1ru4l/envelop/commit/972c087fb3a47076588121cc6079278276654377) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@whatwg-node/fetch@^0.8.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.0) (from `^0.6.5`, in `dependencies`)
+
 ## 4.0.7
 
 ### Patch Changes

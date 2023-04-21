@@ -1,5 +1,11 @@
 # @envelop/opentelemetry
 
+## 4.1.0
+
+### Minor Changes
+
+- [#1754](https://github.com/n1ru4l/envelop/pull/1754) [`8ddd919a`](https://github.com/n1ru4l/envelop/commit/8ddd919a5e395350f3e5d8e9919ae334e353ed22) Thanks [@darren-west](https://github.com/darren-west)! - chore: upgrade opentelemetry
+
 ## 4.0.6
 
 ### Patch Changes

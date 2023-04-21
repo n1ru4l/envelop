@@ -1,5 +1,11 @@
 # @envelop/validation-cache
 
+## 5.1.3
+
+### Patch Changes
+
+- [#1733](https://github.com/n1ru4l/envelop/pull/1733) [`572561f1`](https://github.com/n1ru4l/envelop/commit/572561f1039111b849abe5140b272dafed3dc467) Thanks [@eugene1g](https://github.com/eugene1g)! - fix: validation cache for ESM environments
+
 ## 5.1.2
 
 ### Patch Changes
