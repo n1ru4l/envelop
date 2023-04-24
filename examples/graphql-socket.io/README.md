@@ -4,6 +4,6 @@ This example demonstrates how to implement the GraphQL flow with Envelop and the
 
 ## Running this example
 
-1. Install all dependencies from the root of the repo (using `yarn`)
-1. `cd` into this folder and run `yarn start`
-1. run `yarn test:client` for executing a test operation against the server
+1. Install all dependencies from the root of the repo (using `pnpm`)
+1. `cd` into this folder and run `pnpm run start`
+1. run `pnpm run test:client` for executing a test operation against the server

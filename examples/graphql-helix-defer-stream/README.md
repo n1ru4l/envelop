@@ -13,6 +13,6 @@ This examples uses the experimental `graphql.js` version `15.4.0-experimental-st
 ## Running this example
 
 1. `cd` into ththisat folder
-1. Install all dependencies (using `yarn`)
-1. Run `yarn start`.
+1. Install all dependencies (using `pnpm`)
+1. Run `pnpm run start`.
 1. Open http://localhost:3000/graphql in your browser, and try one of the suggested operations.

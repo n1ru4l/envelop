@@ -10,9 +10,9 @@ jobs:
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
     with:
       installDependencies: true
-      packageManager: yarn
+      packageManager: pnpm
       nodeVersion: 18
-      preCommit: 'yarn prettier'
+      preCommit: 'pnpm run prettier'
     secrets:
       githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
 

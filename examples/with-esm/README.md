@@ -9,5 +9,5 @@ All bundles produced from this repo has `mjs` in addition to CommonJS.
 To run this example:
 
 1. Make sure to install deps on the root of the repo.
-2. Run `yarn build`.
-3. Run `yarn dev` in this directory.
+2. Run `pnpm run build`.
+3. Run `pnpm run dev` in this directory.

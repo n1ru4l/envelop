@@ -35,7 +35,7 @@
     "test": "jest",
     "test:core": "jest ./packages/core --coverage",
     "test:ci": "jest --coverage",
-    "prerelease": "yarn build",
+    "prerelease": "pnpm run build",
     "release": "changeset publish",
     "loadtest:start-server": "NODE_ENV=production node ./benchmark/app.js",
     "loadtest:run": "k6 -e GRAPHQL_HOSTNAME=0.0.0.0 run ./benchmark/k6.js",
