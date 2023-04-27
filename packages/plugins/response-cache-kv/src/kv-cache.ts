@@ -35,10 +35,44 @@ export const createCloudflareKVCache = (params: KVCacheParameter): Cache => {
     params?.buildKVOperationResultCacheKey ??
     defaultBuildKVOperationResultCacheKey;
 
-  async function buildEntityInvalidationsKeys(
-    entity: string
-  ): Promise<string[]> {
-    // TODO: Figure this out
+  async function buildEntityInvalidationsKeys(entity: string): Promise<string[]> {
+    const keysToInvalidate: string[] = [entity];
+
+    // Find the responseIds for the entity
+    // This won't work but we should update how
+    // Entities are stored so we can use list with a prefix
+    const responseIds = await store.get(entity, "json");
+
+    // Update this to reflect the changes above
+    if (responseIds) {
+      // Add each response to be invalidated since they contained the entity data
+      responseIds.forEach(responseId => {
+        keysToInvalidate.push(responseId);
+        keysToInvalidate.push(`operations:${responseId}`);
+      });
+    }
+
+    if (!entity.includes(':')) {
+      const entityKeys = await store.list({ prefix: `${entity}:` });
+
+      for (const entityKey of entityKeys.keys) {
+        // This will need changing to work with KV (specific prefixed list call)
+        const entityResponseIds = await store.get(entityKey.name, "json");
+
+        if (entityResponseIds) {
+          // If invalidating an entity, check for associated operations containing that entity
+          // and invalidate each response since they contained the entity data
+          entityResponseIds.forEach(responseId => {
+            keysToInvalidate.push(responseId);
+            keysToInvalidate.push(`operations:${responseId}`);
+          });
+        }
+
+        keysToInvalidate.push(entityKey.name);
+      }
+    }
+
+    return keysToInvalidate;
   }
 
   return {
