@@ -1,9 +1,10 @@
 import { Plugin, OnExecuteHookResult, isAsyncIterable } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
-import { SpanAttributes, SpanKind, TracerProvider } from '@opentelemetry/api';
+import { ContextManager, SpanAttributes, SpanKind, trace, TracerProvider } from '@opentelemetry/api';
 import * as opentelemetry from '@opentelemetry/api';
 import { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { print } from 'graphql';
+import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 
 export enum AttributeName {
   EXECUTION_ERROR = 'graphql.execute.error',
@@ -20,6 +21,8 @@ export enum AttributeName {
 
 const tracingSpanSymbol = Symbol('OPEN_TELEMETRY_GRAPHQL');
 
+const traceContextSymbol = Symbol('OPEN_TELEMETRY_GRAPHQL_TEST');
+
 export type TracingOptions = {
   resolvers: boolean;
   variables: boolean;
@@ -28,11 +31,13 @@ export type TracingOptions = {
 
 type PluginContext = {
   [tracingSpanSymbol]: opentelemetry.Span;
+  [traceContextSymbol]: opentelemetry.Context;
 };
 
 export const useOpenTelemetry = (
   options: TracingOptions,
   tracingProvider?: TracerProvider,
+  contextManager?: ContextManager,
   spanKind: SpanKind = SpanKind.SERVER,
   spanAdditionalAttributes: SpanAttributes = {},
   serviceName = 'graphql'
@@ -44,13 +49,19 @@ export const useOpenTelemetry = (
     tracingProvider = basicTraceProvider;
   }
 
+  if (!contextManager) {
+    const contextManager = new AsyncLocalStorageContextManager();
+    contextManager.enable();
+    opentelemetry.context.setGlobalContextManager(contextManager);
+  }
+
   const tracer = tracingProvider.getTracer(serviceName);
 
   return {
     onPluginInit({ addPlugin }) {
       if (options.resolvers) {
         addPlugin(
-          useOnResolve(({ info, context, args }) => {
+          useOnResolve(({ info, context, args, resolver, replaceResolver }) => {
             if (context && typeof context === 'object' && context[tracingSpanSymbol]) {
               const ctx = opentelemetry.trace.setSpan(opentelemetry.context.active(), context[tracingSpanSymbol]);
               const { fieldName, returnType, parentType } = info;
@@ -67,6 +78,17 @@ export const useOpenTelemetry = (
                 },
                 ctx
               );
+
+              context[traceContextSymbol] = ctx;
+
+              replaceResolver(async (root, args, context, info) => {
+                return await opentelemetry.context.with(
+                  trace.setSpan(context[traceContextSymbol], resolverSpan),
+                  async () => {
+                    return resolver(root, args, context, info);
+                  }
+                );
+              });
 
               return ({ result }) => {
                 if (result instanceof Error) {
