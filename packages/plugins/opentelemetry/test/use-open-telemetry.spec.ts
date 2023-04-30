@@ -109,4 +109,39 @@ describe('useOpenTelemetry', () => {
     expect(actual[1].name).toBe('Query.ping');
     expect(actual[2].name).toBe('Anonymous Operation');
   });
+
+  it('Should setup the active context for resolver without resolver span', async () => {
+    const exporter = new InMemorySpanExporter();
+    const provider = createTraceProvider(exporter);
+
+    const tracer = provider.getTracer('grapqhl');
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          ping: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          ping: () => {
+            expect(opentelemetry.context.active()).not.toEqual(opentelemetry.ROOT_CONTEXT);
+            const parent = opentelemetry.trace.getSpan(opentelemetry.context.active());
+            expect(parent).not.toBeUndefined();
+            tracer.startSpan('Test Span', {}, opentelemetry.context.active()).end();
+            return 'hello world';
+          },
+        },
+      },
+    });
+
+    const testInstance = createTestkit([useTestOpenTelemetry(exporter, { resolvers: false })], schema);
+
+    await testInstance.execute(query);
+
+    const actual = exporter.getFinishedSpans();
+    expect(actual.length).toBe(2);
+    expect(actual[0].name).toBe('Test Span');
+    expect(actual[1].name).toBe('Anonymous Operation');
+  });
 });

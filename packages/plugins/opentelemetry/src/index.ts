@@ -19,9 +19,11 @@ export enum AttributeName {
   EXECUTION_VARIABLES = 'graphql.execute.variables',
 }
 
-const tracingSpanSymbol = Symbol('OPEN_TELEMETRY_GRAPHQL');
+const traceContextSymbol = Symbol('OPEN_TELEMETRY_GRAPHQL_ACTIVE_CONTEXT');
 
-const traceContextSymbol = Symbol('OPEN_TELEMETRY_GRAPHQL_TEST');
+const getActiveContext = (context: PluginContext): opentelemetry.Context => {
+  return context[traceContextSymbol] || opentelemetry.ROOT_CONTEXT;
+};
 
 export type TracingOptions = {
   resolvers: boolean;
@@ -30,7 +32,6 @@ export type TracingOptions = {
 };
 
 type PluginContext = {
-  [tracingSpanSymbol]: opentelemetry.Span;
   [traceContextSymbol]: opentelemetry.Context;
 };
 
@@ -59,53 +60,49 @@ export const useOpenTelemetry = (
 
   return {
     onPluginInit({ addPlugin }) {
-      if (options.resolvers) {
-        addPlugin(
-          useOnResolve(({ info, context, args, resolver, replaceResolver }) => {
-            if (context && typeof context === 'object' && context[tracingSpanSymbol]) {
-              const ctx = opentelemetry.trace.setSpan(opentelemetry.context.active(), context[tracingSpanSymbol]);
-              const { fieldName, returnType, parentType } = info;
+      addPlugin(
+        useOnResolve(({ info, context, args, resolver, replaceResolver }) => {
+          replaceResolver(async (root, args, context, info) => {
+            return await opentelemetry.context.with(getActiveContext(context), async () => {
+              return resolver(root, args, context, info);
+            });
+          });
 
-              const resolverSpan = tracer.startSpan(
-                `${parentType.name}.${fieldName}`,
-                {
-                  attributes: {
-                    [AttributeName.RESOLVER_FIELD_NAME]: fieldName,
-                    [AttributeName.RESOLVER_TYPE_NAME]: parentType.toString(),
-                    [AttributeName.RESOLVER_RESULT_TYPE]: returnType.toString(),
-                    [AttributeName.RESOLVER_ARGS]: JSON.stringify(args || {}),
-                  },
-                },
-                ctx
-              );
+          if (!options.resolvers) {
+            return;
+          }
 
-              context[traceContextSymbol] = ctx;
+          const { fieldName, returnType, parentType } = info;
 
-              replaceResolver(async (root, args, context, info) => {
-                return await opentelemetry.context.with(
-                  trace.setSpan(context[traceContextSymbol], resolverSpan),
-                  async () => {
-                    return resolver(root, args, context, info);
-                  }
-                );
+          const resolverSpan = tracer.startSpan(
+            `${parentType.name}.${fieldName}`,
+            {
+              attributes: {
+                [AttributeName.RESOLVER_FIELD_NAME]: fieldName,
+                [AttributeName.RESOLVER_TYPE_NAME]: parentType.toString(),
+                [AttributeName.RESOLVER_RESULT_TYPE]: returnType.toString(),
+                [AttributeName.RESOLVER_ARGS]: JSON.stringify(args || {}),
+              },
+            },
+            getActiveContext(context)
+          );
+
+          context[traceContextSymbol] = opentelemetry.trace.setSpan(getActiveContext(context), resolverSpan);
+
+          return ({ result }) => {
+            if (result instanceof Error) {
+              resolverSpan.recordException({
+                name: AttributeName.RESOLVER_EXCEPTION,
+                message: JSON.stringify(result),
               });
-
-              return ({ result }) => {
-                if (result instanceof Error) {
-                  resolverSpan.recordException({
-                    name: AttributeName.RESOLVER_EXCEPTION,
-                    message: JSON.stringify(result),
-                  });
-                } else {
-                  resolverSpan.end();
-                }
-              };
+            } else {
+              resolverSpan.end();
             }
+          };
 
-            return () => {};
-          })
-        );
-      }
+          return () => {};
+        })
+      );
     },
     onExecute({ args, extendContext }) {
       const executionSpan = tracer.startSpan(`${args.operationName || 'Anonymous Operation'}`, {
@@ -119,6 +116,8 @@ export const useOpenTelemetry = (
             : {}),
         },
       });
+
+      const activeContext = opentelemetry.trace.setSpan(opentelemetry.context.active(), executionSpan);
 
       const resultCbs: OnExecuteHookResult<PluginContext> = {
         onExecuteDone({ result }) {
@@ -146,11 +145,9 @@ export const useOpenTelemetry = (
         },
       };
 
-      if (options.resolvers) {
-        extendContext({
-          [tracingSpanSymbol]: executionSpan,
-        });
-      }
+      extendContext({
+        [traceContextSymbol]: activeContext,
+      });
 
       return resultCbs;
     },
