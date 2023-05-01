@@ -19,9 +19,6 @@ jobs:
           nodeVersion: 17
           packageManager: 'pnpm'
 
-      - name: Install Dependencies using Yarn
-        run: pnpm install --ignore-engines && git checkout pnpm-lock.yaml
-
       - name: Build
         run: pnpm run build
 
