@@ -1,6 +1,11 @@
 {
   "name": "envelop-mono-repository",
   "private": true,
+  "packageManager": "pnpm@7.32.2",
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=7"
+  },
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "scripts": {
