@@ -2,7 +2,8 @@ import { Callout } from '@theguild/components'
 
 # Tracing
 
-`envelop` comes with a self-measuring tracing tool, for providing you some insights on the performance of each stage.
+`envelop` comes with a self-measuring tracing tool, for providing you some insights on the
+performance of each stage.
 
 If you wish to enable it, pass `enableInternalTracing: true` to your envelop instance:
 
@@ -19,7 +20,8 @@ const getEnveloped = envelop({
 })
 ```
 
-This way, on each executed request, you'll get the following object with metrics (measured in `ms`) added to your `result.extensions`:
+This way, on each executed request, you'll get the following object with metrics (measured in `ms`)
+added to your `result.extensions`:
 
 ```json
 {
@@ -36,6 +38,6 @@ This way, on each executed request, you'll get the following object with metrics
 ```
 
 <Callout>
-  The measured time represents the entire execution, of all plugins, in each phase, including before/after of all
-  plugins, and the actual GraphQL function.
+  The measured time represents the entire execution, of all plugins, in each phase, including
+  before/after of all plugins, and the actual GraphQL function.
 </Callout>

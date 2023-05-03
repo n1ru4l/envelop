@@ -1,6 +1,7 @@
 ## TypeGraphQL & Envelop
 
-This example demonstrate how to implement the basic GraphQL flow with Envelop+Helix, and with schema provided by TypeGraphQL.
+This example demonstrate how to implement the basic GraphQL flow with Envelop+Helix, and with schema
+provided by TypeGraphQL.
 
 ## Running this example
 
@@ -10,7 +11,8 @@ This example demonstrate how to implement the basic GraphQL flow with Envelop+He
 
 ## Use it with `typedi`
 
-If you are using TypeGraphQL with dependency injection, and you wish to inject your execution `Container`, you can use `useExtendContext` to build and inject it:
+If you are using TypeGraphQL with dependency injection, and you wish to inject your execution
+`Container`, you can use `useExtendContext` to build and inject it:
 
 ```ts
 const getEnveloped = envelop({

@@ -1,5 +1,5 @@
-import { SubscriptionArgs, execute } from 'graphql';
-import { Plugin, PromiseOrValue, makeExecute, DefaultContext } from '@envelop/core';
+import { execute, SubscriptionArgs } from 'graphql';
+import { DefaultContext, makeExecute, Plugin, PromiseOrValue } from '@envelop/core';
 import { subscribe } from './subscribe.js';
 
 export type ContextFactoryOptions = {
@@ -15,11 +15,13 @@ export type ContextFactoryHook<TContextValue> = {
 };
 
 export type ContextFactoryType<TContextValue = DefaultContext> = (
-  options: ContextFactoryOptions
+  options: ContextFactoryOptions,
 ) => PromiseOrValue<ContextFactoryHook<TContextValue> | void>;
 
-export const useExtendContextValuePerExecuteSubscriptionEvent = <TContextValue extends Record<any, any>>(
-  createContext: ContextFactoryType<TContextValue>
+export const useExtendContextValuePerExecuteSubscriptionEvent = <
+  TContextValue extends Record<any, any>,
+>(
+  createContext: ContextFactoryType<TContextValue>,
 ): Plugin<TContextValue> => {
   return {
     onSubscribe({ args, setSubscribeFn }) {

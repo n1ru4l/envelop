@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises';
-import { GetStaticProps, GetStaticPaths } from 'next';
+import { GetStaticPaths, GetStaticProps } from 'next';
 import { buildDynamicMDX, buildDynamicMeta } from 'nextra/remote';
+import { BRANCH, REPO, ROOT_DIR } from '@/lib/constants';
 import { findPathWithExtension, findStaticPaths } from '@/lib/remote-utils';
-import { REPO, BRANCH, ROOT_DIR } from '@/lib/constants';
 
 export const getStaticPaths: GetStaticPaths = async () => ({
   fallback: 'blocking',

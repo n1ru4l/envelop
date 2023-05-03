@@ -1,6 +1,6 @@
-import { makeExecutableSchema } from '@graphql-tools/schema';
 import DataLoader from 'dataloader';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import { useDataLoader } from '../src/index.js';
 
 describe('useDataLoader', () => {
@@ -21,10 +21,10 @@ describe('useDataLoader', () => {
           () =>
             new DataLoader<string, string>(async () => {
               return ['myValue'];
-            })
+            }),
         ),
       ],
-      schema
+      schema,
     );
 
     const result = await testInstance.execute(`query { test }`);

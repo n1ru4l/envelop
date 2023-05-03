@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
-import { makeExecute, makeSubscribe, Plugin, TypedExecutionArgs } from '@envelop/core';
-import { DocumentNode, Source, ExecutionArgs, ExecutionResult } from 'graphql';
-import { compileQuery, isCompiledQuery, CompilerOptions, CompiledQuery } from 'graphql-jit';
+import { DocumentNode, ExecutionArgs, ExecutionResult, Source } from 'graphql';
+import { CompiledQuery, compileQuery, CompilerOptions, isCompiledQuery } from 'graphql-jit';
 import LRU from 'lru-cache';
+import { makeExecute, makeSubscribe, Plugin, TypedExecutionArgs } from '@envelop/core';
 
 const DEFAULT_MAX = 1000;
 const DEFAULT_TTL = 3600000;
@@ -32,7 +32,7 @@ export const useGraphQlJit = (
      * Custom cache instance
      */
     cache?: JITCache;
-  } = {}
+  } = {},
 ): Plugin => {
   const documentSourceMap = new WeakMap<DocumentNode, string>();
   const jitCache =
@@ -53,7 +53,7 @@ export const useGraphQlJit = (
         args.schema,
         args.document,
         args.operationName ?? undefined,
-        compilerOptions
+        compilerOptions,
       );
 
       if (!isCompiledQuery(compilationResult)) {
@@ -87,26 +87,36 @@ export const useGraphQlJit = (
       };
     },
     async onExecute({ args, setExecuteFn }) {
-      if (!pluginOptions.enableIf || (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))) {
+      if (
+        !pluginOptions.enableIf ||
+        (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))
+      ) {
         setExecuteFn(
           makeExecute(function jitExecutor(args) {
             const cacheEntry = getCacheEntry(args as TypedExecutionArgs<unknown>);
 
             return cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
-          })
+          }),
         );
       }
     },
     async onSubscribe({ args, setSubscribeFn }) {
-      if (!pluginOptions.enableIf || (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))) {
+      if (
+        !pluginOptions.enableIf ||
+        (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))
+      ) {
         setSubscribeFn(
           makeSubscribe(async function jitSubscriber(args) {
             const cacheEntry = getCacheEntry(args as TypedExecutionArgs<unknown>);
 
             return cacheEntry.subscribe
-              ? (cacheEntry.subscribe(args.rootValue, args.contextValue, args.variableValues) as any)
+              ? (cacheEntry.subscribe(
+                  args.rootValue,
+                  args.contextValue,
+                  args.variableValues,
+                ) as any)
               : cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
-          })
+          }),
         );
       }
     },

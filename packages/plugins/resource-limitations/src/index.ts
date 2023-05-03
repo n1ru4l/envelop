@@ -1,5 +1,3 @@
-import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/core';
-import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
 import {
   ExecutionArgs,
   ExecutionResult,
@@ -14,9 +12,13 @@ import {
   GraphQLType,
   isScalarType,
 } from 'graphql';
+import { handleStreamOrSingleExecutionResult, Plugin } from '@envelop/core';
+import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
 import { getArgumentValues } from '@graphql-tools/utils';
 
-const getWrappedType = (graphqlType: GraphQLType): Exclude<GraphQLType, GraphQLList<any> | GraphQLNonNull<any>> => {
+const getWrappedType = (
+  graphqlType: GraphQLType,
+): Exclude<GraphQLType, GraphQLList<any> | GraphQLNonNull<any>> => {
   if (graphqlType instanceof GraphQLList || graphqlType instanceof GraphQLNonNull) {
     return getWrappedType(graphqlType.ofType);
   }
@@ -42,7 +44,11 @@ const hasFieldDefConnectionArgs = (field: GraphQLField<any, any>, argumentTypes?
   return { hasFirst, hasLast };
 };
 
-const buildMissingPaginationFieldErrorMessage = (params: { fieldName: string; hasFirst: boolean; hasLast: boolean }) =>
+const buildMissingPaginationFieldErrorMessage = (params: {
+  fieldName: string;
+  hasFirst: boolean;
+  hasLast: boolean;
+}) =>
   `Missing pagination argument for field '${params.fieldName}'. ` +
   `Please provide ` +
   (params.hasFirst && params.hasLast
@@ -94,13 +100,20 @@ export const ResourceLimitationValidationRule =
 
           // if it is not found the query is invalid and graphql validation will complain
           if (fieldDef != null) {
-            const argumentValues = getArgumentValues(fieldDef, fieldNode, executionArgs.variableValues || undefined);
+            const argumentValues = getArgumentValues(
+              fieldDef,
+              fieldNode,
+              executionArgs.variableValues || undefined,
+            );
             const type = getWrappedType(fieldDef.type);
             if (type instanceof GraphQLObjectType && type.name.endsWith('Connection')) {
               let nodeCost = 1;
               connectionFieldMap.add(fieldNode);
 
-              const { hasFirst, hasLast } = hasFieldDefConnectionArgs(fieldDef, params.paginationArgumentTypes);
+              const { hasFirst, hasLast } = hasFieldDefConnectionArgs(
+                fieldDef,
+                params.paginationArgumentTypes,
+              );
               if (hasFirst === false && hasLast === false) {
                 // eslint-disable-next-line no-console
                 console.warn('Encountered paginated field without pagination arguments.');
@@ -116,8 +129,8 @@ export const ResourceLimitationValidationRule =
                         hasFirst,
                         hasLast,
                       }),
-                      fieldNode
-                    )
+                      fieldNode,
+                    ),
                   );
                 } else if ('first' in argumentValues && !argumentValues.last) {
                   if (
@@ -132,8 +145,8 @@ export const ResourceLimitationValidationRule =
                           argumentName: 'first',
                           fieldName: fieldDef.name,
                         }),
-                        fieldNode
-                      )
+                        fieldNode,
+                      ),
                     );
                   } else {
                     // eslint-disable-next-line dot-notation
@@ -152,8 +165,8 @@ export const ResourceLimitationValidationRule =
                           argumentName: 'last',
                           fieldName: fieldDef.name,
                         }),
-                        fieldNode
-                      )
+                        fieldNode,
+                      ),
                     );
                   } else {
                     // eslint-disable-next-line dot-notation
@@ -167,8 +180,8 @@ export const ResourceLimitationValidationRule =
                         hasFirst,
                         hasLast,
                       }),
-                      fieldNode
-                    )
+                      fieldNode,
+                    ),
                   );
                 }
               }
@@ -193,8 +206,8 @@ export const ResourceLimitationValidationRule =
             context.reportError(
               new GraphQLError(
                 `Cannot request more than ${params.nodeCostLimit} nodes in a single document. Please split your operation into multiple sub operations or reduce the amount of requested nodes.`,
-                documentNode
-              )
+                documentNode,
+              ),
             );
           }
           params.reportNodeCost?.(totalNodeCost, executionArgs);
@@ -231,8 +244,10 @@ type UseResourceLimitationsParams = {
 };
 
 export const useResourceLimitations = (params?: UseResourceLimitationsParams): Plugin => {
-  const paginationArgumentMaximum = params?.paginationArgumentMaximum ?? defaultPaginationArgumentMaximum;
-  const paginationArgumentMinimum = params?.paginationArgumentMinimum ?? defaultPaginationArgumentMinimum;
+  const paginationArgumentMaximum =
+    params?.paginationArgumentMaximum ?? defaultPaginationArgumentMaximum;
+  const paginationArgumentMinimum =
+    params?.paginationArgumentMinimum ?? defaultPaginationArgumentMinimum;
   const nodeCostLimit = params?.nodeCostLimit ?? defaultNodeCostLimit;
   const extensions = params?.extensions ?? false;
   const nodeCostMap = new WeakMap<object, number>();
@@ -267,13 +282,15 @@ export const useResourceLimitations = (params?: UseResourceLimitationsParams): P
             }),
           ],
           onValidationFailed: params => handleResult(params),
-        })
+        }),
       );
     },
     onExecute({ args }) {
       return {
         onExecuteDone(payload) {
-          return handleStreamOrSingleExecutionResult(payload, ({ result }) => handleResult({ result, args }));
+          return handleStreamOrSingleExecutionResult(payload, ({ result }) =>
+            handleResult({ result, args }),
+          );
         },
       };
     },

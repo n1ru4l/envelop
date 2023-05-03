@@ -1,8 +1,15 @@
-import { FeatureList, HeroGradient, HeroIllustration, InfoList, NPMBadge, HeroMarketplace } from '@theguild/components';
-import homeClawImage from '../../public/assets/home-claw.png';
-import featuresPluggableImage from '../../public/assets/features-pluggable.png';
+import {
+  FeatureList,
+  HeroGradient,
+  HeroIllustration,
+  HeroMarketplace,
+  InfoList,
+  NPMBadge,
+} from '@theguild/components';
 import featuresModernImage from '../../public/assets/features-modern.png';
 import featuresPerformantImage from '../../public/assets/features-performant.png';
+import featuresPluggableImage from '../../public/assets/features-pluggable.png';
+import homeClawImage from '../../public/assets/home-claw.png';
 import homeCommunicationImage from '../../public/assets/home-communication.png';
 
 export function IndexPage() {
@@ -40,7 +47,8 @@ export function IndexPage() {
               src: featuresModernImage,
             },
             title: 'Flexible',
-            description: 'Use any HTTP server, and any GraphQL schema (code-first or schema-first).',
+            description:
+              'Use any HTTP server, and any GraphQL schema (code-first or schema-first).',
           },
           {
             image: {
@@ -84,7 +92,8 @@ export function IndexPage() {
           },
           {
             title: 'Integrations',
-            description: 'Integrate envelop with your existing setup quickly, based on usage examples.',
+            description:
+              'Integrate envelop with your existing setup quickly, based on usage examples.',
             link: {
               href: '/docs/integrations',
               children: 'Integrations & Examples',

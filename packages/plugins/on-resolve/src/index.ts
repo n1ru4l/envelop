@@ -1,11 +1,17 @@
-import { defaultFieldResolver, GraphQLResolveInfo, GraphQLSchema, isIntrospectionType, isObjectType } from 'graphql';
+import {
+  defaultFieldResolver,
+  GraphQLResolveInfo,
+  GraphQLSchema,
+  isIntrospectionType,
+  isObjectType,
+} from 'graphql';
 import { Plugin, PromiseOrValue } from '@envelop/core';
 
 export type Resolver<Context = unknown> = (
   root: unknown,
   args: Record<string, unknown>,
   context: Context,
-  info: GraphQLResolveInfo
+  info: GraphQLResolveInfo,
 ) => PromiseOrValue<unknown>;
 
 export type AfterResolver = (options: {
@@ -23,7 +29,7 @@ export interface OnResolveOptions<PluginContext extends Record<string, any> = {}
 }
 
 export type OnResolve<PluginContext extends Record<string, any> = {}> = (
-  options: OnResolveOptions<PluginContext>
+  options: OnResolveOptions<PluginContext>,
 ) => PromiseOrValue<AfterResolver | void>;
 
 /**
@@ -32,7 +38,7 @@ export type OnResolve<PluginContext extends Record<string, any> = {}> = (
  * Use the `onResolve` argument to manipulate the resolver and its results/errors.
  */
 export function useOnResolve<PluginContext extends Record<string, any> = {}>(
-  onResolve: OnResolve<PluginContext>
+  onResolve: OnResolve<PluginContext>,
 ): Plugin<PluginContext> {
   return {
     onSchemaChange({ schema: _schema }) {

@@ -1,55 +1,64 @@
 import {
+  AfterContextBuildingHook,
   AfterParseHook,
   AfterValidateHook,
   ArbitraryObject,
+  AsyncIterableIteratorOrValue,
+  DefaultContext,
   EnvelopContextFnWrapper,
+  ExecuteFunction,
+  ExecutionResult,
   GetEnvelopedFn,
+  Maybe,
   OnContextBuildingHook,
-  AfterContextBuildingHook,
+  OnContextErrorHandler,
   OnEnvelopedHook,
   OnExecuteDoneHook,
+  OnExecuteDoneHookResultOnEndHook,
+  OnExecuteDoneHookResultOnNextHook,
   OnExecuteHook,
   OnParseHook,
   OnSubscribeHook,
-  OnValidateHook,
-  Plugin,
-  SubscribeResultHook,
-  TypedSubscriptionArgs,
-  TypedExecutionArgs,
-  SubscribeFunction,
-  OnSubscribeResultResultOnNextHook,
   OnSubscribeResultResultOnEndHook,
-  OnExecuteDoneHookResultOnNextHook,
-  OnExecuteDoneHookResultOnEndHook,
-  ExecuteFunction,
-  AsyncIterableIteratorOrValue,
-  OnContextErrorHandler,
-  SubscribeErrorHook,
-  DefaultContext,
-  Maybe,
+  OnSubscribeResultResultOnNextHook,
+  OnValidateHook,
   ParseFunction,
+  Plugin,
+  SubscribeErrorHook,
+  SubscribeFunction,
+  SubscribeResultHook,
+  TypedExecutionArgs,
+  TypedSubscriptionArgs,
   ValidateFunction,
-  ExecutionResult,
 } from '@envelop/types';
 import {
   errorAsyncIterator,
   finalAsyncIterator,
+  isAsyncIterable,
   makeExecute,
   makeSubscribe,
   mapAsyncIterator,
-  isAsyncIterable,
 } from './utils.js';
 
 export type EnvelopOrchestrator<
   InitialContext extends ArbitraryObject = ArbitraryObject,
-  PluginsContext extends ArbitraryObject = ArbitraryObject
+  PluginsContext extends ArbitraryObject = ArbitraryObject,
 > = {
   init: (initialContext?: Maybe<InitialContext>) => void;
-  parse: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['parse'], InitialContext>;
-  validate: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['validate'], InitialContext>;
+  parse: EnvelopContextFnWrapper<
+    ReturnType<GetEnvelopedFn<PluginsContext>>['parse'],
+    InitialContext
+  >;
+  validate: EnvelopContextFnWrapper<
+    ReturnType<GetEnvelopedFn<PluginsContext>>['validate'],
+    InitialContext
+  >;
   execute: ReturnType<GetEnvelopedFn<PluginsContext>>['execute'];
   subscribe: ReturnType<GetEnvelopedFn<PluginsContext>>['subscribe'];
-  contextFactory: EnvelopContextFnWrapper<ReturnType<GetEnvelopedFn<PluginsContext>>['contextFactory'], PluginsContext>;
+  contextFactory: EnvelopContextFnWrapper<
+    ReturnType<GetEnvelopedFn<PluginsContext>>['contextFactory'],
+    PluginsContext
+  >;
   getCurrentSchema: () => Maybe<any>;
 };
 
@@ -118,7 +127,14 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     context: [] as OnContextBuildingHook<any>[],
   };
 
-  for (const { onContextBuilding, onExecute, onParse, onSubscribe, onValidate, onEnveloped } of plugins) {
+  for (const {
+    onContextBuilding,
+    onExecute,
+    onParse,
+    onSubscribe,
+    onValidate,
+    onEnveloped,
+  } of plugins) {
     onEnveloped && beforeCallbacks.init.push(onEnveloped);
     onContextBuilding && beforeCallbacks.context.push(onContextBuilding);
     onExecute && beforeCallbacks.execute.push(onExecute);
@@ -202,7 +218,8 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
       }
     : () => parse;
 
-  const customValidate: EnvelopContextFnWrapper<typeof validate, any> = beforeCallbacks.validate.length
+  const customValidate: EnvelopContextFnWrapper<typeof validate, any> = beforeCallbacks.validate
+    .length
     ? initialContext => (schema, documentAST, rules, typeInfo, validationOptions) => {
         let actualRules: undefined | any[] = rules ? [...rules] : undefined;
         let validateFn = validate;
@@ -271,62 +288,65 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
       }
     : () => validate;
 
-  const customContextFactory: EnvelopContextFnWrapper<(orchestratorCtx?: any) => any, any> = beforeCallbacks.context
-    .length
-    ? initialContext => async orchestratorCtx => {
-        const afterCalls: AfterContextBuildingHook<any>[] = [];
+  const customContextFactory: EnvelopContextFnWrapper<(orchestratorCtx?: any) => any, any> =
+    beforeCallbacks.context.length
+      ? initialContext => async orchestratorCtx => {
+          const afterCalls: AfterContextBuildingHook<any>[] = [];
 
-        // In order to have access to the "last working" context object we keep this outside of the try block:
-        let context = orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
+          // In order to have access to the "last working" context object we keep this outside of the try block:
+          let context = orchestratorCtx
+            ? { ...initialContext, ...orchestratorCtx }
+            : initialContext;
 
-        try {
-          let isBreakingContextBuilding = false;
+          try {
+            let isBreakingContextBuilding = false;
 
-          for (const onContext of beforeCallbacks.context) {
-            const afterHookResult = await onContext({
-              context,
-              extendContext: extension => {
-                context = { ...context, ...extension };
-              },
-              breakContextBuilding: () => {
-                isBreakingContextBuilding = true;
-              },
-            });
+            for (const onContext of beforeCallbacks.context) {
+              const afterHookResult = await onContext({
+                context,
+                extendContext: extension => {
+                  context = { ...context, ...extension };
+                },
+                breakContextBuilding: () => {
+                  isBreakingContextBuilding = true;
+                },
+              });
 
-            if (typeof afterHookResult === 'function') {
-              afterCalls.push(afterHookResult);
+              if (typeof afterHookResult === 'function') {
+                afterCalls.push(afterHookResult);
+              }
+
+              if ((isBreakingContextBuilding as boolean) === true) {
+                break;
+              }
             }
 
-            if ((isBreakingContextBuilding as boolean) === true) {
-              break;
+            for (const afterCb of afterCalls) {
+              afterCb({
+                context,
+                extendContext: extension => {
+                  context = { ...context, ...extension };
+                },
+              });
             }
-          }
 
-          for (const afterCb of afterCalls) {
-            afterCb({
-              context,
-              extendContext: extension => {
-                context = { ...context, ...extension };
-              },
-            });
+            return context;
+          } catch (err) {
+            let error: unknown = err;
+            for (const errorCb of contextErrorHandlers) {
+              errorCb({
+                context,
+                error,
+                setError: err => {
+                  error = err;
+                },
+              });
+            }
+            throw error;
           }
-
-          return context;
-        } catch (err) {
-          let error: unknown = err;
-          for (const errorCb of contextErrorHandlers) {
-            errorCb({
-              context,
-              error,
-              setError: err => {
-                error = err;
-              },
-            });
-          }
-          throw error;
         }
-      }
-    : initialContext => orchestratorCtx => orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
+      : initialContext => orchestratorCtx =>
+          orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
 
   const useCustomSubscribe = beforeCallbacks.subscribe.length;
 
@@ -469,8 +489,8 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
               } else {
                 throw new Error(
                   `Invalid context extension provided! Expected "object", got: "${JSON.stringify(
-                    extension
-                  )}" (${typeof extension})`
+                    extension,
+                  )}" (${typeof extension})`,
                 );
               }
             },

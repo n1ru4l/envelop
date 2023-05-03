@@ -1,6 +1,7 @@
 ## GraphQL-Nexus & Envelop
 
-This example demonstrate how to implement the basic GraphQL flow with Envelop+Helix, and with schema provided by `nexus` (https://nexusjs.org/).
+This example demonstrate how to implement the basic GraphQL flow with Envelop+Helix, and with schema
+provided by `nexus` (https://nexusjs.org/).
 
 ## Running this example
 

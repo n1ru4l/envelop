@@ -1,10 +1,16 @@
 /* eslint-disable */
-import 'reflect-metadata';
 import fastify from 'fastify';
+import { execute, parse, subscribe, validate } from 'graphql';
+import {
+  getGraphQLParameters,
+  processRequest,
+  renderGraphiQL,
+  sendResult,
+  shouldRenderGraphiQL,
+} from 'graphql-helix';
+import 'reflect-metadata';
+import { Arg, buildSchemaSync, Field, ID, ObjectType, Query, Resolver } from 'type-graphql';
 import { envelop, useLogger, useSchema } from '@envelop/core';
-import { parse, validate, execute, subscribe } from 'graphql';
-import { Field, ObjectType, buildSchemaSync, ID, Resolver, Query, Arg } from 'type-graphql';
-import { getGraphQLParameters, processRequest, renderGraphiQL, sendResult, shouldRenderGraphiQL } from 'graphql-helix';
 
 @ObjectType()
 class Recipe {
@@ -50,7 +56,7 @@ const getEnveloped = envelop({
     useSchema(
       buildSchemaSync({
         resolvers: [RecipeResolver],
-      })
+      }),
     ),
     useLogger(),
   ],

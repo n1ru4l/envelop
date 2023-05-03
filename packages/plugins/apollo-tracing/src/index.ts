@@ -1,7 +1,7 @@
-import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/core';
-import { useOnResolve } from '@envelop/on-resolve';
 import { TracingFormat } from 'apollo-tracing';
 import { GraphQLType, ResponsePath, responsePathAsArray } from 'graphql';
+import { handleStreamOrSingleExecutionResult, Plugin } from '@envelop/core';
+import { useOnResolve } from '@envelop/on-resolve';
 
 const HR_TO_NS = 1e9;
 const NS_TO_MS = 1e6;
@@ -58,7 +58,7 @@ export const useApolloTracing = (): Plugin => {
             resolverCall.endOffset = process.hrtime(ctx.hrtime);
             ctx.resolversTiming.push(resolverCall);
           };
-        })
+        }),
       );
     },
     onExecute(onExecuteContext) {

@@ -1,10 +1,26 @@
 /* eslint-disable no-console */
-import 'reflect-metadata';
 import fastify from 'fastify';
+import { execute, parse, subscribe, validate } from 'graphql';
+import {
+  getGraphQLParameters,
+  processRequest,
+  renderGraphiQL,
+  sendResult,
+  shouldRenderGraphiQL,
+} from 'graphql-helix';
+import {
+  arg,
+  enumType,
+  intArg,
+  interfaceType,
+  list,
+  makeSchema,
+  objectType,
+  queryType,
+  stringArg,
+} from 'nexus';
+import 'reflect-metadata';
 import { envelop, useLogger, useSchema } from '@envelop/core';
-import { parse, validate, execute, subscribe } from 'graphql';
-import { getGraphQLParameters, processRequest, renderGraphiQL, sendResult, shouldRenderGraphiQL } from 'graphql-helix';
-import { arg, enumType, intArg, interfaceType, makeSchema, objectType, queryType, stringArg, list } from 'nexus';
 
 const Node = interfaceType({
   name: 'Node',

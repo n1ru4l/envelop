@@ -1,9 +1,10 @@
 # Integrating with Databases
 
-Working with a database with GraphQL can sometimes be a little difficult and some principles have to be followed
-to avoid performance or safety issues.
+Working with a database with GraphQL can sometimes be a little difficult and some principles have to
+be followed to avoid performance or safety issues.
 
-In this guide, we will cover a few advices to work with databases. The examples will use the Postgres node client but the concepts apply to every database.
+In this guide, we will cover a few advices to work with databases. The examples will use the
+Postgres node client but the concepts apply to every database.
 
 ## Use Only One Client per Request
 
@@ -32,12 +33,14 @@ In this example, you can very quickly totally starve your API with a simple requ
 }
 ```
 
-Because we use directly the pool of connection, each resolver will request a client to do its request.
-If you have, for example 100 bills, this request can starve the connection pool for other users.
-The server will be stuck and unresponsive for any incoming request while it is not fully resolved.
+Because we use directly the pool of connection, each resolver will request a client to do its
+request. If you have, for example 100 bills, this request can starve the connection pool for other
+users. The server will be stuck and unresponsive for any incoming request while it is not fully
+resolved.
 
-The better way to avoid this is to open only one client per request. With Envelop, we can easily create
-a plugin that adds a client to the context add releases it at the end of the request execution.
+The better way to avoid this is to open only one client per request. With Envelop, we can easily
+create a plugin that adds a client to the context add releases it at the end of the request
+execution.
 
 ```ts
 import * as GraphQLJS from 'graphql'
@@ -63,7 +66,8 @@ const resolvers = {
     bills: (_, _2, { client }) => client.query(SELECT_ALL_BILLS)
   },
   Bill: {
-    payer: (bill, _, { client }) => client.query({ text: SELECT_PAYER_BY_ID, values: [bill.payer_id] })
+    payer: (bill, _, { client }) =>
+      client.query({ text: SELECT_PAYER_BY_ID, values: [bill.payer_id] })
   }
 }
 
@@ -76,8 +80,9 @@ const getEnvelop = envelop({
 
 Now that we have one unique client during all the execution phase, we can add some fancy features.
 
-For more safety, every mutation should be encapsulated in a transaction. Doing it by hand is difficult,
-error-prone and easy to forget. The better way to do it is to automatically wrap every mutation in a transaction.
+For more safety, every mutation should be encapsulated in a transaction. Doing it by hand is
+difficult, error-prone and easy to forget. The better way to do it is to automatically wrap every
+mutation in a transaction.
 
 Let's see how we can change our plugin to implement this:
 
@@ -109,8 +114,8 @@ const databaseClientPlugin = {
 
 ## Enforcing Read-Only Queries
 
-Now that we can wrap every request in a transaction, we can do even better.
-For now, we are making a transaction for every request, but only mutations should need one.
+Now that we can wrap every request in a transaction, we can do even better. For now, we are making a
+transaction for every request, but only mutations should need one.
 
 We can configure transactions differently between query and mutation.
 
@@ -150,9 +155,9 @@ const databaseClientPlugin = {
 
 Some servers will need to do some modifications on multiple databases in a single mutation.
 
-We could just add our new client and just begin/release/rollback as usual. But what happens if an error occurs
-during the commit of the second database? You will have data updated in the first database, and data rollbacked
-in the second one, causing the system to be in an inconsistent state.
+We could just add our new client and just begin/release/rollback as usual. But what happens if an
+error occurs during the commit of the second database? You will have data updated in the first
+database, and data rollbacked in the second one, causing the system to be in an inconsistent state.
 
 To solve this we can use Tow Phase Commit, which is supported by most databases except a few ones...
 (yes I'm looking at you Mongo).

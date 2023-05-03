@@ -1,9 +1,14 @@
-import { PrometheusTracingPluginConfig, usePrometheus, createHistogram, createCounter } from '../src/index.js';
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { Registry, Histogram, Counter } from 'prom-client';
 import { ASTNode, print as graphQLPrint } from 'graphql';
+import { Counter, Histogram, Registry } from 'prom-client';
 import { useExtendContext } from '@envelop/core';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import {
+  createCounter,
+  createHistogram,
+  PrometheusTracingPluginConfig,
+  usePrometheus,
+} from '../src/index.js';
 
 // Graphql.js 16 and 15 produce different results
 // Graphql.js 16 output has not trailing \n
@@ -27,7 +32,9 @@ describe('Prom Metrics plugin', () => {
         payloadField: String
       }
       type Mutation {
-        mutationWithDeprecatedFields(deprecatedInput: String @deprecated(reason: "old")): MutationPayload
+        mutationWithDeprecatedFields(
+          deprecatedInput: String @deprecated(reason: "old")
+        ): MutationPayload
       }
     `,
     resolvers: {
@@ -68,7 +75,7 @@ describe('Prom Metrics plugin', () => {
     });
     const teskit = createTestkit(
       [plugin, useExtendContext(() => new Promise<void>(resolve => setTimeout(resolve, 250)))],
-      schema
+      schema,
     );
 
     return {
@@ -85,8 +92,9 @@ describe('Prom Metrics plugin', () => {
         const m = arr.find(m => m.name === name);
 
         if (m) {
-          return ((m as any).values || []).filter((v: any) => (sub === null ? true : v.metricName === `${name}_${sub}`))
-            .length;
+          return ((m as any).values || []).filter((v: any) =>
+            sub === null ? true : v.metricName === `${name}_${sub}`,
+          ).length;
         }
 
         return 0;
@@ -96,8 +104,9 @@ describe('Prom Metrics plugin', () => {
         const m = arr.find(m => m.name === name);
 
         if (m) {
-          return ((m as any).values || []).find((v: any) => (sub === null ? true : v.metricName === `${name}_${sub}`))
-            .value;
+          return ((m as any).values || []).find((v: any) =>
+            sub === null ? true : v.metricName === `${name}_${sub}`,
+          ).value;
         }
 
         return 0;
@@ -138,7 +147,7 @@ describe('Prom Metrics plugin', () => {
 
       expect(result.errors?.length).toBe(1);
       expect(await metricString('graphql_envelop_error_result')).toContain(
-        'graphql_envelop_error_result{phase="parse"} 1'
+        'graphql_envelop_error_result{phase="parse"} 1',
       );
       expect(await metricCount('graphql_envelop_error_result')).toBe(1);
       expect(await metricCount('graphql_envelop_phase_parse')).toBe(0);
@@ -153,7 +162,7 @@ describe('Prom Metrics plugin', () => {
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
       expect(await metricCount('graphql_envelop_phase_parse', 'count')).toBe(1);
       expect(await metricString('graphql_envelop_phase_parse')).toContain(
-        `graphql_envelop_phase_parse_count{operationName=\"Anonymous\",operationType=\"query\"} 1`
+        `graphql_envelop_phase_parse_count{operationName=\"Anonymous\",operationType=\"query\"} 1`,
       );
     });
 
@@ -185,7 +194,7 @@ describe('Prom Metrics plugin', () => {
             },
           }),
         },
-        registry
+        registry,
       );
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
@@ -193,7 +202,9 @@ describe('Prom Metrics plugin', () => {
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
       expect(await metricCount('test_parse', 'count')).toBe(1);
-      expect(await metricString('test_parse')).toContain(`test_parse_count{opText=\"{\\n  regularField\\n}\"} 1`);
+      expect(await metricString('test_parse')).toContain(
+        `test_parse_count{opText=\"{\\n  regularField\\n}\"} 1`,
+      );
     });
   });
 
@@ -217,7 +228,7 @@ describe('Prom Metrics plugin', () => {
             },
           }),
         },
-        registry
+        registry,
       );
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
@@ -225,7 +236,9 @@ describe('Prom Metrics plugin', () => {
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
       expect(await metricCount('test_validate', 'count')).toBe(1);
-      expect(await metricString('test_validate')).toContain(`test_validate_count{opText=\"{\\n  regularField\\n}\"} 1`);
+      expect(await metricString('test_validate')).toContain(
+        `test_validate_count{opText=\"{\\n  regularField\\n}\"} 1`,
+      );
     });
 
     it('should register to onValidate event when needed', () => {
@@ -240,7 +253,7 @@ describe('Prom Metrics plugin', () => {
 
       expect(result.errors?.length).toBe(1);
       expect(await metricString('graphql_envelop_error_result')).toContain(
-        'graphql_envelop_error_result{operationName="test",operationType="query",phase="validate"} 1'
+        'graphql_envelop_error_result{operationName="test",operationType="query",phase="validate"} 1',
       );
       expect(await metricCount('graphql_envelop_error_result')).toBe(1);
       expect(await metricCount('graphql_envelop_phase_validate', 'count')).toBe(1);
@@ -255,7 +268,7 @@ describe('Prom Metrics plugin', () => {
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
       expect(await metricCount('graphql_envelop_phase_validate', 'count')).toBe(1);
       expect(await metricString('graphql_envelop_phase_validate')).toContain(
-        `graphql_envelop_phase_validate_count{operationName=\"test\",operationType=\"query\"} 1`
+        `graphql_envelop_phase_validate_count{operationName=\"test\",operationType=\"query\"} 1`,
       );
     });
 
@@ -289,7 +302,7 @@ describe('Prom Metrics plugin', () => {
             },
           }),
         },
-        registry
+        registry,
       );
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
@@ -297,7 +310,9 @@ describe('Prom Metrics plugin', () => {
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
       expect(await metricCount('test_context', 'count')).toBe(1);
-      expect(await metricString('test_context')).toContain(`test_context_count{opText=\"{\\n  regularField\\n}\"} 1`);
+      expect(await metricString('test_context')).toContain(
+        `test_context_count{opText=\"{\\n  regularField\\n}\"} 1`,
+      );
     });
 
     it('Should trace contextBuilding timing', async () => {
@@ -338,7 +353,7 @@ describe('Prom Metrics plugin', () => {
             },
           }),
         },
-        registry
+        registry,
       );
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
@@ -346,7 +361,9 @@ describe('Prom Metrics plugin', () => {
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
       expect(await metricCount('test_execute', 'count')).toBe(1);
-      expect(await metricString('test_execute')).toContain(`test_execute_count{opText=\"{\\n  regularField\\n}\"} 1`);
+      expect(await metricString('test_execute')).toContain(
+        `test_execute_count{opText=\"{\\n  regularField\\n}\"} 1`,
+      );
     });
 
     it('Should trace error during execute with a single error', async () => {
@@ -356,7 +373,7 @@ describe('Prom Metrics plugin', () => {
 
       expect(result.errors?.length).toBe(1);
       expect(await metricString('graphql_envelop_error_result')).toContain(
-        'graphql_envelop_error_result{operationName="Anonymous",operationType="query",path="errorField",phase="execute"} 1'
+        'graphql_envelop_error_result{operationName="Anonymous",operationType="query",path="errorField",phase="execute"} 1',
       );
       expect(await metricCount('graphql_envelop_error_result')).toBe(1);
       expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
@@ -369,7 +386,7 @@ describe('Prom Metrics plugin', () => {
 
       expect(result.errors?.length).toBe(2);
       expect(await metricString('graphql_envelop_error_result')).toContain(
-        'graphql_envelop_error_result{operationName="Anonymous",operationType="query",path="errorField",phase="execute"} 1'
+        'graphql_envelop_error_result{operationName="Anonymous",operationType="query",path="errorField",phase="execute"} 1',
       );
       expect(await metricCount('graphql_envelop_error_result')).toBe(2);
       expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
@@ -417,7 +434,7 @@ describe('Prom Metrics plugin', () => {
             },
           }),
         },
-        registry
+        registry,
       );
       const result = await execute('query { errorField }');
       assertSingleExecutionValue(result);
@@ -425,7 +442,7 @@ describe('Prom Metrics plugin', () => {
       expect(result.errors?.length).toBe(1);
       expect(await metricCount('test_error')).toBe(1);
       expect(await metricString('test_error')).toContain(
-        `test_error{opText=\"{\\n  errorField\\n}\",errorMessage=\"error\"} 1`
+        `test_error{opText=\"{\\n  errorField\\n}\",errorMessage=\"error\"} 1`,
       );
     });
 
@@ -467,7 +484,7 @@ describe('Prom Metrics plugin', () => {
       expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
       expect(await metricCount('graphql_envelop_execute_resolver', 'count')).toBe(1);
       expect(await metricString('graphql_envelop_execute_resolver')).toContain(
-        'graphql_envelop_execute_resolver_count{operationName="Anonymous",operationType="query",fieldName="regularField",typeName="Query",returnType="String!"} 1'
+        'graphql_envelop_execute_resolver_count{operationName="Anonymous",operationType="query",fieldName="regularField",typeName="Query",returnType="String!"} 1',
       );
     });
 
@@ -484,7 +501,7 @@ describe('Prom Metrics plugin', () => {
       expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
       expect(await metricCount('graphql_envelop_execute_resolver', 'count')).toBe(1);
       expect(await metricString('graphql_envelop_execute_resolver')).toContain(
-        'graphql_envelop_execute_resolver_count{operationName="Anonymous",operationType="query",fieldName="regularField",typeName="Query",returnType="String!"} 1'
+        'graphql_envelop_execute_resolver_count{operationName="Anonymous",operationType="query",fieldName="regularField",typeName="Query",returnType="String!"} 1',
       );
     });
   });
@@ -502,7 +519,11 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should trace all deprecated fields times correctly', async () => {
-      const { execute, metricCount } = prepare({ execute: true, resolvers: true, deprecatedFields: true });
+      const { execute, metricCount } = prepare({
+        execute: true,
+        resolvers: true,
+        deprecatedFields: true,
+      });
       const result = await execute('query { regularField deprecatedField }');
       assertSingleExecutionValue(result);
 
@@ -532,7 +553,7 @@ describe('Prom Metrics plugin', () => {
         `,
         {
           deprecatedInput: 'a deprecated input',
-        }
+        },
       );
       assertSingleExecutionValue(result);
 
@@ -543,7 +564,7 @@ describe('Prom Metrics plugin', () => {
 
       const metric = await metricString('graphql_envelop_deprecated_field');
       expect(metric).toContain(
-        '{operationName="MutationWithDeprecatedFields",operationType="mutation",fieldName="deprecatedInput",typeName="mutationWithDeprecatedFields"}'
+        '{operationName="MutationWithDeprecatedFields",operationType="mutation",fieldName="deprecatedInput",typeName="mutationWithDeprecatedFields"}',
       );
     });
   });

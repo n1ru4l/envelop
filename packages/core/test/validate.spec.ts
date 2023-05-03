@@ -1,6 +1,6 @@
-import { assertSingleExecutionValue, createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { GraphQLError, GraphQLSchema, validate, ValidationContext } from 'graphql';
-import { schema, query } from './common.js';
+import { assertSingleExecutionValue, createSpiedPlugin, createTestkit } from '@envelop/testing';
+import { query, schema } from './common.js';
 
 describe('validate', () => {
   it('Should call before validate and after validate correctly', async () => {
@@ -44,7 +44,7 @@ describe('validate', () => {
           },
         },
       ],
-      schema
+      schema,
     );
     await teskit.execute(query);
     expect(replacementFn).toHaveBeenCalledTimes(1);
@@ -53,7 +53,7 @@ describe('validate', () => {
       expect.any(Object),
       expect.any(Array),
       undefined,
-      undefined
+      undefined,
     );
   });
 
@@ -68,7 +68,7 @@ describe('validate', () => {
           },
         },
       ],
-      schema
+      schema,
     );
     await teskit.execute(query);
     expect(replacementFn).toHaveBeenCalledTimes(0);
@@ -90,7 +90,7 @@ describe('validate', () => {
           },
         },
       ],
-      schema
+      schema,
     );
     await teskit.execute(query);
     expect(after).toHaveBeenCalledTimes(1);
@@ -115,7 +115,7 @@ describe('validate', () => {
           },
         },
       ],
-      schema
+      schema,
     );
 
     const r = await teskit.execute(query);
@@ -137,7 +137,7 @@ describe('validate', () => {
           },
         },
       ],
-      schema
+      schema,
     );
 
     const r = await teskit.execute(query);
@@ -154,12 +154,12 @@ describe('validate', () => {
         {
           onValidate: ({ addValidationRule }) => {
             addValidationRule(
-              () => ({}) // noop
+              () => ({}), // noop
             );
           },
         },
       ],
-      schema
+      schema,
     );
 
     const r = await teskit.execute('{ woah }');

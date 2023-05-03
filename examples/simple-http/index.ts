@@ -1,6 +1,6 @@
 import { createServer } from 'http';
+import { execute, parse, subscribe, validate } from 'graphql';
 import { envelop, useLogger, useSchema } from '@envelop/core';
-import { parse, validate, execute, subscribe } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const schema = makeExecutableSchema({
@@ -41,7 +41,7 @@ const server = createServer((req, res) => {
       res.end(
         JSON.stringify({
           errors: validationErrors,
-        })
+        }),
       );
 
       return;

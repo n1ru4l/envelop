@@ -1,7 +1,13 @@
 /* eslint-disable no-console */
 import fastify from 'fastify';
-import { getGraphQLParameters, processRequest, renderGraphiQL, sendResult, shouldRenderGraphiQL } from 'graphql-helix';
-import { parse, validate, execute, subscribe } from 'graphql';
+import { execute, parse, subscribe, validate } from 'graphql';
+import {
+  getGraphQLParameters,
+  processRequest,
+  renderGraphiQL,
+  sendResult,
+  shouldRenderGraphiQL,
+} from 'graphql-helix';
 import { envelop, useLogger, useSchema } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
@@ -170,7 +176,7 @@ app.route({
             .slice(1)
             .map(line => line.replace('  ', ''))
             .join('\n'),
-        })
+        }),
       );
     } else {
       const request = {

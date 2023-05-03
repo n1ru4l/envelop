@@ -36,7 +36,7 @@ describe('useRateLimiter', () => {
           identifyFn,
         }),
       ],
-      schemaWithDirective
+      schemaWithDirective,
     );
 
     testInstance.execute(`query { unlimited }`);
@@ -54,7 +54,7 @@ describe('useRateLimiter', () => {
           identifyFn,
         }),
       ],
-      schemaWithDirective
+      schemaWithDirective,
     );
 
     await testInstance.execute(`query { limited }`);
@@ -72,7 +72,7 @@ describe('useRateLimiter', () => {
           identifyFn,
         }),
       ],
-      schemaWithDirective
+      schemaWithDirective,
     );
     await testInstance.execute(`query { limited }`);
     const result = await testInstance.execute(`query { limited }`);
@@ -110,7 +110,7 @@ describe('useRateLimiter', () => {
           identifyFn,
         }),
       ],
-      schema
+      schema,
     );
     await testInstance.execute(`query { limited }`);
     const result = await testInstance.execute(`query { limited }`);

@@ -1,6 +1,13 @@
 import * as GraphQLJS from 'graphql';
-import { DocumentNode, ExecutionResult, getOperationAST, GraphQLError, GraphQLSchema, print } from 'graphql';
-import { useSchema, envelop, isAsyncIterable, useEngine } from '@envelop/core';
+import {
+  DocumentNode,
+  ExecutionResult,
+  getOperationAST,
+  GraphQLError,
+  GraphQLSchema,
+  print,
+} from 'graphql';
+import { envelop, isAsyncIterable, useEngine, useSchema } from '@envelop/core';
 import { GetEnvelopedFn, Plugin } from '@envelop/types';
 import { mapSchema as cloneSchema, isDocumentNode } from '@graphql-tools/utils';
 
@@ -62,13 +69,13 @@ export function createSpiedPlugin() {
       }
     },
     spies,
-    plugin: <Plugin>{
+    plugin: {
       onSchemaChange: spies.onSchemaChange,
       onParse: spies.beforeParse,
       onValidate: spies.beforeValidate,
       onExecute: spies.beforeExecute,
       onContextBuilding: spies.beforeContextBuilding,
-    },
+    } as Plugin,
   };
 }
 
@@ -81,7 +88,7 @@ export type TestkitInstance = {
   execute: (
     operation: DocumentNode | string,
     variables?: Record<string, any>,
-    initialContext?: any
+    initialContext?: any,
   ) => MaybePromise<ExecutionReturn>;
   modifyPlugins: (modifyPluginsFn: ModifyPluginsFn) => void;
   mockPhase: (phaseReplacement: PhaseReplacementParams) => void;
@@ -90,7 +97,7 @@ export type TestkitInstance = {
 
 export function createTestkit(
   pluginsOrEnvelop: GetEnvelopedFn<any> | Parameters<typeof envelop>['0']['plugins'],
-  schema?: GraphQLSchema
+  schema?: GraphQLSchema,
 ): TestkitInstance {
   const toGraphQLErrorOrThrow = (thrownThing: unknown): GraphQLError => {
     if (thrownThing instanceof GraphQLError) {
@@ -104,7 +111,9 @@ export function createTestkit(
   let getEnveloped = Array.isArray(pluginsOrEnvelop)
     ? envelop({
         plugins: [
-          ...(schema ? [useGraphQLJSEngine(), useSchema(cloneSchema(schema))] : [useGraphQLJSEngine()]),
+          ...(schema
+            ? [useGraphQLJSEngine(), useSchema(cloneSchema(schema))]
+            : [useGraphQLJSEngine()]),
           ...pluginsOrEnvelop,
         ],
       })
@@ -114,7 +123,9 @@ export function createTestkit(
     modifyPlugins(modifyPluginsFn: ModifyPluginsFn) {
       getEnveloped = envelop({
         plugins: [
-          ...(schema ? [useGraphQLJSEngine(), useSchema(cloneSchema(schema))] : [useGraphQLJSEngine()]),
+          ...(schema
+            ? [useGraphQLJSEngine(), useSchema(cloneSchema(schema))]
+            : [useGraphQLJSEngine()]),
           ...modifyPluginsFn(getEnveloped._plugins),
         ],
       });
@@ -215,14 +226,16 @@ export function createTestkit(
   };
 }
 
-export function assertSingleExecutionValue(input: ExecutionReturn): asserts input is ExecutionResult {
+export function assertSingleExecutionValue(
+  input: ExecutionReturn,
+): asserts input is ExecutionResult {
   if (isAsyncIterable(input)) {
     throw new Error('Received stream but expected single result');
   }
 }
 
 export function assertStreamExecutionValue(
-  input: ExecutionReturn
+  input: ExecutionReturn,
 ): asserts input is AsyncIterableIterator<ExecutionResult> {
   if (!isAsyncIterable(input)) {
     throw new Error('Received single result but expected stream.');
@@ -230,7 +243,7 @@ export function assertStreamExecutionValue(
 }
 
 export const collectAsyncIteratorValues = async <TType>(
-  asyncIterable: AsyncIterableIterator<TType>
+  asyncIterable: AsyncIterableIterator<TType>,
 ): Promise<Array<TType>> => {
   const values: Array<TType> = [];
   for await (const value of asyncIterable) {

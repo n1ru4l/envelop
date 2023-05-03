@@ -1,4 +1,3 @@
-import { Plugin, TypedSubscriptionArgs } from '@envelop/core';
 import {
   ExecutionArgs,
   ExecutionResult,
@@ -9,6 +8,7 @@ import {
   visitInParallel,
   visitWithTypeInfo,
 } from 'graphql';
+import { Plugin, TypedSubscriptionArgs } from '@envelop/core';
 import { ExtendedValidationRule } from './common.js';
 
 const symbolExtendedValidationRules = Symbol('extendedValidationContext');
@@ -43,7 +43,8 @@ export const useExtendedValidation = <PluginContext extends Record<string, any> 
     },
     onContextBuilding({ context, extendContext }) {
       // We initialize the validationRules context in onContextBuilding as onExecute is already too late!
-      let validationRulesContext: undefined | ExtendedValidationContext = context[symbolExtendedValidationRules];
+      let validationRulesContext: undefined | ExtendedValidationContext =
+        context[symbolExtendedValidationRules];
       if (validationRulesContext === undefined) {
         validationRulesContext = {
           rules: [],
@@ -64,7 +65,7 @@ export const useExtendedValidation = <PluginContext extends Record<string, any> 
 function buildHandler(
   name: 'execute' | 'subscribe',
   getTypeInfo: () => TypeInfo | undefined,
-  onValidationFailed?: OnValidationFailedCallback
+  onValidationFailed?: OnValidationFailedCallback,
 ) {
   return function handler({
     args,
@@ -82,7 +83,7 @@ function buildHandler(
     if (validationRulesContext === undefined) {
       throw new Error(
         'Plugin has not been properly set up. ' +
-          `The 'contextFactory' function is not invoked and the result has not been passed to '${name}'.`
+          `The 'contextFactory' function is not invoked and the result has not been passed to '${name}'.`,
       );
     }
     // we only want to run the extended execution once.
@@ -97,7 +98,9 @@ function buildHandler(
           errors.push(e);
         });
 
-        const visitor = visitInParallel(validationRulesContext.rules.map(rule => rule(validationContext, args)));
+        const visitor = visitInParallel(
+          validationRulesContext.rules.map(rule => rule(validationContext, args)),
+        );
         visit(args.document, visitWithTypeInfo(typeInfo, visitor));
 
         if (errors.length > 0) {

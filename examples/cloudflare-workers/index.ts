@@ -1,9 +1,9 @@
-import { envelop, useLogger, useSchema } from '@envelop/core';
-import { parse, validate, execute, subscribe } from 'graphql';
-import { makeExecutableSchema } from '@graphql-tools/schema';
+import { execute, parse, subscribe, validate } from 'graphql';
 import { getGraphQLParameters, processRequest, Response } from 'graphql-helix';
 import { Router } from 'worktop';
 import { listen } from 'worktop/cache';
+import { envelop, useLogger, useSchema } from '@envelop/core';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const router = new Router();
 
@@ -53,7 +53,7 @@ router.add('POST', '/graphql', async (req, res) => {
   res.send(
     result.status,
     result.payload,
-    result.headers.reduce((prev, item) => ({ ...prev, [item.name]: item.value }), {})
+    result.headers.reduce((prev, item) => ({ ...prev, [item.name]: item.value }), {}),
   );
 });
 listen(router.run);

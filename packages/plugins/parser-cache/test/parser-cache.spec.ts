@@ -1,8 +1,8 @@
 import { buildSchema, DocumentNode, parse } from 'graphql';
-import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { useParserCache } from '../src/index.js';
-import { Plugin } from '@envelop/types';
 import LRU from 'lru-cache';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import { Plugin } from '@envelop/types';
+import { useParserCache } from '../src/index.js';
 
 describe('useParserCache', () => {
   const testSchema = buildSchema(/* GraphQL */ `
@@ -73,7 +73,7 @@ describe('useParserCache', () => {
           documentCache: cache,
         }),
       ],
-      testSchema
+      testSchema,
     );
     await testInstance.execute(`query t { foo }`);
     await testInstance.wait(10);
@@ -92,7 +92,7 @@ describe('useParserCache', () => {
           documentCache,
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     await testInstance.execute(`query t { foo }`);
@@ -111,7 +111,7 @@ describe('useParserCache', () => {
           errorCache,
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     await testInstance.execute(`FAILED\ { foo }`);

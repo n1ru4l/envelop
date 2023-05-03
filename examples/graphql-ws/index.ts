@@ -1,8 +1,8 @@
-import { envelop, useSchema, useLogger } from '@envelop/core';
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { parse, validate, execute, subscribe } from 'graphql';
-import ws from 'ws';
+import { execute, parse, subscribe, validate } from 'graphql';
 import { useServer } from 'graphql-ws/lib/use/ws';
+import ws from 'ws';
+import { envelop, useLogger, useSchema } from '@envelop/core';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `
@@ -70,5 +70,5 @@ useServer(
   new ws.Server({
     port: 3415,
     path: '/graphql',
-  })
+  }),
 );

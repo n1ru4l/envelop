@@ -1,6 +1,8 @@
 ## Envelop example with Socket.io
 
-This example demonstrates how to implement the GraphQL flow with Envelop and the [`@n1ru4l/socket-io-graphql-server`](https://github.com/enisdenjo/graphql-ws) library, that enhances an existing Socket.io server with GraphQL capabilities.
+This example demonstrates how to implement the GraphQL flow with Envelop and the
+[`@n1ru4l/socket-io-graphql-server`](https://github.com/enisdenjo/graphql-ws) library, that enhances
+an existing Socket.io server with GraphQL capabilities.
 
 ## Running this example
 

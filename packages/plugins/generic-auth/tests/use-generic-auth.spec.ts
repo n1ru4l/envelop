@@ -1,13 +1,13 @@
+import { EnumValueNode, getIntrospectionQuery } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { EnumValueNode, getIntrospectionQuery } from 'graphql';
 import {
   DIRECTIVE_SDL,
   ResolveUserFn,
   SKIP_AUTH_DIRECTIVE_SDL,
+  UnauthenticatedError,
   useGenericAuth,
   ValidateUserFn,
-  UnauthenticatedError,
 } from '../src/index.js';
 
 type UserType = {
@@ -67,7 +67,7 @@ describe('useGenericAuth', () => {
             resolveUserFn: validresolveUserFn,
           }),
         ],
-        schemaWithDirective
+        schemaWithDirective,
       );
 
       const result = await testInstance.execute(getIntrospectionQuery());
@@ -83,7 +83,7 @@ describe('useGenericAuth', () => {
             resolveUserFn: validresolveUserFn,
           }),
         ],
-        schemaWithDirective
+        schemaWithDirective,
       );
 
       const result = await testInstance.execute(`query { test }`);
@@ -100,7 +100,7 @@ describe('useGenericAuth', () => {
             resolveUserFn: invalidresolveUserFn,
           }),
         ],
-        schemaWithDirective
+        schemaWithDirective,
       );
 
       try {
@@ -122,7 +122,7 @@ describe('useGenericAuth', () => {
             onExecute: spyFn,
           },
         ],
-        schemaWithDirective
+        schemaWithDirective,
       );
 
       const result = await testInstance.execute(`query { test }`);
@@ -138,7 +138,7 @@ describe('useGenericAuth', () => {
               },
             }),
           }),
-        })
+        }),
       );
     });
 
@@ -150,7 +150,7 @@ describe('useGenericAuth', () => {
             resolveUserFn: validresolveUserFn,
           }),
         ],
-        schemaWithDirective
+        schemaWithDirective,
       );
 
       const result = await testInstance.execute(`query { public }`);
@@ -167,7 +167,7 @@ describe('useGenericAuth', () => {
             resolveUserFn: invalidresolveUserFn,
           }),
         ],
-        schemaWithDirective
+        schemaWithDirective,
       );
 
       const result = await testInstance.execute(`query { public }`);
@@ -186,7 +186,7 @@ describe('useGenericAuth', () => {
             resolveUserFn: validresolveUserFn,
           }),
         ],
-        schema
+        schema,
       );
 
       const result = await testInstance.execute(`query { test }`);
@@ -203,7 +203,7 @@ describe('useGenericAuth', () => {
             resolveUserFn: invalidresolveUserFn,
           }),
         ],
-        schema
+        schema,
       );
 
       const result = await testInstance.execute(`query { test }`);
@@ -224,7 +224,7 @@ describe('useGenericAuth', () => {
             onExecute: spyFn,
           },
         ],
-        schema
+        schema,
       );
 
       const result = await testInstance.execute(`query { test }`);
@@ -240,7 +240,7 @@ describe('useGenericAuth', () => {
               },
             }),
           }),
-        })
+        }),
       );
     });
 
@@ -256,7 +256,7 @@ describe('useGenericAuth', () => {
             onExecute: spyFn,
           },
         ],
-        schema
+        schema,
       );
 
       const result = await testInstance.execute(`query { test }`);
@@ -269,7 +269,7 @@ describe('useGenericAuth', () => {
               currentUser: null,
             }),
           }),
-        })
+        }),
       );
     });
   });
@@ -301,7 +301,7 @@ describe('useGenericAuth', () => {
             resolveUserFn: validresolveUserFn,
           }),
         ],
-        schemaWithDirective
+        schemaWithDirective,
       );
 
       const result = await testInstance.execute(`query { protected }`);
@@ -318,7 +318,7 @@ describe('useGenericAuth', () => {
             resolveUserFn: validresolveUserFn,
           }),
         ],
-        schemaWithDirective
+        schemaWithDirective,
       );
 
       const result = await testInstance.execute(`query { public }`);
@@ -335,7 +335,7 @@ describe('useGenericAuth', () => {
             resolveUserFn: invalidresolveUserFn,
           }),
         ],
-        schemaWithDirective
+        schemaWithDirective,
       );
 
       const result = await testInstance.execute(`query { public }`);
@@ -352,13 +352,15 @@ describe('useGenericAuth', () => {
             resolveUserFn: invalidresolveUserFn,
           }),
         ],
-        schemaWithDirective
+        schemaWithDirective,
       );
 
       const result = await testInstance.execute(`query { protected }`);
       assertSingleExecutionValue(result);
       expect(result.errors?.length).toBe(1);
-      expect(result.errors?.[0].message).toBe(`Accessing 'Query.protected' requires authentication.`);
+      expect(result.errors?.[0].message).toBe(
+        `Accessing 'Query.protected' requires authentication.`,
+      );
     });
 
     describe('auth directive with role', () => {
@@ -366,22 +368,23 @@ describe('useGenericAuth', () => {
       const validateUserFn: ValidateUserFn<UserTypeWithRole> = params => {
         const schemaCoordinate = `${params.objectType.name}.${params.fieldNode.name.value}`;
         if (!params.user) {
-          return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [
-            params.fieldNode,
-          ]);
+          return new UnauthenticatedError(
+            `Accessing '${schemaCoordinate}' requires authentication.`,
+            [params.fieldNode],
+          );
         }
 
         if (params.fieldAuthDirectiveNode?.arguments) {
-          const valueNode = params.fieldAuthDirectiveNode.arguments.find(arg => arg.name.value === 'role')?.value as
-            | EnumValueNode
-            | undefined;
+          const valueNode = params.fieldAuthDirectiveNode.arguments.find(
+            arg => arg.name.value === 'role',
+          )?.value as EnumValueNode | undefined;
           if (valueNode) {
             const role = valueNode.value;
 
             if (role !== params.user.role) {
               return new UnauthenticatedError(
                 `Missing permissions for accessing field '${schemaCoordinate}'. Requires role '${role}'. Request is authenticated with role '${params.user.role}'.`,
-                [params.fieldNode]
+                [params.fieldNode],
               );
             }
           }
@@ -439,14 +442,14 @@ describe('useGenericAuth', () => {
               validateUser: validateUserFn,
             }),
           ],
-          schemaWithDirectiveWithRole
+          schemaWithDirectiveWithRole,
         );
 
         const result = await testInstance.execute(`query { admin }`);
         assertSingleExecutionValue(result);
         expect(result.errors?.length).toBe(1);
         expect(result.errors?.[0].message).toBe(
-          `Missing permissions for accessing field 'Query.admin'. Requires role 'ADMIN'. Request is authenticated with role 'USER'.`
+          `Missing permissions for accessing field 'Query.admin'. Requires role 'ADMIN'. Request is authenticated with role 'USER'.`,
         );
       });
 
@@ -459,7 +462,7 @@ describe('useGenericAuth', () => {
               validateUser: validateUserFn,
             }),
           ],
-          schemaWithDirectiveWithRole
+          schemaWithDirectiveWithRole,
         );
 
         const result = await testInstance.execute(`query { admin }`);

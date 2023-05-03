@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+
 /* eslint sort-keys: error */
-import { defineConfig, Giscus, useTheme, Callout } from '@theguild/components';
 import { useRouter } from 'next/router';
-import { PLUGINS } from '@/lib/plugins';
 import { BRANCH } from '@/lib/constants';
+import { PLUGINS } from '@/lib/plugins';
+import { Callout, defineConfig, Giscus, useTheme } from '@theguild/components';
 
 export default defineConfig({
   docsRepositoryBase: 'https://github.com/n1ru4l/envelop/tree/main/website',
@@ -63,7 +64,12 @@ export default defineConfig({
       }
 
       return (
-        <a className={className} target="_blank" rel="noreferrer" href={`https://github.com/${url}`}>
+        <a
+          className={className}
+          target="_blank"
+          rel="noreferrer"
+          href={`https://github.com/${url}`}
+        >
           {children}
         </a>
       );

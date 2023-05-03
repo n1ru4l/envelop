@@ -1,8 +1,8 @@
+import { APIGatewayProxyHandler } from 'aws-lambda';
+import { execute, parse, subscribe, validate } from 'graphql';
+import { getGraphQLParameters, processRequest, Response } from 'graphql-helix';
 import { envelop, useLogger, useSchema } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { parse, validate, execute, subscribe } from 'graphql';
-import { APIGatewayProxyHandler } from 'aws-lambda';
-import { getGraphQLParameters, processRequest, Response } from 'graphql-helix';
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `

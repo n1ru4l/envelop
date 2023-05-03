@@ -1,6 +1,6 @@
 import { parse } from 'graphql';
-import { makeExecutableSchema } from '@graphql-tools/schema';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import { usePersistedOperations } from '../src/index.js';
 
 describe('usePersistedOperations', () => {
@@ -27,7 +27,7 @@ describe('usePersistedOperations', () => {
           store,
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     const result = await testInstance.execute(`persisted_1`, {}, {});
@@ -46,7 +46,7 @@ describe('usePersistedOperations', () => {
           store,
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     const result = await testInstance.execute(`persisted_1`);
@@ -64,7 +64,7 @@ describe('usePersistedOperations', () => {
           store,
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     const result = await testInstance.execute(`persisted_2`);
@@ -82,7 +82,7 @@ describe('usePersistedOperations', () => {
           store,
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     const result = await testInstance.execute(`invalid`);
@@ -100,7 +100,7 @@ describe('usePersistedOperations', () => {
           store,
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     const result = await testInstance.execute(`query { foo }`);
@@ -119,7 +119,7 @@ describe('usePersistedOperations', () => {
           store,
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     const result = await testInstance.execute(`query { foo }`);
@@ -136,7 +136,7 @@ describe('usePersistedOperations', () => {
           store,
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     const result = await testInstance.execute('persisted_1');
@@ -155,7 +155,7 @@ describe('usePersistedOperations', () => {
           store: context => (context.storeId === 'custom' ? customStore : globalStore),
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     const result = await testInstance.execute('persisted_1', {}, initialContext);
@@ -174,7 +174,7 @@ describe('usePersistedOperations', () => {
           extractOperationId: (context: any) => context.request.body.operationId,
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     const result = await testInstance.execute('invalid', {}, initialContext);
@@ -193,7 +193,7 @@ describe('usePersistedOperations', () => {
           extractOperationId: (context: any) => context.request.body.operationId,
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     const result = await testInstance.execute(`query { bar }`, {}, initialContext);
@@ -213,7 +213,7 @@ describe('usePersistedOperations', () => {
           onMissingMatch: mockOnMissingMatch,
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     const result = await testInstance.execute('persisted_1', {}, initialContext);
@@ -234,7 +234,7 @@ describe('usePersistedOperations', () => {
           onMissingMatch: mockOnMissingMatch,
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     const result = await testInstance.execute('persisted_1', {}, initialContext);
@@ -254,7 +254,7 @@ describe('usePersistedOperations', () => {
           onMissingMatch: mockOnMissingMatch,
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     const result = await testInstance.execute('persisted_1');
@@ -273,7 +273,7 @@ describe('usePersistedOperations', () => {
           onMissingMatch: mockOnMissingMatch,
         }),
       ],
-      testSchema
+      testSchema,
     );
 
     const result = await testInstance.execute('persisted_1');

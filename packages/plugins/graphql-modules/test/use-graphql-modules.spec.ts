@@ -1,6 +1,6 @@
-import 'reflect-metadata';
 import { parse } from 'graphql';
 import { createApplication, createModule, Injectable, Scope } from 'graphql-modules';
+import 'reflect-metadata';
 import {
   assertSingleExecutionValue,
   assertStreamExecutionValue,
@@ -50,7 +50,11 @@ function createApp(onDestroy: () => void) {
           },
           Subscription: {
             bar: {
-              subscribe: async function* (root: never, args: never, { injector }: GraphQLModules.Context) {
+              subscribe: async function* (
+                root: never,
+                args: never,
+                { injector }: GraphQLModules.Context,
+              ) {
                 yield injector.get(TestProvider).getBar();
               },
               resolve: (id: unknown) => id,

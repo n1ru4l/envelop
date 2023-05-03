@@ -1,5 +1,9 @@
-import { assertStreamExecutionValue, collectAsyncIteratorValues, createTestkit } from '@envelop/testing';
 import { ExecutionResult } from 'graphql';
+import {
+  assertStreamExecutionValue,
+  collectAsyncIteratorValues,
+  createTestkit,
+} from '@envelop/testing';
 import { schema } from './common.js';
 
 describe('subscribe', () => {
@@ -28,7 +32,7 @@ describe('subscribe', () => {
           },
         },
       ],
-      schema
+      schema,
     );
 
     const result = await teskit.execute(/* GraphQL */ `
@@ -76,7 +80,7 @@ describe('subscribe', () => {
           },
         },
       ],
-      schema
+      schema,
     );
 
     const result = await teskit.execute(/* GraphQL */ `

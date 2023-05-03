@@ -1,8 +1,8 @@
 import { buildSchema, GraphQLError, NoSchemaIntrospectionCustomRule, validate } from 'graphql';
-import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { useValidationCache } from '../src/index.js';
-import { Plugin } from '@envelop/types';
 import LRU from 'lru-cache';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import { Plugin } from '@envelop/types';
+import { useValidationCache } from '../src/index.js';
 
 describe('useValidationCache', () => {
   const testSchema = buildSchema(/* GraphQL */ `
@@ -69,7 +69,7 @@ describe('useValidationCache', () => {
           cache,
         }),
       ],
-      testSchema
+      testSchema,
     );
     await testInstance.execute(`query t { foo }`);
     await testInstance.wait(10);
@@ -88,7 +88,7 @@ describe('useValidationCache', () => {
           cache,
         }),
       ],
-      testSchema
+      testSchema,
     );
     await testInstance.execute(`query { foo2 }`);
     await testInstance.execute(`query { foo2 }`);
@@ -135,7 +135,10 @@ describe('useValidationCache', () => {
       },
     };
 
-    const testInstance = createTestkit([useTestPlugin, dynamicSchema, useValidationCache()], testSchema);
+    const testInstance = createTestkit(
+      [useTestPlugin, dynamicSchema, useValidationCache()],
+      testSchema,
+    );
     await testInstance.execute(`{ __schema { types { name } } }`);
     expect(testValidator).toHaveBeenCalledTimes(1);
 

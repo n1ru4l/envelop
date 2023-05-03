@@ -1,9 +1,9 @@
-import { Plugin, TypedExecutionArgs, ExecutionResult } from '@envelop/types';
+import { ExecutionResult, Plugin, TypedExecutionArgs } from '@envelop/types';
 import { handleStreamOrSingleExecutionResult } from '../utils.js';
 
 export type FormatterFunction = (
   result: ExecutionResult<any, any>,
-  args: TypedExecutionArgs<any>
+  args: TypedExecutionArgs<any>,
 ) => false | ExecutionResult<any, any>;
 
 const makeHandleResult =

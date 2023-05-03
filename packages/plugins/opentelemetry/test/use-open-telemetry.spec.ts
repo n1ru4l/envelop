@@ -1,6 +1,10 @@
-import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { BasicTracerProvider, SimpleSpanProcessor, InMemorySpanExporter } from '@opentelemetry/sdk-trace-base';
 import { buildSchema } from 'graphql';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import {
+  BasicTracerProvider,
+  InMemorySpanExporter,
+  SimpleSpanProcessor,
+} from '@opentelemetry/sdk-trace-base';
 import { useOpenTelemetry } from '../src/index.js';
 
 function createTraceProvider(exporter: InMemorySpanExporter) {
@@ -31,7 +35,7 @@ describe('useOpenTelemetry', () => {
         variables: false,
         ...(options ?? {}),
       },
-      exporter ? createTraceProvider(exporter) : undefined
+      exporter ? createTraceProvider(exporter) : undefined,
     );
 
   it('Should override execute function', async () => {
@@ -43,7 +47,7 @@ describe('useOpenTelemetry', () => {
           onExecute: onExecuteSpy,
         },
       ],
-      schema
+      schema,
     );
 
     const result = await testInstance.execute(query);
@@ -63,7 +67,10 @@ describe('useOpenTelemetry', () => {
 
   it('Should add resolver span if requested', async () => {
     const exporter = new InMemorySpanExporter();
-    const testInstance = createTestkit([useTestOpenTelemetry(exporter, { resolvers: true })], schema);
+    const testInstance = createTestkit(
+      [useTestOpenTelemetry(exporter, { resolvers: true })],
+      schema,
+    );
 
     await testInstance.execute(query);
     const actual = exporter.getFinishedSpans();

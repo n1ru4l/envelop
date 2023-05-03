@@ -1,4 +1,4 @@
-import { Plugin, DefaultContext, TypedExecutionArgs, ExecutionResult } from '@envelop/types';
+import { DefaultContext, ExecutionResult, Plugin, TypedExecutionArgs } from '@envelop/types';
 import { handleStreamOrSingleExecutionResult } from '../utils.js';
 import { isGraphQLError, SerializableGraphQLErrorLike } from './use-masked-errors.js';
 
@@ -26,7 +26,7 @@ const makeHandleResult =
   };
 
 export const useErrorHandler = <ContextType extends Record<string, any>>(
-  errorHandler: ErrorHandler
+  errorHandler: ErrorHandler,
 ): Plugin<ContextType> => {
   const handleResult = makeHandleResult<ContextType>(errorHandler);
   return {

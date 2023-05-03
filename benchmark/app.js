@@ -73,14 +73,30 @@ const envelopsMap = {
     enableInternalTracing: true,
   }),
   'envelop-just-cache': envelop({
-    plugins: [useEngine(GraphQLJS), useSchema(createSchema()), useParserCache(), useValidationCache()],
+    plugins: [
+      useEngine(GraphQLJS),
+      useSchema(createSchema()),
+      useParserCache(),
+      useValidationCache(),
+    ],
     enableInternalTracing: true,
   }),
   'envelop-cache-and-no-internal-tracing': envelop({
-    plugins: [useEngine(GraphQLJS), useSchema(createSchema()), useParserCache(), useValidationCache()],
+    plugins: [
+      useEngine(GraphQLJS),
+      useSchema(createSchema()),
+      useParserCache(),
+      useValidationCache(),
+    ],
   }),
   'envelop-cache-jit': envelop({
-    plugins: [useEngine(GraphQLJS), useSchema(createSchema()), useGraphQlJit(), useParserCache(), useValidationCache()],
+    plugins: [
+      useEngine(GraphQLJS),
+      useSchema(createSchema()),
+      useGraphQlJit(),
+      useParserCache(),
+      useValidationCache(),
+    ],
     enableInternalTracing: true,
   }),
   'prom-tracing': envelop({

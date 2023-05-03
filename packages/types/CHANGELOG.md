@@ -4,29 +4,36 @@
 
 ### Patch Changes
 
-- [#1725](https://github.com/n1ru4l/envelop/pull/1725) [`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957) Thanks [@n1ru4l](https://github.com/n1ru4l)! - dependencies updates:
+- [#1725](https://github.com/n1ru4l/envelop/pull/1725)
+  [`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957)
+  Thanks [@n1ru4l](https://github.com/n1ru4l)! - dependencies updates:
 
-  - Updated dependency [`tslib@^2.5.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.5.0) (from `^2.4.0`, in `dependencies`)
+  - Updated dependency [`tslib@^2.5.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.5.0) (from
+    `^2.4.0`, in `dependencies`)
 
 ## 3.0.1
 
 ### Patch Changes
 
-- [#1587](https://github.com/n1ru4l/envelop/pull/1587) [`e2ff77ed`](https://github.com/n1ru4l/envelop/commit/e2ff77edbc8c38d2854fc019f1d71ad4cf948d5f) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Don't use `Id` TypeScript generic utility that can cause a circular constraint error
+- [#1587](https://github.com/n1ru4l/envelop/pull/1587)
+  [`e2ff77ed`](https://github.com/n1ru4l/envelop/commit/e2ff77edbc8c38d2854fc019f1d71ad4cf948d5f)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Don't use `Id` TypeScript generic utility
+  that can cause a circular constraint error
 
 ## 2.4.0
 
 ### Minor Changes
 
-- [#1499](https://github.com/n1ru4l/envelop/pull/1499) [`1f7af02b`](https://github.com/n1ru4l/envelop/commit/1f7af02b9f1a16058a6d69fcd48425a93be655c6) Thanks [@viniciuspalma](https://github.com/viniciuspalma)! - Adding tslib to package dependencies
+- [#1499](https://github.com/n1ru4l/envelop/pull/1499)
+  [`1f7af02b`](https://github.com/n1ru4l/envelop/commit/1f7af02b9f1a16058a6d69fcd48425a93be655c6)
+  Thanks [@viniciuspalma](https://github.com/viniciuspalma)! - Adding tslib to package dependencies
 
-  Projects that currently are using yarn Berry with PnP or any strict dependency
-  resolver, that requires that all dependencies are specified on
-  package.json otherwise it would endue in an error if not treated correct
+  Projects that currently are using yarn Berry with PnP or any strict dependency resolver, that
+  requires that all dependencies are specified on package.json otherwise it would endue in an error
+  if not treated correct
 
-  Since https://www.typescriptlang.org/tsconfig#importHelpers is currently
-  being used, tslib should be exported as a dependency to external runners
-  get the proper import.
+  Since https://www.typescriptlang.org/tsconfig#importHelpers is currently being used, tslib should
+  be exported as a dependency to external runners get the proper import.
 
   Change on each package:
 
@@ -68,7 +75,10 @@
     return {
       onPluginInit(context) {
         context.registerContextErrorHandler(({ context }) => {
-          console.error('Error occurred during context creation but at least I have the  context so far', context)
+          console.error(
+            'Error occurred during context creation but at least I have the  context so far',
+            context
+          )
         })
       }
     }
@@ -85,7 +95,8 @@
 
 ### Major Changes
 
-- aac65ef: Move `onResolverCalled` from within `OnExecuteHookResult` and `OnSubscribeHookResult` to the `Plugin` type.
+- aac65ef: Move `onResolverCalled` from within `OnExecuteHookResult` and `OnSubscribeHookResult` to
+  the `Plugin` type.
 
   ```diff
   import type { Plugin } from "@envelop/core";
@@ -101,11 +112,15 @@
   }
   ```
 
-  We highly recommend avoiding to use any plugins that use `onResolverCalled` within your production environment as it has severe impact on the performance of the individual resolver functions within your schema.
+  We highly recommend avoiding to use any plugins that use `onResolverCalled` within your production
+  environment as it has severe impact on the performance of the individual resolver functions within
+  your schema.
 
-  The schema resolver functions are now ONLY wrapped if any plugin in your envelop setup uses the `onResolverCalled` hook.
+  The schema resolver functions are now ONLY wrapped if any plugin in your envelop setup uses the
+  `onResolverCalled` hook.
 
-  If you need any shared state between `onExecute` and `onResolverCalled` you can share it by extending the context object.
+  If you need any shared state between `onExecute` and `onResolverCalled` you can share it by
+  extending the context object.
 
   ```ts
   import type { Plugin } from '@envelop/core'
@@ -128,7 +143,9 @@
 
 - 4106e08: Add new option `breakContextBuilding` to `OnContextBuildingEventPayload`.
 
-  This allows short-circuiting the context building phase. Please use this with care as careless usage of it can result in severe errors during the execution phase, as the context might not include all the fields your schema resolvers need.
+  This allows short-circuiting the context building phase. Please use this with care as careless
+  usage of it can result in severe errors during the execution phase, as the context might not
+  include all the fields your schema resolvers need.
 
 ## 1.5.1
 
@@ -136,7 +153,8 @@
 
 - b1a0331: Properly list `@envelop/core` as a `peerDependency` in plugins.
 
-  This resolves issues where the bundled envelop plugins published to npm had logic inlined from the `@envelop/core` package, causing `instanceof` check of `EnvelopError` to fail.
+  This resolves issues where the bundled envelop plugins published to npm had logic inlined from the
+  `@envelop/core` package, causing `instanceof` check of `EnvelopError` to fail.
 
 ## 1.5.0
 
@@ -187,7 +205,8 @@
 ### Patch Changes
 
 - 94db02d: Added new helper `handleStreamOrSingleExecutionResult`
-- 94db02d: Update usage of plugins to use the correct `isAsyncIterable` and new helper `handleStreamOrSingleExecutionResult`
+- 94db02d: Update usage of plugins to use the correct `isAsyncIterable` and new helper
+  `handleStreamOrSingleExecutionResult`
 
 ## 1.0.1
 
@@ -242,7 +261,8 @@
 
 ### Patch Changes
 
-- 7f4901d: Fix issues with contextFactory and missing context coming from GraphQL pipeline orchestrator
+- 7f4901d: Fix issues with contextFactory and missing context coming from GraphQL pipeline
+  orchestrator
 
 ## 0.2.0
 

@@ -1,3 +1,4 @@
+import { execute, ExecutionResult, GraphQLError, GraphQLSchema } from 'graphql';
 import {
   assertSingleExecutionValue,
   assertStreamExecutionValue,
@@ -7,8 +8,7 @@ import {
 } from '@envelop/testing';
 import { OnExecuteDoneHookResult, OnSubscribeResultResult } from '@envelop/types';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { execute, ExecutionResult, GraphQLError, GraphQLSchema } from 'graphql';
-import { schema, query } from './common.js';
+import { query, schema } from './common.js';
 
 type Deferred<T = void> = {
   promise: Promise<T>;
@@ -95,7 +95,7 @@ describe('execute', () => {
           },
         },
       ],
-      schema
+      schema,
     );
     await teskit.execute(query);
     expect(altExecute).toHaveBeenCalledTimes(1);
@@ -111,7 +111,7 @@ describe('execute', () => {
           },
         },
       ],
-      schema
+      schema,
     );
     await teskit.execute(query);
   });
@@ -135,7 +135,10 @@ describe('execute', () => {
           },
           {
             onExecute({ setResultAndStopExecution }) {
-              setResultAndStopExecution({ data: null, errors: [new GraphQLError('setResultAndStopExecution.')] });
+              setResultAndStopExecution({
+                data: null,
+                errors: [new GraphQLError('setResultAndStopExecution.')],
+              });
 
               return {
                 onExecuteDone() {
@@ -145,7 +148,7 @@ describe('execute', () => {
             },
           },
         ],
-        schema
+        schema,
       );
       const result = await teskit.execute(query);
       assertSingleExecutionValue(result);
@@ -170,7 +173,10 @@ describe('execute', () => {
         [
           {
             onExecute({ setResultAndStopExecution }) {
-              setResultAndStopExecution({ data: null, errors: [new GraphQLError('setResultAndStopExecution.')] });
+              setResultAndStopExecution({
+                data: null,
+                errors: [new GraphQLError('setResultAndStopExecution.')],
+              });
 
               return {
                 onExecuteDone() {
@@ -190,7 +196,7 @@ describe('execute', () => {
             },
           },
         ],
-        schema
+        schema,
       );
       const result = await teskit.execute(query);
       assertSingleExecutionValue(result);
@@ -233,7 +239,7 @@ describe('execute', () => {
           },
         },
       ],
-      schema
+      schema,
     );
 
     const result = await teskit.execute(/* GraphQL */ `
@@ -281,7 +287,7 @@ describe('execute', () => {
           },
         },
       ],
-      schema
+      schema,
     );
 
     const result = await teskit.execute(/* GraphQL */ `
@@ -340,7 +346,7 @@ describe('execute', () => {
           },
         },
       ],
-      schema
+      schema,
     );
 
     const result = await teskit.execute(/* GraphQL */ `
@@ -377,7 +383,10 @@ describe('execute', () => {
           return this;
         },
         async next() {
-          return delayNextDeferred.promise.then(() => ({ value: { data: { alphabet: 'a' } }, done: false }));
+          return delayNextDeferred.promise.then(() => ({
+            value: { data: { alphabet: 'a' } },
+            done: false,
+          }));
         },
         async return() {
           isReturnCalled = true;
@@ -402,7 +411,7 @@ describe('execute', () => {
             },
           },
         ],
-        schema
+        schema,
       );
 
       const result = await teskit.execute(/* GraphQL */ `
@@ -422,7 +431,7 @@ describe('execute', () => {
       delayNextDeferred.resolve();
 
       await Promise.all([nextPromise, returnPromise, delayNextDeferred.promise]);
-    }
+    },
   );
 
   it('should allow to use an async function for the done hook', async () => {
@@ -441,7 +450,7 @@ describe('execute', () => {
           },
         },
       ],
-      schema
+      schema,
     );
 
     expect(await testkit.execute(query)).toEqual({ data: { test: 'test' } });
@@ -511,7 +520,7 @@ describe('execute', () => {
           },
         },
       ],
-      schema
+      schema,
     );
 
     const document = /* GraphQL */ `
@@ -551,7 +560,10 @@ it.each([
         return this;
       },
       async next() {
-        return delayNextDeferred.promise.then(() => ({ value: { data: { alphabet: 'a' } }, done: false }));
+        return delayNextDeferred.promise.then(() => ({
+          value: { data: { alphabet: 'a' } },
+          done: false,
+        }));
       },
       async return() {
         isReturnCalled = true;
@@ -594,7 +606,7 @@ it.each([
           },
         },
       ],
-      schema
+      schema,
     );
 
     const result = await teskit.execute(/* GraphQL */ `
@@ -614,5 +626,5 @@ it.each([
     delayNextDeferred.resolve();
 
     await Promise.all([nextPromise, returnPromise, delayNextDeferred.promise]);
-  }
+  },
 );

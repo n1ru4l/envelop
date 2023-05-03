@@ -1,8 +1,9 @@
+import { GraphQLResolveInfo, IntValueNode, StringValueNode } from 'graphql';
+import { getGraphQLRateLimiter } from 'graphql-rate-limit';
 import { Plugin } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
-import { IntValueNode, StringValueNode, GraphQLResolveInfo } from 'graphql';
 import { getDirective } from './utils.js';
-import { getGraphQLRateLimiter } from 'graphql-rate-limit';
+
 export * from './utils.js';
 
 export class UnauthenticatedError extends Error {}
@@ -17,7 +18,12 @@ export type RateLimiterPluginOptions = {
   identifyFn: IdentifyFn;
   rateLimitDirectiveName?: 'rateLimit' | string;
   transformError?: (message: string) => Error;
-  onRateLimitError?: (event: { error: string; identifier: string; context: unknown; info: GraphQLResolveInfo }) => void;
+  onRateLimitError?: (event: {
+    error: string;
+    identifier: string;
+    context: unknown;
+    info: GraphQLResolveInfo;
+  }) => void;
 };
 
 interface RateLimiterContext {
@@ -31,15 +37,20 @@ export const useRateLimiter = (options: RateLimiterPluginOptions): Plugin<RateLi
     onPluginInit({ addPlugin }) {
       addPlugin(
         useOnResolve(async ({ args, root, context, info }) => {
-          const rateLimitDirectiveNode = getDirective(info, options.rateLimitDirectiveName || 'rateLimit');
+          const rateLimitDirectiveNode = getDirective(
+            info,
+            options.rateLimitDirectiveName || 'rateLimit',
+          );
 
           if (rateLimitDirectiveNode && rateLimitDirectiveNode.arguments) {
             const maxNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'max')
               ?.value as IntValueNode;
-            const windowNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'window')
-              ?.value as StringValueNode;
-            const messageNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'message')
-              ?.value as IntValueNode;
+            const windowNode = rateLimitDirectiveNode.arguments.find(
+              arg => arg.name.value === 'window',
+            )?.value as StringValueNode;
+            const messageNode = rateLimitDirectiveNode.arguments.find(
+              arg => arg.name.value === 'message',
+            )?.value as IntValueNode;
 
             const message = messageNode.value;
             const max = parseInt(maxNode.value);
@@ -54,7 +65,7 @@ export const useRateLimiter = (options: RateLimiterPluginOptions): Plugin<RateLi
                 message: interpolate(message, {
                   id,
                 }),
-              }
+              },
             );
             if (errorMessage) {
               if (options.onRateLimitError) {
@@ -73,7 +84,7 @@ export const useRateLimiter = (options: RateLimiterPluginOptions): Plugin<RateLi
               throw new Error(errorMessage);
             }
           }
-        })
+        }),
       );
     },
     async onContextBuilding({ extendContext }) {

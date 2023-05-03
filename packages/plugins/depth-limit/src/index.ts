@@ -1,5 +1,5 @@
-import { Plugin } from '@envelop/core';
 import depthLimit from 'graphql-depth-limit';
+import { Plugin } from '@envelop/core';
 
 export type DepthLimitConfig = { maxDepth: number; ignore?: string[] };
 

@@ -1,4 +1,11 @@
-import { InlineFragmentNode, ArgumentNode, DocumentNode, FragmentDefinitionNode, visit, Kind } from 'graphql';
+import {
+  ArgumentNode,
+  DocumentNode,
+  FragmentDefinitionNode,
+  InlineFragmentNode,
+  Kind,
+  visit,
+} from 'graphql';
 
 export function applySelectionSetFragmentArguments(document: DocumentNode): DocumentNode | Error {
   const fragmentList = new Map<string, FragmentDefinitionNode>();

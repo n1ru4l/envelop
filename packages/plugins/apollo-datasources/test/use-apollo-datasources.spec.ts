@@ -1,9 +1,9 @@
-import 'reflect-metadata';
-import { createTestkit, assertSingleExecutionValue } from '@envelop/testing';
-import { InMemoryLRUCache } from 'apollo-server-caching';
 import type { DataSourceConfig } from 'apollo-datasource';
-import { useApolloDataSources } from '../src/index.js';
+import { InMemoryLRUCache } from 'apollo-server-caching';
+import 'reflect-metadata';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { useApolloDataSources } from '../src/index.js';
 
 describe('useApolloDataSources', () => {
   it('should use InMemoryLRUCache by default', async () => {
@@ -29,14 +29,14 @@ describe('useApolloDataSources', () => {
           },
         }),
       ],
-      schema
+      schema,
     );
     const result = await testInstance.execute(
       `query { foo }`,
       {},
       {
         initialContextValue: true,
-      }
+      },
     );
     assertSingleExecutionValue(result);
     expect(result.errors).toBeUndefined();
@@ -49,7 +49,7 @@ describe('useApolloDataSources', () => {
     expect(dataSourceConfig.context).toEqual(
       expect.objectContaining({
         initialContextValue: true,
-      })
+      }),
     );
   });
 
@@ -78,7 +78,7 @@ describe('useApolloDataSources', () => {
           },
         }),
       ],
-      schema
+      schema,
     );
     const result = await testInstance.execute(`query { foo }`);
     assertSingleExecutionValue(result);

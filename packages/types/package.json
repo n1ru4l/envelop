@@ -1,14 +1,14 @@
 {
   "name": "@envelop/types",
   "version": "3.0.2",
-  "author": "Dotan Simha <dotansimha@gmail.com>",
-  "license": "MIT",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/n1ru4l/envelop.git",
     "directory": "packages/types"
   },
-  "sideEffects": false,
+  "author": "Dotan Simha <dotansimha@gmail.com>",
+  "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "exports": {
@@ -43,21 +43,21 @@
     "./package.json": "./package.json"
   },
   "typings": "dist/typings/index.d.ts",
-  "typescript": {
-    "definition": "dist/typings/index.d.ts"
-  },
   "dependencies": {
     "tslib": "^2.5.0"
   },
   "devDependencies": {
     "typescript": "4.8.4"
   },
-  "buildOptions": {
-    "input": "./src/index.ts"
-  },
   "publishConfig": {
     "directory": "dist",
     "access": "public"
   },
-  "type": "module"
+  "sideEffects": false,
+  "buildOptions": {
+    "input": "./src/index.ts"
+  },
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
 }

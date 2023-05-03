@@ -12,7 +12,7 @@ pkg.resolutions = pkg.resolutions || {};
 if (pkg.resolutions.graphql.startsWith(version)) {
   // eslint-disable-next-line no-console
   console.info(`GraphQL v${version} is match! Skipping.`);
-  return;
+  process.exit(0);
 }
 
 const npmVersion = version.includes('-') ? version : `^${version}`;

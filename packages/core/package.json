@@ -1,23 +1,14 @@
 {
   "name": "@envelop/core",
   "version": "3.0.6",
-  "author": "Dotan Simha <dotansimha@gmail.com>",
-  "license": "MIT",
-  "sideEffects": false,
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/n1ru4l/envelop.git",
     "directory": "packages/core"
   },
-  "keywords": [
-    "gql",
-    "graphql",
-    "server",
-    "framework",
-    "node",
-    "nodejs",
-    "typescript"
-  ],
+  "author": "Dotan Simha <dotansimha@gmail.com>",
+  "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "exports": {
@@ -52,26 +43,35 @@
     "./package.json": "./package.json"
   },
   "typings": "dist/typings/index.d.ts",
-  "typescript": {
-    "definition": "dist/typings/index.d.ts"
-  },
+  "keywords": [
+    "gql",
+    "graphql",
+    "server",
+    "framework",
+    "node",
+    "nodejs",
+    "typescript"
+  ],
   "dependencies": {
     "@envelop/types": "3.0.2",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@graphql-tools/utils": "8.13.1",
     "@graphql-tools/schema": "8.5.1",
+    "@graphql-tools/utils": "8.13.1",
+    "@repeaterjs/repeater": "3.0.4",
     "graphql": "16.6.0",
-    "typescript": "4.8.4",
-    "@repeaterjs/repeater": "3.0.4"
-  },
-  "buildOptions": {
-    "input": "./src/index.ts"
+    "typescript": "4.8.4"
   },
   "publishConfig": {
     "directory": "dist",
     "access": "public"
   },
-  "type": "module"
+  "sideEffects": false,
+  "buildOptions": {
+    "input": "./src/index.ts"
+  },
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
 }

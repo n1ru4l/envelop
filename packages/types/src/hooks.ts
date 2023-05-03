@@ -1,14 +1,14 @@
-import { Maybe, PromiseOrValue, AsyncIterableIteratorOrValue } from './utils.js';
 import {
   ExecuteFunction,
+  ExecutionArgs,
+  ExecutionResult,
   ParseFunction,
+  SubscribeFunction,
   ValidateFunction,
   ValidateFunctionParameter,
-  SubscribeFunction,
-  ExecutionResult,
-  ExecutionArgs,
 } from './graphql.js';
 import { Plugin } from './plugin.js';
+import { AsyncIterableIteratorOrValue, Maybe, PromiseOrValue } from './utils.js';
 
 export type DefaultArgs = Record<string, unknown>;
 
@@ -65,7 +65,7 @@ export type OnPluginInitEventPayload<PluginContext extends Record<string, any>> 
  * Invoked when a plugin is initialized.
  */
 export type OnPluginInitHook<ContextType extends Record<string, any>> = (
-  options: OnPluginInitEventPayload<ContextType>
+  options: OnPluginInitEventPayload<ContextType>,
 ) => void;
 
 /** onPluginInit */
@@ -84,7 +84,9 @@ export type OnEnvelopedHookEventPayload<ContextType> = {
   extendContext: (contextExtension: Partial<ContextType>) => void;
 };
 
-export type OnEnvelopedHook<ContextType> = (options: OnEnvelopedHookEventPayload<ContextType>) => void;
+export type OnEnvelopedHook<ContextType> = (
+  options: OnEnvelopedHookEventPayload<ContextType>,
+) => void;
 
 export type OnParseEventPayload<ContextType> = {
   /**
@@ -141,7 +143,7 @@ export type AfterParseHook<ContextType> = (options: AfterParseEventPayload<Conte
  * Hook that is invoked before the parse function is invoked.
  */
 export type OnParseHook<ContextType> = (
-  options: OnParseEventPayload<ContextType>
+  options: OnParseEventPayload<ContextType>,
 ) => void | AfterParseHook<ContextType>;
 /**
  * Payload forwarded to the onValidate hook.
@@ -207,13 +209,15 @@ export type AfterValidateEventPayload<ContextType> = {
 /**
  * AfterValidateHook is invoked after the validate function has been invoked.
  */
-export type AfterValidateHook<ContextType> = (options: AfterValidateEventPayload<ContextType>) => void;
+export type AfterValidateHook<ContextType> = (
+  options: AfterValidateEventPayload<ContextType>,
+) => void;
 
 /**
  * The OnValidateHook is invoked before the validate function has been invoked.
  */
 export type OnValidateHook<ContextType> = (
-  options: OnValidateEventPayload<ContextType>
+  options: OnValidateEventPayload<ContextType>,
 ) => void | AfterValidateHook<ContextType>;
 
 /**
@@ -252,7 +256,7 @@ export type AfterContextBuildingEventPayload<ContextType> = {
  * Invoked after the context has been builded.
  */
 export type AfterContextBuildingHook<ContextType> = (
-  options: AfterContextBuildingEventPayload<ContextType>
+  options: AfterContextBuildingEventPayload<ContextType>,
 ) => PromiseOrValue<void>;
 
 /**
@@ -260,13 +264,15 @@ export type AfterContextBuildingHook<ContextType> = (
  * Return a AfterContextBuildingHook, which is invoked after the context building has been finished.
  */
 export type OnContextBuildingHook<ContextType> = (
-  options: OnContextBuildingEventPayload<ContextType>
+  options: OnContextBuildingEventPayload<ContextType>,
 ) => PromiseOrValue<void | AfterContextBuildingHook<ContextType>>;
 
 /**
  * Execution arguments with inferred context value type.
  */
-export type TypedExecutionArgs<ContextType> = Omit<ExecutionArgs, 'contextValue'> & { contextValue: ContextType };
+export type TypedExecutionArgs<ContextType> = Omit<ExecutionArgs, 'contextValue'> & {
+  contextValue: ContextType;
+};
 
 /**
  * Payload that is passed to the onExecute hook.
@@ -316,7 +322,7 @@ export type OnExecuteDoneHookResultOnNextHookPayload<ContextType> = {
  * Hook that is invoked for each value a AsyncIterable returned from execute publishes.
  */
 export type OnExecuteDoneHookResultOnNextHook<ContextType> = (
-  payload: OnExecuteDoneHookResultOnNextHookPayload<ContextType>
+  payload: OnExecuteDoneHookResultOnNextHookPayload<ContextType>,
 ) => void | Promise<void>;
 
 /**
@@ -362,7 +368,7 @@ export type OnExecuteDoneEventPayload<ContextType> = {
  * Allows returning a OnExecuteDoneHookResult for hooking into stream values if execute returned an AsyncIterable.
  */
 export type OnExecuteDoneHook<ContextType> = (
-  options: OnExecuteDoneEventPayload<ContextType>
+  options: OnExecuteDoneEventPayload<ContextType>,
 ) => PromiseOrValue<void | OnExecuteDoneHookResult<ContextType>>;
 
 /**
@@ -379,13 +385,15 @@ export type OnExecuteHookResult<ContextType> = {
  * onExecute hook that is invoked before the execute function is invoked.
  */
 export type OnExecuteHook<ContextType> = (
-  options: OnExecuteEventPayload<ContextType>
+  options: OnExecuteEventPayload<ContextType>,
 ) => PromiseOrValue<void | OnExecuteHookResult<ContextType>>;
 
 /**
  * Subscription arguments with inferred context value type.
  */
-export type TypedSubscriptionArgs<ContextType> = Omit<ExecutionArgs, 'contextValue'> & { contextValue: ContextType };
+export type TypedSubscriptionArgs<ContextType> = Omit<ExecutionArgs, 'contextValue'> & {
+  contextValue: ContextType;
+};
 
 /**
  * Payload with which the onSubscribe hook is invoked.
@@ -450,7 +458,7 @@ export type OnSubscribeResultResultOnNextHookPayload<ContextType> = {
  * Hook invoked for each value published by the AsyncIterable returned from subscribe.
  */
 export type OnSubscribeResultResultOnNextHook<ContextType> = (
-  payload: OnSubscribeResultResultOnNextHookPayload<ContextType>
+  payload: OnSubscribeResultResultOnNextHookPayload<ContextType>,
 ) => void | Promise<void>;
 
 /**
@@ -474,7 +482,7 @@ export type OnSubscribeResultResult<ContextType> = {
  * Return a OnSubscribeResultResult for hooking into the AsyncIterable returned from subscribe.
  */
 export type SubscribeResultHook<ContextType> = (
-  options: OnSubscribeResultEventPayload<ContextType>
+  options: OnSubscribeResultEventPayload<ContextType>,
 ) => void | OnSubscribeResultResult<ContextType>;
 
 export type SubscribeErrorHookPayload = {
@@ -500,5 +508,5 @@ export type OnSubscribeHookResult<ContextType> = {
  * Return a OnSubscribeHookResult for hooking into phase after the subscribe function has been called.
  */
 export type OnSubscribeHook<ContextType> = (
-  options: OnSubscribeEventPayload<ContextType>
+  options: OnSubscribeEventPayload<ContextType>,
 ) => PromiseOrValue<void | OnSubscribeHookResult<ContextType>>;

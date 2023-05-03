@@ -1,6 +1,6 @@
-import { Plugin } from '@envelop/core';
 import { DocumentNode, Source } from 'graphql';
 import LRU from 'lru-cache';
+import { Plugin } from '@envelop/core';
 
 interface Cache<T> {
   get(key: string): T | undefined;

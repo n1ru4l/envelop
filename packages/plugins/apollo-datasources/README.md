@@ -11,10 +11,10 @@ yarn add @envelop/apollo-datasources
 ## Usage Example
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
-import { envelop, useEngine } from '@envelop/core'
-import { useApolloDataSources } from '@envelop/apollo-datasources'
 import { RESTDataSource } from 'apollo-datasource-rest'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
+import { useApolloDataSources } from '@envelop/apollo-datasources'
+import { envelop, useEngine } from '@envelop/core'
 
 class MoviesAPI extends RESTDataSource {
   constructor() {

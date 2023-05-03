@@ -1,4 +1,4 @@
-import { readFileSync, promises } from 'fs';
+import { promises, readFileSync } from 'fs';
 import { DocumentNode } from 'graphql';
 import { PersistedOperationsStore } from '../types.js';
 

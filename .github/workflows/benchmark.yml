@@ -35,4 +35,6 @@ jobs:
           pnpm run wait-on tcp:3000
 
       - name: Run Benchmark
-        run: k6 -e GITHUB_PR=${{ github.event.number }} -e GITHUB_SHA=${{ github.sha }} -e GITHUB_TOKEN=${{secrets.GH_API_TOKEN}} -e GRAPHQL_HOSTNAME="[::1]" run ./benchmark/k6.js
+        run:
+          k6 -e GITHUB_PR=${{ github.event.number }} -e GITHUB_SHA=${{ github.sha }} -e
+          GITHUB_TOKEN=${{secrets.GH_API_TOKEN}} -e GRAPHQL_HOSTNAME="[::1]" run ./benchmark/k6.js

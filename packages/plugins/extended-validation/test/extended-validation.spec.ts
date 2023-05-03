@@ -1,7 +1,7 @@
+import { buildSchema, GraphQLError, parse } from 'graphql';
 import { envelop, useSchema } from '@envelop/core';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { buildSchema, GraphQLError, parse } from 'graphql';
 import { useExtendedValidation } from '../src/index.js';
 
 describe('useExtendedValidation', () => {
@@ -41,7 +41,7 @@ describe('useExtendedValidation', () => {
           ],
         }),
       ],
-      schema
+      schema,
     );
 
     const result = await testInstance.execute(operation);
@@ -90,7 +90,7 @@ describe('useExtendedValidation', () => {
           ],
         }),
       ],
-      schema
+      schema,
     );
 
     await testInstance.execute(operation);
@@ -120,9 +120,9 @@ describe('useExtendedValidation', () => {
         document: parse(operation),
         contextValue: {},
         schema,
-      })
+      }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"Plugin has not been properly set up. The 'contextFactory' function is not invoked and the result has not been passed to 'execute'."`
+      `"Plugin has not been properly set up. The 'contextFactory' function is not invoked and the result has not been passed to 'execute'."`,
     );
   });
   it('subscribe does run the extended validation phase', async () => {
@@ -162,7 +162,7 @@ describe('useExtendedValidation', () => {
           ],
         }),
       ],
-      schema
+      schema,
     );
     const result = await testkit.execute(operation);
     expect(calledExtendedValidationRule).toEqual(true);
@@ -203,7 +203,7 @@ describe('useExtendedValidation', () => {
           ],
         }),
       ],
-      schema
+      schema,
     );
     const result = await testkit.execute(operation);
     assertSingleExecutionValue(result);

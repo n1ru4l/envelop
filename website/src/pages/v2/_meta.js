@@ -36,7 +36,8 @@ export default async () => {
         'adding-authentication-with-auth0': '',
         'monitoring-and-tracing': '',
         'using-graphql-features-from-the-future': '',
-        'resolving-subscription-data-loader-caching-issues': 'Resolving Subscription DataLoader Caching Issues',
+        'resolving-subscription-data-loader-caching-issues':
+          'Resolving Subscription DataLoader Caching Issues',
         'adding-a-graphql-response-cache': '',
         'integrating-with-databases': '',
       },

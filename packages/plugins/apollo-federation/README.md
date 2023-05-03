@@ -11,10 +11,10 @@ yarn add @envelop/apollo-federation
 ## Usage Example
 
 ```ts
-import { envelop, useEngine } from '@envelop/core'
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { ApolloGateway } from '@apollo/gateway'
 import { useApolloFederation } from '@envelop/apollo-federation'
+import { envelop, useEngine } from '@envelop/core'
 
 // Initialize the gateway
 const gateway = new ApolloGateway({

@@ -1,5 +1,5 @@
-import { createCounter, createHistogram, createSummary } from './utils.js';
 import { Registry } from 'prom-client';
+import { createCounter, createHistogram, createSummary } from './utils.js';
 
 export type PrometheusTracingPluginConfig = {
   requestCount?: boolean | ReturnType<typeof createCounter>;

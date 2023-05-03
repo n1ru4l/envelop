@@ -1,8 +1,8 @@
-import { useLiveQuery, GraphQLLiveDirectiveSDL } from '../src/index.js';
+import { assertStreamExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
-import { createTestkit, assertStreamExecutionValue } from '@envelop/testing';
 import { applyLiveQueryJSONDiffPatchGenerator } from '@n1ru4l/graphql-live-query-patch-jsondiffpatch';
+import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
+import { GraphQLLiveDirectiveSDL, useLiveQuery } from '../src/index.js';
 
 const schema = makeExecutableSchema({
   typeDefs: [
@@ -34,7 +34,7 @@ describe('useLiveQuery', () => {
         }
       `,
       undefined,
-      contextValue
+      contextValue,
     );
     assertStreamExecutionValue(result);
     let current = await result.next();
@@ -71,8 +71,13 @@ describe('useLiveQuery', () => {
   it('apply patch middleware', async () => {
     const liveQueryStore = new InMemoryLiveQueryStore();
     const testKit = createTestkit(
-      [useLiveQuery({ liveQueryStore, applyLiveQueryPatchGenerator: applyLiveQueryJSONDiffPatchGenerator })],
-      schema
+      [
+        useLiveQuery({
+          liveQueryStore,
+          applyLiveQueryPatchGenerator: applyLiveQueryJSONDiffPatchGenerator,
+        }),
+      ],
+      schema,
     );
     const contextValue = {
       greetings: ['Hi', 'Sup', 'Ola'],
@@ -84,7 +89,7 @@ describe('useLiveQuery', () => {
         }
       `,
       undefined,
-      contextValue
+      contextValue,
     );
     assertStreamExecutionValue(result);
     let current = await result.next();

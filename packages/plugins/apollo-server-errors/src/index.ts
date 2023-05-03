@@ -1,10 +1,16 @@
-import { Plugin, handleStreamOrSingleExecutionResult } from '@envelop/core';
 import { formatApolloErrors } from 'apollo-server-errors';
 import type { ExecutionResult, GraphQLError } from 'graphql';
+import { handleStreamOrSingleExecutionResult, Plugin } from '@envelop/core';
 
 const makeHandleResult =
   (options: Parameters<typeof formatApolloErrors>[1] = {}) =>
-  ({ result, setResult }: { result: ExecutionResult; setResult: (result: ExecutionResult) => void }) => {
+  ({
+    result,
+    setResult,
+  }: {
+    result: ExecutionResult;
+    setResult: (result: ExecutionResult) => void;
+  }) => {
     if (result.errors && result.errors.length > 0) {
       setResult({
         ...result,
@@ -20,7 +26,9 @@ const makeHandleResult =
     }
   };
 
-export const useApolloServerErrors = (options: Parameters<typeof formatApolloErrors>[1] = {}): Plugin => {
+export const useApolloServerErrors = (
+  options: Parameters<typeof formatApolloErrors>[1] = {},
+): Plugin => {
   return {
     onExecute() {
       const handleResult = makeHandleResult(options);

@@ -1,5 +1,5 @@
-import { Plugin, DefaultContext } from '@envelop/core';
 import { GraphQLError, parse } from 'graphql';
+import { DefaultContext, Plugin } from '@envelop/core';
 import { PersistedOperationsFunctionStore, PersistedOperationsStore } from './types.js';
 import { operationIdFromSource } from './utils.js';
 
@@ -39,7 +39,7 @@ export function readOperationId(context: PersistedOperationPluginContext): strin
 }
 
 export const usePersistedOperations = (
-  rawOptions: UsePersistedOperationsOptions
+  rawOptions: UsePersistedOperationsOptions,
 ): Plugin<PersistedOperationPluginContext> => {
   const options: UsePersistedOperationsOptions = {
     ...DEFAULT_OPTIONS,

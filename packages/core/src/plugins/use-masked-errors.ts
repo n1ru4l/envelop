@@ -1,4 +1,4 @@
-import { Plugin, ExecutionResult } from '@envelop/types';
+import { ExecutionResult, Plugin } from '@envelop/types';
 import { handleStreamOrSingleExecutionResult } from '../utils.js';
 
 export const DEFAULT_ERROR_MESSAGE = 'Unexpected error.';
@@ -28,7 +28,7 @@ export function isOriginalGraphQLError(error: unknown): error is Error & { origi
 function createSerializableGraphQLError(
   message: string,
   originalError: unknown,
-  isDev: boolean
+  isDev: boolean,
 ): SerializableGraphQLErrorLike {
   const error = new Error(message) as SerializableGraphQLErrorLike;
   error.name = 'GraphQLError';
@@ -79,14 +79,20 @@ export type UseMaskedErrorsOpts = {
 
 const makeHandleResult =
   (maskError: MaskError, message: string) =>
-  ({ result, setResult }: { result: ExecutionResult; setResult: (result: ExecutionResult) => void }) => {
+  ({
+    result,
+    setResult,
+  }: {
+    result: ExecutionResult;
+    setResult: (result: ExecutionResult) => void;
+  }) => {
     if (result.errors != null) {
       setResult({ ...result, errors: result.errors.map(error => maskError(error, message)) });
     }
   };
 
 export function useMaskedErrors<PluginContext extends Record<string, any> = {}>(
-  opts?: UseMaskedErrorsOpts
+  opts?: UseMaskedErrorsOpts,
 ): Plugin<PluginContext> {
   const maskError = opts?.maskError ?? defaultMaskError;
   const message = opts?.errorMessage || DEFAULT_ERROR_MESSAGE;

@@ -1,7 +1,7 @@
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { createTestkit, assertSingleExecutionValue } from '@envelop/testing';
-import { usePreloadAssets } from '../src/index.js';
 import { useExtendContext } from '@envelop/core';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { usePreloadAssets } from '../src/index.js';
 
 describe('usePreloadAssets', () => {
   const imageUrl = 'https://localhost/some-asset.png';
@@ -42,7 +42,7 @@ describe('usePreloadAssets', () => {
         useExtendContext(() => ({ shouldPreloadAssets: false })),
         usePreloadAssets({ shouldPreloadAssets: context => (context as any).shouldPreloadAssets }),
       ],
-      schema
+      schema,
     );
     const result = await testInstance.execute(`query { imageUrl }`);
     assertSingleExecutionValue(result);

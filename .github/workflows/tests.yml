@@ -69,14 +69,18 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .cache/jest
-          key: ${{ runner.os }}-${{matrix.node-version}}-${{matrix.graphql_version}}-jest-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('patches/*.patch') }}
+          key:
+            ${{ runner.os }}-${{matrix.node-version}}-${{matrix.graphql_version}}-jest-${{
+            hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('patches/*.patch') }}
       - name: Test
         run: pnpm run test
         env:
           CI: true
 
   core:
-    name: Core Test / ${{matrix.os}} / node v${{matrix.node-version}} / graphql v${{matrix.graphql_version}}
+    name:
+      Core Test / ${{matrix.os}} / node v${{matrix.node-version}} / graphql
+      v${{matrix.graphql_version}}
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
@@ -99,7 +103,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .cache/jest
-          key: ${{ runner.os }}-${{matrix.node-version}}-${{matrix.graphql_version}}-jest-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('patches/*.patch') }}
+          key:
+            ${{ runner.os }}-${{matrix.node-version}}-${{matrix.graphql_version}}-jest-${{
+            hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('patches/*.patch') }}
       - name: Test Core
         run: pnpm run test:core --ci
         env:

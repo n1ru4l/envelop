@@ -27,6 +27,6 @@ export function graphql({ query, operationName, variables }) {
         // eslint-disable-next-line no-undef
         'X-Test-Scenario': __ENV.MODE,
       },
-    }
+    },
   );
 }

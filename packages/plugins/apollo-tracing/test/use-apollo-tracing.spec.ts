@@ -1,7 +1,7 @@
 import 'reflect-metadata';
-import { createTestkit, assertSingleExecutionValue } from '@envelop/testing';
-import { useApolloTracing } from '../src/index.js';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { useApolloTracing } from '../src/index.js';
 
 describe('useApolloTracing', () => {
   const schema = makeExecutableSchema({

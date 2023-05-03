@@ -15,7 +15,9 @@ type InternalPluginContext = {
   [envelopIsIntrospectionSymbol]?: true;
 };
 
-export const useLogger = (rawOptions: LoggerPluginOptions = DEFAULT_OPTIONS): Plugin<InternalPluginContext> => {
+export const useLogger = (
+  rawOptions: LoggerPluginOptions = DEFAULT_OPTIONS,
+): Plugin<InternalPluginContext> => {
   const options = {
     DEFAULT_OPTIONS,
     ...rawOptions,

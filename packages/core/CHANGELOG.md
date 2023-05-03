@@ -4,51 +4,74 @@
 
 ### Patch Changes
 
-- [#1725](https://github.com/n1ru4l/envelop/pull/1725) [`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957) Thanks [@n1ru4l](https://github.com/n1ru4l)! - dependencies updates:
+- [#1725](https://github.com/n1ru4l/envelop/pull/1725)
+  [`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957)
+  Thanks [@n1ru4l](https://github.com/n1ru4l)! - dependencies updates:
 
-  - Updated dependency [`tslib@^2.5.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.5.0) (from `2.5.0`, in `dependencies`)
+  - Updated dependency [`tslib@^2.5.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.5.0) (from
+    `2.5.0`, in `dependencies`)
 
-- Updated dependencies [[`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957)]:
+- Updated dependencies
+  [[`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957)]:
   - @envelop/types@3.0.2
 
 ## 3.0.5
 
 ### Patch Changes
 
-- [#1706](https://github.com/n1ru4l/envelop/pull/1706) [`270249cf`](https://github.com/n1ru4l/envelop/commit/270249cfb7650f8ad64f0167bb45a99475a03b04) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+- [#1706](https://github.com/n1ru4l/envelop/pull/1706)
+  [`270249cf`](https://github.com/n1ru4l/envelop/commit/270249cfb7650f8ad64f0167bb45a99475a03b04)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`tslib@2.5.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.5.0) (from `2.4.0`, in `dependencies`)
+  - Updated dependency [`tslib@2.5.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.5.0) (from
+    `2.4.0`, in `dependencies`)
 
 ## 3.0.4
 
 ### Patch Changes
 
-- Updated dependencies [[`e2ff77ed`](https://github.com/n1ru4l/envelop/commit/e2ff77edbc8c38d2854fc019f1d71ad4cf948d5f)]:
+- Updated dependencies
+  [[`e2ff77ed`](https://github.com/n1ru4l/envelop/commit/e2ff77edbc8c38d2854fc019f1d71ad4cf948d5f)]:
   - @envelop/types@3.0.1
 
 ## 3.0.3
 
 ### Patch Changes
 
-- [#1571](https://github.com/n1ru4l/envelop/pull/1571) [`6b48ef96`](https://github.com/n1ru4l/envelop/commit/6b48ef962020eb7dfd2918626b8a394bff673e4f) Thanks [@ardatan](https://github.com/ardatan)! - Deeply check if it is an original GraphQL Error
+- [#1571](https://github.com/n1ru4l/envelop/pull/1571)
+  [`6b48ef96`](https://github.com/n1ru4l/envelop/commit/6b48ef962020eb7dfd2918626b8a394bff673e4f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Deeply check if it is an original GraphQL Error
 
 ## 3.0.2
 
 ### Patch Changes
 
-- [#1560](https://github.com/n1ru4l/envelop/pull/1560) [`22f5ccfb`](https://github.com/n1ru4l/envelop/commit/22f5ccfbe69eb052cda6c1908425b63e3d906243) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Plugins with context generic for correct inheritance
+- [#1560](https://github.com/n1ru4l/envelop/pull/1560)
+  [`22f5ccfb`](https://github.com/n1ru4l/envelop/commit/22f5ccfbe69eb052cda6c1908425b63e3d906243)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Plugins with context generic for correct
+  inheritance
 
 ## 3.0.0
 
 ### Major Changes
 
-- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove `isIntrospectionQuery` utility
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487)
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)
+  Thanks [@saihaj](https://github.com/saihaj)! - Remove `isIntrospectionQuery` utility
 
-- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove async schema loading plugin. This was a mistake from beginning as we cannot asynchronously `validate` and `parse` since with GraphQL.js are synchronous in nature.
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487)
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)
+  Thanks [@saihaj](https://github.com/saihaj)! - Remove async schema loading plugin. This was a
+  mistake from beginning as we cannot asynchronously `validate` and `parse` since with GraphQL.js
+  are synchronous in nature.
 
-- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove `onResolverCalled`
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487)
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)
+  Thanks [@saihaj](https://github.com/saihaj)! - Remove `onResolverCalled`
 
-  We decided to drop onResolverCalled hook and instead [provide a new plugin](https://github.com/n1ru4l/envelop/pull/1500) that will let you hook into this phase.
+  We decided to drop onResolverCalled hook and instead
+  [provide a new plugin](https://github.com/n1ru4l/envelop/pull/1500) that will let you hook into
+  this phase.
 
   ```diff
   import { parse, validate, execute, subscribe } from 'graphql'
@@ -75,27 +98,46 @@
   });
   ```
 
-- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Drop `useTiming` plugin
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487)
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)
+  Thanks [@saihaj](https://github.com/saihaj)! - Drop `useTiming` plugin
 
-  This plugin was dependent on tracing the schema. As we no longer support wrap the schema out of the box we decided to drop this plugin.
+  This plugin was dependent on tracing the schema. As we no longer support wrap the schema out of
+  the box we decided to drop this plugin.
 
-- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove `isIntrospectionDocument` utility
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487)
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)
+  Thanks [@saihaj](https://github.com/saihaj)! - Remove `isIntrospectionDocument` utility
 
-- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Drop Node v12 support
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487)
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)
+  Thanks [@saihaj](https://github.com/saihaj)! - Drop Node v12 support
 
-  Node.js v12 is no longer supported by the Node.js team. https://github.com/nodejs/Release/#end-of-life-releases
+  Node.js v12 is no longer supported by the Node.js team.
+  https://github.com/nodejs/Release/#end-of-life-releases
 
-- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Drop `EnvelopError` class
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487)
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)
+  Thanks [@saihaj](https://github.com/saihaj)! - Drop `EnvelopError` class
 
-  To keep the core agnostic from a specific implementation we no longer provide the `EnvelopError` class.
+  To keep the core agnostic from a specific implementation we no longer provide the `EnvelopError`
+  class.
 
-- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove `useAsyncSchema` plugin
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487)
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)
+  Thanks [@saihaj](https://github.com/saihaj)! - Remove `useAsyncSchema` plugin
 
-  This was a mistake from beginning as we cannot asynchronously validate and parse since with [graphql](https://github.com/graphql/graphql-js) these functions are synchronous in nature.
+  This was a mistake from beginning as we cannot asynchronously validate and parse since with
+  [graphql](https://github.com/graphql/graphql-js) these functions are synchronous in nature.
 
-- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove `graphql` as a peer dependency
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487)
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)
+  Thanks [@saihaj](https://github.com/saihaj)! - Remove `graphql` as a peer dependency
 
-  We have built the new `envelop` to be engine agnostic. `graphql-js` is no longer a peer dependency. Now you can use any spec compliant GraphQL engine with `envelop` and get the benefit of building a plugin system. We have introduced a new plugin that can be used to customize the GraphQL Engine.
+  We have built the new `envelop` to be engine agnostic. `graphql-js` is no longer a peer
+  dependency. Now you can use any spec compliant GraphQL engine with `envelop` and get the benefit
+  of building a plugin system. We have introduced a new plugin that can be used to customize the
+  GraphQL Engine.
 
   ```diff
   - import { envelop } from '@envelop/core'
@@ -107,11 +149,19 @@
 
   ```
 
-  Checkout the [migration guide](https://www.the-guild.dev/graphql/envelop/v3/guides/migrating-from-v2-to-v3) for more details.
+  Checkout the
+  [migration guide](https://www.the-guild.dev/graphql/envelop/v3/guides/migrating-from-v2-to-v3) for
+  more details.
 
-- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Rename `useLazyLoadedSchema` to `useSchemaByContext` since the original name was vert misleading.
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487)
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)
+  Thanks [@saihaj](https://github.com/saihaj)! - Rename `useLazyLoadedSchema` to
+  `useSchemaByContext` since the original name was vert misleading.
 
-- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove `enableIf` utility in favor of more type safe way to conditionally enable plugins. It wasn't a great experience to have a utility
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487)
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)
+  Thanks [@saihaj](https://github.com/saihaj)! - Remove `enableIf` utility in favor of more type
+  safe way to conditionally enable plugins. It wasn't a great experience to have a utility
 
   We can easily replace usage like this:
 
@@ -135,34 +185,48 @@
   })
   ```
 
-- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Remove `handleValidationErrors` and `handleParseErrors` options from `useMaskedErrors`.
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487)
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)
+  Thanks [@saihaj](https://github.com/saihaj)! - Remove `handleValidationErrors` and
+  `handleParseErrors` options from `useMaskedErrors`.
 
-  > ONLY masking validation errors OR ONLY disabling introspection errors does not make sense, as both can be abused for reverse-engineering the GraphQL schema (see https://github.com/nikitastupin/clairvoyance for reverse-engineering the schema based on validation error suggestions).
-  > https://github.com/n1ru4l/envelop/issues/1482#issue-1340015060
+  > ONLY masking validation errors OR ONLY disabling introspection errors does not make sense, as
+  > both can be abused for reverse-engineering the GraphQL schema (see
+  > https://github.com/nikitastupin/clairvoyance for reverse-engineering the schema based on
+  > validation error suggestions). https://github.com/n1ru4l/envelop/issues/1482#issue-1340015060
 
   Rename `formatError` function option to `maskError`
 
-- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - Removed orchestrator tracing
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487)
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)
+  Thanks [@saihaj](https://github.com/saihaj)! - Removed orchestrator tracing
 
-  `GraphQLSchema` was wrapped to provide resolvers/fields tracing from the schema. Issue with this approach was it was very specific to the underlying engine's implementation. With the new version we no longer want to depend to a specific implementation. Now users can wrap their schemas and add tracing themselves.
+  `GraphQLSchema` was wrapped to provide resolvers/fields tracing from the schema. Issue with this
+  approach was it was very specific to the underlying engine's implementation. With the new version
+  we no longer want to depend to a specific implementation. Now users can wrap their schemas and add
+  tracing themselves.
 
 ### Minor Changes
 
-- [#1487](https://github.com/n1ru4l/envelop/pull/1487) [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f) Thanks [@saihaj](https://github.com/saihaj)! - respond to context, parse and validate errors in `useErrorHandler` plugin
+- [#1487](https://github.com/n1ru4l/envelop/pull/1487)
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)
+  Thanks [@saihaj](https://github.com/saihaj)! - respond to context, parse and validate errors in
+  `useErrorHandler` plugin
 
 ## 2.6.0
 
 ### Minor Changes
 
-- [#1499](https://github.com/n1ru4l/envelop/pull/1499) [`1f7af02b`](https://github.com/n1ru4l/envelop/commit/1f7af02b9f1a16058a6d69fcd48425a93be655c6) Thanks [@viniciuspalma](https://github.com/viniciuspalma)! - Adding tslib to package dependencies
+- [#1499](https://github.com/n1ru4l/envelop/pull/1499)
+  [`1f7af02b`](https://github.com/n1ru4l/envelop/commit/1f7af02b9f1a16058a6d69fcd48425a93be655c6)
+  Thanks [@viniciuspalma](https://github.com/viniciuspalma)! - Adding tslib to package dependencies
 
-  Projects that currently are using yarn Berry with PnP or any strict dependency
-  resolver, that requires that all dependencies are specified on
-  package.json otherwise it would endue in an error if not treated correct
+  Projects that currently are using yarn Berry with PnP or any strict dependency resolver, that
+  requires that all dependencies are specified on package.json otherwise it would endue in an error
+  if not treated correct
 
-  Since https://www.typescriptlang.org/tsconfig#importHelpers is currently
-  being used, tslib should be exported as a dependency to external runners
-  get the proper import.
+  Since https://www.typescriptlang.org/tsconfig#importHelpers is currently being used, tslib should
+  be exported as a dependency to external runners get the proper import.
 
   Change on each package:
 
@@ -177,20 +241,31 @@
 
 ### Patch Changes
 
-- [#1496](https://github.com/n1ru4l/envelop/pull/1496) [`ae7bc9a3`](https://github.com/n1ru4l/envelop/commit/ae7bc9a36abd595b0a91f7b4e133017d3eb99a4a) Thanks [@ardatan](https://github.com/ardatan)! - Fix isIntrospectionDocument and isIntrospectionOperation for fragment tricks
+- [#1496](https://github.com/n1ru4l/envelop/pull/1496)
+  [`ae7bc9a3`](https://github.com/n1ru4l/envelop/commit/ae7bc9a36abd595b0a91f7b4e133017d3eb99a4a)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix isIntrospectionDocument and
+  isIntrospectionOperation for fragment tricks
 
-- Updated dependencies [[`1f7af02b`](https://github.com/n1ru4l/envelop/commit/1f7af02b9f1a16058a6d69fcd48425a93be655c6)]:
+- Updated dependencies
+  [[`1f7af02b`](https://github.com/n1ru4l/envelop/commit/1f7af02b9f1a16058a6d69fcd48425a93be655c6)]:
   - @envelop/types@2.4.0
 
 ## 2.5.0
 
 ### Minor Changes
 
-- [#1473](https://github.com/n1ru4l/envelop/pull/1473) [`d828f129`](https://github.com/n1ru4l/envelop/commit/d828f1291254a0f9dfdc3654611087859e4c9708) Thanks [@n1ru4l](https://github.com/n1ru4l)! - handle subscription resolver errors in useErrorHandler
+- [#1473](https://github.com/n1ru4l/envelop/pull/1473)
+  [`d828f129`](https://github.com/n1ru4l/envelop/commit/d828f1291254a0f9dfdc3654611087859e4c9708)
+  Thanks [@n1ru4l](https://github.com/n1ru4l)! - handle subscription resolver errors in
+  useErrorHandler
 
 ### Patch Changes
 
-- [#1471](https://github.com/n1ru4l/envelop/pull/1471) [`5a5f5c04`](https://github.com/n1ru4l/envelop/commit/5a5f5c04177b9e1379fd77db5d6383160879d449) Thanks [@n1ru4l](https://github.com/n1ru4l)! - Ensure error thrown from the context factory is wrapped within a GraphQLError for proper formatting. Previously this caused an unexpected error to be swallowed completly when error masking is enabled.
+- [#1471](https://github.com/n1ru4l/envelop/pull/1471)
+  [`5a5f5c04`](https://github.com/n1ru4l/envelop/commit/5a5f5c04177b9e1379fd77db5d6383160879d449)
+  Thanks [@n1ru4l](https://github.com/n1ru4l)! - Ensure error thrown from the context factory is
+  wrapped within a GraphQLError for proper formatting. Previously this caused an unexpected error to
+  be swallowed completly when error masking is enabled.
 
 ## 2.4.2
 
@@ -204,7 +279,8 @@
 
 ### Patch Changes
 
-- 787d28a2: Use the custom error formatter for the errors thrown when building the context and the subscription
+- 787d28a2: Use the custom error formatter for the errors thrown when building the context and the
+  subscription
 
 ## 2.4.0
 
@@ -229,7 +305,8 @@
 
 ### Patch Changes
 
-- 07d029b: use the correct `GraphQLErrorExtensions` interface for the `extensions` constructor option on `EnvelopError`.
+- 07d029b: use the correct `GraphQLErrorExtensions` interface for the `extensions` constructor
+  option on `EnvelopError`.
 
 ## 2.3.1
 
@@ -248,7 +325,10 @@
     return {
       onPluginInit(context) {
         context.registerContextErrorHandler(({ context }) => {
-          console.error('Error occurred during context creation but at least I have the  context so far', context)
+          console.error(
+            'Error occurred during context creation but at least I have the  context so far',
+            context
+          )
         })
       }
     }
@@ -273,7 +353,8 @@
   })
   ```
 
-  This option is disabled by default as validation and parse errors are expected errors that help the API consumer instead of leaking secret information.
+  This option is disabled by default as validation and parse errors are expected errors that help
+  the API consumer instead of leaking secret information.
 
   If you want to avoid leaking schema suggestions, we recommend using persisted operations.
 
@@ -299,7 +380,8 @@
 
 ### Major Changes
 
-- aac65ef: Move `onResolverCalled` from within `OnExecuteHookResult` and `OnSubscribeHookResult` to the `Plugin` type.
+- aac65ef: Move `onResolverCalled` from within `OnExecuteHookResult` and `OnSubscribeHookResult` to
+  the `Plugin` type.
 
   ```diff
   import type { Plugin } from "@envelop/core";
@@ -315,11 +397,15 @@
   }
   ```
 
-  We highly recommend avoiding to use any plugins that use `onResolverCalled` within your production environment as it has severe impact on the performance of the individual resolver functions within your schema.
+  We highly recommend avoiding to use any plugins that use `onResolverCalled` within your production
+  environment as it has severe impact on the performance of the individual resolver functions within
+  your schema.
 
-  The schema resolver functions are now ONLY wrapped if any plugin in your envelop setup uses the `onResolverCalled` hook.
+  The schema resolver functions are now ONLY wrapped if any plugin in your envelop setup uses the
+  `onResolverCalled` hook.
 
-  If you need any shared state between `onExecute` and `onResolverCalled` you can share it by extending the context object.
+  If you need any shared state between `onExecute` and `onResolverCalled` you can share it by
+  extending the context object.
 
   ```ts
   import type { Plugin } from '@envelop/core'
@@ -342,9 +428,12 @@
 
 - 4106e08: Add new option `breakContextBuilding` to `OnContextBuildingEventPayload`.
 
-  This allows short-circuiting the context building phase. Please use this with care as careless usage of it can result in severe errors during the execution phase, as the context might not include all the fields your schema resolvers need.
+  This allows short-circuiting the context building phase. Please use this with care as careless
+  usage of it can result in severe errors during the execution phase, as the context might not
+  include all the fields your schema resolvers need.
 
-- 4106e08: Add new plugin `useImmediateIntrospection` for speeding up introspection only operations by skipping context building.
+- 4106e08: Add new plugin `useImmediateIntrospection` for speeding up introspection only operations
+  by skipping context building.
 
   ```ts
   import { envelop, useImmediateIntrospection } from '@envelop/core'
@@ -375,25 +464,31 @@
 
 ### Minor Changes
 
-- d9cfb7c: Support including the original error stack for masked errors within the error extensions via the `isDev` option and the `defaultErrorFormatter`.
+- d9cfb7c: Support including the original error stack for masked errors within the error extensions
+  via the `isDev` option and the `defaultErrorFormatter`.
 
   ```ts
   useMaskedErrors({ isDev: true })
   ```
 
-  On Node.js environments the `isDev` default value is `true` if `globalThis.process.env["NODE_ENV"]` is equal to `"development"`. Otherwise, the default value is ALWAYS `false`.
+  On Node.js environments the `isDev` default value is `true` if
+  `globalThis.process.env["NODE_ENV"]` is equal to `"development"`. Otherwise, the default value is
+  ALWAYS `false`.
 
   ***
 
-  The `FormatErrorHandler` now has a third argument `isDev` which is forwarded from the configuration and can be used for customizing the formatter behavior in development mode.
+  The `FormatErrorHandler` now has a third argument `isDev` which is forwarded from the
+  configuration and can be used for customizing the formatter behavior in development mode.
 
 ## 1.6.6
 
 ### Patch Changes
 
-- 8e365c2: fix potential memory leak when using `onEnd` and `onNext` stream handlers for hooking into `subscribe` and `execute`.
+- 8e365c2: fix potential memory leak when using `onEnd` and `onNext` stream handlers for hooking
+  into `subscribe` and `execute`.
 
-  This has been caused by AsyncGenerators being blocked until the next value is published. Now disposed result streams (AsyncIterables) will properly cleanup the underlying stream source.
+  This has been caused by AsyncGenerators being blocked until the next value is published. Now
+  disposed result streams (AsyncIterables) will properly cleanup the underlying stream source.
 
 - fd14339: feat(usePayloadFormatter): add second argument with execution arguments
 - 128c5d3: Fix context type inference with enableIf helper
@@ -430,7 +525,8 @@
 
 - b1a0331: Properly list `@envelop/core` as a `peerDependency` in plugins.
 
-  This resolves issues where the bundled envelop plugins published to npm had logic inlined from the `@envelop/core` package, causing `instanceof` check of `EnvelopError` to fail.
+  This resolves issues where the bundled envelop plugins published to npm had logic inlined from the
+  `@envelop/core` package, causing `instanceof` check of `EnvelopError` to fail.
 
 - Updated dependencies [b1a0331]
   - @envelop/types@1.5.1
@@ -450,7 +546,8 @@
 
 ### Minor Changes
 
-- 3458917: Allow functions returning a plugin in `enableIf` and lazy load plugin by avoiding running the init flow of plugin if value is false.
+- 3458917: Allow functions returning a plugin in `enableIf` and lazy load plugin by avoiding running
+  the init flow of plugin if value is false.
 - 04120de: add support for GraphQL.js 16
 
 ### Patch Changes
@@ -507,9 +604,12 @@
   }
   ```
 
-- 7704fc3: `useMaskedErrors` now masks errors thrown during context creation (calling `contextFactory`).
+- 7704fc3: `useMaskedErrors` now masks errors thrown during context creation (calling
+  `contextFactory`).
 
-  It might be possible that you need to load some data during context creation from a remote source that could be unavailable and thus yield in an error being thrown. `useMaskedErrors` now handles such scenarios and prevents leaking such information to clients.
+  It might be possible that you need to load some data during context creation from a remote source
+  that could be unavailable and thus yield in an error being thrown. `useMaskedErrors` now handles
+  such scenarios and prevents leaking such information to clients.
 
   ✅ context error will be masked
 
@@ -544,9 +644,12 @@
   execute({ schema, ...args })
   ```
 
-  This fixes an edge-case with graphql frameworks that call execute with the old and deprecated signature.
+  This fixes an edge-case with graphql frameworks that call execute with the old and deprecated
+  signature.
 
-  Thus, Envelop allows developers using server frameworks that hard-core the legacy v15 call signature to immediately use v16 without waiting for framework developers to adjusting it or fork/patch it.
+  Thus, Envelop allows developers using server frameworks that hard-core the legacy v15 call
+  signature to immediately use v16 without waiting for framework developers to adjusting it or
+  fork/patch it.
 
 ## 1.0.3
 
@@ -559,7 +662,8 @@
 ### Patch Changes
 
 - 94db02d: Added new helper `handleStreamOrSingleExecutionResult`
-- 94db02d: Update usage of plugins to use the correct `isAsyncIterable` and new helper `handleStreamOrSingleExecutionResult`
+- 94db02d: Update usage of plugins to use the correct `isAsyncIterable` and new helper
+  `handleStreamOrSingleExecutionResult`
 - Updated dependencies [94db02d]
 - Updated dependencies [94db02d]
   - @envelop/types@1.0.2
@@ -626,7 +730,8 @@
 
 ### Minor Changes
 
-- d82e2d0: Added utils: isOperationDefinition, isIntrospectionOperation, isIntrospectionDocument, isIntrospectionOperationString
+- d82e2d0: Added utils: isOperationDefinition, isIntrospectionOperation, isIntrospectionDocument,
+  isIntrospectionOperationString
 - 2113527: Extend Envelop plugin API with the ability to access and replace resolver function
 - d82e2d0: Added config flag `skipIntrospection` for useLogger plugin
 
@@ -644,7 +749,8 @@
 
 ### Patch Changes
 
-- 7f4901d: Fix issues with contextFactory and missing context coming from GraphQL pipeline orchestrator
+- 7f4901d: Fix issues with contextFactory and missing context coming from GraphQL pipeline
+  orchestrator
 - Updated dependencies [7f4901d]
   - @envelop/types@0.2.1
 

@@ -1,9 +1,13 @@
-import { Plugin, OnExecuteHookResult, isAsyncIterable } from '@envelop/core';
+import { print } from 'graphql';
+import { isAsyncIterable, OnExecuteHookResult, Plugin } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
 import { SpanAttributes, SpanKind, TracerProvider } from '@opentelemetry/api';
 import * as opentelemetry from '@opentelemetry/api';
-import { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
-import { print } from 'graphql';
+import {
+  BasicTracerProvider,
+  ConsoleSpanExporter,
+  SimpleSpanProcessor,
+} from '@opentelemetry/sdk-trace-base';
 
 export enum AttributeName {
   EXECUTION_ERROR = 'graphql.execute.error',
@@ -35,7 +39,7 @@ export const useOpenTelemetry = (
   tracingProvider?: TracerProvider,
   spanKind: SpanKind = SpanKind.SERVER,
   spanAdditionalAttributes: SpanAttributes = {},
-  serviceName = 'graphql'
+  serviceName = 'graphql',
 ): Plugin<PluginContext> => {
   if (!tracingProvider) {
     const basicTraceProvider = new BasicTracerProvider();
@@ -52,7 +56,10 @@ export const useOpenTelemetry = (
         addPlugin(
           useOnResolve(({ info, context, args }) => {
             if (context && typeof context === 'object' && context[tracingSpanSymbol]) {
-              const ctx = opentelemetry.trace.setSpan(opentelemetry.context.active(), context[tracingSpanSymbol]);
+              const ctx = opentelemetry.trace.setSpan(
+                opentelemetry.context.active(),
+                context[tracingSpanSymbol],
+              );
               const { fieldName, returnType, parentType } = info;
 
               const resolverSpan = tracer.startSpan(
@@ -65,7 +72,7 @@ export const useOpenTelemetry = (
                     [AttributeName.RESOLVER_ARGS]: JSON.stringify(args || {}),
                   },
                 },
-                ctx
+                ctx,
               );
 
               return ({ result }) => {
@@ -81,7 +88,7 @@ export const useOpenTelemetry = (
             }
 
             return () => {};
-          })
+          }),
         );
       }
     },
@@ -104,7 +111,7 @@ export const useOpenTelemetry = (
             executionSpan.end();
             // eslint-disable-next-line no-console
             console.warn(
-              `Plugin "newrelic" encountered a AsyncIterator which is not supported yet, so tracing data is not available for the operation.`
+              `Plugin "newrelic" encountered a AsyncIterator which is not supported yet, so tracing data is not available for the operation.`,
             );
             return;
           }

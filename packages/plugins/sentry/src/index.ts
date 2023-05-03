@@ -1,12 +1,12 @@
+import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 import {
-  Plugin,
   handleStreamOrSingleExecutionResult,
-  OnExecuteDoneHookResultOnNextHook,
   isOriginalGraphQLError,
+  OnExecuteDoneHookResultOnNextHook,
+  Plugin,
 } from '@envelop/core';
 import * as Sentry from '@sentry/node';
 import type { Span, TraceparentData } from '@sentry/types';
-import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 
 export type SentryPluginOptions = {
   /**
@@ -82,7 +82,10 @@ export type SentryPluginOptions = {
 export const defaultSkipError = isOriginalGraphQLError;
 
 export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
-  function pick<K extends keyof SentryPluginOptions>(key: K, defaultValue: NonNullable<SentryPluginOptions[K]>) {
+  function pick<K extends keyof SentryPluginOptions>(
+    key: K,
+    defaultValue: NonNullable<SentryPluginOptions[K]>,
+  ) {
     return options[key] ?? defaultValue;
   }
 
@@ -113,7 +116,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
 
       const rootOperation = args.document.definitions.find(
         // @ts-expect-error TODO: not sure how we will make it dev friendly
-        o => o.kind === Kind.OPERATION_DEFINITION
+        o => o.kind === Kind.OPERATION_DEFINITION,
       ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
 
@@ -167,7 +170,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
             [
               `Flag "startTransaction" is disabled but Sentry failed to find a transaction.`,
               `Try to create a transaction before GraphQL execution phase is started.`,
-            ].join('\n')
+            ].join('\n'),
           );
           return {};
         }

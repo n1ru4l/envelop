@@ -3,8 +3,16 @@
 Prevent unexpected error messages from leaking to the GraphQL clients.
 
 ```ts
-import { envelop, useSchema, useMaskedErrors, useEngine } from '@envelop/core'
-import { makeExecutableSchema, GraphQLError, parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import {
+  execute,
+  GraphQLError,
+  makeExecutableSchema,
+  parse,
+  specifiedRules,
+  subscribe,
+  validate
+} from 'graphql'
+import { envelop, useEngine, useMaskedErrors, useSchema } from '@envelop/core'
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `
@@ -33,15 +41,19 @@ const schema = makeExecutableSchema({
 })
 
 const getEnveloped = envelop({
-  plugins: [useEngine({ parse, validate, specifiedRules, execute, subscribe }), useSchema(schema), useMaskedErrors()]
+  plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
+    useSchema(schema),
+    useMaskedErrors()
+  ]
 })
 ```
 
 You may customize the default error message `Unexpected error.` with your own `errorMessage`:
 
 ```ts
-import { envelop, useSchema, useMaskedErrors, useEngine } from '@envelop/core'
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
+import { envelop, useEngine, useMaskedErrors, useSchema } from '@envelop/core'
 import { schema } from './schema'
 
 const getEnveloped = envelop({
@@ -56,8 +68,8 @@ const getEnveloped = envelop({
 Or provide a custom formatter when masking the output:
 
 ```ts
+import { execute, GraphQLError, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { isGraphQLError, MaskError, useEngine } from '@envelop/core'
-import { parse, validate, specifiedRules, execute, subscribe, GraphQLError } from 'graphql'
 
 export const customFormatError: MaskError = err => {
   if (isGraphQLError(err)) {

@@ -1,8 +1,8 @@
+import { useExtendContext } from '@envelop/core';
 import { assertStreamExecutionValue, createTestkit } from '@envelop/testing';
+import { makePushPullAsyncIterableIterator } from '@n1ru4l/push-pull-async-iterable-iterator';
 import { schema, subscriptionOperationString } from '../../../core/test/common.js';
 import { useExtendContextValuePerExecuteSubscriptionEvent } from '../src/index.js';
-import { useExtendContext } from '@envelop/core';
-import { makePushPullAsyncIterableIterator } from '@n1ru4l/push-pull-async-iterable-iterator';
 
 describe('useContextValuePerExecuteSubscriptionEvent', () => {
   it('it can be used for injecting a context that is different from the subscription context', async () => {
@@ -11,7 +11,10 @@ describe('useContextValuePerExecuteSubscriptionEvent', () => {
     const subscriptionContextValue: {
       subscribeSource: AsyncIterableIterator<unknown>;
       message: string;
-    } = { subscribeSource: asyncIterableIterator, message: 'this is only used during subscribe phase' };
+    } = {
+      subscribeSource: asyncIterableIterator,
+      message: 'this is only used during subscribe phase',
+    };
 
     let counter = 0;
 
@@ -24,7 +27,7 @@ describe('useContextValuePerExecuteSubscriptionEvent', () => {
           },
         })),
       ],
-      schema
+      schema,
     );
 
     const result = await testInstance.execute(subscriptionOperationString);
@@ -60,7 +63,7 @@ describe('useContextValuePerExecuteSubscriptionEvent', () => {
           onEnd,
         })),
       ],
-      schema
+      schema,
     );
 
     const result = await testInstance.execute(subscriptionOperationString);

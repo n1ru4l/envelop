@@ -1,9 +1,9 @@
-import type { StatsD } from 'hot-shots';
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { useStatsD, metricNames, StatsDPluginOptions } from '../src/index.js';
 import { getIntrospectionQuery } from 'graphql';
+import type { StatsD } from 'hot-shots';
 import { useExtendContext } from '@envelop/core';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { metricNames, StatsDPluginOptions, useStatsD } from '../src/index.js';
 
 function createMetricName(key: keyof typeof metricNames, prefix: string = 'graphql'): string {
   return `${prefix}.${metricNames[key]}`;
@@ -41,7 +41,7 @@ describe('StatsD plugin', () => {
     });
     const teskit = createTestkit(
       [plugin, useExtendContext(() => new Promise<void>(resolve => setTimeout(resolve, 250)))],
-      schema
+      schema,
     );
 
     return {
@@ -72,7 +72,9 @@ describe('StatsD plugin', () => {
     expect(client.histogram).not.toBeCalled();
     expect(client.increment).toBeCalledTimes(2);
     expect(client.increment).toBeCalledWith(createMetricName('errorCount'), { operation: 'test' });
-    expect(client.increment).toBeCalledWith(createMetricName('operationCount'), { operation: 'test' });
+    expect(client.increment).toBeCalledWith(createMetricName('operationCount'), {
+      operation: 'test',
+    });
   });
 
   test('increase error_count and count on graphql error', async () => {
@@ -84,7 +86,9 @@ describe('StatsD plugin', () => {
     expect(client.histogram).not.toBeCalled();
     expect(client.increment).toBeCalledTimes(2);
     expect(client.increment).toBeCalledWith(createMetricName('errorCount'), { operation: 'test' });
-    expect(client.increment).toBeCalledWith(createMetricName('operationCount'), { operation: 'test' });
+    expect(client.increment).toBeCalledWith(createMetricName('operationCount'), {
+      operation: 'test',
+    });
   });
 
   test('increase count and update histogram on successful operation', async () => {
@@ -94,9 +98,13 @@ describe('StatsD plugin', () => {
 
     expect(result.errors).toBeUndefined();
     expect(client.increment).toBeCalledTimes(1);
-    expect(client.increment).toBeCalledWith(createMetricName('operationCount'), { operation: 'test' });
+    expect(client.increment).toBeCalledWith(createMetricName('operationCount'), {
+      operation: 'test',
+    });
     expect(client.histogram).toBeCalledTimes(1);
-    expect(client.histogram).toBeCalledWith(createMetricName('latency'), expect.any(Number), { operation: 'test' });
+    expect(client.histogram).toBeCalledWith(createMetricName('latency'), expect.any(Number), {
+      operation: 'test',
+    });
   });
 
   test('support custom prefix', async () => {
@@ -107,11 +115,17 @@ describe('StatsD plugin', () => {
 
     expect(result.errors).toBeUndefined();
     expect(client.increment).toBeCalledTimes(1);
-    expect(client.increment).toBeCalledWith(createMetricName('operationCount', prefix), { operation: 'test' });
-    expect(client.histogram).toBeCalledTimes(1);
-    expect(client.histogram).toBeCalledWith(createMetricName('latency', prefix), expect.any(Number), {
+    expect(client.increment).toBeCalledWith(createMetricName('operationCount', prefix), {
       operation: 'test',
     });
+    expect(client.histogram).toBeCalledTimes(1);
+    expect(client.histogram).toBeCalledWith(
+      createMetricName('latency', prefix),
+      expect.any(Number),
+      {
+        operation: 'test',
+      },
+    );
   });
 
   test('do not skip on introspection by default', async () => {
@@ -121,7 +135,9 @@ describe('StatsD plugin', () => {
 
     expect(result.errors).toBeUndefined();
     expect(client.increment).toBeCalledTimes(1);
-    expect(client.increment).toBeCalledWith(createMetricName('operationCount'), { operation: 'IntrospectionQuery' });
+    expect(client.increment).toBeCalledWith(createMetricName('operationCount'), {
+      operation: 'IntrospectionQuery',
+    });
     expect(client.histogram).toBeCalledTimes(1);
     expect(client.histogram).toBeCalledWith(createMetricName('latency'), expect.any(Number), {
       operation: 'IntrospectionQuery',

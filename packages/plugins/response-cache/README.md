@@ -4,11 +4,14 @@
 - Customize cache entry time to live based on fields and types within the execution result.
 - Automatically invalidate the cache based on mutation selection sets.
 - Customize invalidation through the cache api (e.g. listen to a database write log).
-- Implement your own global cache (e.g. using another key/value store) by implementing the `Cache` interface.
+- Implement your own global cache (e.g. using another key/value store) by implementing the `Cache`
+  interface.
 
 [Check out the GraphQL Response Cache Guide for more information](https://envelop.dev/docs/guides/adding-a-graphql-response-cache)
 
-> Watch [Episode #34 of `graphql.wtf`](https://graphql.wtf/episodes/34-response-cache-plugin-with-envelop) for a quick introduction to using Response Cache plugin with Envelop:
+> Watch
+> [Episode #34 of `graphql.wtf`](https://graphql.wtf/episodes/34-response-cache-plugin-with-envelop)
+> for a quick introduction to using Response Cache plugin with Envelop:
 
 <iframe
   width="100%"
@@ -38,7 +41,7 @@ When configuring the `useResponseCache`, you can choose the type of cache:
 The in-memory LRU cache is used by default.
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
@@ -57,9 +60,9 @@ const getEnveloped = envelop({
 Or, you may create the in-memory LRU cache explicitly.
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
-import { useResponseCache, createInMemoryCache } from '@envelop/response-cache'
+import { createInMemoryCache, useResponseCache } from '@envelop/response-cache'
 
 const cache = createInMemoryCache()
 
@@ -75,12 +78,13 @@ const getEnveloped = envelop({
 })
 ```
 
-> Note: The in-memory LRU cache is not suitable for serverless deployments. Instead, consider the Redis cache provided by `@envelop/response-cache-redis`.
+> Note: The in-memory LRU cache is not suitable for serverless deployments. Instead, consider the
+> Redis cache provided by `@envelop/response-cache-redis`.
 
 ### Cache based on session/user
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
@@ -106,8 +110,11 @@ yarn add @envelop/response-cache-redis
 In order to use the Redis cache, you need to:
 
 - Create a Redis database
-- Collect the connection settings (or its connection string), e.g., `host`, `port`, `username`, `password`, `tls`, etc.
-- Create and configure a [Redis client](https://github.com/luin/ioredis) with your [connection settings](https://github.com/luin/ioredis/blob/master/API.md#Redis) and any [additional options](https://github.com/luin/ioredis/blob/master/API.md#new_Redis_new)
+- Collect the connection settings (or its connection string), e.g., `host`, `port`, `username`,
+  `password`, `tls`, etc.
+- Create and configure a [Redis client](https://github.com/luin/ioredis) with your
+  [connection settings](https://github.com/luin/ioredis/blob/master/API.md#Redis) and any
+  [additional options](https://github.com/luin/ioredis/blob/master/API.md#new_Redis_new)
 - Create an instance of the Redis Cache and set to the `useResponseCache` plugin options
 
 ```ts
@@ -143,14 +150,15 @@ const getEnveloped = envelop({
 })
 ```
 
-> Note: In the Recipes below, be sure to provide your Redis `cache` instance with `useResponseCache({ cache })`.
+> Note: In the Recipes below, be sure to provide your Redis `cache` instance with
+> `useResponseCache({ cache })`.
 
 ## Recipes
 
 ### Cache with maximum TTL
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { execute, parse, subscribe, validate } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
@@ -169,12 +177,13 @@ const getEnveloped = envelop({
 })
 ```
 
-> Note: Setting `ttl: 0` will disable TTL for all types. You can use that if you wish to disable caching for all type, and then enable caching for specific types using `ttlPerType`.
+> Note: Setting `ttl: 0` will disable TTL for all types. You can use that if you wish to disable
+> caching for all type, and then enable caching for specific types using `ttlPerType`.
 
 ### Cache with custom TTL per object type
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { execute, parse, subscribe, validate } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
@@ -199,7 +208,7 @@ const getEnveloped = envelop({
 ### Cache with custom TTL per schema coordinate
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { execute, parse, subscribe, validate } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
@@ -224,7 +233,7 @@ const getEnveloped = envelop({
 ### Disable cache based on session/user
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { execute, parse, subscribe, validate } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
@@ -247,21 +256,22 @@ const getEnveloped = envelop({
 
 ### Customize if result should be cached
 
-You can define a custom function used to check if a query operation execution result should be cached.
+You can define a custom function used to check if a query operation execution result should be
+cached.
 
 ```ts
 type ShouldCacheResultFunction = (params: { result: ExecutionResult }) => boolean
 ```
 
-This is useful for advanced use-cases. E.g. if you want to
-cache results with certain error types.
+This is useful for advanced use-cases. E.g. if you want to cache results with certain error types.
 
-By default, the `defaultShouldCacheResult` function is used which never caches any query operation execution results that includes any errors (unexpected, EnvelopError, or GraphQLError).
+By default, the `defaultShouldCacheResult` function is used which never caches any query operation
+execution results that includes any errors (unexpected, EnvelopError, or GraphQLError).
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { execute, parse, subscribe, validate } from 'graphql'
 import { envelop } from '@envelop/core'
-import { useResponseCache, ShouldCacheResultFunction } from '@envelop/response-cache'
+import { ShouldCacheResultFunction, useResponseCache } from '@envelop/response-cache'
 
 export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boolean => {
   // cache any query operation execution result
@@ -286,12 +296,13 @@ const getEnveloped = envelop({
 
 ### Cache Introspection query operations
 
-By default introspection query operations are not cached. In case you want to cache them you can do so with the `ttlPerSchemaCoordinate` parameter.
+By default introspection query operations are not cached. In case you want to cache them you can do
+so with the `ttlPerSchemaCoordinate` parameter.
 
 **Infinite caching**
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { execute, parse, subscribe, validate } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
@@ -315,7 +326,7 @@ const getEnveloped = envelop({
 **TTL caching**
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { execute, parse, subscribe, validate } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
@@ -339,7 +350,7 @@ const getEnveloped = envelop({
 ### Cache with maximum TTL
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { execute, parse, subscribe, validate } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
@@ -361,7 +372,7 @@ const getEnveloped = envelop({
 ### Customize the fields that are used for building the cache ID
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { execute, parse, subscribe, validate } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
@@ -385,7 +396,7 @@ const getEnveloped = envelop({
 ### Disable automatic cache invalidation via mutations
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { execute, parse, subscribe, validate } from 'graphql'
 import { envelop } from '@envelop/core'
 import { useResponseCache } from '@envelop/response-cache'
 
@@ -409,9 +420,9 @@ const getEnveloped = envelop({
 ### Invalidate Cache based on custom logic
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { execute, parse, subscribe, validate } from 'graphql'
 import { envelop } from '@envelop/core'
-import { useResponseCache, createInMemoryCache } from '@envelop/response-cache'
+import { createInMemoryCache, useResponseCache } from '@envelop/response-cache'
 import { emitter } from './eventEmitter'
 
 // we create our cache instance, which allows calling all methods on it
@@ -446,9 +457,9 @@ emitter.on('invalidate', resource => {
 ### Customize how cache ids are built
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { execute, parse, subscribe, validate } from 'graphql'
 import { envelop } from '@envelop/core'
-import { useResponseCache, createInMemoryCache } from '@envelop/response-cache'
+import { createInMemoryCache, useResponseCache } from '@envelop/response-cache'
 import { emitter } from './eventEmitter'
 
 // we create our cache instance, which allows calling all methods on it
@@ -476,10 +487,11 @@ const getEnveloped = envelop({
 
 ### Expose cache metadata via extensions
 
-For debugging or monitoring it might be useful to know whether a response got served from the cache or not.
+For debugging or monitoring it might be useful to know whether a response got served from the cache
+or not.
 
 ```ts
-import { parse, validate, execute, subscribe } from 'graphql'
+import { execute, parse, subscribe, validate } from 'graphql'
 import { envelop } from '@envelop/core'
 
 const getEnveloped = envelop({
@@ -498,10 +510,12 @@ const getEnveloped = envelop({
 })
 ```
 
-This option will attach the following fields to the execution result if set to true (or `process.env["NODE_ENV"]` is `"development"`).
+This option will attach the following fields to the execution result if set to true (or
+`process.env["NODE_ENV"]` is `"development"`).
 
 - `extension.responseCache.hit` - Whether the result was served form the cache or not
-- `extension.responseCache.invalidatedEntities` - Entities that got invalidated by a mutation operation
+- `extension.responseCache.invalidatedEntities` - Entities that got invalidated by a mutation
+  operation
 
 #### Examples:
 

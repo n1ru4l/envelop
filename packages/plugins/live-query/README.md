@@ -2,7 +2,8 @@
 
 The easiest way of adding live queries to your GraphQL server!
 
-Push new data to your clients automatically once the data selected by a GraphQL operation becomes stale by annotating your query operation with the `@live` directive.
+Push new data to your clients automatically once the data selected by a GraphQL operation becomes
+stale by annotating your query operation with the `@live` directive.
 
 ```graphql
 query UserProfile @live {
@@ -14,7 +15,8 @@ query UserProfile @live {
 }
 ```
 
-The invalidation mechanism is based on GraphQL ID fields and schema coordinates. Once a query operation has been invalidated, the query is re-executed and the result is pushed to the client.
+The invalidation mechanism is based on GraphQL ID fields and schema coordinates. Once a query
+operation has been invalidated, the query is re-executed and the result is pushed to the client.
 
 ## Installation
 
@@ -27,11 +29,11 @@ yarn add @envelop/live-query @n1ru4l/in-memory-live-query-store
 ### `makeExecutableSchema` from `graphql-tools`
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
-import { envelop, useSchema, useExtendContext, useEngine } from '@envelop/core'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
+import { envelop, useEngine, useExtendContext, useSchema } from '@envelop/core'
 import { useLiveQuery } from '@envelop/live-query'
-import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store'
 import { makeExecutableSchema } from '@graphql-tools/schema'
+import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store'
 
 const schema = makeExecutableSchema({
   typeDefs: [
@@ -85,25 +87,32 @@ const schema = new GraphQLSchema({
 
 ### Applying a patch middleware
 
-By using a patch middleware you can significantly reduce the size of the GraphQL execution result payload that is sent over the wire from the server to the client.
-We recommend using the `@n1ru4l/graphql-live-query-patch-jsondiffpatch` patch generator. [You can learn more about it here](https://github.com/n1ru4l/graphql-live-query/tree/main/packages/graphql-live-query-patch-jsondiffpatch).
+By using a patch middleware you can significantly reduce the size of the GraphQL execution result
+payload that is sent over the wire from the server to the client. We recommend using the
+`@n1ru4l/graphql-live-query-patch-jsondiffpatch` patch generator.
+[You can learn more about it here](https://github.com/n1ru4l/graphql-live-query/tree/main/packages/graphql-live-query-patch-jsondiffpatch).
 
 ```bash
 yarn add @n1ru4l/graphql-live-query-patch-jsondiffpatch
 ```
 
 ```ts
-import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store'
 import { applyLiveQueryJSONDiffPatchGenerator } from '@n1ru4l/graphql-live-query-patch-jsondiffpatch'
+import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store'
 
 const liveQueryStore = new InMemoryLiveQueryStore()
 
-const plugin = useLiveQuery({ liveQueryStore, applyLiveQueryPatchGenerator: applyLiveQueryJSONDiffPatchGenerator })
+const plugin = useLiveQuery({
+  liveQueryStore,
+  applyLiveQueryPatchGenerator: applyLiveQueryJSONDiffPatchGenerator
+})
 ```
 
 ## Further information
 
-This plugin requires you to use a graphql transports that supports usage of the `@defer` and `@stream` directives, as it is built upon the same concepts (return an `AsyncIterable` from `execute`).
+This plugin requires you to use a graphql transports that supports usage of the `@defer` and
+`@stream` directives, as it is built upon the same concepts (return an `AsyncIterable` from
+`execute`).
 
 The following transports have been successfully tested:
 
@@ -114,6 +123,8 @@ The following transports have been successfully tested:
 | [`graphql-ws`](https://github.com/enisdenjo/graphql-ws)                                                                          | [GraphQL over WebSocket](https://github.com/graphql/graphql-over-http/pull/140) (WebSocket)               | [![npm version](https://badge.fury.io/js/graphql-ws.svg)](https://github.com/enisdenjo/graphql-ws)                                                                              | [![npm downloads](https://img.shields.io/npm/dm/graphql-ws.svg)](https://github.com/enisdenjo/graphql-ws)                                                                          |
 | [`graphql-sse`](https://github.com/enisdenjo/graphql-sse)                                                                        | [GraphQL over Server-Sent Events](https://github.com/enisdenjo/graphql-sse/blob/master/PROTOCOL.md) (SSE) | [![npm version](https://badge.fury.io/js/graphql-sse.svg)](https://github.com/enisdenjo/graphql-sse)                                                                            | [![npm downloads](https://img.shields.io/npm/dm/graphql-sse.svg)](https://github.com/enisdenjo/graphql-sse)                                                                        |
 
-For more details check out the [live query repository](https://github.com/n1ru4l/graphql-live-query) or the [introduction blog post](https://the-guild.dev/blog/subscriptions-and-live-queries-real-time-with-graphql).
+For more details check out the [live query repository](https://github.com/n1ru4l/graphql-live-query)
+or the
+[introduction blog post](https://the-guild.dev/blog/subscriptions-and-live-queries-real-time-with-graphql).
 
 [There is also a full schema example available.](https://github.com/n1ru4l/graphql-live-query/blob/main/packages/todo-example/server-ws/src/schema.ts)

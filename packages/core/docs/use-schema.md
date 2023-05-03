@@ -1,10 +1,11 @@
 #### `useSchema`
 
-This plugin is the simplest plugin for specifying your GraphQL schema. You can specify a schema created from any tool that emits `GraphQLSchema` object.
+This plugin is the simplest plugin for specifying your GraphQL schema. You can specify a schema
+created from any tool that emits `GraphQLSchema` object.
 
 ```ts
-import { envelop, useSchema, useEngine } from '@envelop/core'
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
+import { envelop, useEngine, useSchema } from '@envelop/core'
 
 const mySchema = buildSchema(/* ... */)
 

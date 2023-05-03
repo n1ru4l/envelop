@@ -1,14 +1,14 @@
 {
   "name": "@envelop/apollo-datasources",
   "version": "2.0.6",
-  "author": "Kamil Kisiela <kamil.kisiela@gmail.com>",
-  "license": "MIT",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/n1ru4l/envelop.git",
     "directory": "packages/plugins/apollo-datasources"
   },
-  "sideEffects": false,
+  "author": "Kamil Kisiela <kamil.kisiela@gmail.com>",
+  "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "exports": {
@@ -43,31 +43,31 @@
     "./package.json": "./package.json"
   },
   "typings": "dist/typings/index.d.ts",
-  "typescript": {
-    "definition": "dist/typings/index.d.ts"
-  },
-  "devDependencies": {
-    "@graphql-tools/schema": "8.5.1",
-    "apollo-server-caching": "3.3.0",
-    "apollo-datasource": "3.3.1",
-    "graphql": "16.6.0",
-    "typescript": "4.8.4"
-  },
-  "dependencies": {
-    "tslib": "^2.5.0"
-  },
   "peerDependencies": {
     "@envelop/core": "^3.0.6",
     "apollo-datasource": "^3",
     "apollo-server-caching": "^3",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
-  "buildOptions": {
-    "input": "./src/index.ts"
+  "dependencies": {
+    "tslib": "^2.5.0"
+  },
+  "devDependencies": {
+    "@graphql-tools/schema": "8.5.1",
+    "apollo-datasource": "3.3.1",
+    "apollo-server-caching": "3.3.0",
+    "graphql": "16.6.0",
+    "typescript": "4.8.4"
   },
   "publishConfig": {
     "directory": "dist",
     "access": "public"
   },
-  "type": "module"
+  "sideEffects": false,
+  "buildOptions": {
+    "input": "./src/index.ts"
+  },
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
 }

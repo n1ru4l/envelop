@@ -1,7 +1,7 @@
+import { parse, validate } from 'graphql';
+import { useEngine } from '@envelop/core';
 import { createTestkit } from '@envelop/testing';
 import { query, schema, subscriptionOperationString } from '../common.js';
-import { useEngine } from '@envelop/core';
-import { parse, validate } from 'graphql';
 
 describe('useEngine', () => {
   it('should invoke custom execute', async () => {
