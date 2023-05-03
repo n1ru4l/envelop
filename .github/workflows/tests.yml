@@ -127,4 +127,4 @@ jobs:
       - name: Build Packages
         run: pnpm run build
       - name: Test ESM & CJS exports integrity
-        run: pnpm run bob check
+        run: pnpm bob check
