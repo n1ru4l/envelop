@@ -55,6 +55,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@graphql-tools/schema": "8.5.1",
     "@n1ru4l/graphql-live-query-patch-jsondiffpatch": "0.8.0",
     "graphql": "16.6.0",
     "typescript": "4.8.4"

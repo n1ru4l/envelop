@@ -86,9 +86,6 @@ importers:
       eslint-plugin-unicorn:
         specifier: 45.0.2
         version: 45.0.2(eslint@8.34.0)
-      faker:
-        specifier: 5.5.3
-        version: 5.5.3
       globby:
         specifier: 11.1.0
         version: 11.1.0
@@ -696,6 +693,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       apollo-server-core:
         specifier: 3.5.0
         version: 3.5.0(graphql@16.6.0)
@@ -756,6 +756,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       dataloader:
         specifier: 2.2.1
         version: 2.2.1
@@ -833,6 +836,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -896,6 +902,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -916,6 +925,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -933,6 +945,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -995,6 +1010,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       '@n1ru4l/graphql-live-query-patch-jsondiffpatch':
         specifier: 0.8.0
         version: 0.8.0(graphql@16.6.0)
@@ -1031,6 +1049,9 @@ importers:
 
   packages/plugins/on-resolve:
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -1071,6 +1092,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -1119,6 +1143,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -1162,6 +1189,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -1182,6 +1212,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -1208,6 +1241,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       '@types/lru-cache':
         specifier: 5.1.1
         version: 5.1.1
@@ -1234,6 +1270,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1
       '@types/ioredis':
         specifier: 4.28.10
         version: 4.28.10
@@ -1251,6 +1290,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       '@sentry/node':
         specifier: 7.37.1
         version: 7.37.1
@@ -1277,6 +1319,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -1317,6 +1362,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -11895,6 +11943,7 @@ packages:
       {
         integrity: sha512-wLTv2a28wjUyWkbnX7u/ABZBkUkIF2fCd73V6P2oFqEGEktDfzWx4UxrSqtPRw0xPRAcjeAOIiJWqZm3pP4u3g==,
       }
+    dev: false
 
   /fast-content-type-parse@1.0.0:
     resolution:

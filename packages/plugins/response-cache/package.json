@@ -55,6 +55,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@graphql-tools/schema": "8.5.1",
     "@graphql-tools/utils": "^8.8.0",
     "@types/lru-cache": "5.1.1",
     "graphql": "16.6.0",
