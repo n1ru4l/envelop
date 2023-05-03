@@ -32,7 +32,7 @@ jobs:
       - name: GraphQL API
         run: |
           pnpm run loadtest:start-server &
-          pnpm run wait-on tcp:3000
+          pnpm wait-on tcp:3000
 
       - name: Run Benchmark
         run:
