@@ -191,9 +191,9 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   buildResponseCacheKey = defaultBuildResponseCacheKey,
   getDocumentString = defaultGetDocumentString,
   shouldCacheResult = defaultShouldCacheResult,
-  // eslint-disable-next-line dot-notation
   includeExtensionMetadata = typeof process !== 'undefined'
-    ? process.env['NODE_ENV'] === 'development'
+    ? // eslint-disable-next-line dot-notation
+      process.env['NODE_ENV'] === 'development'
     : false,
 }: UseResponseCacheParameter<PluginContext>): Plugin<PluginContext> {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
