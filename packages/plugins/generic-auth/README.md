@@ -73,7 +73,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
   // In `protect-auth-directive` mode, this function will always get called and you can use these parameters to check if the field has the `@auth` or `@skipAuth` directive
 
   if (!user) {
-    throw new Error(`Unauthenticated!`)
+    return new Error(`Unauthenticated!`)
   }
 }
 ```
@@ -326,7 +326,7 @@ const validateUser: ValidateUserFn<UserType> = async ({ user, fieldAuthDirective
   // to the resolver auth directive arguments.
 
   if (!user) {
-    throw new Error(`Unauthenticated!`)
+    return new Error(`Unauthenticated!`)
   }
 
   const valueNode = fieldAuthDirectiveNode.arguments.find(arg => arg.name.value === 'role')
@@ -334,7 +334,7 @@ const validateUser: ValidateUserFn<UserType> = async ({ user, fieldAuthDirective
   const role = valueNode.value
 
   if (role !== user.role) {
-    throw new Error(`No permissions!`)
+    return new Error(`No permissions!`)
   }
 }
 ```
@@ -347,18 +347,18 @@ directive. Here's an example for adding role-aware authentication:
 ```ts
 import { ValidateUserFn } from '@envelop/generic-auth'
 
-const validateUser: ValidateUserFn<UserType> = async ({ user, fieldAuthExtension }) => {
+const validateUser: ValidateUserFn<UserType> = ({ user, fieldAuthExtension }) => {
   // Now you can use the fieldAuthDirectiveNode parameter to implement custom logic for user validation, with access
   // to the resolver auth directive arguments.
 
   if (!user) {
-    throw new Error(`Unauthenticated!`)
+    return new Error(`Unauthenticated!`)
   }
 
   const role = fieldAuthExtension.role
 
   if (role !== user.role) {
-    throw new Error(`No permissions!`)
+    return new Error(`No permissions!`)
   }
 }
 
@@ -391,7 +391,7 @@ const validateUser: ValidateUserFn<UserType> = async ({
   fieldAuthExtension
 }) => {
   if (!user) {
-    throw new Error(`Unauthenticated!`)
+    return new Error(`Unauthenticated!`)
   }
 
   // You have access to the object define in the resolver tree, allowing to define any custom logic you want.
@@ -414,7 +414,7 @@ const resolvers = {
           validate: ({ user, variables, context }) => {
             // We can now have access to the operation and variables to decide if the user can execute the query
             if (user.id !== variables.userId) {
-              throw new Error(`Unauthorized`)
+              return new Error(`Unauthorized`)
             }
           }
         }
