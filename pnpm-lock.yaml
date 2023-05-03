@@ -795,8 +795,8 @@ importers:
         specifier: 8.5.1
         version: 8.5.1(graphql@16.6.0)
       dataloader:
-        specifier: 2.2.1
-        version: 2.2.1
+        specifier: 2.2.2
+        version: 2.2.2
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -10479,10 +10479,10 @@ packages:
       }
     dev: true
 
-  /dataloader@2.2.1:
+  /dataloader@2.2.2:
     resolution:
       {
-        integrity: sha512-Zn+tVZo1RKu120rgoe0JsRk56UiKdefPSH47QROJsMHrX8/S9UJvi5A/A6+Sbuk6rE88z5JoM/wIJ09Z7BTfYA==,
+        integrity: sha512-8YnDaaf7N3k/q5HnTJVuzSyLETjoZjVmHc4AeKAzOvKHEFQKcn64OKBfzHYtE9zGjctNM7V9I0MfnUVLpi7M5g==,
       }
     dev: true
 
