@@ -35,6 +35,7 @@ jobs:
       restoreDeletedChangesets: true
       buildScript: build
       nodeVersion: 18
+      packageManager: 'pnpm'
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
