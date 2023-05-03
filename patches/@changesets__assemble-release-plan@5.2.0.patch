@@ -1,7 +1,7 @@
-diff --git a/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.dev.js b/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.dev.js
+diff --git a/dist/assemble-release-plan.cjs.dev.js b/dist/assemble-release-plan.cjs.dev.js
 index 2ac23c7..ad592c5 100644
---- a/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.dev.js
-+++ b/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.dev.js
+--- a/dist/assemble-release-plan.cjs.dev.js
++++ b/dist/assemble-release-plan.cjs.dev.js
 @@ -130,18 +130,9 @@ function determineDependents({
            depType,
            versionRange
@@ -92,10 +92,10 @@ index 2ac23c7..ad592c5 100644
      }
    }
  
-diff --git a/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.js b/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.js
+diff --git a/dist/assemble-release-plan.cjs.js b/dist/assemble-release-plan.cjs.js
 index f3beb31..42d1290 100644
---- a/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.js
-+++ b/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.js
+--- a/dist/assemble-release-plan.cjs.js
++++ b/dist/assemble-release-plan.cjs.js
 @@ -1,7 +1,7 @@
  'use strict';
  
