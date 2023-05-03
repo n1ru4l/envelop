@@ -1,0 +1,16 @@
+{
+  "name": "@envelop/benchmark",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@envelop/core": "workspace:*",
+    "@envelop/graphql-jit": "workspace:*",
+    "@envelop/parser-cache": "workspace:*",
+    "@envelop/prometheus": "workspace:*",
+    "@envelop/validation-cache": "workspace:*",
+    "@graphql-tools/schema": "8.5.1",
+    "faker": "5.5.3",
+    "fastify": "3.29.5",
+    "graphql": "16.6.0"
+  }
+}

@@ -17,3 +17,4 @@ packages:
   - 'examples/typegraphql'
   - 'examples/nexus'
   - 'examples/express-graphql'
+  - 'benchmark'
