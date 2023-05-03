@@ -1514,6 +1514,9 @@ importers:
       next-sitemap:
         specifier: 3.1.52
         version: 3.1.52(next@13.2.1)
+      nextra:
+        specifier: 2.2.18
+        version: 2.2.18(next@13.2.1)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: 18.2.0
         version: 18.2.0
