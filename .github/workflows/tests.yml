@@ -47,7 +47,7 @@ jobs:
       - name: Use GraphQL v${{matrix.graphql_version}}
         run: node ./scripts/match-graphql.js ${{matrix.graphql_version}}
       - name: Install Dependencies using pnpm
-        run: pnpm install --ignore-engines && git checkout pnpm-lock.yaml
+        run: pnpm install && git checkout pnpm-lock.yaml
       - name: Build
         run: pnpm run ts:check
 
@@ -66,7 +66,7 @@ jobs:
           nodeVersion: 18
           packageManager: 'pnpm'
       - name: Install Dependencies
-        run: pnpm install --ignore-engines && git checkout pnpm-lock.yaml
+        run: pnpm install && git checkout pnpm-lock.yaml
       - name: Cache Jest
         uses: actions/cache@v3
         with:

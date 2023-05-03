@@ -7,11 +7,11 @@
     "loadtest:start-server": "NODE_ENV=production node ./app.js"
   },
   "dependencies": {
-    "@envelop/core": "workspace:*",
-    "@envelop/graphql-jit": "workspace:*",
-    "@envelop/parser-cache": "workspace:*",
-    "@envelop/prometheus": "workspace:*",
-    "@envelop/validation-cache": "workspace:*",
+    "@envelop/core": "*",
+    "@envelop/graphql-jit": "*",
+    "@envelop/parser-cache": "*",
+    "@envelop/prometheus": "*",
+    "@envelop/validation-cache": "*",
     "@graphql-tools/schema": "8.5.1",
     "faker": "5.5.3",
     "fastify": "3.29.5",

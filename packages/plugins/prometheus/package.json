@@ -53,6 +53,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@envelop/core": "^3.0.6",
     "@graphql-tools/schema": "8.5.1",
     "graphql": "16.6.0",
     "prom-client": "14.1.1",

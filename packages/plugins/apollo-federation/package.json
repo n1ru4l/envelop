@@ -56,6 +56,7 @@
   "devDependencies": {
     "@apollo/federation": "0.33.6",
     "@apollo/gateway": "0.43.1",
+    "@envelop/core": "^3.0.6",
     "graphql": "16.6.0",
     "graphql-tag": "2.12.6",
     "typescript": "4.8.4"

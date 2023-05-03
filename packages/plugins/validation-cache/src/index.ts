@@ -1,7 +1,7 @@
 import { GraphQLError, type GraphQLSchema, introspectionFromSchema, print } from 'graphql';
 import hashIt from 'hash-it';
 import LRU from 'lru-cache';
-import { Plugin } from '@envelop/core';
+import type { Plugin } from '@envelop/core';
 
 export interface ValidationCache {
   /**

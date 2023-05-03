@@ -53,6 +53,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@envelop/core": "^3.0.6",
     "@graphql-tools/schema": "8.5.1",
     "apollo-datasource": "3.3.1",
     "apollo-server-caching": "3.3.0",

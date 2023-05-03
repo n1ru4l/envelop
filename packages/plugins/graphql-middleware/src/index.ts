@@ -1,5 +1,5 @@
 import { applyMiddleware, IMiddleware, IMiddlewareGenerator } from 'graphql-middleware';
-import { Plugin } from '@envelop/core';
+import type { Plugin } from '@envelop/core';
 
 const graphqlMiddlewareAppliedTransformSymbol = Symbol('graphqlMiddleware.appliedTransform');
 
