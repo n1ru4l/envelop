@@ -38,5 +38,5 @@ jobs:
           projectName: envelop
           prId: ${{ github.event.pull_request.number }}
           websiteDirectory: ./
-          buildScript: cd website && pnpm run build && pnpm run next export
+          buildScript: cd website && pnpm run build && pnpm next export
           artifactDir: website/out

@@ -44,5 +44,6 @@ jobs:
     with:
       domain: https://www.the-guild.dev/graphql/envelop/
       source: 'Envelop'
+      packageManager: 'pnpm'
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
