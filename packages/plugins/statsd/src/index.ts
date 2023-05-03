@@ -1,5 +1,10 @@
-import { Plugin, AfterParseEventPayload, isIntrospectionOperationString, isAsyncIterable } from '@envelop/core';
 import type { StatsD } from 'hot-shots';
+import {
+  AfterParseEventPayload,
+  isAsyncIterable,
+  isIntrospectionOperationString,
+  Plugin,
+} from '@envelop/core';
 
 export interface StatsDPluginOptions {
   client: StatsD;
@@ -34,7 +39,9 @@ function getOperation(document: any) {
   return document.definitions.find((def: any) => def.kind === 'OperationDefinition');
 }
 
-function isParseFailure(parseResult: AfterParseEventPayload<any>['result']): parseResult is Error | null {
+function isParseFailure(
+  parseResult: AfterParseEventPayload<any>['result'],
+): parseResult is Error | null {
   return parseResult === null || parseResult instanceof Error;
 }
 
@@ -111,7 +118,7 @@ export const useStatsD = (options: StatsDPluginOptions): Plugin<PluginInternalCo
           if (isAsyncIterable(result)) {
             // eslint-disable-next-line no-console
             console.warn(
-              `Plugin "statsd" encountered a AsyncIterator which is not supported yet, so tracing data is not available for the operation.`
+              `Plugin "statsd" encountered a AsyncIterator which is not supported yet, so tracing data is not available for the operation.`,
             );
             return;
           }

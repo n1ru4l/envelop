@@ -1,9 +1,15 @@
 /* eslint-disable no-console */
 import fastify from 'fastify';
-import { getGraphQLParameters, processRequest, renderGraphiQL, sendResult, shouldRenderGraphiQL } from 'graphql-helix';
-import { envelop, useSchema } from '@envelop/core';
-import { parse, validate, execute, subscribe } from 'graphql';
+import { execute, parse, subscribe, validate } from 'graphql';
+import {
+  getGraphQLParameters,
+  processRequest,
+  renderGraphiQL,
+  sendResult,
+  shouldRenderGraphiQL,
+} from 'graphql-helix';
 import { useAuth0 } from '@envelop/auth0';
+import { envelop, useSchema } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const schema = makeExecutableSchema({

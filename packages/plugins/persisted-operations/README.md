@@ -2,9 +2,14 @@
 
 This plugin allow you to enforce execution of persisted (hashed) operation, using a custom store.
 
-The idea behind running persisted operations is to allow clients to run only specific queries, that defined ahead of time. This provides an enhances security and disables (optionally) the execution of other operations. This plugin is useful if you are looking for a way to improve security and reduce network traffic.
+The idea behind running persisted operations is to allow clients to run only specific queries, that
+defined ahead of time. This provides an enhances security and disables (optionally) the execution of
+other operations. This plugin is useful if you are looking for a way to improve security and reduce
+network traffic.
 
-**Note:** If you are using **GraphQL Yoga**, please use the [dedicated Persisted Operations plugin](https://the-guild.dev/graphql/yoga-server/v3/features/persisted-operations) instead.
+**Note:** If you are using **GraphQL Yoga**, please use the
+[dedicated Persisted Operations plugin](https://the-guild.dev/graphql/yoga-server/v3/features/persisted-operations)
+instead.
 
 ## Getting Started
 
@@ -17,9 +22,9 @@ yarn add @envelop/persisted-operations
 The most basic implementation can use an in-memory JS `Map` wrapper with a `Store` object:
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
-import { usePersistedOperations, InMemoryStore } from '@envelop/persisted-operations'
+import { InMemoryStore, usePersistedOperations } from '@envelop/persisted-operations'
 
 // You can retrieve the store in any way (e.g. from a remote source) and implement it with a simple Map / Key->Value
 const myData = new Map()
@@ -41,7 +46,8 @@ const getEnveloped = envelop({
 })
 ```
 
-Now, when running operations through your GraphQL server, you can use a key instead of a query language:
+Now, when running operations through your GraphQL server, you can use a key instead of a query
+language:
 
 ```json
 {
@@ -50,7 +56,8 @@ Now, when running operations through your GraphQL server, you can use a key inst
 }
 ```
 
-You can also provide a function to retrieve the operation id from a custom property available in your context / incoming request:
+You can also provide a function to retrieve the operation id from a custom property available in
+your context / incoming request:
 
 ```ts
 usePersistedOperations({
@@ -62,9 +69,9 @@ usePersistedOperations({
 ## Usage Example with built-in JsonFileStore
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
-import { usePersistedOperations, JsonFileStore } from '@envelop/persisted-operations'
+import { JsonFileStore, usePersistedOperations } from '@envelop/persisted-operations'
 
 const persistedOperationsStore = new JsonFilesStore()
 const filePath = resolve(process.cwd(), 'assets/client1PersistedOperations.json')
@@ -88,10 +95,12 @@ const getEnveloped = envelop({
 
 ## Multiple Stores
 
-The `store` parameter accepts both a `Store` instance, or a function. If you need to support multiple stores (based on incoming GraphQL operation/HTTP request), you can provide a function to toggle between the stores, based on your needs:
+The `store` parameter accepts both a `Store` instance, or a function. If you need to support
+multiple stores (based on incoming GraphQL operation/HTTP request), you can provide a function to
+toggle between the stores, based on your needs:
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 
 const getEnveloped = envelop({
@@ -118,21 +127,28 @@ const proxyFns = getEnveloped({ req })
 
 ### onlyPersisted
 
-You can pass `onlyPersisted: true` when you want to allow persisted operations only in your server. In this case the plugin will issue a GraphQL error when it does not receive an operation Id, or when the received operation id is not available in your store/s.
+You can pass `onlyPersisted: true` when you want to allow persisted operations only in your server.
+In this case the plugin will issue a GraphQL error when it does not receive an operation Id, or when
+the received operation id is not available in your store/s.
 
 ### onMissingMatch
 
-You might want to perform some actions, such as logging custom events, when your operation Id is not matched in your store/s; in this case you can use the `onMissingMatch` callback function.
-The function receives the context and operationId as arguments, so you can use it like so:
+You might want to perform some actions, such as logging custom events, when your operation Id is not
+matched in your store/s; in this case you can use the `onMissingMatch` callback function. The
+function receives the context and operationId as arguments, so you can use it like so:
 
 ```js
 onMissingMatch: (context, operationId) => {
-  myEventPool.add(`Missing match for operation "${operationId}" from agent "${context.req.headers['user-agent']}"`)
+  myEventPool.add(
+    `Missing match for operation "${operationId}" from agent "${context.req.headers['user-agent']}"`
+  )
 }
 ```
 
 ## With Relay
 
-If you are using Relay, you can leverage `relay-compiler` feature for hashing and and creating the store for you, during build.
+If you are using Relay, you can leverage `relay-compiler` feature for hashing and and creating the
+store for you, during build.
 
-You can [read more about this feature here](https://relay.dev/docs/guides/persisted-queries/). After building your hashes, you can use `queryMap.json` as your store.
+You can [read more about this feature here](https://relay.dev/docs/guides/persisted-queries/). After
+building your hashes, you can use `queryMap.json` as your store.

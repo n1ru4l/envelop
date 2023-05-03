@@ -1,5 +1,11 @@
 import { createSourceEventStream, ExecutionResult } from 'graphql';
-import { ExecuteFunction, makeSubscribe, mapAsyncIterator, SubscribeFunction, isAsyncIterable } from '@envelop/core';
+import {
+  ExecuteFunction,
+  isAsyncIterable,
+  makeSubscribe,
+  mapAsyncIterator,
+  SubscribeFunction,
+} from '@envelop/core';
 
 /**
  * This is a almost identical port from graphql-js subscribe.
@@ -25,7 +31,7 @@ export const subscribe = (execute: ExecuteFunction): SubscribeFunction =>
       contextValue,
       variableValues ?? undefined,
       operationName,
-      subscribeFieldResolver
+      subscribeFieldResolver,
     );
 
     if (!isAsyncIterable(resultOrStream)) {

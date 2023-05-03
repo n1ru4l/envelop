@@ -1,4 +1,4 @@
-import { ValidationRule, OperationTypeNode, GraphQLError } from 'graphql';
+import { GraphQLError, OperationTypeNode, ValidationRule } from 'graphql';
 
 export type AllowedOperations = Iterable<OperationTypeNode>;
 
@@ -9,7 +9,9 @@ export const createFilterOperationTypeRule =
     return {
       OperationDefinition(node) {
         if (!ops.has(node.operation)) {
-          context.reportError(new GraphQLError(`GraphQL operation type "${node.operation}" is not allowed.`, [node]));
+          context.reportError(
+            new GraphQLError(`GraphQL operation type "${node.operation}" is not allowed.`, [node]),
+          );
         }
       },
     };

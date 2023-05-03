@@ -1,9 +1,10 @@
 ## `@envelop/newrelic`
 
-Instrument your GraphQL application with New Relic reporting.
-Take advantage of Distributed tracing to monitor performance and errors whilst ultimately getting to the root cause of issues.
+Instrument your GraphQL application with New Relic reporting. Take advantage of Distributed tracing
+to monitor performance and errors whilst ultimately getting to the root cause of issues.
 
-Below are some screenshots to show how tracking looks like in New Relic, in these examples all plugin options were set to `true`.
+Below are some screenshots to show how tracking looks like in New Relic, in these examples all
+plugin options were set to `true`.
 
 Error tracking, operation and resolver views:
 ![newrelic_error_operation_screenshot](https://raw.githubusercontent.com/n1ru4l/envelop/519f9c34435914fca63d64c9135812825d793440/packages/plugins/newrelic/error_operation.png)
@@ -22,7 +23,8 @@ Successful operation tracking, operation plus root-field and sub-field resolvers
 
 ## Installation
 
-This plugin expects the Node.js agent, [newrelic npm package](https://www.npmjs.com/package/newrelic), to be installed in your application.
+This plugin expects the Node.js agent,
+[newrelic npm package](https://www.npmjs.com/package/newrelic), to be installed in your application.
 
 ```
 yarn add newrelic @envelop/newrelic
@@ -31,7 +33,7 @@ yarn add newrelic @envelop/newrelic
 ## Basic usage Example
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useNewRelic } from '@envelop/newrelic'
 
@@ -55,15 +57,19 @@ const getEnveloped = envelop({
 })
 ```
 
-> Note: Transaction and segment/span timings may be affected by other plugins used. In order to get more accurate tracking, it is recommended to add the New Relic plugin last.
+> Note: Transaction and segment/span timings may be affected by other plugins used. In order to get
+> more accurate tracking, it is recommended to add the New Relic plugin last.
 
 ## Advanced usage
 
-The plugin allows you to keep control over the variables and arguments that are tracked in New Relic.
-In addition to the basic `true/false` boolean value, `includeExecuteVariables` and `includeResolverArgs` also accept a RegEx pattern. This allows you to implement white and black listing of properties to be tracked in New Relic.
+The plugin allows you to keep control over the variables and arguments that are tracked in New
+Relic. In addition to the basic `true/false` boolean value, `includeExecuteVariables` and
+`includeResolverArgs` also accept a RegEx pattern. This allows you to implement white and black
+listing of properties to be tracked in New Relic.
 
-This is particularly useful if you have properties coming through variables and arguments that are useful for debugging, but you don't want to leak users' data (such as PII).
-Below is a quick example of how you can use RegEx to set up white/black listing functionalities.
+This is particularly useful if you have properties coming through variables and arguments that are
+useful for debugging, but you don't want to leak users' data (such as PII). Below is a quick example
+of how you can use RegEx to set up white/black listing functionalities.
 
 ```ts
 useNewRelic({
@@ -73,23 +79,32 @@ useNewRelic({
 }),
 ```
 
-Obviously, the ones above are just a couple of examples, but clearly you have endless options to use any RegEx pattern to filter the variables and arguments in the way that best work for you.
+Obviously, the ones above are just a couple of examples, but clearly you have endless options to use
+any RegEx pattern to filter the variables and arguments in the way that best work for you.
 
-> Be aware that the only way to filter variables and arguments is to loop through them, so there is an O(_n_) cost when filtering, where _n_ is the number of variables sent to the operation (when tracking execute variables), or the number of arguments passed to resolvers (when tracking resolvers arguments).
+> Be aware that the only way to filter variables and arguments is to loop through them, so there is
+> an O(_n_) cost when filtering, where _n_ is the number of variables sent to the operation (when
+> tracking execute variables), or the number of arguments passed to resolvers (when tracking
+> resolvers arguments).
 
 ## Agent Configuration
 
-For full details about New Relic Agent configuration, we recommend reading [New Relic's official Node.js agent configuration documentation](https://docs.newrelic.com/docs/agents/nodejs-agent/installation-configuration/nodejs-agent-configuration/).
+For full details about New Relic Agent configuration, we recommend reading
+[New Relic's official Node.js agent configuration documentation](https://docs.newrelic.com/docs/agents/nodejs-agent/installation-configuration/nodejs-agent-configuration/).
 
 The main methods to configure the New Relic Agent is through:
 
 - The newrelic.js file [or]
 - The environment variables
 
-If you choose to use the newrelic.js file, then you need this file located in the root of your application. You can look [here](https://github.com/newrelic/node-newrelic/blob/main/newrelic.js) for a basic example of what this file can look like.
+If you choose to use the newrelic.js file, then you need this file located in the root of your
+application. You can look [here](https://github.com/newrelic/node-newrelic/blob/main/newrelic.js)
+for a basic example of what this file can look like.
 
-If you choose to configure the New Relic Agent through environment variables, then you can follow your preferred strategy to make sure the variables are set and available when your application starts.
-The variables are the same you can set in newrelic.js file, you just need to know that they need to start with `NEW_RELIC_`, obviously, the variables name must be fully uppercase.
+If you choose to configure the New Relic Agent through environment variables, then you can follow
+your preferred strategy to make sure the variables are set and available when your application
+starts. The variables are the same you can set in newrelic.js file, you just need to know that they
+need to start with `NEW_RELIC_`, obviously, the variables name must be fully uppercase.
 
 The two variables that are always required are:
 
@@ -107,4 +122,6 @@ Other variables that are popularly used are:
 | Capture all request headers | `allow_all_headers: true`                | `NEW_RELIC_ALLOW_ALL_HEADERS=true`           |
 | Enable error collection     | `error_collector: { enabled: true }`     | `NEW_RELIC_ERROR_COLLECTOR_ENABLED=true`     |
 
-Finally, [here](https://github.com/newrelic/node-newrelic/blob/main/lib/config/default.js) is also a reference of all the configuration variables you can include in your newrelic.js file, or translate into the env variables equivalent.
+Finally, [here](https://github.com/newrelic/node-newrelic/blob/main/lib/config/default.js) is also a
+reference of all the configuration variables you can include in your newrelic.js file, or translate
+into the env variables equivalent.

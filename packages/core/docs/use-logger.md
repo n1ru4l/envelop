@@ -3,8 +3,8 @@
 Logs parameters and information about the execution phases. You can easily plug your custom logger.
 
 ```ts
-import { envelop, useEngine, specifiedRules, useLogger } from '@envelop/core'
-import { parse, validate, execute, subscribe } from 'graphql'
+import { execute, parse, subscribe, validate } from 'graphql'
+import { envelop, specifiedRules, useEngine, useLogger } from '@envelop/core'
 
 const getEnveloped = envelop({
   plugins: [

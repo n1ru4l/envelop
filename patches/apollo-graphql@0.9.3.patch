@@ -1,7 +1,7 @@
-diff --git a/node_modules/apollo-graphql/lib/schema/buildSchemaFromSDL.js b/node_modules/apollo-graphql/lib/schema/buildSchemaFromSDL.js
+diff --git a/lib/schema/buildSchemaFromSDL.js b/lib/schema/buildSchemaFromSDL.js
 index 56d2b8e..4343b6e 100644
---- a/node_modules/apollo-graphql/lib/schema/buildSchemaFromSDL.js
-+++ b/node_modules/apollo-graphql/lib/schema/buildSchemaFromSDL.js
+--- a/lib/schema/buildSchemaFromSDL.js
++++ b/lib/schema/buildSchemaFromSDL.js
 @@ -17,10 +17,8 @@ const skippedSDLRules = [
      validation_1.UniqueDirectivesPerLocationRule
  ];

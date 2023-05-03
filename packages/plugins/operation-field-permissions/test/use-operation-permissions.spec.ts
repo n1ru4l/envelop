@@ -1,7 +1,7 @@
-import { useOperationFieldPermissions } from '../src/index.js';
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { getIntrospectionQuery } from 'graphql';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { useOperationFieldPermissions } from '../src/index.js';
 
 const schema = makeExecutableSchema({
   typeDefs: [
@@ -49,7 +49,7 @@ describe('useOperationPermissions', () => {
           getPermissions: () => 'boop',
         }),
       ],
-      schema
+      schema,
     );
 
     const result = await kit.execute(getIntrospectionQuery());
@@ -64,7 +64,7 @@ describe('useOperationPermissions', () => {
           getPermissions: () => 'boop',
         }),
       ],
-      schema
+      schema,
     );
 
     const result = await kit.execute(/* GraphQL */ `
@@ -90,7 +90,7 @@ describe('useOperationPermissions', () => {
           getPermissions: () => '*',
         }),
       ],
-      schema
+      schema,
     );
 
     const result = await kit.execute(query);
@@ -105,7 +105,7 @@ describe('useOperationPermissions', () => {
           getPermissions: () => 'Query.greetings',
         }),
       ],
-      schema
+      schema,
     );
 
     const result = await kit.execute(query);
@@ -125,7 +125,7 @@ describe('useOperationPermissions', () => {
           getPermissions: () => 'Query.*',
         }),
       ],
-      schema
+      schema,
     );
 
     const result = await kit.execute(query);
@@ -143,7 +143,7 @@ describe('useOperationPermissions', () => {
           getPermissions: () => new Set(['Query.greetings', 'Query.foo', 'Query.user', 'User.id']),
         }),
       ],
-      schema
+      schema,
     );
 
     const result = await kit.execute(query);
@@ -157,7 +157,7 @@ describe('useOperationPermissions', () => {
           getPermissions: () => new Set([]),
         }),
       ],
-      schema
+      schema,
     );
 
     const result = await kit.execute(/* GraphQL */ `
@@ -184,7 +184,7 @@ describe('useOperationPermissions', () => {
           getPermissions: () => new Set([]),
         }),
       ],
-      schema
+      schema,
     );
 
     const result = await kit.execute(/* GraphQL */ `
@@ -211,7 +211,7 @@ describe('useOperationPermissions', () => {
           getPermissions: () => new Set([]),
         }),
       ],
-      schema
+      schema,
     );
 
     const result = await kit.execute(/* GraphQL */ `

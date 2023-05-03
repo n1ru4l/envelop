@@ -1,8 +1,8 @@
-import { Plugin } from '@envelop/core';
-import { ApolloGateway } from '@apollo/gateway';
-import { DocumentNode, getOperationAST, print, printSchema, Source } from 'graphql';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { CachePolicy, GraphQLRequestMetrics, Logger, SchemaHash } from 'apollo-server-types';
+import { DocumentNode, getOperationAST, print, printSchema, Source } from 'graphql';
+import { ApolloGateway } from '@apollo/gateway';
+import { Plugin } from '@envelop/core';
 import { newCachePolicy } from './new-cache-policy.js';
 
 export interface ApolloFederationPluginConfig {
@@ -29,7 +29,7 @@ export const useApolloFederation = (options: ApolloFederationPluginConfig): Plug
         setSchema(gateway.schema);
       } else {
         logger.warn(
-          `ApolloGateway doesn't have the schema loaded. Please make sure ApolloGateway is loaded with .load() method. Otherwise this plugin might not work consistently, especially if you are using ApolloServer.`
+          `ApolloGateway doesn't have the schema loaded. Please make sure ApolloGateway is loaded with .load() method. Otherwise this plugin might not work consistently, especially if you are using ApolloServer.`,
         );
         gateway.load();
       }

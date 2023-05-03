@@ -1,17 +1,21 @@
 import {
   buildSchema,
-  GraphQLObjectType,
-  GraphQLInputObjectType,
-  GraphQLString,
-  GraphQLID,
-  GraphQLInt,
-  GraphQLNonNull,
-  GraphQLSchema,
   GraphQLBoolean,
+  GraphQLID,
+  GraphQLInputObjectType,
+  GraphQLInt,
   GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
 } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { useExtendedValidation, ONE_OF_DIRECTIVE_SDL, OneOfInputObjectsRule } from '../src/index.js';
+import {
+  ONE_OF_DIRECTIVE_SDL,
+  OneOfInputObjectsRule,
+  useExtendedValidation,
+} from '../src/index.js';
 
 describe('oneOf', () => {
   const astSchema = buildSchema(/* GraphQL */ `
@@ -31,7 +35,8 @@ describe('oneOf', () => {
 
     type Query {
       user(input: UserUniqueCondition): User
-      findUser(byID: ID, byUsername: String, byEmail: String, byRegistrationNumber: Int): User @oneOf
+      findUser(byID: ID, byUsername: String, byEmail: String, byRegistrationNumber: Int): User
+        @oneOf
       nestedOneOf(input: NestedOneOfFieldInput!): Boolean
       deeplyNestedOneOf(input: DeeplyNestedOneOfFieldInput): Boolean
       listOneOf(input: [UserUniqueCondition!]): Boolean
@@ -172,7 +177,9 @@ describe('oneOf', () => {
         type: GraphQLBoolean,
         args: {
           input: {
-            type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLUserUniqueCondition))),
+            type: new GraphQLNonNull(
+              new GraphQLList(new GraphQLNonNull(GraphQLUserUniqueCondition)),
+            ),
           },
         },
       },
@@ -416,7 +423,8 @@ describe('oneOf', () => {
           {
             document: DOCUMENT_WITH_WHOLE_INPUT,
             variables: {},
-            expectedError: 'Variable "$input" of required type "UserUniqueCondition!" was not provided.',
+            expectedError:
+              'Variable "$input" of required type "UserUniqueCondition!" was not provided.',
           },
         ],
         [
@@ -526,7 +534,7 @@ describe('oneOf', () => {
               rules: [OneOfInputObjectsRule],
             }),
           ],
-          testSchema
+          testSchema,
         );
 
         const result = await testInstance.execute(document, variables);
@@ -628,7 +636,7 @@ describe('oneOf', () => {
               rules: [OneOfInputObjectsRule],
             }),
           ],
-          testSchema
+          testSchema,
         );
 
         const result = await testInstance.execute(document, variables);

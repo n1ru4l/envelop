@@ -1,6 +1,6 @@
-import { useResourceLimitations } from '../src/index.js';
-import { makeExecutableSchema } from '@graphql-tools/schema';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { useResourceLimitations } from '../src/index.js';
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `
@@ -13,7 +13,11 @@ const schema = makeExecutableSchema({
     type User {
       id: ID!
       repositories(first: Int, last: Int, after: String): RepositoryConnection!
-      repositoriesCustom(first: ConnectionInt, last: ConnectionInt, after: String): RepositoryConnection!
+      repositoriesCustom(
+        first: ConnectionInt
+        last: ConnectionInt
+        after: String
+      ): RepositoryConnection!
     }
 
     type Repository {
@@ -74,7 +78,7 @@ describe('useResourceLimitations', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
     expect(result.errors?.[0]?.message).toEqual(
-      "Missing pagination argument for field 'repositories'. Please provide either the 'first' or 'last' field argument."
+      "Missing pagination argument for field 'repositories'. Please provide either the 'first' or 'last' field argument.",
     );
   });
   it('requires non-null values on either the first or last field on fields that resolve to a Connection type.', async () => {
@@ -96,7 +100,7 @@ describe('useResourceLimitations', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
     expect(result.errors?.[0]?.message).toEqual(
-      "Missing pagination argument for field 'repositories'. Please provide either the 'first' or 'last' field argument."
+      "Missing pagination argument for field 'repositories'. Please provide either the 'first' or 'last' field argument.",
     );
   });
   it('requires the usage of either the first or last field on fields that resolve to a Connection type (other argument provided).', async () => {
@@ -118,7 +122,7 @@ describe('useResourceLimitations', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
     expect(result.errors?.[0]?.message).toEqual(
-      "Missing pagination argument for field 'repositories'. Please provide either the 'first' or 'last' field argument."
+      "Missing pagination argument for field 'repositories'. Please provide either the 'first' or 'last' field argument.",
     );
   });
   it('ignores null in last field', async () => {
@@ -163,11 +167,14 @@ describe('useResourceLimitations', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
     expect(result.errors?.[0]?.message).toEqual(
-      "Invalid pagination argument for field 'repositories'. The value for the 'first' argument must be an integer within 1-100."
+      "Invalid pagination argument for field 'repositories'. The value for the 'first' argument must be an integer within 1-100.",
     );
   });
   it('requires the first field to be at least a custom minimum value', async () => {
-    const testkit = createTestkit([useResourceLimitations({ paginationArgumentMinimum: 2, extensions: true })], schema);
+    const testkit = createTestkit(
+      [useResourceLimitations({ paginationArgumentMinimum: 2, extensions: true })],
+      schema,
+    );
     const result = await testkit.execute(/* GraphQL */ `
       query {
         viewer {
@@ -185,7 +192,7 @@ describe('useResourceLimitations', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
     expect(result.errors?.[0]?.message).toEqual(
-      "Invalid pagination argument for field 'repositories'. The value for the 'first' argument must be an integer within 2-100."
+      "Invalid pagination argument for field 'repositories'. The value for the 'first' argument must be an integer within 2-100.",
     );
   });
   it('requires the first field to be not higher than 100', async () => {
@@ -207,13 +214,13 @@ describe('useResourceLimitations', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
     expect(result.errors?.[0]?.message).toEqual(
-      "Invalid pagination argument for field 'repositories'. The value for the 'first' argument must be an integer within 1-100."
+      "Invalid pagination argument for field 'repositories'. The value for the 'first' argument must be an integer within 1-100.",
     );
   });
   it('requires the first field to be not higher than a custom maximum value', async () => {
     const testkit = createTestkit(
       [useResourceLimitations({ paginationArgumentMaximum: 99, extensions: true })],
-      schema
+      schema,
     );
     const result = await testkit.execute(/* GraphQL */ `
       query {
@@ -232,7 +239,7 @@ describe('useResourceLimitations', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
     expect(result.errors?.[0]?.message).toEqual(
-      "Invalid pagination argument for field 'repositories'. The value for the 'first' argument must be an integer within 1-99."
+      "Invalid pagination argument for field 'repositories'. The value for the 'first' argument must be an integer within 1-99.",
     );
   });
   it('ignores null in first field', async () => {
@@ -277,11 +284,14 @@ describe('useResourceLimitations', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
     expect(result.errors?.[0]?.message).toEqual(
-      "Invalid pagination argument for field 'repositories'. The value for the 'last' argument must be an integer within 1-100."
+      "Invalid pagination argument for field 'repositories'. The value for the 'last' argument must be an integer within 1-100.",
     );
   });
   it('requires the last field to be at least a custom minimum value', async () => {
-    const testkit = createTestkit([useResourceLimitations({ paginationArgumentMinimum: 2, extensions: true })], schema);
+    const testkit = createTestkit(
+      [useResourceLimitations({ paginationArgumentMinimum: 2, extensions: true })],
+      schema,
+    );
     const result = await testkit.execute(/* GraphQL */ `
       query {
         viewer {
@@ -299,7 +309,7 @@ describe('useResourceLimitations', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
     expect(result.errors?.[0]?.message).toEqual(
-      "Invalid pagination argument for field 'repositories'. The value for the 'last' argument must be an integer within 2-100."
+      "Invalid pagination argument for field 'repositories'. The value for the 'last' argument must be an integer within 2-100.",
     );
   });
   it('requires the last field to be not higher than 100', async () => {
@@ -321,13 +331,13 @@ describe('useResourceLimitations', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
     expect(result.errors?.[0]?.message).toEqual(
-      "Invalid pagination argument for field 'repositories'. The value for the 'last' argument must be an integer within 1-100."
+      "Invalid pagination argument for field 'repositories'. The value for the 'last' argument must be an integer within 1-100.",
     );
   });
   it('requires the last field to be not higher than a custom maximum value', async () => {
     const testkit = createTestkit(
       [useResourceLimitations({ paginationArgumentMaximum: 99, extensions: true })],
-      schema
+      schema,
     );
     const result = await testkit.execute(/* GraphQL */ `
       query {
@@ -346,7 +356,7 @@ describe('useResourceLimitations', () => {
     expect(result.errors).toBeDefined();
     expect(result.errors?.length).toEqual(1);
     expect(result.errors?.[0]?.message).toEqual(
-      "Invalid pagination argument for field 'repositories'. The value for the 'last' argument must be an integer within 1-99."
+      "Invalid pagination argument for field 'repositories'. The value for the 'last' argument must be an integer within 1-99.",
     );
   });
   it('calculates node cost (single)', async () => {
@@ -375,7 +385,7 @@ describe('useResourceLimitations', () => {
   it('calculates node cost on connections with custom argument types (single)', async () => {
     const testkit = createTestkit(
       [useResourceLimitations({ paginationArgumentScalars: ['ConnectionInt'], extensions: true })],
-      schema
+      schema,
     );
     const result = await testkit.execute(/* GraphQL */ `
       query {
@@ -484,7 +494,10 @@ describe('useResourceLimitations', () => {
     });
   });
   it('stops execution if node cost limit is exceeded', async () => {
-    const testkit = createTestkit([useResourceLimitations({ extensions: true, nodeCostLimit: 20 })], schema);
+    const testkit = createTestkit(
+      [useResourceLimitations({ extensions: true, nodeCostLimit: 20 })],
+      schema,
+    );
     const result = await testkit.execute(/* GraphQL */ `
       query {
         viewer {
@@ -514,11 +527,14 @@ describe('useResourceLimitations', () => {
     });
     expect(result.errors).toBeDefined();
     expect(result.errors?.[0].message).toEqual(
-      'Cannot request more than 20 nodes in a single document. Please split your operation into multiple sub operations or reduce the amount of requested nodes.'
+      'Cannot request more than 20 nodes in a single document. Please split your operation into multiple sub operations or reduce the amount of requested nodes.',
     );
   });
   it('minimum cost is always 1', async () => {
-    const testkit = createTestkit([useResourceLimitations({ extensions: true, nodeCostLimit: 20 })], schema);
+    const testkit = createTestkit(
+      [useResourceLimitations({ extensions: true, nodeCostLimit: 20 })],
+      schema,
+    );
     const result = await testkit.execute(/* GraphQL */ `
       query {
         viewer {

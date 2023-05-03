@@ -1,10 +1,10 @@
 /// @ts-check
 const { makeExecutableSchema } = require('@graphql-tools/schema');
-const { envelop, useSchema, useEngine } = require('../packages/core');
-const { useParserCache } = require('../packages/plugins/parser-cache');
-const { usePrometheus } = require('../packages/plugins/prometheus');
-const { useGraphQlJit } = require('../packages/plugins/graphql-jit');
-const { useValidationCache } = require('../packages/plugins/validation-cache');
+const { envelop, useSchema, useEngine } = require('@envelop/core');
+const { useParserCache } = require('@envelop/parser-cache');
+const { usePrometheus } = require('@envelop/prometheus');
+const { useGraphQlJit } = require('@envelop/graphql-jit');
+const { useValidationCache } = require('@envelop/validation-cache');
 const { fastify } = require('fastify');
 const faker = require('faker');
 const GraphQLJS = require('graphql');
@@ -73,14 +73,30 @@ const envelopsMap = {
     enableInternalTracing: true,
   }),
   'envelop-just-cache': envelop({
-    plugins: [useEngine(GraphQLJS), useSchema(createSchema()), useParserCache(), useValidationCache()],
+    plugins: [
+      useEngine(GraphQLJS),
+      useSchema(createSchema()),
+      useParserCache(),
+      useValidationCache(),
+    ],
     enableInternalTracing: true,
   }),
   'envelop-cache-and-no-internal-tracing': envelop({
-    plugins: [useEngine(GraphQLJS), useSchema(createSchema()), useParserCache(), useValidationCache()],
+    plugins: [
+      useEngine(GraphQLJS),
+      useSchema(createSchema()),
+      useParserCache(),
+      useValidationCache(),
+    ],
   }),
   'envelop-cache-jit': envelop({
-    plugins: [useEngine(GraphQLJS), useSchema(createSchema()), useGraphQlJit(), useParserCache(), useValidationCache()],
+    plugins: [
+      useEngine(GraphQLJS),
+      useSchema(createSchema()),
+      useGraphQlJit(),
+      useParserCache(),
+      useValidationCache(),
+    ],
     enableInternalTracing: true,
   }),
   'prom-tracing': envelop({

@@ -1,4 +1,3 @@
-import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/core';
 import {
   DirectiveNode,
   ExecutionArgs,
@@ -12,12 +11,13 @@ import {
   isObjectType,
   isUnionType,
 } from 'graphql';
+import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/core';
 import { useExtendedValidation } from '@envelop/extended-validation';
 
 export class UnauthenticatedError extends GraphQLError {}
 
 export type ResolveUserFn<UserType, ContextType = DefaultContext> = (
-  context: ContextType
+  context: ContextType,
 ) => PromiseOrValue<Maybe<UserType>>;
 
 export type ValidateUserFnParams<UserType> = {
@@ -35,7 +35,9 @@ export type ValidateUserFnParams<UserType> = {
   executionArgs: ExecutionArgs;
 };
 
-export type ValidateUserFn<UserType> = (params: ValidateUserFnParams<UserType>) => void | UnauthenticatedError;
+export type ValidateUserFn<UserType> = (
+  params: ValidateUserFnParams<UserType>,
+) => void | UnauthenticatedError;
 
 export const DIRECTIVE_SDL = /* GraphQL */ `
   directive @auth on FIELD_DEFINITION
@@ -48,7 +50,7 @@ export const SKIP_AUTH_DIRECTIVE_SDL = /* GraphQL */ `
 export type GenericAuthPluginOptions<
   UserType extends {} = {},
   ContextType = DefaultContext,
-  CurrentUserKey extends string = 'currentUser'
+  CurrentUserKey extends string = 'currentUser',
 > = {
   /**
    * Here you can implement any custom sync/async code, and use the context built so far in Envelop and the HTTP request
@@ -110,29 +112,33 @@ export type GenericAuthPluginOptions<
 );
 
 export function defaultProtectAllValidateFn<UserType>(
-  params: ValidateUserFnParams<UserType>
+  params: ValidateUserFnParams<UserType>,
 ): void | UnauthenticatedError {
   if (params.user == null && !params.fieldAuthDirectiveNode && !params.fieldAuthExtension) {
     const schemaCoordinate = `${params.objectType.name}.${params.fieldNode.name.value}`;
-    return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [params.fieldNode]);
+    return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [
+      params.fieldNode,
+    ]);
   }
 }
 
 export function defaultProtectSingleValidateFn<UserType>(
-  params: ValidateUserFnParams<UserType>
+  params: ValidateUserFnParams<UserType>,
 ): void | UnauthenticatedError {
   if (params.user == null && (params.fieldAuthDirectiveNode || params.fieldAuthExtension)) {
     const schemaCoordinate = `${params.objectType.name}.${params.fieldNode.name.value}`;
-    return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [params.fieldNode]);
+    return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [
+      params.fieldNode,
+    ]);
   }
 }
 
 export const useGenericAuth = <
   UserType extends {} = {},
   ContextType extends Record<any, any> = DefaultContext,
-  CurrentUserKey extends string = 'currentUser'
+  CurrentUserKey extends string = 'currentUser',
 >(
-  options: GenericAuthPluginOptions<UserType, ContextType, CurrentUserKey>
+  options: GenericAuthPluginOptions<UserType, ContextType, CurrentUserKey>,
 ): Plugin<
   {
     validateUser: ValidateUserFn<UserType>;
@@ -142,17 +148,20 @@ export const useGenericAuth = <
 
   if (options.mode === 'protect-all' || options.mode === 'protect-granular') {
     const directiveOrExtensionFieldName =
-      options.directiveOrExtensionFieldName ?? (options.mode === 'protect-all' ? 'skipAuth' : 'auth');
+      options.directiveOrExtensionFieldName ??
+      (options.mode === 'protect-all' ? 'skipAuth' : 'auth');
     const validateUser =
       options.validateUser ??
-      (options.mode === 'protect-all' ? defaultProtectAllValidateFn : defaultProtectSingleValidateFn);
+      (options.mode === 'protect-all'
+        ? defaultProtectAllValidateFn
+        : defaultProtectSingleValidateFn);
     const extractAuthMeta = (
-      input: GraphQLField<any, any>
+      input: GraphQLField<any, any>,
     ): { fieldAuthDirectiveNode: DirectiveNode | undefined; fieldAuthExtension: unknown } => {
       return {
         fieldAuthExtension: input.extensions?.[directiveOrExtensionFieldName],
         fieldAuthDirectiveNode: input.astNode?.directives?.find(
-          directive => directive.name.value === directiveOrExtensionFieldName
+          directive => directive.name.value === directiveOrExtensionFieldName,
         ),
       };
     };
@@ -209,7 +218,7 @@ export const useGenericAuth = <
                 };
               },
             ],
-          })
+          }),
         );
       },
       async onContextBuilding({ context, extendContext }) {

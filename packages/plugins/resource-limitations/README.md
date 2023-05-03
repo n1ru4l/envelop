@@ -1,6 +1,9 @@
 ## `@envelop/resource-limitations`
 
-This plugins uses `extended-valiations` concept ([details here](https://github.com/n1ru4l/envelop/tree/main/packages/plugins/extended-validation#envelopextended-validation)) for implemeting a resource-limitations rate-limit similar to GitHub GraphQL API (see https://docs.github.com/en/graphql/overview/resource-limitations for more details)
+This plugins uses `extended-valiations` concept
+([details here](https://github.com/n1ru4l/envelop/tree/main/packages/plugins/extended-validation#envelopextended-validation))
+for implemeting a resource-limitations rate-limit similar to GitHub GraphQL API (see
+https://docs.github.com/en/graphql/overview/resource-limitations for more details)
 
 ## Getting Started
 
@@ -11,7 +14,7 @@ yarn add @envelop/resource-limitations
 ## Usage Example
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useResourceLimitations } from '@envelop/resource-limitations'
 

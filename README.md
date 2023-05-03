@@ -1,17 +1,21 @@
 ## Envelop
 
-`envelop` is a lightweight JavaScript (/TypeScript) library for wrapping GraphQL execution layer and flow, allowing developers to develop, share
-and collaborate on GraphQL-related plugins while filling the missing pieces in GraphQL implementations.
+`envelop` is a lightweight JavaScript (/TypeScript) library for wrapping GraphQL execution layer and
+flow, allowing developers to develop, share and collaborate on GraphQL-related plugins while filling
+the missing pieces in GraphQL implementations.
 
-`envelop` aims to extend the GraphQL execution flow by adding plugins that enrichs the feature set of your application.
+`envelop` aims to extend the GraphQL execution flow by adding plugins that enrichs the feature set
+of your application.
 
 <p align="center">
   <img height="150" src="./logo.png">
 </p>
 
-`@envelop/core`: [![npm version](https://badge.fury.io/js/%40envelop%2Fcore.svg)](https://www.npmjs.com/package/@envelop/core)
+`@envelop/core`:
+[![npm version](https://badge.fury.io/js/%40envelop%2Fcore.svg)](https://www.npmjs.com/package/@envelop/core)
 
-> Envelop is created and maintained by [The Guild](https://the-guild.dev/), and used in production by our clients.
+> Envelop is created and maintained by [The Guild](https://the-guild.dev/), and used in production
+> by our clients.
 
 ### [Envelop Key Concepts](<(https://www.envelop.dev/docs#key-concepts)>)
 
@@ -48,7 +52,9 @@ const getEnveloped = envelop({
 })
 ```
 
-The result of `envelop` is a function that allows you to get everything you need for the GraphQL execution: `parse`, `validate`, `contextBuilder` and `execute`. Use that to run the client's GraphQL queries. Here's a pseudo-code example of how it should look like:
+The result of `envelop` is a function that allows you to get everything you need for the GraphQL
+execution: `parse`, `validate`, `contextBuilder` and `execute`. Use that to run the client's GraphQL
+queries. Here's a pseudo-code example of how it should look like:
 
 ```ts
 const httpServer = createServer()
@@ -83,9 +89,11 @@ httpServer.on('request', async (req, res) => {
 httpServer.listen(3000)
 ```
 
-Behind the scenes, this simple workflow allows you to use **Envelop plugins** and hook into the entire request handling flow.
+Behind the scenes, this simple workflow allows you to use **Envelop plugins** and hook into the
+entire request handling flow.
 
-Here's a simple example for collecting metrics and log all incoming requests, using the built-in plugins:
+Here's a simple example for collecting metrics and log all incoming requests, using the built-in
+plugins:
 
 ```ts
 const getEnveloped = envelop({
@@ -101,21 +109,29 @@ const getEnveloped = envelop({
 
 ## Available Plugins
 
-You can explore all plugins in our [Plugins Hub](https://www.envelop.dev/plugins). If you wish your plugin to be listed here and under PluginsHub, feel free to add your plugin information [in this file](https://github.com/n1ru4l/envelop/edit/main/website/src/lib/plugins.ts#L23) and create a Pull Request!
+You can explore all plugins in our [Plugins Hub](https://www.envelop.dev/plugins). If you wish your
+plugin to be listed here and under PluginsHub, feel free to add your plugin information
+[in this file](https://github.com/n1ru4l/envelop/edit/main/website/src/lib/plugins.ts#L23) and
+create a Pull Request!
 
-We provide a few built-in plugins within the `@envelop/core`, and many more plugins as standalone packages.
+We provide a few built-in plugins within the `@envelop/core`, and many more plugins as standalone
+packages.
 
 **[Envelop's Plugin Hub](https://www.envelop.dev/plugins)**
 
 ## Sharing / Composing `envelop`s
 
-After an `envelop` has been created, you can share it with others as a complete layer of plugins. This is useful if you wish to create a predefined layer of plugins, and share it with others. You can use it as a shell and as a base for writing shareable pieces of servers.
+After an `envelop` has been created, you can share it with others as a complete layer of plugins.
+This is useful if you wish to create a predefined layer of plugins, and share it with others. You
+can use it as a shell and as a base for writing shareable pieces of servers.
 
-You can read more about [Sharing and Composing Envelops here](https://www.envelop.dev/docs/composing-envelop).
+You can read more about
+[Sharing and Composing Envelops here](https://www.envelop.dev/docs/composing-envelop).
 
 ## Write your own plugin!
 
-Envelop plugins are just objects with functions, that provide contextual implementation for before/after of each phase, with a flexible API.
+Envelop plugins are just objects with functions, that provide contextual implementation for
+before/after of each phase, with a flexible API.
 
 Here's a simple example that allows you to print the execution params:
 
@@ -144,14 +160,17 @@ const getEnveloped = envelop({
 
 ### Contributing
 
-If this is your first time contributing to this project, please do read our [Contributor Workflow Guide](https://github.com/the-guild-org/Stack/blob/master/CONTRIBUTING.md) before you get started off.
+If this is your first time contributing to this project, please do read our
+[Contributor Workflow Guide](https://github.com/the-guild-org/Stack/blob/master/CONTRIBUTING.md)
+before you get started off.
 
 Feel free to open issues and pull requests. We're always welcome support from the community.
 
 ### Code of Conduct
 
-Help us keep Envelop open and inclusive. Please read and follow our [
-of Conduct](https://github.com/the-guild-org/Stack/blob/master/CODE_OF_CONDUCT.md) as adopted from [Contributor Covenant](https://www.contributor-covenant.org/)
+Help us keep Envelop open and inclusive. Please read and follow our
+[ of Conduct](https://github.com/the-guild-org/Stack/blob/master/CODE_OF_CONDUCT.md) as adopted from
+[Contributor Covenant](https://www.contributor-covenant.org/)
 
 ### License
 

@@ -1,8 +1,8 @@
+import { GetStaticPaths, GetStaticProps } from 'next';
+import { format } from 'date-fns';
+import { buildDynamicMDX, buildDynamicMeta } from 'nextra/remote';
 import { fetchPackageInfo } from '@theguild/components';
 import { PLUGINS } from './plugins';
-import { format } from 'date-fns';
-import { GetStaticProps, GetStaticPaths } from 'next';
-import { buildDynamicMDX, buildDynamicMeta } from 'nextra/remote';
 
 export const getStaticPaths: GetStaticPaths = () => ({
   fallback: 'blocking',
@@ -29,11 +29,11 @@ export const getStaticProps: GetStaticProps = async ctx => {
 |-|-|-|-|-|
 |[\`${npmPackage}\`](https://npmjs.com/package/${npmPackage})|![Downloads](https://badgen.net/npm/dw/${npmPackage} "Downloads")|![Version](https://badgen.net/npm/v/${npmPackage} "Version")|![License](https://badgen.net/npm/license/${npmPackage} "License")|${format(
       new Date(updatedAt),
-      'MMM do, yyyy'
+      'MMM do, yyyy',
     )}|
 
 ${readme}`,
-    { defaultShowCopyCode: true }
+    { defaultShowCopyCode: true },
   );
 
   return {

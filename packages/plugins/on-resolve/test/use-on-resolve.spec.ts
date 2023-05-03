@@ -52,7 +52,7 @@ describe('useOnResolve', () => {
           setResult('value2');
         }),
       ],
-      schema
+      schema,
     );
 
     const result = await testkit.execute('{ value1 }');

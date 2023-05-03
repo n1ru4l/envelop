@@ -11,7 +11,9 @@ on:
 jobs:
   deployment:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name == 'push'
+    if:
+      github.event.pull_request.head.repo.full_name == github.repository || github.event_name ==
+      'push'
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -22,13 +24,13 @@ jobs:
         name: setup env
         with:
           nodeVersion: 18
-          packageManager: yarn
-
+          packageManager: pnpm
       - uses: the-guild-org/shared-config/website-cf@main
         name: build and deploy website
         env:
           NEXT_BASE_PATH: ${{ github.ref == 'refs/heads/main' && '/graphql/envelop' || '' }}
-          SITE_URL: ${{ github.ref == 'refs/heads/main' && 'https://the-guild.dev/graphql/envelop' || '' }}
+          SITE_URL:
+            ${{ github.ref == 'refs/heads/main' && 'https://the-guild.dev/graphql/envelop' || '' }}
         with:
           cloudflareApiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflareAccountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -36,5 +38,5 @@ jobs:
           projectName: envelop
           prId: ${{ github.event.pull_request.number }}
           websiteDirectory: ./
-          buildScript: cd website && yarn build && yarn next export
+          buildScript: cd website && pnpm run build && pnpm next export
           artifactDir: website/out

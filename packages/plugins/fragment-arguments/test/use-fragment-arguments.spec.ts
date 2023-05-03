@@ -1,9 +1,9 @@
-import { buildSchema, print } from 'graphql';
 import { oneLine, stripIndent } from 'common-tags';
+import { buildSchema, print } from 'graphql';
 import { diff } from 'jest-diff';
 import { envelop, useSchema } from '@envelop/core';
-import { useFragmentArguments } from '../src/index.js';
 import { useGraphQLJSEngine } from '@envelop/testing';
+import { useFragmentArguments } from '../src/index.js';
 
 function compareStrings(a: string, b: string): boolean {
   return a.includes(b);

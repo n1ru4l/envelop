@@ -1,6 +1,13 @@
-import { Plugin, Path, isAsyncIterable, DefaultContext } from '@envelop/core';
+import {
+  ExecutionResult,
+  FieldNode,
+  GraphQLError,
+  Kind,
+  OperationDefinitionNode,
+  print,
+} from 'graphql';
+import { DefaultContext, isAsyncIterable, Path, Plugin } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
-import { print, FieldNode, Kind, OperationDefinitionNode, ExecutionResult, GraphQLError } from 'graphql';
 
 enum AttributeName {
   COMPONENT_NAME = 'Envelop_NewRelic_Plugin',
@@ -62,7 +69,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
     .then(({ shim }) => {
       if (!shim?.agent) {
         throw new Error(
-          'Agent unavailable. Please check your New Relic Agent configuration and ensure New Relic is enabled.'
+          'Agent unavailable. Please check your New Relic Agent configuration and ensure New Relic is enabled.',
         );
       }
       shim.agent.metrics
@@ -91,14 +98,17 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
             const formattedPath = flattenPath(path, delimiter);
             const currentSegment = instrumentationApi.getActiveSegment();
             if (!currentSegment) {
-              logger.trace('No active segment found at resolver call. Not recording resolver (%s).', formattedPath);
+              logger.trace(
+                'No active segment found at resolver call. Not recording resolver (%s).',
+                formattedPath,
+              );
               return () => {};
             }
 
             const resolverSegment = instrumentationApi.createSegment(
               `resolver${delimiter}${formattedPath}`,
               null,
-              currentSegment
+              currentSegment,
             );
             if (!resolverSegment) {
               logger.trace('Resolver segment was not created (%s).', formattedPath);
@@ -113,7 +123,10 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
               const resolverArgsToTrack = options.isResolverArgsRegex
                 ? filterPropertiesByRegex(rawArgs, options.includeResolverArgs as RegExp)
                 : rawArgs;
-              resolverSegment.addAttribute(AttributeName.RESOLVER_ARGS, JSON.stringify(resolverArgsToTrack));
+              resolverSegment.addAttribute(
+                AttributeName.RESOLVER_ARGS,
+                JSON.stringify(resolverArgsToTrack),
+              );
             }
             return ({ result }) => {
               if (options.includeRawResult) {
@@ -121,7 +134,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
               }
               resolverSegment.end();
             };
-          })
+          }),
         );
       }
     },
@@ -132,7 +145,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
       const delimiter = transactionNameState.delimiter;
       const rootOperation = args.document.definitions.find(
         // @ts-expect-error TODO: not sure how we will make it dev friendly
-        definitionNode => definitionNode.kind === Kind.OPERATION_DEFINITION
+        definitionNode => definitionNode.kind === Kind.OPERATION_DEFINITION,
       ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
       const document = print(args.document);
@@ -145,7 +158,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
 
       if (options.rootFieldsNaming) {
         const fieldNodes = rootOperation.selectionSet.selections.filter(
-          selectionNode => selectionNode.kind === Kind.FIELD
+          selectionNode => selectionNode.kind === Kind.FIELD,
         ) as FieldNode[];
         rootFields = fieldNodes.map(fieldNode => fieldNode.name.value);
       }
@@ -154,7 +167,10 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
         transactionNameState.prefix,
         transactionNameState.verb,
         delimiter,
-        operationType + delimiter + operationName + (rootFields ? delimiter + rootFields.join('&') : '')
+        operationType +
+          delimiter +
+          operationName +
+          (rootFields ? delimiter + rootFields.join('&') : ''),
       );
 
       spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_NAME, operationName);
@@ -168,7 +184,10 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
           ? filterPropertiesByRegex(rawVariables, options.includeExecuteVariables as RegExp)
           : rawVariables;
 
-        spanContext.addCustomAttribute(AttributeName.EXECUTION_VARIABLES, JSON.stringify(executeVariablesToTrack));
+        spanContext.addCustomAttribute(
+          AttributeName.EXECUTION_VARIABLES,
+          JSON.stringify(executeVariablesToTrack),
+        );
       }
 
       const operationSegment = instrumentationApi.getActiveSegment();
@@ -177,7 +196,10 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
         onExecuteDone({ result }) {
           const sendResult = (singularResult: ExecutionResult) => {
             if (singularResult.data && options.includeRawResult) {
-              spanContext.addCustomAttribute(AttributeName.EXECUTION_RESULT, JSON.stringify(singularResult));
+              spanContext.addCustomAttribute(
+                AttributeName.EXECUTION_RESULT,
+                JSON.stringify(singularResult),
+              );
             }
 
             if (singularResult.errors && singularResult.errors.length > 0) {

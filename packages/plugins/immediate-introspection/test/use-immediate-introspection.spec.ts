@@ -1,14 +1,17 @@
-import { createTestkit } from '@envelop/testing';
-import { useImmediateIntrospection } from '../src/index.js';
-import { useExtendContext } from '@envelop/core';
-import { schema } from '../../../core/test/common.js';
 import { getIntrospectionQuery } from 'graphql';
+import { useExtendContext } from '@envelop/core';
+import { createTestkit } from '@envelop/testing';
+import { schema } from '../../../core/test/common.js';
+import { useImmediateIntrospection } from '../src/index.js';
 
 describe('useImmediateIntrospection', () => {
   it('skips context building for introspection only operation', async () => {
     const testInstance = createTestkit(
-      [useImmediateIntrospection(), useExtendContext<() => Promise<{}>>(() => Promise.reject('EHHH'))],
-      schema
+      [
+        useImmediateIntrospection(),
+        useExtendContext<() => Promise<{}>>(() => Promise.reject('EHHH')),
+      ],
+      schema,
     );
 
     await testInstance.execute(/* GraphQL */ `
@@ -19,8 +22,11 @@ describe('useImmediateIntrospection', () => {
   });
   it('skips context building for introspection only operation (alias)', async () => {
     const testInstance = createTestkit(
-      [useImmediateIntrospection(), useExtendContext<() => Promise<{}>>(() => Promise.reject('EHHH'))],
-      schema
+      [
+        useImmediateIntrospection(),
+        useExtendContext<() => Promise<{}>>(() => Promise.reject('EHHH')),
+      ],
+      schema,
     );
 
     await testInstance.execute(/* GraphQL */ `
@@ -31,8 +37,11 @@ describe('useImmediateIntrospection', () => {
   });
   it('runs context building for operation containing non introspection fields', async () => {
     const testInstance = createTestkit(
-      [useImmediateIntrospection(), useExtendContext<() => Promise<{}>>(() => Promise.reject('This should reject'))],
-      schema
+      [
+        useImmediateIntrospection(),
+        useExtendContext<() => Promise<{}>>(() => Promise.reject('This should reject')),
+      ],
+      schema,
     );
 
     try {
@@ -57,8 +66,11 @@ describe('useImmediateIntrospection', () => {
 
   it('runs context building for operation containing mutation', async () => {
     const testInstance = createTestkit(
-      [useImmediateIntrospection(), useExtendContext<() => Promise<{}>>(() => Promise.reject('This should reject'))],
-      schema
+      [
+        useImmediateIntrospection(),
+        useExtendContext<() => Promise<{}>>(() => Promise.reject('This should reject')),
+      ],
+      schema,
     );
 
     try {
@@ -80,8 +92,11 @@ describe('useImmediateIntrospection', () => {
 
   it('runs context building for operation containing subscription', async () => {
     const testInstance = createTestkit(
-      [useImmediateIntrospection(), useExtendContext<() => Promise<{}>>(() => Promise.reject('This should reject'))],
-      schema
+      [
+        useImmediateIntrospection(),
+        useExtendContext<() => Promise<{}>>(() => Promise.reject('This should reject')),
+      ],
+      schema,
     );
 
     try {
@@ -101,8 +116,11 @@ describe('useImmediateIntrospection', () => {
 
   it('runs context building for operation containing non introspection fields', async () => {
     const testInstance = createTestkit(
-      [useImmediateIntrospection(), useExtendContext<() => Promise<{}>>(() => Promise.reject('This should reject'))],
-      schema
+      [
+        useImmediateIntrospection(),
+        useExtendContext<() => Promise<{}>>(() => Promise.reject('This should reject')),
+      ],
+      schema,
     );
 
     try {
@@ -131,7 +149,7 @@ describe('useImmediateIntrospection', () => {
         useImmediateIntrospection(),
         useExtendContext<() => Promise<{}>>(() => Promise.reject('This should not reject')),
       ],
-      schema
+      schema,
     );
 
     await testInstance.execute(getIntrospectionQuery());

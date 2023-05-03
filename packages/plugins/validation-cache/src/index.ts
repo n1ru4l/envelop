@@ -1,7 +1,7 @@
-import { Plugin } from '@envelop/core';
-import { GraphQLError, print, introspectionFromSchema, type GraphQLSchema } from 'graphql';
-import LRU from 'lru-cache';
+import { GraphQLError, type GraphQLSchema, introspectionFromSchema, print } from 'graphql';
 import hashIt from 'hash-it';
+import LRU from 'lru-cache';
+import type { Plugin } from '@envelop/core';
 
 export interface ValidationCache {
   /**
@@ -63,7 +63,11 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
         }
 
         const key: string =
-          schemaHashKey + `|` + ruleKey + `|` + (context[rawDocumentSymbol] ?? print(params.documentAST));
+          schemaHashKey +
+          `|` +
+          ruleKey +
+          `|` +
+          (context[rawDocumentSymbol] ?? print(params.documentAST));
 
         const cachedResult = resultCache.get(key);
 

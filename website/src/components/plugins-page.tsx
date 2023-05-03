@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { StaticImageData } from 'next/image';
-import { useSSG } from 'nextra/ssg';
 import { compareDesc } from 'date-fns';
-import { MarketplaceSearch, fetchPackageInfo } from '@theguild/components';
-import { PLUGINS, ALL_TAGS } from '@/lib/plugins';
+import { useSSG } from 'nextra/ssg';
+import { ALL_TAGS, PLUGINS } from '@/lib/plugins';
+import { fetchPackageInfo, MarketplaceSearch } from '@theguild/components';
 
 type Plugin = {
   title: string;
@@ -20,29 +20,31 @@ type Plugin = {
 
 export const getStaticProps = async () => {
   const plugins: Plugin[] = await Promise.all(
-    PLUGINS.map(async ({ identifier, npmPackage, title, icon, tags, githubReadme, className = '' }) => {
-      const {
-        readme,
-        createdAt,
-        updatedAt,
-        description,
-        weeklyNPMDownloads = 0,
-      } = await fetchPackageInfo(npmPackage, githubReadme);
-      const actualReadme = githubReadme ? 'TODO' : readme;
+    PLUGINS.map(
+      async ({ identifier, npmPackage, title, icon, tags, githubReadme, className = '' }) => {
+        const {
+          readme,
+          createdAt,
+          updatedAt,
+          description,
+          weeklyNPMDownloads = 0,
+        } = await fetchPackageInfo(npmPackage, githubReadme);
+        const actualReadme = githubReadme ? 'TODO' : readme;
 
-      return {
-        title,
-        readme: actualReadme,
-        createdAt,
-        updatedAt,
-        description,
-        linkHref: `/plugins/${identifier}`,
-        weeklyNPMDownloads,
-        icon,
-        tags,
-        className,
-      };
-    })
+        return {
+          title,
+          readme: actualReadme,
+          createdAt,
+          updatedAt,
+          description,
+          linkHref: `/plugins/${identifier}`,
+          weeklyNPMDownloads,
+          icon,
+          tags,
+          className,
+        };
+      },
+    ),
   );
 
   return {
@@ -80,12 +82,12 @@ export function PluginsPage() {
         },
         weeklyNPMDownloads: plugin.weeklyNPMDownloads,
       })),
-    [plugins]
+    [plugins],
   );
 
   const recentlyUpdatedItems = useMemo(
     () => [...marketplaceItems].sort((a, b) => compareDesc(new Date(a.update), new Date(b.update))),
-    [marketplaceItems]
+    [marketplaceItems],
   );
 
   const trendingItems = useMemo(
@@ -98,7 +100,7 @@ export function PluginsPage() {
 
           return bMonthlyDownloads - aMonthlyDownloads;
         }),
-    [marketplaceItems]
+    [marketplaceItems],
   );
 
   return (

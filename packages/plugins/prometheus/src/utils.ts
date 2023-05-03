@@ -1,16 +1,16 @@
 import {
-  GraphQLError,
+  ASTNode,
   DocumentNode,
-  OperationDefinitionNode,
+  GraphQLError,
   GraphQLResolveInfo,
+  OperationDefinitionNode,
   TypeInfo,
   visit,
-  ASTNode,
   visitWithTypeInfo,
 } from 'graphql';
+import { Counter, register as defaultRegistry, Histogram, Summary } from 'prom-client';
 import { AfterParseEventPayload } from '@envelop/core';
 import { PrometheusTracingPluginConfig } from './config.js';
-import { Counter, Histogram, register as defaultRegistry, Summary } from 'prom-client';
 
 export type DeprecatedFieldInfo = {
   fieldName: string;
@@ -27,7 +27,10 @@ export type FillLabelsFnParams = {
   deprecationInfo?: DeprecatedFieldInfo;
 };
 
-export function shouldTraceFieldResolver(info: GraphQLResolveInfo, whitelist: string[] | undefined): boolean {
+export function shouldTraceFieldResolver(
+  info: GraphQLResolveInfo,
+  whitelist: string[] | undefined,
+): boolean {
   if (!whitelist) {
     return true;
   }
@@ -43,7 +46,9 @@ function getOperation(document: DocumentNode): OperationDefinitionNode {
   return document.definitions[0] as OperationDefinitionNode;
 }
 
-export function createInternalContext(parseResult: AfterParseEventPayload<any>['result']): FillLabelsFnParams | null {
+export function createInternalContext(
+  parseResult: AfterParseEventPayload<any>['result'],
+): FillLabelsFnParams | null {
   if (parseResult === null) {
     return null;
   }
@@ -60,7 +65,7 @@ export function createInternalContext(parseResult: AfterParseEventPayload<any>['
 
 export type FillLabelsFn<LabelNames extends string> = (
   params: FillLabelsFnParams,
-  rawContext: any
+  rawContext: any,
 ) => Record<LabelNames, string>;
 
 export function createHistogram<LabelNames extends string>(options: {
@@ -88,7 +93,7 @@ export function getHistogramFromConfig(
   config: PrometheusTracingPluginConfig,
   phase: keyof PrometheusTracingPluginConfig,
   name: string,
-  help: string
+  help: string,
 ): ReturnType<typeof createHistogram> | undefined {
   return typeof config[phase] === 'object'
     ? (config[phase] as ReturnType<typeof createHistogram>)
@@ -117,7 +122,11 @@ export function extractDeprecatedFields(node: ASTNode, typeInfo: TypeInfo): Depr
       Argument: () => {
         const argument = typeInfo.getArgument();
         const field = typeInfo.getFieldDef();
-        if (field && argument && (argument.deprecationReason != null || (argument as any).isDeprecated)) {
+        if (
+          field &&
+          argument &&
+          (argument.deprecationReason != null || (argument as any).isDeprecated)
+        ) {
           found.push({
             fieldName: argument.name,
             // the GraphQLArgument type doesn't contain context regarding the mutation the argument was passed to
@@ -137,7 +146,7 @@ export function extractDeprecatedFields(node: ASTNode, typeInfo: TypeInfo): Depr
           });
         }
       },
-    })
+    }),
   );
 
   return found;

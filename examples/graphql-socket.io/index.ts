@@ -1,9 +1,9 @@
-import { Server } from 'socket.io';
 import * as http from 'http';
-import { registerSocketIOGraphQLServer } from '@n1ru4l/socket-io-graphql-server';
+import { execute, parse, subscribe, validate } from 'graphql';
+import { Server } from 'socket.io';
 import { envelop, useLogger, useSchema } from '@envelop/core';
-import { parse, validate, execute, subscribe } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { registerSocketIOGraphQLServer } from '@n1ru4l/socket-io-graphql-server';
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `
@@ -18,7 +18,13 @@ const schema = makeExecutableSchema({
   },
 });
 
-const getEnveloped = envelop({ parse, validate, execute, subscribe, plugins: [useSchema(schema), useLogger()] });
+const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
+  plugins: [useSchema(schema), useLogger()],
+});
 
 const httpServer = http.createServer();
 const socketServer = new Server(httpServer);
@@ -26,7 +32,10 @@ const socketServer = new Server(httpServer);
 registerSocketIOGraphQLServer({
   socketServer,
   getParameter: async ({ socket, graphQLPayload }) => {
-    const { schema, contextFactory, parse, validate, execute, subscribe } = getEnveloped({ socket, graphQLPayload });
+    const { schema, contextFactory, parse, validate, execute, subscribe } = getEnveloped({
+      socket,
+      graphQLPayload,
+    });
     return {
       parse,
       validate,

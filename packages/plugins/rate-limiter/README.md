@@ -1,6 +1,7 @@
 ## `@envelop/rate-limiter`
 
-This plugins uses [`graphql-rate-limit`](https://github.com/teamplanes/graphql-rate-limit#readme) in order to limit the rate of calling queries and mutations.
+This plugins uses [`graphql-rate-limit`](https://github.com/teamplanes/graphql-rate-limit#readme) in
+order to limit the rate of calling queries and mutations.
 
 ## Getting Started
 
@@ -11,9 +12,9 @@ yarn add @envelop/rate-limiter
 ## Usage Example
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
-import { useRateLimiter, IdentifyFn } from '@envelop/rate-limiter'
+import { IdentifyFn, useRateLimiter } from '@envelop/rate-limiter'
 
 const identifyFn: IdentifyFn = context => {
   return context.request.ip
@@ -30,9 +31,11 @@ const getEnveloped = envelop({
 })
 ```
 
-> By default, we assume that you have the GraphQL directive definition as part of your GraphQL schema (`directive @rateLimit(max: Int, window: String, message: String) on FIELD_DEFINITION`).
+> By default, we assume that you have the GraphQL directive definition as part of your GraphQL
+> schema (`directive @rateLimit(max: Int, window: String, message: String) on FIELD_DEFINITION`).
 
-Then, in your GraphQL schema SDL, you can add `@rateLimit` directive to your fields, and the limiter will get called only while resolving that specific field:
+Then, in your GraphQL schema SDL, you can add `@rateLimit` directive to your fields, and the limiter
+will get called only while resolving that specific field:
 
 ```graphql
 type Query {
@@ -49,7 +52,8 @@ type Query {
 
 ### Error message interpolation
 
-The `message` argument of the `@rateLimit` directive can be dynamic. You `{{var}}` or `{{ var }}` syntax to interpolate variables.
+The `message` argument of the `@rateLimit` directive can be dynamic. You `{{var}}` or `{{ var }}`
+syntax to interpolate variables.
 
 ```graphql
 type Query {

@@ -1,8 +1,8 @@
 import http from 'http';
-import { envelop, useSchema, useLogger } from '@envelop/core';
-import { parse, validate, execute, subscribe } from 'graphql';
-import { makeExecutableSchema } from '@graphql-tools/schema';
+import { execute, parse, subscribe, validate } from 'graphql';
 import { createHandler } from 'graphql-sse';
+import { envelop, useLogger, useSchema } from '@envelop/core';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `

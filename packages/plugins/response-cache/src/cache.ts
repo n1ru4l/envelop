@@ -1,5 +1,5 @@
-import type { Maybe, PromiseOrValue } from '@envelop/core';
 import type { ExecutionResult } from 'graphql';
+import type { Maybe, PromiseOrValue } from '@envelop/core';
 
 export type CacheEntityRecord = {
   typename: string;
@@ -19,7 +19,7 @@ export type Cache = {
     /** array of entity records that were collected during execution */
     entities: Iterable<CacheEntityRecord>,
     /** how long the operation should be cached */
-    ttl: number
+    ttl: number,
   ): PromiseOrValue<void>;
   /** get a cached response */
   get(id: string): PromiseOrValue<Maybe<ExecutionResult>>;

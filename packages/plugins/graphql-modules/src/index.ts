@@ -1,5 +1,5 @@
-import type { Plugin, TypedExecutionArgs } from '@envelop/core';
 import type { Application } from 'graphql-modules';
+import type { Plugin, TypedExecutionArgs } from '@envelop/core';
 
 const graphqlModulesControllerSymbol = Symbol('GRAPHQL_MODULES');
 

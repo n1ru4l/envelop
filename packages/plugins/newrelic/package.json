@@ -1,14 +1,14 @@
 {
   "name": "@envelop/newrelic",
   "version": "5.0.6",
-  "author": "Santino Puleio <santinopuleio@gmail.com>",
-  "license": "MIT",
-  "sideEffects": false,
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/n1ru4l/envelop.git",
     "directory": "packages/plugins/newrelic"
   },
+  "author": "Santino Puleio <santinopuleio@gmail.com>",
+  "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "exports": {
@@ -43,30 +43,31 @@
     "./package.json": "./package.json"
   },
   "typings": "dist/typings/index.d.ts",
-  "typescript": {
-    "definition": "dist/typings/index.d.ts"
+  "peerDependencies": {
+    "@envelop/core": "^3.0.6",
+    "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0",
+    "newrelic": "^7 || ^8.0.0"
   },
   "dependencies": {
     "@envelop/on-resolve": "^2.0.6",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@envelop/core": "^3.0.6",
     "@types/newrelic": "7.0.4",
     "graphql": "16.6.0",
     "newrelic": "8.17.1",
     "typescript": "4.8.4"
   },
-  "peerDependencies": {
-    "@envelop/core": "^3.0.6",
-    "newrelic": "^7 || ^8.0.0",
-    "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
-  },
-  "buildOptions": {
-    "input": "./src/index.ts"
-  },
   "publishConfig": {
     "directory": "dist",
     "access": "public"
   },
-  "type": "module"
+  "sideEffects": false,
+  "buildOptions": {
+    "input": "./src/index.ts"
+  },
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
 }

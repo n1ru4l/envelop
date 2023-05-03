@@ -1,11 +1,15 @@
-import { useErrorHandler } from '../../src/plugins/use-error-handler.js';
-import { assertStreamExecutionValue, collectAsyncIteratorValues, createTestkit } from '@envelop/testing';
+import { useExtendContext } from '@envelop/core';
+import {
+  assertStreamExecutionValue,
+  collectAsyncIteratorValues,
+  createTestkit,
+} from '@envelop/testing';
 import { Plugin } from '@envelop/types';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { Repeater } from '@repeaterjs/repeater';
 import { createGraphQLError } from '@graphql-tools/utils';
+import { Repeater } from '@repeaterjs/repeater';
+import { useErrorHandler } from '../../src/plugins/use-error-handler.js';
 import { schema } from '../common.js';
-import { useExtendContext } from '@envelop/core';
 
 describe('useErrorHandler', () => {
   it('should invoke error handler when error happens during execution', async () => {
@@ -42,7 +46,7 @@ describe('useErrorHandler', () => {
     expect(mockHandler).toHaveBeenCalledWith(
       expect.objectContaining({
         phase: 'parse',
-      })
+      }),
     );
   });
 
@@ -56,13 +60,16 @@ describe('useErrorHandler', () => {
       },
     };
     const mockHandler = jest.fn();
-    const testInstance = createTestkit([useMyFailingValidator, useErrorHandler(mockHandler)], schema);
+    const testInstance = createTestkit(
+      [useMyFailingValidator, useErrorHandler(mockHandler)],
+      schema,
+    );
     await testInstance.execute(`query { iDoNotExistsMyGuy }`, {});
     expect(mockHandler).toHaveBeenCalledTimes(1);
     expect(mockHandler).toHaveBeenCalledWith(
       expect.objectContaining({
         phase: 'validate',
-      })
+      }),
     );
   });
 
@@ -76,7 +83,7 @@ describe('useErrorHandler', () => {
         }),
         useErrorHandler(mockHandler),
       ],
-      schema
+      schema,
     );
 
     try {
@@ -85,7 +92,7 @@ describe('useErrorHandler', () => {
       expect(mockHandler).toHaveBeenCalledWith(
         expect.objectContaining({
           phase: 'context',
-        })
+        }),
       );
       expect(mockHandler).toHaveBeenCalledTimes(1);
     }
@@ -129,7 +136,7 @@ describe('useErrorHandler', () => {
       expect.objectContaining({
         errors: expect.objectContaining([testError]),
         phase: 'execution',
-      })
+      }),
     );
   });
 });

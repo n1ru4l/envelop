@@ -1,5 +1,5 @@
-import type { Plugin } from '@envelop/types';
 import { BREAK, ValidationRule } from 'graphql';
+import type { Plugin } from '@envelop/types';
 
 const OnNonIntrospectionFieldReachedValidationRule =
   (onNonIntrospectionField: () => void): ValidationRule =>
@@ -38,7 +38,7 @@ export const useImmediateIntrospection = (): Plugin => {
       addValidationRule(
         OnNonIntrospectionFieldReachedValidationRule(() => {
           isIntrospectionOnly = false;
-        })
+        }),
       );
 
       return function afterValidate({ extendContext }) {

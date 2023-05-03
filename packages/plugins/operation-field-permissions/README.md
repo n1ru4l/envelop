@@ -1,8 +1,11 @@
 ## `@envelop/operation-field-permissions`
 
-Disallow executing operations that select certain fields. Useful if you want to restrict the scope of certain public API users to a subset of the public GraphQL schema, without triggering execution (e.g. how [graphql-shield](https://github.com/maticzav/graphql-shield) works).
+Disallow executing operations that select certain fields. Useful if you want to restrict the scope
+of certain public API users to a subset of the public GraphQL schema, without triggering execution
+(e.g. how [graphql-shield](https://github.com/maticzav/graphql-shield) works).
 
-**Note:** This plugin and authorization on a resolver level (or via middleware) are complementary. You should still verify whether a viewer is allowed to access certain data within your resolvers.
+**Note:** This plugin and authorization on a resolver level (or via middleware) are complementary.
+You should still verify whether a viewer is allowed to access certain data within your resolvers.
 
 ## Installation
 
@@ -13,8 +16,8 @@ yarn add @envelop/operation-field-permissions
 ## Usage Example
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
-import { envelop, useSchema, useEngine } from '@envelop/core'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
+import { envelop, useEngine, useSchema } from '@envelop/core'
 import { useOperationFieldPermissions } from '@envelop/operation-field-permissions'
 
 const getEnveloped = envelop({

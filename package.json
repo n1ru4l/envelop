@@ -1,45 +1,29 @@
 {
   "name": "envelop-mono-repository",
-  "private": true,
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
-  "workspaces": [
-    "website",
-    "packages/*",
-    "packages/plugins/*",
-    "examples/apollo-server",
-    "examples/graphql-ws",
-    "examples/graphql-sse",
-    "examples/graphql-socket.io",
-    "examples/simple-http",
-    "examples/graphql-helix",
-    "examples/graphql-helix-auth0",
-    "examples/lambda-aws",
-    "examples/azure-functions",
-    "examples/google-cloud-functions",
-    "examples/cloudflare-workers",
-    "examples/with-esm",
-    "examples/typegraphql",
-    "examples/nexus",
-    "examples/express-graphql"
-  ],
+  "private": true,
+  "packageManager": "pnpm@7.32.2",
+  "engines": {
+    "node": ">=14.0.0",
+    "pnpm": ">=7.32.2"
+  },
   "scripts": {
-    "prepare": "husky install",
-    "postinstall": "patch-package",
-    "lint": "eslint --config .eslintrc.json --ext .ts . --max-warnings 0",
-    "ci:lint": "eslint --config .eslintrc.json --ext .ts . --max-warnings 0 --output-file eslint_report.json --format json",
-    "lint:prettier": "prettier --cache --ignore-path .gitignore --check .",
-    "prebuild": "rimraf packages/*/dist packages/plugins/*/dist",
     "build": "bob build",
-    "ts:check": "tsc --noEmit",
-    "test": "jest",
-    "test:core": "jest ./packages/core --coverage",
-    "test:ci": "jest --coverage",
-    "prerelease": "yarn build",
+    "ci:lint": "eslint --config .eslintrc.json --ext .ts . --max-warnings 0 --output-file eslint_report.json --format json",
+    "lint": "eslint --config .eslintrc.json --ext .ts . --max-warnings 0",
+    "lint:prettier": "prettier --cache --ignore-path .gitignore --check .",
+    "loadtest:run": "pnpm run --filter @envelop/benchmark loadtest:run",
+    "loadtest:start-server": "pnpm run --filter @envelop/benchmark loadtest:start-server",
+    "prebuild": "rimraf packages/*/dist packages/plugins/*/dist",
+    "prepare": "husky install",
+    "prerelease": "pnpm run build",
+    "prettier": "prettier --cache --ignore-path .gitignore --write --list-different .",
     "release": "changeset publish",
-    "loadtest:start-server": "NODE_ENV=production node ./benchmark/app.js",
-    "loadtest:run": "k6 -e GRAPHQL_HOSTNAME=0.0.0.0 run ./benchmark/k6.js",
-    "prettier": "prettier --cache --ignore-path .gitignore --write --list-different ."
+    "test": "jest",
+    "test:ci": "jest --coverage",
+    "test:core": "jest ./packages/core --coverage",
+    "ts:check": "tsc --noEmit"
   },
   "devDependencies": {
     "@babel/core": "7.20.12",
@@ -49,8 +33,7 @@
     "@babel/preset-typescript": "7.18.6",
     "@changesets/changelog-github": "0.4.8",
     "@changesets/cli": "2.24.2",
-    "@graphql-tools/schema": "8.5.1",
-    "@theguild/prettier-config": "0.1.1",
+    "@theguild/prettier-config": "1.1.3",
     "@types/benchmark": "2.1.2",
     "@types/jest": "27.5.2",
     "@types/k6": "0.42.0",
@@ -59,7 +42,7 @@
     "@typescript-eslint/parser": "5.51.0",
     "apollo-server": "3.5.0",
     "benchmark": "2.1.4",
-    "bob-the-bundler": "4.1.1",
+    "bob-the-bundler": "6.0.0",
     "chalk": "5.0.1",
     "eslint": "8.34.0",
     "eslint-config-prettier": "8.6.0",
@@ -69,24 +52,17 @@
     "eslint-plugin-package-json": "^0.1.4",
     "eslint-plugin-promise": "6.1.1",
     "eslint-plugin-unicorn": "45.0.2",
-    "faker": "5.5.3",
     "globby": "11.1.0",
     "husky": "8.0.3",
     "jest": "27.5.1",
     "lint-staged": "13.1.2",
-    "patch-package": "6.5.1",
-    "prettier": "2.8.4",
+    "prettier": "2.8.8",
     "pretty-quick": "3.1.3",
     "rimraf": "4.1.2",
     "ts-jest": "27.1.5",
     "ts-node": "10.9.1",
     "typescript": "4.8.4",
     "wait-on": "7.0.1"
-  },
-  "resolutions": {
-    "esbuild": "^0.17.0",
-    "graphql": "16.6.0",
-    "prettier": "2.8.4"
   },
   "lint-staged": {
     "packages/**/src/**/*.{ts,tsx}": [
@@ -95,5 +71,19 @@
     "**/*.{ts,tsx,graphql,yml,json}": [
       "prettier --write"
     ]
+  },
+  "pnpm": {
+    "overrides": {
+      "esbuild": "^0.17.0",
+      "graphql": "16.6.0",
+      "prettier": "2.8.8"
+    },
+    "patchedDependencies": {
+      "@apollo/federation@0.33.6": "patches/@apollo__federation@0.33.6.patch",
+      "@changesets/apply-release-plan@6.0.4": "patches/@changesets__apply-release-plan@6.0.4.patch",
+      "@changesets/assemble-release-plan@5.2.0": "patches/@changesets__assemble-release-plan@5.2.0.patch",
+      "apollo-graphql@0.9.3": "patches/apollo-graphql@0.9.3.patch",
+      "@apollo/core-schema@0.1.0": "patches/@apollo__core-schema@0.1.0.patch"
+    }
   }
 }

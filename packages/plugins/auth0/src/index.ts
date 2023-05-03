@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
+
 /* eslint-disable dot-notation */
-import { Plugin } from '@envelop/core';
+import jwtPkg, { DecodeOptions, VerifyOptions } from 'jsonwebtoken';
 import * as JwksRsa from 'jwks-rsa';
-import jwtPkg, { VerifyOptions, DecodeOptions } from 'jsonwebtoken';
+import { Plugin } from '@envelop/core';
 
 const { decode, verify } = jwtPkg;
 
@@ -29,11 +30,14 @@ export type UserPayload = {
   [key: string]: any;
 };
 
-type BuildContext<TOptions extends Auth0PluginOptions> = TOptions['extendContextField'] extends string
-  ? { [TName in TOptions['extendContextField'] as TOptions['extendContextField']]: UserPayload }
-  : { _auth0: UserPayload };
+type BuildContext<TOptions extends Auth0PluginOptions> =
+  TOptions['extendContextField'] extends string
+    ? { [TName in TOptions['extendContextField'] as TOptions['extendContextField']]: UserPayload }
+    : { _auth0: UserPayload };
 
-export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions): Plugin<BuildContext<TOptions>> => {
+export const useAuth0 = <TOptions extends Auth0PluginOptions>(
+  options: TOptions,
+): Plugin<BuildContext<TOptions>> => {
   const jkwsClient = new JwksRsa.JwksClient({
     cache: true,
     rateLimit: true,
@@ -54,7 +58,7 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
 
       if (!headers) {
         console.warn(
-          `useAuth0 plugin unable to locate your request or headers on the execution context. Please make sure to pass that, or provide custom "extractTokenFn" function.`
+          `useAuth0 plugin unable to locate your request or headers on the execution context. Please make sure to pass that, or provide custom "extractTokenFn" function.`,
         );
       } else {
         let authHeader: string | null = null;
@@ -87,7 +91,10 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(options: TOptions)
 
   const verifyToken = async (token: string): Promise<any> => {
     const decodedToken =
-      (decode(token, { complete: true, ...options.jwtDecodeOptions }) as Record<string, { kid?: string }>) || {};
+      (decode(token, { complete: true, ...options.jwtDecodeOptions }) as Record<
+        string,
+        { kid?: string }
+      >) || {};
 
     if (decodedToken && decodedToken.header && decodedToken.header.kid) {
       const secret = await jkwsClient.getSigningKey(decodedToken.header.kid);

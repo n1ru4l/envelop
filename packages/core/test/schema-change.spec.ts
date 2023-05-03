@@ -1,7 +1,7 @@
+import { buildSchema, GraphQLSchema } from 'graphql';
 import { createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { Plugin } from '@envelop/types';
-import { buildSchema, GraphQLSchema } from 'graphql';
-import { schema, query } from './common.js';
+import { query, schema } from './common.js';
 
 describe('schemaChange', () => {
   it('Should trigger schema change initially when schema is available', async () => {

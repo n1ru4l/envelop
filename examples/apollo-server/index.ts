@@ -1,10 +1,6 @@
 /* eslint-disable no-console */
+import { execute, parse, subscribe, validate } from 'graphql';
 import { ApolloServer } from '@apollo/server';
-import { envelop, useEngine, useSchema } from '@envelop/core';
-import { parse, validate, subscribe, execute } from 'graphql';
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { startStandaloneServer } from '@apollo/server/standalone';
-import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground';
 import {
   GatewayApolloConfig,
   GatewayExecutor,
@@ -13,6 +9,10 @@ import {
   GatewaySchemaLoadOrUpdateCallback,
   GatewayUnsubscriber,
 } from '@apollo/server-gateway-interface';
+import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { envelop, useEngine, useSchema } from '@envelop/core';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `

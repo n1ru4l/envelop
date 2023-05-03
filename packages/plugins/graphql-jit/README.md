@@ -1,6 +1,7 @@
 ## `@envelop/graphql-jit`
 
-This plugins replaces the original `execute` of GraphQL with [`graphql-jit`](https://github.com/zalando-incubator/graphql-jit).
+This plugins replaces the original `execute` of GraphQL with
+[`graphql-jit`](https://github.com/zalando-incubator/graphql-jit).
 
 ## Getting Started
 
@@ -11,7 +12,7 @@ yarn add @envelop/graphql-jit
 ## Usage Example
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useGraphQlJit } from '@envelop/graphql-jit'
 
@@ -33,10 +34,11 @@ const getEnveloped = envelop({
 
 ## Conditional Execution
 
-If you wish to conditionally use the JIT executor based on the incoming request, you can use `enableIf` config flag and return a `boolean` based on the `ExecutionArgs`:
+If you wish to conditionally use the JIT executor based on the incoming request, you can use
+`enableIf` config flag and return a `boolean` based on the `ExecutionArgs`:
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useGraphQlJit } from '@envelop/graphql-jit'
 
@@ -61,7 +63,7 @@ const getEnveloped = envelop({
 You can configure the JIT cache with the following options:
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useGraphQlJit } from '@envelop/graphql-jit'
 

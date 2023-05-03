@@ -1,6 +1,6 @@
 import { ContextFactoryFn, useExtendContext } from '@envelop/core';
 import { createSpiedPlugin, createTestkit } from '@envelop/testing';
-import { schema, query } from './common.js';
+import { query, schema } from './common.js';
 
 describe('contextFactory', () => {
   it('Should call before parse and after parse correctly', async () => {
@@ -52,7 +52,7 @@ describe('contextFactory', () => {
           onExecute: onExecuteSpy,
         },
       ],
-      schema
+      schema,
     );
 
     await teskit.execute(query, {}, {});
@@ -70,7 +70,7 @@ describe('contextFactory', () => {
             test: true,
           }),
         }),
-      })
+      }),
     );
   });
 
@@ -92,7 +92,7 @@ describe('contextFactory', () => {
           onExecute: onExecuteSpy,
         },
       ],
-      schema
+      schema,
     );
     await teskit.execute(query, {}, {});
     expect(afterContextSpy).toHaveBeenCalledWith(
@@ -100,7 +100,7 @@ describe('contextFactory', () => {
         context: expect.objectContaining({
           test: true,
         }),
-      })
+      }),
     );
     expect(onExecuteSpy).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -109,7 +109,7 @@ describe('contextFactory', () => {
             test: true,
           }),
         }),
-      })
+      }),
     );
   });
 
@@ -137,7 +137,7 @@ describe('contextFactory', () => {
           },
         },
       ],
-      schema
+      schema,
     );
 
     const execution = teskit.execute(query, {}, { test: true });
@@ -157,7 +157,7 @@ describe('contextFactory', () => {
                 }),
                 error: new Error('The server was about to step on a turtle'),
                 setError: expect.any(Function),
-              })
+              }),
             );
           } catch (e) {
             reject(e);

@@ -1,5 +1,5 @@
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 import git from 'isomorphic-git';
 import http from 'isomorphic-git/http/node';
 
@@ -26,7 +26,9 @@ export async function listFiles({
     ref,
   });
   const filenames = await git.listFiles({ fs, dir });
-  return filenames.filter(filename => filename.startsWith(rootDir)).map(filename => filename.replace(rootDir, ''));
+  return filenames
+    .filter(filename => filename.startsWith(rootDir))
+    .map(filename => filename.replace(rootDir, ''));
 }
 
 export async function findPathWithExtension({

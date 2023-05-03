@@ -10,6 +10,6 @@ export default async () => {
           timestamp: false,
         },
       },
-    ])
+    ]),
   );
 };

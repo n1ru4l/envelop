@@ -1,10 +1,15 @@
 ## `@envelop/extended-validation`
 
-Extended validation plugin adds support for writing GraphQL validation rules, that has access to all `execute` parameters, including variables.
+Extended validation plugin adds support for writing GraphQL validation rules, that has access to all
+`execute` parameters, including variables.
 
-While GraphQL supports fair amount of built-in validations, and validations could be extended, it's doesn't expose `variables` to the validation rules, since operation variables are not available during `validate` flow (it's only available through execution of the operation, after input/variables coercion is done).
+While GraphQL supports fair amount of built-in validations, and validations could be extended, it's
+doesn't expose `variables` to the validation rules, since operation variables are not available
+during `validate` flow (it's only available through execution of the operation, after
+input/variables coercion is done).
 
-This plugin runs before `validate` but allow developers to write their validation rules in the same way GraphQL `ValidationRule` is defined (based on a GraphQL visitor).
+This plugin runs before `validate` but allow developers to write their validation rules in the same
+way GraphQL `ValidationRule` is defined (based on a GraphQL visitor).
 
 ## Getting Started
 
@@ -17,7 +22,7 @@ yarn add @envelop/extended-validation
 Then, use the plugin with your validation rules:
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useExtendedValidation } from '@envelop/extended-validation'
 
@@ -33,7 +38,8 @@ const getEnveloped = envelop({
 })
 ```
 
-To create your custom rules, implement the `ExtendedValidationRule` interface and return your GraphQL AST visitor.
+To create your custom rules, implement the `ExtendedValidationRule` interface and return your
+GraphQL AST visitor.
 
 For example:
 
@@ -55,16 +61,18 @@ export const MyRule: ExtendedValidationRule = (validationContext, executionArgs)
 
 ### Union Inputs: `@oneOf`
 
-This directive provides validation for input types and implements the concept of union inputs. You can find the [complete spec RFC here](https://github.com/graphql/graphql-spec/pull/825).
+This directive provides validation for input types and implements the concept of union inputs. You
+can find the [complete spec RFC here](https://github.com/graphql/graphql-spec/pull/825).
 
-You can use union inputs either via a the SDL flow, by annotating types and fields with `@oneOf` or via the `extensions` field.
+You can use union inputs either via a the SDL flow, by annotating types and fields with `@oneOf` or
+via the `extensions` field.
 
 First, make sure to add that rule to your plugin usage:
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
-import { useExtendedValidation, OneOfInputObjectsRule } from '@envelop/extended-validation'
+import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation'
 
 const getEnveloped = envelop({
   plugins: [

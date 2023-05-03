@@ -1,22 +1,21 @@
 import { StaticImageData } from 'next/image';
-
-import sentryIcon from '../../public/assets/logos/sentry.png';
-import datadogIcon from '../../public/assets/logos/datadog.png';
-import graphqlIcon from '../../public/assets/logos/graphql.png';
 import apolloIcon from '../../public/assets/logos/apollo.png';
-import openTelemetryIcon from '../../public/assets/logos/opentelemetry.png';
-import genericAuthIcon from '../../public/assets/logos/generic_auth.png';
-import rateLimiterIcon from '../../public/assets/logos/rate_limiter.png';
-import graphqlArmorIcon from '../../public/assets/logos/graphql-armor.svg';
-import prometheusIcon from '../../public/assets/logos/prometheus.png';
-import newrelicIcon from '../../public/assets/logos/newrelic.png';
-import modulesIcon from '../../public/assets/logos/modules.svg';
-import auth0Icon from '../../public/assets/logos/auth0.png';
-import persistedOperationsIcon from '../../public/assets/logos/persisted_operations.png';
 import assetsIcon from '../../public/assets/logos/assets.png';
+import auth0Icon from '../../public/assets/logos/auth0.png';
+import datadogIcon from '../../public/assets/logos/datadog.png';
+import genericAuthIcon from '../../public/assets/logos/generic_auth.png';
+import graphqlArmorIcon from '../../public/assets/logos/graphql-armor.svg';
+import graphqlIcon from '../../public/assets/logos/graphql.png';
+import inngestIcon from '../../public/assets/logos/inngest.png';
+import modulesIcon from '../../public/assets/logos/modules.svg';
+import newrelicIcon from '../../public/assets/logos/newrelic.png';
+import openTelemetryIcon from '../../public/assets/logos/opentelemetry.png';
+import persistedOperationsIcon from '../../public/assets/logos/persisted_operations.png';
+import prometheusIcon from '../../public/assets/logos/prometheus.png';
+import rateLimiterIcon from '../../public/assets/logos/rate_limiter.png';
+import sentryIcon from '../../public/assets/logos/sentry.png';
 import envelopIcon from '../../public/logo.png';
 import hiveIcon from 'https://the-guild.dev/static/shared-logos/products/hive.svg';
-import inngestIcon from '../../public/assets/logos/inngest.png';
 
 export const ALL_TAGS = [
   'tracing',

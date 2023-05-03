@@ -1,6 +1,7 @@
 ## `@envelop/prometheus`
 
-This plugin tracks the complete execution flow, and reports metrics using Prometheus tracing (based on `prom-client`).
+This plugin tracks the complete execution flow, and reports metrics using Prometheus tracing (based
+on `prom-client`).
 
 You can opt-in to collect tracing from the following phases:
 
@@ -26,7 +27,7 @@ yarn add prom-client @envelop/prometheus
 ## Usage Example
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { usePrometheus } from '@envelop/prometheus'
 
@@ -52,16 +53,18 @@ const getEnveloped = envelop({
 })
 ```
 
-> Note: Tracing resolvers using `resovlers: true` might have a performance impact on your GraphQL runtime. Please consider to test it locally first and then decide if it's needed.
+> Note: Tracing resolvers using `resovlers: true` might have a performance impact on your GraphQL
+> runtime. Please consider to test it locally first and then decide if it's needed.
 
 ### Custom registry
 
-You can customize the `prom-client` `Registry` object if you are using a custom one, by passing it along with the configuration object:
+You can customize the `prom-client` `Registry` object if you are using a custom one, by passing it
+along with the configuration object:
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
-import { envelop, useEngine } from '@envelop/core'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { Registry } from 'prom-client'
+import { envelop, useEngine } from '@envelop/core'
 
 const myRegistry = new Registry()
 
@@ -77,18 +80,21 @@ const getEnveloped = envelop({
 })
 ```
 
-> Note: if you are using custom `prom-client` instances, you need to make sure to pass your registry there as well.
+> Note: if you are using custom `prom-client` instances, you need to make sure to pass your registry
+> there as well.
 
 ### Introspection
 
-If you wish to disable introspection logging, you can use `skipIntrospection: true` in your config object.
+If you wish to disable introspection logging, you can use `skipIntrospection: true` in your config
+object.
 
 ### Custom `prom-client` instances
 
-Each tracing field supports custom `prom-client` objects, and custom `labels` a metadata, you can create a custom extraction function for every `Histogram` / `Summary` / `Counter`:
+Each tracing field supports custom `prom-client` objects, and custom `labels` a metadata, you can
+create a custom extraction function for every `Histogram` / `Summary` / `Counter`:
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { Histogram } from 'prom-client'
 import { envelop, useEngine } from '@envelop/core'
 import { createHistogram, usePrometheus } from '@envelop/prometheus'

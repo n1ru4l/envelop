@@ -1,24 +1,28 @@
-import { PackageCmd, Callout } from '@theguild/components'
+import { Callout, PackageCmd } from '@theguild/components'
 
 # Testing
 
-Envelop comes with a dedicated package for testing purposes. You can use it to test your plugin, or your whole envelop, by replacing or mocking other plugins/phases.
+Envelop comes with a dedicated package for testing purposes. You can use it to test your plugin, or
+your whole envelop, by replacing or mocking other plugins/phases.
 
-The Envelop Testkit can also help you to test your envelop plugins in a headless environment, so you don't need to deal with HTTP or anything else.
+The Envelop Testkit can also help you to test your envelop plugins in a headless environment, so you
+don't need to deal with HTTP or anything else.
 
-To get started with the Envelop Testkit, make sure to install it in your project (as a `devDependency`):
+To get started with the Envelop Testkit, make sure to install it in your project (as a
+`devDependency`):
 
 <PackageCmd packages={['-D @envelop/testing']} />
 
-To get started with your `envelop` testing, make sure first to setup your favorite test runner in your project (we use [Jest](https://jestjs.io)).
+To get started with your `envelop` testing, make sure first to setup your favorite test runner in
+your project (we use [Jest](https://jestjs.io)).
 
 ## Testing a Plugin
 
 To test a plugin in a real GraphQL environment, just create a Testkit Envelop:
 
 ```ts
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing'
 import { useMyPlugin } from './my-plugin'
-import { createTestkit, assertSingleExecutionValue } from '@envelop/testing'
 
 describe('My Plugin', () => {
   const mySchema = buildSchema(`type Query { foo: String }`)
@@ -38,11 +42,12 @@ describe('My Plugin', () => {
 
 ## Testing Envelop Instance
 
-You can also pass a complete instance of `envelop` (the `getEnveloped` function) to your Testkit, and run the same testing flow for multiple plugins together:
+You can also pass a complete instance of `envelop` (the `getEnveloped` function) to your Testkit,
+and run the same testing flow for multiple plugins together:
 
 ```ts
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing'
 import { getEnveloped } from './my-app'
-import { createTestkit, assertSingleExecutionValue } from '@envelop/testing'
 
 describe('My GQL App', () => {
   const mySchema = buildSchema(`type Query { foo: String }`)
@@ -64,7 +69,9 @@ describe('My GQL App', () => {
 
 ### Manipulating Envelops
 
-If you are testing a complete `envelop`, you might want to manipulate the Envelop before executing it (for example, to replace a context function that authenticates the user, or to create a scenario needed for testing).
+If you are testing a complete `envelop`, you might want to manipulate the Envelop before executing
+it (for example, to replace a context function that authenticates the user, or to create a scenario
+needed for testing).
 
 You can use `modifyPlugins` in order to modify the plugins that are part of your execution:
 
@@ -77,13 +84,17 @@ testkit.modifyPlugins(plugins => [...plugins, somePlugins])
 const result = await testkit.execute(`query testQuery { foo }`)
 ```
 
-<Callout>You can either add plugins, but also replace/remove plugins that are not needed during testing.</Callout>
+<Callout>
+  You can either add plugins, but also replace/remove plugins that are not needed during testing.
+</Callout>
 
 ### Mocking Phases
 
-If you need to make sure that a specific phase of `envelop` will perform a specific result, you can replace the entire phase with a custom one.
+If you need to make sure that a specific phase of `envelop` will perform a specific result, you can
+replace the entire phase with a custom one.
 
-This is useful if you need to prepare with a specific scenario before running your Envelop, without the need to deal with specific plugins.
+This is useful if you need to prepare with a specific scenario before running your Envelop, without
+the need to deal with specific plugins.
 
 Here's an example for replacing the whole context-building phase:
 
@@ -101,15 +112,18 @@ testkit.mockPhase({
 })
 ```
 
-<Callout type="warning">**Note**: Replacing whole phases might affect plugins execution, so use it carefully!</Callout>
+<Callout type="warning">
+  **Note**: Replacing whole phases might affect plugins execution, so use it carefully!
+</Callout>
 
 ### Spying on Phases
 
-If you are using Jest, you can use a pre-defined plugin that can help you spy on Envelop phases and check the validity of your parameters.
+If you are using Jest, you can use a pre-defined plugin that can help you spy on Envelop phases and
+check the validity of your parameters.
 
 ```ts
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing'
 import { getEnveloped } from './my-app'
-import { createTestkit, assertSingleExecutionValue } from '@envelop/testing'
 
 describe('My GQL App', () => {
   const mySchema = buildSchema(`type Query { foo: String }`)

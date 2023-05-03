@@ -1,5 +1,5 @@
-import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { execute, parse } from 'graphql';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useApolloFederation } from '../src/index.js';
 
 describe('useApolloFederation', () => {
@@ -19,7 +19,10 @@ describe('useApolloFederation', () => {
     }
   `;
 
-  const { ApolloGateway, LocalGraphQLDataSource }: typeof import('@apollo/gateway') = require('@apollo/gateway');
+  const {
+    ApolloGateway,
+    LocalGraphQLDataSource,
+  }: typeof import('@apollo/gateway') = require('@apollo/gateway');
   const accounts: typeof import('./fixtures/accounts') = require('./fixtures/accounts');
   const products: typeof import('./fixtures/products') = require('./fixtures/products');
   const reviews: typeof import('./fixtures/reviews') = require('./fixtures/reviews');

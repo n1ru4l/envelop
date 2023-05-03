@@ -1,15 +1,15 @@
 import {
   AsyncIterableIteratorOrValue,
-  ExecuteFunction,
-  PolymorphicExecuteArguments,
-  PolymorphicSubscribeArguments,
-  SubscribeFunction,
-  PromiseOrValue,
   DefaultContext,
+  ExecuteFunction,
+  ExecutionArgs,
   OnExecuteDoneEventPayload,
   OnExecuteDoneHookResult,
   OnExecuteDoneHookResultOnNextHook,
-  ExecutionArgs,
+  PolymorphicExecuteArguments,
+  PolymorphicSubscribeArguments,
+  PromiseOrValue,
+  SubscribeFunction,
 } from '@envelop/types';
 
 export const envelopIsIntrospectionSymbol = Symbol('ENVELOP_IS_INTROSPECTION');
@@ -42,7 +42,7 @@ export const makeSubscribe = (subscribeFn: (args: ExecutionArgs) => any): Subscr
 
 export function mapAsyncIterator<T, O>(
   source: AsyncIterable<T>,
-  mapper: (input: T) => Promise<O> | O
+  mapper: (input: T) => Promise<O> | O,
 ): AsyncGenerator<O> {
   const iterator = source[Symbol.asyncIterator]();
 
@@ -106,7 +106,7 @@ function getExecuteArgs(args: PolymorphicExecuteArguments): ExecutionArgs {
  * Utility function for making a execute function that handles polymorphic arguments.
  */
 export const makeExecute = (
-  executeFn: (args: ExecutionArgs) => PromiseOrValue<AsyncIterableIteratorOrValue<any>>
+  executeFn: (args: ExecutionArgs) => PromiseOrValue<AsyncIterableIteratorOrValue<any>>,
 ): ExecuteFunction =>
   ((...polyArgs: PolymorphicExecuteArguments): PromiseOrValue<AsyncIterableIteratorOrValue<any>> =>
     executeFn(getExecuteArgs(polyArgs))) as unknown as ExecuteFunction;
@@ -117,7 +117,9 @@ export const makeExecute = (
  *
  * Source: https://github.com/graphql/graphql-js/blob/main/src/jsutils/isAsyncIterable.ts
  */
-export function isAsyncIterable<TType>(maybeAsyncIterable: unknown): maybeAsyncIterable is AsyncIterable<TType> {
+export function isAsyncIterable<TType>(
+  maybeAsyncIterable: unknown,
+): maybeAsyncIterable is AsyncIterable<TType> {
   return (
     typeof maybeAsyncIterable === 'object' &&
     maybeAsyncIterable != null &&
@@ -134,7 +136,7 @@ export function isAsyncIterable<TType>(maybeAsyncIterable: unknown): maybeAsyncI
  */
 export function handleStreamOrSingleExecutionResult<ContextType = DefaultContext>(
   payload: OnExecuteDoneEventPayload<ContextType>,
-  fn: OnExecuteDoneHookResultOnNextHook<ContextType>
+  fn: OnExecuteDoneHookResultOnNextHook<ContextType>,
 ): void | OnExecuteDoneHookResult<ContextType> {
   if (isAsyncIterable(payload.result)) {
     return { onNext: fn };
@@ -148,7 +150,10 @@ export function handleStreamOrSingleExecutionResult<ContextType = DefaultContext
   return undefined;
 }
 
-export function finalAsyncIterator<TInput>(source: AsyncIterable<TInput>, onFinal: () => void): AsyncGenerator<TInput> {
+export function finalAsyncIterator<TInput>(
+  source: AsyncIterable<TInput>,
+  onFinal: () => void,
+): AsyncGenerator<TInput> {
   const iterator = source[Symbol.asyncIterator]();
   let isDone = false;
   const stream: AsyncGenerator<TInput> = {
@@ -187,7 +192,7 @@ export function finalAsyncIterator<TInput>(source: AsyncIterable<TInput>, onFina
 
 export function errorAsyncIterator<TInput>(
   source: AsyncIterable<TInput>,
-  onError: (err: unknown) => void
+  onError: (err: unknown) => void,
 ): AsyncGenerator<TInput> {
   const iterator = source[Symbol.asyncIterator]();
   const stream: AsyncGenerator<TInput> = {

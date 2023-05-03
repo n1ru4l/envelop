@@ -1,13 +1,14 @@
-import { PackageCmd, Callout } from '@theguild/components'
+import { Callout, PackageCmd } from '@theguild/components'
 
 # First Steps
 
-Using Envelop is straight-forward and intuitive, in this section you will learn how to install and set up a GraphQL server using Envelop from scratch.
+Using Envelop is straight-forward and intuitive, in this section you will learn how to install and
+set up a GraphQL server using Envelop from scratch.
 
 <Callout>
-  In case you are being referred to the Envelop documentation from a framework or library that implements envelop, you
-  can straight dive into the [Plugin Hub](/plugins) or head over to the [Plugin Tutorial](/docs/plugins) for learning
-  how to write your plugins.
+  In case you are being referred to the Envelop documentation from a framework or library that
+  implements envelop, you can straight dive into the [Plugin Hub](/plugins) or head over to the
+  [Plugin Tutorial](/docs/plugins) for learning how to write your plugins.
 </Callout>
 ## Installation
 
@@ -17,11 +18,13 @@ Start by adding the core of `envelop` and `graphql` to your codebase.
 
 ## Create Your First Envelop
 
-After installing the `@envelop/core` package, you can use the `envelop` function for creating your `getEnveloped` function. We use a simple GraphQL schema that we build with the `buildSchema` function from `graphql`.
+After installing the `@envelop/core` package, you can use the `envelop` function for creating your
+`getEnveloped` function. We use a simple GraphQL schema that we build with the `buildSchema`
+function from `graphql`.
 
 ```ts
-import { envelop, useSchema, useEngine } from '@envelop/core'
 import * as GraphQLJS from 'graphql'
+import { envelop, useEngine, useSchema } from '@envelop/core'
 
 const schema = GraphQLJS.buildSchema(/* GraphQL */ `
   type Query {
@@ -36,9 +39,12 @@ export const getEnveloped = envelop({
 
 ## Use Your Envelop
 
-The result of `envelop` is a factory function that allows you to get everything you need for the GraphQL execution: `parse`, `validate`, `contextBuilder`, `execute` and `subscribe`. It is usually named `getEnveloped`.
+The result of `envelop` is a factory function that allows you to get everything you need for the
+GraphQL execution: `parse`, `validate`, `contextBuilder`, `execute` and `subscribe`. It is usually
+named `getEnveloped`.
 
-By calling the `getEnveloped` function you will get all the primitive functions required for the GraphQL execution layer.
+By calling the `getEnveloped` function you will get all the primitive functions required for the
+GraphQL execution layer.
 
 ```ts
 // prettier-ignore
@@ -54,16 +60,19 @@ const {
 
 ## Add Plugins to Your Envelop
 
-After you set up your base Envelop, you can start customizing your GraphQL server. Adding new functionality is as easy as adding a new envelop plugin to your base envelop setup.
+After you set up your base Envelop, you can start customizing your GraphQL server. Adding new
+functionality is as easy as adding a new envelop plugin to your base envelop setup.
 
-Let's add a parser and validation cache, so sending the same operation string sent to our server is cached using an LRU cache, allowing to improve the overall performance of the GraphQL execution layer.
+Let's add a parser and validation cache, so sending the same operation string sent to our server is
+cached using an LRU cache, allowing to improve the overall performance of the GraphQL execution
+layer.
 
 <PackageCmd packages={['@envelop/parser-cache @envelop/validation-cache']} />
 
 ```ts
 import * as GraphQLJS from 'graphql'
 import { buildSchema } from 'graphql'
-import { envelop, useSchema, useEngine } from '@envelop/core'
+import { envelop, useEngine, useSchema } from '@envelop/core'
 import { useParserCache } from '@envelop/parser-cache'
 import { useValidationCache } from '@envelop/validation-cache'
 
@@ -88,7 +97,8 @@ const getEnveloped = envelop({
 
 ## Use Your Envelop with an HTTP Server
 
-You can build a very simple GraphQL HTTP server from scratch, by using the Node.js `http` module and only these functions.
+You can build a very simple GraphQL HTTP server from scratch, by using the Node.js `http` module and
+only these functions.
 
 ```ts
 import { createServer } from 'node:http'
@@ -150,7 +160,8 @@ const httpServer = createServer(async (req, res) => {
 httpServer.listen(3000)
 ```
 
-After starting this server we can send a GraphQL operation using `curl`, yielding a response of `{"data":{"__typename":"Query"}}{:json}`.
+After starting this server we can send a GraphQL operation using `curl`, yielding a response of
+`{"data":{"__typename":"Query"}}{:json}`.
 
 ```bash
 curl \
@@ -160,8 +171,10 @@ curl \
 ```
 
 <Callout>
-  This example uses the Node.js `http` module and is a very simplified handler that does not strictly follow the
-  [GraphQL over HTTP specification](https://github.com/graphql/graphql-over-http) as it does not handle headers or
-  respect HTTP methods. For actual production usage, we recommend using Envelop with one of the popular and
-  battle-tested HTTP frameworks and servers. Check the examples on our [Integrations page](/docs/integrations).
+  This example uses the Node.js `http` module and is a very simplified handler that does not
+  strictly follow the [GraphQL over HTTP
+  specification](https://github.com/graphql/graphql-over-http) as it does not handle headers or
+  respect HTTP methods. For actual production usage, we recommend using Envelop with one of the
+  popular and battle-tested HTTP frameworks and servers. Check the examples on our [Integrations
+  page](/docs/integrations).
 </Callout>

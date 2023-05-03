@@ -13,5 +13,9 @@ export type ComposeContextArray<V> = V extends []
   ? [Ctx, ...ComposeContextArray<R>]
   : [{ error: 'ComposeContextArray-no-match'; value: V }];
 
-export type ComposeContext<V extends Plugin[]> = Spread<ComposeContextArray<TuplifyUnion<Unarray<V>>>>;
-export type ContextFrom<TEnvelop> = TEnvelop extends GetEnvelopedFn<infer Context> ? Context : never;
+export type ComposeContext<V extends Plugin[]> = Spread<
+  ComposeContextArray<TuplifyUnion<Unarray<V>>>
+>;
+export type ContextFrom<TEnvelop> = TEnvelop extends GetEnvelopedFn<infer Context>
+  ? Context
+  : never;

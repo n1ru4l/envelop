@@ -1,30 +1,36 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+import { TypeInfo } from 'graphql';
+import { Counter, register as defaultRegistry, Histogram, Summary } from 'prom-client';
 import {
-  Plugin,
+  isAsyncIterable,
+  isIntrospectionOperationString,
+  OnContextBuildingHook,
+  OnExecuteHook,
   OnExecuteHookResult,
   OnParseHook,
   OnValidateHook,
-  OnContextBuildingHook,
-  OnExecuteHook,
-  isIntrospectionOperationString,
-  isAsyncIterable,
+  Plugin,
 } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
-import { TypeInfo } from 'graphql';
-import { Summary, Counter, Histogram, register as defaultRegistry } from 'prom-client';
-import {
-  getHistogramFromConfig,
-  createHistogram,
-  createCounter,
-  shouldTraceFieldResolver,
-  FillLabelsFnParams,
-  createInternalContext,
-  extractDeprecatedFields,
-  createSummary,
-} from './utils.js';
 import { PrometheusTracingPluginConfig } from './config.js';
+import {
+  createCounter,
+  createHistogram,
+  createInternalContext,
+  createSummary,
+  extractDeprecatedFields,
+  FillLabelsFnParams,
+  getHistogramFromConfig,
+  shouldTraceFieldResolver,
+} from './utils.js';
 
-export { PrometheusTracingPluginConfig, createCounter, createHistogram, createSummary, FillLabelsFnParams };
+export {
+  PrometheusTracingPluginConfig,
+  createCounter,
+  createHistogram,
+  createSummary,
+  FillLabelsFnParams,
+};
 
 const promPluginContext = Symbol('promPluginContext');
 const promPluginExecutionStartTimeSymbol = Symbol('promPluginExecutionStartTimeSymbol');
@@ -34,32 +40,34 @@ type PluginInternalContext = {
   [promPluginExecutionStartTimeSymbol]: number;
 };
 
-export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugin<PluginInternalContext> => {
+export const usePrometheus = (
+  config: PrometheusTracingPluginConfig = {},
+): Plugin<PluginInternalContext> => {
   let typeInfo: TypeInfo | null = null;
 
   const parseHistogram = getHistogramFromConfig(
     config,
     'parse',
     'graphql_envelop_phase_parse',
-    'Time spent on running GraphQL "parse" function'
+    'Time spent on running GraphQL "parse" function',
   );
   const validateHistogram = getHistogramFromConfig(
     config,
     'validate',
     'graphql_envelop_phase_validate',
-    'Time spent on running GraphQL "validate" function'
+    'Time spent on running GraphQL "validate" function',
   );
   const contextBuildingHistogram = getHistogramFromConfig(
     config,
     'contextBuilding',
     'graphql_envelop_phase_context',
-    'Time spent on building the GraphQL context'
+    'Time spent on building the GraphQL context',
   );
   const executeHistogram = getHistogramFromConfig(
     config,
     'execute',
     'graphql_envelop_phase_execute',
-    'Time spent on running the GraphQL "execute" function'
+    'Time spent on running the GraphQL "execute" function',
   );
 
   const resolversHistogram =
@@ -70,7 +78,13 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
           histogram: new Histogram({
             name: 'graphql_envelop_execute_resolver',
             help: 'Time spent on running the GraphQL resolvers',
-            labelNames: ['operationType', 'operationName', 'fieldName', 'typeName', 'returnType'] as const,
+            labelNames: [
+              'operationType',
+              'operationName',
+              'fieldName',
+              'typeName',
+              'returnType',
+            ] as const,
             registers: [config.registry || defaultRegistry],
           }),
           fillLabelsFn: params => ({
@@ -193,7 +207,10 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
           [promPluginContext]: internalContext,
         });
 
-        parseHistogram?.histogram.observe(parseHistogram.fillLabelsFn(internalContext, context), totalTime);
+        parseHistogram?.histogram.observe(
+          parseHistogram.fillLabelsFn(internalContext, context),
+          totalTime,
+        );
 
         if (deprecationCounter && typeInfo) {
           const deprecatedFields = extractDeprecatedFields(internalContext.document!, typeInfo);
@@ -207,8 +224,8 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
                       ...internalContext,
                       deprecationInfo: depField,
                     },
-                    context
-                  )
+                    context,
+                  ),
                 )
                 .inc();
             }
@@ -250,23 +267,24 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
       }
     : undefined;
 
-  const onContextBuilding: OnContextBuildingHook<PluginInternalContext> | undefined = contextBuildingHistogram
-    ? ({ context }) => {
-        if (!context[promPluginContext]) {
-          return undefined;
+  const onContextBuilding: OnContextBuildingHook<PluginInternalContext> | undefined =
+    contextBuildingHistogram
+      ? ({ context }) => {
+          if (!context[promPluginContext]) {
+            return undefined;
+          }
+
+          const startTime = Date.now();
+
+          return () => {
+            const totalTime = (Date.now() - startTime) / 1000;
+            contextBuildingHistogram.histogram.observe(
+              contextBuildingHistogram.fillLabelsFn(context[promPluginContext], context),
+              totalTime,
+            );
+          };
         }
-
-        const startTime = Date.now();
-
-        return () => {
-          const totalTime = (Date.now() - startTime) / 1000;
-          contextBuildingHistogram.histogram.observe(
-            contextBuildingHistogram.fillLabelsFn(context[promPluginContext], context),
-            totalTime
-          );
-        };
-      }
-    : undefined;
+      : undefined;
 
   const onExecute: OnExecuteHook<PluginInternalContext> | undefined = executeHistogram
     ? ({ args }) => {
@@ -283,25 +301,40 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
           onExecuteDone: ({ result }) => {
             const totalTime = (Date.now() - startTime) / 1000;
             executeHistogram.histogram.observe(
-              executeHistogram.fillLabelsFn(args.contextValue[promPluginContext], args.contextValue),
-              totalTime
+              executeHistogram.fillLabelsFn(
+                args.contextValue[promPluginContext],
+                args.contextValue,
+              ),
+              totalTime,
             );
 
             requestTotalHistogram?.histogram.observe(
-              requestTotalHistogram.fillLabelsFn(args.contextValue[promPluginContext], args.contextValue),
-              totalTime
+              requestTotalHistogram.fillLabelsFn(
+                args.contextValue[promPluginContext],
+                args.contextValue,
+              ),
+              totalTime,
             );
 
             if (requestSummary && args.contextValue[promPluginExecutionStartTimeSymbol]) {
-              const summaryTime = (Date.now() - args.contextValue[promPluginExecutionStartTimeSymbol]) / 1000;
+              const summaryTime =
+                (Date.now() - args.contextValue[promPluginExecutionStartTimeSymbol]) / 1000;
 
               requestSummary.summary.observe(
-                requestSummary.fillLabelsFn(args.contextValue[promPluginContext], args.contextValue),
-                summaryTime
+                requestSummary.fillLabelsFn(
+                  args.contextValue[promPluginContext],
+                  args.contextValue,
+                ),
+                summaryTime,
               );
             }
 
-            if (errorsCounter && !isAsyncIterable(result) && result.errors && result.errors.length > 0) {
+            if (
+              errorsCounter &&
+              !isAsyncIterable(result) &&
+              result.errors &&
+              result.errors.length > 0
+            ) {
               for (const error of result.errors) {
                 errorsCounter.counter
                   .labels(
@@ -311,8 +344,8 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
                         errorPhase: 'execute',
                         error,
                       },
-                      args.contextValue
-                    )
+                      args.contextValue,
+                    ),
                   )
                   .inc();
               }
@@ -348,9 +381,12 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
                 ...context[promPluginContext],
                 info,
               };
-              resolversHistogram.histogram.observe(resolversHistogram.fillLabelsFn(paramsCtx, context), totalTime);
+              resolversHistogram.histogram.observe(
+                resolversHistogram.fillLabelsFn(paramsCtx, context),
+                totalTime,
+              );
             };
-          })
+          }),
         );
       }
     },

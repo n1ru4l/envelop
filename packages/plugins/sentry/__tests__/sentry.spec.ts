@@ -1,11 +1,11 @@
-import { useSentry } from '@envelop/sentry';
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import { GraphQLError } from 'graphql';
 import createSentryTestkit from 'sentry-testkit';
+import { useMaskedErrors } from '@envelop/core';
+import { useSentry } from '@envelop/sentry';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import * as Sentry from '@sentry/node';
 import '@sentry/tracing';
-import { GraphQLError } from 'graphql';
-import { useMaskedErrors } from '@envelop/core';
 
 describe('sentry', () => {
   test('report unexpected error', async () => {

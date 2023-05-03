@@ -1,9 +1,10 @@
 ## `@envelop/preload-assets`
 
-Inject a function for registering assets that should be preloaded on the client.
-The registered assets will be added under the `extensions.preloadAssets` key on the execution result.
+Inject a function for registering assets that should be preloaded on the client. The registered
+assets will be added under the `extensions.preloadAssets` key on the execution result.
 
-On your client network layer you can register a handler for preloading the given resources as soon as the operation result is arriving on the client!
+On your client network layer you can register a handler for preloading the given resources as soon
+as the operation result is arriving on the client!
 
 ## Getting Started
 
@@ -12,10 +13,10 @@ yarn add @envelop/preload-assets
 ```
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
+import { makeExecutableSchema } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { usePreloadAssets } from '@envelop/preload-asset'
-import { makeExecutableSchema } from 'graphql'
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `

@@ -4,20 +4,26 @@
 
 ### Patch Changes
 
-- [#1725](https://github.com/n1ru4l/envelop/pull/1725) [`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957) Thanks [@n1ru4l](https://github.com/n1ru4l)! - dependencies updates:
+- [#1725](https://github.com/n1ru4l/envelop/pull/1725)
+  [`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957)
+  Thanks [@n1ru4l](https://github.com/n1ru4l)! - dependencies updates:
 
-  - Updated dependency [`tslib@^2.5.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.5.0) (from `^2.4.0`, in `dependencies`)
+  - Updated dependency [`tslib@^2.5.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.5.0) (from
+    `^2.4.0`, in `dependencies`)
 
-- Updated dependencies [[`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957)]:
+- Updated dependencies
+  [[`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957)]:
   - @envelop/core@3.0.6
-- Updated dependencies [[`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957)]:
+- Updated dependencies
+  [[`c1eb2c09`](https://github.com/n1ru4l/envelop/commit/c1eb2c09ac535b076a5c13430c3892d98f7ef957)]:
   - @envelop/extended-validation@2.0.6
 
 ## 5.0.5
 
 ### Patch Changes
 
-- Updated dependencies [[`270249cf`](https://github.com/n1ru4l/envelop/commit/270249cfb7650f8ad64f0167bb45a99475a03b04)]:
+- Updated dependencies
+  [[`270249cf`](https://github.com/n1ru4l/envelop/commit/270249cfb7650f8ad64f0167bb45a99475a03b04)]:
   - @envelop/core@3.0.5
 - Updated dependencies []:
   - @envelop/extended-validation@2.0.5
@@ -35,7 +41,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`6b48ef96`](https://github.com/n1ru4l/envelop/commit/6b48ef962020eb7dfd2918626b8a394bff673e4f)]:
+- Updated dependencies
+  [[`6b48ef96`](https://github.com/n1ru4l/envelop/commit/6b48ef962020eb7dfd2918626b8a394bff673e4f)]:
   - @envelop/core@3.0.3
 - Updated dependencies []:
   - @envelop/extended-validation@2.0.3
@@ -44,7 +51,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`22f5ccfb`](https://github.com/n1ru4l/envelop/commit/22f5ccfbe69eb052cda6c1908425b63e3d906243)]:
+- Updated dependencies
+  [[`22f5ccfb`](https://github.com/n1ru4l/envelop/commit/22f5ccfbe69eb052cda6c1908425b63e3d906243)]:
   - @envelop/core@3.0.2
 - Updated dependencies []:
   - @envelop/extended-validation@2.0.2
@@ -53,7 +61,21 @@
 
 ### Major Changes
 
-- Updated dependencies [[`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f), [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f), [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f), [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f), [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f), [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f), [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f), [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f), [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f), [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f), [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f), [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f), [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f), [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)]:
+- Updated dependencies
+  [[`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f),
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f),
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f),
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f),
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f),
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f),
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f),
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f),
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f),
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f),
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f),
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f),
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f),
+  [`dc1e24b5`](https://github.com/n1ru4l/envelop/commit/dc1e24b5340ed7eba300a702b17f9be5cff65a8f)]:
   - @envelop/core@3.0.0
 
 ### Patch Changes
@@ -65,9 +87,12 @@
 
 ### Minor Changes
 
-- [#1528](https://github.com/n1ru4l/envelop/pull/1528) [`50f214a2`](https://github.com/n1ru4l/envelop/commit/50f214a26cb6595f8ef4dda43cd32dd28d7fc67d) Thanks [@{](https://github.com/{)! - give access to execute args in `validateUser` function.
+- [#1528](https://github.com/n1ru4l/envelop/pull/1528)
+  [`50f214a2`](https://github.com/n1ru4l/envelop/commit/50f214a26cb6595f8ef4dda43cd32dd28d7fc67d)
+  Thanks [@{](https://github.com/{)! - give access to execute args in `validateUser` function.
 
-  This is useful in conjunction with the `fieldAuthExtension` parameter to achieve custom per field validation:
+  This is useful in conjunction with the `fieldAuthExtension` parameter to achieve custom per field
+  validation:
 
   ```ts
   import { ValidateUserFn } from '@envelop/generic-auth'
@@ -107,15 +132,16 @@
 
 ### Minor Changes
 
-- [#1499](https://github.com/n1ru4l/envelop/pull/1499) [`1f7af02b`](https://github.com/n1ru4l/envelop/commit/1f7af02b9f1a16058a6d69fcd48425a93be655c6) Thanks [@viniciuspalma](https://github.com/viniciuspalma)! - Adding tslib to package dependencies
+- [#1499](https://github.com/n1ru4l/envelop/pull/1499)
+  [`1f7af02b`](https://github.com/n1ru4l/envelop/commit/1f7af02b9f1a16058a6d69fcd48425a93be655c6)
+  Thanks [@viniciuspalma](https://github.com/viniciuspalma)! - Adding tslib to package dependencies
 
-  Projects that currently are using yarn Berry with PnP or any strict dependency
-  resolver, that requires that all dependencies are specified on
-  package.json otherwise it would endue in an error if not treated correct
+  Projects that currently are using yarn Berry with PnP or any strict dependency resolver, that
+  requires that all dependencies are specified on package.json otherwise it would endue in an error
+  if not treated correct
 
-  Since https://www.typescriptlang.org/tsconfig#importHelpers is currently
-  being used, tslib should be exported as a dependency to external runners
-  get the proper import.
+  Since https://www.typescriptlang.org/tsconfig#importHelpers is currently being used, tslib should
+  be exported as a dependency to external runners get the proper import.
 
   Change on each package:
 
@@ -128,19 +154,24 @@
   }
   ```
 
-- Updated dependencies [[`1f7af02b`](https://github.com/n1ru4l/envelop/commit/1f7af02b9f1a16058a6d69fcd48425a93be655c6), [`ae7bc9a3`](https://github.com/n1ru4l/envelop/commit/ae7bc9a36abd595b0a91f7b4e133017d3eb99a4a)]:
+- Updated dependencies
+  [[`1f7af02b`](https://github.com/n1ru4l/envelop/commit/1f7af02b9f1a16058a6d69fcd48425a93be655c6),
+  [`ae7bc9a3`](https://github.com/n1ru4l/envelop/commit/ae7bc9a36abd595b0a91f7b4e133017d3eb99a4a)]:
   - @envelop/core@2.6.0
 
 ### Patch Changes
 
-- Updated dependencies [[`1f7af02b`](https://github.com/n1ru4l/envelop/commit/1f7af02b9f1a16058a6d69fcd48425a93be655c6)]:
+- Updated dependencies
+  [[`1f7af02b`](https://github.com/n1ru4l/envelop/commit/1f7af02b9f1a16058a6d69fcd48425a93be655c6)]:
   - @envelop/extended-validation@1.9.0
 
 ## 4.4.0
 
 ### Minor Changes
 
-- Updated dependencies [[`5a5f5c04`](https://github.com/n1ru4l/envelop/commit/5a5f5c04177b9e1379fd77db5d6383160879d449), [`d828f129`](https://github.com/n1ru4l/envelop/commit/d828f1291254a0f9dfdc3654611087859e4c9708)]:
+- Updated dependencies
+  [[`5a5f5c04`](https://github.com/n1ru4l/envelop/commit/5a5f5c04177b9e1379fd77db5d6383160879d449),
+  [`d828f129`](https://github.com/n1ru4l/envelop/commit/d828f1291254a0f9dfdc3654611087859e4c9708)]:
   - @envelop/core@2.5.0
 
 ### Patch Changes
@@ -183,9 +214,13 @@
 
 ### Patch Changes
 
-- ddd0e4f: `useGenericAuth`'s `ContextType` generic used to accept the types that has an index signature which makes it impossible to use it with "fixed types". Now it defaults to `DefaultContext` without extending it so any kind of type can be used as `ContextType`.
+- ddd0e4f: `useGenericAuth`'s `ContextType` generic used to accept the types that has an index
+  signature which makes it impossible to use it with "fixed types". Now it defaults to
+  `DefaultContext` without extending it so any kind of type can be used as `ContextType`.
 
-  Also `useGenericAuth` now takes a third generic which is the name of the field name that contains the user data in the context. It can be also inferred from `contextFieldName` of the plugin options.
+  Also `useGenericAuth` now takes a third generic which is the name of the field name that contains
+  the user data in the context. It can be also inferred from `contextFieldName` of the plugin
+  options.
 
 ## 4.2.3
 
@@ -248,21 +283,26 @@
 
 ### Major Changes
 
-- 7f78839: Use the extended validation phase instead of resolver wrapping for applying authentication rules.
+- 7f78839: Use the extended validation phase instead of resolver wrapping for applying
+  authentication rules.
 
-  `onResolverCalled` results in wrapping all resolvers in the schema and can be a severe performance bottle-neck.
+  `onResolverCalled` results in wrapping all resolvers in the schema and can be a severe performance
+  bottle-neck.
 
-  Now the authorization rules are applied statically before running any execution logic, which results in the WHOLE operation being rejected as soon as a field in the selection set does not have sufficient permissions.
+  Now the authorization rules are applied statically before running any execution logic, which
+  results in the WHOLE operation being rejected as soon as a field in the selection set does not
+  have sufficient permissions.
 
   The mode `protect-auth-directive` has been renamed to `protect-granular`.
 
   The `authDirectiveName` option got renamed to `directiveOrExtensionFieldName`.
 
-  Authorization rules for the `protect-all` and `protect-granular`, can be applied via field extensions:
+  Authorization rules for the `protect-all` and `protect-granular`, can be applied via field
+  extensions:
 
   ```typescript
   // schema.ts
-  import { GraphQLObjectType, GraphQLInt } from 'graphql'
+  import { GraphQLInt, GraphQLObjectType } from 'graphql'
 
   const GraphQLQueryType = new GraphQLObjectType({
     name: 'Query',
@@ -279,11 +319,16 @@
   })
   ```
 
-  The `validateUser` function is no longer attached to the `context` object passed to the resolvers. You can add your own `validateUser` function to the context using `useExtendContext`.
+  The `validateUser` function is no longer attached to the `context` object passed to the resolvers.
+  You can add your own `validateUser` function to the context using `useExtendContext`.
 
   ```typescript
   const getEnveloped = envelop({
-    plugins: [useSchema(schema), useGenericAuth(options), useExtendContext(() => ({ validateUser }))]
+    plugins: [
+      useSchema(schema),
+      useGenericAuth(options),
+      useExtendContext(() => ({ validateUser }))
+    ]
   })
   ```
 
@@ -321,7 +366,8 @@
 
 - b1a0331: Properly list `@envelop/core` as a `peerDependency` in plugins.
 
-  This resolves issues where the bundled envelop plugins published to npm had logic inlined from the `@envelop/core` package, causing `instanceof` check of `EnvelopError` to fail.
+  This resolves issues where the bundled envelop plugins published to npm had logic inlined from the
+  `@envelop/core` package, causing `instanceof` check of `EnvelopError` to fail.
 
 - Updated dependencies [b1a0331]
   - @envelop/core@1.6.1

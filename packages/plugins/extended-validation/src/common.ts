@@ -1,10 +1,13 @@
 import { ASTVisitor, DirectiveNode, ExecutionArgs, ValidationContext } from 'graphql';
 
-export type ExtendedValidationRule = (context: ValidationContext, executionArgs: ExecutionArgs) => ASTVisitor;
+export type ExtendedValidationRule = (
+  context: ValidationContext,
+  executionArgs: ExecutionArgs,
+) => ASTVisitor;
 
 export function getDirectiveFromAstNode(
   astNode: { directives?: ReadonlyArray<DirectiveNode> },
-  names: string | string[]
+  names: string | string[],
 ): null | DirectiveNode {
   const directives = astNode.directives || [];
   const namesArr = Array.isArray(names) ? names : [names];

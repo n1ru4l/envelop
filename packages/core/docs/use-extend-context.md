@@ -3,8 +3,8 @@
 Easily extends the context with custom fields.
 
 ```ts
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine, useExtendContext } from '@envelop/core'
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
   plugins: [

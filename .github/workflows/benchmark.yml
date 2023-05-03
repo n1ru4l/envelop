@@ -13,28 +13,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Use Node
-        uses: actions/setup-node@master
+      - name: Setup env
+        uses: the-guild-org/shared-config/setup@main
         with:
-          node-version: 17
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache Yarn
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-17-16-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-17-16-yarn-
-
-      - name: Install Dependencies using Yarn
-        run: yarn install --ignore-engines && git checkout yarn.lock
+          nodeVersion: 17
+          packageManager: 'pnpm'
 
       - name: Build
-        run: yarn build
+        run: pnpm run build
 
       - name: Setup K6
         run: |
@@ -45,8 +31,10 @@ jobs:
 
       - name: GraphQL API
         run: |
-          yarn loadtest:start-server &
-          yarn wait-on tcp:3000
+          pnpm run loadtest:start-server &
+          pnpm wait-on tcp:3000
 
       - name: Run Benchmark
-        run: k6 -e GITHUB_PR=${{ github.event.number }} -e GITHUB_SHA=${{ github.sha }} -e GITHUB_TOKEN=${{secrets.GH_API_TOKEN}} -e GRAPHQL_HOSTNAME="[::1]" run ./benchmark/k6.js
+        run:
+          k6 -e GITHUB_PR=${{ github.event.number }} -e GITHUB_SHA=${{ github.sha }} -e
+          GITHUB_TOKEN=${{secrets.GH_API_TOKEN}} -e GRAPHQL_HOSTNAME="[::1]" run ./benchmark/k6.js

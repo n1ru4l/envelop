@@ -1,5 +1,5 @@
-import { DefaultContext } from '@envelop/core';
 import { DocumentNode } from 'graphql';
+import { DefaultContext } from '@envelop/core';
 
 export interface PersistedOperationsStore {
   /**
@@ -12,5 +12,5 @@ export interface PersistedOperationsStore {
 }
 
 export type PersistedOperationsFunctionStore<ContextType = DefaultContext> = (
-  context: Readonly<ContextType>
+  context: Readonly<ContextType>,
 ) => PersistedOperationsStore;

@@ -1,9 +1,12 @@
+import Redis from 'ioredis';
+import { useResponseCache } from '@envelop/response-cache';
 import { createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import Redis from 'ioredis';
-
-import { createRedisCache, defaultBuildRedisEntityId, defaultBuildRedisOperationResultCacheKey } from '../src/index.js';
-import { useResponseCache } from '@envelop/response-cache';
+import {
+  createRedisCache,
+  defaultBuildRedisEntityId,
+  defaultBuildRedisOperationResultCacheKey,
+} from '../src/index.js';
 
 jest.mock('ioredis', () => require('ioredis-mock/jest'));
 
@@ -180,7 +183,7 @@ describe('useResponseCache with Redis cache', () => {
       `,
       {
         id: 1,
-      }
+      },
     );
 
     await testInstance.execute(query);
@@ -495,7 +498,7 @@ describe('useResponseCache with Redis cache', () => {
 
     const testInstance = createTestkit(
       [useResponseCache({ session: () => null, cache, includeExtensionMetadata: true })],
-      schema
+      schema,
     );
 
     const query = /* GraphQL */ `
@@ -533,7 +536,7 @@ describe('useResponseCache with Redis cache', () => {
       `,
       {
         id: 1,
-      }
+      },
     );
 
     cacheHitMaybe = mutationResult['extensions']['responseCache']['hit'];
@@ -601,7 +604,7 @@ describe('useResponseCache with Redis cache', () => {
 
     const testInstance = createTestkit(
       [useResponseCache({ session: () => null, cache, includeExtensionMetadata: true })],
-      schema
+      schema,
     );
 
     const result = await testInstance.execute(
@@ -614,7 +617,7 @@ describe('useResponseCache with Redis cache', () => {
       `,
       {
         id: 1,
-      }
+      },
     );
 
     const responseCache = result['extensions']['responseCache'];
@@ -651,7 +654,7 @@ describe('useResponseCache with Redis cache', () => {
             },
           ],
         },
-      ].slice(0, limit)
+      ].slice(0, limit),
     );
 
     const schema = makeExecutableSchema({
@@ -762,7 +765,10 @@ describe('useResponseCache with Redis cache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ session: () => null, cache, ttl: 100 })], schema);
+    const testInstance = createTestkit(
+      [useResponseCache({ session: () => null, cache, ttl: 100 })],
+      schema,
+    );
 
     const query = /* GraphQL */ `
       query test {
@@ -851,7 +857,7 @@ describe('useResponseCache with Redis cache', () => {
           },
         }),
       ],
-      schema
+      schema,
     );
 
     const query = /* GraphQL */ `
@@ -872,14 +878,14 @@ describe('useResponseCache with Redis cache', () => {
       {},
       {
         sessionId: 1,
-      }
+      },
     );
     await testInstance.execute(
       query,
       {},
       {
         sessionId: 1,
-      }
+      },
     );
     expect(spy).toHaveBeenCalledTimes(1);
 
@@ -891,7 +897,7 @@ describe('useResponseCache with Redis cache', () => {
       {},
       {
         sessionId: 2,
-      }
+      },
     );
     expect(spy).toHaveBeenCalledTimes(2);
 
@@ -950,7 +956,7 @@ describe('useResponseCache with Redis cache', () => {
 
     const testInstance = createTestkit(
       [useResponseCache({ session: () => null, cache, ignoredTypes: ['Comment'] })],
-      schema
+      schema,
     );
 
     const query = /* GraphQL */ `
@@ -1048,7 +1054,7 @@ describe('useResponseCache with Redis cache', () => {
           },
         }),
       ],
-      schema
+      schema,
     );
 
     const query = /* GraphQL */ `
@@ -1139,7 +1145,7 @@ describe('useResponseCache with Redis cache', () => {
           },
         }),
       ],
-      schema
+      schema,
     );
 
     const query = /* GraphQL */ `

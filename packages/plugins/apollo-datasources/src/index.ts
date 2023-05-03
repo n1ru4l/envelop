@@ -1,7 +1,7 @@
-import { Plugin } from '@envelop/core';
+import type { DataSource } from 'apollo-datasource';
 import { InMemoryLRUCache } from 'apollo-server-caching';
 import type { KeyValueCache } from 'apollo-server-caching';
-import type { DataSource } from 'apollo-datasource';
+import { Plugin } from '@envelop/core';
 
 export interface ApolloDataSourcesConfig {
   dataSources(): {
@@ -23,7 +23,7 @@ export function useApolloDataSources(config: ApolloDataSourcesConfig): Plugin {
             dataSource.initialize({
               context: args.contextValue,
               cache,
-            })
+            }),
           );
         }
       }
@@ -32,7 +32,7 @@ export function useApolloDataSources(config: ApolloDataSourcesConfig): Plugin {
 
       if ('dataSources' in args.contextValue) {
         throw new Error(
-          'Please use the dataSources config option instead of putting dataSources on the context yourself.'
+          'Please use the dataSources config option instead of putting dataSources on the context yourself.',
         );
       }
 

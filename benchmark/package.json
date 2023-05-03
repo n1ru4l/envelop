@@ -1,0 +1,20 @@
+{
+  "name": "@envelop/benchmark",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "loadtest:run": "k6 -e GRAPHQL_HOSTNAME=0.0.0.0 run ./k6.js",
+    "loadtest:start-server": "NODE_ENV=production node ./app.js"
+  },
+  "dependencies": {
+    "@envelop/core": "*",
+    "@envelop/graphql-jit": "*",
+    "@envelop/parser-cache": "*",
+    "@envelop/prometheus": "*",
+    "@envelop/validation-cache": "*",
+    "@graphql-tools/schema": "8.5.1",
+    "faker": "5.5.3",
+    "fastify": "3.29.5",
+    "graphql": "16.6.0"
+  }
+}

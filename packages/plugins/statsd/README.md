@@ -1,6 +1,7 @@
 ## `@envelop/statsd`
 
-This plugin tracks the complete execution flow, and reports metrics using StatsD (based on `hot-shots`).
+This plugin tracks the complete execution flow, and reports metrics using StatsD (based on
+`hot-shots`).
 
 Compatible with:
 
@@ -25,10 +26,10 @@ yarn add hot-shots @envelop/statsd
 ## Usage Example
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
+import StatsD from 'hot-shots'
 import { envelop, useEngine } from '@envelop/core'
 import { useStatsD } from '@envelop/statsd'
-import StatsD from 'hot-shots'
 
 const client = new StatsD({
   port: 8020,

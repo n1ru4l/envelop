@@ -1,5 +1,5 @@
 import { Plugin } from '@envelop/core';
-import { createFilterOperationTypeRule, AllowedOperations } from './filter-operation-type-rule.js';
+import { AllowedOperations, createFilterOperationTypeRule } from './filter-operation-type-rule.js';
 
 export { AllowedOperations };
 

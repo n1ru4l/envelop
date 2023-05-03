@@ -1,8 +1,14 @@
 /* eslint-disable no-console */
 import fastify from 'fastify';
-import { getGraphQLParameters, processRequest, renderGraphiQL, sendResult, shouldRenderGraphiQL } from 'graphql-helix';
+import { execute, parse, subscribe, validate } from 'graphql';
+import {
+  getGraphQLParameters,
+  processRequest,
+  renderGraphiQL,
+  sendResult,
+  shouldRenderGraphiQL,
+} from 'graphql-helix';
 import { envelop, useLogger, useSchema } from '@envelop/core';
-import { parse, validate, execute, subscribe } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const schema = makeExecutableSchema({

@@ -1,4 +1,5 @@
 import { ObjMap } from './utils.js';
+
 export interface ExecutionArgs {
   schema: any;
   document: any;
@@ -13,7 +14,13 @@ export interface ExecutionArgs {
 declare function parse(source: any, options?: any): any;
 declare function execute(args: ExecutionArgs): any;
 declare function subscribe(args: ExecutionArgs): any;
-declare function validate(schema: any, documentAST: any, rules?: any, options?: any, typeInfo?: any): any;
+declare function validate(
+  schema: any,
+  documentAST: any,
+  rules?: any,
+  options?: any,
+  typeInfo?: any,
+): any;
 
 export type ExecuteFunction = typeof execute;
 
@@ -55,7 +62,7 @@ export type PolymorphicExecuteArguments =
       ExecutionArgs['variableValues'],
       ExecutionArgs['operationName'],
       ExecutionArgs['fieldResolver'],
-      ExecutionArgs['typeResolver']
+      ExecutionArgs['typeResolver'],
     ];
 
 /** @private */

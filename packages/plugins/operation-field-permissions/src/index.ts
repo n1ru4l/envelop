@@ -1,15 +1,15 @@
-import { Plugin, useExtendContext } from '@envelop/core';
-import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
 import {
-  isUnionType,
   FieldNode,
-  GraphQLObjectType,
-  isObjectType,
-  isInterfaceType,
-  isIntrospectionType,
   getNamedType,
   GraphQLError,
+  GraphQLObjectType,
+  isInterfaceType,
+  isIntrospectionType,
+  isObjectType,
+  isUnionType,
 } from 'graphql';
+import { Plugin, useExtendContext } from '@envelop/core';
+import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
 
 type PromiseOrValue<T> = T | Promise<T>;
 
@@ -29,7 +29,8 @@ const getWildcardTypes = (scope: Set<string>): Set<string> => {
   return wildcardTypes;
 };
 
-const toSet = (input: string | Set<string>) => (typeof input === 'string' ? new Set([input]) : input);
+const toSet = (input: string | Set<string>) =>
+  typeof input === 'string' ? new Set([input]) : input;
 
 type ScopeContext = {
   allowAll: boolean;
@@ -125,7 +126,7 @@ const defaultFormatError = (schemaCoordinate: string) =>
   `Insufficient permissions for selecting '${schemaCoordinate}'.`;
 
 export const useOperationFieldPermissions = <TContext>(
-  opts: OperationScopeOptions<TContext>
+  opts: OperationScopeOptions<TContext>,
 ): Plugin<{ [OPERATION_PERMISSIONS_SYMBOL]: ScopeContext }> => {
   return {
     onPluginInit({ addPlugin }) {
@@ -136,7 +137,7 @@ export const useOperationFieldPermissions = <TContext>(
               formatError: opts.formatError ?? defaultFormatError,
             }),
           ],
-        })
+        }),
       );
 
       addPlugin(
@@ -157,7 +158,7 @@ export const useOperationFieldPermissions = <TContext>(
           return {
             [OPERATION_PERMISSIONS_SYMBOL]: scopeContext,
           };
-        })
+        }),
       );
     },
   };

@@ -101,7 +101,9 @@ export const createRedisCache = (params: RedisCacheParameter): Cache => {
 
       for (const { typename, id } of entitiesToRemove) {
         invalidationKeys.push(
-          await buildEntityInvalidationsKeys(id != null ? buildRedisEntityId(typename, id) : typename)
+          await buildEntityInvalidationsKeys(
+            id != null ? buildRedisEntityId(typename, id) : typename,
+          ),
         );
       }
 
@@ -114,5 +116,5 @@ export const createRedisCache = (params: RedisCacheParameter): Cache => {
 };
 
 export const defaultBuildRedisEntityId: BuildRedisEntityId = (typename, id) => `${typename}:${id}`;
-export const defaultBuildRedisOperationResultCacheKey: BuildRedisOperationResultCacheKey = responseId =>
-  `operations:${responseId}`;
+export const defaultBuildRedisOperationResultCacheKey: BuildRedisOperationResultCacheKey =
+  responseId => `operations:${responseId}`;

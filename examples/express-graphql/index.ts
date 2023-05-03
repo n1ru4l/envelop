@@ -1,8 +1,8 @@
-import { envelop, useLogger, useSchema, useEngine } from '@envelop/core';
-import * as GraphQLJS from 'graphql';
-import { makeExecutableSchema } from '@graphql-tools/schema';
 import express from 'express';
 import { graphqlHTTP } from 'express-graphql';
+import * as GraphQLJS from 'graphql';
+import { envelop, useEngine, useLogger, useSchema } from '@envelop/core';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const schema = makeExecutableSchema({
   typeDefs: /* GraphQL */ `
@@ -35,7 +35,7 @@ app.use(
       context: await contextFactory(),
       customExecuteFn: execute,
     };
-  })
+  }),
 );
 
 app.listen(4000);

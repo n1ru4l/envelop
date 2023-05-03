@@ -1,8 +1,11 @@
 ## `@envelop/opentelemetry`
 
-This plugins integrates [Open Telemetry](https://opentelemetry.io/) tracing with your GraphQL execution. It also collects GraphQL execution errors and reports it as Exceptions.
+This plugins integrates [Open Telemetry](https://opentelemetry.io/) tracing with your GraphQL
+execution. It also collects GraphQL execution errors and reports it as Exceptions.
 
-You can use this plugin with any kind of Open Telemetry [tracer](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/api.md#tracer), and integrate it to any tracing/metric platform that supports this standard.
+You can use this plugin with any kind of Open Telemetry
+[tracer](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/api.md#tracer),
+and integrate it to any tracing/metric platform that supports this standard.
 
 ## Getting Started
 
@@ -15,7 +18,7 @@ yarn add @envelop/opentelemetry
 By default, this plugin prints the collected telemetry to the console:
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useOpenTelemetry } from '@envelop/opentelemetry'
 
@@ -32,14 +35,15 @@ const getEnveloped = envelop({
 })
 ```
 
-If you wish to use custom tracer/exporter, create it and pass it. This example integrates Jaeger tracer:
+If you wish to use custom tracer/exporter, create it and pass it. This example integrates Jaeger
+tracer:
 
 ```ts
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { useOpenTelemetry } from '@envelop/opentelemetry'
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger'
-import { SimpleSpanProcessor, BasicTracerProvider } from '@opentelemetry/sdk-trace-base'
+import { BasicTracerProvider, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base'
 
 const exporter = new JaegerExporter({
   serviceName: 'my-service-name'

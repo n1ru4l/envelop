@@ -1,9 +1,9 @@
 /* eslint-disable no-undef */
-import { check } from 'k6';
-import { graphql, checkNoErrors } from './utils.js';
-import { Trend } from 'k6/metrics';
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';
 import { githubComment } from 'https://raw.githubusercontent.com/dotansimha/k6-github-pr-comment/master/lib.js';
+import { check } from 'k6';
+import { Trend } from 'k6/metrics';
+import { checkNoErrors, graphql } from './utils.js';
 
 const DURATION = 30;
 const VUS = 10;
@@ -121,16 +121,20 @@ export function handleSummary(data) {
 
       if (thresholds.failures) {
         result.push(
-          `**Performance regression detected**: it seems like your Pull Request adds some extra latency to the GraphQL requests, or to envelop runtime.`
+          `**Performance regression detected**: it seems like your Pull Request adds some extra latency to the GraphQL requests, or to envelop runtime.`,
         );
       }
 
       if (checks.failures) {
-        result.push('**Failed assertions detected**: some GraphQL operations included in the loadtest are failing.');
+        result.push(
+          '**Failed assertions detected**: some GraphQL operations included in the loadtest are failing.',
+        );
       }
 
       if (!passes) {
-        result.push(`> If the performance regression is expected, please increase the failing threshold.`);
+        result.push(
+          `> If the performance regression is expected, please increase the failing threshold.`,
+        );
       }
 
       return result.join('\n');

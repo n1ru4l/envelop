@@ -1,3 +1,5 @@
+import { execute, subscribe } from 'graphql';
+import LRU from 'lru-cache';
 import {
   assertSingleExecutionValue,
   assertStreamExecutionValue,
@@ -5,9 +7,7 @@ import {
   createTestkit,
 } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { execute, subscribe } from 'graphql';
-import { useGraphQlJit, JITCache } from '../src/index.js';
-import LRU from 'lru-cache';
+import { JITCache, useGraphQlJit } from '../src/index.js';
 
 describe('useGraphQlJit', () => {
   const schema = makeExecutableSchema({
@@ -45,7 +45,7 @@ describe('useGraphQlJit', () => {
           onExecute: onExecuteSpy,
         },
       ],
-      schema
+      schema,
     );
 
     await testInstance.execute(`query { test }`);
@@ -64,7 +64,7 @@ describe('useGraphQlJit', () => {
           onSubscribe: onSubscribeSpy,
         },
       ],
-      schema
+      schema,
     );
 
     await testInstance.execute(`subscription { count }`);
@@ -82,13 +82,13 @@ describe('useGraphQlJit', () => {
           {},
           {
             enableIf: () => false,
-          }
+          },
         ),
         {
           onExecute: onExecuteSpy,
         },
       ],
-      schema
+      schema,
     );
 
     await testInstance.execute(`query { test }`);
@@ -107,13 +107,13 @@ describe('useGraphQlJit', () => {
           {},
           {
             enableIf: () => false,
-          }
+          },
         ),
         {
           onSubscribe: onSubscribeSpy,
         },
       ],
-      schema
+      schema,
     );
 
     await testInstance.execute(`subscription { count }`);
@@ -151,10 +151,10 @@ describe('useGraphQlJit', () => {
           {},
           {
             cache,
-          }
+          },
         ),
       ],
-      schema
+      schema,
     );
 
     await testInstance.execute(`query { test }`);

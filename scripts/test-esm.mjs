@@ -1,7 +1,7 @@
-import globby from 'globby';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import chalk from 'chalk';
+import globby from 'globby';
 
 process.env.NEW_RELIC_APP_NAME = 'TEST';
 
@@ -28,7 +28,7 @@ async function main() {
           console.error(color('\n-----\n\n'));
           fail.push(mjsPath);
         });
-    })
+    }),
   );
   ok.length && console.log(chalk.blue(`${ok.length} OK: ${ok.join(' | ')}`));
   fail.length && console.error(chalk.red(`${fail.length} Fail: ${fail.join(' | ')}`));

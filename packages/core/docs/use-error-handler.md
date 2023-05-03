@@ -3,8 +3,8 @@
 This plugin triggers a custom function when execution encounters an error.
 
 ```ts
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine, useErrorHandler } from '@envelop/core'
-import { parse, validate, specifiedRules, execute, subscribe } from 'graphql'
 
 const getEnveloped = envelop({
   plugins: [

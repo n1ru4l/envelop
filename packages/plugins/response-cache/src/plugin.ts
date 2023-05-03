@@ -1,11 +1,19 @@
-import { Plugin, Maybe, isAsyncIterable, ExecutionResult, ObjMap } from '@envelop/core';
-import { visitResult } from '@graphql-tools/utils';
-import { visit, TypeInfo, visitWithTypeInfo, ExecutionArgs, getOperationAST, Kind, SelectionSetNode } from 'graphql';
 import jsonStableStringify from 'fast-json-stable-stringify';
-import type { Cache, CacheEntityRecord } from './cache.js';
-import { createInMemoryCache } from './in-memory-cache.js';
-import { hashSHA256 } from './hash-sha256.js';
+import {
+  ExecutionArgs,
+  getOperationAST,
+  Kind,
+  SelectionSetNode,
+  TypeInfo,
+  visit,
+  visitWithTypeInfo,
+} from 'graphql';
+import { ExecutionResult, isAsyncIterable, Maybe, ObjMap, Plugin } from '@envelop/core';
+import { visitResult } from '@graphql-tools/utils';
 import { defaultGetDocumentString, useCacheDocumentString } from './cache-document-str.js';
+import type { Cache, CacheEntityRecord } from './cache.js';
+import { hashSHA256 } from './hash-sha256.js';
+import { createInMemoryCache } from './in-memory-cache.js';
 
 /**
  * Function for building the response cache key based on the input parameters
@@ -23,7 +31,10 @@ export type BuildResponseCacheKeyFunction = (params: {
 
 export type GetDocumentStringFunction = (executionArgs: ExecutionArgs) => string;
 
-export type ShouldCacheResultFunction = (params: { cacheKey: string; result: ExecutionResult }) => Boolean;
+export type ShouldCacheResultFunction = (params: {
+  cacheKey: string;
+  result: ExecutionResult;
+}) => Boolean;
 
 export type UseResponseCacheParameter<PluginContext extends Record<string, any> = {}> = {
   cache?: Cache;
@@ -124,7 +135,7 @@ export const defaultBuildResponseCacheKey: BuildResponseCacheKeyFunction = param
       params.operationName ?? '',
       jsonStableStringify(params.variableValues ?? {}),
       params.sessionId ?? '',
-    ].join('|')
+    ].join('|'),
   );
 
 /**
@@ -180,8 +191,10 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   buildResponseCacheKey = defaultBuildResponseCacheKey,
   getDocumentString = defaultGetDocumentString,
   shouldCacheResult = defaultShouldCacheResult,
-  // eslint-disable-next-line dot-notation
-  includeExtensionMetadata = typeof process !== 'undefined' ? process.env['NODE_ENV'] === 'development' : false,
+  includeExtensionMetadata = typeof process !== 'undefined'
+    ? // eslint-disable-next-line dot-notation
+      process.env['NODE_ENV'] === 'development'
+    : false,
 }: UseResponseCacheParameter<PluginContext>): Plugin<PluginContext> {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
 
@@ -199,7 +212,9 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       const newDocument = visit(onExecuteParams.args.document, {
         SelectionSet(node): SelectionSetNode {
           if (
-            !node.selections.some(selection => selection.kind === Kind.FIELD && selection.name.value === '__typename')
+            !node.selections.some(
+              selection => selection.kind === Kind.FIELD && selection.name.value === '__typename',
+            )
           ) {
             documentChanged = true;
             return {
@@ -302,18 +317,23 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
                   },
                 });
               },
-            }
-          )
+            },
+          ),
         );
 
-      const operationAST = getOperationAST(onExecuteParams.args.document, onExecuteParams.args.operationName);
+      const operationAST = getOperationAST(
+        onExecuteParams.args.document,
+        onExecuteParams.args.operationName,
+      );
 
       if (invalidateViaMutation !== false && operationAST?.operation === 'mutation') {
         return {
           onExecuteDone({ result, setResult }) {
             if (isAsyncIterable(result)) {
               // eslint-disable-next-line no-console
-              console.warn('[useResponseCache] AsyncIterable returned from execute is currently unsupported.');
+              console.warn(
+                '[useResponseCache] AsyncIterable returned from execute is currently unsupported.',
+              );
               return;
             }
 
@@ -380,7 +400,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
                 }
               }
             },
-          })
+          }),
         );
       }
 
@@ -388,7 +408,9 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         onExecuteDone({ result, setResult }) {
           if (isAsyncIterable(result)) {
             // eslint-disable-next-line no-console
-            console.warn('[useResponseCache] AsyncIterable returned from execute is currently unsupported.');
+            console.warn(
+              '[useResponseCache] AsyncIterable returned from execute is currently unsupported.',
+            );
             return;
           }
 

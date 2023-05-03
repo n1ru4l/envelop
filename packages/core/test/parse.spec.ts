@@ -1,6 +1,6 @@
-import { assertSingleExecutionValue, createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { FieldNode, parse, visit } from 'graphql';
-import { schema, query } from './common.js';
+import { assertSingleExecutionValue, createSpiedPlugin, createTestkit } from '@envelop/testing';
+import { query, schema } from './common.js';
 
 describe('parse', () => {
   it('Should call before parse and after parse correctly', async () => {
@@ -39,7 +39,7 @@ describe('parse', () => {
           },
         },
       ],
-      schema
+      schema,
     );
     await teskit.execute(query);
     expect(replacementFn).toHaveBeenCalledTimes(1);
@@ -61,7 +61,7 @@ describe('parse', () => {
           },
         },
       ],
-      schema
+      schema,
     );
     await teskit.execute(query);
     expect(replacementFn).toHaveBeenCalledTimes(0);
@@ -79,13 +79,13 @@ describe('parse', () => {
       const modifiedDoc = visit(result, {
         Field: node => {
           if (node.name.value === 'me') {
-            return <FieldNode>{
+            return {
               ...node,
               alias: {
                 kind: 'Name',
                 value: 'currentUser',
               },
-            };
+            } as FieldNode;
           }
 
           return node;
@@ -101,7 +101,7 @@ describe('parse', () => {
           onParse: () => afterFn,
         },
       ],
-      schema
+      schema,
     );
     const result = await teskit.execute(query);
     assertSingleExecutionValue(result);
