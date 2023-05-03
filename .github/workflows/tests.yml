@@ -25,6 +25,8 @@ jobs:
     uses: the-guild-org/shared-config/.github/workflows/lint.yml@main
     with:
       script: pnpm run ci:lint
+      nodeVersion: 17
+      packageManager: 'pnpm'
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
