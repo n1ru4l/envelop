@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "hash-it": "^6.0.0",
-    "lru-cache": "^6.0.0",
+    "lru-cache": "^9.1.1",
     "tslib": "^2.5.0"
   },
   "devDependencies": {

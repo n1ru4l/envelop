@@ -1,5 +1,5 @@
 import { buildSchema, GraphQLError, NoSchemaIntrospectionCustomRule, validate } from 'graphql';
-import LRU from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { Plugin } from '@envelop/types';
 import { useValidationCache } from '../src/index.js';
@@ -58,9 +58,9 @@ describe('useValidationCache', () => {
   });
 
   it('should call validate multiple times when operation is invalidated', async () => {
-    const cache = new LRU<string, readonly GraphQLError[]>({
+    const cache = new LRUCache<string, readonly GraphQLError[]>({
       max: 100,
-      maxAge: 1,
+      ttl: 1,
     });
     const testInstance = createTestkit(
       [
@@ -78,7 +78,7 @@ describe('useValidationCache', () => {
   });
 
   it('should use provided cache instance', async () => {
-    const cache = new LRU<string, readonly GraphQLError[]>();
+    const cache = new LRUCache<string, readonly GraphQLError[]>({ max: 100 });
     jest.spyOn(cache, 'set');
     jest.spyOn(cache, 'get');
     const testInstance = createTestkit(

@@ -1,5 +1,5 @@
 import { buildSchema, DocumentNode, parse } from 'graphql';
-import LRU from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { Plugin } from '@envelop/types';
 import { useParserCache } from '../src/index.js';
@@ -62,9 +62,9 @@ describe('useParserCache', () => {
   });
 
   it('should call parse multiple times when operation is invalidated', async () => {
-    const cache = new LRU<string, DocumentNode>({
+    const cache = new LRUCache<string, DocumentNode>({
       max: 100,
-      maxAge: 1,
+      ttl: 1,
     });
     const testInstance = createTestkit(
       [
@@ -82,7 +82,9 @@ describe('useParserCache', () => {
   });
 
   it('should use provided documentCache instance', async () => {
-    const documentCache = new LRU<string, DocumentNode>();
+    const documentCache = new LRUCache<string, DocumentNode>({
+      max: 100,
+    });
     jest.spyOn(documentCache, 'set');
     jest.spyOn(documentCache, 'get');
     const testInstance = createTestkit(
@@ -101,7 +103,9 @@ describe('useParserCache', () => {
   });
 
   it('should use provided documentCache instance', async () => {
-    const errorCache = new LRU<string, Error>();
+    const errorCache = new LRUCache<string, Error>({
+      max: 100,
+    });
     jest.spyOn(errorCache, 'set');
     jest.spyOn(errorCache, 'get');
     const testInstance = createTestkit(

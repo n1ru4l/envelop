@@ -972,8 +972,8 @@ importers:
         specifier: ^0.8.0
         version: 0.8.0(graphql@16.6.0)
       lru-cache:
-        specifier: ^6.0.0
-        version: 6.0.0
+        specifier: ^9.1.1
+        version: 9.1.1
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -1183,8 +1183,8 @@ importers:
   packages/plugins/parser-cache:
     dependencies:
       lru-cache:
-        specifier: ^6.0.0
-        version: 6.0.0
+        specifier: ^9.1.1
+        version: 9.1.1
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -1330,8 +1330,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0
       lru-cache:
-        specifier: ^6.0.0
-        version: 6.0.0
+        specifier: ^9.1.1
+        version: 9.1.1
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -1342,9 +1342,6 @@ importers:
       '@graphql-tools/schema':
         specifier: 8.5.1
         version: 8.5.1(graphql@16.6.0)
-      '@types/lru-cache':
-        specifier: 5.1.1
-        version: 5.1.1
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -1446,8 +1443,8 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       lru-cache:
-        specifier: ^6.0.0
-        version: 6.0.0
+        specifier: ^9.1.1
+        version: 9.1.1
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -6998,13 +6995,6 @@ packages:
       {
         integrity: sha512-5tXH6Bx/kNGd3MgffdmP4dy2Z+G4eaXw0SE81Tq3BNadtnMR5/ySMzX4SLEzHJzSmPNn4HIdpQsBvXMUykr58w==,
       }
-
-  /@types/lru-cache@5.1.1:
-    resolution:
-      {
-        integrity: sha512-ssE3Vlrys7sdIzs5LOxCzTVMsU7i9oa/IaW92wF32JFb3CVczqOkru2xspuKczHEbG3nvmPY7IFqVmGGHdNbYw==,
-      }
-    dev: true
 
   /@types/markdown-it@12.2.3:
     resolution:
@@ -15936,6 +15926,14 @@ packages:
         integrity: sha512-ysxwsnTKdAx96aTRdhDOCQfDgbHnt8SK0KY8SEjO0wHinhWOFTESbjVCMPbU1uGXg/ch4lifqx0wfjOawU2+WA==,
       }
     engines: { node: '>=12' }
+    dev: false
+
+  /lru-cache@9.1.1:
+    resolution:
+      {
+        integrity: sha512-65/Jky17UwSb0BuB9V+MyDpsOtXKmYwzhyl+cOa9XUiI4uV2Ouy/2voFP3+al0BjZbJgMBD8FojMpAf+Z+qn4A==,
+      }
+    engines: { node: 14 || >=16.14 }
     dev: false
 
   /lru-memoizer@2.2.0:

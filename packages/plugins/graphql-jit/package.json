@@ -49,14 +49,14 @@
   },
   "dependencies": {
     "graphql-jit": "^0.8.0",
-    "lru-cache": "^6.0.0",
+    "lru-cache": "^9.1.1",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
     "@envelop/core": "^3.0.6",
     "@graphql-tools/schema": "8.5.1",
     "graphql": "16.6.0",
-    "lru-cache": "6.0.0",
+    "lru-cache": "^9.1.1",
     "reflect-metadata": "0.1.13",
     "typescript": "4.8.4"
   },

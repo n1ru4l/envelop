@@ -1,6 +1,5 @@
 import { execute, type ExecutionArgs, subscribe } from 'graphql';
-import LRU from 'lru-cache';
-import { useParserCache } from '@envelop/parser-cache';
+import { LRUCache } from 'lru-cache';
 import {
   assertSingleExecutionValue,
   assertStreamExecutionValue,
@@ -142,7 +141,9 @@ describe('useGraphQlJit', () => {
   });
 
   it('Should use the provided cache instance', async () => {
-    const cache: JITCache = new LRU();
+    const cache: JITCache = new LRUCache({
+      max: 100,
+    });
     jest.spyOn(cache, 'set');
     jest.spyOn(cache, 'get');
 
