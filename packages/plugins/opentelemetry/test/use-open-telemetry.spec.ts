@@ -1,6 +1,6 @@
-import { buildSchema } from 'graphql';
 import { traceDirective } from 'graphql-otel';
 import { createTestkit } from '@envelop/testing';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import { InMemorySpanExporter, ReadableSpan } from '@opentelemetry/sdk-trace-base';
 import { useOpenTelemetry } from '../src/index.js';
 import { buildSpanTree, cleanSpanTreeForSnapshot, otelSetup } from './utils';
@@ -14,22 +14,37 @@ describe('useOpenTelemetry', () => {
 
   const trace = traceDirective('trace');
 
-  const schema = buildSchema(/* GraphQL */ `
+  const typeDefs = /* GraphQL */ `
     ${trace.typeDefs}
 
     type User {
-      name: String @trace
+      name: String
       posts: [Post] @trace
     }
 
     type Post {
       title: String
+      comments: [Comment] @trace
+    }
+
+    type Comment {
+      text: String
     }
 
     type Query {
       users: [User] @trace
     }
-  `);
+  `;
+
+  const resolvers = {
+    Query: {
+      users: () => [
+        { name: 'foobar', posts: [{ title: 'foobar', comments: [{ text: 'foobar' }] }] },
+      ],
+    },
+  };
+
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
 
   const query = /* GraphQL */ `
     query {
@@ -37,6 +52,9 @@ describe('useOpenTelemetry', () => {
         name
         posts {
           title
+          comments {
+            text
+          }
         }
       }
     }
@@ -56,7 +74,7 @@ describe('useOpenTelemetry', () => {
       "{
         \\"span\\": {
           \\"attributes\\": {
-            \\"query\\": \\"{\\\\n  users {\\\\n    name\\\\n    posts {\\\\n      title\\\\n    }\\\\n  }\\\\n}\\"
+            \\"query\\": \\"{\\\\n  users {\\\\n    name\\\\n    posts {\\\\n      title\\\\n      comments {\\\\n        text\\\\n      }\\\\n    }\\\\n  }\\\\n}\\"
           },
           \\"links\\": [],
           \\"events\\": [],
@@ -66,7 +84,37 @@ describe('useOpenTelemetry', () => {
           \\"name\\": \\"Query:users\\",
           \\"kind\\": 0
         },
-        \\"children\\": []
+        \\"children\\": [
+          {
+            \\"span\\": {
+              \\"attributes\\": {},
+              \\"links\\": [],
+              \\"events\\": [],
+              \\"status\\": {
+                \\"code\\": 0
+              },
+              \\"name\\": \\"User:posts\\",
+              \\"parentSpanId\\": \\"<parentSpanId>\\",
+              \\"kind\\": 0
+            },
+            \\"children\\": [
+              {
+                \\"span\\": {
+                  \\"attributes\\": {},
+                  \\"links\\": [],
+                  \\"events\\": [],
+                  \\"status\\": {
+                    \\"code\\": 0
+                  },
+                  \\"name\\": \\"Post:comments\\",
+                  \\"parentSpanId\\": \\"<parentSpanId>\\",
+                  \\"kind\\": 0
+                },
+                \\"children\\": []
+              }
+            ]
+          }
+        ]
       }"
     `);
   });

@@ -1149,6 +1149,9 @@ importers:
       '@envelop/core':
         specifier: ^3.0.6
         version: link:../../core
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
       '@opentelemetry/api':
         specifier: ^1.2.0
         version: 1.4.1
