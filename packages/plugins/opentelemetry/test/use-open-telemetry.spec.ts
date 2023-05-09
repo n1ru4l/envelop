@@ -1,81 +1,74 @@
 import { buildSchema } from 'graphql';
-import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import {
-  BasicTracerProvider,
-  InMemorySpanExporter,
-  SimpleSpanProcessor,
-} from '@opentelemetry/sdk-trace-base';
+import { traceDirective } from 'graphql-otel';
+import { createTestkit } from '@envelop/testing';
+import { InMemorySpanExporter, ReadableSpan } from '@opentelemetry/sdk-trace-base';
 import { useOpenTelemetry } from '../src/index.js';
+import { buildSpanTree, cleanSpanTreeForSnapshot, otelSetup } from './utils';
 
-function createTraceProvider(exporter: InMemorySpanExporter) {
-  const provider = new BasicTracerProvider();
-  const processor = new SimpleSpanProcessor(exporter);
-  provider.addSpanProcessor(processor);
-  provider.register();
-  return provider;
-}
+const inMemorySpanExporter = otelSetup() as InMemorySpanExporter;
 
 describe('useOpenTelemetry', () => {
+  beforeEach(() => {
+    inMemorySpanExporter.reset();
+  });
+
+  const trace = traceDirective('trace');
+
   const schema = buildSchema(/* GraphQL */ `
+    ${trace.typeDefs}
+
+    type User {
+      name: String @trace
+      posts: [Post] @trace
+    }
+
+    type Post {
+      title: String
+    }
+
     type Query {
-      ping: String
+      users: [User] @trace
     }
   `);
+
   const query = /* GraphQL */ `
     query {
-      ping
+      users {
+        name
+        posts {
+          title
+        }
+      }
     }
   `;
 
-  const useTestOpenTelemetry = (exporter?: InMemorySpanExporter, options?: any) =>
-    useOpenTelemetry(
-      {
-        resolvers: false,
-        result: false,
-        variables: false,
-        ...(options ?? {}),
-      },
-      exporter ? createTraceProvider(exporter) : undefined,
-    );
+  it('Should wrap the traced fields in a span and assert the tree', async () => {
+    const testInstance = createTestkit([useOpenTelemetry()], schema);
 
-  it('Should override execute function', async () => {
-    const onExecuteSpy = jest.fn();
-    const testInstance = createTestkit(
-      [
-        useTestOpenTelemetry(),
-        {
-          onExecute: onExecuteSpy,
+    await testInstance.execute(query);
+    const spans = inMemorySpanExporter.getFinishedSpans();
+    const rootSpan = spans.find(span => !span.parentSpanId) as ReadableSpan;
+    const spanTree = buildSpanTree({ span: rootSpan, children: [] }, spans);
+
+    const cleanTree = cleanSpanTreeForSnapshot(spanTree);
+
+    expect(JSON.stringify(cleanTree, null, 2)).toMatchInlineSnapshot(`
+      "{
+        \\"span\\": {
+          \\"attributes\\": {
+            \\"query\\": \\"{\\\\n  users {\\\\n    name\\\\n    posts {\\\\n      title\\\\n    }\\\\n  }\\\\n}\\"
+          },
+          \\"links\\": [],
+          \\"events\\": [],
+          \\"status\\": {
+            \\"code\\": 0
+          },
+          \\"name\\": \\"Query:users\\",
+          \\"kind\\": 0
         },
-      ],
-      schema,
-    );
-
-    const result = await testInstance.execute(query);
-    assertSingleExecutionValue(result);
-    expect(onExecuteSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it('Should add execution span', async () => {
-    const exporter = new InMemorySpanExporter();
-    const testInstance = createTestkit([useTestOpenTelemetry(exporter)], schema);
-
-    await testInstance.execute(query);
-    const actual = exporter.getFinishedSpans();
-    expect(actual.length).toBe(1);
-    expect(actual[0].name).toBe('Anonymous Operation');
-  });
-
-  it('Should add resolver span if requested', async () => {
-    const exporter = new InMemorySpanExporter();
-    const testInstance = createTestkit(
-      [useTestOpenTelemetry(exporter, { resolvers: true })],
-      schema,
-    );
-
-    await testInstance.execute(query);
-    const actual = exporter.getFinishedSpans();
-    expect(actual.length).toBe(2);
-    expect(actual[0].name).toBe('Query.ping');
-    expect(actual[1].name).toBe('Anonymous Operation');
+        \\"children\\": []
+      }"
+    `);
+    console.log(spanTree);
   });
 });
