@@ -226,9 +226,10 @@ const GraphQLGeometryCreateInput = new GraphQLInputObjectType({
 [You can learn more in the plugin documentations](/plugins/use-extended-validation#union-inputs-oneof).
 
 <Callout type="info">
-  **Note**: If you print the schema using `import {printSchema} from 'graphql/utilities'`, this will **not** include the
-  added `@oneOf` directive as the `GraphQLSchema` object doesn't recognize directives as part of its AST. If you want to
-  print your schema with those directives added to your SDL, use
+  **Note**: If you print the schema using `import {printSchema} from 'graphql/utilities'`, this will
+  **not** include the added `@oneOf` directive as the `GraphQLSchema` object doesn't recognize
+  directives as part of its AST. If you want to print your schema with those directives added to
+  your SDL, use
   [`printSchemaWithDirectives`](https://the-guild.dev/graphql/tools/docs/api/modules/utils_src#printschemawithdirectives)
   instead.
 </Callout>
@@ -293,8 +294,8 @@ Frameworks such as relay allow doing similar via directives today. It is time th
 the GraphQL specification and is officially supported!
 
 <Callout>
-  There is a [PR for `graphql-js`](https://github.com/graphql/graphql-js/pull/3152) and [issue discussing the matter
-  (from 5 years ago!)](https://github.com/graphql/graphql-spec/issues/204).
+  There is a [PR for `graphql-js`](https://github.com/graphql/graphql-js/pull/3152) and [issue
+  discussing the matter (from 5 years ago!)](https://github.com/graphql/graphql-spec/issues/204).
 </Callout>
 
 Envelop already allows using fragment arguments by extending the GraphQL parser. We don't recommend
