@@ -33,16 +33,12 @@ export const useOpenTelemetry = (): Plugin<PluginContext> => {
   return {
     onContextBuilding({ extendContext }) {
       extendContext({
-        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore - dafuck
         GraphQLOTELContext: new GraphQLOTELContext(),
       });
     },
-    onExecute({ args }) {
-      console.log(args.contextValue);
-      console.log('executing');
-    },
     onSchemaChange({ schema, replaceSchema }) {
-      console.log('shjhskhjsghkjsghjgshjgshjksg');
       if (schema.extensions?.[graphqlMiddlewareAppliedTransformSymbol]) {
         return;
       }
