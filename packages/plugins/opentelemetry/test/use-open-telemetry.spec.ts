@@ -69,6 +69,5 @@ describe('useOpenTelemetry', () => {
         \\"children\\": []
       }"
     `);
-    console.log(spanTree);
   });
 });
