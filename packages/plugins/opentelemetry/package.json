@@ -49,12 +49,20 @@
   },
   "dependencies": {
     "@envelop/on-resolve": "^2.0.6",
-    "@opentelemetry/api": "^1.0.0",
-    "@opentelemetry/sdk-trace-base": "^1.11.0",
+    "@opentelemetry/core": "^1.7.0",
+    "graphql-otel": "^0.0.9",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
     "@envelop/core": "^3.0.6",
+    "@graphql-tools/schema": "8.5.1",
+    "@opentelemetry/api": "^1.2.0",
+    "@opentelemetry/context-async-hooks": "^1.7.0",
+    "@opentelemetry/instrumentation": "^0.33.0",
+    "@opentelemetry/otlp-exporter-base": "^0.33.0",
+    "@opentelemetry/resources": "^1.7.0",
+    "@opentelemetry/sdk-trace-base": "^1.7.0",
+    "@opentelemetry/semantic-conventions": "^1.12.0",
     "graphql": "16.6.0",
     "typescript": "4.8.4"
   },

@@ -1,81 +1,121 @@
-import { buildSchema } from 'graphql';
-import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import {
-  BasicTracerProvider,
-  InMemorySpanExporter,
-  SimpleSpanProcessor,
-} from '@opentelemetry/sdk-trace-base';
+import { traceDirective } from 'graphql-otel';
+import { createTestkit } from '@envelop/testing';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { InMemorySpanExporter, ReadableSpan } from '@opentelemetry/sdk-trace-base';
 import { useOpenTelemetry } from '../src/index.js';
+import { buildSpanTree, cleanSpanTreeForSnapshot, otelSetup } from './utils';
 
-function createTraceProvider(exporter: InMemorySpanExporter) {
-  const provider = new BasicTracerProvider();
-  const processor = new SimpleSpanProcessor(exporter);
-  provider.addSpanProcessor(processor);
-  provider.register();
-  return provider;
-}
+const inMemorySpanExporter = otelSetup() as InMemorySpanExporter;
 
 describe('useOpenTelemetry', () => {
-  const schema = buildSchema(/* GraphQL */ `
-    type Query {
-      ping: String
+  beforeEach(() => {
+    inMemorySpanExporter.reset();
+  });
+
+  const trace = traceDirective('trace');
+
+  const typeDefs = /* GraphQL */ `
+    ${trace.typeDefs}
+
+    type User {
+      name: String
+      posts: [Post] @trace
     }
-  `);
-  const query = /* GraphQL */ `
-    query {
-      ping
+
+    type Post {
+      title: String
+      comments: [Comment] @trace
+    }
+
+    type Comment {
+      text: String
+    }
+
+    type Query {
+      users: [User] @trace
     }
   `;
 
-  const useTestOpenTelemetry = (exporter?: InMemorySpanExporter, options?: any) =>
-    useOpenTelemetry(
-      {
-        resolvers: false,
-        result: false,
-        variables: false,
-        ...(options ?? {}),
-      },
-      exporter ? createTraceProvider(exporter) : undefined,
-    );
-
-  it('Should override execute function', async () => {
-    const onExecuteSpy = jest.fn();
-    const testInstance = createTestkit(
-      [
-        useTestOpenTelemetry(),
-        {
-          onExecute: onExecuteSpy,
-        },
+  const resolvers = {
+    Query: {
+      users: () => [
+        { name: 'foobar', posts: [{ title: 'foobar', comments: [{ text: 'foobar' }] }] },
       ],
-      schema,
-    );
+    },
+  };
 
-    const result = await testInstance.execute(query);
-    assertSingleExecutionValue(result);
-    expect(onExecuteSpy).toHaveBeenCalledTimes(1);
-  });
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
 
-  it('Should add execution span', async () => {
-    const exporter = new InMemorySpanExporter();
-    const testInstance = createTestkit([useTestOpenTelemetry(exporter)], schema);
+  const query = /* GraphQL */ `
+    query {
+      users {
+        name
+        posts {
+          title
+          comments {
+            text
+          }
+        }
+      }
+    }
+  `;
 
-    await testInstance.execute(query);
-    const actual = exporter.getFinishedSpans();
-    expect(actual.length).toBe(1);
-    expect(actual[0].name).toBe('Anonymous Operation');
-  });
-
-  it('Should add resolver span if requested', async () => {
-    const exporter = new InMemorySpanExporter();
-    const testInstance = createTestkit(
-      [useTestOpenTelemetry(exporter, { resolvers: true })],
-      schema,
-    );
+  it('Should wrap the traced fields in a span and assert the tree', async () => {
+    const testInstance = createTestkit([useOpenTelemetry()], schema);
 
     await testInstance.execute(query);
-    const actual = exporter.getFinishedSpans();
-    expect(actual.length).toBe(2);
-    expect(actual[0].name).toBe('Query.ping');
-    expect(actual[1].name).toBe('Anonymous Operation');
+    const spans = inMemorySpanExporter.getFinishedSpans();
+    const rootSpan = spans.find(span => !span.parentSpanId) as ReadableSpan;
+    const spanTree = buildSpanTree({ span: rootSpan, children: [] }, spans);
+
+    const cleanTree = cleanSpanTreeForSnapshot(spanTree);
+
+    expect(JSON.stringify(cleanTree, null, 2)).toMatchInlineSnapshot(`
+      "{
+        \\"span\\": {
+          \\"attributes\\": {
+            \\"query\\": \\"{\\\\n  users {\\\\n    name\\\\n    posts {\\\\n      title\\\\n      comments {\\\\n        text\\\\n      }\\\\n    }\\\\n  }\\\\n}\\"
+          },
+          \\"links\\": [],
+          \\"events\\": [],
+          \\"status\\": {
+            \\"code\\": 0
+          },
+          \\"name\\": \\"Query:users\\",
+          \\"kind\\": 0
+        },
+        \\"children\\": [
+          {
+            \\"span\\": {
+              \\"attributes\\": {},
+              \\"links\\": [],
+              \\"events\\": [],
+              \\"status\\": {
+                \\"code\\": 0
+              },
+              \\"name\\": \\"User:posts\\",
+              \\"parentSpanId\\": \\"<parentSpanId>\\",
+              \\"kind\\": 0
+            },
+            \\"children\\": [
+              {
+                \\"span\\": {
+                  \\"attributes\\": {},
+                  \\"links\\": [],
+                  \\"events\\": [],
+                  \\"status\\": {
+                    \\"code\\": 0
+                  },
+                  \\"name\\": \\"Post:comments\\",
+                  \\"parentSpanId\\": \\"<parentSpanId>\\",
+                  \\"kind\\": 0
+                },
+                \\"children\\": []
+              }
+            ]
+          }
+        ]
+      }"
+    `);
   });
 });
