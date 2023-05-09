@@ -17,12 +17,6 @@ export enum AttributeName {
 
 const tracingSpanSymbol = Symbol('OPEN_TELEMETRY_GRAPHQL');
 
-export type TracingOptions = {
-  resolvers: boolean;
-  variables: boolean;
-  result: boolean;
-};
-
 type PluginContext = {
   [tracingSpanSymbol]: opentelemetry.Span;
 };
