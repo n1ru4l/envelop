@@ -1,7 +1,7 @@
 import { GraphQLError, type GraphQLSchema, introspectionFromSchema, print } from 'graphql';
 import hashIt from 'hash-it';
 import LRU from 'lru-cache';
-import type { Plugin } from '@envelop/core';
+import { getDocumentString, type Plugin } from '@envelop/core';
 
 export interface ValidationCache {
   /**
@@ -21,7 +21,6 @@ export type ValidationCacheOptions = {
 const DEFAULT_MAX = 1000;
 const DEFAULT_TTL = 3600000;
 
-const rawDocumentSymbol = Symbol('rawDocument');
 const schemaHashCache = new WeakMap<GraphQLSchema, string>();
 
 function getSchemaHash(schema: GraphQLSchema) {
@@ -45,10 +44,7 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
         });
 
   return {
-    onParse({ params, extendContext }) {
-      extendContext({ [rawDocumentSymbol]: params.source.toString() });
-    },
-    onValidate({ params, context, setValidationFn, validateFn }) {
+    onValidate({ params, setValidationFn, validateFn }) {
       // We use setValidateFn over accessing params.rules directly, as other plugins in the chain might add more rules.
       // This would cause an issue if we are constructing the cache key here already.
       setValidationFn((...args) => {
@@ -63,11 +59,7 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
         }
 
         const key: string =
-          schemaHashKey +
-          `|` +
-          ruleKey +
-          `|` +
-          (context[rawDocumentSymbol] ?? print(params.documentAST));
+          schemaHashKey + `|` + ruleKey + `|` + getDocumentString(params.documentAST, print);
 
         const cachedResult = resultCache.get(key);
 

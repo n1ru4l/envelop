@@ -1,8 +1,8 @@
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { CachePolicy, GraphQLRequestMetrics, Logger, SchemaHash } from 'apollo-server-types';
-import { DocumentNode, getOperationAST, print, printSchema, Source } from 'graphql';
+import { getOperationAST, print, printSchema } from 'graphql';
 import { ApolloGateway } from '@apollo/gateway';
-import { Plugin } from '@envelop/core';
+import { getDocumentString, Plugin } from '@envelop/core';
 import { newCachePolicy } from './new-cache-policy.js';
 
 export interface ApolloFederationPluginConfig {
@@ -22,7 +22,6 @@ export const useApolloFederation = (options: ApolloFederationPluginConfig): Plug
     overallCachePolicy = newCachePolicy(),
   } = options;
   let schemaHash: SchemaHash;
-  const documentSourceMap = new WeakMap<DocumentNode, string>();
   return {
     onPluginInit({ setSchema }) {
       if (gateway.schema) {
@@ -38,21 +37,8 @@ export const useApolloFederation = (options: ApolloFederationPluginConfig): Plug
         schemaHash = (coreSupergraphSdl || printSchema(apiSchema)) as SchemaHash;
       });
     },
-    onParse({ params: { source } }) {
-      const key = source instanceof Source ? source.body : source;
-
-      return ({ result }) => {
-        if (!result || result instanceof Error) return;
-
-        documentSourceMap.set(result, key);
-      };
-    },
     onExecute({ args, setExecuteFn }) {
-      let documentStr = documentSourceMap.get(args.document)!;
-      if (documentStr == null) {
-        documentStr = print(args.document);
-        documentSourceMap.set(args.document, documentStr);
-      }
+      const documentStr = getDocumentString(args.document, print);
       const operation = getOperationAST(args.document, args.operationName ?? undefined);
       if (!operation) {
         throw new Error(`Operation ${args.operationName || ''} cannot be found in ${documentStr}`);

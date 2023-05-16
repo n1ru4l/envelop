@@ -31,6 +31,7 @@ import {
   TypedSubscriptionArgs,
   ValidateFunction,
 } from '@envelop/types';
+import { documentStringMap } from './document-string-map.js';
 import {
   errorAsyncIterator,
   finalAsyncIterator,
@@ -213,6 +214,8 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
         if (result instanceof Error) {
           throw result;
         }
+
+        documentStringMap.set(result, source.toString());
 
         return result;
       }

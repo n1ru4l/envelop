@@ -7,7 +7,7 @@ import {
   GraphQLSchema,
   print,
 } from 'graphql';
-import { envelop, isAsyncIterable, useEngine, useSchema } from '@envelop/core';
+import { envelop, getDocumentString, isAsyncIterable, useEngine, useSchema } from '@envelop/core';
 import { GetEnvelopedFn, Plugin } from '@envelop/types';
 import { mapSchema as cloneSchema, isDocumentNode } from '@graphql-tools/utils';
 
@@ -195,12 +195,12 @@ export function createTestkit(
           method: 'POST',
           query: '',
           body: {
-            query: print(document),
+            query: getDocumentString(document, print),
             variables: variableValues,
           },
         },
         document,
-        operation: print(document),
+        operation: getDocumentString(document, print),
         variables: variableValues,
         ...initialContext,
       });
