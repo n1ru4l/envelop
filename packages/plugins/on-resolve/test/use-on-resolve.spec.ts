@@ -1,4 +1,4 @@
-import { OnResolveOptions, useOnResolve } from '@envelop/on-resolve';
+import { AfterResolver, OnResolveOptions, useOnResolve } from '@envelop/on-resolve';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
@@ -58,6 +58,29 @@ describe('useOnResolve', () => {
     const result = await testkit.execute('{ value1 }');
     assertSingleExecutionValue(result);
 
+    expect(result.data?.value1).toBe('value2');
+  });
+
+  it('should only execute the onResolve function once after the schema has been replaced', async () => {
+    const afterResolve: AfterResolver = jest.fn(({ setResult }) => {
+      setResult('value2');
+    });
+    const testkit = createTestkit(
+      [
+        useOnResolve(() => afterResolve),
+        {
+          onSchemaChange({ schema, replaceSchema }) {
+            replaceSchema(schema);
+          },
+        },
+      ],
+      schema,
+    );
+
+    const result = await testkit.execute('{ value1 }');
+    expect(afterResolve).toBeCalledTimes(1);
+
+    assertSingleExecutionValue(result);
     expect(result.data?.value1).toBe('value2');
   });
 });

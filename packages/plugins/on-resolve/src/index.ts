@@ -40,6 +40,7 @@ export type OnResolve<PluginContext extends Record<string, any> = {}> = (
 export function useOnResolve<PluginContext extends Record<string, any> = {}>(
   onResolve: OnResolve<PluginContext>,
 ): Plugin<PluginContext> {
+  const hasWrappedResolveSymbol = Symbol('hasWrappedResolve');
   return {
     onSchemaChange({ schema: _schema }) {
       const schema = _schema as GraphQLSchema;
@@ -48,6 +49,8 @@ export function useOnResolve<PluginContext extends Record<string, any> = {}>(
       for (const type of Object.values(schema.getTypeMap())) {
         if (!isIntrospectionType(type) && isObjectType(type)) {
           for (const field of Object.values(type.getFields())) {
+            if (field.resolve?.[hasWrappedResolveSymbol]) continue;
+
             let resolver = (field.resolve || defaultFieldResolver) as Resolver<PluginContext>;
 
             field.resolve = async (root, args, context, info) => {
@@ -83,6 +86,8 @@ export function useOnResolve<PluginContext extends Record<string, any> = {}>(
               }
               return result;
             };
+
+            field.resolve[hasWrappedResolveSymbol] = true;
           }
         }
       }
