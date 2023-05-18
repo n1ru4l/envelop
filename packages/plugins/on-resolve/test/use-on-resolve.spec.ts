@@ -68,6 +68,9 @@ describe('useOnResolve', () => {
     const testkit = createTestkit(
       [
         useOnResolve(() => afterResolve),
+        // This _should_ trigger another afterResolve call
+        useOnResolve(() => afterResolve),
+        // This should _NOT_ trigger another afterResolve call
         {
           onSchemaChange({ schema, replaceSchema }) {
             replaceSchema(schema);
@@ -78,7 +81,8 @@ describe('useOnResolve', () => {
     );
 
     const result = await testkit.execute('{ value1 }');
-    expect(afterResolve).toBeCalledTimes(1);
+    // Expect two calls, not four.
+    expect(afterResolve).toBeCalledTimes(2);
 
     assertSingleExecutionValue(result);
     expect(result.data?.value1).toBe('value2');
