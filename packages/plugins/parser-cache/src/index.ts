@@ -1,5 +1,5 @@
 import { DocumentNode, Source } from 'graphql';
-import LRU from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import type { Plugin } from '@envelop/core';
 
 interface Cache<T> {
@@ -22,11 +22,11 @@ export const useParserCache = (pluginOptions: ParserCacheOptions = {}): Plugin =
   const documentCache =
     typeof pluginOptions.documentCache !== 'undefined'
       ? pluginOptions.documentCache
-      : new LRU<string, DocumentNode>({ max: DEFAULT_MAX, maxAge: DEFAULT_TTL });
+      : new LRUCache<string, DocumentNode>({ max: DEFAULT_MAX, ttl: DEFAULT_TTL });
   const errorCache =
     typeof pluginOptions.errorCache !== 'undefined'
       ? pluginOptions.errorCache
-      : new LRU<string, Error>({ max: DEFAULT_MAX, maxAge: DEFAULT_TTL });
+      : new LRUCache<string, Error>({ max: DEFAULT_MAX, ttl: DEFAULT_TTL });
 
   return {
     onParse({ params, setParsedDocument }) {

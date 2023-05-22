@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { DocumentNode, ExecutionArgs, ExecutionResult } from 'graphql';
 import { CompiledQuery, compileQuery, CompilerOptions, isCompiledQuery } from 'graphql-jit';
-import LRU from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import {
   getDocumentString,
   makeExecute,
@@ -43,7 +43,7 @@ export const useGraphQlJit = (
   const jitCacheByDocumentString =
     typeof pluginOptions.cache !== 'undefined'
       ? pluginOptions.cache
-      : new LRU<string, JITCacheEntry>({ max: DEFAULT_MAX, maxAge: DEFAULT_TTL });
+      : new LRUCache<string, JITCacheEntry>({ max: DEFAULT_MAX, ttl: DEFAULT_TTL });
 
   const jitCacheByDocument = new WeakMap<DocumentNode, JITCacheEntry>();
 

@@ -1,4 +1,4 @@
-import LRU from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import type { Cache } from './cache.js';
 
 export type BuildEntityId = (typename: string, id: number | string) => string;
@@ -17,9 +17,9 @@ export type InMemoryCacheParameter = {
 
 export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
   const buildEntityId = params?.buildEntityId ?? defaultBuildEntityId;
-  const cachedResponses = new LRU<string, any>({
-    max: params?.max,
-    stale: false,
+  const cachedResponses = new LRUCache<string, any>({
+    max: params?.max ?? 1000,
+    allowStale: false,
     noDisposeOnSet: true,
     dispose(responseId) {
       purgeResponse(responseId, false);
@@ -43,7 +43,7 @@ export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
 
     if (shouldRemove) {
       // remove the response from the cache
-      cachedResponses.del(responseId);
+      cachedResponses.delete(responseId);
     }
   }
 
@@ -59,7 +59,7 @@ export const createInMemoryCache = (params?: InMemoryCacheParameter): Cache => {
 
   return {
     set(responseId, result, collectedEntities, ttl) {
-      cachedResponses.set(responseId, result, ttl);
+      cachedResponses.set(responseId, result, { ttl });
       const entityIds = new Set<string>();
       responseIdToEntityIds.set(responseId, entityIds);
 

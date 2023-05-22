@@ -1,6 +1,6 @@
 import { GraphQLError, type GraphQLSchema, introspectionFromSchema, print } from 'graphql';
 import hashIt from 'hash-it';
-import LRU from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import { getDocumentString, type Plugin } from '@envelop/core';
 
 export interface ValidationCache {
@@ -38,9 +38,9 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
   const resultCache =
     typeof pluginOptions.cache !== 'undefined'
       ? pluginOptions.cache
-      : new LRU<string, readonly GraphQLError[]>({
+      : new LRUCache<string, readonly GraphQLError[]>({
           max: DEFAULT_MAX,
-          maxAge: DEFAULT_TTL,
+          ttl: DEFAULT_TTL,
         });
 
   return {
