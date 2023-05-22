@@ -1,4 +1,4 @@
-import { crypto, TextEncoder } from '@whatwg-node/fetch';
+import { TextEncoder } from '@whatwg-node/fetch';
 
 export const hashSHA256 = async (text: string): Promise<string> => {
   const inputUint8Array = new TextEncoder().encode(text);
