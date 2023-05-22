@@ -101,8 +101,8 @@ importers:
         specifier: 6.1.1
         version: 6.1.1(eslint@8.34.0)
       eslint-plugin-unicorn:
-        specifier: 45.0.2
-        version: 45.0.2(eslint@8.34.0)
+        specifier: 47.0.0
+        version: 47.0.0(eslint@8.34.0)
       globby:
         specifier: 13.1.4
         version: 13.1.4
@@ -4539,14 +4539,14 @@ packages:
     dev: true
     optional: true
 
-  /@eslint-community/eslint-utils@4.1.2(eslint@8.34.0):
+  /@eslint-community/eslint-utils@4.4.0(eslint@8.34.0):
     resolution:
       {
-        integrity: sha512-7qELuQWWjVDdVsFQ5+beUl+KPczrEDA7S3zM4QUd/bJl7oXgsmpXaEVqrRTnOBqenOV4rWf2kVZk2Ot085zPWA==,
+        integrity: sha512-1/sA4dwrzBAyeUoQ6oxahHKmrZvsnLCg4RfxW3ZFGGmQkSNQPFNLV9CUEFQP1x9EYXHTo5p6xdhZM1Ne9p/AfA==,
       }
     engines: { node: ^12.22.0 || ^14.17.0 || >=16.0.0 }
     peerDependencies:
-      eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
+      eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
     dependencies:
       eslint: 8.34.0
       eslint-visitor-keys: 3.3.0
@@ -7272,7 +7272,7 @@ packages:
         integrity: sha512-Q0Op0hdWbYd1iahB+IFNQcWXFq4O0Q5MwQP7uN0souuQ4rPg1vEYcnIOfr1gY+M+6rc8FGoRaBO1mOOvL29sEQ==,
       }
     dependencies:
-      ci-info: 3.7.1
+      ci-info: 3.8.0
     dev: true
 
   /@types/istanbul-lib-coverage@2.0.3:
@@ -9604,6 +9604,14 @@ packages:
     engines: { node: '>=8' }
     dev: true
 
+  /ci-info@3.8.0:
+    resolution:
+      {
+        integrity: sha512-eXTggHWSooYhq49F2opQhuHWgzucfF2YgODK4e1566GQs5BIfP30B0oenwBJHfWxAs2fyPB1s7Mg949zLf61Yw==,
+      }
+    engines: { node: '>=8' }
+    dev: true
+
   /cjs-module-lexer@1.2.1:
     resolution:
       {
@@ -11854,21 +11862,21 @@ packages:
       eslint: 8.34.0
     dev: true
 
-  /eslint-plugin-unicorn@45.0.2(eslint@8.34.0):
+  /eslint-plugin-unicorn@47.0.0(eslint@8.34.0):
     resolution:
       {
-        integrity: sha512-Y0WUDXRyGDMcKLiwgL3zSMpHrXI00xmdyixEGIg90gHnj0PcHY4moNv3Ppje/kDivdAy5vUeUr7z211ImPv2gw==,
+        integrity: sha512-ivB3bKk7fDIeWOUmmMm9o3Ax9zbMz1Bsza/R2qm46ufw4T6VBFBaJIR1uN3pCKSmSXm8/9Nri8V+iUut1NhQGA==,
       }
-    engines: { node: '>=14.18' }
+    engines: { node: '>=16' }
     peerDependencies:
-      eslint: '>=8.28.0'
+      eslint: '>=8.38.0'
     dependencies:
       '@babel/helper-validator-identifier': 7.19.1
-      '@eslint-community/eslint-utils': 4.1.2(eslint@8.34.0)
-      ci-info: 3.7.1
+      '@eslint-community/eslint-utils': 4.4.0(eslint@8.34.0)
+      ci-info: 3.8.0
       clean-regexp: 1.0.0
       eslint: 8.34.0
-      esquery: 1.4.0
+      esquery: 1.5.0
       indent-string: 4.0.0
       is-builtin-module: 3.2.1
       jsesc: 3.0.2
@@ -11876,7 +11884,7 @@ packages:
       pluralize: 8.0.0
       read-pkg-up: 7.0.1
       regexp-tree: 0.1.24
-      regjsparser: 0.9.1
+      regjsparser: 0.10.0
       safe-regex: 2.1.1
       semver: 7.3.8
       strip-indent: 3.0.0
@@ -12024,6 +12032,16 @@ packages:
     resolution:
       {
         integrity: sha512-cCDispWt5vHHtwMY2YrAQ4ibFkAL8RbH5YGBnZBc90MolvvfkkQcJro/aZiAQUlQ3qgrYS6D6v8Gc5G5CQsc9w==,
+      }
+    engines: { node: '>=0.10' }
+    dependencies:
+      estraverse: 5.2.0
+    dev: true
+
+  /esquery@1.5.0:
+    resolution:
+      {
+        integrity: sha512-YQLXUplAwJgCydQ78IMJywZCceoqk1oH01OERdSAJc/7U2AylwjhSCLDEtqwg811idIS/9fIU5GjG73IgjKMVg==,
       }
     engines: { node: '>=0.10' }
     dependencies:
@@ -14343,7 +14361,7 @@ packages:
       }
     hasBin: true
     dependencies:
-      ci-info: 3.7.1
+      ci-info: 3.8.0
     dev: true
 
   /is-core-module@2.11.0:
@@ -14910,7 +14928,7 @@ packages:
       '@jest/types': 27.5.1
       babel-jest: 27.5.1(@babel/core@7.21.8)
       chalk: 4.1.2
-      ci-info: 3.7.1
+      ci-info: 3.8.0
       deepmerge: 4.2.2
       glob: 7.1.6
       graceful-fs: 4.2.10
@@ -19955,6 +19973,16 @@ packages:
       regjsparser: 0.9.1
       unicode-match-property-ecmascript: 2.0.0
       unicode-match-property-value-ecmascript: 2.1.0
+    dev: true
+
+  /regjsparser@0.10.0:
+    resolution:
+      {
+        integrity: sha512-qx+xQGZVsy55CH0a1hiVwHmqjLryfh7wQyF5HO07XJ9f7dQMY/gPQHhlyDkIzJKC+x2fUCpCcUODUUUFrm7SHA==,
+      }
+    hasBin: true
+    dependencies:
+      jsesc: 0.5.0
     dev: true
 
   /regjsparser@0.9.1:
