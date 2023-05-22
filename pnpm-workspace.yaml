@@ -3,6 +3,7 @@ packages:
   - 'packages/*'
   - 'packages/plugins/*'
   - 'examples/apollo-server'
+  - 'examples/graphql-http'
   - 'examples/graphql-ws'
   - 'examples/graphql-sse'
   - 'examples/graphql-socket.io'

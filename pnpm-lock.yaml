@@ -375,6 +375,31 @@ importers:
         specifier: 4.8.4
         version: 4.8.4
 
+  examples/graphql-http:
+    dependencies:
+      '@envelop/core':
+        specifier: '*'
+        version: link:../../packages/core
+      '@graphql-tools/schema':
+        specifier: 8.5.1
+        version: 8.5.1(graphql@16.6.0)
+      graphql:
+        specifier: 16.6.0
+        version: 16.6.0
+      graphql-http:
+        specifier: ^1.18.0
+        version: 1.18.0(graphql@16.6.0)
+    devDependencies:
+      '@types/node':
+        specifier: 18.13.0
+        version: 18.13.0
+      ts-node:
+        specifier: 10.9.1
+        version: 10.9.1(@types/node@18.13.0)(typescript@4.8.4)
+      typescript:
+        specifier: 4.8.4
+        version: 4.8.4
+
   examples/graphql-socket.io:
     dependencies:
       '@envelop/core':
@@ -13034,6 +13059,18 @@ packages:
       }
     peerDependencies:
       graphql: ^15.3.0 || ^16.0.0
+    dependencies:
+      graphql: 16.6.0
+    dev: false
+
+  /graphql-http@1.18.0(graphql@16.6.0):
+    resolution:
+      {
+        integrity: sha512-r2sIo6jCTQi1aj7s+Srg7oU3+r5pUUgxgDD5JDZOmFzrbXVGz+yMhIKhvqW0cV10DcnVIFCOzuFuc1qvnjJ7yQ==,
+      }
+    engines: { node: '>=12' }
+    peerDependencies:
+      graphql: '>=0.11 <=16'
     dependencies:
       graphql: 16.6.0
     dev: false
