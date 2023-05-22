@@ -15,7 +15,7 @@ jobs:
       - name: Setup env
         uses: the-guild-org/shared-config/setup@main
         with:
-          nodeVersion: 17
+          nodeVersion: 20
           packageManager: 'pnpm'
       - name: Lint Prettier
         run: pnpm run lint:prettier
@@ -25,7 +25,7 @@ jobs:
     uses: the-guild-org/shared-config/.github/workflows/lint.yml@main
     with:
       script: pnpm run ci:lint
-      nodeVersion: 17
+      nodeVersion: 20
       packageManager: 'pnpm'
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
@@ -42,7 +42,7 @@ jobs:
       - name: Setup env
         uses: the-guild-org/shared-config/setup@main
         with:
-          nodeVersion: 18
+          nodeVersion: 20
           packageManager: 'pnpm'
       - name: Use GraphQL v${{matrix.graphql_version}}
         run: node ./scripts/match-graphql.js ${{matrix.graphql_version}}
@@ -63,7 +63,7 @@ jobs:
       - name: Setup env
         uses: the-guild-org/shared-config/setup@main
         with:
-          nodeVersion: 18
+          nodeVersion: 20
           packageManager: 'pnpm'
       - name: Install Dependencies
         run: pnpm install --no-frozen-lockfile && git checkout pnpm-lock.yaml
@@ -87,7 +87,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest] # remove windows to speed up the tests
-        node-version: [14, 16, 17, 18]
+        node-version: [16, 18, 20]
         graphql_version: [15, 16, 'npm:@graphql-tools/graphql@0.0.1']
     steps:
       - name: Checkout Master
@@ -122,7 +122,7 @@ jobs:
       - name: Setup env
         uses: the-guild-org/shared-config/setup@main
         with:
-          nodeVersion: 18
+          nodeVersion: 20
           packageManager: 'pnpm'
       - name: Build Packages
         run: pnpm run build
