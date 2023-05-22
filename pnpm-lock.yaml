@@ -521,8 +521,8 @@ importers:
         version: 1.13.0(graphql@16.6.0)
     devDependencies:
       '@types/aws-lambda':
-        specifier: 8.10.113
-        version: 8.10.113
+        specifier: 8.10.115
+        version: 8.10.115
       '@types/node':
         specifier: 18.13.0
         version: 18.13.0
@@ -6651,10 +6651,10 @@ packages:
       '@types/estree': 0.0.50
     dev: false
 
-  /@types/aws-lambda@8.10.113:
+  /@types/aws-lambda@8.10.115:
     resolution:
       {
-        integrity: sha512-JHxKRi7Nz2Bjqp0CKllm9Fl5GZwRfMF+lilSfl12ATyvBx0cRM09ztBVgebeJ8wrjJggHxxjSU2/U+SvSG+K1A==,
+        integrity: sha512-kCZuFXKLV3y8NjSoaD5+qKTpRWvPz3uh3W/u1uwlw3Mg+MtaStg1NWgjAwUXo/VJDb6n6KF1ljykFNlNwEJ53Q==,
       }
     dev: true
 
