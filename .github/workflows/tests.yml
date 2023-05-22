@@ -15,7 +15,7 @@ jobs:
       - name: Setup env
         uses: the-guild-org/shared-config/setup@main
         with:
-          nodeVersion: 20
+          nodeVersion: 18
           packageManager: 'pnpm'
       - name: Lint Prettier
         run: pnpm run lint:prettier
@@ -25,7 +25,7 @@ jobs:
     uses: the-guild-org/shared-config/.github/workflows/lint.yml@main
     with:
       script: pnpm run ci:lint
-      nodeVersion: 20
+      nodeVersion: 18
       packageManager: 'pnpm'
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
@@ -42,7 +42,7 @@ jobs:
       - name: Setup env
         uses: the-guild-org/shared-config/setup@main
         with:
-          nodeVersion: 20
+          nodeVersion: 18
           packageManager: 'pnpm'
       - name: Use GraphQL v${{matrix.graphql_version}}
         run: node ./scripts/match-graphql.js ${{matrix.graphql_version}}
@@ -63,7 +63,7 @@ jobs:
       - name: Setup env
         uses: the-guild-org/shared-config/setup@main
         with:
-          nodeVersion: 20
+          nodeVersion: 18
           packageManager: 'pnpm'
       - name: Install Dependencies
         run: pnpm install --no-frozen-lockfile && git checkout pnpm-lock.yaml
@@ -122,7 +122,7 @@ jobs:
       - name: Setup env
         uses: the-guild-org/shared-config/setup@main
         with:
-          nodeVersion: 20
+          nodeVersion: 18
           packageManager: 'pnpm'
       - name: Build Packages
         run: pnpm run build
