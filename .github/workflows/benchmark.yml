@@ -16,7 +16,7 @@ jobs:
       - name: Setup env
         uses: the-guild-org/shared-config/setup@main
         with:
-          nodeVersion: 17
+          nodeVersion: 18
           packageManager: 'pnpm'
 
       - name: Build

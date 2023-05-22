@@ -10,6 +10,9 @@
   },
   "author": "Laurin Quast <laurinquast@googlemail.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "exports": {
@@ -50,12 +53,12 @@
   },
   "dependencies": {
     "@envelop/extended-validation": "^2.0.6",
-    "@graphql-tools/utils": "^8.8.0",
+    "@graphql-tools/utils": "^10.0.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
     "@envelop/core": "^3.0.6",
-    "@graphql-tools/schema": "8.5.1",
+    "@graphql-tools/schema": "10.0.0",
     "graphql": "16.6.0",
     "typescript": "4.8.4"
   },
