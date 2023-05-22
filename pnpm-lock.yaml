@@ -1059,8 +1059,8 @@ importers:
         specifier: 16.6.0
         version: 16.6.0
       graphql-modules:
-        specifier: 2.1.0
-        version: 2.1.0(graphql@16.6.0)
+        specifier: 2.1.2
+        version: 2.1.2(graphql@16.6.0)
       reflect-metadata:
         specifier: 0.1.13
         version: 0.1.13
@@ -4932,6 +4932,21 @@ packages:
       value-or-promise: 1.0.11
     dev: true
 
+  /@graphql-tools/batch-execute@8.5.22(graphql@16.6.0):
+    resolution:
+      {
+        integrity: sha512-hcV1JaY6NJQFQEwCKrYhpfLK8frSXDbtNMoTur98u10Cmecy1zrqNKSqhEyGetpgHxaJRqszGzKeI3RuroDN6A==,
+      }
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+    dependencies:
+      '@graphql-tools/utils': 9.2.1(graphql@16.6.0)
+      dataloader: 2.2.2
+      graphql: 16.6.0
+      tslib: 2.5.0
+      value-or-promise: 1.0.12
+    dev: true
+
   /@graphql-tools/delegate@8.8.1(graphql@16.6.0):
     resolution:
       {
@@ -4947,6 +4962,40 @@ packages:
       graphql: 16.6.0
       tslib: 2.4.1
       value-or-promise: 1.0.11
+    dev: true
+
+  /@graphql-tools/delegate@9.0.35(graphql@16.6.0):
+    resolution:
+      {
+        integrity: sha512-jwPu8NJbzRRMqi4Vp/5QX1vIUeUPpWmlQpOkXQD2r1X45YsVceyUUBnktCrlJlDB4jPRVy7JQGwmYo3KFiOBMA==,
+      }
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+    dependencies:
+      '@graphql-tools/batch-execute': 8.5.22(graphql@16.6.0)
+      '@graphql-tools/executor': 0.0.20(graphql@16.6.0)
+      '@graphql-tools/schema': 9.0.19(graphql@16.6.0)
+      '@graphql-tools/utils': 9.2.1(graphql@16.6.0)
+      dataloader: 2.2.2
+      graphql: 16.6.0
+      tslib: 2.5.0
+      value-or-promise: 1.0.12
+    dev: true
+
+  /@graphql-tools/executor@0.0.20(graphql@16.6.0):
+    resolution:
+      {
+        integrity: sha512-GdvNc4vszmfeGvUqlcaH1FjBoguvMYzxAfT6tDd4/LgwymepHhinqLNA5otqwVLW+JETcDaK7xGENzFomuE6TA==,
+      }
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+    dependencies:
+      '@graphql-tools/utils': 9.2.1(graphql@16.6.0)
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.6.0)
+      '@repeaterjs/repeater': 3.0.4
+      graphql: 16.6.0
+      tslib: 2.5.0
+      value-or-promise: 1.0.12
     dev: true
 
   /@graphql-tools/merge@8.3.1:
@@ -4985,7 +5034,19 @@ packages:
       '@graphql-tools/utils': 9.1.4(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.5.0
-    dev: false
+
+  /@graphql-tools/merge@8.4.2(graphql@16.6.0):
+    resolution:
+      {
+        integrity: sha512-XbrHAaj8yDuINph+sAfuq3QCZ/tKblrTLOpirK0+CAgNlZUCHs0Fa+xtMUURgwCVThLle1AF7svJCxFizygLsw==,
+      }
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+    dependencies:
+      '@graphql-tools/utils': 9.2.1(graphql@16.6.0)
+      graphql: 16.6.0
+      tslib: 2.5.0
+    dev: true
 
   /@graphql-tools/merge@9.0.0:
     resolution:
@@ -5143,7 +5204,21 @@ packages:
       graphql: 16.6.0
       tslib: 2.5.0
       value-or-promise: 1.0.12
-    dev: false
+
+  /@graphql-tools/schema@9.0.19(graphql@16.6.0):
+    resolution:
+      {
+        integrity: sha512-oBRPoNBtCkk0zbUsyP4GaIzCt8C0aCI4ycIRUL67KK5pOHljKLBBtGT+Jr6hkzA74C8Gco8bpZPe7aWFjiaK2w==,
+      }
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+    dependencies:
+      '@graphql-tools/merge': 8.4.2(graphql@16.6.0)
+      '@graphql-tools/utils': 9.2.1(graphql@16.6.0)
+      graphql: 16.6.0
+      tslib: 2.5.0
+      value-or-promise: 1.0.12
+    dev: true
 
   /@graphql-tools/utils@10.0.0:
     resolution:
@@ -5252,22 +5327,34 @@ packages:
     dependencies:
       graphql: 16.6.0
       tslib: 2.5.0
-    dev: false
 
-  /@graphql-tools/wrap@8.3.1(graphql@16.6.0):
+  /@graphql-tools/utils@9.2.1(graphql@16.6.0):
     resolution:
       {
-        integrity: sha512-vcbxawe4gFLuzvT9/CrZhauv9Rk9bMqZIwxgS/w3DWN+G7o6+fNxIv6LYt0acE5+rHJOF6+r3lX/SgFgPyoWww==,
+        integrity: sha512-WUw506Ql6xzmOORlriNrD6Ugx+HjVgYxt9KCXD9mHAak+eaXSwuGGPyE60hy9xaDEoXKBsG7SkG69ybitaVl6A==,
       }
     peerDependencies:
-      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
-      '@graphql-tools/delegate': 8.8.1(graphql@16.6.0)
-      '@graphql-tools/schema': 8.5.1(graphql@16.6.0)
-      '@graphql-tools/utils': 8.13.1(graphql@16.6.0)
+      '@graphql-typed-document-node/core': 3.1.1(graphql@16.6.0)
       graphql: 16.6.0
-      tslib: 2.3.1
-      value-or-promise: 1.0.11
+      tslib: 2.5.0
+    dev: true
+
+  /@graphql-tools/wrap@9.4.2(graphql@16.6.0):
+    resolution:
+      {
+        integrity: sha512-DFcd9r51lmcEKn0JW43CWkkI2D6T9XI1juW/Yo86i04v43O9w2/k4/nx2XTJv4Yv+iXwUw7Ok81PGltwGJSDSA==,
+      }
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+    dependencies:
+      '@graphql-tools/delegate': 9.0.35(graphql@16.6.0)
+      '@graphql-tools/schema': 9.0.19(graphql@16.6.0)
+      '@graphql-tools/utils': 9.2.1(graphql@16.6.0)
+      graphql: 16.6.0
+      tslib: 2.5.0
+      value-or-promise: 1.0.12
     dev: true
 
   /@graphql-typed-document-node/core@3.1.1:
@@ -5292,6 +5379,19 @@ packages:
         ^16.0.0
     dependencies:
       graphql: 16.6.0
+
+  /@graphql-typed-document-node/core@3.2.0(graphql@16.6.0):
+    resolution:
+      {
+        integrity: sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==,
+      }
+    peerDependencies:
+      graphql:
+        ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 ||
+        ^16.0.0 || ^17.0.0
+    dependencies:
+      graphql: 16.6.0
+    dev: true
 
   /@grpc/grpc-js@1.8.10:
     resolution:
@@ -13487,16 +13587,16 @@ packages:
       graphql: 16.6.0
     dev: true
 
-  /graphql-modules@2.1.0(graphql@16.6.0):
+  /graphql-modules@2.1.2(graphql@16.6.0):
     resolution:
       {
-        integrity: sha512-fOUc4i5xNLkRxqx234MIr+kolrxk1tZ2onTeRIcB73mCY4NeKxej7FMLb5St+UcNLzhqM4L6Mf47rN9MPVDmgA==,
+        integrity: sha512-GWxPom0iv4TXyLkuPqEHdRtJRdWCrUOGRMpXWmly1eY2T2MKAdCNya5iY/Ezb3d0Z2BzQBRUXdOgdkFPe2UDjg==,
       }
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
-      '@graphql-tools/schema': 8.5.1(graphql@16.6.0)
-      '@graphql-tools/wrap': 8.3.1(graphql@16.6.0)
+      '@graphql-tools/schema': 9.0.14(graphql@16.6.0)
+      '@graphql-tools/wrap': 9.4.2(graphql@16.6.0)
       '@graphql-typed-document-node/core': 3.1.1(graphql@16.6.0)
       graphql: 16.6.0
       ramda: 0.28.0
@@ -22050,13 +22150,6 @@ packages:
       {
         integrity: sha512-gS9GVHRU+RGn5KQM2rllAlR3dU6m7AcpJKdtH8gFvQiC4Otgk98XnmMU+nZenHt/+VhnBPWwgrJsyrdcw6i23w==,
       }
-
-  /tslib@2.3.1:
-    resolution:
-      {
-        integrity: sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==,
-      }
-    dev: true
 
   /tslib@2.4.1:
     resolution:
