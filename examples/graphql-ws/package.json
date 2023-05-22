@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@envelop/core": "*",
-    "@graphql-tools/schema": "8.5.1",
+    "@graphql-tools/schema": "10.0.0",
     "graphql": "16.6.0",
     "graphql-ws": "^4.4.2",
     "ws": "7.5.9"
