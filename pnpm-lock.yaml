@@ -402,15 +402,15 @@ importers:
         specifier: 4.6.0
         version: 4.6.0
       ws:
-        specifier: 7.5.9
-        version: 7.5.9
+        specifier: 8.13.0
+        version: 8.13.0
     devDependencies:
       '@types/node':
         specifier: 18.13.0
         version: 18.13.0
       '@types/ws':
-        specifier: 7.4.7
-        version: 7.4.7
+        specifier: 8.5.4
+        version: 8.5.4
       ts-node:
         specifier: 10.9.1
         version: 10.9.1(@types/node@18.13.0)(typescript@4.8.4)
@@ -437,8 +437,8 @@ importers:
         specifier: 18.13.0
         version: 18.13.0
       '@types/ws':
-        specifier: 7.4.7
-        version: 7.4.7
+        specifier: 8.5.4
+        version: 8.5.4
       ts-node:
         specifier: 10.9.1
         version: 10.9.1(@types/node@18.13.0)(typescript@4.8.4)
@@ -461,15 +461,15 @@ importers:
         specifier: ^4.4.2
         version: 4.4.2(graphql@16.6.0)
       ws:
-        specifier: 7.5.9
-        version: 7.5.9
+        specifier: 8.13.0
+        version: 8.13.0
     devDependencies:
       '@types/node':
         specifier: 18.13.0
         version: 18.13.0
       '@types/ws':
-        specifier: 7.4.7
-        version: 7.4.7
+        specifier: 8.5.4
+        version: 8.5.4
       ts-node:
         specifier: 10.9.1
         version: 10.9.1(@types/node@18.13.0)(typescript@4.8.4)
@@ -7225,10 +7225,10 @@ packages:
       }
     dev: false
 
-  /@types/ws@7.4.7:
+  /@types/ws@8.5.4:
     resolution:
       {
-        integrity: sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww==,
+        integrity: sha512-zdQDHKUgcX/zBc4GrwsE/7dVdAD8JR4EuiAXiiUhhfyIJXXb2+PrGshFyeXWQPMmmZ2XxgaqclgpIC7eTXc1mg==,
       }
     dependencies:
       '@types/node': 18.14.0
@@ -22845,6 +22845,22 @@ packages:
     peerDependencies:
       bufferutil: ^4.0.1
       utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dev: false
+
+  /ws@8.13.0:
+    resolution:
+      {
+        integrity: sha512-x9vcZYTrFPC7aSIbj7sRCYo7L/Xb8Iy+pW0ng0wt2vCJv7M9HOMy0UoN3rr+IFC7hb7vXoqS+P9ktyLLLhO+LA==,
+      }
+    engines: { node: '>=10.0.0' }
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
     peerDependenciesMeta:
       bufferutil:
         optional: true
