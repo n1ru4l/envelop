@@ -39,9 +39,9 @@ export const useValidationCache = (pluginOptions: ValidationCacheOptions = {}): 
     typeof pluginOptions.cache !== 'undefined'
       ? pluginOptions.cache
       : new LRUCache<string, readonly GraphQLError[]>({
-        max: DEFAULT_MAX,
-        ttl: DEFAULT_TTL,
-      });
+          max: DEFAULT_MAX,
+          ttl: DEFAULT_TTL,
+        });
 
   return {
     onValidate({ params, setValidationFn, validateFn }) {

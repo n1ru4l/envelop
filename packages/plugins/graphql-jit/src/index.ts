@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { DocumentNode, ExecutionArgs, ExecutionResult } from 'graphql';
 import { CompiledQuery, compileQuery, CompilerOptions, isCompiledQuery } from 'graphql-jit';
+import { LRUCache } from 'lru-cache';
 import {
   getDocumentString,
   makeExecute,
@@ -8,7 +9,6 @@ import {
   Plugin,
   TypedExecutionArgs,
 } from '@envelop/core';
-import { LRUCache } from 'lru-cache';
 
 const DEFAULT_MAX = 1000;
 const DEFAULT_TTL = 3600000;
@@ -113,10 +113,10 @@ export const useGraphQlJit = (
 
             return cacheEntry.subscribe
               ? (cacheEntry.subscribe(
-                args.rootValue,
-                args.contextValue,
-                args.variableValues,
-              ) as any)
+                  args.rootValue,
+                  args.contextValue,
+                  args.variableValues,
+                ) as any)
               : cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
           }),
         );
