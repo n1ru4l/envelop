@@ -1,5 +1,25 @@
 # @envelop/rate-limiter
 
+## 5.0.0
+
+### Major Changes
+
+- [#1776](https://github.com/n1ru4l/envelop/pull/1776)
+  [`332f1f22`](https://github.com/n1ru4l/envelop/commit/332f1f221f655421a850adb834afe549d50b4fac)
+  Thanks [@ardatan](https://github.com/ardatan)! - Drop Node 14 and require Node 16 or higher
+
+- Updated dependencies
+  [[`332f1f22`](https://github.com/n1ru4l/envelop/commit/332f1f221f655421a850adb834afe549d50b4fac),
+  [`a36925c7`](https://github.com/n1ru4l/envelop/commit/a36925c7df0538f88b51682e4e23f4b16f6fae2b)]:
+  - @envelop/core@4.0.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`332f1f22`](https://github.com/n1ru4l/envelop/commit/332f1f221f655421a850adb834afe549d50b4fac),
+  [`7066ce98`](https://github.com/n1ru4l/envelop/commit/7066ce98df8e4ed18be618eb821ca50074557452)]:
+  - @envelop/on-resolve@3.0.0
+
 ## 4.0.6
 
 ### Patch Changes
