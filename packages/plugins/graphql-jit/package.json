@@ -61,7 +61,7 @@
     "graphql": "16.6.0",
     "lru-cache": "^9.1.1",
     "reflect-metadata": "0.1.13",
-    "typescript": "4.8.4"
+    "typescript": "4.9.5"
   },
   "publishConfig": {
     "directory": "dist",

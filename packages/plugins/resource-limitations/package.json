@@ -60,7 +60,7 @@
     "@envelop/core": "^3.0.6",
     "@graphql-tools/schema": "10.0.0",
     "graphql": "16.6.0",
-    "typescript": "4.8.4"
+    "typescript": "4.9.5"
   },
   "publishConfig": {
     "directory": "dist",
