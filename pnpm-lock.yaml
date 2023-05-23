@@ -404,8 +404,8 @@ importers:
         specifier: 16.6.0
         version: 16.6.0
       graphql-ws:
-        specifier: ^4.4.2
-        version: 4.4.2(graphql@16.6.0)
+        specifier: ^5.0.0
+        version: 5.0.0(graphql@16.6.0)
       socket.io:
         specifier: 4.6.1
         version: 4.6.1
@@ -469,8 +469,8 @@ importers:
         specifier: 16.6.0
         version: 16.6.0
       graphql-ws:
-        specifier: ^4.4.2
-        version: 4.4.2(graphql@16.6.0)
+        specifier: ^5.0.0
+        version: 5.0.0(graphql@16.6.0)
       ws:
         specifier: 8.13.0
         version: 8.13.0
@@ -10703,8 +10703,8 @@ packages:
       tslib: 2.5.0
     dev: true
 
-  /graphql-ws@4.4.2(graphql@16.6.0):
-    resolution: {integrity: sha512-Cz+t1w+8+tiHIKzcz45tMwrxJpPSQ7KNjQrfN8ADAELECkkBB7aSvAgpShWz0Tne8teH/UxzJsULObLVq5eMvQ==}
+  /graphql-ws@5.0.0(graphql@16.6.0):
+    resolution: {integrity: sha512-SSSn5xQB5bDtmIwn2Rkw9WakrNbkDvPP5B7J5pKhFoDfQkF5xs9BaqelsGljoRs4rrdmWq9xw/QVtEXmjImZQA==}
     engines: {node: '>=10'}
     peerDependencies:
       graphql: '>=0.11 <=15'
