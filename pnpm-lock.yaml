@@ -286,8 +286,8 @@ importers:
         specifier: 11.8.0
         version: 11.8.0
       firebase-functions:
-        specifier: 3.24.1
-        version: 3.24.1(firebase-admin@11.8.0)
+        specifier: 4.4.0
+        version: 4.4.0(firebase-admin@11.8.0)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -10394,20 +10394,20 @@ packages:
       - supports-color
     dev: false
 
-  /firebase-functions@3.24.1(firebase-admin@11.8.0):
-    resolution: {integrity: sha512-GYhoyOV0864HFMU1h/JNBXYNmDk2MlbvU7VO/5qliHX6u/6vhSjTJjlyCG4leDEI8ew8IvmkIC5QquQ1U8hAuA==}
-    engines: {node: ^8.13.0 || >=10.10.0}
+  /firebase-functions@4.4.0(firebase-admin@11.8.0):
+    resolution: {integrity: sha512-Vdkr9/y/UKQez//cPm2Iu/9CeayqQ2tQF6o3KXozDDBokK9AOlAalVHImCpKo6nWptT/ncZ8djJFk5cR8l+E+A==}
+    engines: {node: '>=14.10.0'}
     hasBin: true
     peerDependencies:
-      firebase-admin: ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0
+      firebase-admin: ^10.0.0 || ^11.0.0
     dependencies:
       '@types/cors': 2.8.12
       '@types/express': 4.17.3
       cors: 2.8.5
       express: 4.18.2
       firebase-admin: 11.8.0
-      lodash: 4.17.21
       node-fetch: 2.6.7
+      protobufjs: 7.2.2
     transitivePeerDependencies:
       - encoding
       - supports-color
