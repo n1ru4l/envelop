@@ -34,5 +34,6 @@
     }
   ],
   "ignorePaths": ["**/__tests__/**", "**/test/**", "**/tests/**", "**/__fixtures__/**"],
+  "ignoreDeps": ["faker"],
   "baseBranches": ["main"]
 }
