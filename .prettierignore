@@ -1,1 +1,10 @@
+.pnp.*
+**/dist/**
+coverage/
+.next/
+.bob
+.svelte-kit
+examples/sveltekit
+**/generated/**
+.next
 pnpm-lock.yaml
