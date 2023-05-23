@@ -11,6 +11,7 @@
     "module": "node16",
     "target": "ES2021",
     "lib": ["es2021", "dom"],
+    "ignoreDeprecations": "5.0",
     "suppressImplicitAnyIndexErrors": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,

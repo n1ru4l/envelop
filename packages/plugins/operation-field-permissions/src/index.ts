@@ -42,7 +42,7 @@ const getContext = (input: unknown): ScopeContext => {
   if (typeof input !== 'object' || !input || !(OPERATION_PERMISSIONS_SYMBOL in input)) {
     throw new Error('OperationScopeRule was used without context.');
   }
-  return input[OPERATION_PERMISSIONS_SYMBOL];
+  return input[OPERATION_PERMISSIONS_SYMBOL] as ScopeContext;
 };
 
 type OperationScopeRuleOptions = {

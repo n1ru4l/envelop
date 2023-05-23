@@ -59,7 +59,7 @@
     "@graphql-tools/schema": "10.0.0",
     "apollo-server-core": "3.12.0",
     "graphql": "16.6.0",
-    "typescript": "4.8.4"
+    "typescript": "5.0.4"
   },
   "publishConfig": {
     "directory": "dist",
