@@ -3,7 +3,7 @@
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "private": true,
-  "packageManager": "pnpm@7.32.2",
+  "packageManager": "pnpm@7.32.4",
   "engines": {
     "node": ">=14.0.0",
     "pnpm": ">=7.32.2"
