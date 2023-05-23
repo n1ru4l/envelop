@@ -50,13 +50,13 @@
     "@envelop/core": "^3.0.6"
   },
   "dependencies": {
-    "jsonwebtoken": "^8.5.1",
-    "jwks-rsa": "^2.0.1",
+    "jsonwebtoken": "^9.0.0",
+    "jwks-rsa": "^3.0.1",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
     "@envelop/core": "^3.0.6",
-    "@types/jsonwebtoken": "8.5.9",
+    "@types/jsonwebtoken": "9.0.2",
     "typescript": "5.0.4"
   },
   "publishConfig": {
