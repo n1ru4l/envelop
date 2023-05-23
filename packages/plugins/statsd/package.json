@@ -54,14 +54,14 @@
     "telegraf"
   ],
   "peerDependencies": {
-    "@envelop/core": "^4.0.0",
+    "@envelop/core": "^4.0.0-rc-20230523121659-e74aff8c",
     "hot-shots": "^8.0.0 || ^9.0.0"
   },
   "dependencies": {
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@envelop/core": "^4.0.0",
+    "@envelop/core": "^4.0.0-rc-20230523121659-e74aff8c",
     "@graphql-tools/schema": "10.0.0",
     "graphql": "16.6.0",
     "hot-shots": "9.3.0",

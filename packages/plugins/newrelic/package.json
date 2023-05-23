@@ -47,16 +47,16 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@envelop/core": "^4.0.0",
+    "@envelop/core": "^4.0.0-rc-20230523121659-e74aff8c",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0",
     "newrelic": "^7 || ^8.0.0"
   },
   "dependencies": {
-    "@envelop/on-resolve": "^3.0.0",
+    "@envelop/on-resolve": "^3.0.0-rc-20230523121659-e74aff8c",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@envelop/core": "^4.0.0",
+    "@envelop/core": "^4.0.0-rc-20230523121659-e74aff8c",
     "@types/newrelic": "7.0.4",
     "graphql": "16.6.0",
     "newrelic": "8.17.1",

@@ -47,7 +47,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@envelop/core": "^4.0.0",
+    "@envelop/core": "^4.0.0-rc-20230523121659-e74aff8c",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
@@ -55,7 +55,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@envelop/core": "^4.0.0",
+    "@envelop/core": "^4.0.0-rc-20230523121659-e74aff8c",
     "@graphql-tools/schema": "10.0.0",
     "apollo-server-core": "3.12.0",
     "graphql": "16.6.0",

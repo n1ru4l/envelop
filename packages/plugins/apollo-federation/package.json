@@ -48,7 +48,7 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@apollo/gateway": "^0.54.0",
-    "@envelop/core": "^4.0.0",
+    "@envelop/core": "^4.0.0-rc-20230523121659-e74aff8c",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
@@ -59,7 +59,7 @@
   "devDependencies": {
     "@apollo/federation": "0.38.1",
     "@apollo/gateway": "0.54.1",
-    "@envelop/core": "^4.0.0",
+    "@envelop/core": "^4.0.0-rc-20230523121659-e74aff8c",
     "graphql": "16.6.0",
     "graphql-tag": "2.12.6",
     "typescript": "5.0.4"
