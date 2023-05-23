@@ -1,6 +1,6 @@
 {
   "name": "@envelop/dataloader",
-  "version": "4.0.6",
+  "version": "5.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -47,14 +47,14 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@envelop/core": "^3.0.6",
+    "@envelop/core": "^4.0.0",
     "dataloader": "^2.0.0"
   },
   "dependencies": {
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@envelop/core": "^3.0.6",
+    "@envelop/core": "^4.0.0",
     "@graphql-tools/schema": "10.0.0",
     "dataloader": "2.2.2",
     "graphql": "16.6.0",

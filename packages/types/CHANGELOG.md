@@ -1,5 +1,13 @@
 # @envelop/types
 
+## 4.0.0
+
+### Major Changes
+
+- [#1776](https://github.com/n1ru4l/envelop/pull/1776)
+  [`332f1f22`](https://github.com/n1ru4l/envelop/commit/332f1f221f655421a850adb834afe549d50b4fac)
+  Thanks [@ardatan](https://github.com/ardatan)! - Drop Node 14 and require Node 16 or higher
+
 ## 3.0.2
 
 ### Patch Changes

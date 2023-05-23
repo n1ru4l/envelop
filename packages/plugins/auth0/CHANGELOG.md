@@ -1,5 +1,30 @@
 # @envelop/auth0
 
+## 5.0.0
+
+### Major Changes
+
+- [#1776](https://github.com/n1ru4l/envelop/pull/1776)
+  [`332f1f22`](https://github.com/n1ru4l/envelop/commit/332f1f221f655421a850adb834afe549d50b4fac)
+  Thanks [@ardatan](https://github.com/ardatan)! - Drop Node 14 and require Node 16 or higher
+
+- Updated dependencies
+  [[`332f1f22`](https://github.com/n1ru4l/envelop/commit/332f1f221f655421a850adb834afe549d50b4fac),
+  [`a36925c7`](https://github.com/n1ru4l/envelop/commit/a36925c7df0538f88b51682e4e23f4b16f6fae2b)]:
+  - @envelop/core@4.0.0
+
+### Patch Changes
+
+- [#1814](https://github.com/n1ru4l/envelop/pull/1814)
+  [`dab0b262`](https://github.com/n1ru4l/envelop/commit/dab0b2621d44b3ea2cc22f69c050a5e80100cd60)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`jsonwebtoken@^9.0.0` ↗︎](https://www.npmjs.com/package/jsonwebtoken/v/9.0.0) (from `^8.5.1`,
+    in `dependencies`)
+  - Updated dependency [`jwks-rsa@^3.0.1` ↗︎](https://www.npmjs.com/package/jwks-rsa/v/3.0.1) (from
+    `^2.0.1`, in `dependencies`)
+
 ## 4.0.6
 
 ### Patch Changes

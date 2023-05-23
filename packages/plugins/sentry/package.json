@@ -1,6 +1,6 @@
 {
   "name": "@envelop/sentry",
-  "version": "5.1.1",
+  "version": "6.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -47,7 +47,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@envelop/core": "^3.0.6",
+    "@envelop/core": "^4.0.0",
     "@sentry/node": "^6 || ^7",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
@@ -55,7 +55,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@envelop/core": "^3.0.6",
+    "@envelop/core": "^4.0.0",
     "@graphql-tools/schema": "10.0.0",
     "@sentry/node": "7.53.0",
     "@sentry/tracing": "7.53.0",

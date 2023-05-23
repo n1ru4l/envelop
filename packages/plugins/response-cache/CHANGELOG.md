@@ -1,5 +1,49 @@
 # @envelop/response-cache
 
+## 5.0.0
+
+### Major Changes
+
+- [#1776](https://github.com/n1ru4l/envelop/pull/1776)
+  [`332f1f22`](https://github.com/n1ru4l/envelop/commit/332f1f221f655421a850adb834afe549d50b4fac)
+  Thanks [@ardatan](https://github.com/ardatan)! - Drop Node 14 and require Node 16 or higher
+
+- [#1767](https://github.com/n1ru4l/envelop/pull/1767)
+  [`0b127cc4`](https://github.com/n1ru4l/envelop/commit/0b127cc40f2e6a003a05cbeb0b6f004a08ada9d2)
+  Thanks [@n1ru4l](https://github.com/n1ru4l)! - bump lru cache dependency version
+
+- Updated dependencies
+  [[`332f1f22`](https://github.com/n1ru4l/envelop/commit/332f1f221f655421a850adb834afe549d50b4fac),
+  [`a36925c7`](https://github.com/n1ru4l/envelop/commit/a36925c7df0538f88b51682e4e23f4b16f6fae2b)]:
+  - @envelop/core@4.0.0
+
+### Patch Changes
+
+- [#1767](https://github.com/n1ru4l/envelop/pull/1767)
+  [`0b127cc4`](https://github.com/n1ru4l/envelop/commit/0b127cc40f2e6a003a05cbeb0b6f004a08ada9d2)
+  Thanks [@n1ru4l](https://github.com/n1ru4l)! - dependencies updates:
+
+  - Updated dependency [`lru-cache@^9.1.1` ↗︎](https://www.npmjs.com/package/lru-cache/v/9.1.1)
+    (from `^6.0.0`, in `dependencies`)
+
+- [#1776](https://github.com/n1ru4l/envelop/pull/1776)
+  [`332f1f22`](https://github.com/n1ru4l/envelop/commit/332f1f221f655421a850adb834afe549d50b4fac)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/utils@^10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.0.0)
+    (from `^8.8.0`, in `dependencies`)
+  - Updated dependency
+    [`@whatwg-node/fetch@^0.9.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.0) (from
+    `^0.8.0`, in `dependencies`)
+
+- [#1728](https://github.com/n1ru4l/envelop/pull/1728)
+  [`a36925c7`](https://github.com/n1ru4l/envelop/commit/a36925c7df0538f88b51682e4e23f4b16f6fae2b)
+  Thanks [@ardatan](https://github.com/ardatan)! - - Memoize parsed document string result and use
+  it wherever possible, and export `getDocumentString` function to allow users to use it as well.
+  - Use `WeakMap`s with `DocumentNode` wherever possible instead of using LRU Cache with strings. It
+    is more optimal if a parser caching is used
+
 ## 4.0.8
 
 ### Patch Changes

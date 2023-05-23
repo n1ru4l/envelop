@@ -1,6 +1,6 @@
 {
   "name": "@envelop/newrelic",
-  "version": "5.0.6",
+  "version": "6.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -47,16 +47,16 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@envelop/core": "^3.0.6",
+    "@envelop/core": "^4.0.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0",
     "newrelic": "^7 || ^8.0.0"
   },
   "dependencies": {
-    "@envelop/on-resolve": "^2.0.6",
+    "@envelop/on-resolve": "^3.0.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@envelop/core": "^3.0.6",
+    "@envelop/core": "^4.0.0",
     "@types/newrelic": "7.0.4",
     "graphql": "16.6.0",
     "newrelic": "8.17.1",

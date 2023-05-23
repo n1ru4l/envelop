@@ -1,5 +1,30 @@
 # @envelop/generic-auth
 
+## 6.0.0
+
+### Major Changes
+
+- [#1776](https://github.com/n1ru4l/envelop/pull/1776)
+  [`332f1f22`](https://github.com/n1ru4l/envelop/commit/332f1f221f655421a850adb834afe549d50b4fac)
+  Thanks [@ardatan](https://github.com/ardatan)! - Drop Node 14 and require Node 16 or higher
+
+- Updated dependencies
+  [[`332f1f22`](https://github.com/n1ru4l/envelop/commit/332f1f221f655421a850adb834afe549d50b4fac),
+  [`a36925c7`](https://github.com/n1ru4l/envelop/commit/a36925c7df0538f88b51682e4e23f4b16f6fae2b)]:
+  - @envelop/core@4.0.0
+
+### Patch Changes
+
+- [#1755](https://github.com/n1ru4l/envelop/pull/1755)
+  [`17afb252`](https://github.com/n1ru4l/envelop/commit/17afb2521294ea60213c6aed0d8095ae50112842)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Fix documentation to remove references
+  to async `validateUser` and throwing to report errors
+
+- Updated dependencies
+  [[`332f1f22`](https://github.com/n1ru4l/envelop/commit/332f1f221f655421a850adb834afe549d50b4fac),
+  [`332f1f22`](https://github.com/n1ru4l/envelop/commit/332f1f221f655421a850adb834afe549d50b4fac)]:
+  - @envelop/extended-validation@3.0.0
+
 ## 5.0.6
 
 ### Patch Changes
