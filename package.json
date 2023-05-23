@@ -55,7 +55,7 @@
     "globby": "13.1.4",
     "husky": "8.0.3",
     "jest": "27.5.1",
-    "lint-staged": "13.1.2",
+    "lint-staged": "13.2.2",
     "prettier": "2.8.8",
     "pretty-quick": "3.1.3",
     "rimraf": "5.0.1",
