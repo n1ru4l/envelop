@@ -447,8 +447,8 @@ importers:
         specifier: 16.6.0
         version: 16.6.0
       graphql-sse:
-        specifier: ^1.0.1
-        version: 1.0.1(graphql@16.6.0)
+        specifier: ^2.0.0
+        version: 2.0.0(graphql@16.6.0)
     devDependencies:
       '@types/node':
         specifier: 18.16.14
@@ -10999,11 +10999,11 @@ packages:
       tslib: 2.5.0
       yup: 0.32.11
 
-  /graphql-sse@1.0.1(graphql@16.6.0):
-    resolution: {integrity: sha512-CByxV9oKmUv/k9tlv8Bg/Hn9CcRlfsRQnU5YKI7Z2MfMckLBrXKq6Y1ln9GZh81Id/n5YV4O4X+p+QUHCu24sQ==}
+  /graphql-sse@2.0.0(graphql@16.6.0):
+    resolution: {integrity: sha512-TTdFwxGM9RY68s22XWyhc+SyQn3PLbELDD2So0K6Cc6EIlBAyPuNV8VlPfNKa/la7gEf2SwHY7JoJplOmOY4LA==}
     engines: {node: '>=12'}
     peerDependencies:
-      graphql: '>=0.11 <=15'
+      graphql: '>=0.11 <=16'
     dependencies:
       graphql: 16.6.0
     dev: false
