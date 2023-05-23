@@ -78,19 +78,19 @@ describe('useApolloFederation', () => {
     assertSingleExecutionValue(result);
     expect(result.errors).toBeFalsy();
     expect(result.data).toMatchInlineSnapshot(`
-Object {
-  "me": Object {
-    "reviews": Array [
-      Object {
+{
+  "me": {
+    "reviews": [
+      {
         "body": "Love it!",
-        "product": Object {
+        "product": {
           "name": "Table",
           "upc": "1",
         },
       },
-      Object {
+      {
         "body": "Too expensive.",
-        "product": Object {
+        "product": {
           "name": "Couch",
           "upc": "2",
         },
@@ -108,19 +108,19 @@ Object {
     assertSingleExecutionValue(result);
     expect(result.errors).toBeFalsy();
     expect(result.data).toMatchInlineSnapshot(`
-Object {
-  "me": Object {
-    "reviews": Array [
-      Object {
+{
+  "me": {
+    "reviews": [
+      {
         "body": "Love it!",
-        "product": Object {
+        "product": {
           "name": "Table",
           "upc": "1",
         },
       },
-      Object {
+      {
         "body": "Too expensive.",
-        "product": Object {
+        "product": {
           "name": "Couch",
           "upc": "2",
         },

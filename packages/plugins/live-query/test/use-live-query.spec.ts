@@ -39,9 +39,9 @@ describe('useLiveQuery', () => {
     assertStreamExecutionValue(result);
     let current = await result.next();
     expect(current.value).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "greetings": Array [
+      {
+        "data": {
+          "greetings": [
             "Hi",
             "Sup",
             "Ola",
@@ -54,9 +54,9 @@ describe('useLiveQuery', () => {
     liveQueryStore.invalidate('Query.greetings');
     current = await result.next();
     expect(current.value).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "greetings": Array [
+      {
+        "data": {
+          "greetings": [
             "Ola",
             "Sup",
             "Hi",
@@ -97,15 +97,15 @@ describe('useLiveQuery', () => {
     liveQueryStore.invalidate('Query.greetings');
     current = await result.next();
     expect(current.value).toMatchInlineSnapshot(`
-      Object {
-        "patch": Object {
-          "greetings": Object {
-            "_1": Array [
+      {
+        "patch": {
+          "greetings": {
+            "_1": [
               null,
               1,
               3,
             ],
-            "_2": Array [
+            "_2": [
               null,
               0,
               3,

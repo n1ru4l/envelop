@@ -140,7 +140,7 @@ describe('useMaskedErrors', () => {
       message: 'Bar',
     });
     expect(JSON.stringify(result)).toMatchInlineSnapshot(
-      `"{\\"errors\\":[{\\"message\\":\\"This message goes to all the clients out there!\\",\\"locations\\":[{\\"line\\":1,\\"column\\":9}],\\"path\\":[\\"secretWithExtensions\\"],\\"extensions\\":{\\"code\\":\\"Foo\\",\\"message\\":\\"Bar\\"}}],\\"data\\":null}"`,
+      `"{"errors":[{"message":"This message goes to all the clients out there!","locations":[{"line":1,"column":9}],"path":["secretWithExtensions"],"extensions":{"code":"Foo","message":"Bar"}}],"data":null}"`,
     );
   });
 
@@ -221,7 +221,7 @@ describe('useMaskedErrors', () => {
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchInlineSnapshot(`
-      Array [
+      [
         [GraphQLError: My Custom subscription error message.],
       ]
     `);
@@ -233,7 +233,7 @@ describe('useMaskedErrors', () => {
     assertSingleExecutionValue(result);
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchInlineSnapshot(`
-      Array [
+      [
         [GraphQLError: Noop],
       ]
     `);
@@ -301,7 +301,7 @@ describe('useMaskedErrors', () => {
     expect(allResults).toHaveLength(1);
     const [result] = allResults;
     expect(JSON.stringify(result)).toMatchInlineSnapshot(
-      `"{\\"errors\\":[{\\"message\\":\\"Custom resolve subscription errors.\\"}],\\"data\\":{\\"streamResolveError\\":null}}"`,
+      `"{"errors":[{"message":"Custom resolve subscription errors."}],"data":{"streamResolveError":null}}"`,
     );
   });
 
@@ -314,7 +314,7 @@ describe('useMaskedErrors', () => {
     const [result] = allResults;
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchInlineSnapshot(`
-      Array [
+      [
         [GraphQLError: Noop],
       ]
     `);
@@ -357,8 +357,8 @@ describe('useMaskedErrors', () => {
     const result = await testInstance.execute(`query { a `, {});
     assertSingleExecutionValue(result);
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "errors": Array [
+      {
+        "errors": [
           [GraphQLError: Syntax Error: Expected Name, found <EOF>.],
         ],
       }
@@ -370,8 +370,8 @@ describe('useMaskedErrors', () => {
     const result = await testInstance.execute(`query { iDoNotExistsMyGuy }`, {});
     assertSingleExecutionValue(result);
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "errors": Array [
+      {
+        "errors": [
           [GraphQLError: Cannot query field "iDoNotExistsMyGuy" on type "Query".],
         ],
       }
@@ -387,9 +387,9 @@ describe('useMaskedErrors', () => {
     const result = await testInstance.execute(`query { secret }`);
     assertSingleExecutionValue(result);
     expect(result).toMatchInlineSnapshot(`
-      Object {
+      {
         "data": null,
-        "errors": Array [
+        "errors": [
           [GraphQLError: Custom error message for Secret sauce that should not leak.
 
       GraphQL request:1:9
@@ -399,7 +399,7 @@ describe('useMaskedErrors', () => {
       }
     `);
     expect(JSON.stringify(result)).toMatchInlineSnapshot(
-      `"{\\"errors\\":[{\\"message\\":\\"Custom error message for Secret sauce that should not leak.\\\\n\\\\nGraphQL request:1:9\\\\n1 | query { secret }\\\\n  |         ^\\",\\"extensions\\":{\\"custom\\":true}}],\\"data\\":null}"`,
+      `"{"errors":[{"message":"Custom error message for Secret sauce that should not leak.\\n\\nGraphQL request:1:9\\n1 | query { secret }\\n  |         ^","extensions":{"custom":true}}],"data":null}"`,
     );
   });
 

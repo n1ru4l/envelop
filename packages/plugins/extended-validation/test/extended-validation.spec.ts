@@ -46,9 +46,9 @@ describe('useExtendedValidation', () => {
 
     const result = await testInstance.execute(operation);
     expect(result).toMatchInlineSnapshot(`
-          Object {
+          {
             "data": null,
-            "errors": Array [
+            "errors": [
               [GraphQLError: No 1],
               [GraphQLError: No 2],
             ],
@@ -208,9 +208,9 @@ describe('useExtendedValidation', () => {
     const result = await testkit.execute(operation);
     assertSingleExecutionValue(result);
     expect(result).toMatchInlineSnapshot(`
-      Object {
+      {
         "data": null,
-        "errors": Array [
+        "errors": [
           [GraphQLError: Not today.],
         ],
       }

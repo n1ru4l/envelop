@@ -1,5 +1,5 @@
 const { resolve } = require('path');
-const { pathsToModuleNameMapper } = require('ts-jest/utils');
+const { pathsToModuleNameMapper } = require('ts-jest');
 const CI = !!process.env.CI;
 
 const ROOT_DIR = __dirname;
@@ -17,6 +17,6 @@ module.exports = {
   }),
   collectCoverage: false,
   cacheDirectory: resolve(ROOT_DIR, `${CI ? '' : 'node_modules/'}.cache/jest`),
-  resolver: 'bob-the-bundler/jest-resolver.cjs',
+  resolver: 'bob-the-bundler/jest-resolver',
   setupFilesAfterEnv: ['<rootDir>/jest-setup.js'],
 };

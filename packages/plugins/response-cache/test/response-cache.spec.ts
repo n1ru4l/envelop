@@ -1747,16 +1747,16 @@ describe('useResponseCache', () => {
 
     let result = await testkit.execute(document);
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
+      {
+        "data": {
           "foo": "hi",
         },
       }
     `);
     result = await testkit.execute(document);
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
+      {
+        "data": {
           "foo": "hi",
         },
       }

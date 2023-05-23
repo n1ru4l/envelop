@@ -77,7 +77,7 @@ describe('useOperationPermissions', () => {
     `);
     assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
-      Array [
+      [
         [GraphQLError: Insufficient permissions for selecting 'Query.greetings'.],
       ]
     `);
@@ -111,7 +111,7 @@ describe('useOperationPermissions', () => {
     const result = await kit.execute(query);
     assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
-      Array [
+      [
         [GraphQLError: Insufficient permissions for selecting 'Query.foo'.],
         [GraphQLError: Insufficient permissions for selecting 'Query.user'.],
         [GraphQLError: Insufficient permissions for selecting 'User.id'.],
@@ -131,7 +131,7 @@ describe('useOperationPermissions', () => {
     const result = await kit.execute(query);
     assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
-      Array [
+      [
         [GraphQLError: Insufficient permissions for selecting 'User.id'.],
       ]
     `);
@@ -169,7 +169,7 @@ describe('useOperationPermissions', () => {
     `);
     assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
-      Array [
+      [
         [GraphQLError: Insufficient permissions for selecting 'Query.postOrUser'.],
         [GraphQLError: Insufficient permissions for selecting 'Post.__typename'.],
         [GraphQLError: Insufficient permissions for selecting 'User.__typename'.],
@@ -196,7 +196,7 @@ describe('useOperationPermissions', () => {
     `);
     assertSingleExecutionValue(result);
     expect(result.errors).toMatchInlineSnapshot(`
-      Array [
+      [
         [GraphQLError: Insufficient permissions for selecting 'Query.node'.],
         [GraphQLError: Insufficient permissions for selecting 'User.__typename'.],
         [GraphQLError: Insufficient permissions for selecting 'Post.__typename'.],

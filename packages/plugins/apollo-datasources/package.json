@@ -61,7 +61,7 @@
     "apollo-datasource": "3.3.2",
     "apollo-server-caching": "3.3.0",
     "graphql": "16.6.0",
-    "typescript": "4.8.4"
+    "typescript": "5.0.4"
   },
   "publishConfig": {
     "directory": "dist",

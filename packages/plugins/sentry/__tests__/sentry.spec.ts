@@ -33,11 +33,11 @@ describe('sentry', () => {
     const envelopTestkit = createTestkit([useSentry()], schema);
     const result = await envelopTestkit.execute('{ hello }');
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
+      {
+        "data": {
           "hello": null,
         },
-        "errors": Array [
+        "errors": [
           [GraphQLError: Unexpected Error, ok?],
         ],
       }
@@ -79,11 +79,11 @@ describe('sentry', () => {
     const result = await envelopTestkit.execute('{ hello }');
 
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
+      {
+        "data": {
           "hello": null,
         },
-        "errors": Array [
+        "errors": [
           [GraphQLError: Expected Error, ok?],
         ],
       }
@@ -120,11 +120,11 @@ describe('sentry', () => {
     const envelopTestkit = createTestkit([useSentry(), useMaskedErrors()], schema);
     const result = await envelopTestkit.execute('{ hello }');
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
+      {
+        "data": {
           "hello": null,
         },
-        "errors": Array [
+        "errors": [
           [GraphQLError: Unexpected error.],
         ],
       }
@@ -166,11 +166,11 @@ describe('sentry', () => {
     const result = await envelopTestkit.execute('{ hello }');
 
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
+      {
+        "data": {
           "hello": null,
         },
-        "errors": Array [
+        "errors": [
           [GraphQLError: Expected Error, ok?],
         ],
       }
@@ -238,9 +238,9 @@ describe('sentry', () => {
     const envelopTestkit = createTestkit([useSentry()], schema);
     const result = await envelopTestkit.execute('{ hello }');
     expect(result).toMatchInlineSnapshot(`
-      Object {
+      {
         "data": null,
-        "errors": Array [
+        "errors": [
           [GraphQLError: Cannot return null for non-nullable field Query.hello.],
         ],
       }
