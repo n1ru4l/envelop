@@ -17,6 +17,6 @@ module.exports = {
   }),
   collectCoverage: false,
   cacheDirectory: resolve(ROOT_DIR, `${CI ? '' : 'node_modules/'}.cache/jest`),
-  resolver: 'bob-the-bundler/jest-resolver.cjs',
+  resolver: 'bob-the-bundler/jest-resolver',
   setupFilesAfterEnv: ['<rootDir>/jest-setup.js'],
 };

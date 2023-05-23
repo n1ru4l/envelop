@@ -156,9 +156,9 @@ describe('execute', () => {
       expect(onExecuteDoneCalled).toEqual(true);
       expect(onExecuteDone2Called).toEqual(true);
       expect(result).toMatchInlineSnapshot(`
-        Object {
+        {
           "data": null,
-          "errors": Array [
+          "errors": [
             [GraphQLError: setResultAndStopExecution.],
           ],
         }
@@ -204,9 +204,9 @@ describe('execute', () => {
       expect(onExecuteDoneCalled).toEqual(false);
       expect(onExecuteDone2Called).toEqual(true);
       expect(result).toMatchInlineSnapshot(`
-        Object {
+        {
           "data": null,
-          "errors": Array [
+          "errors": [
             [GraphQLError: setResultAndStopExecution.],
           ],
         }

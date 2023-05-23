@@ -166,8 +166,8 @@ describe('validate', () => {
     assertSingleExecutionValue(r);
 
     expect(r).toMatchInlineSnapshot(`
-      Object {
-        "errors": Array [
+      {
+        "errors": [
           [GraphQLError: Cannot query field "woah" on type "Query".],
         ],
       }
