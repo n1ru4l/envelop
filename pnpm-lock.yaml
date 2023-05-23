@@ -1123,8 +1123,8 @@ importers:
         specifier: ^4.0.0
         version: link:../../core/dist
       '@types/newrelic':
-        specifier: 7.0.4
-        version: 7.0.4
+        specifier: 9.14.0
+        version: 9.14.0
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -5991,8 +5991,8 @@ packages:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: false
 
-  /@types/newrelic@7.0.4:
-    resolution: {integrity: sha512-Y4jdcdi5h+mD6yRe9JIe8jSWMmnx0C451r62sWndkkM3ZRYQ44N+kvZfAlBUP2tIaVdZweX+T3n3+uDxMg7xfw==}
+  /@types/newrelic@9.14.0:
+    resolution: {integrity: sha512-1jqbAMf6pKjAPJ8NC6VqZoylpBR6kejuw4qL3Mk8dworih+AXADki4WaUIWTzo7ERm6aykPl8xt1/J1invp6Mg==}
     dev: true
 
   /@types/node-fetch@2.6.2:
