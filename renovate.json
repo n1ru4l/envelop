@@ -1,10 +1,38 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>the-guild-org/shared-config:renovate", ":preserveSemverRanges"],
+  "automerge": true,
+  "major": {
+    "automerge": false
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
   "packageRules": [
     {
       "groupName": "graphql-tools",
       "matchPackagePrefixes": "@graphql-tools"
+    },
+    {
+      "groupName": "whatwg-node",
+      "matchPackagePrefixes": "@whatwg-node"
+    },
+    {
+      "excludePackagePatterns": [
+        "@changesets/*",
+        "typescript",
+        "^@theguild/",
+        "next",
+        "@whatwg-node/*",
+        "@graphql-tools/*"
+      ],
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
     }
-  ]
+  ],
+  "ignorePaths": ["**/__tests__/**", "**/test/**", "**/tests/**", "**/__fixtures__/**"],
+  "baseBranches": ["main"]
 }
