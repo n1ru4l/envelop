@@ -497,8 +497,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       aws-sdk:
-        specifier: 2.1382.0
-        version: 2.1382.0
+        specifier: 2.1383.0
+        version: 2.1383.0
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -4261,6 +4261,7 @@ packages:
       '@graphql-tools/utils': 8.9.0(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.5.0
+    dev: true
 
   /@graphql-tools/merge@8.3.16(graphql@16.6.0):
     resolution: {integrity: sha512-In0kcOZcPIpYOKaqdrJ3thdLPE7TutFnL9tbrHUy2zCinR2O/blpRC48jPckcs0HHrUQ0pGT4HqvzMkZUeEBAw==}
@@ -4338,6 +4339,7 @@ packages:
       graphql: 16.6.0
       tslib: 2.5.0
       value-or-promise: 1.0.11
+    dev: true
 
   /@graphql-tools/schema@9.0.14(graphql@16.6.0):
     resolution: {integrity: sha512-U6k+HY3Git+dsOEhq+dtWQwYg2CAgue8qBvnBXoKu5eEeH284wymMUoNm0e4IycOgMCJANVhClGEBIkLRu3FQQ==}
@@ -4369,7 +4371,7 @@ packages:
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.6.0)
+      '@graphql-typed-document-node/core': 3.1.1(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.5.0
 
@@ -4399,6 +4401,7 @@ packages:
     dependencies:
       graphql: 16.6.0
       tslib: 2.5.0
+    dev: true
 
   /@graphql-tools/utils@9.1.4(graphql@16.6.0):
     resolution: {integrity: sha512-hgIeLt95h9nQgQuzbbdhuZmh+8WV7RZ/6GbTj6t3IU4Zd2zs9yYJ2jgW/krO587GMOY8zCwrjNOMzD40u3l7Vg==}
@@ -4445,6 +4448,7 @@ packages:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
       graphql: 16.6.0
+    dev: true
 
   /@grpc/grpc-js@1.8.10:
     resolution: {integrity: sha512-x7QS+gJq8WaS1OJYFJkmeoX2PHhi3b5TR5TqR9a8NJv6VyedFecp3LgAUmuJSQZlwoAODpCKRtu4HzG1srNjiA==}
@@ -7104,8 +7108,8 @@ packages:
       - supports-color
     dev: false
 
-  /aws-sdk@2.1382.0:
-    resolution: {integrity: sha512-WAe8bqD4kLdyZwRLHn16bt1kT1Ijdx2MWjWHpWR6krLxQKSA5WKXCdO4JoR/ywzbi0k5covQIAgl/ZSNtCvA4Q==}
+  /aws-sdk@2.1383.0:
+    resolution: {integrity: sha512-A8sdfcrlGYXqu5x8dpwh1lg9/o354leCx08N/irwH3U4sAwQin0vHsI9DHmaJ0PLNo/TuzeLE3s4dLpI3mWtww==}
     engines: {node: '>= 10.0.0'}
     dependencies:
       buffer: 4.9.2
@@ -17713,6 +17717,7 @@ packages:
   /value-or-promise@1.0.11:
     resolution: {integrity: sha512-41BrgH+dIbCFXClcSapVs5M6GkENd3gQOJpEfPDNa71LsUGMXDL0jMWpI/Rh7WhX+Aalfz2TTS3Zt5pUsbnhLg==}
     engines: {node: '>=12'}
+    dev: true
 
   /value-or-promise@1.0.12:
     resolution: {integrity: sha512-Z6Uz+TYwEqE7ZN50gwn+1LCVo9ZVrpxRPOhOLnncYkY1ZzOYtrX8Fwf/rFktZ8R5mJms6EZf5TqNOMeZmnPq9Q==}
