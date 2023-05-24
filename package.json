@@ -3,10 +3,10 @@
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "private": true,
-  "packageManager": "pnpm@7.32.5",
+  "packageManager": "pnpm@8.4.0",
   "engines": {
     "node": ">=14.0.0",
-    "pnpm": ">=7.32.2"
+    "pnpm": ">=8"
   },
   "scripts": {
     "build": "bob build",
