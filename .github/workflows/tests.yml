@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        graphql_version: [15, 16]
+        graphql_version: [15.8.0, 16]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
