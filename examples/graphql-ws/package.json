@@ -16,7 +16,7 @@
     "ws": "8.13.0"
   },
   "devDependencies": {
-    "@types/node": "18.16.14",
+    "@types/node": "18.16.15",
     "@types/ws": "8.5.4",
     "ts-node": "10.9.1",
     "typescript": "5.0.4"

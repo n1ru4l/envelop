@@ -17,7 +17,7 @@
     "graphql-helix": "1.13.0"
   },
   "devDependencies": {
-    "@types/node": "18.16.14",
+    "@types/node": "18.16.15",
     "ts-node": "10.9.1",
     "typescript": "5.0.4"
   }
