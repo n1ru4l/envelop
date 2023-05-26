@@ -1,18 +1,6 @@
 import { withGuildDocs } from '@theguild/components/next.config';
 
 export default withGuildDocs({
-  transformPageOpts(pageOpts) {
-    // TODO: temporal fix to show link for versioned folder in navbar (otherwise you can see only when navigated to it directly)
-    pageOpts.pageMap
-      .find(o => o.kind === 'Folder' && o.name === 'v2')
-      .children.push({
-        kind: 'MdxPage',
-        name: 'index',
-        route: '/v2',
-        frontMatter: {},
-      });
-    return pageOpts;
-  },
   experimental: {
     urlImports: ['https://the-guild.dev/static/shared-logos/products/hive.svg'],
   },
@@ -35,7 +23,6 @@ export default withGuildDocs({
       '/docs/guides/migrating-from-v2-to-v3': '/v3/guides/migrating-from-v2-to-v3',
       '/plugins/use-lazy-loaded-schema':
         '/docs/guides/migrating-from-v2-to-v3#4-rename-uselazyloadedschema-to-useschemabycontext',
-      '/v3/:path*': '/docs/:path*',
     }).map(([from, to]) => ({
       source: from,
       destination: to,

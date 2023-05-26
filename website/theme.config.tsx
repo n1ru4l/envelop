@@ -2,9 +2,8 @@
 
 /* eslint sort-keys: error */
 import { useRouter } from 'next/router';
-import { BRANCH } from '@/lib/constants';
 import { PLUGINS } from '@/lib/plugins';
-import { Callout, defineConfig, Giscus, useTheme } from '@theguild/components';
+import { defineConfig, Giscus, useTheme } from '@theguild/components';
 
 export default defineConfig({
   docsRepositoryBase: 'https://github.com/n1ru4l/envelop/tree/main/website',
@@ -12,9 +11,7 @@ export default defineConfig({
     const { resolvedTheme } = useTheme();
     const { route } = useRouter();
 
-    const isV2 = route.startsWith('/v2');
-
-    const comments = !isV2 && route !== '/' && (
+    const comments = route !== '/' && (
       <Giscus
         // ensure giscus is reloaded when client side route is changed
         key={route}
@@ -28,13 +25,6 @@ export default defineConfig({
     );
     return (
       <>
-        {isV2 && (
-          <Callout type="warning">
-            This is the documentation for the <b>old</b> GraphQL Envelop version 2.
-            <br />
-            We recommend upgrading to the latest version 3.
-          </Callout>
-        )}
         {children}
         {comments}
       </>
@@ -54,13 +44,7 @@ export default defineConfig({
           return null;
         }
         const { repo, path } = plugin.githubReadme;
-        url = `https://github.com/${repo}/tree/main/${path}`;
-      } else if (router.route.startsWith('/v2/')) {
-        url = url
-          //
-          .replace('[[...slug]].mdx', '')
-          .replace('/v2/', '/docs/')
-          .replace('/main/', `/${BRANCH}/`);
+        url = `${repo}/tree/main/${path}`;
       }
 
       return (
