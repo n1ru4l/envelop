@@ -1,2 +1,15 @@
-export { RemoteContent as default } from 'nextra/data'
+import { useEffect } from 'react'
+import { MDXRemote } from 'next-mdx-remote'
+import { useSSG } from 'nextra/ssg'
+
 export { getStaticProps, getStaticPaths } from '@/lib/plugin-get-static-props'
+
+export const PluginPage = () => {
+  const { compiledSource, title } = useSSG()
+  useEffect(() => {
+    document.querySelector('.nextra-breadcrumb li:last-child').textContent = title
+  }, [])
+  return <MDXRemote compiledSource={compiledSource} />
+}
+
+<PluginPage />
