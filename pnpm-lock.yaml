@@ -1536,8 +1536,8 @@ importers:
         specifier: 4.1.3
         version: 4.1.3(@next/env@13.4.4)(next@13.4.4)
       nextra:
-        specifier: 2.6.1
-        version: 2.6.1(next@13.4.4)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 2.6.0
+        version: 2.6.0(next@13.4.4)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -4746,7 +4746,7 @@ packages:
       chalk: 4.1.2
       ci-info: 3.8.0
       exit: 0.1.2
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.10
       jest-changed-files: 29.5.0
       jest-config: 29.5.0(@types/node@18.16.16)(ts-node@10.9.1)
       jest-haste-map: 29.5.0
@@ -10834,7 +10834,6 @@ packages:
 
   /graceful-fs@4.2.10:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
-    dev: true
 
   /graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
@@ -11991,7 +11990,7 @@ packages:
       '@jest/types': 29.5.0
       chalk: 4.1.2
       exit: 0.1.2
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.10
       import-local: 3.0.2
       jest-config: 29.5.0(@types/node@18.16.16)(ts-node@10.9.1)
       jest-util: 29.5.0
@@ -12290,7 +12289,7 @@ packages:
       '@types/node': 18.16.16
       chalk: 4.1.2
       ci-info: 3.8.0
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.10
       picomatch: 2.3.1
     dev: true
 
@@ -12557,6 +12556,20 @@ packages:
 
   /katex@0.13.24:
     resolution: {integrity: sha512-jZxYuKCma3VS5UuxOx/rFV1QyGSl3Uy/i0kTJF3HgQ5xMinCQVF8Zd4bMY/9aI9b9A2pjIBOsjSSm68ykTAr8w==}
+    hasBin: true
+    dependencies:
+      commander: 8.3.0
+    dev: false
+
+  /katex@0.15.6:
+    resolution: {integrity: sha512-UpzJy4yrnqnhXvRPhjEuLA4lcPn6eRngixW7Q3TJErjg3Aw2PuLFBzTkdUb89UtumxjhHTqL3a5GDGETMSwgJA==}
+    hasBin: true
+    dependencies:
+      commander: 8.3.0
+    dev: false
+
+  /katex@0.16.4:
+    resolution: {integrity: sha512-WudRKUj8yyBeVDI4aYMNxhx5Vhh2PjpzQw1GRu/LVGqL4m1AxwD1GcUp0IMbdJaf5zsjtj8ghP0DOQRYhroNkw==}
     hasBin: true
     dependencies:
       commander: 8.3.0
@@ -14159,6 +14172,43 @@ packages:
       zod: 3.21.4
     dev: false
 
+  /nextra@2.6.0(next@13.4.4)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-yLYcjQWBfzlUUuf7q8M5DXIpNId19RB5SyrpjcNB/KvZ1S2CQpf5cXmpRzKGl015NI3MRAX+z7pMR2qiU3HtwA==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      next: '>=9.5.3'
+      react: '>=16.13.1'
+      react-dom: '>=16.13.1'
+    dependencies:
+      '@mdx-js/mdx': 2.3.0
+      '@mdx-js/react': 2.3.0(react@18.2.0)
+      '@napi-rs/simple-git': 0.1.8
+      clsx: 1.2.1
+      github-slugger: 2.0.0
+      graceful-fs: 4.2.10
+      gray-matter: 4.0.3
+      katex: 0.16.4
+      lodash.get: 4.4.2
+      next: 13.4.4(@babel/core@7.22.1)(react-dom@18.2.0)(react@18.2.0)
+      next-mdx-remote: 4.3.0(react-dom@18.2.0)(react@18.2.0)
+      p-limit: 3.1.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      rehype-katex: 6.0.2
+      rehype-pretty-code: 0.9.4(shiki@0.14.2)
+      remark-gfm: 3.0.1
+      remark-math: 5.1.1
+      remark-reading-time: 2.0.1
+      shiki: 0.14.2
+      slash: 3.0.0
+      title: 3.5.3
+      unist-util-remove: 3.1.1
+      unist-util-visit: 4.1.2
+      zod: 3.21.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /nextra@2.6.1(next@13.4.4)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-5NN+aTFzW17/42AWp3qAvBTlgZvSQVpHOUb2MdHI6gnslpjik6z7DS1gZJ9zJ/I8veVxdLhdE70TfksAZ9tgxQ==}
     engines: {node: '>=16'}
@@ -14637,6 +14687,10 @@ packages:
     resolution: {integrity: sha512-xDvOoLU5XRrcOZvnI6b8zA6n9O9ejNk/GExuz1yBuWUGn9KA97GI6HTs6u02wKara1CeVmZhH+0TZFdWScR89w==}
     dependencies:
       parse-path: 7.0.0
+    dev: false
+
+  /parse5@6.0.1:
+    resolution: {integrity: sha512-Ofn/CTFzRGTTxwpNEs9PP93gXShHcTq255nzRYSKe8AkVpZY7e1fpmTfOyoIvjP5HG7Z2ZM7VS9PPhQGW2pOpw==}
     dev: false
 
   /parse5@7.1.2:
@@ -15812,6 +15866,19 @@ packages:
       jsesc: 0.5.0
     dev: true
 
+  /rehype-katex@6.0.2:
+    resolution: {integrity: sha512-C4gDAlS1+l0hJqctyiU64f9CvT00S03qV1T6HiMzbSuLBgWUtcqydWHY9OpKrm0SpkK16FNd62CDKyWLwV2ppg==}
+    dependencies:
+      '@types/hast': 2.3.4
+      '@types/katex': 0.11.1
+      hast-util-to-text: 3.1.2
+      katex: 0.15.6
+      rehype-parse: 8.0.4
+      unified: 10.1.2
+      unist-util-remove-position: 4.0.1
+      unist-util-visit: 4.1.2
+    dev: false
+
   /rehype-katex@6.0.3:
     resolution: {integrity: sha512-ByZlRwRUcWegNbF70CVRm2h/7xy7jQ3R9LaY4VVSvjnoVWwWVhNL60DiZsBpC5tSzYQOCvDbzncIpIjPZWodZA==}
     dependencies:
@@ -15821,6 +15888,15 @@ packages:
       hast-util-to-text: 3.1.2
       katex: 0.16.7
       unist-util-visit: 4.1.2
+    dev: false
+
+  /rehype-parse@8.0.4:
+    resolution: {integrity: sha512-MJJKONunHjoTh4kc3dsM1v3C9kGrrxvA3U8PxZlP2SjH8RNUSrb+lF7Y0KVaUDnGH2QZ5vAn7ulkiajM9ifuqg==}
+    dependencies:
+      '@types/hast': 2.3.4
+      hast-util-from-parse5: 7.1.2
+      parse5: 6.0.1
+      unified: 10.1.2
     dev: false
 
   /rehype-pretty-code@0.9.4(shiki@0.14.2):
