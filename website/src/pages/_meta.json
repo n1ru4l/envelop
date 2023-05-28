@@ -8,13 +8,11 @@
     }
   },
   "v3": {
-    "title": "v3",
-    "versioned": true,
+    "title": "v3 (latest)",
     "type": "page"
   },
   "docs": {
     "title": "v2",
-    "versioned": true,
     "type": "page"
   },
   "plugins": {
