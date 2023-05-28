@@ -1,6 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { format } from 'date-fns';
-import { compileMdx } from 'nextra/compile';
+import { buildDynamicMDX, buildDynamicMeta } from 'nextra/remote';
 import { fetchPackageInfo } from '@theguild/components';
 import { PLUGINS } from './plugins';
 
@@ -21,7 +21,7 @@ export const getStaticProps: GetStaticProps = async ctx => {
   const { npmPackage, githubReadme, title } = plugin;
   const { readme, updatedAt } = await fetchPackageInfo(npmPackage, githubReadme);
 
-  const mdx = await compileMdx(
+  const mdx = await buildDynamicMDX(
     `
 # \`${title}\`
 
@@ -38,12 +38,8 @@ ${readme}`,
 
   return {
     props: {
-      ssg: {
-        compiledSource: mdx.result,
-        title,
-      },
+      ...mdx,
+      ...(await buildDynamicMeta()),
     },
-    // The page will be considered as stale and regenerated every 24 hours.
-    revalidate: 60 * 60 * 24,
   };
 };
