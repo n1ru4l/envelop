@@ -6,14 +6,19 @@ export const getStaticPaths = async () => ({
   paths: [
     {
       params: {
-        slug: ['index']
+        slug: []
       }
     },
     {
       params: {
-        slug: ['good']
+        slug: ['with-index', 'index']
       }
-    }
+    },
+    {
+     params: {
+       slug: ['with-empty-string', '']
+     }
+   }
   ]
 })
 
