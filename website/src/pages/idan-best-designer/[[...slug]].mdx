@@ -1,0 +1,27 @@
+import { RemoteContent } from 'nextra/data'
+import { buildDynamicMDX, buildDynamicMeta } from 'nextra/remote'
+
+export const getStaticPaths = async () => ({
+  fallback: 'blocking',
+  paths: [
+    {
+      params: {
+        slug: []
+      }
+    }
+  ]
+})
+
+export const getStaticProps = async ({ params: { slug } }) => {
+  const mdx = await buildDynamicMDX('# idan', {
+    defaultShowCopyCode: true
+  })
+  return {
+    props: {
+      ...mdx,
+      ...(await buildDynamicMeta())
+    }
+  }
+}
+
+<RemoteContent />
