@@ -4,21 +4,9 @@ import { buildDynamicMDX, buildDynamicMeta } from 'nextra/remote'
 export const getStaticPaths = async () => ({
   fallback: 'blocking',
   paths: [
-    {
-      params: {
-        slug: []
-      }
-    },
-    {
-      params: {
-        slug: ['with-index', 'index']
-      }
-    },
-    {
-     params: {
-       slug: ['with-empty-string', '']
-     }
-   }
+    { params: { slug: [] } },
+    { params: { slug: ['with-index', 'index'] } },
+    { params: { slug: ['with-empty-string', ''] } }
   ]
 })
 
