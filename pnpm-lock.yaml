@@ -1526,8 +1526,8 @@ importers:
   website:
     dependencies:
       '@theguild/components':
-        specifier: 4.6.2
-        version: 4.6.2(@algolia/client-search@4.17.1)(@types/react@18.2.7)(next@13.4.4)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)(webpack@4.46.0)
+        specifier: 4.6.3
+        version: 4.6.3(@algolia/client-search@4.17.1)(@types/react@18.2.7)(next@13.4.4)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)(webpack@4.46.0)
       date-fns:
         specifier: 2.30.0
         version: 2.30.0
@@ -5869,8 +5869,8 @@ packages:
       remove-markdown: 0.5.0
     dev: true
 
-  /@theguild/components@4.6.2(@algolia/client-search@4.17.1)(@types/react@18.2.7)(next@13.4.4)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)(webpack@4.46.0):
-    resolution: {integrity: sha512-3JkPG/fQOoGZjyeBzeXl3Ym7DZTdLrNbnRCi10xZTGV78seOj3dWrJs1Iw0etrVhCPZjQIvjBcW1bpNngKjbXw==}
+  /@theguild/components@4.6.3(@algolia/client-search@4.17.1)(@types/react@18.2.7)(next@13.4.4)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)(webpack@4.46.0):
+    resolution: {integrity: sha512-zY5MS2xdpihlwwIQ6qhH1FCxXW76EWEVgf9Lb3R0vXecwuhxe18AH+JWQ+w1a3UlUB+KFvvkv6CbsjLNi23Zog==}
     peerDependencies:
       next: ^12.3.1 || ^13.0.0
       react: ^18.2.0
