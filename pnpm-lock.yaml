@@ -53,8 +53,8 @@ importers:
         specifier: 29.5.1
         version: 29.5.1
       '@types/k6':
-        specifier: 0.44.1
-        version: 0.44.1
+        specifier: 0.44.2
+        version: 0.44.2
       '@types/node':
         specifier: 18.16.16
         version: 18.16.16
@@ -6179,8 +6179,8 @@ packages:
     dependencies:
       '@types/node': 18.16.16
 
-  /@types/k6@0.44.1:
-    resolution: {integrity: sha512-VTc4Z55WdCTRgXMz1YhWL0KiQNuGiqzXhApCv6oIA4eqD6b99ZB6zmuZZqiAOU1NL/JELzplwfriHEsHNOIxjw==}
+  /@types/k6@0.44.2:
+    resolution: {integrity: sha512-aK/hngWYvJGxiKJy/fEPXOitK/0/guTodMwFvCUXAkkZPY3udHoAybwrpiugtkOvwES5tz31EQXZfmqqyxM61A==}
     dev: true
 
   /@types/katex@0.11.1:
