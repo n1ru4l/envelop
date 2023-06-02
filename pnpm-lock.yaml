@@ -1350,8 +1350,8 @@ importers:
         specifier: ^10.0.0
         version: 10.0.0(graphql@16.6.0)
       '@whatwg-node/fetch':
-        specifier: ^0.9.0
-        version: 0.9.0
+        specifier: ^0.9.2-rc-20230602215806-47b588a
+        version: 0.9.2-rc-20230602215806-47b588a
       fast-json-stable-stringify:
         specifier: ^2.1.0
         version: 2.1.0
@@ -6615,16 +6615,16 @@ packages:
     engines: {node: '>=16.0.0'}
     dev: false
 
-  /@whatwg-node/fetch@0.9.0:
-    resolution: {integrity: sha512-zEyXaoz5w6BpKYKyZLTwBA41fqGuscOvSoPHytADRo1FY/s/fmjwiKq4QGmB88DlNuQ8e57s6AgWqIYyAT0Zmg==}
+  /@whatwg-node/fetch@0.9.2-rc-20230602215806-47b588a:
+    resolution: {integrity: sha512-EzijDfpPPPTWVGjoQaUiePWGPuoL68GyRebPqbJ87//vjav9St6qm0eTE7ImqDsRj/gBukEJs4n0Ub/TJhYGMA==}
     engines: {node: '>=16.0.0'}
     dependencies:
-      '@whatwg-node/node-fetch': 0.4.0
-      urlpattern-polyfill: 8.0.2
+      '@whatwg-node/node-fetch': 0.4.1
+      urlpattern-polyfill: 9.0.0
     dev: false
 
-  /@whatwg-node/node-fetch@0.4.0:
-    resolution: {integrity: sha512-aFfJNTMwkWrkl8I9nTkslVjPlkL+zb/Z71ng+71UbYYm1gPHfltHHXBiM99aZgUCaqyvaR5XzzwyCL6m0ikqsA==}
+  /@whatwg-node/node-fetch@0.4.1:
+    resolution: {integrity: sha512-pO27RvU5fIWdCcOXOm17dtS2Kd7pWAxO4RYiX1wBumP6WXqI+OPr/resrwn5dk7oQl8JuHf+hPoy2/Qqx9dCHw==}
     engines: {node: '>=16.0.0'}
     dependencies:
       '@whatwg-node/events': 0.1.0
@@ -17710,8 +17710,8 @@ packages:
       querystring: 0.2.0
     dev: false
 
-  /urlpattern-polyfill@8.0.2:
-    resolution: {integrity: sha512-Qp95D4TPJl1kC9SKigDcqgyM2VDVO4RiJc2d4qe5GrYm+zbIQCWWKAFaJNQ4BhdFeDGwBmAxqJBwWSJDb9T3BQ==}
+  /urlpattern-polyfill@9.0.0:
+    resolution: {integrity: sha512-WHN8KDQblxd32odxeIgo83rdVDE2bvdkb86it7bMhYZwWKJz0+O0RK/eZiHYnM+zgt/U7hAHOlCQGfjjvSkw2g==}
     dev: false
 
   /use-debounce@9.0.4(react@18.2.0):
