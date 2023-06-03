@@ -6,7 +6,8 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "ts-node index.ts"
+    "start": "ts-node index.ts",
+    "ts:check": "exit 0"
   },
   "dependencies": {
     "@envelop/core": "*",

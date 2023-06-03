@@ -6,13 +6,15 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "ts-node index.ts"
+    "start": "ts-node index.ts",
+    "ts:check": "tsc --noEmit"
   },
   "dependencies": {
     "@envelop/core": "*",
     "@graphql-tools/schema": "10.0.0",
     "graphql": "16.6.0",
-    "graphql-sse": "^2.0.0"
+    "graphql-sse": "^2.0.0",
+    "tslib": "^1.5.0"
   },
   "devDependencies": {
     "@types/node": "18.16.16",

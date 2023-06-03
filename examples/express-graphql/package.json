@@ -6,14 +6,16 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "ts-node index.ts"
+    "start": "ts-node index.ts",
+    "ts:check": "tsc --noEmit"
   },
   "dependencies": {
     "@envelop/core": "*",
     "@graphql-tools/schema": "10.0.0",
     "express": "4.18.2",
     "express-graphql": "0.12.0",
-    "graphql": "16.6.0"
+    "graphql": "16.6.0",
+    "tslib": "^2.5.0"
   },
   "devDependencies": {
     "@types/node": "18.16.16",

@@ -6,7 +6,8 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "compile": "tsc"
+    "compile": "tsc",
+    "ts:check": "tsc --noEmit"
   },
   "dependencies": {
     "@envelop/core": "*",

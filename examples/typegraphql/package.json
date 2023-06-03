@@ -6,7 +6,8 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "ts-node index.ts"
+    "start": "ts-node index.ts",
+    "ts:check": "tsc --noEmit"
   },
   "dependencies": {
     "@envelop/core": "*",
@@ -15,6 +16,7 @@
     "graphql": "16.6.0",
     "graphql-helix": "1.13.0",
     "reflect-metadata": "0.1.13",
+    "tslib": "^1.5.0",
     "type-graphql": "1.1.1"
   },
   "devDependencies": {

@@ -9,7 +9,7 @@ import {
   shouldRenderGraphiQL,
 } from 'graphql-helix';
 import { useAuth0 } from '@envelop/auth0';
-import { envelop, useSchema } from '@envelop/core';
+import { envelop, useEngine, useSchema } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const schema = makeExecutableSchema({
@@ -47,11 +47,13 @@ const auth0Config = {
 };
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({
+      parse,
+      validate,
+      execute,
+      subscribe,
+    }),
     useSchema(schema),
     useAuth0({
       domain: auth0Config.domain,

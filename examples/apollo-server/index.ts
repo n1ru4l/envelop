@@ -2,12 +2,12 @@
 import { execute, parse, subscribe, validate } from 'graphql';
 import { ApolloServer } from '@apollo/server';
 import {
-  GatewayApolloConfig,
-  GatewayExecutor,
-  GatewayInterface,
-  GatewayLoadResult,
-  GatewaySchemaLoadOrUpdateCallback,
-  GatewayUnsubscriber,
+  type GatewayApolloConfig,
+  type GatewayExecutor,
+  type GatewayInterface,
+  type GatewayLoadResult,
+  type GatewaySchemaLoadOrUpdateCallback,
+  type GatewayUnsubscriber,
 } from '@apollo/server-gateway-interface';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground';
 import { startStandaloneServer } from '@apollo/server/standalone';

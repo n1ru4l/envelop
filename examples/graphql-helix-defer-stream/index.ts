@@ -8,7 +8,7 @@ import {
   sendResult,
   shouldRenderGraphiQL,
 } from 'graphql-helix';
-import { envelop, useLogger, useSchema } from '@envelop/core';
+import { envelop, useEngine, useLogger, useSchema } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const sleep = (t = 1000) => new Promise(resolve => setTimeout(resolve, t));
@@ -147,11 +147,16 @@ const graphiQLContent = /* GraphQL */ `
 `;
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
-  plugins: [useSchema(schema), useLogger()],
+  plugins: [
+    useEngine({
+      parse,
+      validate,
+      execute,
+      subscribe,
+    }),
+    useSchema(schema),
+    useLogger(),
+  ],
 });
 const app = fastify();
 

@@ -1,7 +1,7 @@
 import http from 'http';
 import { execute, parse, subscribe, validate } from 'graphql';
-import { createHandler } from 'graphql-sse';
-import { envelop, useLogger, useSchema } from '@envelop/core';
+import { createHandler } from 'graphql-sse/lib/use/http';
+import { envelop, useEngine, useLogger, useSchema } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const schema = makeExecutableSchema({
@@ -31,20 +31,24 @@ const schema = makeExecutableSchema({
 });
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
-  plugins: [useSchema(schema), useLogger()],
+  plugins: [
+    useEngine({
+      parse,
+      validate,
+      execute,
+      subscribe,
+    }),
+    useSchema(schema),
+    useLogger(),
+  ],
 });
 
 const handler = createHandler({
   execute: (args: any) => args.rootValue.execute(args),
   subscribe: (args: any) => args.rootValue.subscribe(args),
-  onSubscribe: async (req, res, params) => {
+  onSubscribe: async (req, params) => {
     const { schema, execute, subscribe, contextFactory, parse, validate } = getEnveloped({
       req,
-      res,
       params,
     });
 

@@ -22,7 +22,7 @@
     "test": "jest",
     "test:ci": "jest --coverage",
     "test:core": "jest ./packages/core --coverage",
-    "ts:check": "tsc --noEmit"
+    "ts:check": "tsc --noEmit && pnpm run -r ts:check"
   },
   "devDependencies": {
     "@babel/core": "7.22.1",

@@ -7,7 +7,8 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node index.ts",
-    "test:client": "ts-node test-client.ts"
+    "test:client": "ts-node test-client.ts",
+    "ts:check": "tsc --noEmit"
   },
   "dependencies": {
     "@envelop/core": "*",
@@ -18,6 +19,7 @@
     "graphql-ws": "^5.0.0",
     "socket.io": "4.6.2",
     "socket.io-client": "4.6.2",
+    "tslib": "^2.5.0",
     "ws": "8.13.0"
   },
   "devDependencies": {

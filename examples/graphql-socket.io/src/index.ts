@@ -1,7 +1,7 @@
 import * as http from 'http';
 import { execute, parse, subscribe, validate } from 'graphql';
 import { Server } from 'socket.io';
-import { envelop, useLogger, useSchema } from '@envelop/core';
+import { envelop, useEngine, useLogger, useSchema } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { registerSocketIOGraphQLServer } from '@n1ru4l/socket-io-graphql-server';
 
@@ -19,11 +19,16 @@ const schema = makeExecutableSchema({
 });
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
-  plugins: [useSchema(schema), useLogger()],
+  plugins: [
+    useEngine({
+      parse,
+      validate,
+      execute,
+      subscribe,
+    }),
+    useSchema(schema),
+    useLogger(),
+  ],
 });
 
 const httpServer = http.createServer();

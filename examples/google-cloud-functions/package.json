@@ -11,7 +11,8 @@
     "logs": "firebase functions:log",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
-    "start": "npm run shell"
+    "start": "npm run shell",
+    "ts:check": "tsc --noEmit"
   },
   "dependencies": {
     "@envelop/core": "*",
@@ -19,7 +20,8 @@
     "firebase-admin": "11.9.0",
     "firebase-functions": "4.4.0",
     "graphql": "16.6.0",
-    "graphql-helix": "1.13.0"
+    "graphql-helix": "1.13.0",
+    "tslib": "^2.5.0"
   },
   "devDependencies": {
     "@azure/functions": "3.5.1",

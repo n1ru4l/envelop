@@ -2,7 +2,7 @@ import { execute, parse, subscribe, validate } from 'graphql';
 import { getGraphQLParameters, processRequest, Response } from 'graphql-helix';
 import { Router } from 'worktop';
 import { listen } from 'worktop/cache';
-import { envelop, useLogger, useSchema } from '@envelop/core';
+import { envelop, useEngine, useLogger, useSchema } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const router = new Router();
@@ -21,11 +21,16 @@ const schema = makeExecutableSchema({
 });
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
-  plugins: [useSchema(schema), useLogger()],
+  plugins: [
+    useEngine({
+      parse,
+      validate,
+      execute,
+      subscribe,
+    }),
+    useSchema(schema),
+    useLogger(),
+  ],
 });
 
 router.add('POST', '/graphql', async (req, res) => {

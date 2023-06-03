@@ -163,6 +163,9 @@ importers:
       '@apollo/server':
         specifier: ^4.3.2
         version: 4.3.2(graphql@16.6.0)
+      '@apollo/server-gateway-interface':
+        specifier: ^1.1.0
+        version: 1.1.0(graphql@16.6.0)
       '@apollo/server-plugin-landing-page-graphql-playground':
         specifier: ^4.0.0
         version: 4.0.0(@apollo/server@4.3.2)
@@ -262,6 +265,9 @@ importers:
       graphql:
         specifier: 16.6.0
         version: 16.6.0
+      tslib:
+        specifier: ^2.5.0
+        version: 2.5.0
     devDependencies:
       '@types/node':
         specifier: 18.16.16
@@ -293,6 +299,9 @@ importers:
       graphql-helix:
         specifier: 1.13.0
         version: 1.13.0(graphql@16.6.0)
+      tslib:
+        specifier: ^2.5.0
+        version: 2.5.0
     devDependencies:
       '@azure/functions':
         specifier: 3.5.1
@@ -417,6 +426,9 @@ importers:
       socket.io-client:
         specifier: 4.6.2
         version: 4.6.2
+      tslib:
+        specifier: ^2.5.0
+        version: 2.5.0
       ws:
         specifier: 8.13.0
         version: 8.13.0
@@ -448,6 +460,9 @@ importers:
       graphql-sse:
         specifier: ^2.0.0
         version: 2.0.0(graphql@16.6.0)
+      tslib:
+        specifier: ^1.5.0
+        version: 1.11.1
     devDependencies:
       '@types/node':
         specifier: 18.16.16
@@ -476,6 +491,9 @@ importers:
       graphql-ws:
         specifier: ^5.0.0
         version: 5.0.0(graphql@16.6.0)
+      tslib:
+        specifier: ^1.5.0
+        version: 1.11.1
       ws:
         specifier: 8.13.0
         version: 8.13.0
@@ -597,6 +615,9 @@ importers:
       reflect-metadata:
         specifier: 0.1.13
         version: 0.1.13
+      tslib:
+        specifier: ^1.5.0
+        version: 1.11.1
       type-graphql:
         specifier: 1.1.1
         version: 1.1.1(class-validator@0.14.0)(graphql@16.6.0)

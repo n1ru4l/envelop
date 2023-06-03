@@ -20,7 +20,7 @@ import {
   stringArg,
 } from 'nexus';
 import 'reflect-metadata';
-import { envelop, useLogger, useSchema } from '@envelop/core';
+import { envelop, useEngine, useLogger, useSchema } from '@envelop/core';
 
 const Node = interfaceType({
   name: 'Node',
@@ -68,11 +68,16 @@ const schema = makeSchema({
 });
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
-  plugins: [useSchema(schema), useLogger()],
+  plugins: [
+    useEngine({
+      parse,
+      validate,
+      execute,
+      subscribe,
+    }),
+    useSchema(schema),
+    useLogger(),
+  ],
 });
 
 const app = fastify();

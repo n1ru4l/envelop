@@ -10,7 +10,7 @@ import {
 } from 'graphql-helix';
 import 'reflect-metadata';
 import { Arg, buildSchemaSync, Field, ID, ObjectType, Query, Resolver } from 'type-graphql';
-import { envelop, useLogger, useSchema } from '@envelop/core';
+import { envelop, useEngine, useLogger, useSchema } from '@envelop/core';
 
 @ObjectType()
 class Recipe {
@@ -48,11 +48,13 @@ class RecipeResolver {
 }
 
 const getEnveloped = envelop({
-  parse,
-  validate,
-  execute,
-  subscribe,
   plugins: [
+    useEngine({
+      parse,
+      validate,
+      execute,
+      subscribe,
+    }),
     useSchema(
       buildSchemaSync({
         resolvers: [RecipeResolver],
