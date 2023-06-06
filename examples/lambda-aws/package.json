@@ -11,12 +11,12 @@
   "dependencies": {
     "@envelop/core": "*",
     "@graphql-tools/schema": "10.0.0",
-    "aws-sdk": "2.1390.0",
+    "aws-sdk": "2.1391.0",
     "graphql": "16.6.0",
     "graphql-helix": "1.13.0"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8.10.115",
+    "@types/aws-lambda": "8.10.116",
     "@types/node": "18.16.16",
     "ts-node": "10.9.1",
     "typescript": "5.1.3"
