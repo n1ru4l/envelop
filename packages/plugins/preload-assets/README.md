@@ -13,8 +13,7 @@ yarn add @envelop/preload-assets
 ```
 
 ```ts
-import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
-import { makeExecutableSchema } from 'graphql'
+import { execute, makeExecutableSchema, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { usePreloadAssets } from '@envelop/preload-asset'
 
