@@ -1,8 +1,11 @@
 import jsonStableStringify from 'fast-json-stable-stringify';
 import {
+  ConstDirectiveNode,
+  ConstValueNode,
   DocumentNode,
   ExecutionArgs,
   getOperationAST,
+  IntValueNode,
   Kind,
   print,
   SelectionSetNode,
@@ -317,7 +320,25 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
                     }
 
                     types.add(typename);
+                    const cacheControlDirective = getDirectiveArg(
+                      onExecuteParams.args.schema.getType(typename),
+                      'cacheControl',
+                      'maxAge',
+                    );
+                    if (cacheControlDirective) {
+                      if (cacheControlDirective.kind !== Kind.INT) {
+                        throw new Error(
+                          'cacheControl directive maxAge argument must be an integer',
+                        );
+                      }
+                      currentTtl = calculateTtl(Number(cacheControlDirective.value), currentTtl);
+                    }
                     if (typename in ttlPerType) {
+                      if (cacheControlDirective) {
+                        throw new Error(
+                          `cacheControl directive and ttlPerType cannot be used together for type ${typename}`,
+                        );
+                      }
                       currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
                     }
 
@@ -407,12 +428,31 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           onExecuteParams.args.document,
           visitWithTypeInfo(typeInfo, {
             Field(fieldNode) {
+              let maybeTtl: number | undefined = undefined;
               const parentType = typeInfo.getParentType();
+              const maybeCacheControlDirective = getDirectiveArg(
+                typeInfo.getFieldDef(),
+                'cacheControl',
+                'maxAge',
+              );
+
+              if (maybeCacheControlDirective) {
+                if (maybeCacheControlDirective.kind !== Kind.INT) {
+                  throw new Error('maxAge argument must be an integer');
+                }
+                currentTtl = calculateTtl(
+                  Number((maybeCacheControlDirective as IntValueNode).value),
+                  currentTtl,
+                );
+              }
+
               if (parentType) {
                 const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
-                const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate];
-                if (maybeTtl !== undefined) {
-                  currentTtl = calculateTtl(maybeTtl, currentTtl);
+                if (schemaCoordinate in ttlPerSchemaCoordinate) {
+                  if (maybeCacheControlDirective) {
+                    throw new Error("Can't set ttl for a field with cacheControl directive");
+                  }
+                  currentTtl = calculateTtl(ttlPerSchemaCoordinate[schemaCoordinate]!, currentTtl);
                 }
               }
             },
@@ -487,3 +527,17 @@ function calculateTtl(typeTtl: number, currentTtl: number | undefined): number {
   }
   return typeTtl;
 }
+
+function getDirectiveArg(
+  type: Maybe<{ astNode: Maybe<{ directives?: readonly ConstDirectiveNode[] }> }>,
+  directiveName: string,
+  argName: string,
+): ConstValueNode | undefined {
+  return type?.astNode?.directives
+    ?.find(directive => directive.name.value === directiveName)
+    ?.arguments?.find(arg => arg.name.value === argName)?.value;
+}
+
+export const responseCacheDirectiveTypeDefs = /* GraphQL */ `
+  directive @cacheControl(maxAge: Int!) on FIELD_DEFINITION | OBJECT
+`;

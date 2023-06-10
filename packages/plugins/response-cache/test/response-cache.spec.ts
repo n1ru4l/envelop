@@ -8,6 +8,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
   createInMemoryCache,
   defaultBuildResponseCacheKey,
+  responseCacheDirectiveTypeDefs,
   useResponseCache,
 } from '../src/index.js';
 
@@ -72,6 +73,91 @@ describe('useResponseCache', () => {
           ttlPerType: {
             User: 200,
           },
+        }),
+      ],
+      schema,
+    );
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+          comments {
+            id
+            text
+          }
+        }
+      }
+    `;
+
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(1);
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(1);
+    jest.advanceTimersByTime(201);
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it('custom ttl per type by schema directive is used instead of the global ttl - only enable caching for a specific type when the global ttl is 0', async () => {
+    jest.useFakeTimers();
+    const spy = jest.fn(() => [
+      {
+        id: 1,
+        name: 'User 1',
+        comments: [
+          {
+            id: 1,
+            text: 'Comment 1 of User 1',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'User 2',
+        comments: [
+          {
+            id: 2,
+            text: 'Comment 2 of User 2',
+          },
+        ],
+      },
+    ]);
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        ${responseCacheDirectiveTypeDefs}
+
+        type Query {
+          users: [User!]!
+        }
+
+        type User @cacheControl(maxAge: 200) {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+      },
+    });
+
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+          ttl: 0,
         }),
       ],
       schema,
@@ -962,7 +1048,7 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it('custom ttl can be specified per schema coordinate and will be used over the default ttl for caching a query operation execution result if included in the operation document', async () => {
+  it('custom ttl can be specified per static schema directive and will be used over the default ttl for caching a query operation execution result if included in the operation document', async () => {
     jest.useFakeTimers();
     const spy = jest.fn(() => [
       {
@@ -989,8 +1075,10 @@ describe('useResponseCache', () => {
 
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
+        ${responseCacheDirectiveTypeDefs}
+
         type Query {
-          users: [User!]!
+          users: [User!]! @cacheControl(maxAge: 200)
         }
 
         type User {
@@ -1017,9 +1105,6 @@ describe('useResponseCache', () => {
         useResponseCache({
           session: () => null,
           ttl: 500,
-          ttlPerSchemaCoordinate: {
-            'Query.users': 200,
-          },
         }),
       ],
       schema,
