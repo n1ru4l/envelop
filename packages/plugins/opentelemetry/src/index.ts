@@ -111,7 +111,7 @@ export const useOpenTelemetry = (
             executionSpan.end();
             // eslint-disable-next-line no-console
             console.warn(
-              `Plugin "newrelic" encountered a AsyncIterator which is not supported yet, so tracing data is not available for the operation.`,
+              `Plugin "opentelemetry" encountered an AsyncIterator which is not supported yet, so tracing data is not available for the operation.`,
             );
             return;
           }
