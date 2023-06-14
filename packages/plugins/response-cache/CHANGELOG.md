@@ -1,5 +1,14 @@
 # @envelop/response-cache
 
+## 5.0.1
+
+### Patch Changes
+
+- [#1873](https://github.com/n1ru4l/envelop/pull/1873)
+  [`914d78c3`](https://github.com/n1ru4l/envelop/commit/914d78c33d527137f4b7c69982b30044e91fda33)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not revisit cached parser result which adds
+  extra \_\_typename properties in the execution result
+
 ## 5.0.0
 
 ### Major Changes
