@@ -251,7 +251,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   return {
     onParse() {
       return ({ result, replaceParseResult }) => {
-        if (result.kind === Kind.DOCUMENT) {
+        if (!originalDocumentMap.has(result) && result.kind === Kind.DOCUMENT) {
           const newDocument = addTypeNameToDocument(result);
           replaceParseResult(newDocument);
         }
