@@ -16,7 +16,7 @@
     "graphql-helix": "1.13.0"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8.10.118",
+    "@types/aws-lambda": "8.10.119",
     "@types/node": "18.16.18",
     "ts-node": "10.9.1",
     "typescript": "5.1.3"
