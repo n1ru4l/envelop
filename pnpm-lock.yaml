@@ -502,8 +502,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       aws-sdk:
-        specifier: 2.1396.0
-        version: 2.1396.0
+        specifier: 2.1397.0
+        version: 2.1397.0
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -512,8 +512,8 @@ importers:
         version: 1.13.0(graphql@16.6.0)
     devDependencies:
       '@types/aws-lambda':
-        specifier: 8.10.117
-        version: 8.10.117
+        specifier: 8.10.118
+        version: 8.10.118
       '@types/node':
         specifier: 18.16.18
         version: 18.16.18
@@ -5938,8 +5938,8 @@ packages:
       '@types/estree': 0.0.50
     dev: false
 
-  /@types/aws-lambda@8.10.117:
-    resolution: {integrity: sha512-6T1aHTSSK4l8+67ANKHha/CRVxyk/bAl6OGCOxsKVsHaSxWpqsqgupc8rPw8vQGjtIgIZ+EaHqMz8gA4d6xZhQ==}
+  /@types/aws-lambda@8.10.118:
+    resolution: {integrity: sha512-KOvOKuC4OJCi6pL1SfXiTgG0UPCoBj4ce3Gv+w+x5+8b8E0ACYbxBB1ituzO1NLfeqicvt6eSSY0XRsGC1d3NA==}
     dev: true
 
   /@types/babel__core@7.1.14:
@@ -7194,8 +7194,8 @@ packages:
       - supports-color
     dev: false
 
-  /aws-sdk@2.1396.0:
-    resolution: {integrity: sha512-5tAzB4pO9mfwb4XbDIv7wj4IsxaLI+KEAUZ8CR80sh2OdsP9AVGtMGH61dH6DQbHxCiwtLyQuoy7gZEuXv2ldQ==}
+  /aws-sdk@2.1397.0:
+    resolution: {integrity: sha512-Km+jUscV6vW3vuurSsGrTjEqaNfrE9ykA3IJmJb85V2z5tklJvoBU+7JcCiF6h3BDKegNjiFOM7uoL3cGVGz4g==}
     engines: {node: '>= 10.0.0'}
     dependencies:
       buffer: 4.9.2
