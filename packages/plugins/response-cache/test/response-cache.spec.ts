@@ -1888,6 +1888,57 @@ describe('useResponseCache', () => {
       });
     });
 
+    it('does not include __typename in result if mot selected via selection set (union type)', async () => {
+      const schema = makeExecutableSchema({
+        typeDefs: /* GraphQL */ `
+          type Query {
+            user: User
+          }
+
+          union User = Admin | Customer
+
+          type Admin {
+            id: ID!
+            login: String!
+          }
+
+          type Customer {
+            id: ID!
+            name: String!
+          }
+        `,
+        resolvers: {
+          Query: {
+            user: () => ({ __typename: 'Admin', id: 1, login: 'root' }),
+          },
+        },
+      });
+      const testkit = createTestkit([useResponseCache({ session: () => null })], schema);
+      const result = await testkit.execute(/* GraphQL */ `
+        query {
+          user {
+            ... on Admin {
+              id
+              login
+            }
+            ... on Customer {
+              id
+              name
+            }
+          }
+        }
+      `);
+      assertSingleExecutionValue(result);
+      expect(result).toEqual({
+        data: {
+          user: {
+            id: '1',
+            login: 'root',
+          },
+        },
+      });
+    });
+
     it('works properly if __typename within selection set is aliased', async () => {
       const schema = makeExecutableSchema({
         typeDefs: /* GraphQL */ `
