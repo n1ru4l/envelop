@@ -1466,7 +1466,6 @@ describe('useResponseCache', () => {
   });
 
   it.skip('cache is purged upon mutation even when error is included in the mutation execution result', async () => {
-    3;
     const spy = jest.fn(() => [
       {
         id: 1,
@@ -2003,6 +2002,51 @@ describe('useResponseCache', () => {
         ttl: Infinity,
       });
     });
+
+    it('works with parse caching', async () => {
+      const schema = makeExecutableSchema({
+        typeDefs: /* GraphQL */ `
+          type Query {
+            foo: String
+          }
+        `,
+        resolvers: {
+          Query: {
+            foo: () => 'bar',
+          },
+        },
+      });
+      const operation = /* GraphQL */ `
+        query {
+          foo
+        }
+      `;
+      const testkit = createTestkit(
+        [
+          useResponseCache({
+            session: () => null,
+            ttl: 0,
+          }),
+          useParserCache(),
+        ],
+        schema,
+      );
+
+      const result = await testkit.execute(operation);
+      assertSingleExecutionValue(result);
+      expect(result).toEqual({
+        data: {
+          foo: 'bar',
+        },
+      });
+      const cachedResult = await testkit.execute(operation);
+      assertSingleExecutionValue(result);
+      expect(cachedResult).toEqual({
+        data: {
+          foo: 'bar',
+        },
+      });
+    });
   });
 
   describe('ignoring and ttl per type for types without id field', () => {
@@ -2194,6 +2238,7 @@ describe('useResponseCache', () => {
           onExecute({ setExecuteFn }) {
             setExecuteFn(() => ({
               data: {
+                __typename: 'Query',
                 foo: 'bar',
               },
               extensions: {
@@ -2249,6 +2294,7 @@ describe('useResponseCache', () => {
           onExecute({ setExecuteFn }) {
             setExecuteFn(() => ({
               data: {
+                __typename: 'Query',
                 foo: 'bar',
               },
               extensions: {
