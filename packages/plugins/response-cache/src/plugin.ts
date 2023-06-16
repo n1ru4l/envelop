@@ -520,3 +520,7 @@ function calculateTtl(typeTtl: number, currentTtl: number | undefined): number {
   }
   return typeTtl;
 }
+
+export const cacheControlDirective = /* GraphQL */ `
+  directive @cacheControl(maxAge: Int) on FIELD_DEFINITION | OBJECT
+`;

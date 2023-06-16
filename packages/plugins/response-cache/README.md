@@ -205,6 +205,36 @@ const getEnveloped = envelop({
 })
 ```
 
+It is also possible to define the TTL by using the `@cacheControl` directive in your schema.
+
+```ts
+import { execute, parse, subscribe, validate, buildSchema } from 'graphql'
+import { envelop } from '@envelop/core'
+import { useResponseCache, cacheControlDirective } from '@envelop/response-cache'
+
+const schema = buildSchema(/* GraphQL */ `
+  ${cacheControlDirective}
+
+  type Stock @cacheControl(maxAge: 500) {
+    # ... stock fields ...
+  }
+
+  # ... rest of the schema ...
+`)
+
+const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
+  plugins: [
+    useSchema(schema)
+    // ... other plugins ...
+    useResponseCache({ ttl: 2000 })
+  ]
+})
+```
+
 ### Cache with custom TTL per schema coordinate
 
 ```ts
@@ -226,6 +256,36 @@ const getEnveloped = envelop({
         'Query.rocketCoordinates': 100
       }
     })
+  ]
+})
+```
+
+It is also possible to define the TTL by using the `@cacheControl` directive in your schema.
+
+```ts
+import { buildSchema, execute, parse, subscribe, validate } from 'graphql'
+import { envelop } from '@envelop/core'
+import { cacheControlDirective, useResponseCache } from '@envelop/response-cache'
+
+const schema = buildSchema(/* GraphQL */ `
+  ${cacheControlDirective}
+
+  type Query {
+    rocketCoordinates: Coordinates @cacheControl(maxAge: 100)
+  }
+
+  # ... rest of the schema ...
+`)
+
+const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
+  plugins: [
+    useSchema(schema)
+    // ... other plugins ...
+    useResponseCache({ ttl: 2000 })
   ]
 })
 ```
