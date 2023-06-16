@@ -65,6 +65,7 @@ export type UseResponseCacheParameter<PluginContext extends Record<string, any> 
    * you need to provide the value `{ 'Query.__schema': undefined }`.
    */
   ttlPerSchemaCoordinate?: Record<string, number | undefined>;
+  scopePerSchemaCoordinate?: Record<string, 'PRIVATE' | 'PUBLIC' | undefined>;
   /**
    * Allows to cache responses based on the resolved session id.
    * Return a unique value for each session.
@@ -234,6 +235,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   ignoredTypes = [],
   ttlPerType = {},
   ttlPerSchemaCoordinate = {},
+  scopePerSchemaCoordinate = {},
   idFields = ['id'],
   invalidateViaMutation = true,
   buildResponseCacheKey = defaultBuildResponseCacheKey,
@@ -273,6 +275,9 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
               if (ttl != null) {
                 ttlPerType[type.name] = ttl;
               }
+              if (cacheControl.scope) {
+                scopePerSchemaCoordinate[`${type.name}`] = cacheControl.scope;
+              }
             });
             return type;
           },
@@ -282,6 +287,9 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
               const ttl = cacheControl.maxAge * 1000;
               if (ttl != null) {
                 ttlPerSchemaCoordinate[`${typeName}.${fieldName}`] = ttl;
+              }
+              if (cacheControl.scope) {
+                scopePerSchemaCoordinate[`${typeName}.${fieldName}`] = cacheControl.scope;
               }
             });
             return fieldConfig;
@@ -293,6 +301,8 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
     async onExecute(onExecuteParams) {
       const identifier = new Map<string, CacheEntityRecord>();
       const types = new Set<string>();
+
+      const sessionId = session(onExecuteParams.args.contextValue);
 
       let currentTtl: number | undefined;
       let skip = false;
@@ -314,6 +324,22 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
             {
               get(_, typename: string) {
                 let typenameCalled = 0;
+
+                if (ignoredTypesMap.has(typename)) {
+                  skip = true;
+                  return;
+                }
+
+                if (scopePerSchemaCoordinate[typename] === 'PRIVATE' && !sessionId) {
+                  skip = true;
+                  return;
+                }
+
+                types.add(typename);
+                if (typename in ttlPerType) {
+                  currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
+                }
+
                 return new Proxy((val: any) => val, {
                   // Needed for leaf values such as scalars, enums etc
                   // They don't have fields so visitResult expects functions for those
@@ -342,16 +368,12 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
                       };
                     }
 
-                    if (ignoredTypesMap.has(typename)) {
+                    if (
+                      scopePerSchemaCoordinate[`${typename}.${fieldName}`] === 'PRIVATE' &&
+                      !sessionId
+                    ) {
                       skip = true;
-                    }
-                    if (skip === true) {
                       return;
-                    }
-
-                    types.add(typename);
-                    if (typename in ttlPerType) {
-                      currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
                     }
 
                     if (idFields.includes(fieldName)) {
@@ -409,7 +431,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         documentString: getDocumentString(onExecuteParams.args),
         variableValues: onExecuteParams.args.variableValues,
         operationName: onExecuteParams.args.operationName,
-        sessionId: session(onExecuteParams.args.contextValue),
+        sessionId,
       });
 
       if ((enabled?.(onExecuteParams.args.contextValue) ?? true) === true) {
@@ -522,5 +544,10 @@ function calculateTtl(typeTtl: number, currentTtl: number | undefined): number {
 }
 
 export const cacheControlDirective = /* GraphQL */ `
-  directive @cacheControl(maxAge: Int) on FIELD_DEFINITION | OBJECT
+  enum CacheControlScope {
+    PUBLIC
+    PRIVATE
+  }
+
+  directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT
 `;
