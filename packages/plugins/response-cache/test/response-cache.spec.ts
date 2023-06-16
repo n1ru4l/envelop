@@ -5,7 +5,11 @@ import { useParserCache } from '@envelop/parser-cache';
 import { assertSingleExecutionValue, createTestkit, TestkitInstance } from '@envelop/testing';
 import { useValidationCache } from '@envelop/validation-cache';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { createInMemoryCache, defaultBuildResponseCacheKey, useResponseCache } from '../src/index.js';
+import {
+  createInMemoryCache,
+  defaultBuildResponseCacheKey,
+  useResponseCache,
+} from '../src/index.js';
 
 describe('useResponseCache', () => {
   beforeEach(() => jest.useRealTimers());
@@ -70,7 +74,7 @@ describe('useResponseCache', () => {
           },
         }),
       ],
-      schema
+      schema,
     );
 
     const query = /* GraphQL */ `
@@ -219,7 +223,7 @@ describe('useResponseCache', () => {
 
     const testInstance = createTestkit(
       [useResponseCache({ session: () => null, includeExtensionMetadata: true })],
-      schema
+      schema,
     );
 
     const query = /* GraphQL */ `
@@ -253,7 +257,7 @@ describe('useResponseCache', () => {
       `,
       {
         id: 1,
-      }
+      },
     );
     assertSingleExecutionValue(result);
     expect(result?.extensions?.responseCache).toEqual({
@@ -334,7 +338,7 @@ describe('useResponseCache', () => {
         }),
         useGraphQlJit(),
       ],
-      schema
+      schema,
     );
 
     const query = /* GraphQL */ `
@@ -368,7 +372,7 @@ describe('useResponseCache', () => {
       `,
       {
         id: 1,
-      }
+      },
     );
     assertSingleExecutionValue(result);
     expect(result?.extensions?.responseCache).toEqual({
@@ -574,7 +578,7 @@ describe('useResponseCache', () => {
             },
           ],
         },
-      ].slice(0, limit)
+      ].slice(0, limit),
     );
 
     const schema = makeExecutableSchema({
@@ -675,7 +679,10 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ session: () => null, ttl: 100 })], schema);
+    const testInstance = createTestkit(
+      [useResponseCache({ session: () => null, ttl: 100 })],
+      schema,
+    );
 
     const query = /* GraphQL */ `
       query test {
@@ -758,7 +765,7 @@ describe('useResponseCache', () => {
           },
         }),
       ],
-      schema
+      schema,
     );
 
     const query = /* GraphQL */ `
@@ -779,14 +786,14 @@ describe('useResponseCache', () => {
       {},
       {
         sessionId: 1,
-      }
+      },
     );
     await testInstance.execute(
       query,
       {},
       {
         sessionId: 1,
-      }
+      },
     );
     expect(spy).toHaveBeenCalledTimes(1);
     await testInstance.execute(
@@ -794,7 +801,7 @@ describe('useResponseCache', () => {
       {},
       {
         sessionId: 2,
-      }
+      },
     );
     expect(spy).toHaveBeenCalledTimes(2);
   });
@@ -848,7 +855,10 @@ describe('useResponseCache', () => {
       },
     });
 
-    const testInstance = createTestkit([useResponseCache({ session: () => null, ignoredTypes: ['Comment'] })], schema);
+    const testInstance = createTestkit(
+      [useResponseCache({ session: () => null, ignoredTypes: ['Comment'] })],
+      schema,
+    );
 
     const query = /* GraphQL */ `
       query test {
@@ -928,7 +938,7 @@ describe('useResponseCache', () => {
           },
         }),
       ],
-      schema
+      schema,
     );
 
     const query = /* GraphQL */ `
@@ -1012,7 +1022,7 @@ describe('useResponseCache', () => {
           },
         }),
       ],
-      schema
+      schema,
     );
 
     const query = /* GraphQL */ `
@@ -1199,7 +1209,7 @@ describe('useResponseCache', () => {
           includeExtensionMetadata: true,
         }),
       ],
-      schema
+      schema,
     );
 
     const userQuery = /* GraphQL */ `
@@ -1317,7 +1327,7 @@ describe('useResponseCache', () => {
           includeExtensionMetadata: true,
         }),
       ],
-      schema
+      schema,
     );
 
     const userQuery = /* GraphQL */ `
@@ -1436,7 +1446,7 @@ describe('useResponseCache', () => {
           shouldCacheResult: () => true,
         }),
       ],
-      schema
+      schema,
     );
 
     const query = /* GraphQL */ `
@@ -1523,7 +1533,7 @@ describe('useResponseCache', () => {
 
     const testInstance = createTestkit(
       [useResponseCache({ session: () => null, includeExtensionMetadata: true })],
-      schema
+      schema,
     );
 
     const query = /* GraphQL */ `
@@ -1554,7 +1564,7 @@ describe('useResponseCache', () => {
       `,
       {
         id: 1,
-      }
+      },
     );
 
     expect(errorSpy).toHaveBeenCalledTimes(1);
@@ -1657,7 +1667,7 @@ describe('useResponseCache', () => {
           ttlPerSchemaCoordinate: { 'Query.__schema': undefined },
         }),
       ],
-      schema
+      schema,
     );
 
     await testInstance.execute(introspectionQuery);
@@ -1726,7 +1736,7 @@ describe('useResponseCache', () => {
     });
     const testkit = createTestkit(
       [useValidationCache(), useResponseCache({ session: () => null }), useParserCache()],
-      schema
+      schema,
     );
 
     const document = /* GraphQL */ `
@@ -1774,7 +1784,7 @@ describe('useResponseCache', () => {
           ttlPerSchemaCoordinate: { 'Query.foo': Infinity },
         }),
       ],
-      schema
+      schema,
     );
     const operation = /* GraphQL */ `
       {
@@ -1960,7 +1970,7 @@ describe('useResponseCache', () => {
       const cache = createInMemoryCache();
       const testkit = createTestkit(
         [useResponseCache({ session: () => null, includeExtensionMetadata: true, cache })],
-        schema
+        schema,
       );
 
       let result = await testkit.execute(operation);
@@ -2015,7 +2025,7 @@ describe('useResponseCache', () => {
           includeExtensionMetadata: true,
         }),
       ],
-      schema
+      schema,
     );
     const operation = /* GraphQL */ `
       {
@@ -2055,7 +2065,7 @@ describe('useResponseCache', () => {
           includeExtensionMetadata: true,
         }),
       ],
-      schema
+      schema,
     );
     const operation = /* GraphQL */ `
       {
@@ -2124,7 +2134,7 @@ describe('useResponseCache', () => {
               ignoredTypes: ['TypeWithId', 'TypeWithoutId'],
             }),
           ],
-          schema
+          schema,
         );
       });
 
@@ -2187,7 +2197,7 @@ describe('useResponseCache', () => {
               },
             }),
           ],
-          schema
+          schema,
         );
       });
 
@@ -2272,7 +2282,7 @@ describe('useResponseCache', () => {
         },
         useResponseCache({ session: () => null, includeExtensionMetadata: true, cache }),
       ],
-      schema
+      schema,
     );
 
     const result = await testkit.execute(operation);
@@ -2329,7 +2339,7 @@ describe('useResponseCache', () => {
         },
         useResponseCache({ session: () => null, includeExtensionMetadata: true, cache }),
       ],
-      schema
+      schema,
     );
 
     const result = await testkit.execute(operation);
@@ -2377,7 +2387,7 @@ describe('useResponseCache', () => {
           shouldCacheResult,
         }),
       ],
-      schema
+      schema,
     );
 
     const result = await testkit.execute(operation);
