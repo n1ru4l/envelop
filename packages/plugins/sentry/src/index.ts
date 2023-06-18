@@ -108,7 +108,7 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
   }
 
   return {
-    onExecute({ args }) {
+    onExecute({ args, extendContext }) {
       if (skipOperation(args)) {
         return;
       }
@@ -184,6 +184,8 @@ export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
       if (options.configureScope) {
         Sentry.configureScope(scope => options.configureScope!(args, scope));
       }
+
+      extendContext({ sentry: { scope } });
 
       return {
         onExecuteDone(payload) {
