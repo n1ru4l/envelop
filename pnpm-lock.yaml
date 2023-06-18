@@ -95,8 +95,8 @@ importers:
         specifier: 47.0.0
         version: 47.0.0(eslint@8.43.0)
       globby:
-        specifier: 13.1.4
-        version: 13.1.4
+        specifier: 13.2.0
+        version: 13.2.0
       husky:
         specifier: 8.0.3
         version: 8.0.3
@@ -7413,7 +7413,7 @@ packages:
       consola: 3.1.0
       execa: 7.1.1
       fs-extra: 11.1.1
-      globby: 13.1.4
+      globby: 13.2.0
       js-yaml: 4.1.0
       lodash.get: 4.4.2
       p-limit: 4.0.0
@@ -10631,8 +10631,8 @@ packages:
       slash: 3.0.0
     dev: true
 
-  /globby@13.1.4:
-    resolution: {integrity: sha512-iui/IiiW+QrJ1X1hKH5qwlMQyv34wJAYwH1vrf8b9kBA4sNiif3gKsMHa+BrdnOpEudWjpotfa7LrTzB1ERS/g==}
+  /globby@13.2.0:
+    resolution: {integrity: sha512-jWsQfayf13NvqKUIL3Ta+CIqMnvlaIDFveWE/dpOZ9+3AMEJozsxDvKA02zync9UuvOM8rOXzsD5GqKP4OnWPQ==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dependencies:
       dir-glob: 3.0.1
