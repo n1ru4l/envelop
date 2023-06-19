@@ -2099,6 +2099,84 @@ describe('useResponseCache', () => {
       });
     });
   });
+  it('supports @cacheControl directive with maxAge on a field', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        directive @cacheControl(maxAge: Int) on FIELD_DEFINITION
+        type Query {
+          foo: String @cacheControl(maxAge: 10)
+        }
+      `,
+      resolvers: {
+        Query: {
+          foo: () => 'bar',
+        },
+      },
+    });
+    const testkit = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+          includeExtensionMetadata: true,
+        }),
+      ],
+      schema,
+    );
+    const operation = /* GraphQL */ `
+      {
+        foo
+      }
+    `;
+    const result = await testkit.execute(operation);
+    assertSingleExecutionValue(result);
+    expect(result.extensions?.['responseCache']).toEqual({
+      didCache: true,
+      hit: false,
+      ttl: 10000,
+    });
+  });
+
+  it('supports @cacheControl directive with maxAge on a type', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        directive @cacheControl(maxAge: Int) on OBJECT
+        type Query {
+          foo: Foo
+        }
+        type Foo @cacheControl(maxAge: 10) {
+          id: String
+        }
+      `,
+      resolvers: {
+        Query: {
+          foo: () => ({ id: 'baz' }),
+        },
+      },
+    });
+    const testkit = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+          includeExtensionMetadata: true,
+        }),
+      ],
+      schema,
+    );
+    const operation = /* GraphQL */ `
+      {
+        foo {
+          id
+        }
+      }
+    `;
+    const result = await testkit.execute(operation);
+    assertSingleExecutionValue(result);
+    expect(result.extensions?.['responseCache']).toEqual({
+      didCache: true,
+      hit: false,
+      ttl: 10000,
+    });
+  });
 
   describe('ignoring and ttl per type for types without id field', () => {
     let spyWithId: jest.Mock<{ id: Number; field: String }, []>;

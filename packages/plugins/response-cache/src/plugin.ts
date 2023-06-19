@@ -18,7 +18,7 @@ import {
   ObjMap,
   Plugin,
 } from '@envelop/core';
-import { memoize1, visitResult } from '@graphql-tools/utils';
+import { getDirective, MapperKind, mapSchema, memoize1, visitResult } from '@graphql-tools/utils';
 import type { Cache, CacheEntityRecord } from './cache.js';
 import { hashSHA256 } from './hash-sha256.js';
 import { createInMemoryCache } from './in-memory-cache.js';
@@ -245,6 +245,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
     : false,
 }: UseResponseCacheParameter<PluginContext>): Plugin<PluginContext> {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
+  const processedSchemas = new WeakSet();
 
   // never cache Introspections
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
@@ -256,6 +257,38 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           replaceParseResult(newDocument);
         }
       };
+    },
+    onSchemaChange({ schema }) {
+      if (processedSchemas.has(schema)) {
+        return;
+      }
+      // Check if the schema has @cacheControl directive
+      const cacheControlDirective = schema.getDirective('cacheControl');
+      if (cacheControlDirective) {
+        mapSchema(schema, {
+          [MapperKind.COMPOSITE_TYPE]: type => {
+            const cacheControlAnnotations = getDirective(schema, type, 'cacheControl');
+            cacheControlAnnotations?.forEach(cacheControl => {
+              const ttl = cacheControl.maxAge * 1000;
+              if (ttl != null) {
+                ttlPerType[type.name] = ttl;
+              }
+            });
+            return type;
+          },
+          [MapperKind.FIELD]: (fieldConfig, fieldName, typeName) => {
+            const cacheControlAnnotations = getDirective(schema, fieldConfig, 'cacheControl');
+            cacheControlAnnotations?.forEach(cacheControl => {
+              const ttl = cacheControl.maxAge * 1000;
+              if (ttl != null) {
+                ttlPerSchemaCoordinate[`${typeName}.${fieldName}`] = ttl;
+              }
+            });
+            return fieldConfig;
+          },
+        });
+      }
+      processedSchemas.add(schema);
     },
     async onExecute(onExecuteParams) {
       const identifier = new Map<string, CacheEntityRecord>();
@@ -487,3 +520,7 @@ function calculateTtl(typeTtl: number, currentTtl: number | undefined): number {
   }
   return typeTtl;
 }
+
+export const cacheControlDirective = /* GraphQL */ `
+  directive @cacheControl(maxAge: Int) on FIELD_DEFINITION | OBJECT
+`;
