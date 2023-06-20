@@ -1,15 +1,9 @@
-import {
-  ExecutionResult,
-  FieldNode,
-  GraphQLError,
-  Kind,
-  OperationDefinitionNode,
-  print,
-} from 'graphql';
+import { ExecutionResult, FieldNode, getOperationAST, GraphQLError, Kind, print } from 'graphql';
+import newRelic from 'newrelic';
 import { DefaultContext, getDocumentString, isAsyncIterable, Path, Plugin } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
 
-enum AttributeName {
+export enum AttributeName {
   COMPONENT_NAME = 'Envelop_NewRelic_Plugin',
   ANONYMOUS_OPERATION = '<anonymous>',
   EXECUTION_RESULT = 'graphql.execute.result',
@@ -40,6 +34,8 @@ export type UseNewRelicOptions = {
    * By default, this plugin skips all `Error` errors and does not report them to NewRelic.
    */
   skipError?: (error: GraphQLError) => boolean;
+
+  shim?: any;
 };
 
 interface InternalOptions extends UseNewRelicOptions {
@@ -64,36 +60,38 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
   };
   options.isExecuteVariablesRegex = options.includeExecuteVariables instanceof RegExp;
   options.isResolverArgsRegex = options.includeResolverArgs instanceof RegExp;
-  const instrumentationApi$ = import('newrelic')
-    .then(m => m.default || m)
-    .then(({ shim }) => {
-      if (!shim?.agent) {
-        throw new Error(
-          'Agent unavailable. Please check your New Relic Agent configuration and ensure New Relic is enabled.',
-        );
-      }
-      shim.agent.metrics
-        .getOrCreateMetric(`Supportability/ExternalModules/${AttributeName.COMPONENT_NAME}`)
-        .incrementCallCount();
-      return shim;
-    });
+  const instrumentationApi = rawOptions?.shim || newRelic?.shim;
+  if (!instrumentationApi?.agent) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      'Agent unavailable. Please check your New Relic Agent configuration and ensure New Relic is enabled.',
+    );
+    return {};
+  }
+  instrumentationApi.agent.metrics
+    .getOrCreateMetric(`Supportability/ExternalModules/${AttributeName.COMPONENT_NAME}`)
+    .incrementCallCount();
 
-  const logger$ = instrumentationApi$.then(({ logger }) => {
-    const childLogger = logger.child({ component: AttributeName.COMPONENT_NAME });
-    childLogger.info(`${AttributeName.COMPONENT_NAME} registered`);
-    return childLogger;
-  });
+  const logger = instrumentationApi.logger.child({ component: AttributeName.COMPONENT_NAME });
+  logger.info(`${AttributeName.COMPONENT_NAME} registered`);
 
   return {
     onPluginInit({ addPlugin }) {
       if (options.trackResolvers) {
         addPlugin(
-          useOnResolve(async ({ args: resolversArgs, info }) => {
-            const instrumentationApi = await instrumentationApi$;
-            const transactionNameState = instrumentationApi.agent.tracer.getTransaction().nameState;
+          useOnResolve(({ args: resolversArgs, info }) => {
+            const transaction = instrumentationApi.agent.tracer.getTransaction();
+            if (!transaction) {
+              logger.trace('No transaction found. Not recording resolver.');
+              return () => { };
+            }
+            const transactionNameState = transaction.nameState;
+            if (!transactionNameState) {
+              logger.trace('No transaction name state found. Not recording resolver.');
+              return () => { };
+            }
             const delimiter = transactionNameState.delimiter;
 
-            const logger = await logger$;
             const { returnType, path, parentType } = info;
             const formattedPath = flattenPath(path, delimiter);
             const currentSegment = instrumentationApi.getActiveSegment();
@@ -102,7 +100,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
                 'No active segment found at resolver call. Not recording resolver (%s).',
                 formattedPath,
               );
-              return () => {};
+              return () => { };
             }
 
             const resolverSegment = instrumentationApi.createSegment(
@@ -112,7 +110,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
             );
             if (!resolverSegment) {
               logger.trace('Resolver segment was not created (%s).', formattedPath);
-              return () => {};
+              return () => { };
             }
             resolverSegment.start();
             resolverSegment.addAttribute(AttributeName.RESOLVER_FIELD_PATH, formattedPath);
@@ -138,45 +136,54 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
         );
       }
     },
-    async onExecute({ args }) {
-      const instrumentationApi = await instrumentationApi$;
-      const transactionNameState = instrumentationApi.agent.tracer.getTransaction().nameState;
-      const spanContext = instrumentationApi.agent.tracer.getSpanContext();
-      const delimiter = transactionNameState.delimiter;
-      const rootOperation = args.document.definitions.find(
-        // @ts-expect-error TODO: not sure how we will make it dev friendly
-        definitionNode => definitionNode.kind === Kind.OPERATION_DEFINITION,
-      ) as OperationDefinitionNode;
+    onExecute({ args }) {
+      const rootOperation = getOperationAST(args.document, args.operationName);
+      if (!rootOperation) {
+        logger.trace('No root operation found. Not recording transaction.');
+        return;
+      }
       const operationType = rootOperation.operation;
-      const document = getDocumentString(args.document, print);
       const operationName =
         options.extractOperationName?.(args.contextValue) ||
         args.operationName ||
         rootOperation.name?.value ||
         AttributeName.ANONYMOUS_OPERATION;
-      let rootFields: string[] | null = null;
 
-      if (options.rootFieldsNaming) {
-        const fieldNodes = rootOperation.selectionSet.selections.filter(
-          selectionNode => selectionNode.kind === Kind.FIELD,
-        ) as FieldNode[];
-        rootFields = fieldNodes.map(fieldNode => fieldNode.name.value);
-      }
+      const transaction = instrumentationApi.agent.tracer.getTransaction();
+      const transactionNameState = transaction?.nameState;
+      if (transactionNameState) {
+        const delimiter = transactionNameState.delimiter || '/';
+        let rootFields: string[] | null = null;
 
-      transactionNameState.setName(
-        transactionNameState.prefix,
-        transactionNameState.verb,
-        delimiter,
-        operationType +
+        if (options.rootFieldsNaming) {
+          const fieldNodes = rootOperation.selectionSet.selections.filter(
+            selectionNode => selectionNode.kind === Kind.FIELD,
+          ) as FieldNode[];
+          rootFields = fieldNodes.map(fieldNode => fieldNode.name.value);
+        }
+
+        const operationType = rootOperation.operation;
+
+        transactionNameState.setName(
+          transactionNameState.prefix,
+          transactionNameState.verb,
+          delimiter,
+          operationType +
           delimiter +
           operationName +
           (rootFields ? delimiter + rootFields.join('&') : ''),
-      );
+        );
+      }
 
-      spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_NAME, operationName);
-      spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_TYPE, operationType);
+      const spanContext = instrumentationApi.agent.tracer.getSpanContext();
+
+      spanContext?.addCustomAttribute(AttributeName.EXECUTION_OPERATION_NAME, operationName);
+      spanContext?.addCustomAttribute(AttributeName.EXECUTION_OPERATION_TYPE, operationType);
       options.includeOperationDocument &&
-        spanContext.addCustomAttribute(AttributeName.EXECUTION_OPERATION_DOCUMENT, document);
+        spanContext?.addCustomAttribute(
+          AttributeName.EXECUTION_OPERATION_DOCUMENT,
+          getDocumentString(args.document, print),
+        );
 
       if (options.includeExecuteVariables) {
         const rawVariables = args.variableValues || {};
@@ -184,7 +191,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
           ? filterPropertiesByRegex(rawVariables, options.includeExecuteVariables as RegExp)
           : rawVariables;
 
-        spanContext.addCustomAttribute(
+        spanContext?.addCustomAttribute(
           AttributeName.EXECUTION_VARIABLES,
           JSON.stringify(executeVariablesToTrack),
         );
@@ -196,7 +203,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
         onExecuteDone({ result }) {
           const sendResult = (singularResult: ExecutionResult) => {
             if (singularResult.data && options.includeRawResult) {
-              spanContext.addCustomAttribute(
+              spanContext?.addCustomAttribute(
                 AttributeName.EXECUTION_RESULT,
                 JSON.stringify(singularResult),
               );
@@ -206,9 +213,11 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
               const agent = instrumentationApi.agent;
               const transaction = instrumentationApi.tracer.getTransaction();
 
-              for (const error of singularResult.errors) {
-                if (options.skipError?.(error)) continue;
-                agent.errors.add(transaction, JSON.stringify(error));
+              if (transaction) {
+                for (const error of singularResult.errors) {
+                  if (options.skipError?.(error)) continue;
+                  agent.errors.add(transaction, JSON.stringify(error));
+                }
               }
             }
           };
@@ -218,12 +227,12 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
                 sendResult(singularResult);
               },
               onEnd: () => {
-                operationSegment.end();
+                operationSegment?.end();
               },
             };
           }
           sendResult(result);
-          operationSegment.end();
+          operationSegment?.end();
           return {};
         },
       };
