@@ -182,7 +182,7 @@ export type ResponseCacheExtensions =
       ttl: number;
     }
   | {
-      invalidatedEntities: string[];
+      invalidatedEntities: CacheEntityRecord[];
     };
 
 export type ResponseCacheExecutionResult = ExecutionResult<
@@ -389,16 +389,11 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
               cache.invalidate(identifier.values());
               if (includeExtensionMetadata) {
-                setResult({
-                  ...processedResult,
-                  extensions: {
-                    ...processedResult.extensions,
-                    responseCache: {
-                      ...processedResult.extensions?.responseCache,
-                      invalidatedEntities: Array.from(identifier.values()),
-                    },
-                  },
-                });
+                setResult(
+                  resultWithMetadata(processedResult, {
+                    invalidatedEntities: Array.from(identifier.values()),
+                  }),
+                );
               }
             },
           };
@@ -417,16 +412,9 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
         if (cachedResponse != null) {
           if (includeExtensionMetadata) {
-            onExecuteParams.setResultAndStopExecution({
-              ...cachedResponse,
-              extensions: {
-                ...cachedResponse.extensions,
-                responseCache: {
-                  ...cachedResponse.extensions?.responseCache,
-                  hit: true,
-                },
-              },
-            });
+            onExecuteParams.setResultAndStopExecution(
+              resultWithMetadata(cachedResponse, { hit: true }),
+            );
           } else {
             onExecuteParams.setResultAndStopExecution(cachedResponse);
           }
@@ -478,38 +466,35 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
           if (finalTtl === 0) {
             if (includeExtensionMetadata) {
-              setResult({
-                ...processedResult,
-                extensions: {
-                  ...processedResult.extensions,
-                  responseCache: {
-                    ...processedResult.extensions?.responseCache,
-                    hit: false,
-                    didCache: false,
-                  },
-                },
-              });
+              setResult(resultWithMetadata(processedResult, { hit: false, didCache: false }));
             }
             return;
           }
 
           cache.set(cacheKey, processedResult, identifier.values(), finalTtl);
           if (includeExtensionMetadata) {
-            setResult({
-              ...processedResult,
-              extensions: {
-                ...processedResult.extensions,
-                responseCache: {
-                  ...processedResult.extensions?.responseCache,
-                  hit: false,
-                  didCache: true,
-                  ttl: finalTtl,
-                },
-              },
-            });
+            setResult(
+              resultWithMetadata(processedResult, { hit: false, didCache: true, ttl: finalTtl }),
+            );
           }
         },
       };
+    },
+  };
+}
+
+function resultWithMetadata(
+  result: ExecutionResult,
+  metadata: ResponseCacheExtensions,
+): ResponseCacheExecutionResult {
+  return {
+    ...result,
+    extensions: {
+      ...result.extensions,
+      responseCache: {
+        ...(result as ResponseCacheExecutionResult).extensions?.responseCache,
+        ...metadata,
+      },
     },
   };
 }
