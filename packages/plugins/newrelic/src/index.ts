@@ -83,12 +83,12 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
             const transaction = instrumentationApi.agent.tracer.getTransaction();
             if (!transaction) {
               logger.trace('No transaction found. Not recording resolver.');
-              return () => { };
+              return () => {};
             }
             const transactionNameState = transaction.nameState;
             if (!transactionNameState) {
               logger.trace('No transaction name state found. Not recording resolver.');
-              return () => { };
+              return () => {};
             }
             const delimiter = transactionNameState.delimiter;
 
@@ -100,7 +100,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
                 'No active segment found at resolver call. Not recording resolver (%s).',
                 formattedPath,
               );
-              return () => { };
+              return () => {};
             }
 
             const resolverSegment = instrumentationApi.createSegment(
@@ -110,7 +110,7 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
             );
             if (!resolverSegment) {
               logger.trace('Resolver segment was not created (%s).', formattedPath);
-              return () => { };
+              return () => {};
             }
             resolverSegment.start();
             resolverSegment.addAttribute(AttributeName.RESOLVER_FIELD_PATH, formattedPath);
@@ -169,9 +169,9 @@ export const useNewRelic = (rawOptions?: UseNewRelicOptions): Plugin => {
           transactionNameState.verb,
           delimiter,
           operationType +
-          delimiter +
-          operationName +
-          (rootFields ? delimiter + rootFields.join('&') : ''),
+            delimiter +
+            operationName +
+            (rootFields ? delimiter + rootFields.join('&') : ''),
         );
       }
 
