@@ -991,8 +991,8 @@ importers:
         specifier: ^0.8.0
         version: 0.8.0(graphql@16.6.0)
       lru-cache:
-        specifier: ^9.1.1
-        version: 9.1.1
+        specifier: ^10.0.0
+        version: 10.0.0
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -1212,8 +1212,8 @@ importers:
   packages/plugins/parser-cache:
     dependencies:
       lru-cache:
-        specifier: ^9.1.1
-        version: 9.1.1
+        specifier: ^10.0.0
+        version: 10.0.0
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -1359,8 +1359,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0
       lru-cache:
-        specifier: ^9.1.1
-        version: 9.1.1
+        specifier: ^10.0.0
+        version: 10.0.0
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -1472,8 +1472,8 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       lru-cache:
-        specifier: ^9.1.1
-        version: 9.1.1
+        specifier: ^10.0.0
+        version: 10.0.0
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -12804,6 +12804,11 @@ packages:
     dependencies:
       tslib: 2.5.0
 
+  /lru-cache@10.0.0:
+    resolution: {integrity: sha512-svTf/fzsKHffP42sujkO/Rjs37BCIsQVRCeNYIm9WN8rgT7ffoUnRtZCqU+6BqcSBdv8gwJeTz8knJpgACeQMw==}
+    engines: {node: 14 || >=16.14}
+    dev: false
+
   /lru-cache@4.0.2:
     resolution: {integrity: sha512-uQw9OqphAGiZhkuPlpFGmdTU2tEuhxTourM/19qGJrxBPHAr/f8BT1a0i/lOclESnGatdJG/UCkP9kZB/Lh1iw==}
     dependencies:
@@ -12833,6 +12838,7 @@ packages:
   /lru-cache@9.1.1:
     resolution: {integrity: sha512-65/Jky17UwSb0BuB9V+MyDpsOtXKmYwzhyl+cOa9XUiI4uV2Ouy/2voFP3+al0BjZbJgMBD8FojMpAf+Z+qn4A==}
     engines: {node: 14 || >=16.14}
+    dev: true
 
   /lru-memoizer@2.2.0:
     resolution: {integrity: sha512-QfOZ6jNkxCcM/BkIPnFsqDhtrazLRsghi9mBwFAzol5GCvj4EkFT899Za3+QwikCg5sRX8JstioBDwOxEyzaNw==}
