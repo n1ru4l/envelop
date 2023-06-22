@@ -1,6 +1,6 @@
 import { execute, parse, subscribe, validate } from 'graphql';
 import { getGraphQLParameters, processRequest, Response } from 'graphql-helix';
-import { AzureFunction, Context, HttpRequest } from '@azure/functions';
+import type { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { envelop, useLogger, useSchema } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 

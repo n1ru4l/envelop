@@ -1127,6 +1127,9 @@ importers:
       '@envelop/core':
         specifier: ^4.0.0
         version: link:../../core/dist
+      '@graphql-tools/schema':
+        specifier: ^10.0.0
+        version: 10.0.0(graphql@16.6.0)
       '@newrelic/test-utilities':
         specifier: 6.5.5
         version: 6.5.5

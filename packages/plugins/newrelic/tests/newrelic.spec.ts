@@ -1,7 +1,7 @@
-import { AttributeName, useNewRelic } from '../src';
 import { createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { TestAgent } from '@newrelic/test-utilities';
+import { AttributeName, useNewRelic } from '../src';
 
 describe('New Relic', () => {
   const schema = makeExecutableSchema({
@@ -42,7 +42,7 @@ describe('New Relic', () => {
             shim: helper.getShim(),
           }),
         ],
-        schema
+        schema,
       );
       // Do some testing logic...
 
@@ -60,10 +60,14 @@ describe('New Relic', () => {
         AttributeName.EXECUTION_OPERATION_TYPE,
       ]);
       expect(
-        tx.trace.root._spanContext.customAttributes.attributes.get(AttributeName.EXECUTION_OPERATION_NAME).value
+        tx.trace.root._spanContext.customAttributes.attributes.get(
+          AttributeName.EXECUTION_OPERATION_NAME,
+        ).value,
       ).toBe(`Greetings`);
       expect(
-        tx.trace.root._spanContext.customAttributes.attributes.get(AttributeName.EXECUTION_OPERATION_TYPE).value
+        tx.trace.root._spanContext.customAttributes.attributes.get(
+          AttributeName.EXECUTION_OPERATION_TYPE,
+        ).value,
       ).toBe(`query`);
 
       // Many metrics are not created until the transaction ends, if you're
@@ -73,7 +77,9 @@ describe('New Relic', () => {
       // This will check that the metrics given have been created. Extra metrics
       // are allowed.
       expect(
-        helper.agent.metrics.getMetric(`Supportability/ExternalModules/${AttributeName.COMPONENT_NAME}`)
+        helper.agent.metrics.getMetric(
+          `Supportability/ExternalModules/${AttributeName.COMPONENT_NAME}`,
+        ),
       ).toBeTruthy();
     });
   });
@@ -88,13 +94,17 @@ describe('New Relic', () => {
               shim: helper.getShim(),
             }),
           ],
-          schema
+          schema,
         );
 
-        await testKit.execute(`query Greetings($name: String!) { hello(name: $name) }`, { name: 'Laurin' });
+        await testKit.execute(`query Greetings($name: String!) { hello(name: $name) }`, {
+          name: 'Laurin',
+        });
 
         expect(
-          tx.trace.root._spanContext.customAttributes.attributes.get(AttributeName.EXECUTION_VARIABLES).value
+          tx.trace.root._spanContext.customAttributes.attributes.get(
+            AttributeName.EXECUTION_VARIABLES,
+          ).value,
         ).toBe(`{"name":"Laurin"}`);
 
         // Many metrics are not created until the transaction ends, if you're
@@ -112,7 +122,7 @@ describe('New Relic', () => {
               shim: helper.getShim(),
             }),
           ],
-          schema
+          schema,
         );
 
         await testKit.execute(
@@ -124,11 +134,13 @@ describe('New Relic', () => {
           {
             verb: 'Hi',
             name: 'Dotan',
-          }
+          },
         );
 
         expect(
-          tx.trace.root._spanContext.customAttributes.attributes.get(AttributeName.EXECUTION_VARIABLES).value
+          tx.trace.root._spanContext.customAttributes.attributes.get(
+            AttributeName.EXECUTION_VARIABLES,
+          ).value,
         ).toBe(`{"verb":"Hi"}`);
 
         // Many metrics are not created until the transaction ends, if you're
@@ -147,14 +159,15 @@ describe('New Relic', () => {
             shim: helper.getShim(),
           }),
         ],
-        schema
+        schema,
       );
       // Do some testing logic...
       await testKit.execute(`query Greetings { hello }`);
 
-      expect(tx.trace.root._spanContext.customAttributes.attributes.get(AttributeName.EXECUTION_RESULT).value).toBe(
-        `{"data":{"hello":"Hello world!"}}`
-      );
+      expect(
+        tx.trace.root._spanContext.customAttributes.attributes.get(AttributeName.EXECUTION_RESULT)
+          .value,
+      ).toBe(`{"data":{"hello":"Hello world!"}}`);
 
       // Many metrics are not created until the transaction ends, if you're
       // missing metrics in your instrumentation tests, this may help.
@@ -171,7 +184,7 @@ describe('New Relic', () => {
             shim: helper.getShim(),
           }),
         ],
-        schema
+        schema,
       );
       // Do some testing logic...
 
@@ -193,7 +206,7 @@ describe('New Relic', () => {
             shim: helper.getShim(),
           }),
         ],
-        schema
+        schema,
       );
       // Do some testing logic...
 
