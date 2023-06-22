@@ -1,5 +1,14 @@
 # @envelop/newrelic
 
+## 6.0.1
+
+### Patch Changes
+
+- [#1606](https://github.com/n1ru4l/envelop/pull/1606)
+  [`58085615`](https://github.com/n1ru4l/envelop/commit/5808561571b41648c30d7db1455a80b13e146c15)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix
+  `Cannot read properties of null (reading 'namestate')` error when NewRelic env vars are invalid
+
 ## 6.0.0
 
 ### Major Changes

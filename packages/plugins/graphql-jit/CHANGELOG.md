@@ -1,5 +1,16 @@
 # @envelop/graphql-jit
 
+## 6.0.1
+
+### Patch Changes
+
+- [#1879](https://github.com/n1ru4l/envelop/pull/1879)
+  [`d3ecee35`](https://github.com/n1ru4l/envelop/commit/d3ecee350883eabd99fd9fe4fa58c72a616cc6b5)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`lru-cache@^10.0.0` ↗︎](https://www.npmjs.com/package/lru-cache/v/10.0.0)
+    (from `^9.1.1`, in `dependencies`)
+
 ## 6.0.0
 
 ### Major Changes
