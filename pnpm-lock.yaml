@@ -1388,7 +1388,7 @@ importers:
   packages/plugins/response-cache-redis:
     dependencies:
       '@envelop/response-cache':
-        specifier: ^5.0.1
+        specifier: ^5.1.0
         version: link:../response-cache/dist
       ioredis:
         specifier: ^4.27.9
