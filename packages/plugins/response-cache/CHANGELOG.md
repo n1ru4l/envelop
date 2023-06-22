@@ -1,5 +1,27 @@
 # @envelop/response-cache
 
+## 5.1.0
+
+### Minor Changes
+
+- [#1603](https://github.com/n1ru4l/envelop/pull/1603)
+  [`ea907c60`](https://github.com/n1ru4l/envelop/commit/ea907c609b97242510fa78b2848a98e4b26108bc)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support for
+  `directive @cacheControl(maxAge: Int) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION`
+
+### Patch Changes
+
+- [#1879](https://github.com/n1ru4l/envelop/pull/1879)
+  [`d3ecee35`](https://github.com/n1ru4l/envelop/commit/d3ecee350883eabd99fd9fe4fa58c72a616cc6b5)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`lru-cache@^10.0.0` ↗︎](https://www.npmjs.com/package/lru-cache/v/10.0.0)
+    (from `^9.1.1`, in `dependencies`)
+
+- [#1883](https://github.com/n1ru4l/envelop/pull/1883)
+  [`84eb5b46`](https://github.com/n1ru4l/envelop/commit/84eb5b464a9ec89391aa52d2296700fcc5d4763c)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - fix response cache extensions type
+
 ## 5.0.1
 
 ### Patch Changes
