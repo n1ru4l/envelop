@@ -1,5 +1,4 @@
-import { inspect } from 'util';
-import { getIntrospectionQuery, GraphQLDirective, GraphQLObjectType, GraphQLSchema } from 'graphql';
+import { getIntrospectionQuery, GraphQLObjectType, GraphQLSchema } from 'graphql';
 import * as GraphQLJS from 'graphql';
 import { envelop, useEngine, useLogger, useSchema } from '@envelop/core';
 import { useGraphQlJit } from '@envelop/graphql-jit';
