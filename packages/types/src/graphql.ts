@@ -79,3 +79,36 @@ export interface ExecutionResult<TData = ObjMap<unknown>, TExtensions = ObjMap<u
   data?: TData | null;
   extensions?: TExtensions;
 }
+
+export interface IncrementalDeferResult<
+  TData = Record<string, unknown>,
+  TExtensions = Record<string, unknown>,
+> extends ExecutionResult<TData, TExtensions> {
+  path?: ReadonlyArray<string | number>;
+  label?: string;
+}
+
+export interface IncrementalStreamResult<
+  TData = Array<unknown>,
+  TExtensions = Record<string, unknown>,
+> {
+  errors?: ReadonlyArray<any>;
+  items?: TData | null;
+  path?: ReadonlyArray<string | number>;
+  label?: string;
+  extensions?: TExtensions;
+}
+
+export type IncrementalResult<
+  TData = Record<string, unknown>,
+  TExtensions = Record<string, unknown>,
+> = IncrementalDeferResult<TData, TExtensions> | IncrementalStreamResult<TData, TExtensions>;
+
+export interface IncrementalExecutionResult<
+  TData = Record<string, unknown>,
+  TExtensions = Record<string, unknown>,
+> extends ExecutionResult<TData, TExtensions> {
+  hasNext: boolean;
+  incremental?: ReadonlyArray<IncrementalResult<TData, TExtensions>>;
+  extensions?: TExtensions;
+}

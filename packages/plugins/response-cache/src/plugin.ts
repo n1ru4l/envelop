@@ -18,6 +18,7 @@ import {
   ObjMap,
   Plugin,
 } from '@envelop/core';
+import { IncrementalDeferResult, IncrementalStreamResult } from '@graphql-tools/executor';
 import { getDirective, MapperKind, mapSchema, memoize1, visitResult } from '@graphql-tools/utils';
 import type { Cache, CacheEntityRecord } from './cache.js';
 import { hashSHA256 } from './hash-sha256.js';
@@ -463,42 +464,64 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         );
       }
 
-      return {
-        onExecuteDone({ result, setResult }) {
-          if (isAsyncIterable(result)) {
-            // eslint-disable-next-line no-console
-            console.warn(
-              '[useResponseCache] AsyncIterable returned from execute is currently unsupported.',
-            );
-            return;
-          }
+      async function maybeCacheResult(
+        result: ExecutionResult,
+        setResult: (newResult: ExecutionResult) => void,
+      ) {
+        const processedResult = processResult(result) as ResponseCacheExecutionResult;
 
-          const processedResult = processResult(result) as ResponseCacheExecutionResult;
+        if (skip) {
+          return;
+        }
 
-          if (skip) {
-            return;
-          }
+        if (!shouldCacheResult({ cacheKey, result: processedResult })) {
+          return;
+        }
 
-          if (!shouldCacheResult({ cacheKey, result: processedResult })) {
-            return;
-          }
+        // we only use the global ttl if no currentTtl has been determined.
+        const finalTtl = currentTtl ?? globalTtl;
 
-          // we only use the global ttl if no currentTtl has been determined.
-          const finalTtl = currentTtl ?? globalTtl;
-
-          if (finalTtl === 0) {
-            if (includeExtensionMetadata) {
-              setResult(resultWithMetadata(processedResult, { hit: false, didCache: false }));
-            }
-            return;
-          }
-
-          cache.set(cacheKey, processedResult, identifier.values(), finalTtl);
+        if (finalTtl === 0) {
           if (includeExtensionMetadata) {
-            setResult(
-              resultWithMetadata(processedResult, { hit: false, didCache: true, ttl: finalTtl }),
-            );
+            setResult(resultWithMetadata(processedResult, { hit: false, didCache: false }));
           }
+          return;
+        }
+
+        cache.set(cacheKey, processedResult, identifier.values(), finalTtl);
+        if (includeExtensionMetadata) {
+          setResult(
+            resultWithMetadata(processedResult, { hit: false, didCache: true, ttl: finalTtl }),
+          );
+        }
+      }
+
+      return {
+        onExecuteDone(payload) {
+          if (!isAsyncIterable(payload.result)) {
+            maybeCacheResult(payload.result, payload.setResult);
+            return;
+          }
+
+          let result: ExecutionResult;
+          return {
+            onNext({ result: { data, incremental, hasNext, errors, extensions }, setResult }) {
+              if (data) {
+                // This is the first result with the initial data payload sent to the client. We use it as the base result
+                result = { data, errors, extensions };
+              }
+
+              if (incremental) {
+                for (const patch of incremental) {
+                  mergePatch(result, patch);
+                }
+              }
+
+              if (!hasNext) {
+                maybeCacheResult(result, setResult);
+              }
+            },
+          };
         },
       };
     },
@@ -536,3 +559,51 @@ export const cacheControlDirective = /* GraphQL */ `
 
   directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT
 `;
+
+function mergePatch(
+  result: ExecutionResult,
+  patch: IncrementalDeferResult | IncrementalStreamResult,
+) {
+  // All errors and extensions are merged together in the final result
+  if (patch.errors) {
+    result.errors = [...(result.errors ?? []), ...patch.errors];
+  }
+
+  if (patch.extensions) {
+    result.extensions = { ...result.extensions, ...patch.extensions };
+  }
+
+  // We need to follow the path to the point where the patch should be applied
+  let target: any = result;
+  const path = ['data', ...(patch.path ?? [])];
+  for (let i = 0; i < path.length - 1; i++) {
+    target = target[path[i]];
+  }
+  const prop = path[path.length - 1];
+
+  const items = (patch as IncrementalStreamResult).items;
+  const data = (patch as IncrementalDeferResult).data;
+
+  if (items) {
+    // This is a stream patch, the last path segment should be a number and is the index at which we should begin to insert the new items
+    const start = +prop;
+    for (let i = 0; i < items.length; i++) {
+      target[start + i] = deepMerge(target[start + i], items[i]);
+    }
+  } else if (data !== undefined) {
+    // This is a defer patch.
+    target[prop] = deepMerge(target[prop], data);
+  }
+}
+
+function deepMerge(target: any, source: any) {
+  if (typeof target === 'object' && target != null) {
+    target = Array.isArray(target) ? [...target] : { ...target };
+    for (const key of Object.keys(source)) {
+      target[key] = deepMerge(target[key], source[key]);
+    }
+    return target;
+  } else {
+    return source;
+  }
+}

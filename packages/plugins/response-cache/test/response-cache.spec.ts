@@ -1,10 +1,14 @@
-import { getIntrospectionQuery, GraphQLObjectType, GraphQLSchema } from 'graphql';
-import { useLogger } from '@envelop/core';
+import { inspect } from 'util';
+import { getIntrospectionQuery, GraphQLDirective, GraphQLObjectType, GraphQLSchema } from 'graphql';
+import * as GraphQLJS from 'graphql';
+import { envelop, useEngine, useLogger, useSchema } from '@envelop/core';
 import { useGraphQlJit } from '@envelop/graphql-jit';
 import { useParserCache } from '@envelop/parser-cache';
 import { assertSingleExecutionValue, createTestkit, TestkitInstance } from '@envelop/testing';
 import { useValidationCache } from '@envelop/validation-cache';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { mapSchema as cloneSchema } from '@graphql-tools/utils';
 import {
   cacheControlDirective,
   createInMemoryCache,
@@ -2822,4 +2826,160 @@ describe('useResponseCache', () => {
       expect(spy).toHaveBeenCalledTimes(2);
     });
   });
+
+  it('should cache queries using @stream', async () => {
+    const spy = jest.fn(async function* () {
+      yield {
+        id: 1,
+        name: 'User 1',
+        comments: [{ id: 1, text: 'Comment 1 of User 1' }],
+      };
+      yield { id: 2, name: 'User 2', comments: [] };
+      await new Promise(process.nextTick);
+      yield { id: 3, name: 'User 3', comments: [] };
+    });
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        directive @stream on FIELD
+
+        type Query {
+          users: [User!]!
+        }
+
+        type Mutation {
+          updateUser(id: ID!): User!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+      },
+    });
+
+    const testInstance = createTestkit(
+      envelop({
+        plugins: [
+          useEngine({ ...GraphQLJS, execute: normalizedExecutor, subscribe: normalizedExecutor }),
+          useSchema(cloneSchema(schema)),
+          useResponseCache({ session: () => null }),
+        ],
+      }),
+    );
+
+    const query = /* GraphQL */ `
+      query test {
+        users @stream {
+          id
+          name
+          comments {
+            id
+            text
+          }
+        }
+      }
+    `;
+
+    await logResult('result 1', testInstance.execute(query));
+    await logResult('result 2', testInstance.execute(query));
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should cache queries using @defer', async () => {
+    const spy = jest.fn(async function* () {
+      yield {
+        id: 1,
+        name: 'User 1',
+        comments: [{ id: 1, text: 'Comment 1 of User 1' }],
+      };
+      yield { id: 2, name: 'User 2', comments: [] };
+      await new Promise(process.nextTick);
+      yield { id: 3, name: 'User 3', comments: [] };
+    });
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        directive @defer on FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+        type Query {
+          users: [User!]!
+        }
+
+        type Mutation {
+          updateUser(id: ID!): User!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+      },
+    });
+
+    const testInstance = createTestkit(
+      envelop({
+        plugins: [
+          useEngine({ ...GraphQLJS, execute: normalizedExecutor, subscribe: normalizedExecutor }),
+          useSchema(cloneSchema(schema)),
+          useResponseCache({ session: () => null, includeExtensionMetadata: true }),
+        ],
+      }),
+    );
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+
+          ... on User @defer {
+            comments {
+              id
+              text
+            }
+          }
+        }
+      }
+    `;
+
+    await logResult('result 1', testInstance.execute(query));
+    await logResult('result 2', testInstance.execute(query));
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
 });
+
+async function logResult(msg: string, result: any) {
+  result = await result;
+  if (result.next) {
+    let res = [];
+    for await (const r of result) {
+      res.push(r);
+    }
+    console.log(msg, inspect(res, { showHidden: false, depth: null, colors: true }));
+  } else {
+    console.log(msg, inspect(result, { showHidden: false, depth: null, colors: true }));
+  }
+}
