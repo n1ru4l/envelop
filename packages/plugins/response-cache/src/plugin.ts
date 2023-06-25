@@ -13,6 +13,7 @@ import {
 import {
   ExecutionResult,
   getDocumentString,
+  IncrementalExecutionResult,
   isAsyncIterable,
   Maybe,
   ObjMap,
@@ -508,7 +509,10 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           // The merged result is then used to know if we should cache it and to calculate the ttl.
           let result: ExecutionResult = {};
           return {
-            onNext({ result: { data, incremental, hasNext, errors, extensions }, setResult }) {
+            onNext(payload) {
+              const { data, errors, extensions, incremental, hasNext } =
+                payload.result as IncrementalExecutionResult;
+
               if (data) {
                 // This is the first result with the initial data payload sent to the client. We use it as the base result
                 if (data) {
@@ -530,7 +534,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
               if (!hasNext) {
                 // The query is complete, we can process the final result
-                maybeCacheResult(result, setResult);
+                maybeCacheResult(result, payload.setResult);
               }
             },
           };

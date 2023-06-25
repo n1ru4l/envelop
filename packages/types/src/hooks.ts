@@ -312,7 +312,7 @@ export type OnExecuteDoneHookResultOnNextHookPayload<ContextType> = {
   /**
    * The execution result.
    */
-  result: IncrementalExecutionResult;
+  result: IncrementalExecutionResult | ExecutionResult;
   /**
    * Replace the execution result with a new execution result.
    */
