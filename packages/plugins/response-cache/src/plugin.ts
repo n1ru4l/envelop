@@ -503,12 +503,23 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
             return;
           }
 
-          let result: ExecutionResult;
+          // When the result is an AsyncIterable, it means the query is using @defer or @stream.
+          // This means we have to build the final result by merging the incremental results.
+          // The merged result is then used to know if we should cache it and to calculate the ttl.
+          let result: ExecutionResult = {};
           return {
             onNext({ result: { data, incremental, hasNext, errors, extensions }, setResult }) {
               if (data) {
                 // This is the first result with the initial data payload sent to the client. We use it as the base result
-                result = { data, errors, extensions };
+                if (data) {
+                  result = { data };
+                }
+                if (errors) {
+                  result.errors = errors;
+                }
+                if (extensions) {
+                  result.extensions = extensions;
+                }
               }
 
               if (incremental) {
@@ -518,6 +529,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
               }
 
               if (!hasNext) {
+                // The query is complete, we can process the final result
                 maybeCacheResult(result, setResult);
               }
             },

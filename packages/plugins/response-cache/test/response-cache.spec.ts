@@ -2892,8 +2892,20 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await logResult('result 1', testInstance.execute(query));
-    await logResult('result 2', testInstance.execute(query));
+    await waitForResult(testInstance.execute(query));
+    expect(await waitForResult(testInstance.execute(query))).toEqual({
+      data: {
+        users: [
+          {
+            id: '1',
+            name: 'User 1',
+            comments: [{ id: '1', text: 'Comment 1 of User 1' }],
+          },
+          { id: '2', name: 'User 2', comments: [] },
+          { id: '3', name: 'User 3', comments: [] },
+        ],
+      },
+    });
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
@@ -2965,21 +2977,33 @@ describe('useResponseCache', () => {
       }
     `;
 
-    await logResult('result 1', testInstance.execute(query));
-    await logResult('result 2', testInstance.execute(query));
+    await waitForResult(testInstance.execute(query));
+    expect(await waitForResult(testInstance.execute(query))).toEqual({
+      data: {
+        users: [
+          {
+            id: '1',
+            name: 'User 1',
+            comments: [{ __typename: 'Comment', id: '1', text: 'Comment 1 of User 1' }],
+          },
+          { id: '2', name: 'User 2', comments: [] },
+          { id: '3', name: 'User 3', comments: [] },
+        ],
+      },
+      extensions: { responseCache: { hit: true } },
+    });
     expect(spy).toHaveBeenCalledTimes(1);
   });
 });
 
-async function logResult(msg: string, result: any) {
+async function waitForResult(result: any) {
   result = await result;
   if (result.next) {
     let res = [];
     for await (const r of result) {
       res.push(r);
     }
-    console.log(msg, inspect(res, { showHidden: false, depth: null, colors: true }));
-  } else {
-    console.log(msg, inspect(result, { showHidden: false, depth: null, colors: true }));
   }
+
+  return result;
 }
