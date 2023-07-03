@@ -652,8 +652,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       '@graphql-tools/utils':
-        specifier: 10.0.1
-        version: 10.0.1(graphql@16.6.0)
+        specifier: 10.0.2
+        version: 10.0.2(graphql@16.6.0)
       '@repeaterjs/repeater':
         specifier: 3.0.4
         version: 3.0.4
@@ -940,8 +940,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       '@graphql-tools/utils':
-        specifier: 10.0.1
-        version: 10.0.1(graphql@16.6.0)
+        specifier: 10.0.2
+        version: 10.0.2(graphql@16.6.0)
       '@types/common-tags':
         specifier: 1.8.1
         version: 1.8.1
@@ -4293,7 +4293,7 @@ packages:
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
-      '@graphql-tools/utils': 10.0.1(graphql@16.6.0)
+      '@graphql-tools/utils': 10.0.2(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.5.0
 
@@ -4378,13 +4378,14 @@ packages:
       graphql: 16.6.0
       tslib: 2.5.0
 
-  /@graphql-tools/utils@10.0.1(graphql@16.6.0):
-    resolution: {integrity: sha512-i1FozbDGHgdsFA47V/JvQZ0FE8NAy0Eiz7HGCJO2MkNdZAKNnwei66gOq0JWYVFztwpwbVQ09GkKhq7Kjcq5Cw==}
+  /@graphql-tools/utils@10.0.2(graphql@16.6.0):
+    resolution: {integrity: sha512-lm3ApMyjWqRurLHvqK/pUK8zbZzdCzJoff2Y6XIyAHJT3P69n/uSF+Tl6YRV10SPGoJJdRn+XObFv9jXQ/NhkQ==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.6.0)
+      dset: 3.1.2
       graphql: 16.6.0
       tslib: 2.5.0
 
@@ -9091,6 +9092,10 @@ packages:
     resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
     engines: {node: '>=10'}
     dev: true
+
+  /dset@3.1.2:
+    resolution: {integrity: sha512-g/M9sqy3oHe477Ar4voQxWtaPIFw1jTdKZuomOjhCcBx9nHUNn0pu6NopuFFrTh/TRZIKEj+76vLWFu9BNKk+Q==}
+    engines: {node: '>=4'}
 
   /duplexer@0.1.2:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
