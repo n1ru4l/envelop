@@ -314,6 +314,78 @@ const getEnveloped = envelop({
 })
 ```
 
+### Enforce if a type or a field should only be cached based on session/user
+
+Some types or fields in the schemas should never be globaly cached. Its data is always linked to a
+session or user. `PRIVATE` scope allows to enforce this fact and ensure that responses with a
+`PRIVATE` scope will never be cached without a session. The default scope for all types and fields
+is `PUBLIC`.
+
+```ts
+import { execute, parse, subscribe, validate } from 'graphql'
+import { envelop } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
+
+const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
+  plugins: [
+    // ... other plugins ...
+    useResponseCache({
+      ttl: 2000,
+      session: (request) => getSessionId(request)
+      scopePerSchemaCoordinate: {
+        // Set scope for an entire type
+        PrivateProfile: 'PRIVATE',
+        // Set scope for a single field
+        'Profile.privateData': 'PRIVATE',
+      }
+    })
+  ]
+})
+```
+
+It is also possible to define scopes using the `@cacheControl` directive in your schema.
+
+```ts
+import { execute, parse, subscribe, validate, buildSchema } from 'graphql'
+import { envelop, useSchema } from '@envelop/core'
+import { useResponseCache, cacheControlDirective } from '@envelop/response-cache'
+
+const schema = buildSchema(/* GraphQL */`
+  ${cacheControlDirective}
+  type PrivateProfile @cacheControl(scope: PRIVATE) {
+    # ...
+  }
+
+  type Profile {
+    privateData: String @cacheControl(scope: PRIVATE)
+  }
+`)
+
+const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
+  plugins: [
+    // ... other plugins ...
+    useResponseCache({
+      ttl: 2000,
+      session: (request) => getSessionId(request)
+      scopePerSchemaCoordinate: {
+        // Set scope for an entire type
+        PrivateProfile: 'PRIVATE',
+        // Set scope for a single field
+        'Profile.privateData': 'PRIVATE',
+      }
+    })
+  ]
+})
+```
+
 ### Customize if result should be cached
 
 You can define a custom function used to check if a query operation execution result should be
