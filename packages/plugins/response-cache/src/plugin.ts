@@ -19,8 +19,14 @@ import {
   ObjMap,
   Plugin,
 } from '@envelop/core';
-import { IncrementalDeferResult, IncrementalStreamResult } from '@graphql-tools/executor';
-import { getDirective, MapperKind, mapSchema, memoize1, visitResult } from '@graphql-tools/utils';
+import {
+  getDirective,
+  MapperKind,
+  mapSchema,
+  memoize1,
+  mergeIncrementalResult,
+  visitResult,
+} from '@graphql-tools/utils';
 import type { Cache, CacheEntityRecord } from './cache.js';
 import { hashSHA256 } from './hash-sha256.js';
 import { createInMemoryCache } from './in-memory-cache.js';
@@ -528,7 +534,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
               if (incremental) {
                 for (const patch of incremental) {
-                  mergePatch(result, patch);
+                  mergeIncrementalResult(result, patch);
                 }
               }
 
@@ -575,51 +581,3 @@ export const cacheControlDirective = /* GraphQL */ `
 
   directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT
 `;
-
-function mergePatch(
-  result: ExecutionResult,
-  patch: IncrementalDeferResult | IncrementalStreamResult,
-) {
-  // All errors and extensions are merged together in the final result
-  if (patch.errors) {
-    result.errors = [...(result.errors ?? []), ...patch.errors];
-  }
-
-  if (patch.extensions) {
-    result.extensions = { ...result.extensions, ...patch.extensions };
-  }
-
-  // We need to follow the path to the point where the patch should be applied
-  let target: any = result;
-  const path = ['data', ...(patch.path ?? [])];
-  for (let i = 0; i < path.length - 1; i++) {
-    target = target[path[i]];
-  }
-  const prop = path[path.length - 1];
-
-  const items = (patch as IncrementalStreamResult).items;
-  const data = (patch as IncrementalDeferResult).data;
-
-  if (items) {
-    // This is a stream patch, the last path segment should be a number and is the index at which we should begin to insert the new items
-    const start = +prop;
-    for (let i = 0; i < items.length; i++) {
-      target[start + i] = deepMerge(target[start + i], items[i]);
-    }
-  } else if (data !== undefined) {
-    // This is a defer patch.
-    target[prop] = deepMerge(target[prop], data);
-  }
-}
-
-function deepMerge(target: any, source: any) {
-  if (typeof target === 'object' && target != null) {
-    target = Array.isArray(target) ? [...target] : { ...target };
-    for (const key of Object.keys(source)) {
-      target[key] = deepMerge(target[key], source[key]);
-    }
-    return target;
-  } else {
-    return source;
-  }
-}
