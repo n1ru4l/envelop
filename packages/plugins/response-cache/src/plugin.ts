@@ -13,7 +13,6 @@ import {
 import {
   ExecutionResult,
   getDocumentString,
-  IncrementalExecutionResult,
   isAsyncIterable,
   Maybe,
   ObjMap,
@@ -516,8 +515,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           let result: ExecutionResult = {};
           return {
             onNext(payload) {
-              const { data, errors, extensions, incremental, hasNext } =
-                payload.result as IncrementalExecutionResult;
+              const { data, errors, extensions } = payload.result;
 
               if (data) {
                 // This is the first result with the initial data payload sent to the client. We use it as the base result
@@ -532,15 +530,19 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
                 }
               }
 
-              if (incremental) {
-                for (const patch of incremental) {
-                  mergeIncrementalResult(result, patch);
-                }
-              }
+              if ('hasNext' in payload.result) {
+                const { incremental, hasNext } = payload.result;
 
-              if (!hasNext) {
-                // The query is complete, we can process the final result
-                maybeCacheResult(result, payload.setResult);
+                if (incremental) {
+                  for (const patch of incremental) {
+                    mergeIncrementalResult(result, patch);
+                  }
+                }
+
+                if (!hasNext) {
+                  // The query is complete, we can process the final result
+                  maybeCacheResult(result, payload.setResult);
+                }
               }
             },
           };
