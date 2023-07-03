@@ -18,7 +18,14 @@ import {
   ObjMap,
   Plugin,
 } from '@envelop/core';
-import { getDirective, MapperKind, mapSchema, memoize1, visitResult } from '@graphql-tools/utils';
+import {
+  getDirective,
+  MapperKind,
+  mapSchema,
+  memoize1,
+  mergeIncrementalResult,
+  visitResult,
+} from '@graphql-tools/utils';
 import type { Cache, CacheEntityRecord } from './cache.js';
 import { hashSHA256 } from './hash-sha256.js';
 import { createInMemoryCache } from './in-memory-cache.js';
@@ -463,42 +470,82 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         );
       }
 
-      return {
-        onExecuteDone({ result, setResult }) {
-          if (isAsyncIterable(result)) {
-            // eslint-disable-next-line no-console
-            console.warn(
-              '[useResponseCache] AsyncIterable returned from execute is currently unsupported.',
-            );
-            return;
-          }
+      async function maybeCacheResult(
+        result: ExecutionResult,
+        setResult: (newResult: ExecutionResult) => void,
+      ) {
+        const processedResult = processResult(result) as ResponseCacheExecutionResult;
 
-          const processedResult = processResult(result) as ResponseCacheExecutionResult;
+        if (skip) {
+          return;
+        }
 
-          if (skip) {
-            return;
-          }
+        if (!shouldCacheResult({ cacheKey, result: processedResult })) {
+          return;
+        }
 
-          if (!shouldCacheResult({ cacheKey, result: processedResult })) {
-            return;
-          }
+        // we only use the global ttl if no currentTtl has been determined.
+        const finalTtl = currentTtl ?? globalTtl;
 
-          // we only use the global ttl if no currentTtl has been determined.
-          const finalTtl = currentTtl ?? globalTtl;
-
-          if (finalTtl === 0) {
-            if (includeExtensionMetadata) {
-              setResult(resultWithMetadata(processedResult, { hit: false, didCache: false }));
-            }
-            return;
-          }
-
-          cache.set(cacheKey, processedResult, identifier.values(), finalTtl);
+        if (finalTtl === 0) {
           if (includeExtensionMetadata) {
-            setResult(
-              resultWithMetadata(processedResult, { hit: false, didCache: true, ttl: finalTtl }),
-            );
+            setResult(resultWithMetadata(processedResult, { hit: false, didCache: false }));
           }
+          return;
+        }
+
+        cache.set(cacheKey, processedResult, identifier.values(), finalTtl);
+        if (includeExtensionMetadata) {
+          setResult(
+            resultWithMetadata(processedResult, { hit: false, didCache: true, ttl: finalTtl }),
+          );
+        }
+      }
+
+      return {
+        onExecuteDone(payload) {
+          if (!isAsyncIterable(payload.result)) {
+            maybeCacheResult(payload.result, payload.setResult);
+            return;
+          }
+
+          // When the result is an AsyncIterable, it means the query is using @defer or @stream.
+          // This means we have to build the final result by merging the incremental results.
+          // The merged result is then used to know if we should cache it and to calculate the ttl.
+          let result: ExecutionResult = {};
+          return {
+            onNext(payload) {
+              const { data, errors, extensions } = payload.result;
+
+              if (data) {
+                // This is the first result with the initial data payload sent to the client. We use it as the base result
+                if (data) {
+                  result = { data };
+                }
+                if (errors) {
+                  result.errors = errors;
+                }
+                if (extensions) {
+                  result.extensions = extensions;
+                }
+              }
+
+              if ('hasNext' in payload.result) {
+                const { incremental, hasNext } = payload.result;
+
+                if (incremental) {
+                  for (const patch of incremental) {
+                    mergeIncrementalResult({ executionResult: result, incrementalResult: patch });
+                  }
+                }
+
+                if (!hasNext) {
+                  // The query is complete, we can process the final result
+                  maybeCacheResult(result, payload.setResult);
+                }
+              }
+            },
+          };
         },
       };
     },

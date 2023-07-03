@@ -2,6 +2,7 @@ import {
   ExecuteFunction,
   ExecutionArgs,
   ExecutionResult,
+  IncrementalExecutionResult,
   ParseFunction,
   SubscribeFunction,
   ValidateFunction,
@@ -311,7 +312,7 @@ export type OnExecuteDoneHookResultOnNextHookPayload<ContextType> = {
   /**
    * The execution result.
    */
-  result: ExecutionResult;
+  result: IncrementalExecutionResult | ExecutionResult;
   /**
    * Replace the execution result with a new execution result.
    */
