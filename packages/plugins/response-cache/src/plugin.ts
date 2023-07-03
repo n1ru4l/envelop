@@ -535,7 +535,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
                 if (incremental) {
                   for (const patch of incremental) {
-                    mergeIncrementalResult(result, patch);
+                    mergeIncrementalResult({ executionResult: result, incrementalResult: patch });
                   }
                 }
 
