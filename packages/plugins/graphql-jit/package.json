@@ -58,7 +58,7 @@
   "devDependencies": {
     "@envelop/core": "^4.0.0",
     "@graphql-tools/schema": "10.0.0",
-    "graphql": "16.6.0",
+    "graphql": "16.7.0",
     "lru-cache": "^10.0.0",
     "reflect-metadata": "0.1.13",
     "typescript": "5.1.3"

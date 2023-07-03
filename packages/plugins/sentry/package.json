@@ -60,7 +60,7 @@
     "@sentry/node": "7.56.0",
     "@sentry/tracing": "7.56.0",
     "@sentry/types": "7.56.0",
-    "graphql": "16.6.0",
+    "graphql": "16.7.0",
     "sentry-testkit": "5.0.5",
     "typescript": "5.1.3"
   },

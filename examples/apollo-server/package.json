@@ -13,7 +13,7 @@
     "@apollo/server-plugin-landing-page-graphql-playground": "^4.0.0",
     "@envelop/core": "*",
     "@graphql-tools/schema": "10.0.0",
-    "graphql": "16.6.0"
+    "graphql": "16.7.0"
   },
   "devDependencies": {
     "@types/node": "18.16.18",
