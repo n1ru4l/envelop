@@ -91,4 +91,39 @@ describe('subscribe', () => {
     assertStreamExecutionValue(result);
     await collectAsyncIteratorValues(result);
   });
+
+  it('should preserve referential stability of the context', async () => {
+    const streamExecuteFn = async function* () {
+      for (const value of ['a', 'b', 'c', 'd']) {
+        yield { data: { alphabet: value } };
+      }
+    };
+
+    const teskit = createTestkit(
+      [
+        {
+          onSubscribe({ setSubscribeFn, extendContext }) {
+            setSubscribeFn(streamExecuteFn as any);
+            extendContext({ foo: 'bar' });
+          },
+        },
+      ],
+      schema,
+    );
+
+    const context: any = {};
+    const result = await teskit.execute(
+      /* GraphQL */ `
+        subscription {
+          alphabet
+        }
+      `,
+      {},
+      context,
+    );
+    assertStreamExecutionValue(result);
+    await collectAsyncIteratorValues(result);
+
+    expect(context.foo).toEqual('bar');
+  });
 });

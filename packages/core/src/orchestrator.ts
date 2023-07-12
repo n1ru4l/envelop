@@ -297,9 +297,10 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
           const afterCalls: AfterContextBuildingHook<any>[] = [];
 
           // In order to have access to the "last working" context object we keep this outside of the try block:
-          let context = orchestratorCtx
-            ? { ...initialContext, ...orchestratorCtx }
-            : initialContext;
+          const context = initialContext;
+          if (orchestratorCtx) {
+            Object.assign(context, orchestratorCtx);
+          }
 
           try {
             let isBreakingContextBuilding = false;
@@ -308,7 +309,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
               const afterHookResult = await onContext({
                 context,
                 extendContext: extension => {
-                  context = { ...context, ...extension };
+                  Object.assign(context, extension);
                 },
                 breakContextBuilding: () => {
                   isBreakingContextBuilding = true;
@@ -328,7 +329,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
               afterCb({
                 context,
                 extendContext: extension => {
-                  context = { ...context, ...extension };
+                  Object.assign(context, extension);
                 },
               });
             }
@@ -348,8 +349,12 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
             throw error;
           }
         }
-      : initialContext => orchestratorCtx =>
-          orchestratorCtx ? { ...initialContext, ...orchestratorCtx } : initialContext;
+      : initialContext => orchestratorCtx => {
+          if (orchestratorCtx) {
+            Object.assign(initialContext, orchestratorCtx);
+          }
+          return initialContext;
+        };
 
   const useCustomSubscribe = beforeCallbacks.subscribe.length;
 
@@ -360,7 +365,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
         const afterCalls: SubscribeResultHook<PluginsContext>[] = [];
         const subscribeErrorHandlers: SubscribeErrorHook[] = [];
 
-        let context = (args.contextValue as {}) || {};
+        const context = (args.contextValue as {}) || {};
         let result: AsyncIterableIteratorOrValue<ExecutionResult> | undefined;
 
         for (const onSubscribe of beforeCallbacks.subscribe) {
@@ -370,7 +375,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
               subscribeFn = newSubscribeFn;
             },
             extendContext: extension => {
-              context = { ...context, ...extension };
+              Object.assign(context, extension);
             },
             args: args as TypedSubscriptionArgs<PluginsContext>,
             setResultAndStopExecution: stopResult => {
@@ -472,7 +477,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
         let result: AsyncIterableIteratorOrValue<ExecutionResult> | undefined;
 
         const afterCalls: OnExecuteDoneHook<PluginsContext>[] = [];
-        let context = (args.contextValue as {}) || {};
+        const context = (args.contextValue as {}) || {};
 
         for (const onExecute of beforeCallbacks.execute) {
           const after = await onExecute({
@@ -485,10 +490,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
             },
             extendContext: extension => {
               if (typeof extension === 'object') {
-                context = {
-                  ...context,
-                  ...extension,
-                };
+                Object.assign(context, extension);
               } else {
                 throw new Error(
                   `Invalid context extension provided! Expected "object", got: "${JSON.stringify(

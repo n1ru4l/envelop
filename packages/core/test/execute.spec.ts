@@ -536,6 +536,24 @@ describe('execute', () => {
     await result.return!();
     expect(isReturnCalled).toEqual(true);
   });
+
+  it('should preserve referential stability of the context', async () => {
+    const testKit = createTestkit(
+      [
+        {
+          onExecute({ extendContext }) {
+            extendContext({ foo: 'bar' });
+          },
+        },
+      ],
+      schema,
+    );
+
+    const context = {};
+    await testKit.execute(query, {}, context);
+
+    expect(context).toMatchObject({ foo: 'bar' });
+  });
 });
 
 it.each([
