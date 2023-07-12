@@ -536,6 +536,27 @@ describe('execute', () => {
     await result.return!();
     expect(isReturnCalled).toEqual(true);
   });
+
+  it('context extension during execute hook should be visible from executeDone hook', async () => {
+    const testkit = createTestkit(
+      [
+        {
+          onExecute({ extendContext }) {
+            extendContext({ test: 'test' });
+            return {
+              onExecuteDone({ setResult, args: { contextValue } }) {
+                setResult({ data: { test: contextValue.test } });
+              },
+            };
+          },
+        },
+      ],
+      schema,
+    );
+
+    const result = await testkit.execute(query);
+    expect(result).toEqual({ data: { test: 'test' } });
+  });
 });
 
 it.each([
