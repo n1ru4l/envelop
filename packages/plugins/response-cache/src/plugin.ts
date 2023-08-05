@@ -261,6 +261,14 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   return {
     onParse() {
       return ({ result, replaceParseResult }) => {
+        // Check if the operation is a subscription
+        const operationAST = getOperationAST(result);
+        if (operationAST?.operation === "subscription") {
+          // If it's a subscription, simply return without modifying the result
+          return;
+        }
+
+        // Existing logic for non-subscription operations
         if (!originalDocumentMap.has(result) && result.kind === Kind.DOCUMENT) {
           const newDocument = addTypeNameToDocument(result);
           replaceParseResult(newDocument);
