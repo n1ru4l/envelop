@@ -2993,6 +2993,40 @@ describe('useResponseCache', () => {
     });
     expect(spy).toHaveBeenCalledTimes(1);
   });
+
+  it('should work with subscriptions', async () => {
+    jest.useFakeTimers();
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          comment: String!
+        }
+
+        type Subscription {
+          comment: String!
+        }
+      `,
+      resolvers: {
+        Subscription: {
+          comment: {
+            subscribe: async function* () {
+              yield 'Hello World!';
+            },
+          },
+        },
+      },
+    });
+    const operation = /* GraphQL */ `
+      subscription {
+        comment
+      }
+    `;
+    const testInstance = createTestkit([useResponseCache({ session: () => null })], schema);
+
+    const res = await testInstance.execute(operation);
+    expect(JSON.stringify(res)).not.toContain('only one top level field');
+  });
 });
 
 async function waitForResult(result: any) {
