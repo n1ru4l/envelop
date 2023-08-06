@@ -53,7 +53,7 @@ const getEnveloped = envelop({
 })
 ```
 
-> Note: Tracing resolvers using `resovlers: true` might have a performance impact on your GraphQL
+> Note: Tracing resolvers using `resolvers: true` might have a performance impact on your GraphQL
 > runtime. Please consider to test it locally first and then decide if it's needed.
 
 ### Custom registry
