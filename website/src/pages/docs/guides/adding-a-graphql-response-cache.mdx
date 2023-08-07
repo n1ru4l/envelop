@@ -1,4 +1,4 @@
-import { Callout, PackageCmd } from '@theguild/components'
+import { Callout } from '@theguild/components'
 
 # Adding a GraphQL Response Cache
 
@@ -351,7 +351,9 @@ const getEnveloped = envelop({
 Maybe you are in a server-less environment and the In-Memory Cache isn't an option. Also, when
 having multiple server replicas, you might want to have a shared cache between all the replicas.
 
-<PackageCmd packages={['@envelop/response-cache-redis']} />
+```sh npm2yarn
+npm i @envelop/response-cache-redis
+```
 
 First, create a Redis database with your favorite hosting provider.
 

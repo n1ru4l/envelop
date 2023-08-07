@@ -1,4 +1,4 @@
-import { Callout, PackageCmd } from '@theguild/components'
+import { Callout } from '@theguild/components'
 
 # First Steps
 
@@ -14,7 +14,9 @@ set up a GraphQL server using Envelop from scratch.
 
 Start by adding the core of `envelop` and `graphql` to your codebase.
 
-<PackageCmd packages={['@envelop/core graphql']} />
+```sh npm2yarn
+npm i @envelop/core graphql
+```
 
 ## Create Your First Envelop
 
@@ -67,7 +69,9 @@ Let's add a parser and validation cache, so sending the same operation string se
 cached using an LRU cache, allowing to improve the overall performance of the GraphQL execution
 layer.
 
-<PackageCmd packages={['@envelop/parser-cache @envelop/validation-cache']} />
+```sh npm2yarn
+npm i @envelop/parser-cache @envelop/validation-cache
+```
 
 ```ts
 import { buildSchema } from 'graphql'
