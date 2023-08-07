@@ -1,4 +1,4 @@
-import { Callout, PackageCmd } from '@theguild/components'
+import { Callout } from '@theguild/components'
 
 # Testing
 
@@ -11,7 +11,9 @@ don't need to deal with HTTP or anything else.
 To get started with the Envelop Testkit, make sure to install it in your project (as a
 `devDependency`):
 
-<PackageCmd packages={['-D @envelop/testing']} />
+```sh npm2yarn
+npm i -D @envelop/testing
+```
 
 To get started with your `envelop` testing, make sure first to setup your favorite test runner in
 your project (we use [Jest](https://jestjs.io)).
