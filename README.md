@@ -1,3 +1,5 @@
+[![GraphQL Conf 2023](/GraphQLConf-2023-Banner.png)](https://graphql.org/conf/)
+
 ## Envelop
 
 `envelop` is a lightweight JavaScript (/TypeScript) library for wrapping GraphQL execution layer and
