@@ -6,7 +6,7 @@
 flow, allowing developers to develop, share and collaborate on GraphQL-related plugins while filling
 the missing pieces in GraphQL implementations.
 
-`envelop` aims to extend the GraphQL execution flow by adding plugins that enrichs the feature set
+`envelop` aims to extend the GraphQL execution flow by adding plugins that enrich the feature set
 of your application.
 
 <p align="center">
@@ -171,7 +171,7 @@ Feel free to open issues and pull requests. We're always welcome support from th
 ### Code of Conduct
 
 Help us keep Envelop open and inclusive. Please read and follow our
-[ of Conduct](https://github.com/the-guild-org/Stack/blob/master/CODE_OF_CONDUCT.md) as adopted from
+[Code of Conduct](https://github.com/the-guild-org/Stack/blob/master/CODE_OF_CONDUCT.md) as adopted from
 [Contributor Covenant](https://www.contributor-covenant.org/)
 
 ### License

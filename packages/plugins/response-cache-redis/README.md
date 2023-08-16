@@ -1,7 +1,7 @@
 ## `@envelop/response-cache-redis`
 
 - Supports redis cache for `@envelop/response-cache` plugin
-- Suitable for serveless deployments where the LRU In-Memory Cache is not possible
+- Suitable for serverless deployments where the LRU In-Memory Cache is not possible
 
 [Check out the GraphQL Response Cache Guide for more information](https://envelop.dev/docs/guides/adding-a-graphql-response-cache)
 

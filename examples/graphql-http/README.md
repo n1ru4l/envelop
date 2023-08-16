@@ -1,6 +1,6 @@
 ## Envelop example with GraphQL-HTTP
 
-This example demonstrates how to implement the GraphQL flow with Envelop and the offical GraphQL
+This example demonstrates how to implement the GraphQL flow with Envelop and the official GraphQL
 over HTTP library [`graphql-http`](https://github.com/graphql/graphql-http).
 
 ## Running this example

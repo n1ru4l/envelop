@@ -579,7 +579,7 @@ describe('Prom Metrics plugin', () => {
       expect(await metricCount('graphql_envelop_request')).toBe(0);
     });
 
-    it('Should trace all sucessfull requests', async () => {
+    it('Should trace all successful requests', async () => {
       const { execute, metricCount } = prepare({ requestCount: true, execute: true });
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
@@ -589,7 +589,7 @@ describe('Prom Metrics plugin', () => {
       expect(await metricCount('graphql_envelop_request')).toBe(1);
     });
 
-    it('Should trace all sucessfull requests, with multiple req', async () => {
+    it('Should trace all successful requests, with multiple req', async () => {
       const { execute, metricValue } = prepare({ requestCount: true, execute: true });
       const result1 = await execute('query { regularField }');
       const result2 = await execute('query { regularField }');
@@ -613,7 +613,7 @@ describe('Prom Metrics plugin', () => {
       expect(await metricCount('graphql_envelop_request')).toBe(0);
     });
 
-    it('Should trace all sucessfull requests', async () => {
+    it('Should trace all successful requests', async () => {
       const { execute, metricCount } = prepare({ requestSummary: true, execute: true });
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
