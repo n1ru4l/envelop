@@ -3,7 +3,7 @@
 This example demonstrate how to implement the basic GraphQL Envelop flow with Envelop and
 [`Apollo-Server`](https://github.com/apollographql/apollo-server).
 
-In this exmaple, Apollo-Server provides the basic HTTP wrapper and execution flow, and Envelop is in
+In this example, Apollo-Server provides the basic HTTP wrapper and execution flow, and Envelop is in
 charge of the execution runtime.
 
 ## Running this example

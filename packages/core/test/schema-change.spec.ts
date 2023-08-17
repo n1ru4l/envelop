@@ -16,7 +16,7 @@ describe('schemaChange', () => {
     expect(spiedPlugin.spies.onSchemaChange).toHaveBeenCalledTimes(0);
   });
 
-  it('Should trigger schema change only for plugins that doesnt triggered the change itself', async () => {
+  it("Should trigger schema change only for plugins that don't trigger the change itself", async () => {
     const pluginA = { onSchemaChange: jest.fn() };
     const pluginB = { onSchemaChange: jest.fn() };
 

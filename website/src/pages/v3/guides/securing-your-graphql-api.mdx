@@ -101,8 +101,8 @@ const getEnveloped = envelop({
 
 ### Reject Malicious Operation Documents
 
-Parsing a GraphQL operation document is a very expensive and compute intensitive operation that
-blocks the JavaScript event loop. If an attacker sends a very complex operation document with slight
+Parsing a GraphQL operation document is a very expensive and compute intensive operation that blocks
+the JavaScript event loop. If an attacker sends a very complex operation document with slight
 variations over and over again he can easily degrade the performance of the GraphQL server. Because
 of the variations simply having an LRU cache for parsed operation documents is not enough.
 

@@ -316,7 +316,7 @@ const getEnveloped = envelop({
 
 ### Enforce if a type or a field should only be cached based on session/user
 
-Some types or fields in the schemas should never be globaly cached. Its data is always linked to a
+Some types or fields in the schemas should never be globally cached. Its data is always linked to a
 session or user. `PRIVATE` scope allows to enforce this fact and ensure that responses with a
 `PRIVATE` scope will never be cached without a session. The default scope for all types and fields
 is `PUBLIC`.

@@ -5,7 +5,7 @@ on `prom-client`).
 
 You can opt-in to collect tracing from the following phases:
 
-- Sucessfull requests (`requestCount`)
+- Successful requests (`requestCount`)
 - Request summary (`requestSummary`)
 - errors (categorized by `phase`)
 - resolvers tracing and runtime
@@ -37,8 +37,8 @@ const getEnveloped = envelop({
     // ... other plugins ...
     usePrometheus({
       // all optional, and by default, all set to false, please opt-in to the metrics you wish to get
-      requestCount: true, // requries `execute` to be true as well
-      requestSummary: true, // requries `execute` to be true as well
+      requestCount: true, // requires `execute` to be true as well
+      requestSummary: true, // requires `execute` to be true as well
       parse: true,
       validate: true,
       contextBuilding: true,

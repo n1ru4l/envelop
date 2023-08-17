@@ -15,11 +15,11 @@ export type UsePersistedOperationsOptions<ContextType = DefaultContext> = {
    */
   store: PersistedOperationsStore | PersistedOperationsFunctionStore<ContextType>;
   /**
-   * Function that returns the operation id, e.g. by retrieving it from cusotm properties within context
+   * Function that returns the operation id, e.g. by retrieving it from custom properties within context
    */
   extractOperationId?: (context: Readonly<ContextType>) => string | undefined;
   /**
-   * Callback function to notify consumer of missing hash match, f.i. to log, monitor and/or analise these events
+   * Callback function to notify consumer of missing hash match, f.i. to log, monitor and/or analyse these events
    */
   onMissingMatch?: (context: Readonly<ContextType>, operationId: string) => void;
 };
