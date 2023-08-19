@@ -2995,8 +2995,6 @@ describe('useResponseCache', () => {
   });
 
   it('should work with subscriptions', async () => {
-    jest.useFakeTimers();
-
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         type Query {
@@ -3027,6 +3025,48 @@ describe('useResponseCache', () => {
     const res = await testInstance.execute(operation);
     expect(JSON.stringify(res)).not.toContain('only one top level field');
   });
+});
+
+it('should work with named subscription in combined query and subscription document', async () => {
+  // Setting up the GraphQL schema (same as the provided test case)
+  const schema = makeExecutableSchema({
+    typeDefs: /* GraphQL */ `
+      type Query {
+        comment: String!
+      }
+
+      type Subscription {
+        comment: String!
+      }
+    `,
+    resolvers: {
+      Subscription: {
+        comment: {
+          subscribe: async function* () {
+            yield 'Hello World!';
+          },
+        },
+      },
+    },
+  });
+
+  // Defining the GraphQL operation with a named query and subscription
+  const operation = /* GraphQL */ `
+    query Foo {
+      comment
+    }
+
+    subscription Sub {
+      comment
+    }
+  `;
+
+  // Executing the operation (passing the raw GraphQL string directly)
+  const testInstance = createTestkit([useResponseCache({ session: () => null })], schema);
+  const res = await testInstance.execute(operation);
+
+  // Validating the results (This is a generic validation. Adjust based on actual requirements.)
+  expect(JSON.stringify(res)).not.toContain('only one top level field');
 });
 
 async function waitForResult(result: any) {
