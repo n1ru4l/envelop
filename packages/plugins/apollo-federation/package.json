@@ -1,6 +1,6 @@
 {
   "name": "@envelop/apollo-federation",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -48,7 +48,7 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@apollo/gateway": "^0.54.0",
-    "@envelop/core": "^4.0.0",
+    "@envelop/core": "^4.0.1",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
@@ -59,7 +59,7 @@
   "devDependencies": {
     "@apollo/federation": "0.38.1",
     "@apollo/gateway": "0.54.1",
-    "@envelop/core": "^4.0.0",
+    "@envelop/core": "^4.0.1",
     "graphql": "16.7.0",
     "graphql-tag": "2.12.6",
     "typescript": "5.1.3"

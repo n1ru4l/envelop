@@ -1,6 +1,6 @@
 {
   "name": "@envelop/apollo-datasources",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -47,7 +47,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@envelop/core": "^4.0.0",
+    "@envelop/core": "^4.0.1",
     "apollo-datasource": "^3",
     "apollo-server-caching": "^3",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
@@ -56,7 +56,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@envelop/core": "^4.0.0",
+    "@envelop/core": "^4.0.1",
     "@graphql-tools/schema": "10.0.0",
     "apollo-datasource": "3.3.2",
     "apollo-server-caching": "3.3.0",

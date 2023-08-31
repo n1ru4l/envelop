@@ -1,5 +1,12 @@
 # @envelop/live-query
 
+## 6.0.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @envelop/core@4.0.1
+
 ## 6.0.0
 
 ### Major Changes

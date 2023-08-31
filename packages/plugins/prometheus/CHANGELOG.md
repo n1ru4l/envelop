@@ -1,5 +1,14 @@
 # @envelop/prometheus
 
+## 8.0.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @envelop/core@4.0.1
+- Updated dependencies []:
+  - @envelop/on-resolve@3.0.1
+
 ## 8.0.0
 
 ### Major Changes

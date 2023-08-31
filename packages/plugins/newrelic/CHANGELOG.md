@@ -1,5 +1,21 @@
 # @envelop/newrelic
 
+## 6.0.2
+
+### Patch Changes
+
+- [#1935](https://github.com/n1ru4l/envelop/pull/1935)
+  [`89ae34e3`](https://github.com/n1ru4l/envelop/commit/89ae34e3bb3daef5f98608d79dc269ed9f549c11)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+
+  - Updated dependency [`newrelic@>=7 <12` ↗︎](https://www.npmjs.com/package/newrelic/v/7.0.0) (from
+    `^7 || ^8.0.0`, in `peerDependencies`)
+
+- Updated dependencies []:
+  - @envelop/core@4.0.1
+- Updated dependencies []:
+  - @envelop/on-resolve@3.0.1
+
 ## 6.0.1
 
 ### Patch Changes

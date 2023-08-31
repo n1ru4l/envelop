@@ -1,5 +1,16 @@
 # @envelop/benchmark
 
+## 1.0.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @envelop/core@4.0.1
+  - @envelop/graphql-jit@6.0.2
+  - @envelop/parser-cache@6.0.2
+  - @envelop/prometheus@8.0.1
+  - @envelop/validation-cache@6.0.2
+
 ## 1.0.1
 
 ### Patch Changes
