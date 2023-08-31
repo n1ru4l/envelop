@@ -1,6 +1,6 @@
 {
   "name": "@envelop/core",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -56,7 +56,7 @@
     "typescript"
   ],
   "dependencies": {
-    "@envelop/types": "4.0.0",
+    "@envelop/types": "4.0.1",
     "tslib": "^2.5.0"
   },
   "devDependencies": {

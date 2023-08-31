@@ -1,6 +1,6 @@
 {
   "name": "@envelop/graphql-middleware",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -47,7 +47,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@envelop/core": "^4.0.0",
+    "@envelop/core": "^4.0.1",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0",
     "graphql-middleware": "^6.0.0"
   },
@@ -55,7 +55,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@envelop/core": "^4.0.0",
+    "@envelop/core": "^4.0.1",
     "@graphql-tools/schema": "10.0.0",
     "graphql": "16.7.0",
     "graphql-middleware": "6.1.34",

@@ -1,5 +1,31 @@
 # @envelop/response-cache
 
+## 5.2.0
+
+### Minor Changes
+
+- [#1884](https://github.com/n1ru4l/envelop/pull/1884)
+  [`58174743`](https://github.com/n1ru4l/envelop/commit/58174743ad0f638423cea2d7f100147e0317c72a)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - add support for scopes to enforce cache
+  privacy
+
+- [#1896](https://github.com/n1ru4l/envelop/pull/1896)
+  [`834e1e39`](https://github.com/n1ru4l/envelop/commit/834e1e396c5f4b055fce52e61927a99cde6f7a6c)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - add support for @defer and @stream
+
+### Patch Changes
+
+- [#1896](https://github.com/n1ru4l/envelop/pull/1896)
+  [`834e1e39`](https://github.com/n1ru4l/envelop/commit/834e1e396c5f4b055fce52e61927a99cde6f7a6c)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/utils@^10.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.0.3)
+    (from `^10.0.0`, in `dependencies`)
+
+- Updated dependencies []:
+  - @envelop/core@4.0.1
+
 ## 5.1.0
 
 ### Minor Changes

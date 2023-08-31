@@ -1,5 +1,12 @@
 # @envelop/immediate-introspection
 
+## 2.0.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @envelop/core@4.0.1
+
 ## 2.0.0
 
 ### Major Changes
