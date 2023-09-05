@@ -106,12 +106,13 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
   const contextErrorHandlers: Array<OnContextErrorHandler> = [];
 
   // Iterate all plugins and trigger onPluginInit
-  for (const [i, plugin] of plugins.entries()) {
+  for (let i = 0; i < plugins.length; i++) {
+    const plugin = plugins[i];
     plugin.onPluginInit &&
       plugin.onPluginInit({
         plugins,
         addPlugin: newPlugin => {
-          plugins.push(newPlugin);
+          plugins.splice(i + 1, 0, newPlugin);
         },
         setSchema: modifiedSchema => replaceSchema(modifiedSchema, i),
         registerContextErrorHandler: handler => contextErrorHandlers.push(handler),
