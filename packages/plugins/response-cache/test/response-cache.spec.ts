@@ -2497,6 +2497,7 @@ describe('useResponseCache', () => {
       documentString: operation,
       variableValues: {},
       sessionId: null,
+      context: {},
     });
     expect(shouldCacheResult).toHaveBeenCalledWith({
       cacheKey,
