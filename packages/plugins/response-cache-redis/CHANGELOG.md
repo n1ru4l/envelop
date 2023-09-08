@@ -1,5 +1,13 @@
 # @envelop/response-cache-redis
 
+## 3.3.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`be16ad2c`](https://github.com/n1ru4l/envelop/commit/be16ad2c8b77e8ce44c279b9b242618e57d51d2e)]:
+  - @envelop/response-cache@5.3.0
+
 ## 3.2.0
 
 ### Patch Changes

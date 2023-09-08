@@ -1,5 +1,14 @@
 # @envelop/response-cache
 
+## 5.3.0
+
+### Minor Changes
+
+- [#1941](https://github.com/n1ru4l/envelop/pull/1941)
+  [`be16ad2c`](https://github.com/n1ru4l/envelop/commit/be16ad2c8b77e8ce44c279b9b242618e57d51d2e)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Give access to the context in the cache
+  key builder function
+
 ## 5.2.0
 
 ### Minor Changes
