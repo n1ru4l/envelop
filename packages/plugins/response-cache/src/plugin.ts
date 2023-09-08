@@ -483,19 +483,10 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         setResult: (newResult: ExecutionResult) => void,
       ) {
         const processedResult = processResult(result) as ResponseCacheExecutionResult;
-
-        if (skip) {
-          return;
-        }
-
-        if (!shouldCacheResult({ cacheKey, result: processedResult })) {
-          return;
-        }
-
         // we only use the global ttl if no currentTtl has been determined.
         const finalTtl = currentTtl ?? globalTtl;
 
-        if (finalTtl === 0) {
+        if (skip || !shouldCacheResult({ cacheKey, result: processedResult }) || finalTtl === 0) {
           if (includeExtensionMetadata) {
             setResult(resultWithMetadata(processedResult, { hit: false, didCache: false }));
           }
