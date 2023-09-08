@@ -42,6 +42,8 @@ export type BuildResponseCacheKeyFunction = (params: {
   operationName?: Maybe<string>;
   /** optional sessionId for make unique cache keys based on the session.  */
   sessionId: Maybe<string>;
+  /** GraphQL Context */
+  context: ExecutionArgs['contextValue'];
 }) => Promise<string>;
 
 export type GetDocumentStringFunction = (executionArgs: ExecutionArgs) => string;
@@ -144,7 +146,12 @@ export type UseResponseCacheParameter<PluginContext extends Record<string, any> 
  * Default function used for building the response cache key.
  * It is exported here for advanced use-cases. E.g. if you want to short circuit and serve responses from the cache on a global level in order to completely by-pass the GraphQL flow.
  */
-export const defaultBuildResponseCacheKey: BuildResponseCacheKeyFunction = params =>
+export const defaultBuildResponseCacheKey = (params: {
+  documentString: string;
+  variableValues: ExecutionArgs['variableValues'];
+  operationName?: Maybe<string>;
+  sessionId: Maybe<string>;
+}): Promise<string> =>
   hashSHA256(
     [
       params.documentString,
@@ -434,6 +441,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         variableValues: onExecuteParams.args.variableValues,
         operationName: onExecuteParams.args.operationName,
         sessionId,
+        context: onExecuteParams.args.contextValue,
       });
 
       if ((enabled?.(onExecuteParams.args.contextValue) ?? true) === true) {
@@ -475,19 +483,10 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         setResult: (newResult: ExecutionResult) => void,
       ) {
         const processedResult = processResult(result) as ResponseCacheExecutionResult;
-
-        if (skip) {
-          return;
-        }
-
-        if (!shouldCacheResult({ cacheKey, result: processedResult })) {
-          return;
-        }
-
         // we only use the global ttl if no currentTtl has been determined.
         const finalTtl = currentTtl ?? globalTtl;
 
-        if (finalTtl === 0) {
+        if (skip || !shouldCacheResult({ cacheKey, result: processedResult }) || finalTtl === 0) {
           if (includeExtensionMetadata) {
             setResult(resultWithMetadata(processedResult, { hit: false, didCache: false }));
           }
@@ -552,7 +551,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   };
 }
 
-function resultWithMetadata(
+export function resultWithMetadata(
   result: ExecutionResult,
   metadata: ResponseCacheExtensions,
 ): ResponseCacheExecutionResult {
