@@ -42,6 +42,8 @@ export type BuildResponseCacheKeyFunction = (params: {
   operationName?: Maybe<string>;
   /** optional sessionId for make unique cache keys based on the session.  */
   sessionId: Maybe<string>;
+  /** GraphQL Context */
+  context: ExecutionArgs['contextValue'];
 }) => Promise<string>;
 
 export type GetDocumentStringFunction = (executionArgs: ExecutionArgs) => string;
@@ -434,6 +436,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         variableValues: onExecuteParams.args.variableValues,
         operationName: onExecuteParams.args.operationName,
         sessionId,
+        context: onExecuteParams.args.contextValue,
       });
 
       if ((enabled?.(onExecuteParams.args.contextValue) ?? true) === true) {
