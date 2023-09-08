@@ -551,7 +551,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   };
 }
 
-function resultWithMetadata(
+export function resultWithMetadata(
   result: ExecutionResult,
   metadata: ResponseCacheExtensions,
 ): ResponseCacheExecutionResult {
