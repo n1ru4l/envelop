@@ -146,7 +146,12 @@ export type UseResponseCacheParameter<PluginContext extends Record<string, any> 
  * Default function used for building the response cache key.
  * It is exported here for advanced use-cases. E.g. if you want to short circuit and serve responses from the cache on a global level in order to completely by-pass the GraphQL flow.
  */
-export const defaultBuildResponseCacheKey: BuildResponseCacheKeyFunction = params =>
+export const defaultBuildResponseCacheKey = (params: {
+  documentString: string;
+  variableValues: ExecutionArgs['variableValues'];
+  operationName?: Maybe<string>;
+  sessionId: Maybe<string>;
+}): Promise<string> =>
   hashSHA256(
     [
       params.documentString,
