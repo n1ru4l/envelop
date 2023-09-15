@@ -16,6 +16,7 @@ describe('plugin init', () => {
         },
       });
 
+      //TODO: Add test with nested envelops when the related bug is fixed
       const teskit = createTestkit(
         [
           createPlugin(0),
