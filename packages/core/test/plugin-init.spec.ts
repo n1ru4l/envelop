@@ -16,27 +16,33 @@ describe('plugin init', () => {
         },
       });
 
-      //TODO: Add test with nested envelops when the related bug is fixed
       const teskit = createTestkit(
         [
           createPlugin(0),
-          useEnvelop(
-            envelop({
-              plugins: [createPlugin(1), createPlugin(2)],
-            }),
-          ),
-          useEnvelop(
-            envelop({
-              plugins: [createPlugin(3), createPlugin(4)],
-            }),
-          ),
-          createPlugin(5),
+          {
+            onPluginInit({ addPlugin }) {
+              addPlugin(createPlugin(1));
+              addPlugin(createPlugin(2));
+            },
+          },
+          {
+            onPluginInit({ addPlugin }) {
+              addPlugin(createPlugin(3));
+              addPlugin({
+                onPluginInit({ addPlugin }) {
+                  addPlugin(createPlugin(4));
+                },
+              });
+              addPlugin(createPlugin(5));
+            },
+          },
+          createPlugin(6),
         ],
         schema,
       );
       await teskit.execute(query, {});
 
-      expect.assertions(6);
+      expect.assertions(7);
     });
   });
 });
