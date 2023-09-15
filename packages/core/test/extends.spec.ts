@@ -29,4 +29,32 @@ describe('extending envelops', () => {
     expect(spiedPlugin.spies.beforeExecute).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.afterExecute).toHaveBeenCalledTimes(1);
   });
+
+  it('should allow to extend envelops with extended envelop', async () => {
+    const spiedPlugin = createSpiedPlugin();
+
+    const instance = envelop({
+      plugins: [
+        useGraphQLJSEngine(),
+        useLogger(),
+        useSchema(schema),
+        useEnvelop(
+          envelop({
+            plugins: [
+              useEnvelop(
+                envelop({
+                  plugins: [spiedPlugin.plugin],
+                }),
+              ),
+            ],
+          }),
+        ),
+      ],
+    });
+
+    const teskit = createTestkit(instance);
+    await teskit.execute(query, {});
+    expect(spiedPlugin.spies.beforeExecute).toHaveBeenCalledTimes(1);
+    expect(spiedPlugin.spies.afterExecute).toHaveBeenCalledTimes(1);
+  });
 });
