@@ -3,7 +3,13 @@ import * as GraphQLJS from 'graphql';
 import { envelop, useEngine, useLogger, useSchema } from '@envelop/core';
 import { useGraphQlJit } from '@envelop/graphql-jit';
 import { useParserCache } from '@envelop/parser-cache';
-import { assertSingleExecutionValue, createTestkit, TestkitInstance } from '@envelop/testing';
+import {
+  assertSingleExecutionValue,
+  assertStreamExecutionValue,
+  collectAsyncIteratorValues,
+  createTestkit,
+  TestkitInstance,
+} from '@envelop/testing';
 import { useValidationCache } from '@envelop/validation-cache';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -2992,6 +2998,54 @@ describe('useResponseCache', () => {
       extensions: { responseCache: { hit: true } },
     });
     expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should ignore allow subscription and ignore it', async () => {
+    const streamExecuteFn = async function* () {
+      for (const value of ['a', 'b', 'c', 'd']) {
+        yield value;
+      }
+    };
+
+    const teskit = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+        }),
+      ],
+      makeExecutableSchema({
+        typeDefs: /* GraphQL */ `
+          type Query {
+            me: String!
+          }
+          type Subscription {
+            alphabet: String!
+          }
+        `,
+        resolvers: {
+          Subscription: {
+            alphabet: {
+              subscribe: () => streamExecuteFn(),
+              resolve: value => value,
+            },
+          },
+        },
+      }),
+    );
+
+    const result = await teskit.execute(/* GraphQL */ `
+      subscription {
+        alphabet
+      }
+    `);
+    assertStreamExecutionValue(result);
+    const values = await collectAsyncIteratorValues(result);
+    expect(values).toEqual([
+      { data: { alphabet: 'a' } },
+      { data: { alphabet: 'b' } },
+      { data: { alphabet: 'c' } },
+      { data: { alphabet: 'd' } },
+    ]);
   });
 });
 
