@@ -967,6 +967,9 @@ importers:
       '@envelop/extended-validation':
         specifier: ^3.0.1
         version: link:../extended-validation/dist
+      '@graphql-tools/utils':
+        specifier: ^10.0.6
+        version: 10.0.6(graphql@16.6.0)
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -4864,7 +4867,7 @@ packages:
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
-      '@graphql-tools/utils': 10.0.4(graphql@16.6.0)
+      '@graphql-tools/utils': 10.0.6(graphql@16.6.0)
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.6.0)
       '@repeaterjs/repeater': 3.0.4
       graphql: 16.6.0
@@ -4907,7 +4910,7 @@ packages:
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
-      '@graphql-tools/utils': 10.0.4(graphql@16.6.0)
+      '@graphql-tools/utils': 10.0.6(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.5.0
 
@@ -4931,7 +4934,7 @@ packages:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
       '@graphql-tools/merge': 9.0.0(graphql@16.6.0)
-      '@graphql-tools/utils': 10.0.0(graphql@16.6.0)
+      '@graphql-tools/utils': 10.0.6(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.5.0
       value-or-promise: 1.0.12
@@ -4991,6 +4994,7 @@ packages:
       '@graphql-typed-document-node/core': 3.1.1(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.5.0
+    dev: false
 
   /@graphql-tools/utils@10.0.3(graphql@16.6.0):
     resolution: {integrity: sha512-6uO41urAEIs4sXQT2+CYGsUTkHkVo/2MpM/QjoHj6D6xoEF2woXHBpdAVi0HKIInDwZqWgEYOwIFez0pERxa1Q==}
@@ -5006,6 +5010,18 @@ packages:
 
   /@graphql-tools/utils@10.0.4(graphql@16.6.0):
     resolution: {integrity: sha512-MF+nZgGROSnFgyOYWhrl2PuJMlIBvaCH48vtnlnDQKSeDc2fUfOzUVloBAQvnYmK9JBmHHks4Pxv25Ybg3r45Q==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+    dependencies:
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.6.0)
+      dset: 3.1.2
+      graphql: 16.6.0
+      tslib: 2.5.0
+    dev: true
+
+  /@graphql-tools/utils@10.0.6(graphql@16.6.0):
+    resolution: {integrity: sha512-hZMjl/BbX10iagovakgf3IiqArx8TPsotq5pwBld37uIX1JiZoSbgbCIFol7u55bh32o6cfDEiiJgfAD5fbeyQ==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0

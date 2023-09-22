@@ -13,6 +13,7 @@ import {
 } from 'graphql';
 import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/core';
 import { useExtendedValidation } from '@envelop/extended-validation';
+import { shouldIncludeNode } from '@graphql-tools/utils';
 
 export class UnauthenticatedError extends GraphQLError {}
 
@@ -197,6 +198,10 @@ export const useGenericAuth = <
 
                 return {
                   Field(node) {
+                    if (!shouldIncludeNode(args.variableValues, node)) {
+                      return;
+                    }
+
                     const fieldType = getNamedType(context.getParentType()!);
                     if (isIntrospectionType(fieldType)) {
                       return false;
