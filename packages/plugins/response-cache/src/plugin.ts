@@ -357,8 +357,8 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
               skip = true;
             }
             if (!skip) {
-              const id = data[fieldName];
               if (idFields.includes(fieldName)) {
+                const id = data[fieldName];
                 identifier.set(`${typename}:${id}`, { typename, id });
               }
             }
