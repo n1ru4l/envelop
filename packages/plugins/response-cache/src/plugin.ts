@@ -1,10 +1,12 @@
 import jsonStableStringify from 'fast-json-stable-stringify';
 import {
+  ASTNode,
   BREAK,
   DocumentNode,
   ExecutionArgs,
   getOperationAST,
   Kind,
+  OperationDefinitionNode,
   print,
   TypeInfo,
   visit,
@@ -214,14 +216,23 @@ const addTypeNameToDocument = memoize2(function addTypeNameToDocument(
   addTypeNameToDocumentOpts: { invalidateViaMutation: boolean; invalidateViaSubscription: boolean },
 ): DocumentNode {
   const newDocument = visit(document, {
+    OperationDefinition: {
+      enter(node): void | false {
+        if (!addTypeNameToDocumentOpts.invalidateViaMutation && node.operation === 'mutation') {
+          return false;
+        }
+        if (
+          !addTypeNameToDocumentOpts.invalidateViaSubscription &&
+          node.operation === 'subscription'
+        ) {
+          return false;
+        }
+      },
+    },
     SelectionSet(node, _key, parent) {
-      if (parent && 'kind' in parent && parent.kind === Kind.OPERATION_DEFINITION) {
-        if (parent.operation === 'mutation' && !addTypeNameToDocumentOpts.invalidateViaMutation) {
-          return BREAK;
-        }
-        if (parent.operation === 'subscription') {
-          return addTypeNameToDocumentOpts.invalidateViaSubscription ? node : BREAK;
-        }
+      // Skip the root selection set for subscriptions
+      if ((parent as OperationDefinitionNode)?.operation === 'subscription') {
+        return;
       }
       return {
         ...node,
@@ -353,11 +364,13 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
             currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
           }
           for (const fieldName in data) {
-            if (scopePerSchemaCoordinate[`${typename}.${fieldName}`] === 'PRIVATE' && !sessionId) {
-              skip = true;
-            }
             if (!skip) {
-              if (idFields.includes(fieldName)) {
+              if (
+                scopePerSchemaCoordinate[`${typename}.${fieldName}`] === 'PRIVATE' &&
+                !sessionId
+              ) {
+                skip = true;
+              } else if (idFields.includes(fieldName)) {
                 const id = data[fieldName];
                 identifier.set(`${typename}:${id}`, { typename, id });
               }

@@ -1,3 +1,4 @@
+import { inspect } from 'util';
 import * as GraphQLJS from 'graphql';
 import {
   DocumentNode,
@@ -247,7 +248,7 @@ export function assertStreamExecutionValue(
   input: ExecutionReturn,
 ): asserts input is AsyncIterableIterator<ExecutionResult> {
   if (!isAsyncIterable(input)) {
-    throw new Error('Received single result but expected stream.');
+    throw new Error('Received single result but expected stream.' + inspect(input));
   }
 }
 
