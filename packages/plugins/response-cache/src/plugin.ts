@@ -1,7 +1,5 @@
 import jsonStableStringify from 'fast-json-stable-stringify';
 import {
-  ASTNode,
-  BREAK,
   DocumentNode,
   ExecutionArgs,
   getOperationAST,
