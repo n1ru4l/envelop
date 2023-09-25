@@ -247,7 +247,6 @@ export function assertStreamExecutionValue(
   input: ExecutionReturn,
 ): asserts input is AsyncIterableIterator<ExecutionResult> {
   if (!isAsyncIterable(input)) {
-    console.info(input.errors);
     throw new Error('Received single result but expected stream.');
   }
 }
