@@ -209,15 +209,15 @@ const originalDocumentMap = new WeakMap<DocumentNode, DocumentNode>();
 const addTypeNameToDocument = memoize1(function addTypeNameToDocument(
   document: DocumentNode,
 ): DocumentNode {
-  if (
-    document.definitions.some(
-      def => def.kind === Kind.OPERATION_DEFINITION && def.operation === 'subscription',
-    )
-  ) {
-    return document;
-  }
   let documentChanged = false;
   const newDocument = visit(document, {
+    OperationDefinition(node) {
+      // Skip subscriptions to avoid adding __typename to subscription's root selection set
+      if (node.operation === 'subscription') {
+        return false;
+      }
+      return node;
+    },
     SelectionSet(node): SelectionSetNode {
       if (
         !node.selections.some(
