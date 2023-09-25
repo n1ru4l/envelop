@@ -89,6 +89,7 @@ export type TestkitInstance = {
     operation: DocumentNode | string,
     variables?: Record<string, any>,
     initialContext?: any,
+    operationName?: string,
   ) => MaybePromise<ExecutionReturn>;
   modifyPlugins: (modifyPluginsFn: ModifyPluginsFn) => void;
   mockPhase: (phaseReplacement: PhaseReplacementParams) => void;
@@ -134,7 +135,12 @@ export function createTestkit(
       phasesReplacements.push(phaseReplacement);
     },
     wait: ms => new Promise(resolve => setTimeout(resolve, ms)),
-    execute: async (operation, variableValues = {}, initialContext = {}) => {
+    execute: async (
+      operation,
+      variableValues = {},
+      initialContext = {},
+      operationName?: string,
+    ) => {
       const proxy = getEnveloped(initialContext);
 
       for (const replacement of phasesReplacements) {
@@ -181,7 +187,7 @@ export function createTestkit(
         };
       }
 
-      const mainOperation = getOperationAST(document);
+      const mainOperation = getOperationAST(document, operationName);
 
       if (mainOperation == null) {
         return {
@@ -202,6 +208,7 @@ export function createTestkit(
         document,
         operation: getDocumentString(document, print),
         variables: variableValues,
+        operationName,
         ...initialContext,
       });
 
@@ -212,6 +219,7 @@ export function createTestkit(
           schema: proxy.schema,
           document,
           rootValue: {},
+          operationName,
         });
       }
 
@@ -221,6 +229,7 @@ export function createTestkit(
         schema: proxy.schema,
         document,
         rootValue: {},
+        operationName,
       });
     },
   };
