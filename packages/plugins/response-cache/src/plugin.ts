@@ -1,11 +1,11 @@
 import jsonStableStringify from 'fast-json-stable-stringify';
 import {
+  BREAK,
   DocumentNode,
   ExecutionArgs,
   getOperationAST,
   Kind,
   print,
-  SelectionSetNode,
   TypeInfo,
   visit,
   visitWithTypeInfo,
@@ -22,7 +22,7 @@ import {
   getDirective,
   MapperKind,
   mapSchema,
-  memoize1,
+  memoize2,
   mergeIncrementalResult,
 } from '@graphql-tools/utils';
 import type { Cache, CacheEntityRecord } from './cache.js';
@@ -116,6 +116,10 @@ export type UseResponseCacheParameter<PluginContext extends Record<string, any> 
    */
   invalidateViaMutation?: boolean;
   /**
+   * Wheter the subscription execution result should be used for invalidating resources.
+   */
+  invalidateViaSubscription?: boolean;
+  /**
    * Customize the behavior how the response cache key is computed from the document, variable values and sessionId.
    * Defaults to `defaultBuildResponseCacheKey`
    */
@@ -205,18 +209,19 @@ export type ResponseCacheExecutionResult = ExecutionResult<
 >;
 
 const originalDocumentMap = new WeakMap<DocumentNode, DocumentNode>();
-const addTypeNameToDocument = memoize1(function addTypeNameToDocument(
+const addTypeNameToDocument = memoize2(function addTypeNameToDocument(
   document: DocumentNode,
+  addTypeNameToDocumentOpts: { invalidateViaMutation: boolean; invalidateViaSubscription: boolean },
 ): DocumentNode {
   const newDocument = visit(document, {
-    SelectionSet(node, _key, parent): SelectionSetNode {
-      if (
-        parent &&
-        'kind' in parent &&
-        parent.kind === Kind.OPERATION_DEFINITION &&
-        parent.operation === 'subscription'
-      ) {
-        return node;
+    SelectionSet(node, _key, parent) {
+      if (parent && 'kind' in parent && parent.kind === Kind.OPERATION_DEFINITION) {
+        if (parent.operation === 'mutation' && !addTypeNameToDocumentOpts.invalidateViaMutation) {
+          return BREAK;
+        }
+        if (parent.operation === 'subscription') {
+          return addTypeNameToDocumentOpts.invalidateViaSubscription ? node : BREAK;
+        }
       }
       return {
         ...node,
@@ -252,6 +257,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   scopePerSchemaCoordinate = {},
   idFields = ['id'],
   invalidateViaMutation = true,
+  invalidateViaSubscription = true,
   buildResponseCacheKey = defaultBuildResponseCacheKey,
   getDocumentString = defaultGetDocumentString,
   shouldCacheResult = defaultShouldCacheResult,
@@ -265,11 +271,12 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
   // never cache Introspections
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
+  const addTypeNameToDocumentOpts = { invalidateViaMutation, invalidateViaSubscription };
   return {
     onParse() {
       return ({ result, replaceParseResult }) => {
         if (!originalDocumentMap.has(result) && result.kind === Kind.DOCUMENT) {
-          const newDocument = addTypeNameToDocument(result);
+          const newDocument = addTypeNameToDocument(result, addTypeNameToDocumentOpts);
           replaceParseResult(newDocument);
         }
       };
