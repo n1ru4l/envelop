@@ -202,8 +202,8 @@ importers:
         version: 1.13.0(graphql@16.6.0)
     devDependencies:
       '@azure/functions':
-        specifier: 3.5.1
-        version: 3.5.1
+        specifier: 4.0.0
+        version: 4.0.0
       '@types/node':
         specifier: 18.16.18
         version: 18.16.18
@@ -295,8 +295,8 @@ importers:
         version: 1.13.0(graphql@16.6.0)
     devDependencies:
       '@azure/functions':
-        specifier: 3.5.1
-        version: 3.5.1
+        specifier: 4.0.0
+        version: 4.0.0
       '@types/node':
         specifier: 18.16.18
         version: 18.16.18
@@ -2683,12 +2683,12 @@ packages:
       tslib: 2.5.0
     dev: true
 
-  /@azure/functions@3.5.1:
-    resolution: {integrity: sha512-6UltvJiuVpvHSwLcK/Zc6NfUwlkDLOFFx97BHCJzlWNsfiWwzwmTsxJXg4kE/LemKTHxPpfoPE+kOJ8hAdiKFQ==}
+  /@azure/functions@4.0.0:
+    resolution: {integrity: sha512-NsL1vbYtsh19eA6d3Syo9bP8d1JAguE9nRd9AFBTcK+lhbRzKvKQ98efiGz21ug2Cm526SMet0imxUSykviEHA==}
+    engines: {node: '>=18.0'}
     dependencies:
-      iconv-lite: 0.6.3
       long: 4.0.0
-      uuid: 8.3.2
+      undici: 5.25.2
     dev: true
 
   /@babel/code-frame@7.21.4:
@@ -8783,7 +8783,6 @@ packages:
     engines: {node: '>=10.16.0'}
     dependencies:
       streamsearch: 1.1.0
-    dev: false
 
   /bytes@3.1.0:
     resolution: {integrity: sha512-zauLjrfCG+xvoyaqLoV8bLVXXNGC4JqlxFCutSDWA6fJrTo2ZuvLYTqZ7aHBLZSMOopbzwv8f+wZcVzfVTI2Dg==}
@@ -18012,7 +18011,6 @@ packages:
   /streamsearch@1.1.0:
     resolution: {integrity: sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==}
     engines: {node: '>=10.0.0'}
-    dev: false
 
   /string-argv@0.3.1:
     resolution: {integrity: sha512-a1uQGz7IyVy9YwhqjZIZu1c8JO8dNIe20xBmSS6qu9kv++k3JGzCVmprbNN5Kn+BgzD5E7YYwg1CcjuJMRNsvg==}
@@ -18874,6 +18872,13 @@ packages:
     resolution: {integrity: sha512-+A5Sja4HP1M08MaXya7p5LvjuM7K6q/2EaC0+iovj/wOcMsTzMvDFbasi/oSapiwOlt252IqsKqPjCl7huKS0A==}
     dev: false
     optional: true
+
+  /undici@5.25.2:
+    resolution: {integrity: sha512-tch8RbCfn1UUH1PeVCXva4V8gDpGAud/w0WubD6sHC46vYQ3KDxL+xv1A2UxK0N6jrVedutuPHxe1XIoqerwMw==}
+    engines: {node: '>=14.0'}
+    dependencies:
+      busboy: 1.6.0
+    dev: true
 
   /unescape-js@1.1.4:
     resolution: {integrity: sha512-42SD8NOQEhdYntEiUQdYq/1V/YHwr1HLwlHuTJB5InVVdOSbgI6xu8jK5q65yIzuFCfczzyDF/7hbGzVbyCw0g==}
