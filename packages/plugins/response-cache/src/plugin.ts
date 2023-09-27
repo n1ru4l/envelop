@@ -4,7 +4,6 @@ import {
   ExecutionArgs,
   getOperationAST,
   Kind,
-  OperationDefinitionNode,
   print,
   TypeInfo,
   visit,
@@ -117,10 +116,6 @@ export type UseResponseCacheParameter<PluginContext extends Record<string, any> 
    */
   invalidateViaMutation?: boolean;
   /**
-   * Wheter the subscription execution result should be used for invalidating resources.
-   */
-  invalidateViaSubscription?: boolean;
-  /**
    * Customize the behavior how the response cache key is computed from the document, variable values and sessionId.
    * Defaults to `defaultBuildResponseCacheKey`
    */
@@ -212,7 +207,7 @@ export type ResponseCacheExecutionResult = ExecutionResult<
 const originalDocumentMap = new WeakMap<DocumentNode, DocumentNode>();
 const addTypeNameToDocument = memoize2(function addTypeNameToDocument(
   document: DocumentNode,
-  addTypeNameToDocumentOpts: { invalidateViaMutation: boolean; invalidateViaSubscription: boolean },
+  addTypeNameToDocumentOpts: { invalidateViaMutation: boolean },
 ): DocumentNode {
   const newDocument = visit(document, {
     OperationDefinition: {
@@ -220,19 +215,12 @@ const addTypeNameToDocument = memoize2(function addTypeNameToDocument(
         if (!addTypeNameToDocumentOpts.invalidateViaMutation && node.operation === 'mutation') {
           return false;
         }
-        if (
-          !addTypeNameToDocumentOpts.invalidateViaSubscription &&
-          node.operation === 'subscription'
-        ) {
+        if (node.operation === 'subscription') {
           return false;
         }
       },
     },
     SelectionSet(node, _key, parent) {
-      // Skip the root selection set for subscriptions
-      if ((parent as OperationDefinitionNode)?.operation === 'subscription') {
-        return;
-      }
       return {
         ...node,
         selections: [
@@ -267,7 +255,6 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   scopePerSchemaCoordinate = {},
   idFields = ['id'],
   invalidateViaMutation = true,
-  invalidateViaSubscription = true,
   buildResponseCacheKey = defaultBuildResponseCacheKey,
   getDocumentString = defaultGetDocumentString,
   shouldCacheResult = defaultShouldCacheResult,
@@ -281,7 +268,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
   // never cache Introspections
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
-  const addTypeNameToDocumentOpts = { invalidateViaMutation, invalidateViaSubscription };
+  const addTypeNameToDocumentOpts = { invalidateViaMutation };
   return {
     onParse() {
       return ({ result, replaceParseResult }) => {
