@@ -672,7 +672,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -707,10 +707,10 @@ importers:
         specifier: 0.38.1
         version: 0.38.1(graphql@16.6.0)
       '@apollo/gateway':
-        specifier: 0.54.1
-        version: 0.54.1(graphql@16.6.0)
+        specifier: 2.5.5
+        version: 2.5.5(graphql@16.6.0)
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       graphql:
         specifier: 16.6.0
@@ -733,7 +733,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -752,7 +752,7 @@ importers:
   packages/plugins/apollo-tracing:
     dependencies:
       '@envelop/on-resolve':
-        specifier: ^3.0.1
+        specifier: ^3.0.2
         version: link:../on-resolve/dist
       '@envelop/types':
         specifier: ^4.0.1
@@ -765,7 +765,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -791,7 +791,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@types/jsonwebtoken':
         specifier: 9.0.2
@@ -808,7 +808,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -837,7 +837,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@types/graphql-depth-limit':
         specifier: 1.1.3
@@ -857,7 +857,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       graphql:
         specifier: 16.6.0
@@ -874,7 +874,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@n1ru4l/push-pull-async-iterable-iterator':
         specifier: 3.2.0
@@ -897,7 +897,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -917,7 +917,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       graphql:
         specifier: 16.6.0
@@ -934,7 +934,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -965,7 +965,7 @@ importers:
   packages/plugins/generic-auth:
     dependencies:
       '@envelop/extended-validation':
-        specifier: ^3.0.1
+        specifier: ^3.0.2
         version: link:../extended-validation/dist
       '@graphql-tools/utils':
         specifier: ^10.0.6
@@ -975,7 +975,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1001,7 +1001,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1024,7 +1024,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1050,7 +1050,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       graphql:
         specifier: 16.6.0
@@ -1069,7 +1069,7 @@ importers:
   packages/plugins/immediate-introspection:
     dependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@sentry/node':
         specifier: ^6 || ^7
@@ -1102,7 +1102,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1121,14 +1121,14 @@ importers:
   packages/plugins/newrelic:
     dependencies:
       '@envelop/on-resolve':
-        specifier: ^3.0.1
+        specifier: ^3.0.2
         version: link:../on-resolve/dist
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: ^10.0.0
@@ -1153,7 +1153,7 @@ importers:
   packages/plugins/on-resolve:
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1169,7 +1169,7 @@ importers:
   packages/plugins/opentelemetry:
     dependencies:
       '@envelop/on-resolve':
-        specifier: ^3.0.1
+        specifier: ^3.0.2
         version: link:../on-resolve/dist
       '@opentelemetry/api':
         specifier: ^1.0.0
@@ -1182,7 +1182,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       graphql:
         specifier: 16.6.0
@@ -1195,14 +1195,14 @@ importers:
   packages/plugins/operation-field-permissions:
     dependencies:
       '@envelop/extended-validation':
-        specifier: ^3.0.1
+        specifier: ^3.0.2
         version: link:../extended-validation/dist
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1225,7 +1225,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       graphql:
         specifier: 16.6.0
@@ -1242,7 +1242,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1262,7 +1262,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1278,14 +1278,14 @@ importers:
   packages/plugins/prometheus:
     dependencies:
       '@envelop/on-resolve':
-        specifier: ^3.0.1
+        specifier: ^3.0.2
         version: link:../on-resolve/dist
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1304,7 +1304,7 @@ importers:
   packages/plugins/rate-limiter:
     dependencies:
       '@envelop/on-resolve':
-        specifier: ^3.0.1
+        specifier: ^3.0.2
         version: link:../on-resolve/dist
       graphql-rate-limit:
         specifier: 3.3.0
@@ -1314,7 +1314,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1330,7 +1330,7 @@ importers:
   packages/plugins/resource-limitations:
     dependencies:
       '@envelop/extended-validation':
-        specifier: ^3.0.1
+        specifier: ^3.0.2
         version: link:../extended-validation/dist
       '@graphql-tools/utils':
         specifier: ^10.0.0
@@ -1340,7 +1340,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1372,7 +1372,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/executor':
         specifier: ^1.1.0
@@ -1394,7 +1394,7 @@ importers:
   packages/plugins/response-cache-redis:
     dependencies:
       '@envelop/response-cache':
-        specifier: ^5.3.0
+        specifier: ^5.3.1
         version: link:../response-cache/dist
       ioredis:
         specifier: ^4.27.9
@@ -1404,7 +1404,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1427,7 +1427,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1459,7 +1459,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1488,7 +1488,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../../core/dist
       graphql:
         specifier: 16.6.0
@@ -1511,7 +1511,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: 4.0.1
+        specifier: 4.0.2
         version: link:../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1858,13 +1858,28 @@ packages:
     dependencies:
       graphql: 16.6.0
 
-  /@apollo/core-schema@0.2.3(graphql@16.6.0):
-    resolution: {integrity: sha512-0MXK/rlo2Es6qp4nb5lkMcN8jz3AaXm7TiPENO9Cyyy8kIC6rTKKpHCd1yv/E5aDEIFFq44LJcL+WrLONSy7+g==}
-    engines: {node: '>=12.13.0 <18.0'}
+  /@apollo/composition@2.5.5(graphql@16.6.0):
+    resolution: {integrity: sha512-TD6eO2c3jnQmyTlAbncSek9jgA8s04chaiPq0bCn5jajjR5CFJ6D5NNomgiPG+dtZhyJN3Ji/AiOzZjnZ7t8NA==}
+    engines: {node: '>=14.15.0'}
     peerDependencies:
-      graphql: ^15.7.2 || ^16.0.0
+      graphql: ^16.5.0
     dependencies:
+      '@apollo/federation-internals': 2.5.5(graphql@16.6.0)
+      '@apollo/query-graphs': 2.5.5(graphql@16.6.0)
       graphql: 16.6.0
+    dev: true
+
+  /@apollo/federation-internals@2.5.5(graphql@16.6.0):
+    resolution: {integrity: sha512-6Ywx10Jweuoq9p913HwtIUuJt+uI+hAw5g/Tv/yIA04FNwdPETkLe6Jbz7mnXdGV0b30YcPME2NnKnIu7s/5AA==}
+    engines: {node: '>=14.15.0'}
+    peerDependencies:
+      graphql: ^16.5.0
+    dependencies:
+      '@types/uuid': 9.0.4
+      chalk: 4.1.2
+      graphql: 16.6.0
+      js-levenshtein: 1.1.6
+      uuid: 9.0.0
     dev: true
 
   /@apollo/federation@0.38.1(graphql@16.6.0):
@@ -1882,32 +1897,32 @@ packages:
       - encoding
     dev: true
 
-  /@apollo/gateway@0.54.1(graphql@16.6.0):
-    resolution: {integrity: sha512-fGN4A8bWYnF/IFS7EMBH1c78vMiI9PEeiGVu9Thqoum2VkRpKQRc2hBhvoloSPQ6yAocKlLrBep5XBT5EqOSTA==}
-    engines: {node: '>=12.13.0'}
-    deprecated: All v0.x versions of @apollo/gateway are now deprecated (end-of-life September 22, 2023). Apollo recommends upgrading to v2.x or migrating to the Apollo Router as soon as possible. For more details, see our announcement blog post (https://www.apollographql.com/blog/announcement/backend/announcing-the-end-of-life-schedule-for-apollo-gateway-v0-x/) and documentation (https://www.apollographql.com/docs/federation/federation-2/backward-compatibility/#is-official-support-ending-for-apollogateway-v0x).
+  /@apollo/gateway@2.5.5(graphql@16.6.0):
+    resolution: {integrity: sha512-D1hUtFYgVIDT8tmhHQsNcSxacjzVqI4t/tnTMMHBsatlDYGP3FcHmCN9tOtBPUGfIaNNkHI8vua77F8wErNGcg==}
+    engines: {node: '>=14.15.0'}
     peerDependencies:
-      graphql: ^15.8.0 || ^16.0.0
+      graphql: ^16.5.0
     dependencies:
-      '@apollo/core-schema': 0.2.3(graphql@16.6.0)
-      '@apollo/federation': 0.38.1(graphql@16.6.0)
-      '@apollo/query-planner': 0.12.1(graphql@16.6.0)
+      '@apollo/composition': 2.5.5(graphql@16.6.0)
+      '@apollo/federation-internals': 2.5.5(graphql@16.6.0)
+      '@apollo/query-planner': 2.5.5(graphql@16.6.0)
       '@apollo/server-gateway-interface': 1.1.0(graphql@16.6.0)
-      '@apollo/utils.createhash': 1.1.0
-      '@apollo/utils.fetcher': 1.1.1
-      '@apollo/utils.logger': 1.0.1
+      '@apollo/usage-reporting-protobuf': 4.1.1
+      '@apollo/utils.createhash': 2.0.0
+      '@apollo/utils.fetcher': 2.0.0
+      '@apollo/utils.isnodelike': 2.0.0
+      '@apollo/utils.keyvaluecache': 2.1.0
+      '@apollo/utils.logger': 2.0.0
       '@josephg/resolvable': 1.0.1
       '@opentelemetry/api': 1.0.3
       '@types/node-fetch': 2.6.2
-      apollo-reporting-protobuf: 3.2.0
       async-retry: 1.3.3
       graphql: 16.6.0
       loglevel: 1.7.1
-      lru-cache: 7.14.1
-      make-fetch-happen: 10.2.1
-      pretty-format: 28.1.3
+      make-fetch-happen: 11.1.1
+      node-abort-controller: 3.0.1
+      node-fetch: 2.6.7
     transitivePeerDependencies:
-      - bluebird
       - encoding
       - supports-color
     dev: true
@@ -1969,17 +1984,32 @@ packages:
       '@types/long': 4.0.1
       long: 4.0.0
 
-  /@apollo/query-planner@0.12.1(graphql@16.6.0):
-    resolution: {integrity: sha512-dc5GuFZ18NCdCLT1Jh33W5RZlV/btw3CTlJS0/lAaiYx5KGo8K2oq7QWKyU40ksi46MwCRU+rO8ua7aHNa9hAA==}
-    engines: {node: '>=12.13.0'}
-    deprecated: All v0.x versions of the @apollo/query-planner package are now deprecated with an end-of-life date of September 22, 2023. This package is an internal, undocumented package for use in @apollo/gateway. Apollo recommends upgrading to v2.x as soon as possible. For more details, see our announcement blog post (https://www.apollographql.com/blog/announcement/backend/announcing-the-end-of-life-schedule-for-apollo-gateway-v0-x/) and documentation (https://www.apollographql.com/docs/federation/federation-2/backward-compatibility/#is-official-support-ending-for-apollogateway-v0x).
+  /@apollo/query-graphs@2.5.5(graphql@16.6.0):
+    resolution: {integrity: sha512-wbKJYhunUF3POQ279XldKpbuOW/GOi9iBntoLw+q60wyI7AjMmMavQyPo+spC3YPCioZ+aj9Wj8L6tlEUrm4aA==}
+    engines: {node: '>=14.15.0'}
     peerDependencies:
-      graphql: ^15.8.0 || ^16.0.0
+      graphql: ^16.5.0
     dependencies:
+      '@apollo/federation-internals': 2.5.5(graphql@16.6.0)
+      deep-equal: 2.0.5
+      graphql: 16.6.0
+      ts-graphviz: 1.8.1
+      uuid: 9.0.0
+    dev: true
+
+  /@apollo/query-planner@2.5.5(graphql@16.6.0):
+    resolution: {integrity: sha512-naiQPqdjqfj8uvYpb8eTWDIsxbBdOCTieSQ7etcxy8dGtiimyG7kwAjvK3uacFcLLoW6Z4fgp8/3rp1ue/F0Tg==}
+    engines: {node: '>=14.15.0'}
+    peerDependencies:
+      graphql: ^16.5.0
+    dependencies:
+      '@apollo/federation-internals': 2.5.5(graphql@16.6.0)
+      '@apollo/query-graphs': 2.5.5(graphql@16.6.0)
+      '@apollo/utils.keyvaluecache': 2.1.0
       chalk: 4.1.2
       deep-equal: 2.0.5
       graphql: 16.6.0
-      pretty-format: 28.1.3
+      pretty-format: 29.5.0
     dev: true
 
   /@apollo/server-gateway-interface@1.1.0(graphql@16.6.0):
@@ -1987,7 +2017,7 @@ packages:
     peerDependencies:
       graphql: 14.x || 15.x || 16.x
     dependencies:
-      '@apollo/usage-reporting-protobuf': 4.0.2
+      '@apollo/usage-reporting-protobuf': 4.1.1
       '@apollo/utils.fetcher': 2.0.0
       '@apollo/utils.keyvaluecache': 2.1.0
       '@apollo/utils.logger': 2.0.0
@@ -2056,14 +2086,12 @@ packages:
     resolution: {integrity: sha512-GfE8aDqi/lAFut95pjH9IRvH0zGsQ5G/2lYL0ZLZfML7ArX+A4UVHFANQcPCcUYGE6bI6OPhLekg4Vsjf6B1cw==}
     dependencies:
       '@apollo/protobufjs': 1.2.7
+    dev: false
 
-  /@apollo/utils.createhash@1.1.0:
-    resolution: {integrity: sha512-5fT4ZiW75515OlikWpIQzaVDws1yy9VgYSoHoJCrvI2UH6/7YNKXQjbjT5qVYu6ytch2wBxFMfFfYWMn/2bSCQ==}
-    engines: {node: '>=12.13.0'}
+  /@apollo/usage-reporting-protobuf@4.1.1:
+    resolution: {integrity: sha512-u40dIUePHaSKVshcedO7Wp+mPiZsaU6xjv9J+VyxpoU/zL6Jle+9zWeG98tr/+SZ0nZ4OXhrbb8SNr0rAPpIDA==}
     dependencies:
-      '@apollo/utils.isnodelike': 1.1.0
-      sha.js: 2.4.11
-    dev: true
+      '@apollo/protobufjs': 1.2.7
 
   /@apollo/utils.createhash@2.0.0:
     resolution: {integrity: sha512-9GhGGD3J0HJF/VC+odwYpKi3Cg1NWrsO8GQvyGwDS5v/78I3154Hn8s4tpW+nqoaQ/lAvxdQQr3HM1b5HLM6Ww==}
@@ -2071,7 +2099,6 @@ packages:
     dependencies:
       '@apollo/utils.isnodelike': 2.0.0
       sha.js: 2.4.11
-    dev: false
 
   /@apollo/utils.dropunuseddefinitions@1.1.0(graphql@16.6.0):
     resolution: {integrity: sha512-jU1XjMr6ec9pPoL+BFWzEPW7VHHulVdGKMkPAMiCigpVIT11VmCbnij0bWob8uS3ODJ65tZLYKAh/55vLw2rbg==}
@@ -2091,23 +2118,13 @@ packages:
       graphql: 16.6.0
     dev: false
 
-  /@apollo/utils.fetcher@1.1.1:
-    resolution: {integrity: sha512-0vXVznO7kw5VWwxyV5wsDvYEwjDpyZ7vYQAXCseLXqBn2eWEIDViM7qRzi/Hnv4zzAQ05phdimSED99K+lg+SQ==}
-    dev: true
-
   /@apollo/utils.fetcher@2.0.0:
     resolution: {integrity: sha512-RC0twEwwBKbhk/y4B2X4YEciRG1xoKMgiPy5xQqNMd3pG78sR+ybctG/m7c/8+NaaQOS22UPUCBd6yS6WihBIg==}
     engines: {node: '>=14'}
 
-  /@apollo/utils.isnodelike@1.1.0:
-    resolution: {integrity: sha512-q/Q82kBUSEcx1ED11JO1TYBY781mWluUnBD8NvhjHVsu1K1C5R9BZVUxShyK/V8XcePcRUB5fdWOcBMGwS0KOA==}
-    engines: {node: '>=12.13.0'}
-    dev: true
-
   /@apollo/utils.isnodelike@2.0.0:
     resolution: {integrity: sha512-77CiAM2qDXn0haQYrgX0UgrboQykb+bOHaz5p3KKItMwUZ/EFphzuB2vqHvubneIc9dxJcTx2L7MFDswRw/JAQ==}
     engines: {node: '>=14'}
-    dev: false
 
   /@apollo/utils.keyvaluecache@1.0.2:
     resolution: {integrity: sha512-p7PVdLPMnPzmXSQVEsy27cYEjVON+SH/Wb7COyW3rQN8+wJgT1nv9jZouYtztWW8ZgTkii5T6tC9qfoDREd4mg==}
@@ -2211,7 +2228,7 @@ packages:
     peerDependencies:
       graphql: 14.x || 15.x || 16.x
     dependencies:
-      '@apollo/usage-reporting-protobuf': 4.0.2
+      '@apollo/usage-reporting-protobuf': 4.1.1
       '@apollo/utils.dropunuseddefinitions': 1.1.0(graphql@16.6.0)
       '@apollo/utils.printwithreducedwhitespace': 1.1.0(graphql@16.6.0)
       '@apollo/utils.removealiases': 1.0.0(graphql@16.6.0)
@@ -2226,7 +2243,7 @@ packages:
     peerDependencies:
       graphql: 14.x || 15.x || 16.x
     dependencies:
-      '@apollo/usage-reporting-protobuf': 4.0.2
+      '@apollo/usage-reporting-protobuf': 4.1.1
       '@apollo/utils.dropunuseddefinitions': 2.0.0(graphql@16.6.0)
       '@apollo/utils.printwithreducedwhitespace': 2.0.0(graphql@16.6.0)
       '@apollo/utils.removealiases': 2.0.0(graphql@16.6.0)
@@ -4718,10 +4735,6 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@gar/promisify@1.1.3:
-    resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
-    dev: true
-
   /@giscus/react@2.3.0(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-tj79B+NNBfidhPdXJqWoqRm5Jhoc6CBhXMYwBR9nwTwsrdaB/spcQXmHpKcUuOdXZtlYSwMfCFcBogMNbD+gKQ==}
     peerDependencies:
@@ -5354,13 +5367,6 @@ packages:
       v8-to-istanbul: 9.1.0
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /@jest/schemas@28.1.3:
-    resolution: {integrity: sha512-/l/VWsdt/aBXgjshLWOFyFt3IVdYypu5y2Wn2rOO1un6nkqIn8SLXzgIMYXFyYsRWDyF5EthmKJMIdJvk08grg==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    dependencies:
-      '@sinclair/typebox': 0.24.51
     dev: true
 
   /@jest/schemas@29.4.3:
@@ -6045,21 +6051,11 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.13.0
 
-  /@npmcli/fs@2.1.2:
-    resolution: {integrity: sha512-yOJKRvohFOaLqipNtwYB9WugyZKhC/DZC4VYPmpaCzDBrA8YpK3qHZ8/HGscMnE4GqbkLNuVcCnxkeQEdGt6LQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+  /@npmcli/fs@3.1.0:
+    resolution: {integrity: sha512-7kZUAaLscfgbwBQRbvdMYaZOWyMEcPTH/tJjnyAWJ/dvvs9Ef+CERx/qJb9GExJpl1qipaDGn7KqHnFGGixd0w==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
-      '@gar/promisify': 1.1.3
       semver: 7.5.4
-    dev: true
-
-  /@npmcli/move-file@2.0.1:
-    resolution: {integrity: sha512-mJd2Z5TjYWq/ttPLLGqArdtnC74J6bOzg4rMDnN+p1xTacZ2yPRCk2y0oSWQtygLR9YVQXgOcONrwtnk3JupxQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-    deprecated: This functionality has been moved to @npmcli/fs
-    dependencies:
-      mkdirp: 1.0.4
-      rimraf: 3.0.2
     dev: true
 
   /@opentelemetry/api@1.0.3:
@@ -6601,10 +6597,6 @@ packages:
 
   /@sideway/pinpoint@2.0.0:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
-    dev: true
-
-  /@sinclair/typebox@0.24.51:
-    resolution: {integrity: sha512-1P1OROm/rdubP5aFDSZQILU0vrLCJ4fvHt6EoqHEM+2D/G5MK3bIaymUKLit8Js9gbns5UyJnkP/TZROLw4tUA==}
     dev: true
 
   /@sinclair/typebox@0.25.24:
@@ -7512,6 +7504,10 @@ packages:
   /@types/unist@3.0.0:
     resolution: {integrity: sha512-MFETx3tbTjE7Uk6vvnWINA/1iJ7LuMdO4fcq8UfF0pRbj01aGLduVvQcRyswuACJdpnHgg8E3rQLhaRdNEJS0w==}
     dev: false
+
+  /@types/uuid@9.0.4:
+    resolution: {integrity: sha512-zAuJWQflfx6dYJM62vna+Sn5aeSWhh3OB+wfUEACNcqUSc0AGc5JKl+ycL1vrH7frGTXhJchYjE1Hak8L819dA==}
+    dev: true
 
   /@types/validator@13.7.12:
     resolution: {integrity: sha512-YVtyAPqpefU+Mm/qqnOANW6IkqKpCSrarcyV269C8MA8Ux0dbkEuQwM/4CjL47kVEM2LgBef/ETfkH+c6+moFA==}
@@ -8679,6 +8675,7 @@ packages:
 
   /bluebird@3.7.2:
     resolution: {integrity: sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==}
+    dev: false
 
   /bn.js@4.12.0:
     resolution: {integrity: sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==}
@@ -8968,30 +8965,22 @@ packages:
       y18n: 4.0.3
     dev: false
 
-  /cacache@16.1.3:
-    resolution: {integrity: sha512-/+Emcj9DAXxX4cwlLmRI9c166RuL3w30zp4R7Joiv2cQTtTtA+jeuCAjH3ZlGnYS3tKENSrKhAzVVP9GVyzeYQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+  /cacache@17.1.4:
+    resolution: {integrity: sha512-/aJwG2l3ZMJ1xNAnqbMpA40of9dj/pIH3QfiuQSqjfPJF747VR0J/bHn+/KdNnHKc6XQcWt/AfRSBft82W1d2A==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
-      '@npmcli/fs': 2.1.2
-      '@npmcli/move-file': 2.0.1
-      chownr: 2.0.0
-      fs-minipass: 2.1.0
-      glob: 8.1.0
-      infer-owner: 1.0.4
+      '@npmcli/fs': 3.1.0
+      fs-minipass: 3.0.3
+      glob: 10.2.6
       lru-cache: 7.14.1
-      minipass: 3.3.6
+      minipass: 7.0.3
       minipass-collect: 1.0.2
       minipass-flush: 1.0.5
       minipass-pipeline: 1.2.4
-      mkdirp: 1.0.4
       p-map: 4.0.0
-      promise-inflight: 1.0.1(bluebird@3.7.2)
-      rimraf: 3.0.2
-      ssri: 9.0.1
+      ssri: 10.0.5
       tar: 6.1.15
-      unique-filename: 2.0.1
-    transitivePeerDependencies:
-      - bluebird
+      unique-filename: 3.0.0
     dev: true
 
   /cache-base@1.0.1:
@@ -11731,6 +11720,13 @@ packages:
       minipass: 3.3.6
     dev: true
 
+  /fs-minipass@3.0.3:
+    resolution: {integrity: sha512-XUBA9XClHbnJWSfBzjkm6RvPsyg3sryZt06BEQoXcF7EK/xpGaQYJgQKDJSUH5SGZ76Y7pFx1QBnXz09rU5Fbw==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+    dependencies:
+      minipass: 7.0.3
+    dev: true
+
   /fs-write-stream-atomic@1.0.10:
     resolution: {integrity: sha512-gehEzmPn2nAwr39eay+x3X34Ra+M2QlVUTLhkXPjWdeO8RF9kszk116avgBJM3ZyNHgHXBNx+VmPaFC36k0PzA==}
     dependencies:
@@ -11961,6 +11957,8 @@ packages:
       inherits: 2.0.4
       minimatch: 5.1.6
       once: 1.4.0
+    dev: false
+    optional: true
 
   /globals@11.12.0:
     resolution: {integrity: sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==}
@@ -12553,8 +12551,8 @@ packages:
       parse-cache-control: 1.0.1
     dev: true
 
-  /http-cache-semantics@4.1.0:
-    resolution: {integrity: sha512-carPklcUh7ROWRK7Cv27RPtdhYhUsela/ue5/jKzjegVvXDqM2ILE9Q2BGn9JZJh1g87cp56su/FgQSzcWS8cQ==}
+  /http-cache-semantics@4.1.1:
+    resolution: {integrity: sha512-er295DKPVsV82j5kw1Gjt+ADA/XYHsajl82cGNQG2eyoPkvgUhX+nDIyelzhIWbbsXP39EHcI6l5tYs2FYqYXQ==}
     dev: true
 
   /http-errors@1.7.2:
@@ -12738,6 +12736,7 @@ packages:
 
   /infer-owner@1.0.4:
     resolution: {integrity: sha512-IClj+Xz94+d7irH5qRyfJonOdfTzuDaifE6ZPWfx0N0+/ATZCbuTPq2prFl526urkQd90WyUKIh1DfBQ2hMz9A==}
+    dev: false
 
   /inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
@@ -13715,6 +13714,11 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
+  /js-levenshtein@1.1.6:
+    resolution: {integrity: sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g==}
+    engines: {node: '>=0.10.0'}
+    dev: true
+
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -14338,28 +14342,26 @@ packages:
     resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
     dev: true
 
-  /make-fetch-happen@10.2.1:
-    resolution: {integrity: sha512-NgOPbRiaQM10DYXvN3/hhGVI2M5MtITFryzBGxHM5p4wnFxsVCbxkrBrDsk+EZ5OB4jEOT7AjDxtdF+KVEFT7w==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+  /make-fetch-happen@11.1.1:
+    resolution: {integrity: sha512-rLWS7GCSTcEujjVBs2YqG7Y4643u8ucvCJeSRqiLYhesrDuzeuFIk37xREzAsfQaqzl8b9rNCE4m6J8tvX4Q8w==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
       agentkeepalive: 4.3.0
-      cacache: 16.1.3
-      http-cache-semantics: 4.1.0
+      cacache: 17.1.4
+      http-cache-semantics: 4.1.1
       http-proxy-agent: 5.0.0
       https-proxy-agent: 5.0.1
       is-lambda: 1.0.1
       lru-cache: 7.14.1
-      minipass: 3.3.6
-      minipass-collect: 1.0.2
-      minipass-fetch: 2.1.2
+      minipass: 5.0.0
+      minipass-fetch: 3.0.4
       minipass-flush: 1.0.5
       minipass-pipeline: 1.2.4
       negotiator: 0.6.3
       promise-retry: 2.0.1
       socks-proxy-agent: 7.0.0
-      ssri: 9.0.1
+      ssri: 10.0.5
     transitivePeerDependencies:
-      - bluebird
       - supports-color
     dev: true
 
@@ -15187,6 +15189,8 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       brace-expansion: 2.0.1
+    dev: false
+    optional: true
 
   /minimatch@9.0.1:
     resolution: {integrity: sha512-0jWhJpD/MdhPXwPuiRkCbfYfSKp2qnn2eOc279qI7f+osl/l+prKSrvhg157zSYvx/1nmgn2NqdT6k2Z7zSH9w==}
@@ -15218,11 +15222,11 @@ packages:
       minipass: 3.3.6
     dev: true
 
-  /minipass-fetch@2.1.2:
-    resolution: {integrity: sha512-LT49Zi2/WMROHYoqGgdlQIZh8mLPZmOrN2NdJjMXxYe4nkN6FUyuPuOAOedNJDrx0IRGg9+4guZewtp8hE6TxA==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+  /minipass-fetch@3.0.4:
+    resolution: {integrity: sha512-jHAqnA728uUpIaFm7NWsCnqKT6UqZz7GcI/bDpPATuwYyKwJwW0remxSCxUlKiEty+eopHGa3oc8WxgQ1FFJqg==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
-      minipass: 3.3.6
+      minipass: 7.0.3
       minipass-sized: 1.0.3
       minizlib: 2.1.2
     optionalDependencies:
@@ -15264,6 +15268,11 @@ packages:
 
   /minipass@6.0.2:
     resolution: {integrity: sha512-MzWSV5nYVT7mVyWCwn2o7JH13w2TBRmmSqSRCKzTw+lmft9X4z+3wjvs06Tzijo5z4W/kahUCDpRXTF+ZrmF/w==}
+    engines: {node: '>=16 || 14 >=14.17'}
+    dev: true
+
+  /minipass@7.0.3:
+    resolution: {integrity: sha512-LhbbwCfz3vsb12j/WkWQPZfKTsgqIe1Nf/ti1pKjYESGLHIVjWU96G9/ljLH4F9mWNVhlQOm0VySdAWzf05dpg==}
     engines: {node: '>=16 || 14 >=14.17'}
     dev: true
 
@@ -16721,16 +16730,6 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /pretty-format@28.1.3:
-    resolution: {integrity: sha512-8gFb/To0OmxHR9+ZTb14Df2vNxdGCX8g1xWGUTqUw5TiZvcQf5sHKObd5UcPyLLyowNwDAMTF3XWOG1B6mxl1Q==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    dependencies:
-      '@jest/schemas': 28.1.3
-      ansi-regex: 5.0.1
-      ansi-styles: 5.2.0
-      react-is: 18.2.0
-    dev: true
-
   /pretty-format@29.5.0:
     resolution: {integrity: sha512-V2mGkI31qdttvTFX7Mt4efOqHXqJWMu4/r66Xh3Z3BwZaPfPJgp6/gbwoujRpPUtfEF6AUUWx3Jim3GCw5g/Qw==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
@@ -16784,6 +16783,7 @@ packages:
         optional: true
     dependencies:
       bluebird: 3.7.2
+    dev: false
 
   /promise-retry@2.0.1:
     resolution: {integrity: sha512-y+WKFlBR8BGXnsNlIHFGPZmyDf3DFMoLhaflAnyZgV6rG6xu+JwesTo2Q9R6XwYmtmwAFCkAk3e35jEdoeh/3g==}
@@ -18201,18 +18201,18 @@ packages:
     resolution: {integrity: sha512-VE0SOVEHCk7Qc8ulkWw3ntAzXuqf7S2lvwQaDLRnUeIEaKNQJzV6BwmLKhOqT61aGhfUMrXeaBk+oDGCzvhcug==}
     dev: true
 
+  /ssri@10.0.5:
+    resolution: {integrity: sha512-bSf16tAFkGeRlUNDjXu8FzaMQt6g2HZJrun7mtMbIPOddxt3GLMSz5VWUWcqTJUPfLEaDIepGxv+bYQW49596A==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+    dependencies:
+      minipass: 7.0.3
+    dev: true
+
   /ssri@6.0.2:
     resolution: {integrity: sha512-cepbSq/neFK7xB6A50KHN0xHDotYzq58wWCa5LeWqnPrHG8GzfEjO/4O8kpmcGW+oaxkvhEJCWgbgNk4/ZV93Q==}
     dependencies:
       figgy-pudding: 3.5.2
     dev: false
-
-  /ssri@9.0.1:
-    resolution: {integrity: sha512-o57Wcn66jMQvfHG1FlYbWeZWW/dHZhJXjpIcTfXldXEk5nz5lStPo3mK0OJQfGR3RbZUlbISexbljkJzuEj/8Q==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-    dependencies:
-      minipass: 3.3.6
-    dev: true
 
   /stack-utils@2.0.3:
     resolution: {integrity: sha512-gL//fkxfWUsIlFL2Tl42Cl6+HFALEaB1FU76I/Fy+oZjRreP7OPMXFlGbxM7NQsI0ZpUfw76sHnv0WNYuTb7Iw==}
@@ -18871,6 +18871,11 @@ packages:
     engines: {node: '>=6.10'}
     dev: false
 
+  /ts-graphviz@1.8.1:
+    resolution: {integrity: sha512-54/fe5iu0Jb6X0pmDmzsA2UHLfyHjUEUwfHtZcEOR0fZ6Myf+dFoO6eNsyL8CBDMJ9u7WWEewduVaiaXlvjSVw==}
+    engines: {node: '>=14.16'}
+    dev: true
+
   /ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
     dev: true
@@ -19264,11 +19269,11 @@ packages:
       unique-slug: 2.0.2
     dev: false
 
-  /unique-filename@2.0.1:
-    resolution: {integrity: sha512-ODWHtkkdx3IAR+veKxFV+VBkUMcN+FaqzUUd7IZzt+0zhDZFPFxhlqwPF3YQvMHx1TD0tdgYl+kuPnJ8E6ql7A==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+  /unique-filename@3.0.0:
+    resolution: {integrity: sha512-afXhuC55wkAmZ0P18QsVE6kp8JaxrEokN2HGIoIVv2ijHQd419H0+6EigAFcIzXeMIkcIkNBpB3L/DXB3cTS/g==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
-      unique-slug: 3.0.0
+      unique-slug: 4.0.0
     dev: true
 
   /unique-slug@2.0.2:
@@ -19277,9 +19282,9 @@ packages:
       imurmurhash: 0.1.4
     dev: false
 
-  /unique-slug@3.0.0:
-    resolution: {integrity: sha512-8EyMynh679x/0gqE9fT9oilG+qEt+ibFyqjuVTsZn1+CMxH+XLlpvr2UZx4nVcCwTpx81nICr2JQFkM+HPLq4w==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+  /unique-slug@4.0.0:
+    resolution: {integrity: sha512-WrcA6AyEfqDX5bWige/4NQfPZMtASNVxdmWR76WESYQVAACSgWcR6e9i0mofqqBxYFtL4oAxPIptY73/0YE1DQ==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
       imurmurhash: 0.1.4
     dev: true
