@@ -17,7 +17,6 @@ import {
   Maybe,
   ObjMap,
   OnExecuteDoneHookResult,
-  OnExecuteDoneHookResultOnNextHook,
   Plugin,
 } from '@envelop/core';
 import {
@@ -190,20 +189,20 @@ export function defaultGetDocumentString(executionArgs: ExecutionArgs): string {
 
 export type ResponseCacheExtensions =
   | {
-    hit: true;
-  }
+      hit: true;
+    }
   | {
-    hit: false;
-    didCache: false;
-  }
+      hit: false;
+      didCache: false;
+    }
   | {
-    hit: false;
-    didCache: true;
-    ttl: number;
-  }
+      hit: false;
+      didCache: true;
+      ttl: number;
+    }
   | {
-    invalidatedEntities: CacheEntityRecord[];
-  };
+      invalidatedEntities: CacheEntityRecord[];
+    };
 
 export type ResponseCacheExecutionResult = ExecutionResult<
   ObjMap<unknown>,
@@ -274,7 +273,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   shouldCacheResult = defaultShouldCacheResult,
   includeExtensionMetadata = typeof process !== 'undefined'
     ? // eslint-disable-next-line dot-notation
-    process.env['NODE_ENV'] === 'development' || !!process.env['DEBUG']
+      process.env['NODE_ENV'] === 'development' || !!process.env['DEBUG']
     : false,
 }: UseResponseCacheParameter<PluginContext>): Plugin<PluginContext> {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
