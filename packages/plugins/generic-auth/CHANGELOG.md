@@ -1,5 +1,30 @@
 # @envelop/generic-auth
 
+## 6.1.0
+
+### Minor Changes
+
+- [#1950](https://github.com/n1ru4l/envelop/pull/1950)
+  [`4e368f61`](https://github.com/n1ru4l/envelop/commit/4e368f611cf06332407ab35641619cfb9b0d65ff)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Handle @skip and @include directive by
+  skipping validation of this fields.
+
+### Patch Changes
+
+- [#1950](https://github.com/n1ru4l/envelop/pull/1950)
+  [`4e368f61`](https://github.com/n1ru4l/envelop/commit/4e368f611cf06332407ab35641619cfb9b0d65ff)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-tools/utils@^10.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.0.6)
+    (to `dependencies`)
+
+- Updated dependencies
+  [[`db20864a`](https://github.com/n1ru4l/envelop/commit/db20864aac3fcede3e265ae63b2e8cb4664ba23a)]:
+  - @envelop/core@4.0.2
+- Updated dependencies []:
+  - @envelop/extended-validation@3.0.2
+
 ## 6.0.1
 
 ### Patch Changes

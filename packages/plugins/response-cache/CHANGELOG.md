@@ -1,5 +1,23 @@
 # @envelop/response-cache
 
+## 5.3.1
+
+### Patch Changes
+
+- [#1956](https://github.com/n1ru4l/envelop/pull/1956)
+  [`d427c338`](https://github.com/n1ru4l/envelop/commit/d427c338f2666b4b92a9002a9489c21c389dfd3d)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not add \_\_typename in the root of
+  subscription operations
+
+- [#1955](https://github.com/n1ru4l/envelop/pull/1955)
+  [`83b77b60`](https://github.com/n1ru4l/envelop/commit/83b77b6030b979b382d334a45015c7cb7adeda13)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Handle mutations when using `@defer` or
+  `@stream` directives
+
+- Updated dependencies
+  [[`db20864a`](https://github.com/n1ru4l/envelop/commit/db20864aac3fcede3e265ae63b2e8cb4664ba23a)]:
+  - @envelop/core@4.0.2
+
 ## 5.3.0
 
 ### Minor Changes

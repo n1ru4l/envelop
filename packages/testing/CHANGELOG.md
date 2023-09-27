@@ -1,5 +1,17 @@
 # @envelop/testing
 
+## 6.0.2
+
+### Patch Changes
+
+- [#1956](https://github.com/n1ru4l/envelop/pull/1956)
+  [`d427c338`](https://github.com/n1ru4l/envelop/commit/d427c338f2666b4b92a9002a9489c21c389dfd3d)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add `operationName` to `Testkit.execute`
+
+- Updated dependencies
+  [[`db20864a`](https://github.com/n1ru4l/envelop/commit/db20864aac3fcede3e265ae63b2e8cb4664ba23a)]:
+  - @envelop/core@4.0.2
+
 ## 6.0.1
 
 ### Patch Changes
