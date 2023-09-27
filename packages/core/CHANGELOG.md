@@ -1,5 +1,14 @@
 # @envelop/core
 
+## 4.0.2
+
+### Patch Changes
+
+- [#1944](https://github.com/n1ru4l/envelop/pull/1944)
+  [`db20864a`](https://github.com/n1ru4l/envelop/commit/db20864aac3fcede3e265ae63b2e8cb4664ba23a)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Fixed plugin duplication when nesting
+  envelop extensions
+
 ## 4.0.1
 
 ### Patch Changes
