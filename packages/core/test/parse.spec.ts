@@ -109,4 +109,27 @@ describe('parse', () => {
     expect(result.data?.currentUser).toBeDefined();
     expect(result.data?.me).not.toBeDefined();
   });
+
+  it('should preserve referential stability of the context', async () => {
+    const testKit = createTestkit(
+      [
+        {
+          onParse({ extendContext }) {
+            extendContext({ foo: 'bar' });
+
+            return ({ extendContext }) => {
+              extendContext({ bar: 'foo' });
+            };
+          },
+        },
+      ],
+      schema,
+    );
+
+    const context: any = {};
+    await testKit.execute(query, {}, context);
+
+    expect(context.foo).toEqual('bar');
+    expect(context.bar).toEqual('foo');
+  });
 });

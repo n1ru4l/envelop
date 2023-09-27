@@ -169,4 +169,25 @@ describe('contextFactory', () => {
       }
     });
   });
+
+  it('should preserve referential stability of the context', async () => {
+    const testKit = createTestkit(
+      [
+        {
+          onContextBuilding({ extendContext }) {
+            extendContext({ foo: 'bar' });
+            return ({ extendContext }) => {
+              extendContext({ bar: 'foo' });
+            };
+          },
+        },
+      ],
+      schema,
+    );
+
+    const context = {};
+    await testKit.execute(query, {}, context);
+
+    expect(context).toMatchObject({ foo: 'bar', bar: 'foo' });
+  });
 });
