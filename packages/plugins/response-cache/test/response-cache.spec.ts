@@ -3113,16 +3113,102 @@ describe('useResponseCache', () => {
     expect(result).toEqual({ data: { me: 'me' } });
     expect(spy).toHaveBeenCalledTimes(1);
   });
-});
+  it('should invalidate cache queries using @defer', async () => {
+    const spy = jest.fn(async function* () {
+      yield {
+        id: 1,
+        name: 'User 1',
+        comments: [{ id: 1, text: 'Comment 1 of User 1' }],
+      };
+      yield { id: 2, name: 'User 2', comments: [] };
+      await new Promise(process.nextTick);
+      yield { id: 3, name: 'User 3', comments: [] };
+    });
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        directive @defer on FRAGMENT_SPREAD | INLINE_FRAGMENT
 
-async function waitForResult(result: any) {
-  result = await result;
-  if (result.next) {
-    let res = [];
-    for await (const r of result) {
-      res.push(r);
+        type Query {
+          users: [User!]!
+        }
+
+        type Mutation {
+          updateUser(id: ID!): User!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Mutation: {
+          updateUser: () => ({ id: 3, name: 'User 3', comments: [] }),
+        },
+        Query: {
+          users: spy,
+        },
+      },
+    });
+
+    const testInstance = createTestkit(
+      envelop({
+        plugins: [
+          useEngine({ ...GraphQLJS, execute: normalizedExecutor, subscribe: normalizedExecutor }),
+          useSchema(cloneSchema(schema)),
+          useResponseCache({ session: () => null, includeExtensionMetadata: true }),
+        ],
+      }),
+    );
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+          name
+        }
+      }
+    `;
+
+    await testInstance.execute(query);
+    console.log(
+      await waitForResult(
+        testInstance.execute(/* GraphQL */ `
+          mutation {
+            updateUser(id: "3") {
+              id
+              ... on User @defer {
+                comments {
+                  id
+                  text
+                }
+              }
+            }
+          }
+        `),
+      ),
+    );
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  async function waitForResult(result: any) {
+    result = await result;
+    if (result.next) {
+      let res = [];
+      for await (const r of result) {
+        res.push(r);
+      }
+      return res;
     }
-  }
 
-  return result;
-}
+    return result;
+  }
+});

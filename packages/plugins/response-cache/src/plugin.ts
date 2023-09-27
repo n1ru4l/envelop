@@ -16,6 +16,7 @@ import {
   isAsyncIterable,
   Maybe,
   ObjMap,
+  OnExecuteDoneHookResult,
   Plugin,
 } from '@envelop/core';
 import {
@@ -378,32 +379,36 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         }
       }
 
+      function invalidateCache(
+        result: ExecutionResult,
+        setResult: (newResult: ExecutionResult) => void,
+      ): void {
+        processResult(result.data);
+
+        cache.invalidate(identifier.values());
+        if (includeExtensionMetadata) {
+          setResult(
+            resultWithMetadata(result, {
+              invalidatedEntities: Array.from(identifier.values()),
+            }),
+          );
+        }
+      }
+
       if (invalidateViaMutation !== false) {
         const operationAST = getOperationAST(
           onExecuteParams.args.document,
           onExecuteParams.args.operationName,
         );
+
         if (operationAST?.operation === 'mutation') {
           return {
             onExecuteDone({ result, setResult }) {
               if (isAsyncIterable(result)) {
-                // eslint-disable-next-line no-console
-                console.warn(
-                  '[useResponseCache] AsyncIterable returned from execute is currently unsupported.',
-                );
-                return;
+                return handleAsyncIterableResult(invalidateCache);
               }
 
-              processResult(result.data);
-
-              cache.invalidate(identifier.values());
-              if (includeExtensionMetadata) {
-                setResult(
-                  resultWithMetadata(result, {
-                    invalidatedEntities: Array.from(identifier.values()),
-                  }),
-                );
-              }
+              return invalidateCache(result, setResult);
             },
           };
         }
@@ -451,7 +456,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         );
       }
 
-      async function maybeCacheResult(
+      function maybeCacheResult(
         result: ExecutionResult,
         setResult: (newResult: ExecutionResult) => void,
       ) {
@@ -473,51 +478,54 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       }
 
       return {
-        onExecuteDone(payload) {
-          if (!isAsyncIterable(payload.result)) {
-            maybeCacheResult(payload.result, payload.setResult);
-            return;
+        onExecuteDone({ result, setResult }) {
+          if (isAsyncIterable(result)) {
+            return handleAsyncIterableResult(maybeCacheResult);
           }
 
-          // When the result is an AsyncIterable, it means the query is using @defer or @stream.
-          // This means we have to build the final result by merging the incremental results.
-          // The merged result is then used to know if we should cache it and to calculate the ttl.
-          let result: ExecutionResult = {};
-          return {
-            onNext(payload) {
-              const { data, errors, extensions } = payload.result;
-
-              if (data) {
-                // This is the first result with the initial data payload sent to the client. We use it as the base result
-                if (data) {
-                  result = { data };
-                }
-                if (errors) {
-                  result.errors = errors;
-                }
-                if (extensions) {
-                  result.extensions = extensions;
-                }
-              }
-
-              if ('hasNext' in payload.result) {
-                const { incremental, hasNext } = payload.result;
-
-                if (incremental) {
-                  for (const patch of incremental) {
-                    mergeIncrementalResult({ executionResult: result, incrementalResult: patch });
-                  }
-                }
-
-                if (!hasNext) {
-                  // The query is complete, we can process the final result
-                  maybeCacheResult(result, payload.setResult);
-                }
-              }
-            },
-          };
+          return maybeCacheResult(result, setResult);
         },
       };
+    },
+  };
+}
+
+function handleAsyncIterableResult<PluginContext extends Record<string, any> = {}>(
+  handler: (result: ExecutionResult, setResult: (newResult: ExecutionResult) => void) => void,
+): OnExecuteDoneHookResult<PluginContext> {
+  // When the result is an AsyncIterable, it means the query is using @defer or @stream.
+  // This means we have to build the final result by merging the incremental results.
+  // The merged result is then used to know if we should cache it and to calculate the ttl.
+  const result: ExecutionResult = {};
+  return {
+    onNext(payload) {
+      const { data, errors, extensions } = payload.result;
+
+      // This is the first result with the initial data payload sent to the client. We use it as the base result
+      if (data) {
+        result.data = data;
+      }
+      if (errors) {
+        result.errors = errors;
+      }
+      if (extensions) {
+        result.extensions = extensions;
+      }
+
+      if ('hasNext' in payload.result) {
+        const { incremental, hasNext } = payload.result;
+
+        if (incremental) {
+          for (const patch of incremental) {
+            mergeIncrementalResult({ executionResult: result, incrementalResult: patch });
+          }
+        }
+
+        if (!hasNext) {
+          // The query is complete, we can process the final result
+          handler(result, payload.setResult);
+        }
+      }
     },
   };
 }
