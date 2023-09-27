@@ -278,6 +278,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 }: UseResponseCacheParameter<PluginContext>): Plugin<PluginContext> {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
   const processedSchemas = new WeakSet();
+  const typePerSchemaCoordinateMap = new Map<string, string[]>();
 
   // never cache Introspections
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
@@ -295,10 +296,9 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       if (processedSchemas.has(schema)) {
         return;
       }
-      // Check if the schema has @cacheControl directive
       const cacheControlDirective = schema.getDirective('cacheControl');
-      if (cacheControlDirective) {
-        mapSchema(schema, {
+      mapSchema(schema, {
+        ...(cacheControlDirective && {
           [MapperKind.COMPOSITE_TYPE]: type => {
             const cacheControlAnnotations = getDirective(schema, type, 'cacheControl');
             cacheControlAnnotations?.forEach(cacheControl => {
@@ -312,7 +312,12 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
             });
             return type;
           },
-          [MapperKind.FIELD]: (fieldConfig, fieldName, typeName) => {
+        }),
+        [MapperKind.FIELD]: (fieldConfig, fieldName, typeName) => {
+          const schemaCoordinates = `${typeName}.${fieldName}`;
+          const resultTypeNames = unwrapTypenames(fieldConfig.type);
+          typePerSchemaCoordinateMap.set(schemaCoordinates, resultTypeNames);
+          if (cacheControlDirective) {
             const cacheControlAnnotations = getDirective(schema, fieldConfig, 'cacheControl');
             cacheControlAnnotations?.forEach(cacheControl => {
               const ttl = cacheControl.maxAge * 1000;
@@ -323,10 +328,10 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
                 scopePerSchemaCoordinate[`${typeName}.${fieldName}`] = cacheControl.scope;
               }
             });
-            return fieldConfig;
-          },
-        });
-      }
+          }
+          return fieldConfig;
+        },
+      });
       processedSchemas.add(schema);
     },
     async onExecute(onExecuteParams) {
@@ -363,6 +368,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
             currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
           }
           for (const fieldName in data) {
+            const fieldData = data[fieldName];
             if (!skip) {
               if (
                 scopePerSchemaCoordinate[`${typename}.${fieldName}`] === 'PRIVATE' &&
@@ -370,11 +376,19 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
               ) {
                 skip = true;
               } else if (idFields.includes(fieldName)) {
-                const id = data[fieldName];
+                const id = fieldData;
                 identifier.set(`${typename}:${id}`, { typename, id });
+              } else if (
+                fieldData == null ||
+                (Array.isArray(fieldData) && fieldData.length === 0)
+              ) {
+                const inferredTypes = typePerSchemaCoordinateMap.get(`${typename}.${fieldName}`);
+                inferredTypes?.forEach(inferredType => {
+                  identifier.set(inferredType, { typename: inferredType });
+                });
               }
             }
-            processResult(data[fieldName]);
+            processResult(fieldData);
           }
         }
       }
@@ -551,6 +565,16 @@ function calculateTtl(typeTtl: number, currentTtl: number | undefined): number {
     return Math.min(currentTtl, typeTtl);
   }
   return typeTtl;
+}
+
+function unwrapTypenames(type: any): string[] {
+  if (type.ofType) {
+    return unwrapTypenames(type.ofType);
+  }
+  if (type._types) {
+    return type._types.map((t: any) => unwrapTypenames(t)).flat();
+  }
+  return [type.name];
 }
 
 export const cacheControlDirective = /* GraphQL */ `
