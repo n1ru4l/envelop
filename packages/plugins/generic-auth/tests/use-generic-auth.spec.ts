@@ -1,6 +1,8 @@
-import { EnumValueNode, getIntrospectionQuery } from 'graphql';
+import { EnumValueNode, FieldNode, getIntrospectionQuery } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
+import { Maybe } from '@envelop/types';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { shouldIncludeNode } from '@graphql-tools/utils';
 import {
   DIRECTIVE_SDL,
   ResolveUserFn,
@@ -469,6 +471,36 @@ describe('useGenericAuth', () => {
         assertSingleExecutionValue(result);
         expect(result.errors).toBeUndefined();
         expect(result.data?.admin).toBe('admin');
+      });
+    });
+
+    it('should not validate fields with @include and @skip directives', async () => {
+      const testInstance = createTestkit(
+        [
+          useGenericAuth({
+            mode: 'protect-granular',
+            resolveUserFn: invalidresolveUserFn,
+          }),
+        ],
+        schemaWithDirective,
+      );
+
+      const result = await testInstance.execute(
+        /* GraphQL */ `
+          query ($skip: Boolean!, $include: Boolean!) {
+            public
+            p1: protected @skip(if: $skip)
+            p2: protected @skip(if: true)
+            p3: protected @include(if: false)
+            p4: protected @include(if: $include)
+          }
+        `,
+        { skip: true, include: false },
+      );
+      assertSingleExecutionValue(result);
+      expect(result.errors).toBeUndefined();
+      expect(result.data).toEqual({
+        public: 'public',
       });
     });
   });
