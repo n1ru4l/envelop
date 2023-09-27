@@ -1,15 +1,17 @@
 import { GetEnvelopedFn, Plugin } from '@envelop/types';
 
 export const useEnvelop = (envelop: GetEnvelopedFn<any>): Plugin<any> => {
-  const plugin: Plugin = {
+  let initialized = false;
+  return {
     onPluginInit({ addPlugin }) {
+      if (initialized) {
+        return;
+      }
       for (const plugin of envelop._plugins) {
         addPlugin(plugin);
       }
       // Avoid double execution if envelop is extended multiple times
-      plugin.onPluginInit = undefined;
+      initialized = true;
     },
   };
-
-  return plugin;
 };
