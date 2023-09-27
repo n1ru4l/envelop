@@ -3,7 +3,13 @@ import * as GraphQLJS from 'graphql';
 import { envelop, useEngine, useLogger, useSchema } from '@envelop/core';
 import { useGraphQlJit } from '@envelop/graphql-jit';
 import { useParserCache } from '@envelop/parser-cache';
-import { assertSingleExecutionValue, createTestkit, TestkitInstance } from '@envelop/testing';
+import {
+  assertSingleExecutionValue,
+  assertStreamExecutionValue,
+  collectAsyncIteratorValues,
+  createTestkit,
+  TestkitInstance,
+} from '@envelop/testing';
 import { useValidationCache } from '@envelop/validation-cache';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -2371,7 +2377,7 @@ describe('useResponseCache', () => {
           onExecute({ setExecuteFn }) {
             setExecuteFn(() => ({
               data: {
-                __typename: 'Query',
+                __responseCacheTypeName: 'Query',
                 foo: 'bar',
               },
               extensions: {
@@ -2427,7 +2433,7 @@ describe('useResponseCache', () => {
           onExecute({ setExecuteFn }) {
             setExecuteFn(() => ({
               data: {
-                __typename: 'Query',
+                __responseCacheTypeName: 'Query',
                 foo: 'bar',
               },
               extensions: {
@@ -2983,7 +2989,7 @@ describe('useResponseCache', () => {
           {
             id: '1',
             name: 'User 1',
-            comments: [{ __typename: 'Comment', id: '1', text: 'Comment 1 of User 1' }],
+            comments: [{ id: '1', text: 'Comment 1 of User 1' }],
           },
           { id: '2', name: 'User 2', comments: [] },
           { id: '3', name: 'User 3', comments: [] },
@@ -2991,6 +2997,120 @@ describe('useResponseCache', () => {
       },
       extensions: { responseCache: { hit: true } },
     });
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should allow subscriptions', async () => {
+    const streamExecuteFn = async function* () {
+      for (const value of ['a', 'b', 'c', 'd']) {
+        yield value;
+      }
+    };
+
+    const teskit = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+        }),
+      ],
+      makeExecutableSchema({
+        typeDefs: /* GraphQL */ `
+          type Query {
+            me: String!
+          }
+          type Subscription {
+            alphabet: String!
+          }
+        `,
+        resolvers: {
+          Subscription: {
+            alphabet: {
+              subscribe: () => streamExecuteFn(),
+              resolve: value => value,
+            },
+          },
+        },
+      }),
+    );
+
+    const result = await teskit.execute(/* GraphQL */ `
+      subscription {
+        alphabet
+      }
+    `);
+    assertStreamExecutionValue(result);
+    const values = await collectAsyncIteratorValues(result);
+    expect(values).toEqual([
+      { data: { alphabet: 'a' } },
+      { data: { alphabet: 'b' } },
+      { data: { alphabet: 'c' } },
+      { data: { alphabet: 'd' } },
+    ]);
+  });
+
+  it('should allow subscriptions and query in the same request', async () => {
+    const streamExecuteFn = async function* () {
+      for (const value of ['a', 'b', 'c', 'd']) {
+        yield value;
+      }
+    };
+
+    const spy = jest.fn(() => 'me');
+
+    const teskit = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+        }),
+      ],
+      makeExecutableSchema({
+        typeDefs: /* GraphQL */ `
+          type Query {
+            me: String!
+          }
+          type Subscription {
+            alphabet: String!
+          }
+        `,
+        resolvers: {
+          Query: {
+            me: spy,
+          },
+          Subscription: {
+            alphabet: {
+              subscribe: () => streamExecuteFn(),
+              resolve: value => value,
+            },
+          },
+        },
+      }),
+    );
+
+    const operation = /* GraphQL */ `
+      query Foo {
+        me
+      }
+      subscription Sub {
+        alphabet
+      }
+    `;
+
+    let result = await teskit.execute(operation, {}, {}, 'Sub');
+    assertStreamExecutionValue(result);
+    const values = await collectAsyncIteratorValues(result);
+    expect(values).toEqual([
+      { data: { alphabet: 'a' } },
+      { data: { alphabet: 'b' } },
+      { data: { alphabet: 'c' } },
+      { data: { alphabet: 'd' } },
+    ]);
+
+    result = await teskit.execute(operation, {}, {}, 'Foo');
+    assertSingleExecutionValue(result);
+    expect(result).toEqual({ data: { me: 'me' } });
+    result = await teskit.execute(operation, {}, {}, 'Foo');
+    assertSingleExecutionValue(result);
+    expect(result).toEqual({ data: { me: 'me' } });
     expect(spy).toHaveBeenCalledTimes(1);
   });
 });

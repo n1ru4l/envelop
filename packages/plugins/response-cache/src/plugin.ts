@@ -4,8 +4,8 @@ import {
   ExecutionArgs,
   getOperationAST,
   Kind,
+  OperationDefinitionNode,
   print,
-  SelectionSetNode,
   TypeInfo,
   visit,
   visitWithTypeInfo,
@@ -22,9 +22,8 @@ import {
   getDirective,
   MapperKind,
   mapSchema,
-  memoize1,
+  memoize2,
   mergeIncrementalResult,
-  visitResult,
 } from '@graphql-tools/utils';
 import type { Cache, CacheEntityRecord } from './cache.js';
 import { hashSHA256 } from './hash-sha256.js';
@@ -117,6 +116,10 @@ export type UseResponseCacheParameter<PluginContext extends Record<string, any> 
    */
   invalidateViaMutation?: boolean;
   /**
+   * Wheter the subscription execution result should be used for invalidating resources.
+   */
+  invalidateViaSubscription?: boolean;
+  /**
    * Customize the behavior how the response cache key is computed from the document, variable values and sessionId.
    * Defaults to `defaultBuildResponseCacheKey`
    */
@@ -206,38 +209,49 @@ export type ResponseCacheExecutionResult = ExecutionResult<
 >;
 
 const originalDocumentMap = new WeakMap<DocumentNode, DocumentNode>();
-const addTypeNameToDocument = memoize1(function addTypeNameToDocument(
+const addTypeNameToDocument = memoize2(function addTypeNameToDocument(
   document: DocumentNode,
+  addTypeNameToDocumentOpts: { invalidateViaMutation: boolean; invalidateViaSubscription: boolean },
 ): DocumentNode {
-  let documentChanged = false;
   const newDocument = visit(document, {
-    SelectionSet(node): SelectionSetNode {
-      if (
-        !node.selections.some(
-          selection => selection.kind === Kind.FIELD && selection.name.value === '__typename',
-        )
-      ) {
-        documentChanged = true;
-        return {
-          ...node,
-          selections: [
-            {
-              kind: Kind.FIELD,
-              name: {
-                kind: Kind.NAME,
-                value: '__typename',
-              },
-            },
-            ...node.selections,
-          ],
-        };
+    OperationDefinition: {
+      enter(node): void | false {
+        if (!addTypeNameToDocumentOpts.invalidateViaMutation && node.operation === 'mutation') {
+          return false;
+        }
+        if (
+          !addTypeNameToDocumentOpts.invalidateViaSubscription &&
+          node.operation === 'subscription'
+        ) {
+          return false;
+        }
+      },
+    },
+    SelectionSet(node, _key, parent) {
+      // Skip the root selection set for subscriptions
+      if ((parent as OperationDefinitionNode)?.operation === 'subscription') {
+        return;
       }
-      return node;
+      return {
+        ...node,
+        selections: [
+          {
+            kind: Kind.FIELD,
+            name: {
+              kind: Kind.NAME,
+              value: '__typename',
+            },
+            alias: {
+              kind: Kind.NAME,
+              value: '__responseCacheTypeName',
+            },
+          },
+          ...node.selections,
+        ],
+      };
     },
   });
-  if (documentChanged) {
-    originalDocumentMap.set(newDocument, document);
-  }
+  originalDocumentMap.set(newDocument, document);
   return newDocument;
 });
 
@@ -252,12 +266,13 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   scopePerSchemaCoordinate = {},
   idFields = ['id'],
   invalidateViaMutation = true,
+  invalidateViaSubscription = true,
   buildResponseCacheKey = defaultBuildResponseCacheKey,
   getDocumentString = defaultGetDocumentString,
   shouldCacheResult = defaultShouldCacheResult,
   includeExtensionMetadata = typeof process !== 'undefined'
     ? // eslint-disable-next-line dot-notation
-      process.env['NODE_ENV'] === 'development'
+      process.env['NODE_ENV'] === 'development' || !!process.env['DEBUG']
     : false,
 }: UseResponseCacheParameter<PluginContext>): Plugin<PluginContext> {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
@@ -265,11 +280,12 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
   // never cache Introspections
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
+  const addTypeNameToDocumentOpts = { invalidateViaMutation, invalidateViaSubscription };
   return {
     onParse() {
       return ({ result, replaceParseResult }) => {
         if (!originalDocumentMap.has(result) && result.kind === Kind.DOCUMENT) {
-          const newDocument = addTypeNameToDocument(result);
+          const newDocument = addTypeNameToDocument(result, addTypeNameToDocumentOpts);
           replaceParseResult(newDocument);
         }
       };
@@ -320,90 +336,47 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
       let currentTtl: number | undefined;
       let skip = false;
-      const processResult = (result: ExecutionResult): ExecutionResult =>
-        visitResult(
-          result,
-          {
-            document:
-              originalDocumentMap.get(onExecuteParams.args.document) ??
-              onExecuteParams.args.document,
-            variables: onExecuteParams.args.variableValues as any,
-            operationName: onExecuteParams.args.operationName ?? undefined,
-            rootValue: onExecuteParams.args.rootValue,
-            context: onExecuteParams.args.contextValue,
-          },
-          onExecuteParams.args.schema,
-          new Proxy(
-            {},
-            {
-              get(_, typename: string) {
-                let typenameCalled = 0;
 
-                if (ignoredTypesMap.has(typename)) {
-                  skip = true;
-                  return;
-                }
-
-                if (scopePerSchemaCoordinate[typename] === 'PRIVATE' && !sessionId) {
-                  skip = true;
-                  return;
-                }
-
-                types.add(typename);
-                if (typename in ttlPerType) {
-                  currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
-                }
-
-                return new Proxy((val: any) => val, {
-                  // Needed for leaf values such as scalars, enums etc
-                  // They don't have fields so visitResult expects functions for those
-                  apply(_, __, [val]) {
-                    return val;
-                  },
-                  get(_, fieldName: string) {
-                    if (fieldName === '__typename') {
-                      typenameCalled++;
-                    }
-                    if (
-                      fieldName === '__leave' &&
-                      /**
-                       * The visitResult function is called for each field in the selection set.
-                       * But visitResult function looks for __typename field visitor even if it is not there in the document
-                       * So it calls __typename field visitor twice if it is also in the selection set.
-                       * That's why we need to count the number of times it is called.
-                       *
-                       * Default call of __typename https://github.com/ardatan/graphql-tools/blob/master/packages/utils/src/visitResult.ts#L277
-                       * Call for the field node https://github.com/ardatan/graphql-tools/blob/master/packages/utils/src/visitResult.ts#L272
-                       */ typenameCalled < 2
-                    ) {
-                      return (root: any) => {
-                        delete root.__typename;
-                        return root;
-                      };
-                    }
-
-                    if (
-                      scopePerSchemaCoordinate[`${typename}.${fieldName}`] === 'PRIVATE' &&
-                      !sessionId
-                    ) {
-                      skip = true;
-                      return;
-                    }
-
-                    if (idFields.includes(fieldName)) {
-                      return (id: string) => {
-                        identifier.set(`${typename}:${id}`, { typename, id });
-                        return id;
-                      };
-                    }
-
-                    return undefined;
-                  },
-                });
-              },
-            },
-          ),
-        );
+      function processResult(data: any) {
+        if (data == null || typeof data !== 'object') {
+          return;
+        }
+        if (Array.isArray(data)) {
+          for (const item of data) {
+            processResult(item);
+          }
+          return;
+        }
+        const typename = data.__responseCacheTypeName;
+        delete data.__responseCacheTypeName;
+        if (!skip) {
+          if (
+            ignoredTypesMap.has(typename) ||
+            (scopePerSchemaCoordinate[typename] === 'PRIVATE' && !sessionId)
+          ) {
+            skip = true;
+            return;
+          }
+          types.add(typename);
+          if (typename in ttlPerType) {
+            currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
+          }
+          for (const fieldName in data) {
+            if (!skip) {
+              if (
+                scopePerSchemaCoordinate[`${typename}.${fieldName}`] === 'PRIVATE' &&
+                !sessionId
+              ) {
+                skip = true;
+              } else if (idFields.includes(fieldName)) {
+                const id = data[fieldName];
+                identifier.set(`${typename}:${id}`, { typename, id });
+              }
+            }
+            processResult(data[fieldName]);
+          }
+        }
+      }
 
       if (invalidateViaMutation !== false) {
         const operationAST = getOperationAST(
@@ -421,12 +394,12 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
                 return;
               }
 
-              const processedResult = processResult(result) as ResponseCacheExecutionResult;
+              processResult(result.data);
 
               cache.invalidate(identifier.values());
               if (includeExtensionMetadata) {
                 setResult(
-                  resultWithMetadata(processedResult, {
+                  resultWithMetadata(result, {
                     invalidatedEntities: Array.from(identifier.values()),
                   }),
                 );
@@ -482,22 +455,20 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         result: ExecutionResult,
         setResult: (newResult: ExecutionResult) => void,
       ) {
-        const processedResult = processResult(result) as ResponseCacheExecutionResult;
+        processResult(result.data);
         // we only use the global ttl if no currentTtl has been determined.
         const finalTtl = currentTtl ?? globalTtl;
 
-        if (skip || !shouldCacheResult({ cacheKey, result: processedResult }) || finalTtl === 0) {
+        if (skip || !shouldCacheResult({ cacheKey, result }) || finalTtl === 0) {
           if (includeExtensionMetadata) {
-            setResult(resultWithMetadata(processedResult, { hit: false, didCache: false }));
+            setResult(resultWithMetadata(result, { hit: false, didCache: false }));
           }
           return;
         }
 
-        cache.set(cacheKey, processedResult, identifier.values(), finalTtl);
+        cache.set(cacheKey, result, identifier.values(), finalTtl);
         if (includeExtensionMetadata) {
-          setResult(
-            resultWithMetadata(processedResult, { hit: false, didCache: true, ttl: finalTtl }),
-          );
+          setResult(resultWithMetadata(result, { hit: false, didCache: true, ttl: finalTtl }));
         }
       }
 
