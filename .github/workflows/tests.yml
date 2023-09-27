@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup env
         uses: the-guild-org/shared-config/setup@main
         with:
@@ -38,7 +38,7 @@ jobs:
         graphql_version: [15.8.0, 16]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup env
         uses: the-guild-org/shared-config/setup@main
         with:
@@ -59,7 +59,7 @@ jobs:
         os: [ubuntu-latest] # remove windows to speed up the tests
     steps:
       - name: Checkout Master
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup env
         uses: the-guild-org/shared-config/setup@main
         with:
@@ -91,7 +91,7 @@ jobs:
         graphql_version: [15, 16]
     steps:
       - name: Checkout Master
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup env
         uses: the-guild-org/shared-config/setup@main
         with:
@@ -118,7 +118,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup env
         uses: the-guild-org/shared-config/setup@main
         with:
