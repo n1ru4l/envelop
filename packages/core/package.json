@@ -63,7 +63,7 @@
     "@graphql-tools/schema": "10.0.0",
     "@graphql-tools/utils": "10.0.6",
     "@repeaterjs/repeater": "3.0.4",
-    "graphql": "16.7.0",
+    "graphql": "16.8.1",
     "typescript": "5.1.3"
   },
   "publishConfig": {
