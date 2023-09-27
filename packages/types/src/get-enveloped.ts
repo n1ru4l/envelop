@@ -9,7 +9,9 @@ export type EnvelopContextFnWrapper<TFunction extends Function, ContextType = un
 ) => TFunction;
 
 export type GetEnvelopedFn<PluginsContext> = {
-  <InitialContext extends ArbitraryObject>(initialContext?: InitialContext): {
+  <InitialContext extends ArbitraryObject>(
+    initialContext?: InitialContext,
+  ): {
     execute: ExecuteFunction;
     validate: ValidateFunction;
     subscribe: SubscribeFunction;

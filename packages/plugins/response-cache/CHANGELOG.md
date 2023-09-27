@@ -118,8 +118,8 @@
     [`@graphql-tools/utils@^10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.0.0)
     (from `^8.8.0`, in `dependencies`)
   - Updated dependency
-    [`@whatwg-node/fetch@^0.9.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.0) (from
-    `^0.8.0`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.9.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.0)
+    (from `^0.8.0`, in `dependencies`)
 
 - [#1728](https://github.com/n1ru4l/envelop/pull/1728)
   [`a36925c7`](https://github.com/n1ru4l/envelop/commit/a36925c7df0538f88b51682e4e23f4b16f6fae2b)
@@ -137,8 +137,8 @@
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
   - Updated dependency
-    [`@whatwg-node/fetch@^0.8.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.0) (from
-    `^0.6.5`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.8.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.0)
+    (from `^0.6.5`, in `dependencies`)
 
 ## 4.0.7
 
