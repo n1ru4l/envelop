@@ -1,5 +1,19 @@
 # @envelop/graphql-jit
 
+## 6.0.5
+
+### Patch Changes
+
+- [#1964](https://github.com/n1ru4l/envelop/pull/1964)
+  [`6f55fe9a`](https://github.com/n1ru4l/envelop/commit/6f55fe9a45f6f1c4f135b15c0a436f29082cc3f6)
+  Thanks [@ardatan](https://github.com/ardatan)! - Provide a custom JSON serializer in `stringify`
+  property so you can use it in your server implementation like;
+
+  ```ts
+  const result = await enveloped.execute(...);
+  const resultInStr = result.stringify(result);
+  ```
+
 ## 6.0.4
 
 ### Patch Changes
