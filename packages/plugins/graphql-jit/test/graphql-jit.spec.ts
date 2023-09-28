@@ -1,4 +1,4 @@
-import { execute, subscribe, type ExecutionArgs } from 'graphql';
+import { execute, ExecutionResult, subscribe, type ExecutionArgs } from 'graphql';
 import { LRUCache } from 'lru-cache';
 import { useParserCache } from '@envelop/parser-cache';
 import {
@@ -190,5 +190,19 @@ describe('useGraphQlJit', () => {
     await testInstance.execute(`query { test }`);
     expect(cache.get).toHaveBeenCalledTimes(1);
     expect(cache.set).toHaveBeenCalledTimes(1);
+  });
+
+  it('provides a custom serializer', async () => {
+    const testInstance = createTestkit([useGraphQlJit()], schema);
+
+    const result = (await testInstance.execute(`query { test }`)) as ExecutionResult<any, any>;
+    expect(result.extensions?.stringify?.(result)).toMatch(
+      JSON.stringify({
+        data: {
+          test: 'boop',
+        },
+        extensions: {},
+      }),
+    );
   });
 });

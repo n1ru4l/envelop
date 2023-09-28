@@ -7,15 +7,23 @@ import {
   makeExecute,
   makeSubscribe,
   Plugin,
+  PromiseOrValue,
   TypedExecutionArgs,
 } from '@envelop/core';
 
 const DEFAULT_MAX = 1000;
 const DEFAULT_TTL = 3600000;
 
+type JSONStringifier = (result: any) => string;
+
 type JITCacheEntry = {
   query: CompiledQuery['query'];
   subscribe?: CompiledQuery['subscribe'];
+  stringify: JSONStringifier;
+};
+
+type ExecutionResultWithSerializer = ExecutionResult & {
+  stringify?: JSONStringifier;
 };
 
 export interface JITCache {
@@ -33,7 +41,7 @@ export const useGraphQlJit = (
     /**
      * Callback triggered in case of GraphQL Jit compilation error.
      */
-    onError?: (r: ExecutionResult) => void;
+    onError?: (r: ExecutionResultWithSerializer) => void;
     /**
      * Custom cache instance
      */
@@ -74,6 +82,7 @@ export const useGraphQlJit = (
         }
         cacheEntry = {
           query: () => compilationResult,
+          stringify: r => JSON.stringify(r),
         };
       } else {
         cacheEntry = compilationResult;
@@ -97,7 +106,22 @@ export const useGraphQlJit = (
           makeExecute(function jitExecutor(args) {
             const cacheEntry = getCacheEntry(args as TypedExecutionArgs<unknown>);
 
-            return cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
+            const result$ = cacheEntry.query(
+              args.rootValue,
+              args.contextValue,
+              args.variableValues,
+            ) as PromiseOrValue<ExecutionResultWithSerializer>;
+
+            if (isPromise(result$)) {
+              return result$.then(r => {
+                r.extensions ||= {};
+                r.extensions.stringify = cacheEntry.stringify;
+                return r;
+              });
+            }
+            result$.extensions ||= {};
+            result$.extensions.stringify = cacheEntry.stringify;
+            return result$;
           }),
         );
       }
@@ -111,16 +135,30 @@ export const useGraphQlJit = (
           makeSubscribe(async function jitSubscriber(args) {
             const cacheEntry = getCacheEntry(args as TypedExecutionArgs<unknown>);
 
-            return cacheEntry.subscribe
+            const result$ = cacheEntry.subscribe
               ? (cacheEntry.subscribe(
                   args.rootValue,
                   args.contextValue,
                   args.variableValues,
-                ) as any)
+                ) as PromiseOrValue<ExecutionResult<any, any>>)
               : cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
+            if (isPromise(result$)) {
+              return result$.then(r => {
+                r.extensions ||= {};
+                r.extensions.stringify = cacheEntry.stringify;
+                return r;
+              });
+            }
+            result$.extensions ||= {};
+            result$.extensions.stringify = cacheEntry.stringify;
+            return result$;
           }),
         );
       }
     },
   };
 };
+
+function isPromise<T>(p: T | Promise<T>): p is Promise<T> {
+  return (p as any)?.then != null;
+}
