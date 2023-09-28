@@ -1,5 +1,21 @@
 # @envelop/benchmark
 
+## 1.0.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e3c90116`](https://github.com/n1ru4l/envelop/commit/e3c9011640b73aaede4e5e472a5d45aab947165c),
+  [`e3c90116`](https://github.com/n1ru4l/envelop/commit/e3c9011640b73aaede4e5e472a5d45aab947165c),
+  [`e3c90116`](https://github.com/n1ru4l/envelop/commit/e3c9011640b73aaede4e5e472a5d45aab947165c),
+  [`e3c90116`](https://github.com/n1ru4l/envelop/commit/e3c9011640b73aaede4e5e472a5d45aab947165c),
+  [`dee6b8d2`](https://github.com/n1ru4l/envelop/commit/dee6b8d215f21301660090037b6685e86d217593)]:
+  - @envelop/graphql-jit@6.0.4
+  - @envelop/parser-cache@6.0.4
+  - @envelop/prometheus@8.0.3
+  - @envelop/validation-cache@6.0.4
+  - @envelop/core@4.0.3
+
 ## 1.0.3
 
 ### Patch Changes

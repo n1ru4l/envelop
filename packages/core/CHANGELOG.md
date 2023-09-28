@@ -1,5 +1,15 @@
 # @envelop/core
 
+## 4.0.3
+
+### Patch Changes
+
+- [#1911](https://github.com/n1ru4l/envelop/pull/1911)
+  [`dee6b8d2`](https://github.com/n1ru4l/envelop/commit/dee6b8d215f21301660090037b6685e86d217593)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - The context is now referentialy stable.
+  It means the context passed to all hooks and to all resolver is guaranted to always be the same
+  object instance. This unique object instance will be mutated as needed to extend the context.
+
 ## 4.0.2
 
 ### Patch Changes

@@ -1,5 +1,24 @@
 # @envelop/response-cache
 
+## 5.3.2
+
+### Patch Changes
+
+- [#1927](https://github.com/n1ru4l/envelop/pull/1927)
+  [`e3c90116`](https://github.com/n1ru4l/envelop/commit/e3c9011640b73aaede4e5e472a5d45aab947165c)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@envelop/core@^4.0.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.2) (from
+    `^4.0.1`, in `peerDependencies`)
+
+* [`c9e493b8`](https://github.com/n1ru4l/envelop/commit/c9e493b8d62121f573e9f40406dc7bc866a3cf93)
+  Thanks [@ardatan](https://github.com/ardatan)! - Ignore subscriptions in response caching
+
+* Updated dependencies
+  [[`dee6b8d2`](https://github.com/n1ru4l/envelop/commit/dee6b8d215f21301660090037b6685e86d217593)]:
+  - @envelop/core@4.0.3
+
 ## 5.3.1
 
 ### Patch Changes
