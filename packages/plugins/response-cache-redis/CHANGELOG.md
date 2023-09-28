@@ -1,5 +1,22 @@
 # @envelop/response-cache-redis
 
+## 3.3.2
+
+### Patch Changes
+
+- [#1927](https://github.com/n1ru4l/envelop/pull/1927)
+  [`e3c90116`](https://github.com/n1ru4l/envelop/commit/e3c9011640b73aaede4e5e472a5d45aab947165c)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@envelop/response-cache@^5.3.1` ↗︎](https://www.npmjs.com/package/@envelop/response-cache/v/5.3.1)
+    (from `^5.3.0`, in `dependencies`)
+
+- Updated dependencies
+  [[`e3c90116`](https://github.com/n1ru4l/envelop/commit/e3c9011640b73aaede4e5e472a5d45aab947165c),
+  [`c9e493b8`](https://github.com/n1ru4l/envelop/commit/c9e493b8d62121f573e9f40406dc7bc866a3cf93)]:
+  - @envelop/response-cache@5.3.2
+
 ## 3.3.1
 
 ### Patch Changes
