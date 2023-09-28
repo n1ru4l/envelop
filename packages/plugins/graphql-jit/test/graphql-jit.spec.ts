@@ -8,7 +8,7 @@ import {
   createTestkit,
 } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { JITCache, useGraphQlJit } from '../src/index.js';
+import { ExecutionResultWithSerializer, JITCache, useGraphQlJit } from '../src/index.js';
 
 describe('useGraphQlJit', () => {
   const schema = makeExecutableSchema({
@@ -195,13 +195,12 @@ describe('useGraphQlJit', () => {
   it('provides a custom serializer', async () => {
     const testInstance = createTestkit([useGraphQlJit()], schema);
 
-    const result = (await testInstance.execute(`query { test }`)) as ExecutionResult<any, any>;
-    expect(result.extensions?.stringify?.(result)).toMatch(
+    const result = (await testInstance.execute(`query { test }`)) as ExecutionResultWithSerializer;
+    expect(result.stringify?.(result)).toMatch(
       JSON.stringify({
         data: {
           test: 'boop',
         },
-        extensions: {},
       }),
     );
   });

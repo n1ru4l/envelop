@@ -22,7 +22,7 @@ type JITCacheEntry = {
   stringify: JSONStringifier;
 };
 
-type ExecutionResultWithSerializer = ExecutionResult & {
+export type ExecutionResultWithSerializer = ExecutionResult & {
   stringify?: JSONStringifier;
 };
 
@@ -114,13 +114,11 @@ export const useGraphQlJit = (
 
             if (isPromise(result$)) {
               return result$.then(r => {
-                r.extensions ||= {};
-                r.extensions.stringify = cacheEntry.stringify;
+                r.stringify = cacheEntry.stringify;
                 return r;
               });
             }
-            result$.extensions ||= {};
-            result$.extensions.stringify = cacheEntry.stringify;
+            result$.stringify = cacheEntry.stringify;
             return result$;
           }),
         );
@@ -140,17 +138,19 @@ export const useGraphQlJit = (
                   args.rootValue,
                   args.contextValue,
                   args.variableValues,
-                ) as PromiseOrValue<ExecutionResult<any, any>>)
-              : cacheEntry.query(args.rootValue, args.contextValue, args.variableValues);
+                ) as PromiseOrValue<ExecutionResultWithSerializer>)
+              : (cacheEntry.query(
+                  args.rootValue,
+                  args.contextValue,
+                  args.variableValues,
+                ) as PromiseOrValue<ExecutionResultWithSerializer>);
             if (isPromise(result$)) {
               return result$.then(r => {
-                r.extensions ||= {};
-                r.extensions.stringify = cacheEntry.stringify;
+                r.stringify = cacheEntry.stringify;
                 return r;
               });
             }
-            result$.extensions ||= {};
-            result$.extensions.stringify = cacheEntry.stringify;
+            result$.stringify = cacheEntry.stringify;
             return result$;
           }),
         );
