@@ -1,5 +1,6 @@
 import jsonStableStringify from 'fast-json-stable-stringify';
 import {
+  ASTVisitor,
   DocumentNode,
   ExecutionArgs,
   getOperationAST,
@@ -207,39 +208,9 @@ export type ResponseCacheExecutionResult = ExecutionResult<
 const originalDocumentMap = new WeakMap<DocumentNode, DocumentNode>();
 const addTypeNameToDocument = memoize2(function addTypeNameToDocument(
   document: DocumentNode,
-  addTypeNameToDocumentOpts: { invalidateViaMutation: boolean },
+  visitor: ASTVisitor,
 ): DocumentNode {
-  const newDocument = visit(document, {
-    OperationDefinition: {
-      enter(node): void | false {
-        if (!addTypeNameToDocumentOpts.invalidateViaMutation && node.operation === 'mutation') {
-          return false;
-        }
-        if (node.operation === 'subscription') {
-          return false;
-        }
-      },
-    },
-    SelectionSet(node, _key, parent) {
-      return {
-        ...node,
-        selections: [
-          {
-            kind: Kind.FIELD,
-            name: {
-              kind: Kind.NAME,
-              value: '__typename',
-            },
-            alias: {
-              kind: Kind.NAME,
-              value: '__responseCacheTypeName',
-            },
-          },
-          ...node.selections,
-        ],
-      };
-    },
-  });
+  const newDocument = visit(document, visitor);
   originalDocumentMap.set(newDocument, document);
   return newDocument;
 });
@@ -264,23 +235,26 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
     : false,
 }: UseResponseCacheParameter<PluginContext>): Plugin<PluginContext> {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
-  const processedSchemas = new WeakSet();
   const typePerSchemaCoordinateMap = new Map<string, string[]>();
+  const processedSchemas = new WeakMap<any, ASTVisitor>();
 
   // never cache Introspections
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
   const addTypeNameToDocumentOpts = { invalidateViaMutation };
+  const idFieldByTypeName = new Map<string, string>();
+  let visitor: ASTVisitor;
   return {
     onParse() {
       return ({ result, replaceParseResult }) => {
         if (!originalDocumentMap.has(result) && result.kind === Kind.DOCUMENT) {
-          const newDocument = addTypeNameToDocument(result, addTypeNameToDocumentOpts);
+          const newDocument = addTypeNameToDocument(result, visitor);
           replaceParseResult(newDocument);
         }
       };
     },
     onSchemaChange({ schema }) {
       if (processedSchemas.has(schema)) {
+        visitor = processedSchemas.get(schema)!;
         return;
       }
       const cacheControlDirective = schema.getDirective('cacheControl');
@@ -304,22 +278,74 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           const schemaCoordinates = `${typeName}.${fieldName}`;
           const resultTypeNames = unwrapTypenames(fieldConfig.type);
           typePerSchemaCoordinateMap.set(schemaCoordinates, resultTypeNames);
+
+          if (idFields.includes(fieldName) && !idFieldByTypeName.has(typeName)) {
+            idFieldByTypeName.set(typeName, fieldName);
+          }
+
           if (cacheControlDirective) {
+            const schemaCoordinate = `${typeName}.${fieldName}`;
             const cacheControlAnnotations = getDirective(schema, fieldConfig, 'cacheControl');
             cacheControlAnnotations?.forEach(cacheControl => {
               const ttl = cacheControl.maxAge * 1000;
               if (ttl != null) {
-                ttlPerSchemaCoordinate[`${typeName}.${fieldName}`] = ttl;
+                ttlPerSchemaCoordinate[schemaCoordinate] = ttl;
               }
               if (cacheControl.scope) {
-                scopePerSchemaCoordinate[`${typeName}.${fieldName}`] = cacheControl.scope;
+                scopePerSchemaCoordinate[schemaCoordinate] = cacheControl.scope;
               }
             });
           }
           return fieldConfig;
         },
       });
-      processedSchemas.add(schema);
+
+      const typeInfo = new TypeInfo(schema);
+      visitor = visitWithTypeInfo(typeInfo, {
+        OperationDefinition: {
+          enter(node): void | false {
+            if (!addTypeNameToDocumentOpts.invalidateViaMutation && node.operation === 'mutation') {
+              return false;
+            }
+            if (node.operation === 'subscription') {
+              return false;
+            }
+          },
+        },
+        SelectionSet(node, _key, parent) {
+          const parentType = typeInfo.getParentType();
+          const idField = parentType && idFieldByTypeName.get(parentType.name);
+          return {
+            ...node,
+            selections: [
+              {
+                kind: Kind.FIELD,
+                name: {
+                  kind: Kind.NAME,
+                  value: '__typename',
+                },
+                alias: {
+                  kind: Kind.NAME,
+                  value: '__responseCacheTypeName',
+                },
+              },
+              ...(idField
+                ? [
+                    {
+                      kind: Kind.FIELD,
+                      name: { kind: Kind.NAME, value: idField },
+                      alias: { kind: Kind.NAME, value: '__responseCacheId' },
+                    },
+                  ]
+                : []),
+
+              ...node.selections,
+            ],
+          };
+        },
+      });
+
+      processedSchemas.set(schema, visitor);
     },
     async onExecute(onExecuteParams) {
       const identifier = new Map<string, CacheEntityRecord>();
@@ -342,6 +368,8 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         }
         const typename = data.__responseCacheTypeName;
         delete data.__responseCacheTypeName;
+        const entityId = data.__responseCacheId;
+        delete data.__responseCacheId;
         if (!skip) {
           if (
             ignoredTypesMap.has(typename) ||
@@ -362,9 +390,8 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
                 !sessionId
               ) {
                 skip = true;
-              } else if (idFields.includes(fieldName)) {
-                const id = fieldData;
-                identifier.set(`${typename}:${id}`, { typename, id });
+              } else if (entityId != null) {
+                identifier.set(`${typename}:${entityId}`, { typename, id: entityId });
               } else if (
                 fieldData == null ||
                 (Array.isArray(fieldData) && fieldData.length === 0)

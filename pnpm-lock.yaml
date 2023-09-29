@@ -131,7 +131,7 @@ importers:
         version: link:../packages/core/dist
       '@envelop/graphql-jit':
         specifier: '*'
-        version: link:../packages/plugins/graphql-jit/dist
+        version: 6.0.5(@envelop/core@packages+core+dist)(graphql@16.6.0)
       '@envelop/parser-cache':
         specifier: '*'
         version: link:../packages/plugins/parser-cache/dist
@@ -4384,6 +4384,20 @@ packages:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
     dev: true
+
+  /@envelop/graphql-jit@6.0.5(@envelop/core@packages+core+dist)(graphql@16.6.0):
+    resolution: {integrity: sha512-yrgZslAtOBPPfJlW4orT5Ge/k1gSy1gn/1QDNcPVv/6lprbHYaC/QXAo5WdHxSA0KYgzxqYOSX1jnSQjMDkOWA==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      '@envelop/core': ^4.0.3
+      graphql: 16.6.0
+    dependencies:
+      '@envelop/core': link:packages/core/dist
+      graphql: 16.6.0
+      graphql-jit: 0.8.0(graphql@16.6.0)
+      lru-cache: 10.0.0
+      tslib: 2.6.2
+    dev: false
 
   /@esbuild/android-arm64@0.17.7:
     resolution: {integrity: sha512-fOUBZvcbtbQJIj2K/LMKcjULGfXLV9R4qjXFsi3UuqFhIRJHz0Fp6kFjsMFI6vLuPrfC5G9Dmh+3RZOrSKY2Lg==}
