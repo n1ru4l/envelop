@@ -243,6 +243,16 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   const addTypeNameToDocumentOpts = { invalidateViaMutation };
   const idFieldByTypeName = new Map<string, string>();
   let visitor: ASTVisitor;
+
+  function isPrivate(typeName: string, data: Record<string, unknown>): boolean {
+    if (scopePerSchemaCoordinate[typeName] === 'PRIVATE') {
+      return true;
+    }
+    return Object.keys(data).some(
+      fieldName => scopePerSchemaCoordinate[`${typeName}.${fieldName}`] === 'PRIVATE',
+    );
+  }
+
   return {
     onParse() {
       return ({ result, replaceParseResult }) => {
@@ -371,36 +381,25 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         const entityId = data.__responseCacheId;
         delete data.__responseCacheId;
         if (!skip) {
-          if (
-            ignoredTypesMap.has(typename) ||
-            (scopePerSchemaCoordinate[typename] === 'PRIVATE' && !sessionId)
-          ) {
+          if (ignoredTypesMap.has(typename) || (!sessionId && isPrivate(typename, data))) {
             skip = true;
             return;
           }
+
           types.add(typename);
           if (typename in ttlPerType) {
             currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
           }
+          if (entityId != null) {
+            identifier.set(`${typename}:${entityId}`, { typename, id: entityId });
+          }
           for (const fieldName in data) {
             const fieldData = data[fieldName];
-            if (!skip) {
-              if (
-                scopePerSchemaCoordinate[`${typename}.${fieldName}`] === 'PRIVATE' &&
-                !sessionId
-              ) {
-                skip = true;
-              } else if (entityId != null) {
-                identifier.set(`${typename}:${entityId}`, { typename, id: entityId });
-              } else if (
-                fieldData == null ||
-                (Array.isArray(fieldData) && fieldData.length === 0)
-              ) {
-                const inferredTypes = typePerSchemaCoordinateMap.get(`${typename}.${fieldName}`);
-                inferredTypes?.forEach(inferredType => {
-                  identifier.set(inferredType, { typename: inferredType });
-                });
-              }
+            if (fieldData == null || (Array.isArray(fieldData) && fieldData.length === 0)) {
+              const inferredTypes = typePerSchemaCoordinateMap.get(`${typename}.${fieldName}`);
+              inferredTypes?.forEach(inferredType => {
+                identifier.set(inferredType, { typename: inferredType });
+              });
             }
             processResult(fieldData);
           }
