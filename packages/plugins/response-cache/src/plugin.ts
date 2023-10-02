@@ -302,7 +302,10 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
   return {
     onParse() {
-      return ({ result, replaceParseResult }) => {
+      return ({ result, replaceParseResult, context }) => {
+        if (enabled && !enabled(context)) {
+          return;
+        }
         if (!originalDocumentMap.has(result) && result.kind === Kind.DOCUMENT) {
           const newDocument = addEntityInfosToDocument(
             result,
@@ -363,6 +366,9 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       });
     },
     async onExecute(onExecuteParams) {
+      if (enabled && !enabled(onExecuteParams.args.contextValue)) {
+        return;
+      }
       const identifier = new Map<string, CacheEntityRecord>();
       const types = new Set<string>();
 
@@ -454,19 +460,17 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         context: onExecuteParams.args.contextValue,
       });
 
-      if ((enabled?.(onExecuteParams.args.contextValue) ?? true) === true) {
-        const cachedResponse = (await cache.get(cacheKey)) as ResponseCacheExecutionResult;
+      const cachedResponse = (await cache.get(cacheKey)) as ResponseCacheExecutionResult;
 
-        if (cachedResponse != null) {
-          if (includeExtensionMetadata) {
-            onExecuteParams.setResultAndStopExecution(
-              resultWithMetadata(cachedResponse, { hit: true }),
-            );
-          } else {
-            onExecuteParams.setResultAndStopExecution(cachedResponse);
-          }
-          return;
+      if (cachedResponse != null) {
+        if (includeExtensionMetadata) {
+          onExecuteParams.setResultAndStopExecution(
+            resultWithMetadata(cachedResponse, { hit: true }),
+          );
+        } else {
+          onExecuteParams.setResultAndStopExecution(cachedResponse);
         }
+        return;
       }
 
       if (ttlPerSchemaCoordinate) {
