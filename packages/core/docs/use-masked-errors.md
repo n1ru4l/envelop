@@ -64,3 +64,26 @@ const getEnveloped = envelop({
   ]
 })
 ```
+
+Or provide a custom formatter when masking the output:
+
+```ts
+import { execute, GraphQLError, parse, specifiedRules, subscribe, validate } from 'graphql'
+import { isGraphQLError, MaskError, useEngine } from '@envelop/core'
+
+export const customFormatError: MaskError = err => {
+  if (isGraphQLError(err)) {
+    return new GraphQLError('Sorry, something went wrong.')
+  }
+
+  return err
+}
+
+const getEnveloped = envelop({
+  plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
+    useSchema(schema),
+    useMaskedErrors({ maskError: customFormatError })
+  ]
+})
+```
