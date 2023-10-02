@@ -69,7 +69,7 @@ Or provide a custom formatter when masking the output:
 
 ```ts
 import { execute, GraphQLError, parse, specifiedRules, subscribe, validate } from 'graphql'
-import { isGraphQLError, MaskError, useEngine } from '@envelop/core'
+import { envelop, isGraphQLError, MaskError, useEngine, useSchema, useMaskedErrors } from '@envelop/core'
 
 export const customFormatError: MaskError = err => {
   if (isGraphQLError(err)) {
