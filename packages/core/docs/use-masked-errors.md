@@ -83,7 +83,7 @@ const getEnveloped = envelop({
   plugins: [
     useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     useSchema(schema),
-    useMaskedErrors({ maskErrorFn: customFormatError })
+    useMaskedErrors({ maskError: customFormatError })
   ]
 })
 ```
