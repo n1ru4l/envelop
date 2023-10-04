@@ -39,6 +39,7 @@ export type OnResolve<PluginContext extends Record<string, any> = {}> = (
  */
 export function useOnResolve<PluginContext extends Record<string, any> = {}>(
   onResolve: OnResolve<PluginContext>,
+  excludeIntrospection = true,
 ): Plugin<PluginContext> {
   const hasWrappedResolveSymbol = Symbol('hasWrappedResolve');
   return {
@@ -47,7 +48,7 @@ export function useOnResolve<PluginContext extends Record<string, any> = {}>(
       if (!schema) return; // nothing to do if schema is missing
 
       for (const type of Object.values(schema.getTypeMap())) {
-        if (!isIntrospectionType(type) && isObjectType(type)) {
+        if (!(excludeIntrospection && isIntrospectionType(type)) && isObjectType(type)) {
           for (const field of Object.values(type.getFields())) {
             if (field[hasWrappedResolveSymbol]) continue;
 

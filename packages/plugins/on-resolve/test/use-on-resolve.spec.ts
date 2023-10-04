@@ -45,6 +45,43 @@ describe('useOnResolve', () => {
     }
   });
 
+  it('should invoke the callback for introspection', async () => {
+    const onResolveDoneFn = jest.fn();
+    const onResolveFn = jest.fn((_opts: OnResolveOptions) => onResolveDoneFn);
+    const testkit = createTestkit([useOnResolve(onResolveFn, false)], schema);
+
+    await testkit.execute('{ __schema{ ... on __Schema{ queryType { name } } } }');
+
+    expect(onResolveFn).toBeCalledTimes(2);
+    expect(onResolveDoneFn).toBeCalledTimes(2);
+
+    let i = 0;
+    for (const field of ['queryType', 'name']) {
+      expect(onResolveFn.mock.calls[i][0].context).toBeDefined();
+      expect(onResolveFn.mock.calls[i][0].root).toBeDefined();
+      expect(onResolveFn.mock.calls[i][0].args).toBeDefined();
+      expect(onResolveFn.mock.calls[i][0].info).toBeDefined();
+      expect(onResolveFn.mock.calls[i][0].info.fieldName).toBe(field);
+      expect(onResolveFn.mock.calls[i][0].resolver).toBeInstanceOf(Function);
+      expect(onResolveFn.mock.calls[i][0].replaceResolver).toBeInstanceOf(Function);
+
+      expect(onResolveDoneFn.mock.calls[i][0].setResult).toBeInstanceOf(Function);
+
+      i++;
+    }
+  });
+
+  it('should not invoke the callback for introspection when disabled', async () => {
+    const onResolveDoneFn = jest.fn();
+    const onResolveFn = jest.fn((_opts: OnResolveOptions) => onResolveDoneFn);
+    const testkit = createTestkit([useOnResolve(onResolveFn)], schema);
+
+    await testkit.execute('{ __schema{ ... on __Schema{ queryType { name } } } }');
+
+    expect(onResolveFn).toBeCalledTimes(0);
+    expect(onResolveDoneFn).toBeCalledTimes(0);
+  });
+
   it('should replace the result using the after hook', async () => {
     const testkit = createTestkit(
       [
