@@ -480,6 +480,247 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
+  it('purges cached null union query operation execution result via imperative cache.invalidate api using typename', async () => {
+    const productsListingSpy = jest.fn(() => null);
+    const productsSpy = jest.fn(() => null);
+    const adsSpy = jest.fn(() => null);
+    let id = 1;
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          productsListing: [ProductListItem!]
+          products: [Product!]
+          ads: [Ad!]
+        }
+
+        type Mutation {
+          addProduct(input: ProductInput!): Product!
+        }
+
+        input ProductInput {
+          name: String!
+        }
+
+        union ProductListItem = Product | Ad
+
+        type Product {
+          id: ID!
+          name: String!
+        }
+
+        type Ad {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          productsListing: productsListingSpy,
+          products: productsSpy,
+          ads: adsSpy,
+        },
+        Mutation: {
+          addProduct(_, { input }) {
+            const mockProduct = {
+              id: id++,
+              name: input.name,
+            };
+            return mockProduct;
+          },
+        },
+      },
+    });
+
+    const cache = createInMemoryCache();
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
+
+    const productsListingQuery = /* GraphQL */ `
+      query test {
+        productsListing {
+          ... on Product {
+            id
+            name
+          }
+          ... on Ad {
+            id
+            name
+          }
+        }
+      }
+    `;
+
+    const productsQuery = /* GraphQL */ `
+      query test {
+        products {
+          id
+          name
+        }
+      }
+    `;
+
+    const adsQuery = /* GraphQL */ `
+      query test {
+        ads {
+          id
+          name
+        }
+      }
+    `;
+
+    await testInstance.execute(productsListingQuery);
+    await testInstance.execute(productsListingQuery);
+    expect(productsListingSpy).toHaveBeenCalledTimes(1);
+
+    await testInstance.execute(productsQuery);
+    await testInstance.execute(productsQuery);
+    expect(productsSpy).toHaveBeenCalledTimes(1);
+
+    await testInstance.execute(adsQuery);
+    await testInstance.execute(adsQuery);
+    expect(adsSpy).toHaveBeenCalledTimes(1);
+
+    cache.invalidate([{ typename: 'Product' }]);
+
+    await testInstance.execute(productsListingQuery);
+    expect(productsListingSpy).toHaveBeenCalledTimes(2);
+
+    await testInstance.execute(productsQuery);
+    expect(productsSpy).toHaveBeenCalledTimes(2);
+
+    await testInstance.execute(adsQuery);
+    expect(adsSpy).toHaveBeenCalledTimes(1);
+
+    cache.invalidate([{ typename: 'Ad' }]);
+    await testInstance.execute(productsListingQuery);
+    expect(productsListingSpy).toHaveBeenCalledTimes(3);
+
+    await testInstance.execute(productsQuery);
+    expect(productsSpy).toHaveBeenCalledTimes(2);
+
+    await testInstance.execute(adsQuery);
+    expect(adsSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('purges cached null query operation execution result via imperative cache.invalidate api using typename', async () => {
+    const spy = jest.fn(() => null);
+    let id = 1;
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          products: [Product!]
+        }
+
+        type Mutation {
+          addProduct(input: ProductInput!): Product!
+        }
+
+        input ProductInput {
+          name: String!
+        }
+
+        type Product {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          products: spy,
+        },
+        Mutation: {
+          addProduct(_, { input }) {
+            const mockProduct = {
+              id: id++,
+              name: input.name,
+            };
+            return mockProduct;
+          },
+        },
+      },
+    });
+
+    const cache = createInMemoryCache();
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
+
+    const query = /* GraphQL */ `
+      query test {
+        products {
+          id
+          name
+        }
+      }
+    `;
+
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    cache.invalidate([{ typename: 'Product' }]);
+
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it('purges cached empty array query operation execution result via imperative cache.invalidate api using typename', async () => {
+    const spy = jest.fn(() => []);
+    let id = 1;
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          products: [Product!]!
+        }
+
+        type Mutation {
+          addProduct(input: ProductInput!): Product!
+        }
+
+        input ProductInput {
+          name: String!
+        }
+
+        type Product {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          products: spy,
+        },
+        Mutation: {
+          addProduct(_, { input }) {
+            const mockProduct = {
+              id: id++,
+              name: input.name,
+            };
+            return mockProduct;
+          },
+        },
+      },
+    });
+
+    const cache = createInMemoryCache();
+    const testInstance = createTestkit([useResponseCache({ session: () => null, cache })], schema);
+
+    const query = /* GraphQL */ `
+      query test {
+        products {
+          id
+          name
+        }
+      }
+    `;
+
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    cache.invalidate([{ typename: 'Product' }]);
+
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
   it('purges cached query operation execution result via imperative cache.invalidate api using typename', async () => {
     const spy = jest.fn(() => [
       {
