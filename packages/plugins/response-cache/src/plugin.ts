@@ -294,15 +294,14 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           }
 
           if (cacheControlDirective) {
-            const schemaCoordinate = `${typeName}.${fieldName}`;
             const cacheControlAnnotations = getDirective(schema, fieldConfig, 'cacheControl');
             cacheControlAnnotations?.forEach(cacheControl => {
               const ttl = cacheControl.maxAge * 1000;
               if (ttl != null) {
-                ttlPerSchemaCoordinate[schemaCoordinate] = ttl;
+                ttlPerSchemaCoordinate[schemaCoordinates] = ttl;
               }
               if (cacheControl.scope) {
-                scopePerSchemaCoordinate[schemaCoordinate] = cacheControl.scope;
+                scopePerSchemaCoordinate[schemaCoordinates] = cacheControl.scope;
               }
             });
           }
