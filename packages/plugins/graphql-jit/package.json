@@ -51,7 +51,7 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
-    "graphql-jit": "^0.8.0",
+    "graphql-jit": "0.8.2",
     "lru-cache": "^10.0.0",
     "tslib": "^2.5.0"
   },
@@ -59,7 +59,6 @@
     "@envelop/core": "^4.0.3",
     "@graphql-tools/schema": "10.0.0",
     "graphql": "16.8.1",
-    "lru-cache": "^10.0.0",
     "reflect-metadata": "0.1.13",
     "typescript": "5.1.3"
   },
