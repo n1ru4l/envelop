@@ -13,7 +13,7 @@
     "lib": ["es2022", "dom"],
     "ignoreDeprecations": "5.0",
     "suppressImplicitAnyIndexErrors": true,
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "sourceMap": true,
     "declaration": true,
