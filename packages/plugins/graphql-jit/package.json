@@ -52,7 +52,6 @@
   },
   "dependencies": {
     "graphql-jit": "0.8.2",
-    "lru-cache": "^10.0.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {

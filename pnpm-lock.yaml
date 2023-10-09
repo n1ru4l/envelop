@@ -989,9 +989,6 @@ importers:
       graphql-jit:
         specifier: 0.8.2
         version: 0.8.2(graphql@16.6.0)
-      lru-cache:
-        specifier: ^10.0.0
-        version: 10.0.0
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
