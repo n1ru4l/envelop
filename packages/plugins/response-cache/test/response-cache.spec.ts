@@ -231,6 +231,58 @@ describe('useResponseCache', () => {
     expect(spy).not.toHaveBeenCalled();
   });
 
+  it('enable is called only once by request', async () => {
+    const spy = jest.fn(() => false);
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type Mutation {
+          updateUser(id: ID!): User!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: () => [{ id: 1 }],
+        },
+      },
+    });
+
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+          enabled: spy,
+        }),
+      ],
+      schema,
+    );
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+        }
+      }
+    `;
+    await testInstance.execute(query);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
   it('purges the cached query operation execution result upon executing a mutation that invalidates resources', async () => {
     const spy = jest.fn(() => [
       {

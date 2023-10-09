@@ -22,6 +22,7 @@ import {
   getDirective,
   MapperKind,
   mapSchema,
+  memoize1,
   memoize4,
   mergeIncrementalResult,
 } from '@graphql-tools/utils';
@@ -284,6 +285,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 }: UseResponseCacheParameter<PluginContext>): Plugin<PluginContext> {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
   const typePerSchemaCoordinateMap = new Map<string, string[]>();
+  enabled = enabled ? memoize1(enabled) : enabled;
 
   // never cache Introspections
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
