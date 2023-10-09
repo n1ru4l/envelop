@@ -228,7 +228,6 @@ describe('useResponseCache', () => {
     `;
     await testInstance.execute(query);
     await testInstance.execute(query);
-    console.log(spy.mock.calls);
     expect(spy).not.toHaveBeenCalled();
   });
 
