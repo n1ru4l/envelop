@@ -15,6 +15,7 @@ import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { mapSchema as cloneSchema } from '@graphql-tools/utils';
 import {
+  Cache,
   cacheControlDirective,
   createInMemoryCache,
   defaultBuildResponseCacheKey,
@@ -169,6 +170,66 @@ describe('useResponseCache', () => {
     await testInstance.execute(query);
     await testInstance.execute(query);
     expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignore requests when enabled return false', async () => {
+    const spy = jest.fn();
+    const cache: Cache = {
+      get: () => spy('get'),
+      set: () => spy('set'),
+      invalidate: () => spy('invalidate'),
+    };
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type Mutation {
+          updateUser(id: ID!): User!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: () => [{ id: 1 }],
+        },
+      },
+    });
+
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+          cache,
+          enabled: () => false,
+        }),
+      ],
+      schema,
+    );
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+        }
+      }
+    `;
+    await testInstance.execute(query);
+    await testInstance.execute(query);
+    console.log(spy.mock.calls);
+    expect(spy).not.toHaveBeenCalled();
   });
 
   it('purges the cached query operation execution result upon executing a mutation that invalidates resources', async () => {
