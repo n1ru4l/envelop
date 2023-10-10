@@ -1005,6 +1005,9 @@ importers:
       graphql:
         specifier: 16.6.0
         version: 16.6.0
+      lru-cache:
+        specifier: ^10.0.0
+        version: 10.0.0
       reflect-metadata:
         specifier: 0.1.13
         version: 0.1.13
