@@ -52,8 +52,8 @@ importers:
         specifier: 29.5.5
         version: 29.5.5
       '@types/k6':
-        specifier: 0.46.3
-        version: 0.46.3
+        specifier: 0.47.0
+        version: 0.47.0
       '@types/node':
         specifier: 20.8.4
         version: 20.8.4
@@ -7307,8 +7307,8 @@ packages:
     dependencies:
       '@types/node': 20.8.3
 
-  /@types/k6@0.46.3:
-    resolution: {integrity: sha512-mIkpM4flyaavv0GNzKxSFoge9SIIO4JviJ8vN22OZYln99lnPUWB3+i9QFoTsTfYqK+ZbqoDTOPq95SSTdmhJA==}
+  /@types/k6@0.47.0:
+    resolution: {integrity: sha512-maHj30n8FfS8YHL8XqGP+DYzxpURgOvsAUI35L2RSJ5BlhF9JggghnBXea6dAw4KJRJfa5hKCqGaDD/kmsrHdA==}
     dev: true
 
   /@types/katex@0.11.1:
