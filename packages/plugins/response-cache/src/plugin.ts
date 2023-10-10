@@ -1,6 +1,5 @@
 import jsonStableStringify from 'fast-json-stable-stringify';
 import {
-  ASTVisitor,
   DocumentNode,
   ExecutionArgs,
   getOperationAST,
@@ -23,7 +22,7 @@ import {
   getDirective,
   MapperKind,
   mapSchema,
-  memoize2,
+  memoize4,
   mergeIncrementalResult,
 } from '@graphql-tools/utils';
 import type { Cache, CacheEntityRecord } from './cache.js';
@@ -206,11 +205,60 @@ export type ResponseCacheExecutionResult = ExecutionResult<
 >;
 
 const originalDocumentMap = new WeakMap<DocumentNode, DocumentNode>();
-const addTypeNameToDocument = memoize2(function addTypeNameToDocument(
+const addEntityInfosToDocument = memoize4(function addTypeNameToDocument(
   document: DocumentNode,
-  visitor: ASTVisitor,
+  addTypeNameToDocumentOpts: { invalidateViaMutation: boolean },
+  schema: any,
+  idFieldByTypeName: Map<string, string>,
 ): DocumentNode {
-  const newDocument = visit(document, visitor);
+  const typeInfo = new TypeInfo(schema);
+  const newDocument = visit(
+    document,
+    visitWithTypeInfo(typeInfo, {
+      OperationDefinition: {
+        enter(node): void | false {
+          if (!addTypeNameToDocumentOpts.invalidateViaMutation && node.operation === 'mutation') {
+            return false;
+          }
+          if (node.operation === 'subscription') {
+            return false;
+          }
+        },
+      },
+      SelectionSet(node, _key) {
+        const parentType = typeInfo.getParentType();
+        const idField = parentType && idFieldByTypeName.get(parentType.name);
+        return {
+          ...node,
+          selections: [
+            {
+              kind: Kind.FIELD,
+              name: {
+                kind: Kind.NAME,
+                value: '__typename',
+              },
+              alias: {
+                kind: Kind.NAME,
+                value: '__responseCacheTypeName',
+              },
+            },
+            ...(idField
+              ? [
+                  {
+                    kind: Kind.FIELD,
+                    name: { kind: Kind.NAME, value: idField },
+                    alias: { kind: Kind.NAME, value: '__responseCacheId' },
+                  },
+                ]
+              : []),
+
+            ...node.selections,
+          ],
+        };
+      },
+    }),
+  );
+
   originalDocumentMap.set(newDocument, document);
   return newDocument;
 });
@@ -236,13 +284,12 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 }: UseResponseCacheParameter<PluginContext>): Plugin<PluginContext> {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
   const typePerSchemaCoordinateMap = new Map<string, string[]>();
-  const processedSchemas = new WeakMap<any, ASTVisitor>();
 
   // never cache Introspections
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
   const addTypeNameToDocumentOpts = { invalidateViaMutation };
   const idFieldByTypeName = new Map<string, string>();
-  let visitor: ASTVisitor;
+  let schema: any;
 
   function isPrivate(typeName: string, data: Record<string, unknown>): boolean {
     if (scopePerSchemaCoordinate[typeName] === 'PRIVATE') {
@@ -257,16 +304,22 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
     onParse() {
       return ({ result, replaceParseResult }) => {
         if (!originalDocumentMap.has(result) && result.kind === Kind.DOCUMENT) {
-          const newDocument = addTypeNameToDocument(result, visitor);
+          const newDocument = addEntityInfosToDocument(
+            result,
+            addTypeNameToDocumentOpts,
+            schema,
+            idFieldByTypeName,
+          );
           replaceParseResult(newDocument);
         }
       };
     },
-    onSchemaChange({ schema }) {
-      if (processedSchemas.has(schema)) {
-        visitor = processedSchemas.get(schema)!;
+    onSchemaChange({ schema: newSchema }) {
+      if (schema === newSchema) {
         return;
       }
+      schema = newSchema;
+
       const cacheControlDirective = schema.getDirective('cacheControl');
       mapSchema(schema, {
         ...(cacheControlDirective && {
@@ -308,53 +361,6 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           return fieldConfig;
         },
       });
-
-      const typeInfo = new TypeInfo(schema);
-      visitor = visitWithTypeInfo(typeInfo, {
-        OperationDefinition: {
-          enter(node): void | false {
-            if (!addTypeNameToDocumentOpts.invalidateViaMutation && node.operation === 'mutation') {
-              return false;
-            }
-            if (node.operation === 'subscription') {
-              return false;
-            }
-          },
-        },
-        SelectionSet(node, _key, parent) {
-          const parentType = typeInfo.getParentType();
-          const idField = parentType && idFieldByTypeName.get(parentType.name);
-          return {
-            ...node,
-            selections: [
-              {
-                kind: Kind.FIELD,
-                name: {
-                  kind: Kind.NAME,
-                  value: '__typename',
-                },
-                alias: {
-                  kind: Kind.NAME,
-                  value: '__responseCacheTypeName',
-                },
-              },
-              ...(idField
-                ? [
-                    {
-                      kind: Kind.FIELD,
-                      name: { kind: Kind.NAME, value: idField },
-                      alias: { kind: Kind.NAME, value: '__responseCacheId' },
-                    },
-                  ]
-                : []),
-
-              ...node.selections,
-            ],
-          };
-        },
-      });
-
-      processedSchemas.set(schema, visitor);
     },
     async onExecute(onExecuteParams) {
       const identifier = new Map<string, CacheEntityRecord>();
