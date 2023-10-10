@@ -1,14 +1,8 @@
 /* eslint-disable no-console */
 import { DocumentNode, ExecutionArgs, ExecutionResult } from 'graphql';
 import { CompiledQuery, compileQuery, CompilerOptions, isCompiledQuery } from 'graphql-jit';
-import {
-  getDocumentString,
-  makeExecute,
-  makeSubscribe,
-  Plugin,
-  PromiseOrValue,
-  TypedExecutionArgs,
-} from '@envelop/core';
+import { ValueOrPromise } from 'value-or-promise';
+import { getDocumentString, makeExecute, makeSubscribe, Plugin } from '@envelop/core';
 
 type JSONStringifier = (result: any) => string;
 
@@ -48,7 +42,7 @@ export const useGraphQlJit = (
 
   const jitCacheByDocument = new WeakMap<DocumentNode, JITCacheEntry>();
 
-  function getCacheEntry<T>(args: TypedExecutionArgs<T>): JITCacheEntry {
+  function getCacheEntry(args: ExecutionArgs): JITCacheEntry {
     let cacheEntry: JITCacheEntry | undefined;
 
     cacheEntry = jitCacheByDocument.get(args.document);
@@ -93,71 +87,53 @@ export const useGraphQlJit = (
     return cacheEntry;
   }
 
-  function jitExecutor(args: TypedExecutionArgs<unknown>) {
+  function jitExecutor(args: ExecutionArgs) {
     const cacheEntry = getCacheEntry(args);
+    const executeFn = cacheEntry.subscribe ? cacheEntry.subscribe : cacheEntry.query;
 
-    const result$ = cacheEntry.subscribe
-      ? (cacheEntry.subscribe(
+    return new ValueOrPromise(
+      () =>
+        executeFn(
           args.rootValue,
           args.contextValue,
           args.variableValues,
-        ) as PromiseOrValue<ExecutionResultWithSerializer>)
-      : (cacheEntry.query(
-          args.rootValue,
-          args.contextValue,
-          args.variableValues,
-        ) as PromiseOrValue<ExecutionResultWithSerializer>);
-    if (isPromise(result$)) {
-      return result$.then(r => {
-        r.stringify = cacheEntry.stringify;
-        return r;
-      });
-    }
-    result$.stringify = cacheEntry.stringify;
-    return result$;
+        ) as ExecutionResultWithSerializer,
+    )
+      .then(result => {
+        result.stringify = cacheEntry.stringify;
+        return result;
+      })
+      .resolve();
   }
 
   const executeFn = makeExecute(jitExecutor);
   const subscribeFn = makeSubscribe(jitExecutor);
+  const enableIfFn = pluginOptions.enableIf;
 
   return {
     onExecute({ args, setExecuteFn }) {
-      if (pluginOptions.enableIf) {
-        const enableIfRes$ = pluginOptions.enableIf(args);
-        if (isPromise(enableIfRes$)) {
-          return enableIfRes$.then(res => {
-            if (res) {
+      if (enableIfFn) {
+        return new ValueOrPromise(() => enableIfFn(args))
+          .then(enableIfRes => {
+            if (enableIfRes) {
               setExecuteFn(executeFn);
             }
-          });
-        }
-        if (enableIfRes$) {
-          setExecuteFn(executeFn);
-        }
-        return;
+          })
+          .resolve();
       }
       setExecuteFn(executeFn);
     },
     onSubscribe({ args, setSubscribeFn }) {
-      if (pluginOptions.enableIf) {
-        const enableIfRes$ = pluginOptions.enableIf(args);
-        if (isPromise(enableIfRes$)) {
-          return enableIfRes$.then(res => {
-            if (res) {
+      if (enableIfFn) {
+        return new ValueOrPromise(() => enableIfFn(args))
+          .then(enableIfRes => {
+            if (enableIfRes) {
               setSubscribeFn(subscribeFn);
             }
-          });
-        }
-        if (enableIfRes$) {
-          setSubscribeFn(subscribeFn);
-        }
-        return;
+          })
+          .resolve();
       }
       setSubscribeFn(subscribeFn);
     },
   };
 };
-
-function isPromise<T>(p: T | Promise<T>): p is Promise<T> {
-  return (p as any)?.then != null;
-}

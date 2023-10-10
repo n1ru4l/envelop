@@ -52,7 +52,8 @@
   },
   "dependencies": {
     "graphql-jit": "0.8.2",
-    "tslib": "^2.5.0"
+    "tslib": "^2.5.0",
+    "value-or-promise": "^1.0.12"
   },
   "devDependencies": {
     "@envelop/core": "^4.0.3",

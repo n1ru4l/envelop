@@ -992,6 +992,9 @@ importers:
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
+      value-or-promise:
+        specifier: ^1.0.12
+        version: 1.0.12
     devDependencies:
       '@envelop/core':
         specifier: ^4.0.3
