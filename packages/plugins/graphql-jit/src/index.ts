@@ -1,18 +1,8 @@
 /* eslint-disable no-console */
 import { DocumentNode, ExecutionArgs, ExecutionResult } from 'graphql';
 import { CompiledQuery, compileQuery, CompilerOptions, isCompiledQuery } from 'graphql-jit';
-import { LRUCache } from 'lru-cache';
-import {
-  getDocumentString,
-  makeExecute,
-  makeSubscribe,
-  Plugin,
-  PromiseOrValue,
-  TypedExecutionArgs,
-} from '@envelop/core';
-
-const DEFAULT_MAX = 1000;
-const DEFAULT_TTL = 3600000;
+import { ValueOrPromise } from 'value-or-promise';
+import { getDocumentString, makeExecute, makeSubscribe, Plugin } from '@envelop/core';
 
 type JSONStringifier = (result: any) => string;
 
@@ -48,22 +38,20 @@ export const useGraphQlJit = (
     cache?: JITCache;
   } = {},
 ): Plugin => {
-  const jitCacheByDocumentString =
-    typeof pluginOptions.cache !== 'undefined'
-      ? pluginOptions.cache
-      : new LRUCache<string, JITCacheEntry>({ max: DEFAULT_MAX, ttl: DEFAULT_TTL });
+  const jitCacheByDocumentString = pluginOptions.cache;
 
   const jitCacheByDocument = new WeakMap<DocumentNode, JITCacheEntry>();
 
-  function getCacheEntry<T>(args: TypedExecutionArgs<T>): JITCacheEntry {
+  function getCacheEntry(args: ExecutionArgs): JITCacheEntry {
     let cacheEntry: JITCacheEntry | undefined;
 
     cacheEntry = jitCacheByDocument.get(args.document);
 
-    const documentSource = getDocumentString(args.document);
-
-    if (!cacheEntry && documentSource) {
-      cacheEntry = jitCacheByDocumentString.get(documentSource);
+    if (!cacheEntry && jitCacheByDocumentString) {
+      const documentSource = getDocumentString(args.document);
+      if (documentSource) {
+        cacheEntry = jitCacheByDocumentString.get(documentSource);
+      }
     }
 
     if (!cacheEntry) {
@@ -89,76 +77,63 @@ export const useGraphQlJit = (
       }
 
       jitCacheByDocument.set(args.document, cacheEntry);
-      if (documentSource) {
-        jitCacheByDocumentString.set(documentSource, cacheEntry);
+      if (jitCacheByDocumentString) {
+        const documentSource = getDocumentString(args.document);
+        if (documentSource) {
+          jitCacheByDocumentString.set(documentSource, cacheEntry);
+        }
       }
     }
     return cacheEntry;
   }
 
+  function jitExecutor(args: ExecutionArgs) {
+    const cacheEntry = getCacheEntry(args);
+    const executeFn = cacheEntry.subscribe ? cacheEntry.subscribe : cacheEntry.query;
+
+    return new ValueOrPromise(
+      () =>
+        executeFn(
+          args.rootValue,
+          args.contextValue,
+          args.variableValues,
+        ) as ExecutionResultWithSerializer,
+    )
+      .then(result => {
+        result.stringify = cacheEntry.stringify;
+        return result;
+      })
+      .resolve();
+  }
+
+  const executeFn = makeExecute(jitExecutor);
+  const subscribeFn = makeSubscribe(jitExecutor);
+  const enableIfFn = pluginOptions.enableIf;
+
   return {
-    async onExecute({ args, setExecuteFn }) {
-      if (
-        !pluginOptions.enableIf ||
-        (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))
-      ) {
-        setExecuteFn(
-          makeExecute(function jitExecutor(args) {
-            const cacheEntry = getCacheEntry(args as TypedExecutionArgs<unknown>);
-
-            const result$ = cacheEntry.query(
-              args.rootValue,
-              args.contextValue,
-              args.variableValues,
-            ) as PromiseOrValue<ExecutionResultWithSerializer>;
-
-            if (isPromise(result$)) {
-              return result$.then(r => {
-                r.stringify = cacheEntry.stringify;
-                return r;
-              });
+    onExecute({ args, setExecuteFn }) {
+      if (enableIfFn) {
+        return new ValueOrPromise(() => enableIfFn(args))
+          .then(enableIfRes => {
+            if (enableIfRes) {
+              setExecuteFn(executeFn);
             }
-            result$.stringify = cacheEntry.stringify;
-            return result$;
-          }),
-        );
+          })
+          .resolve();
       }
+      setExecuteFn(executeFn);
     },
-    async onSubscribe({ args, setSubscribeFn }) {
-      if (
-        !pluginOptions.enableIf ||
-        (pluginOptions.enableIf && (await pluginOptions.enableIf(args)))
-      ) {
-        setSubscribeFn(
-          makeSubscribe(async function jitSubscriber(args) {
-            const cacheEntry = getCacheEntry(args as TypedExecutionArgs<unknown>);
-
-            const result$ = cacheEntry.subscribe
-              ? (cacheEntry.subscribe(
-                  args.rootValue,
-                  args.contextValue,
-                  args.variableValues,
-                ) as PromiseOrValue<ExecutionResultWithSerializer>)
-              : (cacheEntry.query(
-                  args.rootValue,
-                  args.contextValue,
-                  args.variableValues,
-                ) as PromiseOrValue<ExecutionResultWithSerializer>);
-            if (isPromise(result$)) {
-              return result$.then(r => {
-                r.stringify = cacheEntry.stringify;
-                return r;
-              });
+    onSubscribe({ args, setSubscribeFn }) {
+      if (enableIfFn) {
+        return new ValueOrPromise(() => enableIfFn(args))
+          .then(enableIfRes => {
+            if (enableIfRes) {
+              setSubscribeFn(subscribeFn);
             }
-            result$.stringify = cacheEntry.stringify;
-            return result$;
-          }),
-        );
+          })
+          .resolve();
       }
+      setSubscribeFn(subscribeFn);
     },
   };
 };
-
-function isPromise<T>(p: T | Promise<T>): p is Promise<T> {
-  return (p as any)?.then != null;
-}

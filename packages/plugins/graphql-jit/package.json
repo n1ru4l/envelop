@@ -51,9 +51,9 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
-    "graphql-jit": "^0.8.0",
-    "lru-cache": "^10.0.0",
-    "tslib": "^2.5.0"
+    "graphql-jit": "0.8.2",
+    "tslib": "^2.5.0",
+    "value-or-promise": "^1.0.12"
   },
   "devDependencies": {
     "@envelop/core": "^4.0.3",
