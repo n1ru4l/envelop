@@ -1,6 +1,6 @@
 {
   "name": "@envelop/graphql-jit",
-  "version": "6.0.5",
+  "version": "7.0.0",
   "type": "module",
   "repository": {
     "type": "git",
