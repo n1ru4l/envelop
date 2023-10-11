@@ -1,5 +1,3 @@
-[![GraphQL Conf 2023](/GraphQLConf-2023-Banner.png)](https://graphql.org/conf/)
-
 ## Envelop
 
 `envelop` is a lightweight JavaScript (/TypeScript) library for wrapping GraphQL execution layer and
@@ -44,8 +42,8 @@ yarn add graphql @envelop/core
 Then, create a simple Envelop based on your GraphQL schema:
 
 ```ts
-import * as GraphQLJS from 'graphql'
 import { envelop, useEngine, useSchema } from '@envelop/core'
+import * as GraphQLJS from 'graphql'
 
 const mySchema = buildSchema(/* ... */) // GraphQLSchema
 
