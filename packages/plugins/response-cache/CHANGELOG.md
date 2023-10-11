@@ -1,5 +1,14 @@
 # @envelop/response-cache
 
+## 5.4.0
+
+### Minor Changes
+
+- [#1961](https://github.com/n1ru4l/envelop/pull/1961)
+  [`eccdcad6`](https://github.com/n1ru4l/envelop/commit/eccdcad63df682506f6e17b68694d596212fca42)
+  Thanks [@marhaupe](https://github.com/marhaupe)! - Fix cache invalidations when result contains
+  empty values
+
 ## 5.3.2
 
 ### Patch Changes

@@ -1,5 +1,28 @@
 # @envelop/graphql-jit
 
+## 7.0.0
+
+### Major Changes
+
+- [#1992](https://github.com/n1ru4l/envelop/pull/1992)
+  [`a07b2955`](https://github.com/n1ru4l/envelop/commit/a07b2955e37f261f96f30ca1cfb1f6d07179fb9b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not create LRU cache by default, use a cache
+  only if provided
+
+### Patch Changes
+
+- [#1992](https://github.com/n1ru4l/envelop/pull/1992)
+  [`a07b2955`](https://github.com/n1ru4l/envelop/commit/a07b2955e37f261f96f30ca1cfb1f6d07179fb9b)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency [`graphql-jit@0.8.2` ↗︎](https://www.npmjs.com/package/graphql-jit/v/0.8.2)
+    (from `^0.8.0`, in `dependencies`)
+  - Added dependency
+    [`value-or-promise@^1.0.12` ↗︎](https://www.npmjs.com/package/value-or-promise/v/1.0.12) (to
+    `dependencies`)
+  - Removed dependency [`lru-cache@^10.0.0` ↗︎](https://www.npmjs.com/package/lru-cache/v/10.0.0)
+    (from `dependencies`)
+
 ## 6.0.5
 
 ### Patch Changes
