@@ -1393,7 +1393,7 @@ importers:
   packages/plugins/response-cache-redis:
     dependencies:
       '@envelop/response-cache':
-        specifier: ^5.3.2
+        specifier: ^5.5.0
         version: link:../response-cache/dist
       ioredis:
         specifier: ^4.27.9
