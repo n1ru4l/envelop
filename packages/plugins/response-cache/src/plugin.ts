@@ -22,7 +22,7 @@ import {
   getDirective,
   MapperKind,
   mapSchema,
-  memoize2,
+  memoize4,
   mergeIncrementalResult,
 } from '@graphql-tools/utils';
 import type { Cache, CacheEntityRecord } from './cache.js';
@@ -205,41 +205,60 @@ export type ResponseCacheExecutionResult = ExecutionResult<
 >;
 
 const originalDocumentMap = new WeakMap<DocumentNode, DocumentNode>();
-const addTypeNameToDocument = memoize2(function addTypeNameToDocument(
+const addEntityInfosToDocument = memoize4(function addTypeNameToDocument(
   document: DocumentNode,
   addTypeNameToDocumentOpts: { invalidateViaMutation: boolean },
+  schema: any,
+  idFieldByTypeName: Map<string, string>,
 ): DocumentNode {
-  const newDocument = visit(document, {
-    OperationDefinition: {
-      enter(node): void | false {
-        if (!addTypeNameToDocumentOpts.invalidateViaMutation && node.operation === 'mutation') {
-          return false;
-        }
-        if (node.operation === 'subscription') {
-          return false;
-        }
+  const typeInfo = new TypeInfo(schema);
+  const newDocument = visit(
+    document,
+    visitWithTypeInfo(typeInfo, {
+      OperationDefinition: {
+        enter(node): void | false {
+          if (!addTypeNameToDocumentOpts.invalidateViaMutation && node.operation === 'mutation') {
+            return false;
+          }
+          if (node.operation === 'subscription') {
+            return false;
+          }
+        },
       },
-    },
-    SelectionSet(node, _key, parent) {
-      return {
-        ...node,
-        selections: [
-          {
-            kind: Kind.FIELD,
-            name: {
-              kind: Kind.NAME,
-              value: '__typename',
+      SelectionSet(node, _key) {
+        const parentType = typeInfo.getParentType();
+        const idField = parentType && idFieldByTypeName.get(parentType.name);
+        return {
+          ...node,
+          selections: [
+            {
+              kind: Kind.FIELD,
+              name: {
+                kind: Kind.NAME,
+                value: '__typename',
+              },
+              alias: {
+                kind: Kind.NAME,
+                value: '__responseCacheTypeName',
+              },
             },
-            alias: {
-              kind: Kind.NAME,
-              value: '__responseCacheTypeName',
-            },
-          },
-          ...node.selections,
-        ],
-      };
-    },
-  });
+            ...(idField
+              ? [
+                  {
+                    kind: Kind.FIELD,
+                    name: { kind: Kind.NAME, value: idField },
+                    alias: { kind: Kind.NAME, value: '__responseCacheId' },
+                  },
+                ]
+              : []),
+
+            ...node.selections,
+          ],
+        };
+      },
+    }),
+  );
+
   originalDocumentMap.set(newDocument, document);
   return newDocument;
 });
@@ -264,25 +283,43 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
     : false,
 }: UseResponseCacheParameter<PluginContext>): Plugin<PluginContext> {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
-  const processedSchemas = new WeakSet();
   const typePerSchemaCoordinateMap = new Map<string, string[]>();
 
   // never cache Introspections
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
   const addTypeNameToDocumentOpts = { invalidateViaMutation };
+  const idFieldByTypeName = new Map<string, string>();
+  let schema: any;
+
+  function isPrivate(typeName: string, data: Record<string, unknown>): boolean {
+    if (scopePerSchemaCoordinate[typeName] === 'PRIVATE') {
+      return true;
+    }
+    return Object.keys(data).some(
+      fieldName => scopePerSchemaCoordinate[`${typeName}.${fieldName}`] === 'PRIVATE',
+    );
+  }
+
   return {
     onParse() {
       return ({ result, replaceParseResult }) => {
         if (!originalDocumentMap.has(result) && result.kind === Kind.DOCUMENT) {
-          const newDocument = addTypeNameToDocument(result, addTypeNameToDocumentOpts);
+          const newDocument = addEntityInfosToDocument(
+            result,
+            addTypeNameToDocumentOpts,
+            schema,
+            idFieldByTypeName,
+          );
           replaceParseResult(newDocument);
         }
       };
     },
-    onSchemaChange({ schema }) {
-      if (processedSchemas.has(schema)) {
+    onSchemaChange({ schema: newSchema }) {
+      if (schema === newSchema) {
         return;
       }
+      schema = newSchema;
+
       const cacheControlDirective = schema.getDirective('cacheControl');
       mapSchema(schema, {
         ...(cacheControlDirective && {
@@ -304,22 +341,26 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           const schemaCoordinates = `${typeName}.${fieldName}`;
           const resultTypeNames = unwrapTypenames(fieldConfig.type);
           typePerSchemaCoordinateMap.set(schemaCoordinates, resultTypeNames);
+
+          if (idFields.includes(fieldName) && !idFieldByTypeName.has(typeName)) {
+            idFieldByTypeName.set(typeName, fieldName);
+          }
+
           if (cacheControlDirective) {
             const cacheControlAnnotations = getDirective(schema, fieldConfig, 'cacheControl');
             cacheControlAnnotations?.forEach(cacheControl => {
               const ttl = cacheControl.maxAge * 1000;
               if (ttl != null) {
-                ttlPerSchemaCoordinate[`${typeName}.${fieldName}`] = ttl;
+                ttlPerSchemaCoordinate[schemaCoordinates] = ttl;
               }
               if (cacheControl.scope) {
-                scopePerSchemaCoordinate[`${typeName}.${fieldName}`] = cacheControl.scope;
+                scopePerSchemaCoordinate[schemaCoordinates] = cacheControl.scope;
               }
             });
           }
           return fieldConfig;
         },
       });
-      processedSchemas.add(schema);
     },
     async onExecute(onExecuteParams) {
       const identifier = new Map<string, CacheEntityRecord>();
@@ -342,38 +383,28 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         }
         const typename = data.__responseCacheTypeName;
         delete data.__responseCacheTypeName;
+        const entityId = data.__responseCacheId;
+        delete data.__responseCacheId;
         if (!skip) {
-          if (
-            ignoredTypesMap.has(typename) ||
-            (scopePerSchemaCoordinate[typename] === 'PRIVATE' && !sessionId)
-          ) {
+          if (ignoredTypesMap.has(typename) || (!sessionId && isPrivate(typename, data))) {
             skip = true;
             return;
           }
+
           types.add(typename);
           if (typename in ttlPerType) {
             currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
           }
+          if (entityId != null) {
+            identifier.set(`${typename}:${entityId}`, { typename, id: entityId });
+          }
           for (const fieldName in data) {
             const fieldData = data[fieldName];
-            if (!skip) {
-              if (
-                scopePerSchemaCoordinate[`${typename}.${fieldName}`] === 'PRIVATE' &&
-                !sessionId
-              ) {
-                skip = true;
-              } else if (idFields.includes(fieldName)) {
-                const id = fieldData;
-                identifier.set(`${typename}:${id}`, { typename, id });
-              } else if (
-                fieldData == null ||
-                (Array.isArray(fieldData) && fieldData.length === 0)
-              ) {
-                const inferredTypes = typePerSchemaCoordinateMap.get(`${typename}.${fieldName}`);
-                inferredTypes?.forEach(inferredType => {
-                  identifier.set(inferredType, { typename: inferredType });
-                });
-              }
+            if (fieldData == null || (Array.isArray(fieldData) && fieldData.length === 0)) {
+              const inferredTypes = typePerSchemaCoordinateMap.get(`${typename}.${fieldName}`);
+              inferredTypes?.forEach(inferredType => {
+                identifier.set(inferredType, { typename: inferredType });
+              });
             }
             processResult(fieldData);
           }

@@ -280,6 +280,115 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
+  it('purges the cached query operation execution result upon executing a mutation that invalidates resources without having the id in the request', async () => {
+    const spy = jest.fn(() => [
+      {
+        id: 1,
+        name: 'User 1',
+        comments: [
+          {
+            id: 1,
+            text: 'Comment 1 of User 1',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'User 2',
+        comments: [
+          {
+            id: 2,
+            text: 'Comment 2 of User 2',
+          },
+        ],
+      },
+    ]);
+
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type Mutation {
+          updateUser(id: ID!): User!
+        }
+
+        type User {
+          id: ID!
+          name: String!
+          comments: [Comment!]!
+          recentComment: Comment
+        }
+
+        type Comment {
+          id: ID!
+          text: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: spy,
+        },
+        Mutation: {
+          updateUser(_, { id }) {
+            return {
+              id,
+              name: `User ${id}`,
+            };
+          },
+        },
+      },
+    });
+
+    const testInstance = createTestkit(
+      [useResponseCache({ session: () => null, includeExtensionMetadata: true })],
+      schema,
+    );
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          name
+          comments {
+            id
+            text
+          }
+        }
+      }
+    `;
+
+    let result = await testInstance.execute(query);
+    assertSingleExecutionValue(result);
+    expect(result.extensions?.responseCache).toEqual({ hit: false, didCache: true, ttl: Infinity });
+    result = await testInstance.execute(query);
+    assertSingleExecutionValue(result);
+    expect(result.extensions?.responseCache).toEqual({ hit: true });
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    result = await testInstance.execute(
+      /* GraphQL */ `
+        mutation it($id: ID!) {
+          updateUser(id: $id) {
+            name
+          }
+        }
+      `,
+      {
+        id: 1,
+      },
+    );
+    assertSingleExecutionValue(result);
+    expect(result?.extensions?.responseCache).toEqual({
+      invalidatedEntities: [{ id: '1', typename: 'User' }],
+    });
+
+    result = await testInstance.execute(query);
+    assertSingleExecutionValue(result);
+    expect(result.extensions?.responseCache).toEqual({ hit: false, didCache: true, ttl: Infinity });
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
   it('purges the cached query operation execution result upon executing a mutation that invalidates resources & having useGraphQlJit plugin at the same time', async () => {
     const spy = jest.fn(() => [
       {
