@@ -1,5 +1,15 @@
 # @envelop/response-cache
 
+## 5.5.0
+
+### Minor Changes
+
+- [#1970](https://github.com/n1ru4l/envelop/pull/1970)
+  [`b2ce17e2`](https://github.com/n1ru4l/envelop/commit/b2ce17e235a3e6708f21c45726e5382bedf56951)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Automatically add the entities id to
+  the request document. This change allows the plugin to not require anymore each query to carefuly
+  include all keys of all entities.
+
 ## 5.4.0
 
 ### Minor Changes
