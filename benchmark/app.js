@@ -99,24 +99,6 @@ const envelopsMap = {
     ],
     enableInternalTracing: true,
   }),
-  'prom-tracing': envelop({
-    plugins: [
-      useEngine(GraphQLJS),
-      useSchema(createSchema()),
-      useParserCache(),
-      useValidationCache(),
-      usePrometheus({
-        contextBuilding: true,
-        deprecatedFields: true,
-        errors: true,
-        execute: true,
-        parse: true,
-        resolvers: true,
-        validate: true,
-      }),
-    ],
-    enableInternalTracing: true,
-  }),
 };
 
 const app = fastify();

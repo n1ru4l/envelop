@@ -74,18 +74,6 @@ export const options = buildOptions({
     envelop_total: ['p(95)<=1'],
     event_loop_lag: ['avg==0', 'p(99)==0'],
   },
-  'prom-tracing': {
-    no_errors: ['rate>0.98'],
-    expected_result: ['rate>0.98'],
-    http_req_duration: ['p(95)<=40'],
-    graphql_execute: ['p(95)<=6'],
-    graphql_context: ['p(95)<=1'],
-    graphql_validate: ['p(95)<=1'],
-    graphql_parse: ['p(95)<=1'],
-    envelop_init: ['p(95)<=1'],
-    envelop_total: ['p(95)<=6'],
-    event_loop_lag: ['avg==0', 'p(99)==0'],
-  },
   'envelop-cache-and-no-internal-tracing': {
     no_errors: ['rate>0.98'],
     expected_result: ['rate>0.98'],
