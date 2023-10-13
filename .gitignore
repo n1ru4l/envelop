@@ -111,3 +111,5 @@ temp
 /.husky/_/
 website/public/_redirects
 website/public/sitemap.xml
+
+.tool-versions
