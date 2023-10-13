@@ -57,9 +57,9 @@
   "devDependencies": {
     "@envelop/core": "^4.0.3",
     "@graphql-tools/schema": "10.0.0",
-    "@sentry/node": "7.73.0",
-    "@sentry/tracing": "7.73.0",
-    "@sentry/types": "7.73.0",
+    "@sentry/node": "7.74.0",
+    "@sentry/tracing": "7.74.0",
+    "@sentry/types": "7.74.0",
     "graphql": "16.8.1",
     "sentry-testkit": "5.0.6",
     "typescript": "5.1.3"
