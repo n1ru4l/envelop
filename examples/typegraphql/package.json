@@ -11,14 +11,14 @@
   "dependencies": {
     "@envelop/core": "*",
     "class-validator": "0.14.0",
-    "fastify": "4.23.2",
+    "fastify": "4.24.1",
     "graphql": "16.8.1",
     "graphql-helix": "1.13.0",
     "reflect-metadata": "0.1.13",
     "type-graphql": "1.1.1"
   },
   "devDependencies": {
-    "@types/node": "18.18.4",
+    "@types/node": "18.18.5",
     "ts-node": "10.9.1",
     "typescript": "5.1.3"
   }

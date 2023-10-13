@@ -23,7 +23,7 @@
   "devDependencies": {
     "@theguild/algolia": "1.1.9",
     "@theguild/tailwind-config": "0.3.0",
-    "@types/node": "18.18.4",
+    "@types/node": "18.18.5",
     "@types/react": "18.2.28"
   },
   "browserslist": {
