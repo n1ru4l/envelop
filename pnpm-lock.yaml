@@ -148,8 +148,8 @@ importers:
         specifier: 5.5.3
         version: 5.5.3
       fastify:
-        specifier: 4.24.1
-        version: 4.24.1
+        specifier: 4.24.2
+        version: 4.24.2
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -312,8 +312,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       fastify:
-        specifier: 4.24.1
-        version: 4.24.1
+        specifier: 4.24.2
+        version: 4.24.2
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -343,8 +343,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       fastify:
-        specifier: 4.24.1
-        version: 4.24.1
+        specifier: 4.24.2
+        version: 4.24.2
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -526,8 +526,8 @@ importers:
         specifier: '*'
         version: link:../../packages/core/dist
       fastify:
-        specifier: 4.24.1
-        version: 4.24.1
+        specifier: 4.24.2
+        version: 4.24.2
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -582,8 +582,8 @@ importers:
         specifier: 0.14.0
         version: 0.14.0
       fastify:
-        specifier: 4.24.1
-        version: 4.24.1
+        specifier: 4.24.2
+        version: 4.24.2
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -616,8 +616,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       fastify:
-        specifier: 4.24.1
-        version: 4.24.1
+        specifier: 4.24.2
+        version: 4.24.2
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -11358,8 +11358,8 @@ packages:
       strnum: 1.0.5
     dev: true
 
-  /fastify@4.24.1:
-    resolution: {integrity: sha512-uMthXpH0DjWWxb3/ERmBsVkFm5cllozjbOFkhsD4Xlw+OUg5wGASRBjVRcp2XeYZa91W2BbwgIWJrnGGPWY2dQ==}
+  /fastify@4.24.2:
+    resolution: {integrity: sha512-V/7fdhFas7HoAyjD8ha8wPCeiRLUzPgwwM5dSSUx/eBUv7GvG61YzjggqOchMOsa7Sw32MNN4uCCoFrl+9ccJA==}
     dependencies:
       '@fastify/ajv-compiler': 3.5.0
       '@fastify/error': 3.4.0
