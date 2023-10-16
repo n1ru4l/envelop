@@ -1,5 +1,32 @@
 # @envelop/core
 
+## 5.0.0
+
+### Major Changes
+
+- [#1986](https://github.com/n1ru4l/envelop/pull/1986)
+  [`68e7a2a5`](https://github.com/n1ru4l/envelop/commit/68e7a2a59a2f9872652b4bae28f30c3a2fb70487)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - **Breaking Change:** Support of Node 16
+  is dropped.
+
+* [#1939](https://github.com/n1ru4l/envelop/pull/1939)
+  [`f7ef03c0`](https://github.com/n1ru4l/envelop/commit/f7ef03c07ae1af3abf08de86bc95fe626bbc7913)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - The `addPlugin` function now insert the
+  plugin in place in the plugin list, leading to a more predictable execution order.
+
+  **Breaking Change:** This change alter the execution order of plugins. This can break some plugins
+  that was relying on the fact the `addPlugin` allowed to push a plugin to the end of the plugin
+  list.
+
+  If it is the case, the best fix is to reorder the plugin list and ensure the plugin is in the
+  right position, after all its dependencies.
+
+### Patch Changes
+
+- Updated dependencies
+  [[`68e7a2a5`](https://github.com/n1ru4l/envelop/commit/68e7a2a59a2f9872652b4bae28f30c3a2fb70487)]:
+  - @envelop/types@5.0.0
+
 ## 4.0.3
 
 ### Patch Changes

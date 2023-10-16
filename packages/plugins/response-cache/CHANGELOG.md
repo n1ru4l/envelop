@@ -1,5 +1,30 @@
 # @envelop/response-cache
 
+## 6.0.0
+
+### Major Changes
+
+- [#1986](https://github.com/n1ru4l/envelop/pull/1986)
+  [`68e7a2a5`](https://github.com/n1ru4l/envelop/commit/68e7a2a59a2f9872652b4bae28f30c3a2fb70487)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - **Breaking Change:** Support of Node 16
+  is dropped.
+
+* [#1977](https://github.com/n1ru4l/envelop/pull/1977)
+  [`a4343bee`](https://github.com/n1ru4l/envelop/commit/a4343beefedafe0965fa9713b52ce5df1e80571c)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - The `enable` parameter now allows to
+  entirely disable caching. It is checked eagerly and disables all cache related processing.
+
+  **Breaking Change:**
+
+  Previously, `enable` was only controlling cache reading. This means that previously, the automatic
+  cache invalidation was still working even with `enable` returning false, which is no longer the
+  case. The alternative is to cautiously invalidate data in the related resolvers.
+
+* Updated dependencies
+  [[`68e7a2a5`](https://github.com/n1ru4l/envelop/commit/68e7a2a59a2f9872652b4bae28f30c3a2fb70487),
+  [`f7ef03c0`](https://github.com/n1ru4l/envelop/commit/f7ef03c07ae1af3abf08de86bc95fe626bbc7913)]:
+  - @envelop/core@5.0.0
+
 ## 5.5.0
 
 ### Minor Changes

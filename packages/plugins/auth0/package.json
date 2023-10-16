@@ -1,6 +1,6 @@
 {
   "name": "@envelop/auth0",
-  "version": "5.0.3",
+  "version": "6.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -47,7 +47,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@envelop/core": "^4.0.3"
+    "@envelop/core": "^5.0.0"
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.0",
@@ -55,7 +55,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@envelop/core": "^4.0.3",
+    "@envelop/core": "^5.0.0",
     "@types/jsonwebtoken": "9.0.3",
     "typescript": "5.1.3"
   },
