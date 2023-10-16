@@ -498,8 +498,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       aws-sdk:
-        specifier: 2.1473.0
-        version: 2.1473.0
+        specifier: 2.1474.0
+        version: 2.1474.0
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -638,7 +638,7 @@ importers:
   packages/core:
     dependencies:
       '@envelop/types':
-        specifier: 4.0.1
+        specifier: 5.0.0
         version: link:../types/dist
       tslib:
         specifier: ^2.5.0
@@ -668,7 +668,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -706,7 +706,7 @@ importers:
         specifier: 0.54.1
         version: 0.54.1(graphql@16.6.0)
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       graphql:
         specifier: 16.6.0
@@ -729,7 +729,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -748,10 +748,10 @@ importers:
   packages/plugins/apollo-tracing:
     dependencies:
       '@envelop/on-resolve':
-        specifier: ^3.0.3
+        specifier: ^4.0.0
         version: link:../on-resolve/dist
       '@envelop/types':
-        specifier: ^4.0.1
+        specifier: ^5.0.0
         version: link:../../types/dist
       apollo-tracing:
         specifier: ^0.16.0
@@ -761,7 +761,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -787,7 +787,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@types/jsonwebtoken':
         specifier: 9.0.3
@@ -804,7 +804,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -833,7 +833,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@types/graphql-depth-limit':
         specifier: 1.1.4
@@ -853,7 +853,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       graphql:
         specifier: 16.6.0
@@ -870,7 +870,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@n1ru4l/push-pull-async-iterable-iterator':
         specifier: 3.2.0
@@ -893,7 +893,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -913,7 +913,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       graphql:
         specifier: 16.6.0
@@ -930,7 +930,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -961,7 +961,7 @@ importers:
   packages/plugins/generic-auth:
     dependencies:
       '@envelop/extended-validation':
-        specifier: ^3.0.3
+        specifier: ^4.0.0
         version: link:../extended-validation/dist
       '@graphql-tools/utils':
         specifier: ^10.0.6
@@ -971,7 +971,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -997,7 +997,7 @@ importers:
         version: 1.0.12
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1023,7 +1023,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1049,7 +1049,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       graphql:
         specifier: 16.6.0
@@ -1068,7 +1068,7 @@ importers:
   packages/plugins/immediate-introspection:
     dependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@sentry/node':
         specifier: ^6 || ^7
@@ -1101,7 +1101,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1120,14 +1120,14 @@ importers:
   packages/plugins/newrelic:
     dependencies:
       '@envelop/on-resolve':
-        specifier: ^3.0.3
+        specifier: ^4.0.0
         version: link:../on-resolve/dist
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: ^10.0.0
@@ -1152,7 +1152,7 @@ importers:
   packages/plugins/on-resolve:
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1168,7 +1168,7 @@ importers:
   packages/plugins/opentelemetry:
     dependencies:
       '@envelop/on-resolve':
-        specifier: ^3.0.3
+        specifier: ^4.0.0
         version: link:../on-resolve/dist
       '@opentelemetry/api':
         specifier: ^1.0.0
@@ -1181,7 +1181,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       graphql:
         specifier: 16.6.0
@@ -1194,14 +1194,14 @@ importers:
   packages/plugins/operation-field-permissions:
     dependencies:
       '@envelop/extended-validation':
-        specifier: ^3.0.3
+        specifier: ^4.0.0
         version: link:../extended-validation/dist
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1224,7 +1224,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       graphql:
         specifier: 16.6.0
@@ -1241,7 +1241,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1261,7 +1261,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1277,14 +1277,14 @@ importers:
   packages/plugins/prometheus:
     dependencies:
       '@envelop/on-resolve':
-        specifier: ^3.0.3
+        specifier: ^4.0.0
         version: link:../on-resolve/dist
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1303,7 +1303,7 @@ importers:
   packages/plugins/rate-limiter:
     dependencies:
       '@envelop/on-resolve':
-        specifier: ^3.0.3
+        specifier: ^4.0.0
         version: link:../on-resolve/dist
       graphql-rate-limit:
         specifier: 3.3.0
@@ -1313,7 +1313,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1329,7 +1329,7 @@ importers:
   packages/plugins/resource-limitations:
     dependencies:
       '@envelop/extended-validation':
-        specifier: ^3.0.3
+        specifier: ^4.0.0
         version: link:../extended-validation/dist
       '@graphql-tools/utils':
         specifier: ^10.0.0
@@ -1339,7 +1339,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1371,7 +1371,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/executor':
         specifier: ^1.1.0
@@ -1393,7 +1393,7 @@ importers:
   packages/plugins/response-cache-redis:
     dependencies:
       '@envelop/response-cache':
-        specifier: ^5.5.0
+        specifier: ^6.0.0
         version: link:../response-cache/dist
       ioredis:
         specifier: ^4.27.9
@@ -1403,7 +1403,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1426,7 +1426,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1458,7 +1458,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -1487,7 +1487,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: ^4.0.3
+        specifier: ^5.0.0
         version: link:../../core/dist
       graphql:
         specifier: 16.6.0
@@ -1500,7 +1500,7 @@ importers:
   packages/testing:
     dependencies:
       '@envelop/types':
-        specifier: ^4.0.1
+        specifier: ^5.0.0
         version: link:../types/dist
       '@graphql-tools/utils':
         specifier: ^10.0.0
@@ -1510,7 +1510,7 @@ importers:
         version: 2.5.0
     devDependencies:
       '@envelop/core':
-        specifier: 4.0.3
+        specifier: 5.0.0
         version: link:../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.0
@@ -8380,8 +8380,8 @@ packages:
       - supports-color
     dev: false
 
-  /aws-sdk@2.1473.0:
-    resolution: {integrity: sha512-fl45qeU/Mjhfdocsh38Uw9hkZIec10gMfYDovtWm9/eK8V6zn3jtHUNKPfM2yXCjebmsk3s0FNR21aSv5suzsQ==}
+  /aws-sdk@2.1474.0:
+    resolution: {integrity: sha512-yhIJuBMnLkf+zVj7FI6eYfTwe4ulSo9in3X7Owgc4Bc4Pd0SB8FV5l+zHYGq3G2uZKbzdBkDVohUgBpHfHTocw==}
     engines: {node: '>= 10.0.0'}
     dependencies:
       buffer: 4.9.2
