@@ -57,7 +57,7 @@ export function useOnResolve<PluginContext extends Record<string, any> = {}>(
       if (!schema) return; // nothing to do if schema is missing
 
       for (const type of Object.values(schema.getTypeMap())) {
-        if ((opts?.skipIntrospection || !isIntrospectionType(type)) && isObjectType(type)) {
+        if ((!opts.skipIntrospection || !isIntrospectionType(type)) && isObjectType(type)) {
           for (const field of Object.values(type.getFields())) {
             if (field[hasWrappedResolveSymbol]) continue;
 
