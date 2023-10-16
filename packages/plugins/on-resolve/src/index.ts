@@ -38,7 +38,7 @@ export type UseOnResolveOptions = {
    *
    * @default true
    */
-  skipIntrospection: boolean;
+  skipIntrospection?: boolean;
 };
 
 /**
