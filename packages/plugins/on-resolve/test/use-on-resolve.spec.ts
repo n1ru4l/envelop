@@ -23,7 +23,7 @@ describe('useOnResolve', () => {
     const onResolveFn = jest.fn((_opts: OnResolveOptions) => onResolveDoneFn);
     const testkit = createTestkit([useOnResolve(onResolveFn)], schema);
 
-    await testkit.execute('{ value1, value2 }');
+    await testkit.execute('{ test: value1, test1: value2 }');
 
     expect(onResolveFn).toBeCalledTimes(2);
     expect(onResolveDoneFn).toBeCalledTimes(2);
@@ -48,7 +48,7 @@ describe('useOnResolve', () => {
   it('should invoke the callback for introspection', async () => {
     const onResolveDoneFn = jest.fn();
     const onResolveFn = jest.fn((_opts: OnResolveOptions) => onResolveDoneFn);
-    const testkit = createTestkit([useOnResolve(onResolveFn, false)], schema);
+    const testkit = createTestkit([useOnResolve(onResolveFn, { introspection: true })], schema);
 
     await testkit.execute('{ __schema{ ... on __Schema{ queryType { name } } } }');
 
@@ -74,7 +74,7 @@ describe('useOnResolve', () => {
   it('should not invoke the callback for introspection when disabled', async () => {
     const onResolveDoneFn = jest.fn();
     const onResolveFn = jest.fn((_opts: OnResolveOptions) => onResolveDoneFn);
-    const testkit = createTestkit([useOnResolve(onResolveFn)], schema);
+    const testkit = createTestkit([useOnResolve(onResolveFn, { introspection: false })], schema);
 
     await testkit.execute('{ __schema{ ... on __Schema{ queryType { name } } } }');
 
