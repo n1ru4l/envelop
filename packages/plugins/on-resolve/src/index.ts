@@ -33,6 +33,11 @@ export type OnResolve<PluginContext extends Record<string, any> = {}> = (
 ) => PromiseOrValue<AfterResolver | void>;
 
 export type UseOnResolveOptions = {
+  /**
+   * Skip executing the `onResolve` hook on introspection queries.
+   *
+   * @default true
+   */
   skipIntrospection: boolean;
 };
 
