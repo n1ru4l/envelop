@@ -1,5 +1,19 @@
 # @envelop/parser-cache
 
+## 7.0.0
+
+### Major Changes
+
+- [#1986](https://github.com/n1ru4l/envelop/pull/1986)
+  [`68e7a2a5`](https://github.com/n1ru4l/envelop/commit/68e7a2a59a2f9872652b4bae28f30c3a2fb70487)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - **Breaking Change:** Support of Node 16
+  is dropped.
+
+- Updated dependencies
+  [[`68e7a2a5`](https://github.com/n1ru4l/envelop/commit/68e7a2a59a2f9872652b4bae28f30c3a2fb70487),
+  [`f7ef03c0`](https://github.com/n1ru4l/envelop/commit/f7ef03c07ae1af3abf08de86bc95fe626bbc7913)]:
+  - @envelop/core@5.0.0
+
 ## 6.0.4
 
 ### Patch Changes

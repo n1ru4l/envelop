@@ -1,5 +1,28 @@
 # @envelop/graphql-jit
 
+## 8.0.0
+
+### Major Changes
+
+- [#1986](https://github.com/n1ru4l/envelop/pull/1986)
+  [`68e7a2a5`](https://github.com/n1ru4l/envelop/commit/68e7a2a59a2f9872652b4bae28f30c3a2fb70487)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - **Breaking Change:** Support of Node 16
+  is dropped.
+
+- Updated dependencies
+  [[`68e7a2a5`](https://github.com/n1ru4l/envelop/commit/68e7a2a59a2f9872652b4bae28f30c3a2fb70487),
+  [`f7ef03c0`](https://github.com/n1ru4l/envelop/commit/f7ef03c07ae1af3abf08de86bc95fe626bbc7913)]:
+  - @envelop/core@5.0.0
+
+### Patch Changes
+
+- [#1999](https://github.com/n1ru4l/envelop/pull/1999)
+  [`aba3c5c6`](https://github.com/n1ru4l/envelop/commit/aba3c5c601f861b51c3ebe52ba379140622018ed)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`graphql-jit@0.8.4` ↗︎](https://www.npmjs.com/package/graphql-jit/v/0.8.4)
+    (from `0.8.2`, in `dependencies`)
+
 ## 7.0.0
 
 ### Major Changes

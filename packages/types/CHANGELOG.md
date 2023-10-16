@@ -1,5 +1,14 @@
 # @envelop/types
 
+## 5.0.0
+
+### Major Changes
+
+- [#1986](https://github.com/n1ru4l/envelop/pull/1986)
+  [`68e7a2a5`](https://github.com/n1ru4l/envelop/commit/68e7a2a59a2f9872652b4bae28f30c3a2fb70487)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - **Breaking Change:** Support of Node 16
+  is dropped.
+
 ## 4.0.1
 
 ### Patch Changes
