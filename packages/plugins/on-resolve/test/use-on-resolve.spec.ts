@@ -48,7 +48,7 @@ describe('useOnResolve', () => {
   it('should invoke the callback for introspection', async () => {
     const onResolveDoneFn = jest.fn();
     const onResolveFn = jest.fn((_opts: OnResolveOptions) => onResolveDoneFn);
-    const testkit = createTestkit([useOnResolve(onResolveFn, { introspection: true })], schema);
+    const testkit = createTestkit([useOnResolve(onResolveFn, { skipIntrospection: true })], schema);
 
     await testkit.execute('{ __schema{ ... on __Schema{ queryType { name } } } }');
 
@@ -74,7 +74,10 @@ describe('useOnResolve', () => {
   it('should not invoke the callback for introspection when disabled', async () => {
     const onResolveDoneFn = jest.fn();
     const onResolveFn = jest.fn((_opts: OnResolveOptions) => onResolveDoneFn);
-    const testkit = createTestkit([useOnResolve(onResolveFn, { introspection: false })], schema);
+    const testkit = createTestkit(
+      [useOnResolve(onResolveFn, { skipIntrospection: false })],
+      schema,
+    );
 
     await testkit.execute('{ __schema{ ... on __Schema{ queryType { name } } } }');
 
