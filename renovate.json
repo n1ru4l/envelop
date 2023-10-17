@@ -25,7 +25,8 @@
         "^@theguild/",
         "next",
         "@whatwg-node/*",
-        "@graphql-tools/*"
+        "@graphql-tools/*",
+        "graphql-jit"
       ],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
