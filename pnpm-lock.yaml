@@ -229,8 +229,8 @@ importers:
         version: 0.7.3
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: 4.20231010.0
-        version: 4.20231010.0
+        specifier: 4.20231016.0
+        version: 4.20231016.0
       '@types/node':
         specifier: 18.18.5
         version: 18.18.5
@@ -4232,8 +4232,8 @@ packages:
       prettier: 1.19.1
     dev: true
 
-  /@cloudflare/workers-types@4.20231010.0:
-    resolution: {integrity: sha512-Jscqg52ScJMTMRHHVeoUvXYYiXPT4V59NKaClQVju9B6oPAzuePFYHwi5PLQ5Yr+xEbJ6+bHuq1aYV/69z6L0w==}
+  /@cloudflare/workers-types@4.20231016.0:
+    resolution: {integrity: sha512-eGB0cRVyoJpeyGJx2re5sbd9R316a61sY73xwnqm4cwGpb+OxCK2gc651RxGiN7H4w6LY1RpysUgeGLmj5B3+g==}
     dev: true
 
   /@colors/colors@1.5.0:
