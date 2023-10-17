@@ -1,6 +1,6 @@
 {
   "name": "@envelop/apollo-tracing",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -52,7 +52,7 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
-    "@envelop/on-resolve": "^4.0.0",
+    "@envelop/on-resolve": "^4.1.0",
     "apollo-tracing": "^0.16.0",
     "tslib": "^2.5.0"
   },

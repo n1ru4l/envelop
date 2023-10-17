@@ -1,5 +1,14 @@
 # @envelop/benchmark
 
+## 3.1.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`27c0f705`](https://github.com/n1ru4l/envelop/commit/27c0f705d5369cd8f8656a267cdc9e3207734360)]:
+  - @envelop/graphql-jit@8.0.1
+  - @envelop/prometheus@9.1.0
+
 ## 3.0.0
 
 ### Patch Changes

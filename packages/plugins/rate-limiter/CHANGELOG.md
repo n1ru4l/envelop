@@ -1,5 +1,13 @@
 # @envelop/rate-limiter
 
+## 6.1.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`408f5be3`](https://github.com/n1ru4l/envelop/commit/408f5be3943775157c9ae29f0d9c7ee78c3c369e)]:
+  - @envelop/on-resolve@4.1.0
+
 ## 6.0.0
 
 ### Major Changes

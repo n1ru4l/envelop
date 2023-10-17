@@ -1,5 +1,13 @@
 # @envelop/graphql-jit
 
+## 8.0.1
+
+### Patch Changes
+
+- [`27c0f705`](https://github.com/n1ru4l/envelop/commit/27c0f705d5369cd8f8656a267cdc9e3207734360)
+  Thanks [@ardatan](https://github.com/ardatan)! - Downgrade graphql-jit to the latest working
+  version
+
 ## 8.0.0
 
 ### Major Changes
