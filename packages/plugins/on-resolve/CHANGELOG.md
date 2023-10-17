@@ -1,5 +1,14 @@
 # @envelop/on-resolve
 
+## 4.1.0
+
+### Minor Changes
+
+- [#1982](https://github.com/n1ru4l/envelop/pull/1982)
+  [`408f5be3`](https://github.com/n1ru4l/envelop/commit/408f5be3943775157c9ae29f0d9c7ee78c3c369e)
+  Thanks [@darren-west](https://github.com/darren-west)! - Option to skip executing the `onResolve`
+  hook during introspection queries
+
 ## 4.0.0
 
 ### Major Changes

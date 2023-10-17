@@ -1,6 +1,6 @@
 {
   "name": "@envelop/prometheus",
-  "version": "9.0.0",
+  "version": "9.1.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -52,7 +52,7 @@
     "prom-client": "^15.0.0"
   },
   "dependencies": {
-    "@envelop/on-resolve": "^4.0.0",
+    "@envelop/on-resolve": "^4.1.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {

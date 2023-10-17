@@ -1,6 +1,6 @@
 {
   "name": "@envelop/newrelic",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -52,7 +52,7 @@
     "newrelic": ">=7 <12"
   },
   "dependencies": {
-    "@envelop/on-resolve": "^4.0.0",
+    "@envelop/on-resolve": "^4.1.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
