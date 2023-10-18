@@ -421,8 +421,8 @@ importers:
         specifier: 18.18.6
         version: 18.18.6
       '@types/ws':
-        specifier: 8.5.7
-        version: 8.5.7
+        specifier: 8.5.8
+        version: 8.5.8
       ts-node:
         specifier: 10.9.1
         version: 10.9.1(@types/node@18.18.6)(typescript@5.1.3)
@@ -449,8 +449,8 @@ importers:
         specifier: 18.18.6
         version: 18.18.6
       '@types/ws':
-        specifier: 8.5.7
-        version: 8.5.7
+        specifier: 8.5.8
+        version: 8.5.8
       ts-node:
         specifier: 10.9.1
         version: 10.9.1(@types/node@18.18.6)(typescript@5.1.3)
@@ -480,8 +480,8 @@ importers:
         specifier: 18.18.6
         version: 18.18.6
       '@types/ws':
-        specifier: 8.5.7
-        version: 8.5.7
+        specifier: 8.5.8
+        version: 8.5.8
       ts-node:
         specifier: 10.9.1
         version: 10.9.1(@types/node@18.18.6)(typescript@5.1.3)
@@ -498,8 +498,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       aws-sdk:
-        specifier: 2.1475.0
-        version: 2.1475.0
+        specifier: 2.1476.0
+        version: 2.1476.0
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -7347,8 +7347,8 @@ packages:
     resolution: {integrity: sha512-YVtyAPqpefU+Mm/qqnOANW6IkqKpCSrarcyV269C8MA8Ux0dbkEuQwM/4CjL47kVEM2LgBef/ETfkH+c6+moFA==}
     dev: false
 
-  /@types/ws@8.5.7:
-    resolution: {integrity: sha512-6UrLjiDUvn40CMrAubXuIVtj2PEfKDffJS7ychvnPU44j+KVeXmdHHTgqcM/dxLUTHxlXHiFM8Skmb8ozGdTnQ==}
+  /@types/ws@8.5.8:
+    resolution: {integrity: sha512-flUksGIQCnJd6sZ1l5dqCEG/ksaoAg/eUwiLAGTJQcfgvZJKF++Ta4bJA6A5aPSJmsr+xlseHn4KLgVlNnvPTg==}
     dependencies:
       '@types/node': 20.8.7
     dev: true
@@ -8343,8 +8343,8 @@ packages:
       - supports-color
     dev: false
 
-  /aws-sdk@2.1475.0:
-    resolution: {integrity: sha512-fYlDnmh7sDH/CS6TtP0EEH2RcLBemgHnJjUhkHGIqQvMTzi3N13EvBtyaYozoJsJ2i8/rcwU10/48HO7rNwL5g==}
+  /aws-sdk@2.1476.0:
+    resolution: {integrity: sha512-JxLdsSUpdPISLSyIUHGDLggR7i0VQRWAbtv4BO0Okv2vlm7uuLAiEHge/ZmX7DObzAbKiG8dn1Dfc2v0pOwBuw==}
     engines: {node: '>= 10.0.0'}
     dependencies:
       buffer: 4.9.2
