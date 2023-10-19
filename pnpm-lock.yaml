@@ -103,8 +103,8 @@ importers:
         specifier: 29.7.0
         version: 29.7.0(@types/node@20.8.7)(ts-node@10.9.1)
       lint-staged:
-        specifier: 15.0.1
-        version: 15.0.1
+        specifier: 15.0.2
+        version: 15.0.2
       prettier:
         specifier: 3.0.3
         version: 3.0.3
@@ -148,8 +148,8 @@ importers:
         specifier: 5.5.3
         version: 5.5.3
       fastify:
-        specifier: 4.24.2
-        version: 4.24.2
+        specifier: 4.24.3
+        version: 4.24.3
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -312,8 +312,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       fastify:
-        specifier: 4.24.2
-        version: 4.24.2
+        specifier: 4.24.3
+        version: 4.24.3
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -343,8 +343,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       fastify:
-        specifier: 4.24.2
-        version: 4.24.2
+        specifier: 4.24.3
+        version: 4.24.3
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -526,8 +526,8 @@ importers:
         specifier: '*'
         version: link:../../packages/core/dist
       fastify:
-        specifier: 4.24.2
-        version: 4.24.2
+        specifier: 4.24.3
+        version: 4.24.3
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -582,8 +582,8 @@ importers:
         specifier: 0.14.0
         version: 0.14.0
       fastify:
-        specifier: 4.24.2
-        version: 4.24.2
+        specifier: 4.24.3
+        version: 4.24.3
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -616,8 +616,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       fastify:
-        specifier: 4.24.2
-        version: 4.24.2
+        specifier: 4.24.3
+        version: 4.24.3
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -11313,8 +11313,8 @@ packages:
       strnum: 1.0.5
     dev: true
 
-  /fastify@4.24.2:
-    resolution: {integrity: sha512-V/7fdhFas7HoAyjD8ha8wPCeiRLUzPgwwM5dSSUx/eBUv7GvG61YzjggqOchMOsa7Sw32MNN4uCCoFrl+9ccJA==}
+  /fastify@4.24.3:
+    resolution: {integrity: sha512-6HHJ+R2x2LS3y1PqxnwEIjOTZxFl+8h4kSC/TuDPXtA+v2JnV9yEtOsNSKK1RMD7sIR2y1ZsA4BEFaid/cK5pg==}
     dependencies:
       '@fastify/ajv-compiler': 3.5.0
       '@fastify/error': 3.4.0
@@ -11609,7 +11609,7 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       cross-spawn: 7.0.3
-      signal-exit: 4.0.2
+      signal-exit: 4.1.0
     dev: true
 
   /form-data@2.5.1:
@@ -14111,8 +14111,8 @@ packages:
     dev: false
     optional: true
 
-  /lint-staged@15.0.1:
-    resolution: {integrity: sha512-2IU5OWmCaxch0X0+IBF4/v7sutpB+F3qoXbro43pYjQTOo5wumckjxoxn47pQBqqBsCWrD5HnI2uG/zJA7isew==}
+  /lint-staged@15.0.2:
+    resolution: {integrity: sha512-vnEy7pFTHyVuDmCAIFKR5QDO8XLVlPFQQyujQ/STOxe40ICWqJ6knS2wSJ/ffX/Lw0rz83luRDh+ET7toN+rOw==}
     engines: {node: '>=18.12.0'}
     hasBin: true
     dependencies:
@@ -14121,17 +14121,17 @@ packages:
       debug: 4.3.4
       execa: 8.0.1
       lilconfig: 2.1.0
-      listr2: 7.0.1
+      listr2: 7.0.2
       micromatch: 4.0.5
       pidtree: 0.6.0
       string-argv: 0.3.2
-      yaml: 2.3.2
+      yaml: 2.3.3
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /listr2@7.0.1:
-    resolution: {integrity: sha512-nz+7hwgbDp8eWNoDgzdl4hA/xDSLrNRzPu1TLgOYs6l5Y+Ma6zVWWy9Oyt9TQFONwKoSPoka3H50D3vD5EuNwg==}
+  /listr2@7.0.2:
+    resolution: {integrity: sha512-rJysbR9GKIalhTbVL2tYbF2hVyDnrf7pFUZBwjPaMIdadYHmeT+EVi/Bu3qd7ETQPahTotg2WRCatXwRBW554g==}
     engines: {node: '>=16.0.0'}
     dependencies:
       cli-truncate: 3.1.0
@@ -16478,6 +16478,23 @@ packages:
       lilconfig: 2.1.0
       postcss: 8.4.28
       ts-node: 10.9.1(@types/node@20.8.7)(typescript@5.1.3)
+      yaml: 2.3.2
+    dev: true
+
+  /postcss-load-config@4.0.1(ts-node@10.9.1):
+    resolution: {integrity: sha512-vEJIc8RdiBRu3oRAI0ymerOn+7rPuMvRXslTvZUKZonDHFIczxztIyJ1urxM1x9JXEikvpWWTUUqal5j/8QgvA==}
+    engines: {node: '>= 14'}
+    peerDependencies:
+      postcss: '>=8.0.9'
+      ts-node: '>=9.0.0'
+    peerDependenciesMeta:
+      postcss:
+        optional: true
+      ts-node:
+        optional: true
+    dependencies:
+      lilconfig: 2.1.0
+      ts-node: 10.9.1(@types/node@20.8.7)(typescript@5.1.3)
       yaml: 2.3.1
     dev: true
 
@@ -17998,11 +18015,6 @@ packages:
   /signal-exit@3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
 
-  /signal-exit@4.0.2:
-    resolution: {integrity: sha512-MY2/qGx4enyjprQnFaZsHib3Yadh3IXyV2C321GY0pjGfVBu4un0uDJkwgdxqO+Rdx8JMT8IfJIRwbYVz3Ob3Q==}
-    engines: {node: '>=14'}
-    dev: true
-
   /signal-exit@4.1.0:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
@@ -19132,7 +19144,7 @@ packages:
       execa: 5.1.1
       globby: 11.1.0
       joycon: 3.0.1
-      postcss-load-config: 4.0.1(postcss@8.4.28)(ts-node@10.9.1)
+      postcss-load-config: 4.0.1(ts-node@10.9.1)
       resolve-from: 5.0.0
       rollup: 3.15.0
       source-map: 0.8.0-beta.0
@@ -20205,6 +20217,11 @@ packages:
 
   /yaml@2.3.2:
     resolution: {integrity: sha512-N/lyzTPaJasoDmfV7YTrYCI0G/3ivm/9wdG0aHuheKowWQwGTsK0Eoiw6utmzAnI6pkJa0DUVygvp3spqqEKXg==}
+    engines: {node: '>= 14'}
+    dev: true
+
+  /yaml@2.3.3:
+    resolution: {integrity: sha512-zw0VAJxgeZ6+++/su5AFoqBbZbrEakwu+X0M5HmcwUiBL7AzcuPKjj5we4xfQLp78LkEMpD0cOnUhmgOVy3KdQ==}
     engines: {node: '>= 14'}
     dev: true
 
