@@ -383,16 +383,25 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         if (data == null || typeof data !== 'object') {
           return;
         }
+
         if (Array.isArray(data)) {
           for (const item of data) {
             processResult(item);
           }
           return;
         }
+
         const typename = data.__responseCacheTypeName;
         delete data.__responseCacheTypeName;
         const entityId = data.__responseCacheId;
         delete data.__responseCacheId;
+
+        // Always process nested objects, even if we are skipping cache, to ensure the result is cleaned up
+        // of metadata fields added to the query document.
+        for (const fieldName in data) {
+          processResult(data[fieldName]);
+        }
+
         if (!skip) {
           if (ignoredTypesMap.has(typename) || (!sessionId && isPrivate(typename, data))) {
             skip = true;
@@ -414,7 +423,6 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
                 identifier.set(inferredType, { typename: inferredType });
               });
             }
-            processResult(fieldData);
           }
         }
       }
