@@ -498,8 +498,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       aws-sdk:
-        specifier: 2.1478.0
-        version: 2.1478.0
+        specifier: 2.1479.0
+        version: 2.1479.0
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -8350,8 +8350,8 @@ packages:
       - supports-color
     dev: false
 
-  /aws-sdk@2.1478.0:
-    resolution: {integrity: sha512-F+Ud9FxMD4rwvGbEXn7qc25Q19N4p+9klRjiH1llFLYssPw6TRtY464Cry/jG4OzuYkE/DsnhcwVFEJjGvMmuQ==}
+  /aws-sdk@2.1479.0:
+    resolution: {integrity: sha512-LSTq1l63soAfHjsHYkuFln3ERuImKU4RpkzBzruFkL2DDwd3+CtYcjQ6PbuBjZcQ+XTY3jM8DoxoXhQD4L+YZw==}
     engines: {node: '>= 10.0.0'}
     dependencies:
       buffer: 4.9.2
