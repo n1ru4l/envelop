@@ -198,9 +198,9 @@ Then, in your resolvers, you can execute the check method based on your needs:
 const resolvers = {
   Query: {
     me: async (root, args, context) => {
-      const validationError = context.validateUser();
+      const validationError = context.validateUser()
       if (validationError) {
-        throw validationError;
+        throw validationError
       }
 
       const currentUser = context.currentUser
@@ -389,11 +389,7 @@ validation.
 ```ts
 import { ValidateUserFn } from '@envelop/generic-auth'
 
-const validateUser: ValidateUserFn<UserType> = ({
-  user,
-  executionArgs,
-  fieldAuthExtension
-}) => {
+const validateUser: ValidateUserFn<UserType> = ({ user, executionArgs, fieldAuthExtension }) => {
   if (!user) {
     return new Error(`Unauthenticated!`)
   }
