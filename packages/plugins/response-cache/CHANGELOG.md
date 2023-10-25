@@ -1,5 +1,13 @@
 # @envelop/response-cache
 
+## 6.0.1
+
+### Patch Changes
+
+- [`4183b275`](https://github.com/n1ru4l/envelop/commit/4183b2752d22e82bc819d2b5adc20f2dedf6697c)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Fix leak of cache metadata in the
+  result when cache is skipped.
+
 ## 6.0.0
 
 ### Major Changes
