@@ -1,6 +1,7 @@
 import { withGuildDocs } from '@theguild/components/next.config';
 
 export default withGuildDocs({
+  output: 'export',
   experimental: {
     urlImports: ['https://the-guild.dev/static/shared-logos/products/hive.svg'],
   },
