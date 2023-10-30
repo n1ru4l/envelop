@@ -1,5 +1,14 @@
 # @envelop/response-cache
 
+## 6.1.0
+
+### Minor Changes
+
+- [#2044](https://github.com/n1ru4l/envelop/pull/2044)
+  [`5d87e987`](https://github.com/n1ru4l/envelop/commit/5d87e987010c002f581b85d3970dfed8f4f5db1a)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Expose `hashSHA256` sha256
+  implementation to ease the customization of cache key factory.
+
 ## 6.0.1
 
 ### Patch Changes
