@@ -498,8 +498,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       aws-sdk:
-        specifier: 2.1483.0
-        version: 2.1483.0
+        specifier: 2.1484.0
+        version: 2.1484.0
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -1393,7 +1393,7 @@ importers:
   packages/plugins/response-cache-redis:
     dependencies:
       '@envelop/response-cache':
-        specifier: ^6.0.1
+        specifier: ^6.1.0
         version: link:../response-cache/dist
       ioredis:
         specifier: ^4.27.9
@@ -8341,8 +8341,8 @@ packages:
       - supports-color
     dev: false
 
-  /aws-sdk@2.1483.0:
-    resolution: {integrity: sha512-u1DVpvBd2UeYLXwXgY8tO/SjbdFEE6nRkQWiLaDJaBoHycHpe+DjPtGl1KaLiOIMaDZ+cnIzf3/aRSss/mCeBQ==}
+  /aws-sdk@2.1484.0:
+    resolution: {integrity: sha512-emfCmb5j/UtaB7U8tvLpGdVNAlZMg4xZOhoFvL8jBQwIVJyCRyaqcshe31JXTwJdafThn2pNPtQOeYbZJCE0Ow==}
     engines: {node: '>= 10.0.0'}
     dependencies:
       buffer: 4.9.2
