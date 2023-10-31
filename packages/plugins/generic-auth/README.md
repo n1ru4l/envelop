@@ -175,7 +175,7 @@ type UserType = {
 const resolveUserFn: ResolveUserFn<UserType> = async context => {
   /* ... */
 }
-const validateUser: ValidateUserFn<UserType> = async params => {
+const validateUser: ValidateUserFn<UserType> = params => {
   /* ... */
 }
 
@@ -198,7 +198,11 @@ Then, in your resolvers, you can execute the check method based on your needs:
 const resolvers = {
   Query: {
     me: async (root, args, context) => {
-      await context.validateUser()
+      const validationError = context.validateUser()
+      if (validationError) {
+        throw validationError
+      }
+
       const currentUser = context.currentUser
 
       return currentUser
@@ -292,7 +296,7 @@ the `protect-all` and `protect-granular` mode:
 import { GraphQLError } from 'graphql'
 import { ValidateUserFn } from '@envelop/generic-auth'
 
-const validateUser: ValidateUserFn<UserType> = async ({ user }) => {
+const validateUser: ValidateUserFn<UserType> = ({ user }) => {
   // Now you can use the 3rd parameter to implement custom logic for user validation, with access
   // to the resolver data and information.
 
@@ -321,7 +325,7 @@ Then, you use the `directiveNode` parameter to check the arguments:
 ```ts
 import { ValidateUserFn } from '@envelop/generic-auth'
 
-const validateUser: ValidateUserFn<UserType> = async ({ user, fieldAuthDirectiveNode }) => {
+const validateUser: ValidateUserFn<UserType> = ({ user, fieldAuthDirectiveNode }) => {
   // Now you can use the fieldAuthDirectiveNode parameter to implement custom logic for user validation, with access
   // to the resolver auth directive arguments.
 
@@ -385,11 +389,7 @@ validation.
 ```ts
 import { ValidateUserFn } from '@envelop/generic-auth'
 
-const validateUser: ValidateUserFn<UserType> = async ({
-  user,
-  executionArgs,
-  fieldAuthExtension
-}) => {
+const validateUser: ValidateUserFn<UserType> = ({ user, executionArgs, fieldAuthExtension }) => {
   if (!user) {
     return new Error(`Unauthenticated!`)
   }
@@ -397,7 +397,7 @@ const validateUser: ValidateUserFn<UserType> = async ({
   // You have access to the object define in the resolver tree, allowing to define any custom logic you want.
   const validate = fieldAuthExtension?.validate
   if (validate) {
-    await validate({
+    return validate({
       user,
       variables: executionArgs.variableValues,
       context: executionArgs.contextValue
