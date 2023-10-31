@@ -92,7 +92,7 @@ httpServer.listen(3000)
 Behind the scenes, this simple workflow allows you to use **Envelop plugins** and hook into the
 entire request handling flow.
 
-Here's a simple example for collecting metrics and log all incoming requests, using the built-in
+Here's a simple example for collecting metrics and logging all incoming requests, using the built-in
 plugins:
 
 ```ts
@@ -131,7 +131,7 @@ You can read more about
 ## Write your own plugin!
 
 Envelop plugins are just objects with functions, that provide contextual implementation for
-before/after of each phase, with a flexible API.
+before/after each phase, with a flexible API.
 
 Here's a simple example that allows you to print the execution params:
 
@@ -164,7 +164,7 @@ If this is your first time contributing to this project, please do read our
 [Contributor Workflow Guide](https://github.com/the-guild-org/Stack/blob/master/CONTRIBUTING.md)
 before you get started off.
 
-Feel free to open issues and pull requests. We're always welcome support from the community.
+Feel free to open issues and pull requests. We always welcome support from the community.
 
 ### Code of Conduct
 
