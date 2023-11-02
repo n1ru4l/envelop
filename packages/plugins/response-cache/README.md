@@ -153,6 +153,60 @@ const getEnveloped = envelop({
 > Note: In the Recipes below, be sure to provide your Redis `cache` instance with
 > `useResponseCache({ cache })`.
 
+### Cloudflare KV Cache
+
+```bash
+yarn add @envelop/response-cache-cloudflare-kv
+```
+
+In order to use the Cloudflare KV cache, you need to:
+
+- Create a Cloudflare KV namespace
+- Add that namespace to your `wrangler.toml` in order to access it from your worker. Read the
+  [KV docs](https://developers.cloudflare.com/kv/get-started/) to get started.
+- Pass the KV namespace to the `createKvCache` function and set to the `useResponseCache` plugin
+  options. See the example below.
+
+The example below demonstrates how to use this with graphql-yoga within a Cloudflare Worker script.
+
+```ts
+import { createKvCache } from 'envelop-response-cache-cloudflare-kv'
+import { createSchema, createYoga, YogaInitialContext } from 'graphql-yoga'
+import { useResponseCache } from '@envelop/response-cache'
+import { resolvers } from './graphql-schema/resolvers.generated'
+import { typeDefs } from './graphql-schema/typeDefs.generated'
+
+export type Env = {
+  GRAPHQL_RESPONSE_CACHE: KVNamespace
+}
+export type GraphQLContext = YogaInitialContext & Env & ExecutionContext
+
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const cache = createKvCache({
+      KV: env.GRAPHQL_RESPONSE_CACHE,
+      ctx,
+      keyPrefix: 'graphql' // optional
+    })
+
+    const graphqlServer = createYoga<GraphQLContext>({
+      schema: createSchema({ typeDefs, resolvers }),
+      plugins: [
+        useResponseCache({
+          cache,
+          session: () => null
+        })
+      ]
+    })
+
+    return graphqlServer.fetch(request, env, ctx)
+  }
+}
+```
+
+> Note: In the Recipes below, be sure to provide your Cloudflare KV `cache` instance with
+> `useResponseCache({ cache })`.
+
 ## Recipes
 
 ### Cache with maximum TTL
