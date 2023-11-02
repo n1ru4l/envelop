@@ -1,6 +1,7 @@
 import { parse } from 'graphql';
 import { createApplication, createModule, Injectable, Scope } from 'graphql-modules';
 import 'reflect-metadata';
+import { useGraphQlJit } from '@envelop/graphql-jit';
 import {
   assertSingleExecutionValue,
   assertStreamExecutionValue,
@@ -36,15 +37,25 @@ function createApp(onDestroy: () => void) {
         typeDefs: parse(/* GraphQL */ `
           type Query {
             foo: String
+            test: Test
           }
 
           type Subscription {
             bar: String
           }
+
+          type Test {
+            foo: String
+          }
         `),
         providers: [TestProvider],
         resolvers: {
           Query: {
+            foo: (root: never, args: never, { injector }: GraphQLModules.Context) =>
+              injector.get(TestProvider).getFoo(),
+            test: () => ({}),
+          },
+          Test: {
             foo: (root: never, args: never, { injector }: GraphQLModules.Context) =>
               injector.get(TestProvider).getFoo(),
           },
@@ -91,6 +102,28 @@ describe('useGraphQLModules', () => {
     const allResults = await collectAsyncIteratorValues(resultStream);
     expect(allResults).toHaveLength(1);
     expect(allResults[0]?.data?.bar).toEqual('testBar');
+    expect(isDestroyed).toEqual(true);
+  });
+
+  test('graphql-jit query', async () => {
+    let isDestroyed = false;
+    const app = createApp(() => {
+      isDestroyed = true;
+    });
+    const testInstance = createTestkit([
+      useGraphQlJit(
+        {},
+        {
+          onError(r) {
+            console.error(r);
+          },
+        },
+      ),
+      useGraphQLModules(app),
+    ]);
+    const result = await testInstance.execute(`query { test { foo } }`, {}, {});
+    assertSingleExecutionValue(result);
+    expect((result.data as any)?.test?.foo).toBe('testFoo');
     expect(isDestroyed).toEqual(true);
   });
 });
