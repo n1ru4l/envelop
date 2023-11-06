@@ -36,12 +36,19 @@ export type KvCacheConfig = {
  * @returns A cache object that can be passed to envelop's `useResponseCache` plugin
  */
 export function createKvCache(config: KvCacheConfig): Cache {
+  if (config.cacheReadTTL && config.cacheReadTTL < 60000) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      'Cloudflare KV cacheReadTTL must be at least 60000 (60 seconds). Using default value of 60000 instead.',
+    );
+  }
+  const computedTtlInSeconds = Math.max(Math.floor((config.cacheReadTTL ?? 60000) / 1000), 60); // KV TTL must be at least 60 seconds
+
   const cache: Cache = {
     async get(id: string) {
-      const ttlInSeconds = Math.max(Math.floor((config.cacheReadTTL ?? 60000) / 1000), 60); // KV TTL must be at least 60 seconds
       const kvResponse = await config.KV.get(buildOperationKey(id, config.keyPrefix), {
         type: 'text',
-        cacheTtl: ttlInSeconds,
+        cacheTtl: computedTtlInSeconds,
       });
       if (kvResponse) {
         return JSON.parse(kvResponse) as ExecutionResult;
