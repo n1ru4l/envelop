@@ -11,7 +11,7 @@ export async function invalidate(
   for (const entity of entities) {
     const entityKey = buildEntityKey(entity.typename, entity.id, config.keyPrefix);
 
-    for await (const kvKey of _getAllKvKeysForPrefix(entityKey, config)) {
+    for await (const kvKey of getAllKvKeysForPrefix(entityKey, config)) {
       if (kvKey.metadata?.operationKey) {
         kvPromises.push(config.KV.delete(kvKey.metadata?.operationKey));
         kvPromises.push(config.KV.delete(kvKey.name));
@@ -22,7 +22,7 @@ export async function invalidate(
   await Promise.allSettled(kvPromises);
 }
 
-export async function* _getAllKvKeysForPrefix(prefix: string, config: KvCacheConfig) {
+export async function* getAllKvKeysForPrefix(prefix: string, config: KvCacheConfig) {
   let keyListComplete = false;
   let cursor: string | undefined;
 

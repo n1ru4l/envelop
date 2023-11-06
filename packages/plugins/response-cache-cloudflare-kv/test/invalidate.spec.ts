@@ -2,7 +2,7 @@ import { ExecutionResult } from 'graphql';
 import type { ExecutionContext, KVNamespace } from '@cloudflare/workers-types';
 import { buildEntityKey, buildOperationKey } from '../src/cache-key.js';
 import { KvCacheConfig } from '../src/index.js';
-import { _getAllKvKeysForPrefix, invalidate } from '../src/invalidate.js';
+import { getAllKvKeysForPrefix, invalidate } from '../src/invalidate.js';
 import { set } from '../src/set.js';
 
 type Env = {
@@ -34,7 +34,7 @@ describe('invalidate.test.ts', () => {
     test('should successfully iterate over a KV namespace with no keys', async () => {
       // kv cache has no keys at this point
       const keys = [];
-      for await (const kvKey of _getAllKvKeysForPrefix('vitest', config)) {
+      for await (const kvKey of getAllKvKeysForPrefix('vitest', config)) {
         keys.push(kvKey);
       }
       expect(keys).toEqual([]);
@@ -49,7 +49,7 @@ describe('invalidate.test.ts', () => {
       }
 
       const keys = [];
-      for await (const kvKey of _getAllKvKeysForPrefix('vitest', config)) {
+      for await (const kvKey of getAllKvKeysForPrefix('vitest', config)) {
         keys.push(kvKey);
         const userId = kvKey.name.split(':')[3];
         expect(kvKey.metadata).toEqual({
@@ -68,7 +68,7 @@ describe('invalidate.test.ts', () => {
       }
 
       const keys = [];
-      for await (const kvKey of _getAllKvKeysForPrefix('vitest', config)) {
+      for await (const kvKey of getAllKvKeysForPrefix('vitest', config)) {
         keys.push(kvKey);
         const indexId = kvKey.name.split(':')[3];
         expect(kvKey.metadata).toEqual({
@@ -89,7 +89,7 @@ describe('invalidate.test.ts', () => {
 
     async function collectAllKeys(prefix: string) {
       const keys = [];
-      for await (const kvKey of _getAllKvKeysForPrefix(prefix, config)) {
+      for await (const kvKey of getAllKvKeysForPrefix(prefix, config)) {
         keys.push(kvKey);
       }
       return keys;
