@@ -56,6 +56,8 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20231025.0",
     "@envelop/response-cache": "^6.1.0",
+    "jest-environment-miniflare": "^2.14.1",
+    "ts-jest": "29.1.1",
     "typescript": "^5.2.2"
   },
   "publishConfig": {
@@ -63,6 +65,7 @@
     "access": "public"
   },
   "sideEffects": false,
+  "bob": {},
   "buildOptions": {
     "input": "./src/index.ts"
   },

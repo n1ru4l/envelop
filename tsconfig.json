@@ -3,7 +3,7 @@
     "incremental": true,
     "baseUrl": ".",
     "outDir": "dist",
-    "rootDir": "packages",
+    "rootDir": ".",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "importHelpers": true,
