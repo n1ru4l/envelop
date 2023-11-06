@@ -33,4 +33,5 @@ module.exports = {
     wranglerConfigPath: `${resolve(ROOT_DIR)}/wrangler.jest.toml`,
     bindings: { ENVIRONMENT: 'testing' },
   },
+  resolver: 'bob-the-bundler/jest-resolver',
 };

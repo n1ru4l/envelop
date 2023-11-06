@@ -1,4 +1,4 @@
-import { buildEntityKey, buildOperationKey } from '../src/cache-key';
+import { buildEntityKey, buildOperationKey } from '../src/cache-key.js';
 
 describe('cacheKey.spec.ts', () => {
   describe('buildOperationKey', () => {

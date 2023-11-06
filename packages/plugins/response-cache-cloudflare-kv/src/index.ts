@@ -1,9 +1,9 @@
 import type { ExecutionResult } from 'graphql';
 import type { ExecutionContext, KVNamespace } from '@cloudflare/workers-types';
 import type { Cache, CacheEntityRecord } from '@envelop/response-cache';
-import { buildOperationKey } from './cache-key';
-import { invalidate } from './invalidate';
-import { set } from './set';
+import { buildOperationKey } from './cache-key.js';
+import { invalidate } from './invalidate.js';
+import { set } from './set.js';
 
 export type KvCacheConfig = {
   /**
