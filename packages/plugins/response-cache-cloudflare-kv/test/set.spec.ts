@@ -1,9 +1,9 @@
 import { ExecutionResult } from 'graphql';
 import type { ExecutionContext, KVNamespace } from '@cloudflare/workers-types';
-import { KvCacheConfig } from '../src/';
-import { buildEntityKey, buildOperationKey } from '../src/cache-key';
-import { _getAllKvKeysForPrefix } from '../src/invalidate';
-import { set } from '../src/set';
+import { buildEntityKey, buildOperationKey } from '../src/cache-key.js';
+import { KvCacheConfig } from '../src/index.js';
+import { _getAllKvKeysForPrefix } from '../src/invalidate.js';
+import { set } from '../src/set.js';
 
 type Env = {
   ENVIRONMENT: 'testing' | 'development' | 'production';
