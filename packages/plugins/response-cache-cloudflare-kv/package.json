@@ -7,7 +7,10 @@
     "url": "https://github.com/n1ru4l/envelop.git",
     "directory": "packages/plugins/response-cache-cloudflare-kv"
   },
-  "author": "Adishwar Rishi <adiswa123@gmail.com>",
+  "author": {
+    "name": "Adishwar Rishi",
+    "url": "https://github.com/AdiRishi"
+  },
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
