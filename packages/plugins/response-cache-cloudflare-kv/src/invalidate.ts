@@ -7,19 +7,29 @@ export async function invalidate(
   config: KvCacheConfig,
 ): Promise<void> {
   const kvPromises: Promise<unknown>[] = []; // Collecting all the KV operations so we can await them all at once
+  const entityInvalidationPromises: Promise<unknown>[] = []; // Parallelize invalidation of each entity
 
   for (const entity of entities) {
-    const entityKey = buildEntityKey(entity.typename, entity.id, config.keyPrefix);
+    entityInvalidationPromises.push(invalidateCacheEntityRecord(entity, kvPromises, config));
+  }
+  await Promise.allSettled(entityInvalidationPromises);
+  await Promise.allSettled(kvPromises);
+}
 
-    for await (const kvKey of getAllKvKeysForPrefix(entityKey, config)) {
-      if (kvKey.metadata?.operationKey) {
-        kvPromises.push(config.KV.delete(kvKey.metadata?.operationKey));
-        kvPromises.push(config.KV.delete(kvKey.name));
-      }
+export async function invalidateCacheEntityRecord(
+  entity: CacheEntityRecord,
+  /** Collect all inner promises to batch await all async operations outside the function */
+  kvPromiseCollection: Promise<unknown>[],
+  config: KvCacheConfig,
+) {
+  const entityKey = buildEntityKey(entity.typename, entity.id, config.keyPrefix);
+
+  for await (const kvKey of getAllKvKeysForPrefix(entityKey, config)) {
+    if (kvKey.metadata?.operationKey) {
+      kvPromiseCollection.push(config.KV.delete(kvKey.metadata?.operationKey));
+      kvPromiseCollection.push(config.KV.delete(kvKey.name));
     }
   }
-
-  await Promise.allSettled(kvPromises);
 }
 
 export async function* getAllKvKeysForPrefix(prefix: string, config: KvCacheConfig) {
