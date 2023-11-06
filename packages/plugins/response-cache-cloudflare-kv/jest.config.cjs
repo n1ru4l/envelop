@@ -8,7 +8,6 @@ const TSCONFIG = resolve(ROOT_DIR, '../../../', 'tsconfig.json');
 const PROJECT_ROOT = resolve(ROOT_DIR, '../../../');
 const tsconfig = require(TSCONFIG);
 
-// eslint-disable-next-line import/no-default-export
 /** @type {import('jest').Config} */
 module.exports = {
   testEnvironment: 'miniflare',
