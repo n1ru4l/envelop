@@ -46,8 +46,8 @@ importers:
         specifier: 2.0.1
         version: 2.0.1(prettier@3.0.3)
       '@types/benchmark':
-        specifier: 2.1.4
-        version: 2.1.4
+        specifier: 2.1.5
+        version: 2.1.5
       '@types/jest':
         specifier: 29.5.7
         version: 29.5.7
@@ -508,8 +508,8 @@ importers:
         version: 1.13.0(graphql@16.6.0)
     devDependencies:
       '@types/aws-lambda':
-        specifier: 8.10.125
-        version: 8.10.125
+        specifier: 8.10.126
+        version: 8.10.126
       '@types/node':
         specifier: 20.8.10
         version: 20.8.10
@@ -6958,8 +6958,8 @@ packages:
       '@types/estree': 0.0.50
     dev: false
 
-  /@types/aws-lambda@8.10.125:
-    resolution: {integrity: sha512-Vqw/WMlV4O1fJT6capim01v7VLDZkcX1n6Yhb52E7IfnMqYbNfwHfyDV8rRN42NLBtdDvfaqcCqs2K0fr5ljZw==}
+  /@types/aws-lambda@8.10.126:
+    resolution: {integrity: sha512-5eh4ffLdGYgGYI1Xr6W5L4IVse4RR7L2ns5OVUXA52nW5GFapIcGMcCzHAIMMOdpcQs3aGVxbvFlJNZH6IpgEQ==}
     dev: true
 
   /@types/babel__core@7.1.14:
@@ -6991,8 +6991,8 @@ packages:
       '@babel/types': 7.23.0
     dev: true
 
-  /@types/benchmark@2.1.4:
-    resolution: {integrity: sha512-rVCCileCU5NhP9Ix1e03sIn4gd0mpjh7VNULVQAxzF+9vddk6A5QAHzp2h5kXH8pkv1Ow45fUf3QP3wOEiISvA==}
+  /@types/benchmark@2.1.5:
+    resolution: {integrity: sha512-cKio2eFB3v7qmKcvIHLUMw/dIx/8bhWPuzpzRT4unCPRTD8VdA9Zb0afxpcxOqR4PixRS7yT42FqGS8BYL8g1w==}
     dev: true
 
   /@types/body-parser@1.19.2:
