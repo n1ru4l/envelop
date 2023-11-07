@@ -59,7 +59,7 @@
     "@envelop/core": "^5.0.0",
     "@graphql-tools/schema": "^10.0.0",
     "@newrelic/test-utilities": "6.5.5",
-    "@types/newrelic": "9.14.2",
+    "@types/newrelic": "9.14.3",
     "graphql": "16.8.1",
     "newrelic": "^11.0.0",
     "typescript": "4.9.5"

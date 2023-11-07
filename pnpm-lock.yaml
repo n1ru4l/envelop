@@ -52,8 +52,8 @@ importers:
         specifier: 29.5.7
         version: 29.5.7
       '@types/k6':
-        specifier: 0.47.1
-        version: 0.47.1
+        specifier: 0.47.2
+        version: 0.47.2
       '@types/node':
         specifier: 20.8.10
         version: 20.8.10
@@ -77,13 +77,13 @@ importers:
         version: 9.0.0(eslint@8.53.0)
       eslint-config-standard:
         specifier: 17.1.0
-        version: 17.1.0(eslint-plugin-import@2.29.0)(eslint-plugin-n@16.2.0)(eslint-plugin-promise@6.1.1)(eslint@8.53.0)
+        version: 17.1.0(eslint-plugin-import@2.29.0)(eslint-plugin-n@16.3.0)(eslint-plugin-promise@6.1.1)(eslint@8.53.0)
       eslint-plugin-import:
         specifier: 2.29.0
         version: 2.29.0(@typescript-eslint/parser@6.10.0)(eslint@8.53.0)
       eslint-plugin-n:
-        specifier: 16.2.0
-        version: 16.2.0(eslint@8.53.0)
+        specifier: 16.3.0
+        version: 16.3.0(eslint@8.53.0)
       eslint-plugin-package-json:
         specifier: ^0.2.0
         version: 0.2.0(eslint@8.53.0)
@@ -790,8 +790,8 @@ importers:
         specifier: ^5.0.0
         version: link:../../core/dist
       '@types/jsonwebtoken':
-        specifier: 9.0.4
-        version: 9.0.4
+        specifier: 9.0.5
+        version: 9.0.5
       typescript:
         specifier: 5.1.3
         version: 5.1.3
@@ -836,8 +836,8 @@ importers:
         specifier: ^5.0.0
         version: link:../../core/dist
       '@types/graphql-depth-limit':
-        specifier: 1.1.5
-        version: 1.1.5
+        specifier: 1.1.6
+        version: 1.1.6
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -939,8 +939,8 @@ importers:
         specifier: 10.0.8
         version: 10.0.8(graphql@16.6.0)
       '@types/common-tags':
-        specifier: 1.8.3
-        version: 1.8.3
+        specifier: 1.8.4
+        version: 1.8.4
       common-tags:
         specifier: 1.8.2
         version: 1.8.2
@@ -1136,8 +1136,8 @@ importers:
         specifier: 6.5.5
         version: 6.5.5
       '@types/newrelic':
-        specifier: 9.14.2
-        version: 9.14.2
+        specifier: 9.14.3
+        version: 9.14.3
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -6957,8 +6957,8 @@ packages:
       '@types/node': 20.8.10
     dev: false
 
-  /@types/common-tags@1.8.3:
-    resolution: {integrity: sha512-v3smfzf7umSwpkJrmlUe+apSv6bVnrIFCeBeprnP4f8lIh6pECZxyD50e8yFwfouIt85TdxN5yXiFwS5fnsS3w==}
+  /@types/common-tags@1.8.4:
+    resolution: {integrity: sha512-S+1hLDJPjWNDhcGxsxEbepzaxWqURP/o+3cP4aa2w7yBXgdcmKGQtZzP8JbyfOd0m+33nh+8+kvxYE2UJtBDkg==}
     dev: true
 
   /@types/concat-stream@1.6.1:
@@ -7050,8 +7050,8 @@ packages:
       '@types/node': 20.8.10
     dev: true
 
-  /@types/graphql-depth-limit@1.1.5:
-    resolution: {integrity: sha512-nhXDaJ+4gCtse2VhsJX4cCcoPtXRYhy0RcBFlW74TOihxaNZR1g86FRvffdhAyQiIqJt+lsretqlyn+XEdqgig==}
+  /@types/graphql-depth-limit@1.1.6:
+    resolution: {integrity: sha512-WU4bjoKOzJ8CQE32Pbyq+YshTMcLJf2aJuvVtSLv1BQPwDUGa38m2Vr8GGxf0GZ0luCQcfxlhZeHKu6nmTBvrw==}
     dependencies:
       graphql: 16.6.0
     dev: true
@@ -7114,13 +7114,13 @@ packages:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
 
-  /@types/jsonwebtoken@9.0.4:
-    resolution: {integrity: sha512-8UYapdmR0QlxgvJmyE8lP7guxD0UGVMfknsdtCFZh4ovShdBl3iOI4zdvqBHrB/IS+xUj3PSx73Qkey1fhWz+g==}
+  /@types/jsonwebtoken@9.0.5:
+    resolution: {integrity: sha512-VRLSGzik+Unrup6BsouBeHsf4d1hOEgYWTm/7Nmw1sXoN1+tRly/Gy/po3yeahnP4jfnQWWAhQAqcNfH7ngOkA==}
     dependencies:
       '@types/node': 20.8.10
 
-  /@types/k6@0.47.1:
-    resolution: {integrity: sha512-dQCSM3WT4f5MWCyyxmY/fO+BSYS217nvlvOhDvqg4lZGfzbAuS6pOG+UuwoH+3mLTChccEds+0Q0q7YWBbtgMQ==}
+  /@types/k6@0.47.2:
+    resolution: {integrity: sha512-y0G+eSttCYzKKqVd8/G7erAPTTTJCpIqnVbms6tuJ35VCMrBHJuwT5+LNxG3dKtOjMadbuAWw4/3LtFeeTdK2A==}
     dev: true
 
   /@types/katex@0.11.1:
@@ -7191,8 +7191,8 @@ packages:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: false
 
-  /@types/newrelic@9.14.2:
-    resolution: {integrity: sha512-yTzpDiDMvw4PZVnqL3UzEp0iEJT7VsAryirrh0Rpq8uVxALBJs1PKgyHpgD06StIQcvOCMGmUtgSx1DowPuKhw==}
+  /@types/newrelic@9.14.3:
+    resolution: {integrity: sha512-mMQptlvOQXCDPHo2xzi8VK3ytYNIaVO41iGPVPckTbL8lrHsjy4+67c8Ui3iBtwu5/ugImnLAU7Gv+900krD3g==}
     dev: true
 
   /@types/node-fetch@2.6.2:
@@ -10558,7 +10558,7 @@ packages:
       eslint: 8.53.0
     dev: true
 
-  /eslint-config-standard@17.1.0(eslint-plugin-import@2.29.0)(eslint-plugin-n@16.2.0)(eslint-plugin-promise@6.1.1)(eslint@8.53.0):
+  /eslint-config-standard@17.1.0(eslint-plugin-import@2.29.0)(eslint-plugin-n@16.3.0)(eslint-plugin-promise@6.1.1)(eslint@8.53.0):
     resolution: {integrity: sha512-IwHwmaBNtDK4zDHQukFDW5u/aTb8+meQWZvNFWkiGmbWjD6bqyuSSBxxXKkCftCUzc1zwCH2m/baCNDLGmuO5Q==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -10569,7 +10569,7 @@ packages:
     dependencies:
       eslint: 8.53.0
       eslint-plugin-import: 2.29.0(@typescript-eslint/parser@6.10.0)(eslint@8.53.0)
-      eslint-plugin-n: 16.2.0(eslint@8.53.0)
+      eslint-plugin-n: 16.3.0(eslint@8.53.0)
       eslint-plugin-promise: 6.1.1(eslint@8.53.0)
     dev: true
 
@@ -10658,8 +10658,8 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-plugin-n@16.2.0(eslint@8.53.0):
-    resolution: {integrity: sha512-AQER2jEyQOt1LG6JkGJCCIFotzmlcCZFur2wdKrp1JX2cNotC7Ae0BcD/4lLv3lUAArM9uNS8z/fsvXTd0L71g==}
+  /eslint-plugin-n@16.3.0(eslint@8.53.0):
+    resolution: {integrity: sha512-/XZLH5CUXGK3laz3xYFNza8ZxLCq8ZNW6MsVw5z3d5hc2AwZzi0fPiySFZHQTdVDOHGs2cGv91aqzWmgBdq2gQ==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       eslint: '>=7.0.0'
@@ -10670,9 +10670,9 @@ packages:
       eslint-plugin-es-x: 7.2.0(eslint@8.53.0)
       get-tsconfig: 4.7.2
       ignore: 5.2.4
-      is-core-module: 2.13.0
+      is-core-module: 2.13.1
       minimatch: 3.1.2
-      resolve: 1.22.2
+      resolve: 1.22.8
       semver: 7.5.4
     dev: true
 
@@ -12875,18 +12875,6 @@ packages:
       ci-info: 3.8.0
     dev: true
 
-  /is-core-module@2.12.1:
-    resolution: {integrity: sha512-Q4ZuBAe2FUsKtyQJoQHlvP8OvBERxO3jEmy1I7hcRXcJBGGHFh/aJBswbXuS9sgrDH2QUO8ilkwNPHvHMd8clg==}
-    dependencies:
-      has: 1.0.3
-    dev: true
-
-  /is-core-module@2.13.0:
-    resolution: {integrity: sha512-Z7dk6Qo8pOCp3l4tsX2C5ZVas4V+UxwQodwZhLopL91TX8UyyHEXafPcyoeeWuLrwzHcr3igO78wNLwHJHsMCQ==}
-    dependencies:
-      has: 1.0.3
-    dev: true
-
   /is-core-module@2.13.1:
     resolution: {integrity: sha512-hHrIjvZsftOsvKSn2TRYl63zvxsgE0K+0mYMoH6gD4omR5IWB2KynivBQczo3+wF1cCkjzvptnI9Q0sPU66ilw==}
     dependencies:
@@ -13863,7 +13851,7 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       '@types/express': 4.17.17
-      '@types/jsonwebtoken': 9.0.4
+      '@types/jsonwebtoken': 9.0.5
       debug: 4.3.4
       jose: 4.12.0
       limiter: 1.1.5
@@ -17486,7 +17474,7 @@ packages:
     resolution: {integrity: sha512-Sb+mjNHOULsBv818T40qSPeRiuWLyaGMa5ewydRLFimneixmVy2zdivRl+AF6jaYPC8ERxGDmFSiqui6SfPd+g==}
     hasBin: true
     dependencies:
-      is-core-module: 2.12.1
+      is-core-module: 2.13.1
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
     dev: true
