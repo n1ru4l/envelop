@@ -170,9 +170,9 @@ In order to use the Cloudflare KV cache, you need to:
 The example below demonstrates how to use this with graphql-yoga within a Cloudflare Worker script.
 
 ```ts
-import { createKvCache } from 'envelop-response-cache-cloudflare-kv'
 import { createSchema, createYoga, YogaInitialContext } from 'graphql-yoga'
 import { useResponseCache } from '@envelop/response-cache'
+import { createKvCache } from '@envelop/response-cache-cloudflare-kv'
 import { resolvers } from './graphql-schema/resolvers.generated'
 import { typeDefs } from './graphql-schema/typeDefs.generated'
 
