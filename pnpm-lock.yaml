@@ -498,8 +498,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       aws-sdk:
-        specifier: 2.1490.0
-        version: 2.1490.0
+        specifier: 2.1491.0
+        version: 2.1491.0
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -1432,14 +1432,14 @@ importers:
         specifier: 10.0.0
         version: 10.0.0(graphql@16.6.0)
       '@sentry/node':
-        specifier: 7.78.0
-        version: 7.78.0
+        specifier: 7.79.0
+        version: 7.79.0
       '@sentry/tracing':
-        specifier: 7.78.0
-        version: 7.78.0
+        specifier: 7.79.0
+        version: 7.79.0
       '@sentry/types':
-        specifier: 7.78.0
-        version: 7.78.0
+        specifier: 7.79.0
+        version: 7.79.0
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -6238,13 +6238,13 @@ packages:
   /@repeaterjs/repeater@3.0.5:
     resolution: {integrity: sha512-l3YHBLAol6d/IKnB9LhpD0cEZWAoe3eFKUyTYWmFmCO2Q/WOckxLQAUyMZWwZV2M/m3+4vgRoaolFqaII82/TA==}
 
-  /@sentry-internal/tracing@7.78.0:
-    resolution: {integrity: sha512-53wf+HWyjiansZ0U+q7Q7U2kEjXfL/C8+XOwE4ntLVPGFyvxuYaRUb8OEYFNTsODf20ihnxOLZ+GsXXPlqPfFA==}
+  /@sentry-internal/tracing@7.79.0:
+    resolution: {integrity: sha512-Mf9Bd0OrZ24h1qZpvmz9IRnfORMGYNYC1xWBBFpIR1AauEDX89x+mJwIOrUc4KKAAAwt73shrJv1QA8QOm4E3g==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/core': 7.78.0
-      '@sentry/types': 7.78.0
-      '@sentry/utils': 7.78.0
+      '@sentry/core': 7.79.0
+      '@sentry/types': 7.79.0
+      '@sentry/utils': 7.79.0
     dev: true
 
   /@sentry/core@6.0.0:
@@ -6258,12 +6258,12 @@ packages:
       tslib: 1.11.1
     dev: false
 
-  /@sentry/core@7.78.0:
-    resolution: {integrity: sha512-cf8U+1cNkIK14KC5ySXtzu4RW5Veto3lqkS95Rbl4ExUsrVsfansFNH63j6Bvu7UbJlBRK67uf6Ug2GBbUBUIg==}
+  /@sentry/core@7.79.0:
+    resolution: {integrity: sha512-9vG7SfOcJNJNiqlqg4MuHDUCaSf2ZXpv3eZYRPbBkgPGr8X1ekrSABpOK+6kBNvbtKxfWVTWbLpAA6xU+cwnVw==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.78.0
-      '@sentry/utils': 7.78.0
+      '@sentry/types': 7.79.0
+      '@sentry/utils': 7.79.0
     dev: true
 
   /@sentry/hub@6.0.0:
@@ -6301,14 +6301,14 @@ packages:
       - supports-color
     dev: false
 
-  /@sentry/node@7.78.0:
-    resolution: {integrity: sha512-gCImN1McfAObOvwgHTef2RZaifcgKt8oqCmctk9MczLJOqjOSzuaigNiCwvyvioe5Eq9jqbZomO6Qx/sG+1gpQ==}
+  /@sentry/node@7.79.0:
+    resolution: {integrity: sha512-7kZpYG5hGyt3JhEfo9YtEhbUMwFOzNRQqL/weKgHSyFXU20VcScorceKG2Hynn0rhdAZR6GfdKHsM4kFQvgmtg==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry-internal/tracing': 7.78.0
-      '@sentry/core': 7.78.0
-      '@sentry/types': 7.78.0
-      '@sentry/utils': 7.78.0
+      '@sentry-internal/tracing': 7.79.0
+      '@sentry/core': 7.79.0
+      '@sentry/types': 7.79.0
+      '@sentry/utils': 7.79.0
       https-proxy-agent: 5.0.1
     transitivePeerDependencies:
       - supports-color
@@ -6325,11 +6325,11 @@ packages:
       tslib: 1.11.1
     dev: false
 
-  /@sentry/tracing@7.78.0:
-    resolution: {integrity: sha512-NSWJZP6upHMYVGqE/4hbKHroqLOr+XjNS37MwXvip3trpIT7GK3JEGXrbkZAsmGhNiGWW3IYXAK169bL0gwX7w==}
+  /@sentry/tracing@7.79.0:
+    resolution: {integrity: sha512-Y1awpIcMKCsTpC3wS+SaEJTcOMd6OugZZXCV2r9ozBIRKE7wG//ntDX3ApcRf4kbDzQMJY2Ylu0QKDIyNEAr0g==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry-internal/tracing': 7.78.0
+      '@sentry-internal/tracing': 7.79.0
     dev: true
 
   /@sentry/types@6.0.0:
@@ -6337,8 +6337,8 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /@sentry/types@7.78.0:
-    resolution: {integrity: sha512-XNyu6EFTrXmKlVgKHOxGdBJ6Aw7BnMBWtptr5TPOQJ4kh+rP+4DB3I6nafcSSUbIsO+hBVgBpj0J8R3Ps86CMQ==}
+  /@sentry/types@7.79.0:
+    resolution: {integrity: sha512-3tV32+v/DF8w7kD0p3kLWtgVTVdFL39oGY02+vz//rjWg/vzeqSE95mCYKm5pUfd6cPETX/8dunCiuTBQIkTHQ==}
     engines: {node: '>=8'}
     dev: true
 
@@ -6350,11 +6350,11 @@ packages:
       tslib: 1.11.1
     dev: false
 
-  /@sentry/utils@7.78.0:
-    resolution: {integrity: sha512-vxPZaMTthMgEgKvlkuqD9rQuQ4Q8fsWAuOuzeuwUbrVCBIeM/WpmyjUUx4ozy6axNGXSXGE4CzrEQUNv3+t9kQ==}
+  /@sentry/utils@7.79.0:
+    resolution: {integrity: sha512-tUTlb6PvfZawqBmBK9CPXflqrZDXHKWoX3fve2zLK6W0FSpIMOO4TH8PBqkHBFs0ZgF/bnv/bsM4z7uEAlAtzg==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.78.0
+      '@sentry/types': 7.79.0
     dev: true
 
   /@sideway/address@4.1.3:
@@ -8296,8 +8296,8 @@ packages:
       - supports-color
     dev: false
 
-  /aws-sdk@2.1490.0:
-    resolution: {integrity: sha512-nRVP1+JVGHytxrPpc+6I41lTILzYeTOBAdNbgCi5bwRPrnEr/DxunyHWbGh92qupfHbm9dFcKdao4pOMPDOcVA==}
+  /aws-sdk@2.1491.0:
+    resolution: {integrity: sha512-RzoKhNJCqZSq6rVP/ZZJOjOEVgLiwJx9vsN1pc9MO9ukyJpLsiufJWXXiWVNhICvVsEUcvhSe0YnZJQlZ4NTPQ==}
     engines: {node: '>= 10.0.0'}
     dependencies:
       buffer: 4.9.2
