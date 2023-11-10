@@ -77,13 +77,13 @@ importers:
         version: 9.0.0(eslint@8.53.0)
       eslint-config-standard:
         specifier: 17.1.0
-        version: 17.1.0(eslint-plugin-import@2.29.0)(eslint-plugin-n@16.3.0)(eslint-plugin-promise@6.1.1)(eslint@8.53.0)
+        version: 17.1.0(eslint-plugin-import@2.29.0)(eslint-plugin-n@16.3.1)(eslint-plugin-promise@6.1.1)(eslint@8.53.0)
       eslint-plugin-import:
         specifier: 2.29.0
         version: 2.29.0(@typescript-eslint/parser@6.10.0)(eslint@8.53.0)
       eslint-plugin-n:
-        specifier: 16.3.0
-        version: 16.3.0(eslint@8.53.0)
+        specifier: 16.3.1
+        version: 16.3.1(eslint@8.53.0)
       eslint-plugin-package-json:
         specifier: ^0.2.0
         version: 0.2.0(eslint@8.53.0)
@@ -10624,7 +10624,7 @@ packages:
       eslint: 8.53.0
     dev: true
 
-  /eslint-config-standard@17.1.0(eslint-plugin-import@2.29.0)(eslint-plugin-n@16.3.0)(eslint-plugin-promise@6.1.1)(eslint@8.53.0):
+  /eslint-config-standard@17.1.0(eslint-plugin-import@2.29.0)(eslint-plugin-n@16.3.1)(eslint-plugin-promise@6.1.1)(eslint@8.53.0):
     resolution: {integrity: sha512-IwHwmaBNtDK4zDHQukFDW5u/aTb8+meQWZvNFWkiGmbWjD6bqyuSSBxxXKkCftCUzc1zwCH2m/baCNDLGmuO5Q==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -10635,7 +10635,7 @@ packages:
     dependencies:
       eslint: 8.53.0
       eslint-plugin-import: 2.29.0(@typescript-eslint/parser@6.10.0)(eslint@8.53.0)
-      eslint-plugin-n: 16.3.0(eslint@8.53.0)
+      eslint-plugin-n: 16.3.1(eslint@8.53.0)
       eslint-plugin-promise: 6.1.1(eslint@8.53.0)
     dev: true
 
@@ -10724,8 +10724,8 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-plugin-n@16.3.0(eslint@8.53.0):
-    resolution: {integrity: sha512-/XZLH5CUXGK3laz3xYFNza8ZxLCq8ZNW6MsVw5z3d5hc2AwZzi0fPiySFZHQTdVDOHGs2cGv91aqzWmgBdq2gQ==}
+  /eslint-plugin-n@16.3.1(eslint@8.53.0):
+    resolution: {integrity: sha512-w46eDIkxQ2FaTHcey7G40eD+FhTXOdKudDXPUO2n9WNcslze/i/HT2qJ3GXjHngYSGDISIgPNhwGtgoix4zeOw==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       eslint: '>=7.0.0'
@@ -10736,6 +10736,7 @@ packages:
       eslint-plugin-es-x: 7.2.0(eslint@8.53.0)
       get-tsconfig: 4.7.2
       ignore: 5.2.4
+      is-builtin-module: 3.2.1
       is-core-module: 2.13.1
       minimatch: 3.1.2
       resolve: 1.22.8
