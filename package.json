@@ -19,7 +19,7 @@
     "prepare": "husky install",
     "prettier": "prettier --cache --ignore-path .prettierignore --write --list-different .",
     "release": "pnpm build && changeset publish",
-    "test": "jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:ci": "jest --coverage",
     "test:core": "jest ./packages/core --coverage",
     "ts:check": "tsc --noEmit"
