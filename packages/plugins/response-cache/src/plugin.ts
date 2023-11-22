@@ -331,9 +331,8 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           [MapperKind.COMPOSITE_TYPE]: type => {
             const cacheControlAnnotations = getDirective(schema, type, 'cacheControl');
             cacheControlAnnotations?.forEach(cacheControl => {
-              const ttl = cacheControl.maxAge * 1000;
-              if (ttl != null) {
-                ttlPerType[type.name] = ttl;
+              if (cacheControl.maxAge != null) {
+                ttlPerType[type.name] = cacheControl.maxAge * 1000;
               }
               if (cacheControl.scope) {
                 scopePerSchemaCoordinate[`${type.name}`] = cacheControl.scope;
@@ -354,9 +353,8 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           if (cacheControlDirective) {
             const cacheControlAnnotations = getDirective(schema, fieldConfig, 'cacheControl');
             cacheControlAnnotations?.forEach(cacheControl => {
-              const ttl = cacheControl.maxAge * 1000;
-              if (ttl != null) {
-                ttlPerSchemaCoordinate[schemaCoordinates] = ttl;
+              if (cacheControl.maxAge != null) {
+                ttlPerSchemaCoordinate[schemaCoordinates] = cacheControl.maxAge * 1000;
               }
               if (cacheControl.scope) {
                 scopePerSchemaCoordinate[schemaCoordinates] = cacheControl.scope;
@@ -410,7 +408,10 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
           types.add(typename);
           if (typename in ttlPerType) {
-            currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
+            const maybeTtl = ttlPerType[typename] as number | undefined;
+            if (maybeTtl != null && Number.isNaN(maybeTtl) === false) {
+              currentTtl = calculateTtl(maybeTtl, currentTtl);
+            }
           }
           if (entityId != null) {
             identifier.set(`${typename}:${entityId}`, { typename, id: entityId });
@@ -492,8 +493,8 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
               const parentType = typeInfo.getParentType();
               if (parentType) {
                 const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
-                const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate];
-                if (maybeTtl !== undefined) {
+                const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate] as number | undefined;
+                if (maybeTtl != null && Number.isNaN(maybeTtl) === false) {
                   currentTtl = calculateTtl(maybeTtl, currentTtl);
                 }
               }
