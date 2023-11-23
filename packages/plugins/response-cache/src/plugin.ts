@@ -17,6 +17,7 @@ import {
   Maybe,
   ObjMap,
   OnExecuteDoneHookResult,
+  OnExecuteHookResult,
   Plugin,
 } from '@envelop/core';
 import {
@@ -375,11 +376,35 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       }
       const identifier = new Map<string, CacheEntityRecord>();
       const types = new Set<string>();
+      let currentTtl: number | undefined;
+      let skip = false;
 
       const sessionId = session(onExecuteParams.args.contextValue);
 
-      let currentTtl: number | undefined;
-      let skip = false;
+      function setExecutor({
+        execute,
+        onExecuteDone,
+      }: {
+        execute: typeof onExecuteParams.executeFn;
+        onExecuteDone?: OnExecuteHookResult<PluginContext>['onExecuteDone'];
+      }): OnExecuteHookResult<PluginContext> {
+        let executed = false;
+        onExecuteParams.setExecuteFn(args => {
+          executed = true;
+          return execute(args);
+        });
+        return {
+          onExecuteDone(params) {
+            if (!executed) {
+              // eslint-disable-next-line no-console
+              console.warn(
+                '[useResponseCache] The cached execute function was not called, another plugin might have overwritten it. Please check your plugin order.',
+              );
+            }
+            return onExecuteDone?.(params);
+          },
+        };
+      }
 
       function processResult(data: any) {
         if (data == null || typeof data !== 'object') {
@@ -452,16 +477,16 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         );
 
         if (operationAST?.operation === 'mutation') {
-          onExecuteParams.setExecuteFn(args => {
-            const [document] = getDocumentWithMetadataAndTTL(
-              args.document,
-              documentMetadataOptions.mutations,
-              args.schema,
-              idFieldByTypeName,
-            );
-            return onExecuteParams.executeFn({ ...args, document });
-          });
-          return {
+          return setExecutor({
+            execute(args) {
+              const [document] = getDocumentWithMetadataAndTTL(
+                args.document,
+                documentMetadataOptions.mutations,
+                args.schema,
+                idFieldByTypeName,
+              );
+              return onExecuteParams.executeFn({ ...args, document });
+            },
             onExecuteDone({ result, setResult }) {
               if (isAsyncIterable(result)) {
                 return handleAsyncIterableResult(invalidateCache);
@@ -469,7 +494,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
               return invalidateCache(result, setResult);
             },
-          };
+          });
         }
       }
 
@@ -484,12 +509,12 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       const cachedResponse = (await cache.get(cacheKey)) as ResponseCacheExecutionResult;
 
       if (cachedResponse != null) {
-        onExecuteParams.setExecuteFn(() => {
-          return includeExtensionMetadata
-            ? resultWithMetadata(cachedResponse, { hit: true })
-            : cachedResponse;
+        return setExecutor({
+          execute: () =>
+            includeExtensionMetadata
+              ? resultWithMetadata(cachedResponse, { hit: true })
+              : cachedResponse,
         });
-        return;
       }
 
       function maybeCacheResult(
@@ -513,18 +538,17 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         }
       }
 
-      onExecuteParams.setExecuteFn(args => {
-        const [document, ttl] = getDocumentWithMetadataAndTTL(
-          args.document,
-          documentMetadataOptions.queries,
-          schema,
-          idFieldByTypeName,
-        );
-        currentTtl = ttl;
-        return onExecuteParams.executeFn({ ...args, document });
-      });
-
-      return {
+      return setExecutor({
+        execute(args) {
+          const [document, ttl] = getDocumentWithMetadataAndTTL(
+            args.document,
+            documentMetadataOptions.queries,
+            schema,
+            idFieldByTypeName,
+          );
+          currentTtl = ttl;
+          return onExecuteParams.executeFn({ ...args, document });
+        },
         onExecuteDone({ result, setResult }) {
           if (isAsyncIterable(result)) {
             return handleAsyncIterableResult(maybeCacheResult);
@@ -532,7 +556,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
           return maybeCacheResult(result, setResult);
         },
-      };
+      });
     },
   };
 }
