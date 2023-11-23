@@ -304,7 +304,10 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
   // never cache Introspections
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
-  const addTypeNameToDocumentOpts = { invalidateViaMutation, ttlPerSchemaCoordinate };
+  const documentMetadataOptions = {
+    queries: { invalidateViaMutation, ttlPerSchemaCoordinate },
+    mutations: { invalidateViaMutation }, // remove ttlPerSchemaCoordinate for mutations to skip TTL calculation
+  };
   const idFieldByTypeName = new Map<string, string>();
   let schema: any;
 
@@ -452,7 +455,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           onExecuteParams.setExecuteFn(args => {
             const [document] = getDocumentWithMetadataAndTTL(
               args.document,
-              { invalidateViaMutation },
+              documentMetadataOptions.mutations,
               args.schema,
               idFieldByTypeName,
             );
@@ -481,11 +484,11 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       const cachedResponse = (await cache.get(cacheKey)) as ResponseCacheExecutionResult;
 
       if (cachedResponse != null) {
-        onExecuteParams.setExecuteFn(() =>
-          includeExtensionMetadata
+        onExecuteParams.setExecuteFn(() => {
+          return includeExtensionMetadata
             ? resultWithMetadata(cachedResponse, { hit: true })
-            : cachedResponse,
-        );
+            : cachedResponse;
+        });
         return;
       }
 
@@ -510,10 +513,10 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         }
       }
 
-      onExecuteParams.setExecuteFn(async args => {
+      onExecuteParams.setExecuteFn(args => {
         const [document, ttl] = getDocumentWithMetadataAndTTL(
           args.document,
-          addTypeNameToDocumentOpts,
+          documentMetadataOptions.queries,
           schema,
           idFieldByTypeName,
         );
