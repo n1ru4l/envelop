@@ -1,5 +1,6 @@
 import jsonStableStringify from 'fast-json-stable-stringify';
 import {
+  ASTVisitor,
   DocumentNode,
   ExecutionArgs,
   getOperationAST,
@@ -205,63 +206,77 @@ export type ResponseCacheExecutionResult = ExecutionResult<
   { responseCache?: ResponseCacheExtensions }
 >;
 
-const originalDocumentMap = new WeakMap<DocumentNode, DocumentNode>();
-const addEntityInfosToDocument = memoize4(function addTypeNameToDocument(
+const getDocumentWithMetadataAndTTL = memoize4(function addTypeNameToDocument(
   document: DocumentNode,
-  addTypeNameToDocumentOpts: { invalidateViaMutation: boolean },
+  {
+    invalidateViaMutation,
+    ttlPerSchemaCoordinate,
+  }: {
+    invalidateViaMutation: boolean;
+    ttlPerSchemaCoordinate?: Record<string, number | undefined>;
+  },
   schema: any,
   idFieldByTypeName: Map<string, string>,
-): DocumentNode {
+): [DocumentNode, number | undefined] {
   const typeInfo = new TypeInfo(schema);
-  const newDocument = visit(
-    document,
-    visitWithTypeInfo(typeInfo, {
-      OperationDefinition: {
-        enter(node): void | false {
-          if (!addTypeNameToDocumentOpts.invalidateViaMutation && node.operation === 'mutation') {
-            return false;
-          }
-          if (node.operation === 'subscription') {
-            return false;
-          }
-        },
+  let ttl: number | undefined;
+  const visitor: ASTVisitor = {
+    OperationDefinition: {
+      enter(node): void | false {
+        if (!invalidateViaMutation && node.operation === 'mutation') {
+          return false;
+        }
+        if (node.operation === 'subscription') {
+          return false;
+        }
       },
-      SelectionSet(node, _key) {
+    },
+    ...(ttlPerSchemaCoordinate != null && {
+      Field(fieldNode) {
         const parentType = typeInfo.getParentType();
-        const idField = parentType && idFieldByTypeName.get(parentType.name);
-        return {
-          ...node,
-          selections: [
-            {
-              kind: Kind.FIELD,
-              name: {
-                kind: Kind.NAME,
-                value: '__typename',
-              },
-              alias: {
-                kind: Kind.NAME,
-                value: '__responseCacheTypeName',
-              },
-            },
-            ...(idField
-              ? [
-                  {
-                    kind: Kind.FIELD,
-                    name: { kind: Kind.NAME, value: idField },
-                    alias: { kind: Kind.NAME, value: '__responseCacheId' },
-                  },
-                ]
-              : []),
-
-            ...node.selections,
-          ],
-        };
+        if (parentType) {
+          const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
+          const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate];
+          if (maybeTtl !== undefined) {
+            ttl = calculateTtl(maybeTtl, ttl);
+          }
+        }
       },
     }),
-  );
+    SelectionSet(node, _key) {
+      const parentType = typeInfo.getParentType();
+      const idField = parentType && idFieldByTypeName.get(parentType.name);
+      return {
+        ...node,
+        selections: [
+          {
+            kind: Kind.FIELD,
+            name: {
+              kind: Kind.NAME,
+              value: '__typename',
+            },
+            alias: {
+              kind: Kind.NAME,
+              value: '__responseCacheTypeName',
+            },
+          },
+          ...(idField
+            ? [
+                {
+                  kind: Kind.FIELD,
+                  name: { kind: Kind.NAME, value: idField },
+                  alias: { kind: Kind.NAME, value: '__responseCacheId' },
+                },
+              ]
+            : []),
 
-  originalDocumentMap.set(newDocument, document);
-  return newDocument;
+          ...node.selections,
+        ],
+      };
+    },
+  };
+
+  return [visit(document, visitWithTypeInfo(typeInfo, visitor)), ttl];
 });
 
 export function useResponseCache<PluginContext extends Record<string, any> = {}>({
@@ -289,7 +304,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
   // never cache Introspections
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
-  const addTypeNameToDocumentOpts = { invalidateViaMutation };
+  const addTypeNameToDocumentOpts = { invalidateViaMutation, ttlPerSchemaCoordinate };
   const idFieldByTypeName = new Map<string, string>();
   let schema: any;
 
@@ -303,22 +318,6 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   }
 
   return {
-    onParse() {
-      return ({ result, replaceParseResult, context }) => {
-        if (enabled && !enabled(context)) {
-          return;
-        }
-        if (!originalDocumentMap.has(result) && result.kind === Kind.DOCUMENT) {
-          const newDocument = addEntityInfosToDocument(
-            result,
-            addTypeNameToDocumentOpts,
-            schema,
-            idFieldByTypeName,
-          );
-          replaceParseResult(newDocument);
-        }
-      };
-    },
     onSchemaChange({ schema: newSchema }) {
       if (schema === newSchema) {
         return;
@@ -450,6 +449,15 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         );
 
         if (operationAST?.operation === 'mutation') {
+          onExecuteParams.setExecuteFn(args => {
+            const [document] = getDocumentWithMetadataAndTTL(
+              args.document,
+              { invalidateViaMutation },
+              args.schema,
+              idFieldByTypeName,
+            );
+            return onExecuteParams.executeFn({ ...args, document });
+          });
           return {
             onExecuteDone({ result, setResult }) {
               if (isAsyncIterable(result)) {
@@ -473,33 +481,12 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       const cachedResponse = (await cache.get(cacheKey)) as ResponseCacheExecutionResult;
 
       if (cachedResponse != null) {
-        if (includeExtensionMetadata) {
-          onExecuteParams.setResultAndStopExecution(
-            resultWithMetadata(cachedResponse, { hit: true }),
-          );
-        } else {
-          onExecuteParams.setResultAndStopExecution(cachedResponse);
-        }
-        return;
-      }
-
-      if (ttlPerSchemaCoordinate) {
-        const typeInfo = new TypeInfo(onExecuteParams.args.schema);
-        visit(
-          onExecuteParams.args.document,
-          visitWithTypeInfo(typeInfo, {
-            Field(fieldNode) {
-              const parentType = typeInfo.getParentType();
-              if (parentType) {
-                const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
-                const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate];
-                if (maybeTtl !== undefined) {
-                  currentTtl = calculateTtl(maybeTtl, currentTtl);
-                }
-              }
-            },
-          }),
+        onExecuteParams.setExecuteFn(() =>
+          includeExtensionMetadata
+            ? resultWithMetadata(cachedResponse, { hit: true })
+            : cachedResponse,
         );
+        return;
       }
 
       function maybeCacheResult(
@@ -522,6 +509,17 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           setResult(resultWithMetadata(result, { hit: false, didCache: true, ttl: finalTtl }));
         }
       }
+
+      onExecuteParams.setExecuteFn(async args => {
+        const [document, ttl] = getDocumentWithMetadataAndTTL(
+          args.document,
+          addTypeNameToDocumentOpts,
+          schema,
+          idFieldByTypeName,
+        );
+        currentTtl = ttl;
+        return onExecuteParams.executeFn({ ...args, document });
+      });
 
       return {
         onExecuteDone({ result, setResult }) {
