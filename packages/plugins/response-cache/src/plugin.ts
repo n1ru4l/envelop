@@ -22,7 +22,6 @@ import {
   getDirective,
   MapperKind,
   mapSchema,
-  memoize1,
   memoize4,
   mergeIncrementalResult,
 } from '@graphql-tools/utils';
@@ -205,7 +204,6 @@ export type ResponseCacheExecutionResult = ExecutionResult<
   { responseCache?: ResponseCacheExtensions }
 >;
 
-const originalDocumentMap = new WeakMap<DocumentNode, DocumentNode>();
 const addEntityInfosToDocument = memoize4(function addTypeNameToDocument(
   document: DocumentNode,
   addTypeNameToDocumentOpts: { invalidateViaMutation: boolean },
@@ -213,7 +211,7 @@ const addEntityInfosToDocument = memoize4(function addTypeNameToDocument(
   idFieldByTypeName: Map<string, string>,
 ): DocumentNode {
   const typeInfo = new TypeInfo(schema);
-  const newDocument = visit(
+  return visit(
     document,
     visitWithTypeInfo(typeInfo, {
       OperationDefinition: {
@@ -259,9 +257,6 @@ const addEntityInfosToDocument = memoize4(function addTypeNameToDocument(
       },
     }),
   );
-
-  originalDocumentMap.set(newDocument, document);
-  return newDocument;
 });
 
 export function useResponseCache<PluginContext extends Record<string, any> = {}>({
@@ -285,7 +280,6 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 }: UseResponseCacheParameter<PluginContext>): Plugin<PluginContext> {
   const ignoredTypesMap = new Set<string>(ignoredTypes);
   const typePerSchemaCoordinateMap = new Map<string, string[]>();
-  enabled = enabled ? memoize1(enabled) : enabled;
 
   // never cache Introspections
   ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
@@ -303,22 +297,6 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   }
 
   return {
-    onParse() {
-      return ({ result, replaceParseResult, context }) => {
-        if (enabled && !enabled(context)) {
-          return;
-        }
-        if (!originalDocumentMap.has(result) && result.kind === Kind.DOCUMENT) {
-          const newDocument = addEntityInfosToDocument(
-            result,
-            addTypeNameToDocumentOpts,
-            schema,
-            idFieldByTypeName,
-          );
-          replaceParseResult(newDocument);
-        }
-      };
-    },
     onSchemaChange({ schema: newSchema }) {
       if (schema === newSchema) {
         return;
@@ -450,6 +428,17 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         );
 
         if (operationAST?.operation === 'mutation') {
+          onExecuteParams.setExecuteFn(args =>
+            onExecuteParams.executeFn({
+              ...args,
+              document: addEntityInfosToDocument(
+                args.document,
+                addTypeNameToDocumentOpts,
+                args.schema,
+                idFieldByTypeName,
+              ),
+            }),
+          );
           return {
             onExecuteDone({ result, setResult }) {
               if (isAsyncIterable(result)) {
@@ -473,13 +462,13 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       const cachedResponse = (await cache.get(cacheKey)) as ResponseCacheExecutionResult;
 
       if (cachedResponse != null) {
-        if (includeExtensionMetadata) {
-          onExecuteParams.setResultAndStopExecution(
-            resultWithMetadata(cachedResponse, { hit: true }),
-          );
-        } else {
-          onExecuteParams.setResultAndStopExecution(cachedResponse);
-        }
+        onExecuteParams.setExecuteFn(() => {
+          if (includeExtensionMetadata) {
+            return resultWithMetadata(cachedResponse, { hit: true });
+          } else {
+            return cachedResponse;
+          }
+        });
         return;
       }
 
@@ -522,6 +511,18 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           setResult(resultWithMetadata(result, { hit: false, didCache: true, ttl: finalTtl }));
         }
       }
+
+      onExecuteParams.setExecuteFn(args => {
+        return onExecuteParams.executeFn({
+          ...args,
+          document: addEntityInfosToDocument(
+            args.document,
+            addTypeNameToDocumentOpts,
+            args.schema,
+            idFieldByTypeName,
+          ),
+        });
+      });
 
       return {
         onExecuteDone({ result, setResult }) {
