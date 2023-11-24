@@ -3,6 +3,12 @@ import {
   DocumentNode,
   ExecutionArgs,
   getOperationAST,
+  GraphQLDirective,
+  GraphQLFieldConfig,
+  GraphQLInputFieldConfig,
+  GraphQLInterfaceType,
+  GraphQLObjectType,
+  GraphQLUnionType,
   Kind,
   print,
   TypeInfo,
@@ -264,6 +270,33 @@ const addEntityInfosToDocument = memoize4(function addTypeNameToDocument(
   return newDocument;
 });
 
+type CacheControlDirective = {
+  maxAge?: number;
+  scope?: 'PUBLIC' | 'PRIVATE';
+};
+
+/**
+ * A helper function to get the cacheControl directive from the schema.
+ *
+ * It is an indirection on top of getDirective from graphql-tools that adds type "safety".
+ *
+ * Ideally this should have been type checked, but right now we are simply type casting what we
+ * expect it to be.
+ */
+const getCacheControlDirective = (
+  schema: any,
+  type:
+    | GraphQLInterfaceType
+    | GraphQLUnionType
+    | GraphQLObjectType<any, any>
+    | GraphQLFieldConfig<any, any, any>
+    | GraphQLInputFieldConfig,
+): CacheControlDirective[] | undefined => {
+  return getDirective(schema, type, 'cacheControl') as unknown as
+    | CacheControlDirective[]
+    | undefined;
+};
+
 export function useResponseCache<PluginContext extends Record<string, any> = {}>({
   cache = createInMemoryCache(),
   ttl: globalTtl = Infinity,
@@ -325,17 +358,20 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       }
       schema = newSchema;
 
-      const cacheControlDirective = schema.getDirective('cacheControl');
+      const directive = schema.getDirective('cacheControl') as unknown as
+        | GraphQLDirective
+        | undefined;
+
       mapSchema(schema, {
-        ...(cacheControlDirective && {
+        ...(directive && {
           [MapperKind.COMPOSITE_TYPE]: type => {
-            const cacheControlAnnotations = getDirective(schema, type, 'cacheControl');
+            const cacheControlAnnotations = getCacheControlDirective(schema, type);
             cacheControlAnnotations?.forEach(cacheControl => {
-              if (cacheControl.maxAge != null) {
+              if (cacheControl.maxAge) {
                 ttlPerType[type.name] = cacheControl.maxAge * 1000;
               }
               if (cacheControl.scope) {
-                scopePerSchemaCoordinate[`${type.name}`] = cacheControl.scope;
+                scopePerSchemaCoordinate[type.name] = cacheControl.scope;
               }
             });
             return type;
@@ -350,10 +386,10 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
             idFieldByTypeName.set(typeName, fieldName);
           }
 
-          if (cacheControlDirective) {
-            const cacheControlAnnotations = getDirective(schema, fieldConfig, 'cacheControl');
+          if (directive) {
+            const cacheControlAnnotations = getCacheControlDirective(schema, fieldConfig);
             cacheControlAnnotations?.forEach(cacheControl => {
-              if (cacheControl.maxAge != null) {
+              if (cacheControl.maxAge) {
                 ttlPerSchemaCoordinate[schemaCoordinates] = cacheControl.maxAge * 1000;
               }
               if (cacheControl.scope) {
