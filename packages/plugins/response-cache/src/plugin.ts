@@ -408,10 +408,8 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
           types.add(typename);
           if (typename in ttlPerType) {
-            const maybeTtl = ttlPerType[typename] as number | undefined;
-            if (maybeTtl != null && Number.isNaN(maybeTtl) === false) {
-              currentTtl = calculateTtl(maybeTtl, currentTtl);
-            }
+            const maybeTtl = ttlPerType[typename] as unknown;
+            currentTtl = calculateTtl(maybeTtl, currentTtl);
           }
           if (entityId != null) {
             identifier.set(`${typename}:${entityId}`, { typename, id: entityId });
@@ -493,10 +491,8 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
               const parentType = typeInfo.getParentType();
               if (parentType) {
                 const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
-                const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate] as number | undefined;
-                if (maybeTtl != null && Number.isNaN(maybeTtl) === false) {
-                  currentTtl = calculateTtl(maybeTtl, currentTtl);
-                }
+                const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate] as unknown;
+                currentTtl = calculateTtl(maybeTtl, currentTtl);
               }
             },
           }),
@@ -593,11 +589,14 @@ export function resultWithMetadata(
   };
 }
 
-function calculateTtl(typeTtl: number, currentTtl: number | undefined): number {
-  if (typeof currentTtl === 'number') {
-    return Math.min(currentTtl, typeTtl);
+function calculateTtl(typeTtl: unknown, currentTtl: number | undefined): number | undefined {
+  if (typeof typeTtl === 'number' && !Number.isNaN(typeTtl)) {
+    if (typeof currentTtl === 'number') {
+      return Math.min(currentTtl, typeTtl);
+    }
+    return typeTtl;
   }
-  return typeTtl;
+  return currentTtl;
 }
 
 function unwrapTypenames(type: any): string[] {
