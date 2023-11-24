@@ -17,6 +17,7 @@ import {
   Maybe,
   ObjMap,
   OnExecuteDoneHookResult,
+  OnExecuteEventPayload,
   OnExecuteHookResult,
   Plugin,
 } from '@envelop/core';
@@ -207,7 +208,229 @@ export type ResponseCacheExecutionResult = ExecutionResult<
   { responseCache?: ResponseCacheExtensions }
 >;
 
-const getDocumentWithMetadataAndTTL = memoize4(function addTypeNameToDocument(
+export function useResponseCache<PluginContext extends Record<string, any> = {}>(
+  providedConfig: UseResponseCacheParameter<PluginContext>,
+): Plugin<PluginContext> {
+  const config: InternalContext<PluginContext>['config'] = {
+    ttl: Infinity,
+    idFields: ['id'],
+    invalidateViaMutation: true,
+    buildResponseCacheKey: defaultBuildResponseCacheKey,
+    getDocumentString: defaultGetDocumentString,
+    shouldCacheResult: defaultShouldCacheResult,
+    includeExtensionMetadata:
+      typeof process !== 'undefined'
+        ? // eslint-disable-next-line dot-notation
+          process.env['NODE_ENV'] === 'development' || !!process.env['DEBUG']
+        : false,
+
+    ...providedConfig,
+  };
+
+  let internalContext: InternalContext<PluginContext> = buildInternalContext(
+    providedConfig,
+    config,
+  );
+
+  const enabled = providedConfig.enabled && memoize1(providedConfig.enabled);
+
+  const documentMetadataOptions = {
+    queries: {
+      invalidateViaMutation: config.invalidateViaMutation,
+      ttlPerSchemaCoordinate: internalContext.ttlPerSchemaCoordinate,
+    },
+    mutations: { invalidateViaMutation: config.invalidateViaMutation }, // remove ttlPerSchemaCoordinate for mutations to skip TTL calculation
+  };
+
+  return {
+    onSchemaChange({ schema }) {
+      if (internalContext.schema === schema) {
+        return;
+      }
+      // If the schema changed, we need to rebuild all internal tracking of ttl, scope and id fields.
+      internalContext = buildInternalContext(providedConfig, config, schema);
+
+      const cacheControlDirective = schema.getDirective('cacheControl');
+      mapSchema(schema, {
+        ...(cacheControlDirective && {
+          [MapperKind.COMPOSITE_TYPE]: type => {
+            const cacheControlAnnotations = getDirective(schema, type, 'cacheControl');
+            cacheControlAnnotations?.forEach(cacheControl => {
+              const ttl = cacheControl.maxAge * 1000;
+              if (ttl != null) {
+                internalContext.ttlPerType[type.name] = ttl;
+              }
+              if (cacheControl.scope) {
+                internalContext.scopePerSchemaCoordinate[`${type.name}`] = cacheControl.scope;
+              }
+            });
+            return type;
+          },
+        }),
+        [MapperKind.FIELD]: (fieldConfig, fieldName, typeName) => {
+          const schemaCoordinates = `${typeName}.${fieldName}`;
+          const resultTypeNames = unwrapTypenames(fieldConfig.type);
+          internalContext.typePerSchemaCoordinateMap.set(schemaCoordinates, resultTypeNames);
+
+          if (
+            config.idFields.includes(fieldName) &&
+            !internalContext.idFieldByTypeName.has(typeName)
+          ) {
+            internalContext.idFieldByTypeName.set(typeName, fieldName);
+          }
+
+          if (cacheControlDirective) {
+            const cacheControlAnnotations = getDirective(schema, fieldConfig, 'cacheControl');
+            cacheControlAnnotations?.forEach(cacheControl => {
+              const ttl = cacheControl.maxAge * 1000;
+              if (ttl != null) {
+                internalContext.ttlPerSchemaCoordinate[schemaCoordinates] = ttl;
+              }
+              if (cacheControl.scope) {
+                internalContext.scopePerSchemaCoordinate[schemaCoordinates] = cacheControl.scope;
+              }
+            });
+          }
+          return fieldConfig;
+        },
+      });
+    },
+    async onExecute(onExecuteParams) {
+      if (enabled && !enabled(onExecuteParams.args.contextValue)) {
+        return;
+      }
+      const executionContext: ExecutionContext<PluginContext> = {
+        internalContext,
+        identifier: new Map<string, CacheEntityRecord>(),
+        types: new Set<string>(),
+        currentTtl: undefined as number | undefined,
+        skip: false,
+        sessionId: config.session(onExecuteParams.args.contextValue),
+        params: onExecuteParams,
+      };
+
+      if (config.invalidateViaMutation !== false) {
+        const operationAST = getOperationAST(
+          onExecuteParams.args.document,
+          onExecuteParams.args.operationName,
+        );
+
+        if (operationAST?.operation === 'mutation') {
+          return setExecutor(executionContext, {
+            execute(args) {
+              const [document] = getDocumentWithMetadataAndTTL(
+                args.document,
+                documentMetadataOptions.mutations,
+                internalContext.schema,
+                internalContext.idFieldByTypeName,
+              );
+              return onExecuteParams.executeFn({ ...args, document });
+            },
+            onExecuteDone({ result, setResult }) {
+              if (isAsyncIterable(result)) {
+                return handleAsyncIterableResult(executionContext, invalidateCache);
+              }
+
+              return invalidateCache(executionContext, result, setResult);
+            },
+          });
+        }
+      }
+
+      const cacheKey = await config.buildResponseCacheKey({
+        documentString: config.getDocumentString(onExecuteParams.args),
+        variableValues: onExecuteParams.args.variableValues,
+        operationName: onExecuteParams.args.operationName,
+        sessionId: executionContext.sessionId,
+        context: onExecuteParams.args.contextValue,
+      });
+
+      const cachedResponse = (await internalContext.cache.get(
+        cacheKey,
+      )) as ResponseCacheExecutionResult;
+
+      if (cachedResponse != null) {
+        return setExecutor(executionContext, {
+          execute: () =>
+            config.includeExtensionMetadata
+              ? resultWithMetadata(cachedResponse, { hit: true })
+              : cachedResponse,
+        });
+      }
+
+      return setExecutor(executionContext, {
+        execute(args) {
+          const [document, ttl] = getDocumentWithMetadataAndTTL(
+            args.document,
+            documentMetadataOptions.mutations,
+            internalContext.schema,
+            internalContext.idFieldByTypeName,
+          );
+          executionContext.currentTtl = ttl;
+          return onExecuteParams.executeFn({ ...args, document });
+        },
+        onExecuteDone({ result, setResult }) {
+          if (isAsyncIterable(result)) {
+            return handleAsyncIterableResult({ executionContext, cacheKey }, maybeCacheResult);
+          }
+
+          return maybeCacheResult({ executionContext, cacheKey }, result, setResult);
+        },
+      });
+    },
+  };
+}
+
+type ExecutionContext<PluginContext> = {
+  internalContext: InternalContext<PluginContext>;
+  identifier: Map<string, CacheEntityRecord>;
+  types: Set<string>;
+  currentTtl: number | undefined;
+  skip: boolean;
+  sessionId: Maybe<string>;
+  params: OnExecuteEventPayload<PluginContext>;
+};
+
+type InternalContext<PluginContext> = {
+  ignoredTypesMap: Set<string>;
+  typePerSchemaCoordinateMap: Map<string, string[]>;
+  ttlPerType: Record<string, number>;
+  ttlPerSchemaCoordinate: Record<string, number | undefined>;
+  scopePerSchemaCoordinate: Record<string, 'PRIVATE' | 'PUBLIC' | undefined>;
+  idFieldByTypeName: Map<string, string>;
+  schema: any;
+  cache: Cache;
+  config: {
+    ttl: number;
+    session(context: PluginContext): string | undefined | null;
+    idFields: Array<string>;
+    invalidateViaMutation: boolean;
+    buildResponseCacheKey: BuildResponseCacheKeyFunction;
+    getDocumentString: GetDocumentStringFunction;
+    includeExtensionMetadata: boolean;
+    shouldCacheResult: ShouldCacheResultFunction;
+  };
+};
+
+function buildInternalContext<PluginContext extends Record<string, string>>(
+  providedConfig: UseResponseCacheParameter<PluginContext>,
+  config: InternalContext<PluginContext>['config'],
+  schema?: any,
+): InternalContext<PluginContext> {
+  return {
+    cache: providedConfig.cache ?? createInMemoryCache(),
+    ignoredTypesMap: new Set<string>(providedConfig.ignoredTypes ?? []),
+    typePerSchemaCoordinateMap: new Map<string, string[]>(),
+    idFieldByTypeName: new Map<string, string>(),
+    ttlPerType: { ...providedConfig.ttlPerType },
+    ttlPerSchemaCoordinate: { 'Query.__schema': 0, ...providedConfig.ttlPerSchemaCoordinate },
+    scopePerSchemaCoordinate: { ...providedConfig.scopePerSchemaCoordinate },
+    schema,
+    config,
+  };
+}
+
+const getDocumentWithMetadataAndTTL = memoize4(function getDocumentWithMetadataAndTTL(
   document: DocumentNode,
   {
     invalidateViaMutation,
@@ -280,289 +503,163 @@ const getDocumentWithMetadataAndTTL = memoize4(function addTypeNameToDocument(
   return [visit(document, visitWithTypeInfo(typeInfo, visitor)), ttl];
 });
 
-export function useResponseCache<PluginContext extends Record<string, any> = {}>({
-  cache = createInMemoryCache(),
-  ttl: globalTtl = Infinity,
-  session,
-  enabled,
-  ignoredTypes = [],
-  ttlPerType = {},
-  ttlPerSchemaCoordinate = {},
-  scopePerSchemaCoordinate = {},
-  idFields = ['id'],
-  invalidateViaMutation = true,
-  buildResponseCacheKey = defaultBuildResponseCacheKey,
-  getDocumentString = defaultGetDocumentString,
-  shouldCacheResult = defaultShouldCacheResult,
-  includeExtensionMetadata = typeof process !== 'undefined'
-    ? // eslint-disable-next-line dot-notation
-      process.env['NODE_ENV'] === 'development' || !!process.env['DEBUG']
-    : false,
-}: UseResponseCacheParameter<PluginContext>): Plugin<PluginContext> {
-  const ignoredTypesMap = new Set<string>(ignoredTypes);
-  const typePerSchemaCoordinateMap = new Map<string, string[]>();
-  enabled = enabled ? memoize1(enabled) : enabled;
-
-  // never cache Introspections
-  ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
-  const documentMetadataOptions = {
-    queries: { invalidateViaMutation, ttlPerSchemaCoordinate },
-    mutations: { invalidateViaMutation }, // remove ttlPerSchemaCoordinate for mutations to skip TTL calculation
-  };
-  const idFieldByTypeName = new Map<string, string>();
-  let schema: any;
-
-  function isPrivate(typeName: string, data: Record<string, unknown>): boolean {
-    if (scopePerSchemaCoordinate[typeName] === 'PRIVATE') {
-      return true;
-    }
-    return Object.keys(data).some(
-      fieldName => scopePerSchemaCoordinate[`${typeName}.${fieldName}`] === 'PRIVATE',
-    );
-  }
-
+function setExecutor<PluginContext>(
+  executionContext: ExecutionContext<PluginContext>,
+  {
+    execute,
+    onExecuteDone,
+  }: {
+    execute: typeof executionContext.params.executeFn;
+    onExecuteDone?: OnExecuteHookResult<PluginContext>['onExecuteDone'];
+  },
+): OnExecuteHookResult<PluginContext> {
+  let executed = false;
+  executionContext.params.setExecuteFn(args => {
+    executed = true;
+    return execute(args);
+  });
   return {
-    onSchemaChange({ schema: newSchema }) {
-      if (schema === newSchema) {
-        return;
-      }
-      schema = newSchema;
-
-      const cacheControlDirective = schema.getDirective('cacheControl');
-      mapSchema(schema, {
-        ...(cacheControlDirective && {
-          [MapperKind.COMPOSITE_TYPE]: type => {
-            const cacheControlAnnotations = getDirective(schema, type, 'cacheControl');
-            cacheControlAnnotations?.forEach(cacheControl => {
-              const ttl = cacheControl.maxAge * 1000;
-              if (ttl != null) {
-                ttlPerType[type.name] = ttl;
-              }
-              if (cacheControl.scope) {
-                scopePerSchemaCoordinate[`${type.name}`] = cacheControl.scope;
-              }
-            });
-            return type;
-          },
-        }),
-        [MapperKind.FIELD]: (fieldConfig, fieldName, typeName) => {
-          const schemaCoordinates = `${typeName}.${fieldName}`;
-          const resultTypeNames = unwrapTypenames(fieldConfig.type);
-          typePerSchemaCoordinateMap.set(schemaCoordinates, resultTypeNames);
-
-          if (idFields.includes(fieldName) && !idFieldByTypeName.has(typeName)) {
-            idFieldByTypeName.set(typeName, fieldName);
-          }
-
-          if (cacheControlDirective) {
-            const cacheControlAnnotations = getDirective(schema, fieldConfig, 'cacheControl');
-            cacheControlAnnotations?.forEach(cacheControl => {
-              const ttl = cacheControl.maxAge * 1000;
-              if (ttl != null) {
-                ttlPerSchemaCoordinate[schemaCoordinates] = ttl;
-              }
-              if (cacheControl.scope) {
-                scopePerSchemaCoordinate[schemaCoordinates] = cacheControl.scope;
-              }
-            });
-          }
-          return fieldConfig;
-        },
-      });
-    },
-    async onExecute(onExecuteParams) {
-      if (enabled && !enabled(onExecuteParams.args.contextValue)) {
-        return;
-      }
-      const identifier = new Map<string, CacheEntityRecord>();
-      const types = new Set<string>();
-      let currentTtl: number | undefined;
-      let skip = false;
-
-      const sessionId = session(onExecuteParams.args.contextValue);
-
-      function setExecutor({
-        execute,
-        onExecuteDone,
-      }: {
-        execute: typeof onExecuteParams.executeFn;
-        onExecuteDone?: OnExecuteHookResult<PluginContext>['onExecuteDone'];
-      }): OnExecuteHookResult<PluginContext> {
-        let executed = false;
-        onExecuteParams.setExecuteFn(args => {
-          executed = true;
-          return execute(args);
-        });
-        return {
-          onExecuteDone(params) {
-            if (!executed) {
-              // eslint-disable-next-line no-console
-              console.warn(
-                '[useResponseCache] The cached execute function was not called, another plugin might have overwritten it. Please check your plugin order.',
-              );
-            }
-            return onExecuteDone?.(params);
-          },
-        };
-      }
-
-      function processResult(data: any) {
-        if (data == null || typeof data !== 'object') {
-          return;
-        }
-
-        if (Array.isArray(data)) {
-          for (const item of data) {
-            processResult(item);
-          }
-          return;
-        }
-
-        const typename = data.__responseCacheTypeName;
-        delete data.__responseCacheTypeName;
-        const entityId = data.__responseCacheId;
-        delete data.__responseCacheId;
-
-        // Always process nested objects, even if we are skipping cache, to ensure the result is cleaned up
-        // of metadata fields added to the query document.
-        for (const fieldName in data) {
-          processResult(data[fieldName]);
-        }
-
-        if (!skip) {
-          if (ignoredTypesMap.has(typename) || (!sessionId && isPrivate(typename, data))) {
-            skip = true;
-            return;
-          }
-
-          types.add(typename);
-          if (typename in ttlPerType) {
-            currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
-          }
-          if (entityId != null) {
-            identifier.set(`${typename}:${entityId}`, { typename, id: entityId });
-          }
-          for (const fieldName in data) {
-            const fieldData = data[fieldName];
-            if (fieldData == null || (Array.isArray(fieldData) && fieldData.length === 0)) {
-              const inferredTypes = typePerSchemaCoordinateMap.get(`${typename}.${fieldName}`);
-              inferredTypes?.forEach(inferredType => {
-                identifier.set(inferredType, { typename: inferredType });
-              });
-            }
-          }
-        }
-      }
-
-      function invalidateCache(
-        result: ExecutionResult,
-        setResult: (newResult: ExecutionResult) => void,
-      ): void {
-        processResult(result.data);
-
-        cache.invalidate(identifier.values());
-        if (includeExtensionMetadata) {
-          setResult(
-            resultWithMetadata(result, {
-              invalidatedEntities: Array.from(identifier.values()),
-            }),
-          );
-        }
-      }
-
-      if (invalidateViaMutation !== false) {
-        const operationAST = getOperationAST(
-          onExecuteParams.args.document,
-          onExecuteParams.args.operationName,
+    onExecuteDone(params) {
+      if (!executed) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          '[useResponseCache] The cached execute function was not called, another plugin might have overwritten it. Please check your plugin order.',
         );
-
-        if (operationAST?.operation === 'mutation') {
-          return setExecutor({
-            execute(args) {
-              const [document] = getDocumentWithMetadataAndTTL(
-                args.document,
-                documentMetadataOptions.mutations,
-                args.schema,
-                idFieldByTypeName,
-              );
-              return onExecuteParams.executeFn({ ...args, document });
-            },
-            onExecuteDone({ result, setResult }) {
-              if (isAsyncIterable(result)) {
-                return handleAsyncIterableResult(invalidateCache);
-              }
-
-              return invalidateCache(result, setResult);
-            },
-          });
-        }
       }
-
-      const cacheKey = await buildResponseCacheKey({
-        documentString: getDocumentString(onExecuteParams.args),
-        variableValues: onExecuteParams.args.variableValues,
-        operationName: onExecuteParams.args.operationName,
-        sessionId,
-        context: onExecuteParams.args.contextValue,
-      });
-
-      const cachedResponse = (await cache.get(cacheKey)) as ResponseCacheExecutionResult;
-
-      if (cachedResponse != null) {
-        return setExecutor({
-          execute: () =>
-            includeExtensionMetadata
-              ? resultWithMetadata(cachedResponse, { hit: true })
-              : cachedResponse,
-        });
-      }
-
-      function maybeCacheResult(
-        result: ExecutionResult,
-        setResult: (newResult: ExecutionResult) => void,
-      ) {
-        processResult(result.data);
-        // we only use the global ttl if no currentTtl has been determined.
-        const finalTtl = currentTtl ?? globalTtl;
-
-        if (skip || !shouldCacheResult({ cacheKey, result }) || finalTtl === 0) {
-          if (includeExtensionMetadata) {
-            setResult(resultWithMetadata(result, { hit: false, didCache: false }));
-          }
-          return;
-        }
-
-        cache.set(cacheKey, result, identifier.values(), finalTtl);
-        if (includeExtensionMetadata) {
-          setResult(resultWithMetadata(result, { hit: false, didCache: true, ttl: finalTtl }));
-        }
-      }
-
-      return setExecutor({
-        execute(args) {
-          const [document, ttl] = getDocumentWithMetadataAndTTL(
-            args.document,
-            documentMetadataOptions.queries,
-            schema,
-            idFieldByTypeName,
-          );
-          currentTtl = ttl;
-          return onExecuteParams.executeFn({ ...args, document });
-        },
-        onExecuteDone({ result, setResult }) {
-          if (isAsyncIterable(result)) {
-            return handleAsyncIterableResult(maybeCacheResult);
-          }
-
-          return maybeCacheResult(result, setResult);
-        },
-      });
+      return onExecuteDone?.(params);
     },
   };
 }
 
-function handleAsyncIterableResult<PluginContext extends Record<string, any> = {}>(
-  handler: (result: ExecutionResult, setResult: (newResult: ExecutionResult) => void) => void,
+function processResult<PluginContext>(
+  executionContext: ExecutionContext<PluginContext>,
+  data: any,
+) {
+  if (data == null || typeof data !== 'object') {
+    return;
+  }
+
+  if (Array.isArray(data)) {
+    for (const item of data) {
+      processResult(executionContext, item);
+    }
+    return;
+  }
+
+  const { identifier, sessionId, types, internalContext } = executionContext;
+  const { ignoredTypesMap, typePerSchemaCoordinateMap, ttlPerType } = internalContext;
+  const typename = data.__responseCacheTypeName;
+  delete data.__responseCacheTypeName;
+  const entityId = data.__responseCacheId;
+  delete data.__responseCacheId;
+
+  // Always process nested objects, even if we are skipping cache, to ensure the result is cleaned up
+  // of metadata fields added to the query document.
+  for (const fieldName in data) {
+    processResult(executionContext, data[fieldName]);
+  }
+
+  if (!executionContext.skip) {
+    if (
+      ignoredTypesMap.has(typename) ||
+      (!sessionId && isPrivate(internalContext, typename, data))
+    ) {
+      executionContext.skip = true;
+      return;
+    }
+
+    types.add(typename);
+    if (typename in ttlPerType) {
+      executionContext.currentTtl = calculateTtl(ttlPerType[typename], executionContext.currentTtl);
+    }
+    if (entityId != null) {
+      identifier.set(`${typename}:${entityId}`, { typename, id: entityId });
+    }
+    for (const fieldName in data) {
+      const fieldData = data[fieldName];
+      if (fieldData == null || (Array.isArray(fieldData) && fieldData.length === 0)) {
+        const inferredTypes = typePerSchemaCoordinateMap.get(`${typename}.${fieldName}`);
+        inferredTypes?.forEach(inferredType => {
+          identifier.set(inferredType, { typename: inferredType });
+        });
+      }
+    }
+  }
+}
+
+function isPrivate<PluginContext>(
+  { scopePerSchemaCoordinate }: InternalContext<PluginContext>,
+  typeName: string,
+  data: Record<string, unknown>,
+): boolean {
+  if (scopePerSchemaCoordinate[typeName] === 'PRIVATE') {
+    return true;
+  }
+  return Object.keys(data).some(
+    fieldName => scopePerSchemaCoordinate[`${typeName}.${fieldName}`] === 'PRIVATE',
+  );
+}
+
+function invalidateCache<PluginContext>(
+  executionContext: ExecutionContext<PluginContext>,
+  result: ExecutionResult,
+  setResult: (newResult: ExecutionResult) => void,
+): void {
+  const {
+    internalContext: {
+      cache,
+      config: { includeExtensionMetadata },
+    },
+  } = executionContext;
+  processResult(executionContext, result.data);
+
+  cache.invalidate(executionContext.identifier.values());
+  if (includeExtensionMetadata) {
+    setResult(
+      resultWithMetadata(result, {
+        invalidatedEntities: Array.from(executionContext.identifier.values()),
+      }),
+    );
+  }
+}
+
+function maybeCacheResult<PluginContext>(
+  {
+    executionContext,
+    cacheKey,
+  }: { executionContext: ExecutionContext<PluginContext>; cacheKey: string },
+  result: ExecutionResult,
+  setResult: (newResult: ExecutionResult) => void,
+) {
+  processResult(executionContext, result.data);
+  const { currentTtl, skip, identifier, internalContext } = executionContext;
+  const {
+    cache,
+    config: { ttl: globalTtl, shouldCacheResult, includeExtensionMetadata },
+  } = internalContext;
+  // we only use the global ttl if no currentTtl has been determined.
+  const finalTtl = currentTtl ?? globalTtl;
+
+  if (skip || !shouldCacheResult({ cacheKey, result }) || finalTtl === 0) {
+    if (includeExtensionMetadata) {
+      setResult(resultWithMetadata(result, { hit: false, didCache: false }));
+    }
+    return;
+  }
+
+  cache.set(cacheKey, result, identifier.values(), finalTtl);
+  if (includeExtensionMetadata) {
+    setResult(resultWithMetadata(result, { hit: false, didCache: true, ttl: finalTtl }));
+  }
+}
+
+function handleAsyncIterableResult<T, PluginContext extends Record<string, any> = {}>(
+  executionContext: T,
+  handler: (
+    executionContext: T,
+    result: ExecutionResult,
+    setResult: (newResult: ExecutionResult) => void,
+  ) => void,
 ): OnExecuteDoneHookResult<PluginContext> {
   // When the result is an AsyncIterable, it means the query is using @defer or @stream.
   // This means we have to build the final result by merging the incremental results.
@@ -594,7 +691,7 @@ function handleAsyncIterableResult<PluginContext extends Record<string, any> = {
 
         if (!hasNext) {
           // The query is complete, we can process the final result
-          handler(result, payload.setResult);
+          handler(executionContext, result, payload.setResult);
         }
       }
     },
