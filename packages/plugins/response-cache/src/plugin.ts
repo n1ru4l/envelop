@@ -4,11 +4,6 @@ import {
   ExecutionArgs,
   getOperationAST,
   GraphQLDirective,
-  GraphQLFieldConfig,
-  GraphQLInputFieldConfig,
-  GraphQLInterfaceType,
-  GraphQLObjectType,
-  GraphQLUnionType,
   Kind,
   print,
   TypeInfo,
@@ -275,28 +270,6 @@ type CacheControlDirective = {
   scope?: 'PUBLIC' | 'PRIVATE';
 };
 
-/**
- * A helper function to get the cacheControl directive from the schema.
- *
- * It is an indirection on top of getDirective from graphql-tools that adds type "safety".
- *
- * Ideally this should have been type checked, but right now we are simply type casting what we
- * expect it to be.
- */
-const getCacheControlDirective = (
-  schema: any,
-  type:
-    | GraphQLInterfaceType
-    | GraphQLUnionType
-    | GraphQLObjectType<any, any>
-    | GraphQLFieldConfig<any, any, any>
-    | GraphQLInputFieldConfig,
-): CacheControlDirective[] | undefined => {
-  return getDirective(schema, type, 'cacheControl') as unknown as
-    | CacheControlDirective[]
-    | undefined;
-};
-
 export function useResponseCache<PluginContext extends Record<string, any> = {}>({
   cache = createInMemoryCache(),
   ttl: globalTtl = Infinity,
@@ -365,7 +338,11 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       mapSchema(schema, {
         ...(directive && {
           [MapperKind.COMPOSITE_TYPE]: type => {
-            const cacheControlAnnotations = getCacheControlDirective(schema, type);
+            const cacheControlAnnotations = getDirective(
+              schema,
+              type,
+              'cacheControl',
+            ) as unknown as CacheControlDirective[] | undefined;
             cacheControlAnnotations?.forEach(cacheControl => {
               if (cacheControl.maxAge) {
                 ttlPerType[type.name] = cacheControl.maxAge * 1000;
@@ -387,7 +364,11 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           }
 
           if (directive) {
-            const cacheControlAnnotations = getCacheControlDirective(schema, fieldConfig);
+            const cacheControlAnnotations = getDirective(
+              schema,
+              fieldConfig,
+              'cacheControl',
+            ) as unknown as CacheControlDirective[] | undefined;
             cacheControlAnnotations?.forEach(cacheControl => {
               if (cacheControl.maxAge) {
                 ttlPerSchemaCoordinate[schemaCoordinates] = cacheControl.maxAge * 1000;
