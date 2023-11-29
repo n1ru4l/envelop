@@ -1,5 +1,18 @@
 # @envelop/response-cache
 
+## 6.1.1
+
+### Patch Changes
+
+- [#2094](https://github.com/n1ru4l/envelop/pull/2094)
+  [`cafc43f`](https://github.com/n1ru4l/envelop/commit/cafc43f444f17a9d6fc2f283e3ba31a14c568b51)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Run enabled once only in execution
+
+* [#2090](https://github.com/n1ru4l/envelop/pull/2090)
+  [`09a4bc1`](https://github.com/n1ru4l/envelop/commit/09a4bc146753faa84c7eaa3ba934fb3b66ea0640)
+  Thanks [@klippx](https://github.com/klippx)! - Fix TTL being NaN when using `@cacheControl`
+  without `maxAge` argument.
+
 ## 6.1.0
 
 ### Minor Changes
