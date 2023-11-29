@@ -36,6 +36,37 @@ When configuring the `useResponseCache`, you can choose the type of cache:
 - In-Memory LRU Cache (default)
 - Redis Cache (see: `@envelop/response-cache-redis`)
 
+### Note on Plugin ordering
+
+This plugin rely on a custom executor to work. This means that this plugin should in most cases
+placed last in the plugin list. Otherwise, some other plugin might override the custom executor.
+
+For example, this would not work:
+
+```ts
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
+import { useResponseCache } from '@envelop/response-cache'
+
+// Don't
+const getEnveloped = envelop({
+  plugins: [
+    useResponseCache(),
+    // Here, useEngine will override the `execute` function, leading to a non working cache.
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
+  ]
+})
+
+// Do
+const getEnveloped = envelop({
+  plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
+    // Here, the plugin can control the `execute` function
+    useResponseCache(),
+  ]
+})
+```
+
 ### In-Memory Cache
 
 The in-memory LRU cache is used by default.
