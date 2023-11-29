@@ -4,6 +4,7 @@ import {
   DocumentNode,
   ExecutionArgs,
   getOperationAST,
+  GraphQLDirective,
   Kind,
   print,
   TypeInfo,
@@ -237,10 +238,8 @@ const getDocumentWithMetadataAndTTL = memoize4(function addTypeNameToDocument(
         const parentType = typeInfo.getParentType();
         if (parentType) {
           const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
-          const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate];
-          if (maybeTtl !== undefined) {
-            ttl = calculateTtl(maybeTtl, ttl);
-          }
+          const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate] as unknown;
+          ttl = calculateTtl(maybeTtl, ttl);
         }
       },
     }),
@@ -279,6 +278,11 @@ const getDocumentWithMetadataAndTTL = memoize4(function addTypeNameToDocument(
 
   return [visit(document, visitWithTypeInfo(typeInfo, visitor)), ttl];
 });
+
+type CacheControlDirective = {
+  maxAge?: number;
+  scope?: 'PUBLIC' | 'PRIVATE';
+};
 
 export function useResponseCache<PluginContext extends Record<string, any> = {}>({
   cache = createInMemoryCache(),
@@ -328,18 +332,24 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       }
       schema = newSchema;
 
-      const cacheControlDirective = schema.getDirective('cacheControl');
+      const directive = schema.getDirective('cacheControl') as unknown as
+        | GraphQLDirective
+        | undefined;
+
       mapSchema(schema, {
-        ...(cacheControlDirective && {
+        ...(directive && {
           [MapperKind.COMPOSITE_TYPE]: type => {
-            const cacheControlAnnotations = getDirective(schema, type, 'cacheControl');
+            const cacheControlAnnotations = getDirective(
+              schema,
+              type,
+              'cacheControl',
+            ) as unknown as CacheControlDirective[] | undefined;
             cacheControlAnnotations?.forEach(cacheControl => {
-              const ttl = cacheControl.maxAge * 1000;
-              if (ttl != null) {
-                ttlPerType[type.name] = ttl;
+              if (cacheControl.maxAge) {
+                ttlPerType[type.name] = cacheControl.maxAge * 1000;
               }
               if (cacheControl.scope) {
-                scopePerSchemaCoordinate[`${type.name}`] = cacheControl.scope;
+                scopePerSchemaCoordinate[type.name] = cacheControl.scope;
               }
             });
             return type;
@@ -354,12 +364,15 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
             idFieldByTypeName.set(typeName, fieldName);
           }
 
-          if (cacheControlDirective) {
-            const cacheControlAnnotations = getDirective(schema, fieldConfig, 'cacheControl');
+          if (directive) {
+            const cacheControlAnnotations = getDirective(
+              schema,
+              fieldConfig,
+              'cacheControl',
+            ) as unknown as CacheControlDirective[] | undefined;
             cacheControlAnnotations?.forEach(cacheControl => {
-              const ttl = cacheControl.maxAge * 1000;
-              if (ttl != null) {
-                ttlPerSchemaCoordinate[schemaCoordinates] = ttl;
+              if (cacheControl.maxAge) {
+                ttlPerSchemaCoordinate[schemaCoordinates] = cacheControl.maxAge * 1000;
               }
               if (cacheControl.scope) {
                 scopePerSchemaCoordinate[schemaCoordinates] = cacheControl.scope;
@@ -437,7 +450,8 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
           types.add(typename);
           if (typename in ttlPerType) {
-            currentTtl = calculateTtl(ttlPerType[typename], currentTtl);
+            const maybeTtl = ttlPerType[typename] as unknown;
+            currentTtl = calculateTtl(maybeTtl, currentTtl);
           }
           if (entityId != null) {
             identifier.set(`${typename}:${entityId}`, { typename, id: entityId });
@@ -617,11 +631,14 @@ export function resultWithMetadata(
   };
 }
 
-function calculateTtl(typeTtl: number, currentTtl: number | undefined): number {
-  if (typeof currentTtl === 'number') {
-    return Math.min(currentTtl, typeTtl);
+function calculateTtl(typeTtl: unknown, currentTtl: number | undefined): number | undefined {
+  if (typeof typeTtl === 'number' && !Number.isNaN(typeTtl)) {
+    if (typeof currentTtl === 'number') {
+      return Math.min(currentTtl, typeTtl);
+    }
+    return typeTtl;
   }
-  return typeTtl;
+  return currentTtl;
 }
 
 function unwrapTypenames(type: any): string[] {

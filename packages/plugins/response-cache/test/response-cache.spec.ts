@@ -3292,6 +3292,204 @@ describe('useResponseCache', () => {
       await testInstance.execute(query);
       expect(spy).toHaveBeenCalledTimes(2);
     });
+
+    it('should cache correctly for session with ttl being a valid number', async () => {
+      jest.useFakeTimers();
+      const spy = jest.fn(() => [
+        {
+          id: 1,
+          name: 'User 1',
+          comments: [
+            {
+              id: 1,
+              text: 'Comment 1 of User 1',
+            },
+          ],
+        },
+        {
+          id: 2,
+          name: 'User 2',
+          comments: [
+            {
+              id: 2,
+              text: 'Comment 2 of User 2',
+            },
+          ],
+        },
+      ]);
+
+      const schema = makeExecutableSchema({
+        typeDefs: /* GraphQL */ `
+          ${cacheControlDirective}
+          type Query {
+            users: [User!]!
+          }
+
+          type User {
+            id: ID!
+            name: String! @cacheControl(scope: PRIVATE)
+            comments: [Comment!]!
+            recentComment: Comment
+          }
+
+          type Comment {
+            id: ID!
+            text: String!
+          }
+        `,
+        resolvers: {
+          Query: {
+            users: spy,
+          },
+        },
+      });
+
+      const cache: Cache = {
+        get: jest.fn(),
+        set: jest.fn(),
+        invalidate: () => {},
+      };
+      const testInstance = createTestkit(
+        [
+          useResponseCache({
+            session: () => 'PHP BOSS',
+            cache,
+            ttl: 200,
+          }),
+        ],
+        schema,
+      );
+
+      const query = /* GraphQL */ `
+        query test {
+          users {
+            id
+            name
+            comments {
+              id
+              text
+            }
+          }
+        }
+      `;
+
+      await testInstance.execute(query);
+      expect(cache.get).toHaveBeenCalledWith(
+        'c3b653bbea8797070b0072c7d9b7f69ad28f24f4cf0fae91fcaadd205e87880d',
+      );
+      expect(cache.set).toHaveBeenCalledWith(
+        'c3b653bbea8797070b0072c7d9b7f69ad28f24f4cf0fae91fcaadd205e87880d',
+        {
+          data: {
+            users: [
+              { comments: [{ id: '1', text: 'Comment 1 of User 1' }], id: '1', name: 'User 1' },
+              { comments: [{ id: '2', text: 'Comment 2 of User 2' }], id: '2', name: 'User 2' },
+            ],
+          },
+        },
+        expect.any(Object),
+        200,
+      );
+    });
+
+    it('should cache correctly for session with ttl being Infinity', async () => {
+      jest.useFakeTimers();
+      const spy = jest.fn(() => [
+        {
+          id: 1,
+          name: 'User 1',
+          comments: [
+            {
+              id: 1,
+              text: 'Comment 1 of User 1',
+            },
+          ],
+        },
+        {
+          id: 2,
+          name: 'User 2',
+          comments: [
+            {
+              id: 2,
+              text: 'Comment 2 of User 2',
+            },
+          ],
+        },
+      ]);
+
+      const schema = makeExecutableSchema({
+        typeDefs: /* GraphQL */ `
+          ${cacheControlDirective}
+          type Query {
+            users: [User!]!
+          }
+
+          type User {
+            id: ID!
+            name: String! @cacheControl(scope: PRIVATE)
+            comments: [Comment!]!
+            recentComment: Comment
+          }
+
+          type Comment {
+            id: ID!
+            text: String!
+          }
+        `,
+        resolvers: {
+          Query: {
+            users: spy,
+          },
+        },
+      });
+
+      const cache: Cache = {
+        get: jest.fn(),
+        set: jest.fn(),
+        invalidate: () => {},
+      };
+      const testInstance = createTestkit(
+        [
+          useResponseCache({
+            session: () => 'PHP BOSS',
+            cache,
+            ttl: Infinity,
+          }),
+        ],
+        schema,
+      );
+
+      const query = /* GraphQL */ `
+        query test {
+          users {
+            id
+            name
+            comments {
+              id
+              text
+            }
+          }
+        }
+      `;
+
+      await testInstance.execute(query);
+      expect(cache.get).toHaveBeenCalledWith(
+        'c3b653bbea8797070b0072c7d9b7f69ad28f24f4cf0fae91fcaadd205e87880d',
+      );
+      expect(cache.set).toHaveBeenCalledWith(
+        'c3b653bbea8797070b0072c7d9b7f69ad28f24f4cf0fae91fcaadd205e87880d',
+        {
+          data: {
+            users: [
+              { comments: [{ id: '1', text: 'Comment 1 of User 1' }], id: '1', name: 'User 1' },
+              { comments: [{ id: '2', text: 'Comment 2 of User 2' }], id: '2', name: 'User 2' },
+            ],
+          },
+        },
+        expect.any(Object),
+        Infinity,
+      );
+    });
   });
 
   it('should cache queries using @stream', async () => {
