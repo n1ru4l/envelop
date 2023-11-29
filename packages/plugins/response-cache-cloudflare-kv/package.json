@@ -1,6 +1,6 @@
 {
   "name": "@envelop/response-cache-cloudflare-kv",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -50,7 +50,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@envelop/response-cache": "^6.1.0",
+    "@envelop/response-cache": "^6.1.1",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
@@ -58,7 +58,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20231025.0",
-    "@envelop/response-cache": "^6.1.0",
+    "@envelop/response-cache": "^6.1.1",
     "jest-environment-miniflare": "^2.14.1",
     "ts-jest": "29.1.1",
     "typescript": "^5.2.2"
