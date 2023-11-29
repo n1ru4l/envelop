@@ -1,6 +1,6 @@
 import { getIntrospectionQuery, GraphQLObjectType, GraphQLSchema } from 'graphql';
 import * as GraphQLJS from 'graphql';
-import { envelop, useEngine, useLogger, useSchema } from '@envelop/core';
+import { envelop, useEngine, useExtendContext, useLogger, useSchema } from '@envelop/core';
 import { useGraphQlJit } from '@envelop/graphql-jit';
 import { useParserCache } from '@envelop/parser-cache';
 import {
@@ -563,11 +563,11 @@ describe('useResponseCache', () => {
 
     const testInstance = createTestkit(
       [
+        useGraphQlJit(),
         useResponseCache({
           session: () => null,
           includeExtensionMetadata: true,
         }),
-        useGraphQlJit(),
       ],
       schema,
     );
@@ -3919,4 +3919,45 @@ describe('useResponseCache', () => {
 
     return result;
   }
+});
+
+it('calls enabled fn after context building', async () => {
+  expect.assertions(2);
+  const schema = makeExecutableSchema({
+    typeDefs: /* GraphQL */ `
+      type Query {
+        foo: String
+      }
+    `,
+    resolvers: { Query: { foo: () => 'hi' } },
+  });
+  const testkit = createTestkit(
+    [
+      useEngine({ ...GraphQLJS, execute: normalizedExecutor, subscribe: normalizedExecutor }),
+      useExtendContext(() => ({ foo: 'bar' })),
+      useResponseCache({
+        session: () => null,
+        ttlPerSchemaCoordinate: { 'Query.foo': Infinity },
+        enabled: context => {
+          expect(context).toMatchObject({ foo: 'bar' });
+          return true;
+        },
+      }),
+    ],
+    schema,
+  );
+
+  const document = /* GraphQL */ `
+    query {
+      foo
+    }
+  `;
+
+  const result = await testkit.execute(document, { foo: 'bar' });
+  assertSingleExecutionValue(result);
+  expect(result).toMatchObject({
+    data: {
+      foo: 'hi',
+    },
+  });
 });
