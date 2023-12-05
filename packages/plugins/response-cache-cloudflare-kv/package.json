@@ -50,14 +50,19 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
+    "@cloudflare/workers-types": "^4.20231121.0",
     "@envelop/response-cache": "^6.1.1",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@cloudflare/workers-types": {
+      "optional": true
+    }
   },
   "dependencies": {
     "tslib": "^2.6.2"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20231025.0",
     "@envelop/response-cache": "^6.1.1",
     "jest-environment-miniflare": "^2.14.1",
     "ts-jest": "29.1.1",
