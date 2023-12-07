@@ -345,7 +345,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
               'cacheControl',
             ) as unknown as CacheControlDirective[] | undefined;
             cacheControlAnnotations?.forEach(cacheControl => {
-              if (cacheControl.maxAge) {
+              if (cacheControl.maxAge !== undefined) {
                 ttlPerType[type.name] = cacheControl.maxAge * 1000;
               }
               if (cacheControl.scope) {
@@ -371,7 +371,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
               'cacheControl',
             ) as unknown as CacheControlDirective[] | undefined;
             cacheControlAnnotations?.forEach(cacheControl => {
-              if (cacheControl.maxAge) {
+              if (cacheControl.maxAge !== undefined) {
                 ttlPerSchemaCoordinate[schemaCoordinates] = cacheControl.maxAge * 1000;
               }
               if (cacheControl.scope) {
