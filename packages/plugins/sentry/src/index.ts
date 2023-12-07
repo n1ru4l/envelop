@@ -1,15 +1,16 @@
-import { ExecutionArgs, GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
+import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 import {
   getDocumentString,
   handleStreamOrSingleExecutionResult,
   isOriginalGraphQLError,
   OnExecuteDoneHookResultOnNextHook,
+  TypedExecutionArgs,
   type Plugin,
 } from '@envelop/core';
 import * as Sentry from '@sentry/node';
 import type { Span, TraceparentData } from '@sentry/types';
 
-export type SentryPluginOptions = {
+export type SentryPluginOptions<PluginContext extends Record<string, any>> = {
   /**
    * Starts a new transaction for every GraphQL Operation.
    * When disabled, an already existing Transaction will be used.
@@ -45,34 +46,34 @@ export type SentryPluginOptions = {
   /**
    * Adds custom tags to every Transaction.
    */
-  appendTags?: (args: ExecutionArgs) => Record<string, unknown>;
+  appendTags?: (args: TypedExecutionArgs<PluginContext>) => Record<string, unknown>;
   /**
    * Callback to set context information onto the scope.
    */
-  configureScope?: (args: ExecutionArgs, scope: Sentry.Scope) => void;
+  configureScope?: (args: TypedExecutionArgs<PluginContext>, scope: Sentry.Scope) => void;
   /**
    * Produces a name of Transaction (only when "renameTransaction" or "startTransaction" are enabled) and description of created Span.
    *
    * @default operation's name or "Anonymous Operation" when missing)
    */
-  transactionName?: (args: ExecutionArgs) => string;
+  transactionName?: (args: TypedExecutionArgs<PluginContext>) => string;
   /**
    * Produces tracing data for Transaction
    *
    * @default is empty
    */
-  traceparentData?: (args: ExecutionArgs) => TraceparentData | undefined;
+  traceparentData?: (args: TypedExecutionArgs<PluginContext>) => TraceparentData | undefined;
   /**
    * Produces a "op" (operation) of created Span.
    *
    * @default execute
    */
-  operationName?: (args: ExecutionArgs) => string;
+  operationName?: (args: TypedExecutionArgs<PluginContext>) => string;
   /**
    * Indicates whether or not to skip the entire Sentry flow for given GraphQL operation.
    * By default, no operations are skipped.
    */
-  skip?: (args: ExecutionArgs) => boolean;
+  skip?: (args: TypedExecutionArgs<PluginContext>) => boolean;
   /**
    * Indicates whether or not to skip Sentry exception reporting for a given error.
    * By default, this plugin skips all `GraphQLError` errors and does not report it to Sentry.
@@ -82,10 +83,12 @@ export type SentryPluginOptions = {
 
 export const defaultSkipError = isOriginalGraphQLError;
 
-export const useSentry = (options: SentryPluginOptions = {}): Plugin => {
-  function pick<K extends keyof SentryPluginOptions>(
+export const useSentry = <PluginContext extends Record<string, any> = {}>(
+  options: SentryPluginOptions<PluginContext> = {},
+): Plugin<PluginContext> => {
+  function pick<K extends keyof SentryPluginOptions<PluginContext>>(
     key: K,
-    defaultValue: NonNullable<SentryPluginOptions[K]>,
+    defaultValue: NonNullable<SentryPluginOptions<PluginContext>[K]>,
   ) {
     return options[key] ?? defaultValue;
   }
