@@ -1587,6 +1587,76 @@ describe('useResponseCache', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
+  it('should not cache with a ttl of 0 defined by either directive, ttlPerType or ttlPerSchemaCoordinate options', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        ${cacheControlDirective}
+        type Query {
+          withDirective: String @cacheControl(maxAge: 0)
+          withTtlPerSchemaCoordinate: String
+          withTtlPerType: TypeWithoutCache
+          withDefaultCache: String
+        }
+
+        type TypeWithoutCache {
+          id: ID!
+        }
+      `,
+    });
+
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+          ttlPerSchemaCoordinate: { 'Query.withTtlPerSchemaCoordinate': 0 },
+          ttlPerType: { TypeWithoutCache: 0 },
+          ttl: Infinity,
+          includeExtensionMetadata: true,
+        }),
+      ],
+      schema,
+    );
+
+    expect(
+      await testInstance.execute(/* GraphQL */ `
+        {
+          withDefaultCache
+        }
+      `),
+    ).toMatchObject({
+      extensions: { responseCache: { didCache: true } },
+    });
+    expect(
+      await testInstance.execute(/* GraphQL */ `
+        {
+          withDirective
+        }
+      `),
+    ).toMatchObject({
+      extensions: { responseCache: { didCache: false } },
+    });
+    expect(
+      await testInstance.execute(/* GraphQL */ `
+        {
+          withTtlPerSchemaCoordinate
+        }
+      `),
+    ).toMatchObject({
+      extensions: { responseCache: { didCache: false } },
+    });
+    expect(
+      await testInstance.execute(/* GraphQL */ `
+        {
+          withTtlPerType {
+            id
+          }
+        }
+      `),
+    ).toMatchObject({
+      extensions: { responseCache: { didCache: false } },
+    });
+  });
+
   it('schema coordinate ttl is prioritized over global ttl', async () => {
     jest.useFakeTimers();
     const userSpy = jest.fn(() => [
