@@ -345,7 +345,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
               'cacheControl',
             ) as unknown as CacheControlDirective[] | undefined;
             cacheControlAnnotations?.forEach(cacheControl => {
-              if (cacheControl.maxAge !== undefined) {
+              if (cacheControl.maxAge != null) {
                 ttlPerType[type.name] = cacheControl.maxAge * 1000;
               }
               if (cacheControl.scope) {
@@ -371,7 +371,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
               'cacheControl',
             ) as unknown as CacheControlDirective[] | undefined;
             cacheControlAnnotations?.forEach(cacheControl => {
-              if (cacheControl.maxAge !== undefined) {
+              if (cacheControl.maxAge != null) {
                 ttlPerSchemaCoordinate[schemaCoordinates] = cacheControl.maxAge * 1000;
               }
               if (cacheControl.scope) {
@@ -461,6 +461,10 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
             if (fieldData == null || (Array.isArray(fieldData) && fieldData.length === 0)) {
               const inferredTypes = typePerSchemaCoordinateMap.get(`${typename}.${fieldName}`);
               inferredTypes?.forEach(inferredType => {
+                if (inferredType in ttlPerType) {
+                  const maybeTtl = ttlPerType[inferredType] as unknown;
+                  currentTtl = calculateTtl(maybeTtl, currentTtl);
+                }
                 identifier.set(inferredType, { typename: inferredType });
               });
             }
