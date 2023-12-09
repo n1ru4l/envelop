@@ -54,7 +54,7 @@ export type GetDocumentStringFunction = (executionArgs: ExecutionArgs) => string
 export type ShouldCacheResultFunction = (params: {
   cacheKey: string;
   result: ExecutionResult;
-}) => Boolean;
+}) => boolean;
 
 export type UseResponseCacheParameter<PluginContext extends Record<string, any> = {}> = {
   cache?: Cache;
@@ -139,7 +139,7 @@ export type UseResponseCacheParameter<PluginContext extends Record<string, any> 
   includeExtensionMetadata?: boolean;
   /**
    * Checks if the execution result should be cached or ignored. By default, any execution that
-   * raises any error, unexpected ot EnvelopError or GraphQLError are ignored.
+   * raises any error is ignored.
    * Use this function to customize the behavior, such as caching results that have an EnvelopError.
    */
   shouldCacheResult?: ShouldCacheResultFunction;
@@ -172,7 +172,7 @@ export const defaultBuildResponseCacheKey = (params: {
  *
  * By default, results with errors (unexpected, EnvelopError, or GraphQLError) are not cached.
  */
-export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boolean => {
+export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): boolean => {
   if (params.result.errors) {
     // eslint-disable-next-line no-console
     console.warn('[useResponseCache] Failed to cache due to errors');

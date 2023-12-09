@@ -490,7 +490,7 @@ import { execute, parse, subscribe, validate } from 'graphql'
 import { envelop } from '@envelop/core'
 import { ShouldCacheResultFunction, useResponseCache } from '@envelop/response-cache'
 
-export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): Boolean => {
+export const defaultShouldCacheResult: ShouldCacheResultFunction = (params): boolean => {
   // cache any query operation execution result
   // even if it includes errors
   return true
