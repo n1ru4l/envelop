@@ -644,6 +644,9 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
     devDependencies:
+      '@graphql-tools/executor':
+        specifier: ^1.1.0
+        version: 1.1.0(graphql@16.6.0)
       '@graphql-tools/schema':
         specifier: 10.0.2
         version: 10.0.2(graphql@16.6.0)
@@ -4786,7 +4789,7 @@ packages:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.6.0)
       '@repeaterjs/repeater': 3.0.5
       graphql: 16.6.0
-      tslib: 2.5.0
+      tslib: 2.6.2
       value-or-promise: 1.0.12
     dev: true
 

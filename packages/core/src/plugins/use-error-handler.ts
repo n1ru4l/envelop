@@ -1,4 +1,10 @@
-import { DefaultContext, ExecutionResult, Plugin, TypedExecutionArgs } from '@envelop/types';
+import {
+  DefaultContext,
+  ExecutionResult,
+  IncrementalExecutionResult,
+  Plugin,
+  TypedExecutionArgs,
+} from '@envelop/types';
 import { handleStreamOrSingleExecutionResult } from '../utils.js';
 import { isGraphQLError, SerializableGraphQLErrorLike } from './use-masked-errors.js';
 
@@ -13,15 +19,24 @@ export type ErrorHandler = ({
 }) => void;
 
 type ErrorHandlerCallback<ContextType> = {
-  result: ExecutionResult;
+  result: ExecutionResult | IncrementalExecutionResult;
   args: TypedExecutionArgs<ContextType>;
 };
 
 const makeHandleResult =
   <ContextType extends Record<any, any>>(errorHandler: ErrorHandler) =>
   ({ result, args }: ErrorHandlerCallback<ContextType>) => {
-    if (result.errors?.length) {
-      errorHandler({ errors: result.errors, context: args, phase: 'execution' });
+    const errors = result.errors ? [...result.errors] : [];
+    if ('incremental' in result && result.incremental) {
+      for (const increment of result.incremental) {
+        if (increment.errors) {
+          errors.push(...increment.errors);
+        }
+      }
+    }
+
+    if (errors.length) {
+      errorHandler({ errors, context: args, phase: 'execution' });
     }
   };
 
