@@ -1,5 +1,14 @@
 # @envelop/sentry
 
+## 7.1.0
+
+### Minor Changes
+
+- [#2103](https://github.com/n1ru4l/envelop/pull/2103)
+  [`58d80ea`](https://github.com/n1ru4l/envelop/commit/58d80ea472c73b791d3b2644cf0e3439f69f7b0a)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Allow to provide the context type as a
+  generic parameter
+
 ## 7.0.0
 
 ### Major Changes
