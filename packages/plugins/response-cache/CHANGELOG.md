@@ -1,5 +1,17 @@
 # @envelop/response-cache
 
+## 6.1.2
+
+### Patch Changes
+
+- [#2111](https://github.com/n1ru4l/envelop/pull/2111)
+  [`ee1b3c0`](https://github.com/n1ru4l/envelop/commit/ee1b3c05e01a7e5e7564cd8136f3bc2e558089b9)
+  Thanks [@klippx](https://github.com/klippx)! - Fixes return type of shouldCacheResult
+
+* [`4a1e50b`](https://github.com/n1ru4l/envelop/commit/4a1e50bfbda0b9ee399cdf55c65a682e4f753aa9)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Do not cache response with a TTL equal
+  to 0, whatever API is used to define the TTL
+
 ## 6.1.1
 
 ### Patch Changes

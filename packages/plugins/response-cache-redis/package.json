@@ -1,6 +1,6 @@
 {
   "name": "@envelop/response-cache-redis",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -48,7 +48,7 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {},
   "dependencies": {
-    "@envelop/response-cache": "^6.1.1",
+    "@envelop/response-cache": "^6.1.2",
     "ioredis": "^4.27.9",
     "tslib": "^2.5.0"
   },
