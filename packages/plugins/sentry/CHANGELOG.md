@@ -1,5 +1,13 @@
 # @envelop/sentry
 
+## 7.1.1
+
+### Patch Changes
+
+- [`398564c`](https://github.com/n1ru4l/envelop/commit/398564c53886f8b11faae76e49f061fe3fa5b43f)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Revert the addition of a typed context
+  since it is a breaking change. This will be re-added in a major release.
+
 ## 7.1.0
 
 ### Minor Changes
