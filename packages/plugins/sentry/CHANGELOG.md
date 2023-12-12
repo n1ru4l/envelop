@@ -1,5 +1,27 @@
 # @envelop/sentry
 
+## 8.0.0
+
+### Major Changes
+
+- [`aff6ea0`](https://github.com/n1ru4l/envelop/commit/aff6ea09e71f07355dd91ba152dcc9534466d41f)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Allow to provide the context type as a
+  generic parameter
+
+  **Breaking Change:** Since this introduces a typed context as a generic, TS will not always infer
+  the correct type for you. If you have a custom Context type, please consider explicitly pass this
+  context type as a generic argument:
+
+  ```ts
+  cont yoga = createYoga<CustomContext>({
+    plugins: [
+      useSentry<CustomContext>({
+        //...
+      })
+    ]
+  })
+  ```
+
 ## 7.1.1
 
 ### Patch Changes
