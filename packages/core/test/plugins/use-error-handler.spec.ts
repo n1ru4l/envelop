@@ -5,7 +5,7 @@ import {
   collectAsyncIteratorValues,
   createTestkit,
 } from '@envelop/testing';
-import { ExecutionResult, IncrementalExecutionResult, Plugin } from '@envelop/types';
+import { Plugin } from '@envelop/types';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { createGraphQLError } from '@graphql-tools/utils';
@@ -168,15 +168,9 @@ describe('useErrorHandler', () => {
       ],
       schema,
     );
-    const result = (await testInstance.execute(`query { ... @defer { foo } }`)) as
-      | ExecutionResult
-      | IncrementalExecutionResult
-      | AsyncIterableIterator<ExecutionResult>
-      | AsyncIterableIterator<IncrementalExecutionResult>;
-    if ('next' in result) {
-      for await (const _r of result) {
-      }
-    }
+    const result = await testInstance.execute(`query { ... @defer { foo } }`);
+    assertStreamExecutionValue(result);
+    await collectAsyncIteratorValues(result);
 
     expect(mockHandler).toHaveBeenCalledWith(expect.objectContaining({ phase: 'execution' }));
   });
