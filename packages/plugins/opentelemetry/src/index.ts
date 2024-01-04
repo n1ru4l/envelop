@@ -50,6 +50,7 @@ export const useOpenTelemetry = (
   spanKind: SpanKind = SpanKind.SERVER,
   spanAdditionalAttributes: SpanAttributes = {},
   serviceName = 'graphql',
+  spanPrefix = '',
 ): Plugin<PluginContext> => {
   if (!tracingProvider) {
     const basicTraceProvider = new BasicTracerProvider();
@@ -73,7 +74,7 @@ export const useOpenTelemetry = (
               const { fieldName, returnType, parentType } = info;
 
               const resolverSpan = tracer.startSpan(
-                `${parentType.name}.${fieldName}`,
+                `${spanPrefix}${parentType.name}.${fieldName}`,
                 {
                   attributes: {
                     [AttributeName.RESOLVER_FIELD_NAME]: fieldName,
