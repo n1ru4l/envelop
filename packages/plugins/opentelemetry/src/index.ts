@@ -122,7 +122,7 @@ export const useOpenTelemetry = (
         isDocumentLoggable = false;
       }
       const operationName = operationAst.name?.value || 'anonymous';
-      const executionSpan = tracer.startSpan(`${operationType}.${operationName}`, {
+      const executionSpan = tracer.startSpan(`${spanPrefix}${operationType}.${operationName}`, {
         kind: spanKind,
         attributes: {
           ...spanAdditionalAttributes,
