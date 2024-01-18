@@ -229,7 +229,11 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
       const totalTime = (Date.now() - startTime) / 1000;
       let fillLabelsFnParams = fillLabelsFnParamsMap.get(params.result);
       if (!fillLabelsFnParams) {
-        fillLabelsFnParams = createFillLabelFnParams(params.result, filterFillParamsFnParams);
+        fillLabelsFnParams = createFillLabelFnParams(
+          params.result,
+          context,
+          filterFillParamsFnParams,
+        );
         fillLabelsFnParamsMap.set(context, fillLabelsFnParams);
       }
 

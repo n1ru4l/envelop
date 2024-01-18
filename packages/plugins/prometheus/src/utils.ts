@@ -48,6 +48,7 @@ function getOperation(document: DocumentNode): OperationDefinitionNode {
 
 export function createFillLabelFnParams(
   parseResult: AfterParseEventPayload<any>['result'],
+  context: any,
   filterParams: (params: FillLabelsFnParams) => FillLabelsFnParams | null,
 ): FillLabelsFnParams | null {
   if (parseResult === null) {
@@ -59,7 +60,7 @@ export function createFillLabelFnParams(
   const operation = getOperation(parseResult);
   return filterParams({
     document: parseResult,
-    operationName: operation.name?.value || 'Anonymous',
+    operationName: context?.params?.operationName || operation.name?.value || 'Anonymous',
     operationType: operation.operation,
   });
 }
