@@ -1,5 +1,12 @@
 # @envelop/prometheus
 
+## 9.3.0
+
+### Minor Changes
+
+- [`37d4dac`](https://github.com/n1ru4l/envelop/commit/37d4dac030738709a8fb818c78fc517f2d2b2ed2)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support subscriptions
+
 ## 9.2.0
 
 ### Minor Changes
