@@ -1,5 +1,12 @@
 # @envelop/opentelemetry
 
+## 6.2.1
+
+### Patch Changes
+
+- [`5c8a3a2`](https://github.com/n1ru4l/envelop/commit/5c8a3a2797dde8d96192a818f0449f9e679c7a7b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Ability to propagate otel context
+
 ## 6.2.0
 
 ### Minor Changes
