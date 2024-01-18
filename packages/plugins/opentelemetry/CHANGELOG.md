@@ -1,5 +1,20 @@
 # @envelop/opentelemetry
 
+## 6.2.0
+
+### Minor Changes
+
+- [#2139](https://github.com/n1ru4l/envelop/pull/2139)
+  [`9b83224`](https://github.com/n1ru4l/envelop/commit/9b832246fe2bdd7a33c844e2e86666f6c46247bb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Subscriptions support, expose trace id in the
+  extensions
+
+### Patch Changes
+
+- [#2130](https://github.com/n1ru4l/envelop/pull/2130)
+  [`6b29a6d`](https://github.com/n1ru4l/envelop/commit/6b29a6da70ee08907ed90feca0393f211d329379)
+  Thanks [@Akryum](https://github.com/Akryum)! - Able to add a prefix to the span
+
 ## 6.1.0
 
 ### Patch Changes
