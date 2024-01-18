@@ -14,7 +14,7 @@ import {
   ConsoleSpanExporter,
   SimpleSpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
-import { hasInlineArgument } from './has-inline-argument';
+import { hasInlineArgument } from './has-inline-argument.js';
 
 export enum AttributeName {
   EXECUTION_ERROR = 'graphql.execute.error',
