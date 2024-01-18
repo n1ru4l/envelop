@@ -68,7 +68,7 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --no-frozen-lockfile && git checkout pnpm-lock.yaml
       - name: Cache Jest
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .cache/jest
           key:
@@ -102,7 +102,7 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --no-frozen-lockfile && git checkout pnpm-lock.yaml
       - name: Cache Jest
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .cache/jest
           key:
