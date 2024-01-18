@@ -46,8 +46,9 @@ function getOperation(document: DocumentNode): OperationDefinitionNode {
   return document.definitions[0] as OperationDefinitionNode;
 }
 
-export function createInternalContext(
+export function createFillLabelFnParams(
   parseResult: AfterParseEventPayload<any>['result'],
+  filterParams: (params: FillLabelsFnParams) => FillLabelsFnParams | null,
 ): FillLabelsFnParams | null {
   if (parseResult === null) {
     return null;
@@ -56,11 +57,11 @@ export function createInternalContext(
     return null;
   }
   const operation = getOperation(parseResult);
-  return {
+  return filterParams({
     document: parseResult,
     operationName: operation.name?.value || 'Anonymous',
     operationType: operation.operation,
-  };
+  });
 }
 
 export type FillLabelsFn<LabelNames extends string> = (

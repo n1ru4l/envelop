@@ -1,4 +1,4 @@
-import { ASTNode, print as graphQLPrint } from 'graphql';
+import { ASTNode, buildSchema, GraphQLError, print as graphQLPrint } from 'graphql';
 import { Counter, Histogram, Registry } from 'prom-client';
 import { useExtendContext } from '@envelop/core';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
@@ -66,9 +66,7 @@ describe('Prom Metrics plugin', () => {
     },
   });
 
-  function prepare(config: PrometheusTracingPluginConfig, externalRegistry?: Registry) {
-    const registry = externalRegistry || new Registry();
-
+  function prepare(config: PrometheusTracingPluginConfig, registry: Registry = new Registry()) {
     const plugin = usePrometheus({
       ...config,
       registry,
@@ -81,6 +79,7 @@ describe('Prom Metrics plugin', () => {
     return {
       execute: teskit.execute,
       plugin,
+      registry,
       async metricString(name: string) {
         return registry.getSingleMetricAsString(name);
       },
@@ -331,6 +330,52 @@ describe('Prom Metrics plugin', () => {
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_phase_context')).toBe(0);
     });
+
+    it('should trace error during contextBuilding', async () => {
+      const registry = new Registry();
+      const testKit = createTestkit(
+        [
+          usePrometheus({
+            errors: true,
+            contextBuilding: true,
+            registry,
+          }),
+          useExtendContext<any>(() => {
+            throw new Error('error');
+          }),
+        ],
+        schema,
+      );
+      try {
+        await testKit.execute('query { regularField }');
+      } catch (e) {}
+      const metrics = await registry.getMetricsAsJSON();
+      expect(metrics).toEqual([
+        {
+          help: 'Time spent on building the GraphQL context',
+          name: 'graphql_envelop_phase_context',
+          type: 'histogram',
+          values: [],
+          aggregator: 'sum',
+        },
+        {
+          help: 'Counts the amount of errors reported from all phases',
+          name: 'graphql_envelop_error_result',
+          type: 'counter',
+          values: [
+            {
+              labels: {
+                operationName: 'Anonymous',
+                operationType: 'query',
+                phase: 'context',
+              },
+              value: 1,
+            },
+          ],
+          aggregator: 'sum',
+        },
+      ]);
+    });
   });
 
   describe('execute', () => {
@@ -410,6 +455,24 @@ describe('Prom Metrics plugin', () => {
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_error_result')).toBe(0);
       expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(0);
+    });
+
+    it('should not contain operationName and operationType if disables', async () => {
+      const { execute, metricString } = prepare({
+        errors: true,
+        execute: true,
+        labels: {
+          operationName: false,
+          operationType: false,
+        },
+      });
+      const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricString('graphql_envelop_phase_execute')).not.toContain(
+        ',operationName="Anonymous",operationType="query"',
+      );
     });
   });
 
@@ -621,6 +684,45 @@ describe('Prom Metrics plugin', () => {
       expect(result.errors).toBeUndefined();
       expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
       expect(await metricCount('graphql_envelop_request_time_summary', 'count')).toBe(1);
+    });
+  });
+
+  describe('schema', () => {
+    it('should capture graphql schema changing', async () => {
+      const registry = new Registry();
+      createTestkit(
+        [
+          usePrometheus({ registry, schemaChangeCount: true }),
+          {
+            onSchemaChange: ({ replaceSchema }) => {
+              replaceSchema(
+                buildSchema(/* GraphQL */ `
+                  type Query {
+                    hello: String!
+                  }
+                `),
+              );
+            },
+          },
+        ],
+        schema,
+      );
+
+      const metrics = await registry.getMetricsAsJSON();
+      expect(metrics).toEqual([
+        {
+          help: 'Counts the amount of schema changes',
+          name: 'graphql_envelop_schema_change',
+          type: 'counter',
+          values: [
+            {
+              labels: {},
+              value: 2,
+            },
+          ],
+          aggregator: 'sum',
+        },
+      ]);
     });
   });
 });
