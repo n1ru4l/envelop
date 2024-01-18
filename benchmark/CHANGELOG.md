@@ -1,5 +1,13 @@
 # @envelop/benchmark
 
+## 3.3.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`37d4dac`](https://github.com/n1ru4l/envelop/commit/37d4dac030738709a8fb818c78fc517f2d2b2ed2)]:
+  - @envelop/prometheus@9.3.0
+
 ## 3.2.0
 
 ### Patch Changes
