@@ -1,13 +1,20 @@
-import { print } from 'graphql';
-import { getDocumentString, isAsyncIterable, OnExecuteHookResult, Plugin } from '@envelop/core';
+import { ExecutionResult, getOperationAST, print } from 'graphql';
+import {
+  getDocumentString,
+  isAsyncIterable,
+  OnExecuteHookResult,
+  OnSubscribeHookResult,
+  Plugin,
+} from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
-import { SpanAttributes, SpanKind, TracerProvider } from '@opentelemetry/api';
+import { SpanAttributes, SpanKind, SpanStatusCode, TracerProvider } from '@opentelemetry/api';
 import * as opentelemetry from '@opentelemetry/api';
 import {
   BasicTracerProvider,
   ConsoleSpanExporter,
   SimpleSpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
+import { hasInlineArgument } from './has-inline-argument.js';
 
 export enum AttributeName {
   EXECUTION_ERROR = 'graphql.execute.error',
@@ -18,6 +25,7 @@ export enum AttributeName {
   RESOLVER_RESULT_TYPE = 'graphql.resolver.resultType',
   RESOLVER_ARGS = 'graphql.resolver.args',
   EXECUTION_OPERATION_NAME = 'graphql.execute.operationName',
+  EXECUTION_OPERATION_TYPE = 'graphql.execute.operationType',
   EXECUTION_OPERATION_DOCUMENT = 'graphql.execute.document',
   EXECUTION_VARIABLES = 'graphql.execute.variables',
 }
@@ -25,9 +33,11 @@ export enum AttributeName {
 const tracingSpanSymbol = Symbol('OPEN_TELEMETRY_GRAPHQL');
 
 export type TracingOptions = {
-  resolvers: boolean;
-  variables: boolean;
-  result: boolean;
+  document?: boolean;
+  resolvers?: boolean;
+  variables?: boolean;
+  result?: boolean;
+  traceIdInResult?: string;
 };
 
 type PluginContext = {
@@ -50,16 +60,16 @@ export const useOpenTelemetry = (
 
   const tracer = tracingProvider.getTracer(serviceName);
 
+  const spanByContext = new WeakMap<any, opentelemetry.Span>();
+
   return {
     onPluginInit({ addPlugin }) {
       if (options.resolvers) {
         addPlugin(
           useOnResolve(({ info, context, args }) => {
-            if (context && typeof context === 'object' && context[tracingSpanSymbol]) {
-              const ctx = opentelemetry.trace.setSpan(
-                opentelemetry.context.active(),
-                context[tracingSpanSymbol],
-              );
+            const parentSpan = spanByContext.get(context);
+            if (parentSpan) {
+              const ctx = opentelemetry.trace.setSpan(opentelemetry.context.active(), parentSpan);
               const { fieldName, returnType, parentType } = info;
 
               const resolverSpan = tracer.startSpan(
@@ -92,52 +102,163 @@ export const useOpenTelemetry = (
         );
       }
     },
-    onExecute({ args, extendContext }) {
-      const executionSpan = tracer.startSpan(`${args.operationName || 'Anonymous Operation'}`, {
+    onExecute({ args }) {
+      const operationAst = getOperationAST(args.document, args.operationName);
+      if (!operationAst) {
+        return;
+      }
+      const operationType = operationAst.operation;
+      let isDocumentLoggable: boolean;
+      if (options.document == null || options.document === true) {
+        if (options.variables) {
+          isDocumentLoggable = true;
+        } else if (!hasInlineArgument(args.document)) {
+          isDocumentLoggable = true;
+        } else {
+          isDocumentLoggable = false;
+        }
+      } else {
+        isDocumentLoggable = false;
+      }
+      const operationName = operationAst.name?.value || 'anonymous';
+      const executionSpan = tracer.startSpan(`${operationType}.${operationName}`, {
         kind: spanKind,
         attributes: {
           ...spanAdditionalAttributes,
-          [AttributeName.EXECUTION_OPERATION_NAME]: args.operationName ?? undefined,
-          [AttributeName.EXECUTION_OPERATION_DOCUMENT]: getDocumentString(args.document, print),
+          [AttributeName.EXECUTION_OPERATION_NAME]: operationName,
+          [AttributeName.EXECUTION_OPERATION_TYPE]: operationType,
+          [AttributeName.EXECUTION_OPERATION_DOCUMENT]: isDocumentLoggable
+            ? getDocumentString(args.document, print)
+            : undefined,
           ...(options.variables
             ? { [AttributeName.EXECUTION_VARIABLES]: JSON.stringify(args.variableValues ?? {}) }
             : {}),
         },
       });
 
+      const otelContext = opentelemetry.trace.setSpan(
+        opentelemetry.context.active(),
+        executionSpan,
+      );
+
       const resultCbs: OnExecuteHookResult<PluginContext> = {
-        onExecuteDone({ result }) {
-          if (isAsyncIterable(result)) {
+        onExecuteDone({ result, setResult }) {
+          if (!isAsyncIterable(result)) {
+            if (result.data && options.result) {
+              executionSpan.setAttribute(AttributeName.EXECUTION_RESULT, JSON.stringify(result));
+            }
+            if (options.traceIdInResult) {
+              setResult(addTraceIdToResult(otelContext, result, options.traceIdInResult));
+            }
+            markError(executionSpan, result);
             executionSpan.end();
-            // eslint-disable-next-line no-console
-            console.warn(
-              `Plugin "opentelemetry" encountered an AsyncIterator which is not supported yet, so tracing data is not available for the operation.`,
-            );
-            return;
           }
 
-          if (result.data && options.result) {
-            executionSpan.setAttribute(AttributeName.EXECUTION_RESULT, JSON.stringify(result));
-          }
-
-          if (result.errors && result.errors.length > 0) {
-            executionSpan.recordException({
-              name: AttributeName.EXECUTION_ERROR,
-              message: JSON.stringify(result.errors),
-            });
-          }
-
-          executionSpan.end();
+          return {
+            // handles async iterator
+            onNext: ({ result, setResult }) => {
+              if (options.traceIdInResult) {
+                setResult(addTraceIdToResult(otelContext, result, options.traceIdInResult));
+              }
+              markError(executionSpan, result);
+            },
+            onEnd: () => {
+              executionSpan.end();
+            },
+          };
         },
       };
 
       if (options.resolvers) {
-        extendContext({
-          [tracingSpanSymbol]: executionSpan,
-        });
+        spanByContext.set(args.contextValue, executionSpan);
+      }
+
+      return resultCbs;
+    },
+    onSubscribe({ args }) {
+      const operationAst = getOperationAST(args.document, args.operationName);
+      if (!operationAst) {
+        return;
+      }
+      const operationType = 'subscription';
+      let isDocumentLoggable: boolean;
+      if (options.variables) {
+        isDocumentLoggable = true;
+      } else if (!hasInlineArgument(args.document)) {
+        isDocumentLoggable = true;
+      } else {
+        isDocumentLoggable = false;
+      }
+      const operationName = operationAst.name?.value || 'anonymous';
+      const subscriptionSpan = tracer.startSpan(`${operationType}.${operationName}`, {
+        kind: spanKind,
+        attributes: {
+          ...spanAdditionalAttributes,
+          [AttributeName.EXECUTION_OPERATION_NAME]: operationName,
+          [AttributeName.EXECUTION_OPERATION_TYPE]: operationType,
+          [AttributeName.EXECUTION_OPERATION_DOCUMENT]: isDocumentLoggable
+            ? getDocumentString(args.document, print)
+            : undefined,
+          ...(options.variables
+            ? { [AttributeName.EXECUTION_VARIABLES]: JSON.stringify(args.variableValues ?? {}) }
+            : {}),
+        },
+      });
+
+      const otelContext = opentelemetry.trace.setSpan(
+        opentelemetry.context.active(),
+        subscriptionSpan,
+      );
+
+      const resultCbs: OnSubscribeHookResult<PluginContext> = {
+        onSubscribeError: ({ error }) => {
+          if (error) subscriptionSpan.setStatus({ code: SpanStatusCode.ERROR });
+        },
+        onSubscribeResult() {
+          return {
+            // handles async iterator
+            onNext: ({ result, setResult }) => {
+              if (options.traceIdInResult) {
+                setResult(addTraceIdToResult(otelContext, result, options.traceIdInResult));
+              }
+              markError(subscriptionSpan, result);
+            },
+            onEnd: () => {
+              subscriptionSpan.end();
+            },
+          };
+        },
+      };
+
+      if (options.resolvers) {
+        spanByContext.set(args.contextValue, subscriptionSpan);
       }
 
       return resultCbs;
     },
   };
 };
+
+function addTraceIdToResult(
+  ctx: opentelemetry.Context,
+  result: ExecutionResult,
+  traceIdProp: string,
+): ExecutionResult {
+  return {
+    ...result,
+    extensions: {
+      ...result.extensions,
+      [traceIdProp]: opentelemetry.trace.getSpan(ctx)?.spanContext().traceId,
+    },
+  };
+}
+
+function markError(executionSpan: opentelemetry.Span, result: ExecutionResult) {
+  if (result.errors && result.errors.length > 0) {
+    executionSpan.setStatus({ code: opentelemetry.SpanStatusCode.ERROR });
+    executionSpan.recordException({
+      name: AttributeName.EXECUTION_ERROR,
+      message: JSON.stringify(result.errors),
+    });
+  }
+}
