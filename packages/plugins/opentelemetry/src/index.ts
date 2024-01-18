@@ -44,6 +44,24 @@ type PluginContext = {
   [tracingSpanSymbol]: opentelemetry.Span;
 };
 
+export const otelContextMap = new WeakMap<any, opentelemetry.Context>();
+
+export function getCurrentOtelContext(graphqlContext: any): opentelemetry.Context {
+  let otelContext = otelContextMap.get(graphqlContext);
+
+  if (!otelContext) {
+    otelContext = opentelemetry.context.active();
+    otelContextMap.set(graphqlContext, otelContext);
+  }
+
+  return otelContext;
+}
+
+export function setCurrentOtelContext(graphqlContext: any, otelContext: opentelemetry.Context) {
+  otelContextMap.set(graphqlContext, otelContext);
+  return otelContext;
+}
+
 export const useOpenTelemetry = (
   options: TracingOptions,
   tracingProvider?: TracerProvider,
@@ -70,7 +88,7 @@ export const useOpenTelemetry = (
           useOnResolve(({ info, context, args }) => {
             const parentSpan = spanByContext.get(context);
             if (parentSpan) {
-              const ctx = opentelemetry.trace.setSpan(opentelemetry.context.active(), parentSpan);
+              const ctx = opentelemetry.trace.setSpan(getCurrentOtelContext(context), parentSpan);
               const { fieldName, returnType, parentType } = info;
 
               const resolverSpan = tracer.startSpan(
@@ -103,7 +121,12 @@ export const useOpenTelemetry = (
         );
       }
     },
-    onExecute({ args }) {
+    onExecute({ args, executeFn, setExecuteFn }) {
+      setExecuteFn(function wrappedExecuteFnWithOtelCtx(args) {
+        return opentelemetry.context.with(getCurrentOtelContext(args.contextValue), () =>
+          executeFn(args),
+        );
+      });
       const operationAst = getOperationAST(args.document, args.operationName);
       if (!operationAst) {
         return;
@@ -122,24 +145,29 @@ export const useOpenTelemetry = (
         isDocumentLoggable = false;
       }
       const operationName = operationAst.name?.value || 'anonymous';
-      const executionSpan = tracer.startSpan(`${spanPrefix}${operationType}.${operationName}`, {
-        kind: spanKind,
-        attributes: {
-          ...spanAdditionalAttributes,
-          [AttributeName.EXECUTION_OPERATION_NAME]: operationName,
-          [AttributeName.EXECUTION_OPERATION_TYPE]: operationType,
-          [AttributeName.EXECUTION_OPERATION_DOCUMENT]: isDocumentLoggable
-            ? getDocumentString(args.document, print)
-            : undefined,
-          ...(options.variables
-            ? { [AttributeName.EXECUTION_VARIABLES]: JSON.stringify(args.variableValues ?? {}) }
-            : {}),
+      const currOtelContext = getCurrentOtelContext(args.contextValue);
+      const executionSpan = tracer.startSpan(
+        `${spanPrefix}${operationType}.${operationName}`,
+        {
+          kind: spanKind,
+          attributes: {
+            ...spanAdditionalAttributes,
+            [AttributeName.EXECUTION_OPERATION_NAME]: operationName,
+            [AttributeName.EXECUTION_OPERATION_TYPE]: operationType,
+            [AttributeName.EXECUTION_OPERATION_DOCUMENT]: isDocumentLoggable
+              ? getDocumentString(args.document, print)
+              : undefined,
+            ...(options.variables
+              ? { [AttributeName.EXECUTION_VARIABLES]: JSON.stringify(args.variableValues ?? {}) }
+              : {}),
+          },
         },
-      });
+        currOtelContext,
+      );
 
-      const otelContext = opentelemetry.trace.setSpan(
-        opentelemetry.context.active(),
-        executionSpan,
+      setCurrentOtelContext(
+        args.contextValue,
+        opentelemetry.trace.setSpan(currOtelContext, executionSpan),
       );
 
       const resultCbs: OnExecuteHookResult<PluginContext> = {
@@ -149,7 +177,8 @@ export const useOpenTelemetry = (
               executionSpan.setAttribute(AttributeName.EXECUTION_RESULT, JSON.stringify(result));
             }
             if (options.traceIdInResult) {
-              setResult(addTraceIdToResult(otelContext, result, options.traceIdInResult));
+              const currOtelContext = getCurrentOtelContext(args.contextValue);
+              setResult(addTraceIdToResult(currOtelContext, result, options.traceIdInResult));
             }
             markError(executionSpan, result);
             executionSpan.end();
@@ -159,7 +188,8 @@ export const useOpenTelemetry = (
             // handles async iterator
             onNext: ({ result, setResult }) => {
               if (options.traceIdInResult) {
-                setResult(addTraceIdToResult(otelContext, result, options.traceIdInResult));
+                const currOtelContext = getCurrentOtelContext(args.contextValue);
+                setResult(addTraceIdToResult(currOtelContext, result, options.traceIdInResult));
               }
               markError(executionSpan, result);
             },
@@ -176,7 +206,12 @@ export const useOpenTelemetry = (
 
       return resultCbs;
     },
-    onSubscribe({ args }) {
+    onSubscribe({ args, subscribeFn, setSubscribeFn }) {
+      setSubscribeFn(function wrappedSubscribeFnWithOtelCtx(args) {
+        return opentelemetry.context.with(getCurrentOtelContext(args.contextValue), () =>
+          subscribeFn(args),
+        );
+      });
       const operationAst = getOperationAST(args.document, args.operationName);
       if (!operationAst) {
         return;
@@ -190,25 +225,30 @@ export const useOpenTelemetry = (
       } else {
         isDocumentLoggable = false;
       }
+      const currOtelContext = getCurrentOtelContext(args.contextValue);
       const operationName = operationAst.name?.value || 'anonymous';
-      const subscriptionSpan = tracer.startSpan(`${operationType}.${operationName}`, {
-        kind: spanKind,
-        attributes: {
-          ...spanAdditionalAttributes,
-          [AttributeName.EXECUTION_OPERATION_NAME]: operationName,
-          [AttributeName.EXECUTION_OPERATION_TYPE]: operationType,
-          [AttributeName.EXECUTION_OPERATION_DOCUMENT]: isDocumentLoggable
-            ? getDocumentString(args.document, print)
-            : undefined,
-          ...(options.variables
-            ? { [AttributeName.EXECUTION_VARIABLES]: JSON.stringify(args.variableValues ?? {}) }
-            : {}),
+      const subscriptionSpan = tracer.startSpan(
+        `${operationType}.${operationName}`,
+        {
+          kind: spanKind,
+          attributes: {
+            ...spanAdditionalAttributes,
+            [AttributeName.EXECUTION_OPERATION_NAME]: operationName,
+            [AttributeName.EXECUTION_OPERATION_TYPE]: operationType,
+            [AttributeName.EXECUTION_OPERATION_DOCUMENT]: isDocumentLoggable
+              ? getDocumentString(args.document, print)
+              : undefined,
+            ...(options.variables
+              ? { [AttributeName.EXECUTION_VARIABLES]: JSON.stringify(args.variableValues ?? {}) }
+              : {}),
+          },
         },
-      });
+        currOtelContext,
+      );
 
-      const otelContext = opentelemetry.trace.setSpan(
-        opentelemetry.context.active(),
-        subscriptionSpan,
+      setCurrentOtelContext(
+        args.contextValue,
+        opentelemetry.trace.setSpan(currOtelContext, subscriptionSpan),
       );
 
       const resultCbs: OnSubscribeHookResult<PluginContext> = {
@@ -220,7 +260,8 @@ export const useOpenTelemetry = (
             // handles async iterator
             onNext: ({ result, setResult }) => {
               if (options.traceIdInResult) {
-                setResult(addTraceIdToResult(otelContext, result, options.traceIdInResult));
+                const currOtelContext = getCurrentOtelContext(args.contextValue);
+                setResult(addTraceIdToResult(currOtelContext, result, options.traceIdInResult));
               }
               markError(subscriptionSpan, result);
             },
