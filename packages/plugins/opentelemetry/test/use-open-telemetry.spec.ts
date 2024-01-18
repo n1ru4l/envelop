@@ -64,7 +64,11 @@ describe('useOpenTelemetry', () => {
     },
   });
 
-  const useTestOpenTelemetry = (exporter?: InMemorySpanExporter, options?: TracingOptions) =>
+  const useTestOpenTelemetry = (
+    exporter?: InMemorySpanExporter,
+    options?: TracingOptions,
+    spanPrefix?: string,
+  ) =>
     useOpenTelemetry(
       {
         resolvers: false,
@@ -73,6 +77,10 @@ describe('useOpenTelemetry', () => {
         ...(options ?? {}),
       },
       exporter ? createTraceProvider(exporter) : undefined,
+      undefined,
+      undefined,
+      undefined,
+      spanPrefix,
     );
 
   const pingQuery = /* GraphQL */ `
@@ -354,6 +362,23 @@ describe('useOpenTelemetry', () => {
       [AttributeName.EXECUTION_OPERATION_NAME]: 'counter',
       [AttributeName.EXECUTION_OPERATION_TYPE]: 'subscription',
     });
+  });
+
+  it('adds spanPrefix to span name', async () => {
+    const exporter = new InMemorySpanExporter();
+    const testInstance = createTestkit([useTestOpenTelemetry(exporter, {}, 'my-prefix.')], schema);
+
+    const queryStr = /* GraphQL */ `
+      query ping {
+        ping
+      }
+    `;
+
+    await testInstance.execute(queryStr);
+
+    const actual = exporter.getFinishedSpans();
+    expect(actual.length).toBe(1);
+    expect(actual[0].name).toBe('my-prefix.query.ping');
   });
 });
 
