@@ -1,5 +1,5 @@
 ---
-'@envelop/prometheus': patch
+'@envelop/prometheus': minor
 ---
 
 - Ability to hide operationName and operationType in the labels
