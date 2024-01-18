@@ -1,5 +1,16 @@
 # @envelop/prometheus
 
+## 9.2.0
+
+### Minor Changes
+
+- [#2142](https://github.com/n1ru4l/envelop/pull/2142)
+  [`4c11530`](https://github.com/n1ru4l/envelop/commit/4c115302d16fa6bf095f4397594d3b73ba3c532b)
+  Thanks [@ardatan](https://github.com/ardatan)! - - Ability to hide operationName and operationType
+  in the labels
+  - Count schema changes
+  - Catch errors during the context creation
+
 ## 9.1.0
 
 ### Patch Changes
