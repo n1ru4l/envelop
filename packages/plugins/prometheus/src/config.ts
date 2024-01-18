@@ -9,6 +9,7 @@ export type PrometheusTracingPluginConfig = {
   validate?: boolean | ReturnType<typeof createHistogram>;
   contextBuilding?: boolean | ReturnType<typeof createHistogram>;
   execute?: boolean | ReturnType<typeof createHistogram>;
+  subscribe?: boolean | ReturnType<typeof createHistogram>;
   errors?: boolean | ReturnType<typeof createCounter>;
   resolvers?: boolean | ReturnType<typeof createHistogram>;
   resolversWhitelist?: string[];

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-import { GraphQLSchema, TypeInfo } from 'graphql';
+import { ExecutionResult, GraphQLSchema, TypeInfo } from 'graphql';
 import { Counter, register as defaultRegistry, Histogram, Summary } from 'prom-client';
 import {
   isAsyncIterable,
@@ -8,6 +8,8 @@ import {
   OnExecuteHook,
   OnExecuteHookResult,
   OnParseHook,
+  OnSubscribeHook,
+  OnSubscribeHookResult,
   OnValidateHook,
   Plugin,
 } from '@envelop/core';
@@ -61,6 +63,12 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
     'execute',
     'graphql_envelop_phase_execute',
     'Time spent on running the GraphQL "execute" function',
+  );
+  const subscribeHistogram = getHistogramFromConfig(
+    config,
+    'subscribe',
+    'graphql_envelop_phase_subscribe',
+    'Time spent on running the GraphQL "subscribe" function',
   );
 
   function labelExists(label: string) {
@@ -330,49 +338,138 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
           .labels(reqCounter.fillLabelsFn(fillLabelsFnParams, args.contextValue))
           .inc();
 
+        function handleResult(result: ExecutionResult) {
+          if (errorsCounter && result.errors && result.errors.length > 0) {
+            for (const error of result.errors) {
+              errorsCounter.counter
+                .labels(
+                  errorsCounter.fillLabelsFn(
+                    {
+                      ...fillLabelsFnParams,
+                      errorPhase: 'execute',
+                      error,
+                    },
+                    args.contextValue,
+                  ),
+                )
+                .inc();
+            }
+          }
+        }
+
         const result: OnExecuteHookResult<{}> = {
           onExecuteDone: ({ result }) => {
-            const totalTime = (Date.now() - startTime) / 1000;
-            executeHistogram.histogram.observe(
-              executeHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-              totalTime,
-            );
-
-            requestTotalHistogram?.histogram.observe(
-              requestTotalHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-              totalTime,
-            );
-
             const execStartTime = execStartTimeMap.get(args.contextValue);
-            if (requestSummary && execStartTime) {
-              const summaryTime = (Date.now() - execStartTime) / 1000;
-
-              requestSummary.summary.observe(
-                requestSummary.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-                summaryTime,
+            const handleEnd = () => {
+              const totalTime = (Date.now() - startTime) / 1000;
+              executeHistogram.histogram.observe(
+                executeHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                totalTime,
               );
-            }
 
-            if (
-              errorsCounter &&
-              !isAsyncIterable(result) &&
-              result.errors &&
-              result.errors.length > 0
-            ) {
-              for (const error of result.errors) {
-                errorsCounter.counter
-                  .labels(
-                    errorsCounter.fillLabelsFn(
-                      {
-                        ...fillLabelsFnParams,
-                        errorPhase: 'execute',
-                        error,
-                      },
-                      args.contextValue,
-                    ),
-                  )
-                  .inc();
+              requestTotalHistogram?.histogram.observe(
+                requestTotalHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                totalTime,
+              );
+
+              if (requestSummary && execStartTime) {
+                const summaryTime = (Date.now() - execStartTime) / 1000;
+
+                requestSummary.summary.observe(
+                  requestSummary.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                  summaryTime,
+                );
               }
+            };
+            if (!isAsyncIterable(result)) {
+              handleResult(result);
+              handleEnd();
+              return undefined;
+            } else {
+              return {
+                onNext({ result }) {
+                  handleResult(result);
+                },
+                onEnd() {
+                  handleEnd();
+                },
+              };
+            }
+          },
+        };
+
+        return result;
+      }
+    : undefined;
+
+  const onSubscribe: OnSubscribeHook<{}> | undefined = subscribeHistogram
+    ? ({ args }) => {
+        const fillLabelsFnParams = fillLabelsFnParamsMap.get(args.contextValue);
+        if (!fillLabelsFnParams) {
+          return undefined;
+        }
+
+        const startTime = Date.now();
+        reqCounter?.counter
+          .labels(reqCounter.fillLabelsFn(fillLabelsFnParams, args.contextValue))
+          .inc();
+
+        function handleResult(result: ExecutionResult) {
+          if (errorsCounter && result.errors && result.errors.length > 0) {
+            for (const error of result.errors) {
+              errorsCounter.counter
+                .labels(
+                  errorsCounter.fillLabelsFn(
+                    {
+                      ...fillLabelsFnParams,
+                      errorPhase: 'execute',
+                      error,
+                    },
+                    args.contextValue,
+                  ),
+                )
+                .inc();
+            }
+          }
+        }
+
+        const result: OnSubscribeHookResult<{}> = {
+          onSubscribeResult: ({ result }) => {
+            const execStartTime = execStartTimeMap.get(args.contextValue);
+            const handleEnd = () => {
+              const totalTime = (Date.now() - startTime) / 1000;
+              subscribeHistogram.histogram.observe(
+                subscribeHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                totalTime,
+              );
+
+              requestTotalHistogram?.histogram.observe(
+                requestTotalHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                totalTime,
+              );
+
+              if (requestSummary && execStartTime) {
+                const summaryTime = (Date.now() - execStartTime) / 1000;
+
+                requestSummary.summary.observe(
+                  requestSummary.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                  summaryTime,
+                );
+              }
+            };
+            if (!isAsyncIterable(result)) {
+              handleResult(result);
+              handleEnd();
+              return undefined;
+            } else {
+              return {
+                onNext({ result }) {
+                  handleResult(result);
+                },
+                onEnd() {
+                  handleEnd();
+                },
+              };
             }
           },
         };
@@ -440,5 +537,6 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
     onValidate,
     onContextBuilding,
     onExecute,
+    onSubscribe,
   };
 };
