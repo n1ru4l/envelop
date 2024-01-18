@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-import { TypeInfo } from 'graphql';
+import { GraphQLSchema, TypeInfo } from 'graphql';
 import { Counter, register as defaultRegistry, Histogram, Summary } from 'prom-client';
 import {
   isAsyncIterable,
@@ -15,8 +15,8 @@ import { useOnResolve } from '@envelop/on-resolve';
 import { PrometheusTracingPluginConfig } from './config.js';
 import {
   createCounter,
+  createFillLabelFnParams,
   createHistogram,
-  createInternalContext,
   createSummary,
   extractDeprecatedFields,
   FillLabelsFnParams,
@@ -32,17 +32,10 @@ export {
   FillLabelsFnParams,
 };
 
-const promPluginContext = Symbol('promPluginContext');
-const promPluginExecutionStartTimeSymbol = Symbol('promPluginExecutionStartTimeSymbol');
+export const fillLabelsFnParamsMap = new WeakMap<any, FillLabelsFnParams | null>();
+export const execStartTimeMap = new WeakMap<any, number>();
 
-type PluginInternalContext = {
-  [promPluginContext]: FillLabelsFnParams;
-  [promPluginExecutionStartTimeSymbol]: number;
-};
-
-export const usePrometheus = (
-  config: PrometheusTracingPluginConfig = {},
-): Plugin<PluginInternalContext> => {
+export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugin => {
   let typeInfo: TypeInfo | null = null;
 
   const parseHistogram = getHistogramFromConfig(
@@ -70,6 +63,18 @@ export const usePrometheus = (
     'Time spent on running the GraphQL "execute" function',
   );
 
+  function labelExists(label: string) {
+    const labelFlag = config.labels?.[label];
+    if (labelFlag == null) {
+      return true;
+    }
+    return labelFlag;
+  }
+
+  function filterFillParamsFnParams(params: Record<string, any>) {
+    return Object.fromEntries(Object.entries(params).filter(([key]) => labelExists(key)));
+  }
+
   const resolversHistogram =
     typeof config.resolvers === 'object'
       ? config.resolvers
@@ -84,16 +89,17 @@ export const usePrometheus = (
               'fieldName',
               'typeName',
               'returnType',
-            ] as const,
+            ].filter(labelExists),
             registers: [config.registry || defaultRegistry],
           }),
-          fillLabelsFn: params => ({
-            operationName: params.operationName!,
-            operationType: params.operationType!,
-            fieldName: params.info?.fieldName!,
-            typeName: params.info?.parentType.name!,
-            returnType: params.info?.returnType.toString()!,
-          }),
+          fillLabelsFn: params =>
+            filterFillParamsFnParams({
+              operationName: params.operationName!,
+              operationType: params.operationType!,
+              fieldName: params.info?.fieldName!,
+              typeName: params.info?.parentType.name!,
+              returnType: params.info?.returnType.toString()!,
+            }),
         })
       : undefined;
 
@@ -105,13 +111,14 @@ export const usePrometheus = (
           histogram: new Histogram({
             name: 'graphql_envelop_request_duration',
             help: 'Time spent on running the GraphQL operation from parse to execute',
-            labelNames: ['operationType', 'operationName'] as const,
+            labelNames: ['operationType', 'operationName'].filter(labelExists),
             registers: [config.registry || defaultRegistry],
           }),
-          fillLabelsFn: params => ({
-            operationName: params.operationName!,
-            operationType: params.operationType!,
-          }),
+          fillLabelsFn: params =>
+            filterFillParamsFnParams({
+              operationName: params.operationName!,
+              operationType: params.operationType!,
+            }),
         })
       : undefined;
 
@@ -123,13 +130,14 @@ export const usePrometheus = (
           summary: new Summary({
             name: 'graphql_envelop_request_time_summary',
             help: 'Summary to measure the time to complete GraphQL operations',
-            labelNames: ['operationType', 'operationName'] as const,
+            labelNames: ['operationType', 'operationName'].filter(labelExists),
             registers: [config.registry || defaultRegistry],
           }),
-          fillLabelsFn: params => ({
-            operationName: params.operationName!,
-            operationType: params.operationType!,
-          }),
+          fillLabelsFn: params =>
+            filterFillParamsFnParams({
+              operationName: params.operationName!,
+              operationType: params.operationType!,
+            }),
         })
       : undefined;
 
@@ -141,15 +149,16 @@ export const usePrometheus = (
           counter: new Counter({
             name: 'graphql_envelop_error_result',
             help: 'Counts the amount of errors reported from all phases',
-            labelNames: ['operationType', 'operationName', 'path', 'phase'] as const,
+            labelNames: ['operationType', 'operationName', 'path', 'phase'].filter(labelExists),
             registers: [config.registry || defaultRegistry],
           }),
-          fillLabelsFn: params => ({
-            operationName: params.operationName!,
-            operationType: params.operationType!,
-            path: params.error?.path?.join('.')!,
-            phase: params.errorPhase!,
-          }),
+          fillLabelsFn: params =>
+            filterFillParamsFnParams({
+              operationName: params.operationName!,
+              operationType: params.operationType!,
+              path: params.error?.path?.join('.')!,
+              phase: params.errorPhase!,
+            }),
         })
       : undefined;
 
@@ -161,13 +170,14 @@ export const usePrometheus = (
           counter: new Counter({
             name: 'graphql_envelop_request',
             help: 'Counts the amount of GraphQL requests executed through Envelop',
-            labelNames: ['operationType', 'operationName'] as const,
+            labelNames: ['operationType', 'operationName'].filter(labelExists),
             registers: [config.registry || defaultRegistry],
           }),
-          fillLabelsFn: params => ({
-            operationName: params.operationName!,
-            operationType: params.operationType!,
-          }),
+          fillLabelsFn: params =>
+            filterFillParamsFnParams({
+              operationName: params.operationName!,
+              operationType: params.operationType!,
+            }),
         })
       : undefined;
 
@@ -179,19 +189,36 @@ export const usePrometheus = (
           counter: new Counter({
             name: 'graphql_envelop_deprecated_field',
             help: 'Counts the amount of deprecated fields used in selection sets',
-            labelNames: ['operationType', 'operationName', 'fieldName', 'typeName'] as const,
+            labelNames: ['operationType', 'operationName', 'fieldName', 'typeName'].filter(
+              labelExists,
+            ),
             registers: [config.registry || defaultRegistry],
           }),
-          fillLabelsFn: params => ({
-            operationName: params.operationName!,
-            operationType: params.operationType!,
-            fieldName: params.deprecationInfo?.fieldName!,
-            typeName: params.deprecationInfo?.typeName!,
-          }),
+          fillLabelsFn: params =>
+            filterFillParamsFnParams({
+              operationName: params.operationName!,
+              operationType: params.operationType!,
+              fieldName: params.deprecationInfo?.fieldName!,
+              typeName: params.deprecationInfo?.typeName!,
+            }),
         })
       : undefined;
 
-  const onParse: OnParseHook<PluginInternalContext> = ({ context, extendContext, params }) => {
+  const schemaChangeCounter =
+    typeof config.schemaChangeCount === 'object'
+      ? config.schemaChangeCount
+      : config.schemaChangeCount === true
+      ? createCounter({
+          counter: new Counter({
+            name: 'graphql_envelop_schema_change',
+            help: 'Counts the amount of schema changes',
+            registers: [config.registry || defaultRegistry],
+          }),
+          fillLabelsFn: () => ({}),
+        })
+      : undefined;
+
+  const onParse: OnParseHook<{}> = ({ context, params }) => {
     if (config.skipIntrospection && isIntrospectionOperationString(params.source)) {
       return;
     }
@@ -200,20 +227,20 @@ export const usePrometheus = (
 
     return params => {
       const totalTime = (Date.now() - startTime) / 1000;
-      const internalContext = createInternalContext(params.result);
+      let fillLabelsFnParams = fillLabelsFnParamsMap.get(params.result);
+      if (!fillLabelsFnParams) {
+        fillLabelsFnParams = createFillLabelFnParams(params.result, filterFillParamsFnParams);
+        fillLabelsFnParamsMap.set(context, fillLabelsFnParams);
+      }
 
-      if (internalContext) {
-        extendContext({
-          [promPluginContext]: internalContext,
-        });
-
+      if (fillLabelsFnParams) {
         parseHistogram?.histogram.observe(
-          parseHistogram.fillLabelsFn(internalContext, context),
+          parseHistogram.fillLabelsFn(fillLabelsFnParams, context),
           totalTime,
         );
 
         if (deprecationCounter && typeInfo) {
-          const deprecatedFields = extractDeprecatedFields(internalContext.document!, typeInfo);
+          const deprecatedFields = extractDeprecatedFields(fillLabelsFnParams.document!, typeInfo);
 
           if (deprecatedFields.length > 0) {
             for (const depField of deprecatedFields) {
@@ -221,7 +248,7 @@ export const usePrometheus = (
                 .labels(
                   deprecationCounter.fillLabelsFn(
                     {
-                      ...internalContext,
+                      ...fillLabelsFnParams,
                       deprecationInfo: depField,
                     },
                     context,
@@ -242,9 +269,10 @@ export const usePrometheus = (
     };
   };
 
-  const onValidate: OnValidateHook<PluginInternalContext> | undefined = validateHistogram
+  const onValidate: OnValidateHook<{}> | undefined = validateHistogram
     ? ({ context }) => {
-        if (!context[promPluginContext]) {
+        const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
+        if (!fillLabelsFnParams) {
           return undefined;
         }
 
@@ -252,7 +280,7 @@ export const usePrometheus = (
 
         return ({ valid }) => {
           const totalTime = (Date.now() - startTime) / 1000;
-          const labels = validateHistogram.fillLabelsFn(context[promPluginContext], context);
+          const labels = validateHistogram.fillLabelsFn(fillLabelsFnParams, context);
           validateHistogram.histogram.observe(labels, totalTime);
 
           if (!valid) {
@@ -267,64 +295,56 @@ export const usePrometheus = (
       }
     : undefined;
 
-  const onContextBuilding: OnContextBuildingHook<PluginInternalContext> | undefined =
-    contextBuildingHistogram
-      ? ({ context }) => {
-          if (!context[promPluginContext]) {
-            return undefined;
-          }
-
-          const startTime = Date.now();
-
-          return () => {
-            const totalTime = (Date.now() - startTime) / 1000;
-            contextBuildingHistogram.histogram.observe(
-              contextBuildingHistogram.fillLabelsFn(context[promPluginContext], context),
-              totalTime,
-            );
-          };
+  const onContextBuilding: OnContextBuildingHook<{}> | undefined = contextBuildingHistogram
+    ? ({ context }) => {
+        const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
+        if (!fillLabelsFnParams) {
+          return undefined;
         }
-      : undefined;
 
-  const onExecute: OnExecuteHook<PluginInternalContext> | undefined = executeHistogram
+        const startTime = Date.now();
+
+        return () => {
+          const totalTime = (Date.now() - startTime) / 1000;
+          contextBuildingHistogram.histogram.observe(
+            contextBuildingHistogram.fillLabelsFn(fillLabelsFnParams, context),
+            totalTime,
+          );
+        };
+      }
+    : undefined;
+
+  const onExecute: OnExecuteHook<{}> | undefined = executeHistogram
     ? ({ args }) => {
-        if (!args.contextValue[promPluginContext]) {
+        const fillLabelsFnParams = fillLabelsFnParamsMap.get(args.contextValue);
+        if (!fillLabelsFnParams) {
           return undefined;
         }
 
         const startTime = Date.now();
         reqCounter?.counter
-          .labels(reqCounter.fillLabelsFn(args.contextValue[promPluginContext], args.contextValue))
+          .labels(reqCounter.fillLabelsFn(fillLabelsFnParams, args.contextValue))
           .inc();
 
-        const result: OnExecuteHookResult<PluginInternalContext> = {
+        const result: OnExecuteHookResult<{}> = {
           onExecuteDone: ({ result }) => {
             const totalTime = (Date.now() - startTime) / 1000;
             executeHistogram.histogram.observe(
-              executeHistogram.fillLabelsFn(
-                args.contextValue[promPluginContext],
-                args.contextValue,
-              ),
+              executeHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
               totalTime,
             );
 
             requestTotalHistogram?.histogram.observe(
-              requestTotalHistogram.fillLabelsFn(
-                args.contextValue[promPluginContext],
-                args.contextValue,
-              ),
+              requestTotalHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
               totalTime,
             );
 
-            if (requestSummary && args.contextValue[promPluginExecutionStartTimeSymbol]) {
-              const summaryTime =
-                (Date.now() - args.contextValue[promPluginExecutionStartTimeSymbol]) / 1000;
+            const execStartTime = execStartTimeMap.get(args.contextValue);
+            if (requestSummary && execStartTime) {
+              const summaryTime = (Date.now() - execStartTime) / 1000;
 
               requestSummary.summary.observe(
-                requestSummary.fillLabelsFn(
-                  args.contextValue[promPluginContext],
-                  args.contextValue,
-                ),
+                requestSummary.fillLabelsFn(fillLabelsFnParams, args.contextValue),
                 summaryTime,
               );
             }
@@ -340,7 +360,7 @@ export const usePrometheus = (
                   .labels(
                     errorsCounter.fillLabelsFn(
                       {
-                        ...args.contextValue[promPluginContext],
+                        ...fillLabelsFnParams,
                         errorPhase: 'execute',
                         error,
                       },
@@ -357,13 +377,14 @@ export const usePrometheus = (
       }
     : undefined;
 
+  const countedSchemas = new WeakSet<GraphQLSchema>();
   return {
-    onEnveloped({ extendContext }) {
-      extendContext({
-        [promPluginExecutionStartTimeSymbol]: Date.now(),
-      });
+    onEnveloped({ context }) {
+      if (!execStartTimeMap.has(context)) {
+        execStartTimeMap.set(context, Date.now());
+      }
     },
-    onPluginInit({ addPlugin }) {
+    onPluginInit({ addPlugin, registerContextErrorHandler }) {
       if (resolversHistogram) {
         addPlugin(
           useOnResolve(({ info, context }) => {
@@ -377,8 +398,9 @@ export const usePrometheus = (
 
             return () => {
               const totalTime = (Date.now() - startTime) / 1000;
+              const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
               const paramsCtx = {
-                ...context[promPluginContext],
+                ...fillLabelsFnParams,
                 info,
               };
               resolversHistogram.histogram.observe(
@@ -389,9 +411,26 @@ export const usePrometheus = (
           }),
         );
       }
+      registerContextErrorHandler(({ context }) => {
+        const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
+        let extraLabels;
+        if (fillLabelsFnParams) {
+          extraLabels = contextBuildingHistogram?.fillLabelsFn(fillLabelsFnParams, context);
+        }
+        errorsCounter?.counter
+          .labels({
+            ...extraLabels,
+            phase: 'context',
+          })
+          .inc();
+      });
     },
     onSchemaChange({ schema }) {
       typeInfo = new TypeInfo(schema);
+      if (schemaChangeCounter && !countedSchemas.has(schema)) {
+        schemaChangeCounter.counter.inc();
+        countedSchemas.add(schema);
+      }
     },
     onParse,
     onValidate,

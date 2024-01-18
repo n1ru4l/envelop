@@ -15,4 +15,12 @@ export type PrometheusTracingPluginConfig = {
   deprecatedFields?: boolean | ReturnType<typeof createCounter>;
   registry?: Registry;
   skipIntrospection?: boolean;
+  schemaChangeCount?: boolean | ReturnType<typeof createCounter>;
+  labels?: {
+    operationName?: boolean;
+    operationType?: boolean;
+    fieldName?: boolean;
+    typeName?: boolean;
+    returnType?: boolean;
+  };
 };
