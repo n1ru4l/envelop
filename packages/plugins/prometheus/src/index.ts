@@ -380,7 +380,9 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
   const countedSchemas = new WeakSet<GraphQLSchema>();
   return {
     onEnveloped({ context }) {
-      execStartTimeMap.set(context, Date.now());
+      if (!execStartTimeMap.has(context)) {
+        execStartTimeMap.set(context, Date.now());
+      }
     },
     onPluginInit({ addPlugin, registerContextErrorHandler }) {
       if (resolversHistogram) {
