@@ -1,5 +1,12 @@
 # @envelop/prometheus
 
+## 9.3.1
+
+### Patch Changes
+
+- [`3dc808b`](https://github.com/n1ru4l/envelop/commit/3dc808bf4635d6a903ce1b073e592d63a06a0254)
+  Thanks [@ardatan](https://github.com/ardatan)! - Remove unwanted labels from metrics
+
 ## 9.3.0
 
 ### Minor Changes
