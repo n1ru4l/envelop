@@ -22,7 +22,9 @@ import {
   createSummary,
   extractDeprecatedFields,
   FillLabelsFnParams,
+  filterFillParamsFnParams,
   getHistogramFromConfig,
+  labelExists,
   shouldTraceFieldResolver,
 } from './utils.js';
 
@@ -71,18 +73,6 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
     'Time spent on running the GraphQL "subscribe" function',
   );
 
-  function labelExists(label: string) {
-    const labelFlag = config.labels?.[label];
-    if (labelFlag == null) {
-      return true;
-    }
-    return labelFlag;
-  }
-
-  function filterFillParamsFnParams(params: Record<string, any>) {
-    return Object.fromEntries(Object.entries(params).filter(([key]) => labelExists(key)));
-  }
-
   const resolversHistogram =
     typeof config.resolvers === 'object'
       ? config.resolvers
@@ -97,11 +87,11 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
               'fieldName',
               'typeName',
               'returnType',
-            ].filter(labelExists),
+            ].filter(label => labelExists(config, label)),
             registers: [config.registry || defaultRegistry],
           }),
           fillLabelsFn: params =>
-            filterFillParamsFnParams({
+            filterFillParamsFnParams(config, {
               operationName: params.operationName!,
               operationType: params.operationType!,
               fieldName: params.info?.fieldName!,
@@ -119,11 +109,13 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
           histogram: new Histogram({
             name: 'graphql_envelop_request_duration',
             help: 'Time spent on running the GraphQL operation from parse to execute',
-            labelNames: ['operationType', 'operationName'].filter(labelExists),
+            labelNames: ['operationType', 'operationName'].filter(label =>
+              labelExists(config, label),
+            ),
             registers: [config.registry || defaultRegistry],
           }),
           fillLabelsFn: params =>
-            filterFillParamsFnParams({
+            filterFillParamsFnParams(config, {
               operationName: params.operationName!,
               operationType: params.operationType!,
             }),
@@ -138,11 +130,13 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
           summary: new Summary({
             name: 'graphql_envelop_request_time_summary',
             help: 'Summary to measure the time to complete GraphQL operations',
-            labelNames: ['operationType', 'operationName'].filter(labelExists),
+            labelNames: ['operationType', 'operationName'].filter(label =>
+              labelExists(config, label),
+            ),
             registers: [config.registry || defaultRegistry],
           }),
           fillLabelsFn: params =>
-            filterFillParamsFnParams({
+            filterFillParamsFnParams(config, {
               operationName: params.operationName!,
               operationType: params.operationType!,
             }),
@@ -157,11 +151,13 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
           counter: new Counter({
             name: 'graphql_envelop_error_result',
             help: 'Counts the amount of errors reported from all phases',
-            labelNames: ['operationType', 'operationName', 'path', 'phase'].filter(labelExists),
+            labelNames: ['operationType', 'operationName', 'path', 'phase'].filter(label =>
+              labelExists(config, label),
+            ),
             registers: [config.registry || defaultRegistry],
           }),
           fillLabelsFn: params =>
-            filterFillParamsFnParams({
+            filterFillParamsFnParams(config, {
               operationName: params.operationName!,
               operationType: params.operationType!,
               path: params.error?.path?.join('.')!,
@@ -178,11 +174,13 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
           counter: new Counter({
             name: 'graphql_envelop_request',
             help: 'Counts the amount of GraphQL requests executed through Envelop',
-            labelNames: ['operationType', 'operationName'].filter(labelExists),
+            labelNames: ['operationType', 'operationName'].filter(label =>
+              labelExists(config, label),
+            ),
             registers: [config.registry || defaultRegistry],
           }),
           fillLabelsFn: params =>
-            filterFillParamsFnParams({
+            filterFillParamsFnParams(config, {
               operationName: params.operationName!,
               operationType: params.operationType!,
             }),
@@ -197,13 +195,13 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
           counter: new Counter({
             name: 'graphql_envelop_deprecated_field',
             help: 'Counts the amount of deprecated fields used in selection sets',
-            labelNames: ['operationType', 'operationName', 'fieldName', 'typeName'].filter(
-              labelExists,
+            labelNames: ['operationType', 'operationName', 'fieldName', 'typeName'].filter(label =>
+              labelExists(config, label),
             ),
             registers: [config.registry || defaultRegistry],
           }),
           fillLabelsFn: params =>
-            filterFillParamsFnParams({
+            filterFillParamsFnParams(config, {
               operationName: params.operationName!,
               operationType: params.operationType!,
               fieldName: params.deprecationInfo?.fieldName!,
@@ -237,10 +235,8 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
       const totalTime = (Date.now() - startTime) / 1000;
       let fillLabelsFnParams = fillLabelsFnParamsMap.get(params.result);
       if (!fillLabelsFnParams) {
-        fillLabelsFnParams = createFillLabelFnParams(
-          params.result,
-          context,
-          filterFillParamsFnParams,
+        fillLabelsFnParams = createFillLabelFnParams(params.result, context, params =>
+          filterFillParamsFnParams(config, params),
         );
         fillLabelsFnParamsMap.set(context, fillLabelsFnParams);
       }

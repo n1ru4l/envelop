@@ -104,13 +104,16 @@ export function getHistogramFromConfig(
         histogram: new Histogram({
           name,
           help,
-          labelNames: ['operationType', 'operationName'] as const,
+          labelNames: ['operationType', 'operationName'].filter(label =>
+            labelExists(config, label),
+          ),
           registers: [config.registry || defaultRegistry],
         }),
-        fillLabelsFn: params => ({
-          operationName: params.operationName!,
-          operationType: params.operationType!,
-        }),
+        fillLabelsFn: params =>
+          filterFillParamsFnParams(config, {
+            operationName: params.operationName!,
+            operationType: params.operationType!,
+          }),
       })
     : undefined;
 }
@@ -152,4 +155,19 @@ export function extractDeprecatedFields(node: ASTNode, typeInfo: TypeInfo): Depr
   );
 
   return found;
+}
+
+export function labelExists(config: PrometheusTracingPluginConfig, label: string) {
+  const labelFlag = config.labels?.[label];
+  if (labelFlag == null) {
+    return true;
+  }
+  return labelFlag;
+}
+
+export function filterFillParamsFnParams(
+  config: PrometheusTracingPluginConfig,
+  params: Record<string, any>,
+) {
+  return Object.fromEntries(Object.entries(params).filter(([key]) => labelExists(config, key)));
 }
