@@ -1,10 +1,12 @@
-import { useExtendContext } from '@envelop/core';
+import * as GraphQLJS from 'graphql';
+import { useEngine, useExtendContext } from '@envelop/core';
 import {
   assertStreamExecutionValue,
   collectAsyncIteratorValues,
   createTestkit,
 } from '@envelop/testing';
 import { Plugin } from '@envelop/types';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { createGraphQLError } from '@graphql-tools/utils';
 import { Repeater } from '@repeaterjs/repeater';
@@ -138,5 +140,38 @@ describe('useErrorHandler', () => {
         phase: 'execution',
       }),
     );
+  });
+
+  it('should invoke error handler when error happens during incremental execution', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        directive @defer on FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+        type Query {
+          foo: String
+        }
+      `,
+      resolvers: {
+        Query: {
+          foo: () => {
+            throw new Error('kaboom');
+          },
+        },
+      },
+    });
+
+    const mockHandler = jest.fn();
+    const testInstance = createTestkit(
+      [
+        useEngine({ ...GraphQLJS, execute: normalizedExecutor, subscribe: normalizedExecutor }),
+        useErrorHandler(mockHandler),
+      ],
+      schema,
+    );
+    const result = await testInstance.execute(`query { ... @defer { foo } }`);
+    assertStreamExecutionValue(result);
+    await collectAsyncIteratorValues(result);
+
+    expect(mockHandler).toHaveBeenCalledWith(expect.objectContaining({ phase: 'execution' }));
   });
 });
