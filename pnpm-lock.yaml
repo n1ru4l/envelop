@@ -1321,9 +1321,6 @@ importers:
       '@envelop/core':
         specifier: ^5.0.0
         version: link:../../core/dist
-      '@graphql-tools/schema':
-        specifier: 10.0.2
-        version: 10.0.2(graphql@16.6.0)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
