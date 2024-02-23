@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@envelop/core": "^5.0.0",
-    "@graphql-tools/schema": "10.0.2",
+    "@graphql-tools/schema": "10.0.3",
     "apollo-server-core": "3.12.1",
     "graphql": "16.8.1",
     "typescript": "5.1.3"
