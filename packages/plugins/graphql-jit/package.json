@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@envelop/core": "^5.0.0",
-    "@graphql-tools/schema": "10.0.2",
+    "@graphql-tools/schema": "10.0.3",
     "graphql": "16.8.1",
     "lru-cache": "^10.0.0",
     "reflect-metadata": "0.1.13",
