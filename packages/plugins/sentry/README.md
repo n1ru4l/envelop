@@ -63,8 +63,6 @@ const getEnveloped = envelop({
 - `renameTransaction` (default: `false`) - Renames Transaction.
 - `includeRawResult` (default: `false`) - Adds result of each resolver and operation to Span's data
   (available under "result")
-- `includeResolverArgs` (default: `false`) - Adds arguments of each resolver to Span's tag called
-  "args"
 - `includeExecuteVariables` (default: `false`) - Adds operation's variables to a Scope (only in case
   of errors)
 - `appendTags` - See example above. Allow you to manipulate the tags reports on the Sentry
