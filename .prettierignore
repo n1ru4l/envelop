@@ -8,3 +8,4 @@ examples/sveltekit
 **/generated/**
 .next
 pnpm-lock.yaml
+.husky
