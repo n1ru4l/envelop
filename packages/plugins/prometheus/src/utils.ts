@@ -100,22 +100,22 @@ export function getHistogramFromConfig(
   return typeof config[phase] === 'object'
     ? (config[phase] as ReturnType<typeof createHistogram>)
     : config[phase] === true
-    ? createHistogram({
-        histogram: new Histogram({
-          name,
-          help,
-          labelNames: ['operationType', 'operationName'].filter(label =>
-            labelExists(config, label),
-          ),
-          registers: [config.registry || defaultRegistry],
-        }),
-        fillLabelsFn: params =>
-          filterFillParamsFnParams(config, {
-            operationName: params.operationName!,
-            operationType: params.operationType!,
+      ? createHistogram({
+          histogram: new Histogram({
+            name,
+            help,
+            labelNames: ['operationType', 'operationName'].filter(label =>
+              labelExists(config, label),
+            ),
+            registers: [config.registry || defaultRegistry],
           }),
-      })
-    : undefined;
+          fillLabelsFn: params =>
+            filterFillParamsFnParams(config, {
+              operationName: params.operationName!,
+              operationType: params.operationType!,
+            }),
+        })
+      : undefined;
 }
 
 export function extractDeprecatedFields(node: ASTNode, typeInfo: TypeInfo): DeprecatedFieldInfo[] {

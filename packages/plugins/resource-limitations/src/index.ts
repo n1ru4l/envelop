@@ -54,8 +54,8 @@ const buildMissingPaginationFieldErrorMessage = (params: {
   (params.hasFirst && params.hasLast
     ? "either the 'first' or 'last'"
     : params.hasFirst
-    ? "the 'first'"
-    : "the 'last'") +
+      ? "the 'first'"
+      : "the 'last'") +
   ' field argument.';
 
 const buildInvalidPaginationRangeErrorMessage = (params: {
