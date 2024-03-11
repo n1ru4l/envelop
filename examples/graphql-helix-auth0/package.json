@@ -12,13 +12,13 @@
     "@envelop/auth0": "*",
     "@envelop/core": "*",
     "@graphql-tools/schema": "10.0.3",
-    "fastify": "4.24.3",
+    "fastify": "4.26.2",
     "graphql": "16.8.1",
     "graphql-helix": "1.13.0"
   },
   "devDependencies": {
-    "@types/node": "20.9.0",
-    "ts-node": "10.9.1",
+    "@types/node": "20.11.25",
+    "ts-node": "10.9.2",
     "typescript": "5.1.3"
   }
 }
