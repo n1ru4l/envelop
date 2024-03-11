@@ -15,6 +15,7 @@
     "lint:prettier": "prettier --cache --ignore-path .prettierignore --check .",
     "loadtest:run": "pnpm run --filter @envelop/benchmark loadtest:run",
     "loadtest:start-server": "pnpm run --filter @envelop/benchmark loadtest:start-server",
+    "postinstall": "npx -y update-browserslist-db@latest --update-db",
     "prebuild": "rimraf packages/*/dist packages/plugins/*/dist",
     "prepare": "husky install",
     "prettier": "prettier --cache --ignore-path .prettierignore --write --list-different .",
