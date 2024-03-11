@@ -1467,14 +1467,14 @@ importers:
         specifier: 10.0.3
         version: 10.0.3(graphql@16.6.0)
       '@sentry/node':
-        specifier: 7.106.0
-        version: 7.106.0
+        specifier: 7.106.1
+        version: 7.106.1
       '@sentry/tracing':
-        specifier: 7.106.0
-        version: 7.106.0
+        specifier: 7.106.1
+        version: 7.106.1
       '@sentry/types':
-        specifier: 7.106.0
-        version: 7.106.0
+        specifier: 7.106.1
+        version: 7.106.1
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -6997,13 +6997,13 @@ packages:
     dev: true
     optional: true
 
-  /@sentry-internal/tracing@7.106.0:
-    resolution: {integrity: sha512-O8Es6Sa/tP80nfl+8soNfWzeRNFcT484SvjLR8BS3pHM9KDAlwNXyoQhFr2BKNYL1irbq6UF6eku4xCnUKVmqA==}
+  /@sentry-internal/tracing@7.106.1:
+    resolution: {integrity: sha512-Ui9zSmW88jTdmNnNBLYYpNoAi31esX5/auysC3v7+SpwxIsC3AGLFvXs4EPziyz8d0F62Ji0fNQZ96ui4fO6BQ==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/core': 7.106.0
-      '@sentry/types': 7.106.0
-      '@sentry/utils': 7.106.0
+      '@sentry/core': 7.106.1
+      '@sentry/types': 7.106.1
+      '@sentry/utils': 7.106.1
     dev: true
 
   /@sentry/core@6.0.0:
@@ -7017,12 +7017,12 @@ packages:
       tslib: 1.11.1
     dev: false
 
-  /@sentry/core@7.106.0:
-    resolution: {integrity: sha512-Dc13XtnyFaXup2E4vCbzuG0QKAVjrJBk4qfGwvSJaTuopEaEWBs2MpK6hRzFhsz9S3T0La7c1F/62NptvTUWsQ==}
+  /@sentry/core@7.106.1:
+    resolution: {integrity: sha512-cwCd66wkbutXCI8j14JLkyod9RHtqSNfzGpx/ieBE+N786jX+Yj1DiaZJ6ZYjKQpnToipFnacEakCd9Vc9oePA==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.106.0
-      '@sentry/utils': 7.106.0
+      '@sentry/types': 7.106.1
+      '@sentry/utils': 7.106.1
     dev: true
 
   /@sentry/hub@6.0.0:
@@ -7060,14 +7060,14 @@ packages:
       - supports-color
     dev: false
 
-  /@sentry/node@7.106.0:
-    resolution: {integrity: sha512-4DIqbu5K7//lK/k2nV8lqKeGQzhu2T1OpJFmiUrjN6fUKWivGFjZrcmQDS7tvhAAyJezkL3LlrNU4tjPHUElPA==}
+  /@sentry/node@7.106.1:
+    resolution: {integrity: sha512-KB2Lkb9WqocD/gbKIZCk2mQQmx+G3khI9ChJUw6GJzd5mvdQ5xxr4/yQKIHR6L9z3oGWBno9/Xc8Aw9s3ZwGwQ==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry-internal/tracing': 7.106.0
-      '@sentry/core': 7.106.0
-      '@sentry/types': 7.106.0
-      '@sentry/utils': 7.106.0
+      '@sentry-internal/tracing': 7.106.1
+      '@sentry/core': 7.106.1
+      '@sentry/types': 7.106.1
+      '@sentry/utils': 7.106.1
     dev: true
 
   /@sentry/tracing@6.0.0:
@@ -7081,11 +7081,11 @@ packages:
       tslib: 1.11.1
     dev: false
 
-  /@sentry/tracing@7.106.0:
-    resolution: {integrity: sha512-qHlRnNLcQpj7d/tSXL9uk49fjtfgKhd1VdqOcb66m180PF1vwIxzr3yPQ7wFZa91sHqf7Xto7faax8DnaDmpoQ==}
+  /@sentry/tracing@7.106.1:
+    resolution: {integrity: sha512-oVAxUhXR41SGpAXjfp/c1cmoUQZI0NSzn6iW95fGHN0o5FBXEU0Pxet/BAG0ik1E1dH6QHnWpKef5TytE1Nqsg==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry-internal/tracing': 7.106.0
+      '@sentry-internal/tracing': 7.106.1
     dev: true
 
   /@sentry/types@6.0.0:
@@ -7093,8 +7093,8 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /@sentry/types@7.106.0:
-    resolution: {integrity: sha512-oKTkDaL6P9xJC5/zHLRemHTWboUqRYjkJNaZCN63j4kJqGy56wee4vDtDese/NWWn4U4C1QV1h+Mifm2HmDcQg==}
+  /@sentry/types@7.106.1:
+    resolution: {integrity: sha512-g3OcyAHGugBwkQP4fZYCCZqF2ng9K7yQc9FVngKq/y7PwHm84epXdYYGDGgfQOIC1d5/GMaPxmzI5IIrZexzkg==}
     engines: {node: '>=8'}
     dev: true
 
@@ -7106,11 +7106,11 @@ packages:
       tslib: 1.11.1
     dev: false
 
-  /@sentry/utils@7.106.0:
-    resolution: {integrity: sha512-bVsePsXLpFu/1sH4rpJrPcnVxW2fXXfGfGxKs6Bm+dkOMbuVTlk/KAzIbdjCDIpVlrMDJmMNEv5xgTFjgWDkjw==}
+  /@sentry/utils@7.106.1:
+    resolution: {integrity: sha512-NIeuvB9MeDwrObbi6W5xRrNTcQj8klVvwWWYQB0zotY/LDjyl+c+cZzUshFOxBTp9ljVnYzWqZ7J8x/i4baj7w==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.106.0
+      '@sentry/types': 7.106.1
     dev: true
 
   /@sideway/address@4.1.3:
