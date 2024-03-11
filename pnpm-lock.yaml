@@ -648,8 +648,8 @@ importers:
         specifier: 10.0.3
         version: 10.0.3(graphql@16.6.0)
       '@graphql-tools/utils':
-        specifier: 10.1.0
-        version: 10.1.0(graphql@16.6.0)
+        specifier: 10.1.1
+        version: 10.1.1(graphql@16.6.0)
       '@repeaterjs/repeater':
         specifier: 3.0.5
         version: 3.0.5
@@ -936,8 +936,8 @@ importers:
         specifier: 10.0.3
         version: 10.0.3(graphql@16.6.0)
       '@graphql-tools/utils':
-        specifier: 10.1.0
-        version: 10.1.0(graphql@16.6.0)
+        specifier: 10.1.1
+        version: 10.1.1(graphql@16.6.0)
       '@types/common-tags':
         specifier: 1.8.4
         version: 1.8.4
@@ -4731,7 +4731,7 @@ packages:
     peerDependencies:
       graphql: 16.6.0
     dependencies:
-      '@graphql-tools/utils': 10.1.0(graphql@16.6.0)
+      '@graphql-tools/utils': 10.1.1(graphql@16.6.0)
       dataloader: 2.2.2
       graphql: 16.6.0
       tslib: 2.6.2
@@ -4747,7 +4747,7 @@ packages:
       '@graphql-tools/batch-execute': 9.0.2(graphql@16.6.0)
       '@graphql-tools/executor': 1.1.0(graphql@16.6.0)
       '@graphql-tools/schema': 10.0.3(graphql@16.6.0)
-      '@graphql-tools/utils': 10.1.0(graphql@16.6.0)
+      '@graphql-tools/utils': 10.1.1(graphql@16.6.0)
       dataloader: 2.2.2
       graphql: 16.6.0
       tslib: 2.6.2
@@ -4772,7 +4772,7 @@ packages:
     peerDependencies:
       graphql: 16.6.0
     dependencies:
-      '@graphql-tools/utils': 10.1.0(graphql@16.6.0)
+      '@graphql-tools/utils': 10.1.1(graphql@16.6.0)
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.6.0)
       '@repeaterjs/repeater': 3.0.5
       graphql: 16.6.0
@@ -4805,7 +4805,7 @@ packages:
     peerDependencies:
       graphql: 16.6.0
     dependencies:
-      '@graphql-tools/utils': 10.1.0(graphql@16.6.0)
+      '@graphql-tools/utils': 10.1.1(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.6.2
     dev: true
@@ -4816,7 +4816,7 @@ packages:
     peerDependencies:
       graphql: 16.6.0
     dependencies:
-      '@graphql-tools/utils': 10.1.0(graphql@16.6.0)
+      '@graphql-tools/utils': 10.1.1(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.6.2
     dev: true
@@ -4827,7 +4827,7 @@ packages:
     peerDependencies:
       graphql: 16.6.0
     dependencies:
-      '@graphql-tools/utils': 10.1.0(graphql@16.6.0)
+      '@graphql-tools/utils': 10.1.1(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.6.2
 
@@ -4851,7 +4851,7 @@ packages:
       graphql: 16.6.0
     dependencies:
       '@graphql-tools/merge': 9.0.0(graphql@16.6.0)
-      '@graphql-tools/utils': 10.1.0(graphql@16.6.0)
+      '@graphql-tools/utils': 10.1.1(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.5.0
       value-or-promise: 1.0.12
@@ -4864,7 +4864,7 @@ packages:
       graphql: 16.6.0
     dependencies:
       '@graphql-tools/merge': 9.0.1(graphql@16.6.0)
-      '@graphql-tools/utils': 10.1.0(graphql@16.6.0)
+      '@graphql-tools/utils': 10.1.1(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.6.2
       value-or-promise: 1.0.12
@@ -4963,6 +4963,18 @@ packages:
       graphql: 16.6.0
       tslib: 2.6.2
 
+  /@graphql-tools/utils@10.1.1(graphql@16.6.0):
+    resolution: {integrity: sha512-1kNkZsND12hPkb+YpuUeTRt8f9ZTGhYOfu23V5Z21HegYDjl1k9eX+Inher/eiHCf1eXCk5rKWL9Liol8MWixA==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      graphql: 16.6.0
+    dependencies:
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.6.0)
+      cross-inspect: 1.0.0
+      dset: 3.1.2
+      graphql: 16.6.0
+      tslib: 2.6.2
+
   /@graphql-tools/utils@7.10.0(graphql@16.6.0):
     resolution: {integrity: sha512-d334r6bo9mxdSqZW6zWboEnnOOFRrAPVQJ7LkU8/6grglrbcu6WhwCLzHb90E94JI3TD3ricC3YGbUqIi9Xg0w==}
     peerDependencies:
@@ -5007,7 +5019,7 @@ packages:
     dependencies:
       '@graphql-tools/delegate': 10.0.3(graphql@16.6.0)
       '@graphql-tools/schema': 10.0.3(graphql@16.6.0)
-      '@graphql-tools/utils': 10.1.0(graphql@16.6.0)
+      '@graphql-tools/utils': 10.1.1(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.6.2
       value-or-promise: 1.0.12
