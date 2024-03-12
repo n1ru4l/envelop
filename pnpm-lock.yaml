@@ -229,8 +229,8 @@ importers:
         version: 0.7.3
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: 4.20240222.0
-        version: 4.20240222.0
+        specifier: 4.20240312.0
+        version: 4.20240312.0
       '@types/node':
         specifier: 20.11.26
         version: 20.11.26
@@ -498,8 +498,8 @@ importers:
         specifier: 10.0.3
         version: 10.0.3(graphql@16.6.0)
       aws-sdk:
-        specifier: 2.1575.0
-        version: 2.1575.0
+        specifier: 2.1576.0
+        version: 2.1576.0
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -4401,8 +4401,8 @@ packages:
     resolution: {integrity: sha512-+kWfpCkqiepwAKXyHoE0gnkPgkLhz0/9HOBIGhHRsUvUKvhUtm3mbqqoGRWgF1qcjzrDUBbrrOq4MYHfFtc2RA==}
     dev: false
 
-  /@cloudflare/workers-types@4.20240222.0:
-    resolution: {integrity: sha512-luO0BdK3rLlCv3B240+cTrfqm+XSbHtpk+88aJtGwzyVK9QF/Xz8lBgE/oZZLN8nCTmOvxAZnszyxUuZ8GP8Cg==}
+  /@cloudflare/workers-types@4.20240312.0:
+    resolution: {integrity: sha512-tpBNfijiXR/DSZkcUZHxP+80nIvKUWbGO2u4FBLudmJLGPhzgfoQ3tql+FeIhxYslSituMcVQNnJmWTF7FjURg==}
     dev: true
 
   /@colors/colors@1.5.0:
@@ -5909,7 +5909,7 @@ packages:
     resolution: {integrity: sha512-hfactEWiHuHOmE29XFG8oLNCF6+HqjD6Mb80CzidcVmLlBTEtSC3PEF+DXPyvNdLXpBolZMKOuC/yzzloWvACA==}
     engines: {node: '>=16.13'}
     dependencies:
-      '@cloudflare/workers-types': 4.20240222.0
+      '@cloudflare/workers-types': 4.20240312.0
       '@miniflare/cache': 2.14.1
       '@miniflare/core': 2.14.1
       '@miniflare/d1': 2.14.1
@@ -9066,8 +9066,8 @@ packages:
       - supports-color
     dev: false
 
-  /aws-sdk@2.1575.0:
-    resolution: {integrity: sha512-q33w5NN057CYOdcbxpKAgrb7CUSPrtPBxGGzgIo44y1Fi1iEXDawMYcahu5cwSfD6NFzvZkPz2a5Eo1Fu3Az8A==}
+  /aws-sdk@2.1576.0:
+    resolution: {integrity: sha512-h9ujtJl6LrELtbBrMkzywHoL90L7/7R/CwRx8nWwF500wmmzKwScmQ3MJQ9XSZxl0TjY6lf39K1zP6pNCwh1lA==}
     engines: {node: '>= 10.0.0'}
     requiresBuild: true
     dependencies:
