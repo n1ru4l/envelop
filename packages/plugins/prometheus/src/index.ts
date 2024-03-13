@@ -45,41 +45,46 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
   const parseHistogram = getHistogramFromConfig(
     config,
     'parse',
-    'graphql_envelop_phase_parse',
+    typeof config.parse === 'string' ? config.parse : 'graphql_envelop_phase_parse',
     'Time spent on running GraphQL "parse" function',
   );
   const validateHistogram = getHistogramFromConfig(
     config,
     'validate',
-    'graphql_envelop_phase_validate',
+    typeof config.validate === 'string' ? config.validate : 'graphql_envelop_phase_validate',
     'Time spent on running GraphQL "validate" function',
   );
   const contextBuildingHistogram = getHistogramFromConfig(
     config,
     'contextBuilding',
-    'graphql_envelop_phase_context',
+    typeof config.contextBuilding === 'string'
+      ? config.contextBuilding
+      : 'graphql_envelop_phase_context',
     'Time spent on building the GraphQL context',
   );
   const executeHistogram = getHistogramFromConfig(
     config,
     'execute',
-    'graphql_envelop_phase_execute',
+    typeof config.execute === 'string' ? config.execute : 'graphql_envelop_phase_execute',
     'Time spent on running the GraphQL "execute" function',
   );
   const subscribeHistogram = getHistogramFromConfig(
     config,
     'subscribe',
-    'graphql_envelop_phase_subscribe',
+    typeof config.subscribe === 'string' ? config.subscribe : 'graphql_envelop_phase_subscribe',
     'Time spent on running the GraphQL "subscribe" function',
   );
 
   const resolversHistogram =
     typeof config.resolvers === 'object'
       ? config.resolvers
-      : config.resolvers === true
+      : config.resolvers === true || typeof config.resolvers === 'string'
         ? createHistogram({
             histogram: new Histogram({
-              name: 'graphql_envelop_execute_resolver',
+              name:
+                typeof config.resolvers === 'string'
+                  ? config.resolvers
+                  : 'graphql_envelop_execute_resolver',
               help: 'Time spent on running the GraphQL resolvers',
               labelNames: [
                 'operationType',
@@ -104,10 +109,13 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
   const requestTotalHistogram =
     typeof config.requestTotalDuration === 'object'
       ? config.requestTotalDuration
-      : config.requestTotalDuration === true
+      : config.requestTotalDuration === true || typeof config.requestTotalDuration === 'string'
         ? createHistogram({
             histogram: new Histogram({
-              name: 'graphql_envelop_request_duration',
+              name:
+                typeof config.requestTotalDuration === 'string'
+                  ? config.requestTotalDuration
+                  : 'graphql_envelop_request_duration',
               help: 'Time spent on running the GraphQL operation from parse to execute',
               labelNames: ['operationType', 'operationName'].filter(label =>
                 labelExists(config, label),
@@ -125,10 +133,13 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
   const requestSummary =
     typeof config.requestSummary === 'object'
       ? config.requestSummary
-      : config.requestSummary === true
+      : config.requestSummary === true || typeof config.requestSummary === 'string'
         ? createSummary({
             summary: new Summary({
-              name: 'graphql_envelop_request_time_summary',
+              name:
+                typeof config.requestSummary === 'string'
+                  ? config.requestSummary
+                  : 'graphql_envelop_request_time_summary',
               help: 'Summary to measure the time to complete GraphQL operations',
               labelNames: ['operationType', 'operationName'].filter(label =>
                 labelExists(config, label),
@@ -146,10 +157,11 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
   const errorsCounter =
     typeof config.errors === 'object'
       ? config.errors
-      : config.errors === true
+      : config.errors === true || typeof config.errors === 'string'
         ? createCounter({
             counter: new Counter({
-              name: 'graphql_envelop_error_result',
+              name:
+                typeof config.errors === 'string' ? config.errors : 'graphql_envelop_error_result',
               help: 'Counts the amount of errors reported from all phases',
               labelNames: ['operationType', 'operationName', 'path', 'phase'].filter(label =>
                 labelExists(config, label),
@@ -169,10 +181,13 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
   const reqCounter =
     typeof config.requestCount === 'object'
       ? config.requestCount
-      : config.requestCount === true
+      : config.requestCount === true || typeof config.requestCount === 'string'
         ? createCounter({
             counter: new Counter({
-              name: 'graphql_envelop_request',
+              name:
+                typeof config.requestCount === 'string'
+                  ? config.requestCount
+                  : 'graphql_envelop_request',
               help: 'Counts the amount of GraphQL requests executed through Envelop',
               labelNames: ['operationType', 'operationName'].filter(label =>
                 labelExists(config, label),
@@ -190,10 +205,13 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
   const deprecationCounter =
     typeof config.deprecatedFields === 'object'
       ? config.deprecatedFields
-      : config.deprecatedFields === true
+      : config.deprecatedFields === true || typeof config.deprecatedFields === 'string'
         ? createCounter({
             counter: new Counter({
-              name: 'graphql_envelop_deprecated_field',
+              name:
+                typeof config.deprecatedFields === 'string'
+                  ? config.deprecatedFields
+                  : 'graphql_envelop_deprecated_field',
               help: 'Counts the amount of deprecated fields used in selection sets',
               labelNames: ['operationType', 'operationName', 'fieldName', 'typeName'].filter(
                 label => labelExists(config, label),
@@ -213,10 +231,13 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
   const schemaChangeCounter =
     typeof config.schemaChangeCount === 'object'
       ? config.schemaChangeCount
-      : config.schemaChangeCount === true
+      : config.schemaChangeCount === true || typeof config.schemaChangeCount === 'string'
         ? createCounter({
             counter: new Counter({
-              name: 'graphql_envelop_schema_change',
+              name:
+                typeof config.schemaChangeCount === 'string'
+                  ? config.schemaChangeCount
+                  : 'graphql_envelop_schema_change',
               help: 'Counts the amount of schema changes',
               registers: [config.registry || defaultRegistry],
             }),
