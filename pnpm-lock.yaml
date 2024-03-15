@@ -1575,8 +1575,8 @@ importers:
         specifier: 5.2.6
         version: 5.2.6(@algolia/client-search@4.22.1)(@types/react@18.2.66)(next@13.5.1)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)(webpack@4.47.0)
       date-fns:
-        specifier: 3.4.0
-        version: 3.4.0
+        specifier: 3.5.0
+        version: 3.5.0
       next:
         specifier: 13.5.1
         version: 13.5.1(@babel/core@7.24.0)(react-dom@18.2.0)(react@18.2.0)
@@ -10758,8 +10758,8 @@ packages:
     resolution: {integrity: sha512-8YnDaaf7N3k/q5HnTJVuzSyLETjoZjVmHc4AeKAzOvKHEFQKcn64OKBfzHYtE9zGjctNM7V9I0MfnUVLpi7M5g==}
     dev: true
 
-  /date-fns@3.4.0:
-    resolution: {integrity: sha512-Akz4R8J9MXBsOgF1QeWeCsbv6pntT5KCPjU0Q9prBxVmWJYPLhwAIsNg3b0QAdr0ttiozYLD3L/af7Ra0jqYXw==}
+  /date-fns@3.5.0:
+    resolution: {integrity: sha512-a+DwyXn7NOfdJireCzAA0B9p7jIXEu/Q9JKCyMYvH6+0vPUNbQceA0neXrdfJ/xzl3mhOh5vibQQ3936Tssm6A==}
     dev: false
 
   /date-format@4.0.14:
