@@ -3,7 +3,7 @@
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "private": true,
-  "packageManager": "pnpm@8.15.4",
+  "packageManager": "pnpm@8.15.5",
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8"
@@ -36,8 +36,8 @@
     "@theguild/prettier-config": "2.0.5",
     "@types/benchmark": "2.1.5",
     "@types/jest": "29.5.12",
-    "@types/k6": "0.49.1",
-    "@types/node": "20.11.28",
+    "@types/k6": "0.49.2",
+    "@types/node": "20.11.29",
     "@typescript-eslint/eslint-plugin": "7.3.0",
     "@typescript-eslint/parser": "7.3.0",
     "bob-the-bundler": "7.0.1",
