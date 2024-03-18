@@ -1,5 +1,13 @@
 # @envelop/benchmark
 
+## 3.4.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`dded74e`](https://github.com/n1ru4l/envelop/commit/dded74eb630f5537ef4af9b00afba1f307b28d20)]:
+  - @envelop/graphql-jit@8.0.2
+
 ## 3.4.0
 
 ### Patch Changes
