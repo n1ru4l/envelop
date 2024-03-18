@@ -4779,8 +4779,8 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@google-cloud/firestore@7.3.1:
-    resolution: {integrity: sha512-YluLZbJK3dHXq6Ns5URCtr6hjBiG+6EM17QSivjaozPYDsv1R9a9mkWPz+jCQrb6Ewz6mxp3zavu6DXxvmSWLA==}
+  /@google-cloud/firestore@7.4.0:
+    resolution: {integrity: sha512-PRukAUgeBOZu/4pK9NXkAs8ur6QUpG6bBiwcnSO1qsh0FlR93gqU+VtkCx3EJM46S10jzMhHqpA0NoVbnUs5TQ==}
     engines: {node: '>=14.0.0'}
     requiresBuild: true
     dependencies:
@@ -4818,8 +4818,8 @@ packages:
     dev: false
     optional: true
 
-  /@google-cloud/storage@7.8.0:
-    resolution: {integrity: sha512-4q8rKdLp35z8msAtrhr0pbos7BeD8T0tr6rMbBINewp9cfrwj7ROIElVwBluU8fZ596OvwQcjb6QCyBzTmkMRQ==}
+  /@google-cloud/storage@7.9.0:
+    resolution: {integrity: sha512-PlFl7g3r91NmXtZHXsSEfTZES5ysD3SSBWmX4iBdQ2TFH7tN/Vn/IhnVELCHtgh1vc+uYPZ7XvRYaqtDCdghIA==}
     engines: {node: '>=14'}
     requiresBuild: true
     dependencies:
@@ -12351,8 +12351,8 @@ packages:
       node-forge: 1.3.1
       uuid: 9.0.0
     optionalDependencies:
-      '@google-cloud/firestore': 7.3.1
-      '@google-cloud/storage': 7.8.0
+      '@google-cloud/firestore': 7.4.0
+      '@google-cloud/storage': 7.9.0
     transitivePeerDependencies:
       - encoding
       - supports-color
