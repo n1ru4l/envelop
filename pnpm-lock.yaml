@@ -1573,7 +1573,7 @@ importers:
     dependencies:
       '@theguild/components':
         specifier: 6.3.0
-        version: 6.3.0(@algolia/client-search@4.22.1)(@types/react@18.2.67)(next@13.5.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(webpack@4.47.0)
+        version: 6.3.0(@algolia/client-search@4.22.1)(@types/react@18.2.67)(next@13.5.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.2)(webpack@4.47.0)
       date-fns:
         specifier: 3.6.0
         version: 3.6.0
@@ -7418,7 +7418,7 @@ packages:
       remove-markdown: 0.5.0
     dev: true
 
-  /@theguild/components@6.3.0(@algolia/client-search@4.22.1)(@types/react@18.2.67)(next@13.5.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(webpack@4.47.0):
+  /@theguild/components@6.3.0(@algolia/client-search@4.22.1)(@types/react@18.2.67)(next@13.5.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.2)(webpack@4.47.0):
     resolution: {integrity: sha512-kPCTpj0SW46YqdwNRxAEIT84LHEFdiFtarRJK4PsuuVVBv5OCHy4Wp9yiFyRDylSvgKbsx9uLFakhRNW1muVuw==}
     peerDependencies:
       next: ^13 || ^14
@@ -7437,7 +7437,7 @@ packages:
       fuzzy: 0.1.3
       next: 13.5.1(@babel/core@7.24.3)(react-dom@18.2.0)(react@18.2.0)
       next-videos: 1.5.0(webpack@4.47.0)
-      nextra: 3.0.0-alpha.17(@types/react@18.2.67)(next@13.5.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
+      nextra: 3.0.0-alpha.17(@types/react@18.2.67)(next@13.5.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.2)
       nextra-theme-docs: 3.0.0-alpha.17(next@13.5.1)(nextra@3.0.0-alpha.17)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -16968,7 +16968,7 @@ packages:
       intersection-observer: 0.12.2
       next: 13.5.1(@babel/core@7.24.3)(react-dom@18.2.0)(react@18.2.0)
       next-themes: 0.2.1(next@13.5.1)(react-dom@18.2.0)(react@18.2.0)
-      nextra: 3.0.0-alpha.17(@types/react@18.2.67)(next@13.5.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
+      nextra: 3.0.0-alpha.17(@types/react@18.2.67)(next@13.5.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.2)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       scroll-into-view-if-needed: 3.1.0
@@ -17012,7 +17012,7 @@ packages:
       - supports-color
     dev: false
 
-  /nextra@3.0.0-alpha.17(@types/react@18.2.67)(next@13.5.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2):
+  /nextra@3.0.0-alpha.17(@types/react@18.2.67)(next@13.5.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.2):
     resolution: {integrity: sha512-kVAbUv44CZPBF/X+mAY/xzlhzsd4hk2mUy/yWkWi+kIY71IiWFICp97svTECmf8MidphbnNgJgbmM4iCltUE0w==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -17048,7 +17048,7 @@ packages:
       remark-reading-time: 2.0.1
       remark-smartypants: 2.1.0
       shikiji: 0.10.2
-      shikiji-twoslash: 0.10.2(typescript@5.2.2)
+      shikiji-twoslash: 0.10.2(typescript@5.4.2)
       slash: 5.1.0
       title: 3.5.3
       unist-util-remove: 4.0.0
@@ -19539,11 +19539,11 @@ packages:
     resolution: {integrity: sha512-9Of8HMlF96usXJHmCL3Gd0Fcf0EcyJUF9m8EoAKKd98mHXi0La2AZl1h6PegSFGtiYcBDK/fLuKbDa1l16r1fA==}
     dev: false
 
-  /shikiji-twoslash@0.10.2(typescript@5.2.2):
+  /shikiji-twoslash@0.10.2(typescript@5.4.2):
     resolution: {integrity: sha512-BeIo3TsuWMh07dn0RjPvmAxJh6zeZu0kbPW1m6R0kvKOgh/jSa9+Mu75evHfPabNJumtMELT5osnzlv66x87wg==}
     dependencies:
       shikiji-core: 0.10.2
-      twoslash: 0.1.2(typescript@5.2.2)
+      twoslash: 0.1.2(typescript@5.4.2)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -20800,13 +20800,13 @@ packages:
       yargs: 17.7.2
     dev: true
 
-  /twoslash@0.1.2(typescript@5.2.2):
+  /twoslash@0.1.2(typescript@5.4.2):
     resolution: {integrity: sha512-q0jnapnD3b0umNGCJCRlo6Em1oSFl2OBPwsXqhLzijtEzuORrGVrJffG7E1k1KPHFlwBSRX2q6yYA61etn5hSg==}
     peerDependencies:
       typescript: '*'
     dependencies:
       '@typescript/vfs': 1.5.0
-      typescript: 5.2.2
+      typescript: 5.4.2
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -20938,6 +20938,13 @@ packages:
     resolution: {integrity: sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==}
     engines: {node: '>=14.17'}
     hasBin: true
+    dev: true
+
+  /typescript@5.4.2:
+    resolution: {integrity: sha512-+2/g0Fds1ERlP6JsakQQDXjZdZMM+rqpamFZJEKh4kwTIn3iDkgKtby0CeNd5ATNZ4Ry1ax15TMx0W2V+miizQ==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    dev: false
 
   /unbox-primitive@1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
