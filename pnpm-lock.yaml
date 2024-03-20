@@ -987,8 +987,8 @@ importers:
   packages/plugins/graphql-jit:
     dependencies:
       graphql-jit:
-        specifier: 0.8.5
-        version: 0.8.5(graphql@16.6.0)
+        specifier: 0.8.6
+        version: 0.8.6(graphql@16.6.0)
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -12903,8 +12903,8 @@ packages:
       graphql: 16.6.0
     dev: false
 
-  /graphql-jit@0.8.5(graphql@16.6.0):
-    resolution: {integrity: sha512-J+G9O8dHdvvc/AtEc2Hru4YkvklMYunHMZeHYfQFyHRAiH0yX0cm5fK41C2AD3rsrZ3Dp2mm9VCZSTDhLFibbA==}
+  /graphql-jit@0.8.6(graphql@16.6.0):
+    resolution: {integrity: sha512-oVJteh/uYDpIA/M4UHrI+DmzPnX1zTD0a7Je++JA8q8P68L/KbuepimDyrT5FhL4HAq3filUxaFvfsL6/A4msw==}
     peerDependencies:
       graphql: 16.6.0
     dependencies:

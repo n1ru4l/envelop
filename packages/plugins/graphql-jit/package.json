@@ -51,7 +51,7 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
-    "graphql-jit": "0.8.5",
+    "graphql-jit": "0.8.6",
     "tslib": "^2.5.0",
     "value-or-promise": "^1.0.12"
   },
