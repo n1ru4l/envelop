@@ -29,11 +29,6 @@ export type SentryPluginOptions<PluginContext extends Record<string, any>> = {
    */
   includeRawResult?: boolean;
   /**
-   * Adds arguments of each resolver to Span's tag called "args"
-   * @default false
-   */
-  includeResolverArgs?: boolean;
-  /**
    * Adds operation's variables to a Scope (only in case of errors)
    * @default false
    */
