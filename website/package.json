@@ -24,8 +24,8 @@
     "@theguild/algolia": "1.1.9",
     "@theguild/tailwind-config": "0.3.2",
     "@types/node": "20.11.30",
-    "@types/react": "18.2.67",
-    "sharp": "0.33.2"
+    "@types/react": "18.2.69",
+    "sharp": "0.33.3"
   },
   "browserslist": {
     "production": [
