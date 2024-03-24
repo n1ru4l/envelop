@@ -13123,7 +13123,7 @@ packages:
       '@jest/types': 29.6.3
       '@types/stack-utils': 2.0.1
       chalk: 4.1.2
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
       micromatch: 4.0.5
       pretty-format: 29.7.0
       slash: 3.0.0
