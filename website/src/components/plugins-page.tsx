@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { StaticImageData } from 'next/image';
 import { compareDesc } from 'date-fns';
-import { useSSG } from 'nextra/ssg';
+import { useData } from 'nextra/hooks';
 import { ALL_TAGS, PLUGINS } from '@/lib/plugins';
 import { fetchPackageInfo, MarketplaceSearch } from '@theguild/components';
 
@@ -53,13 +53,11 @@ export const getStaticProps = async () => {
       // which will be provided to the Nextra's `useSSG` hook.
       ssg: plugins,
     },
-    // Revalidate at most once every 1 hour
-    revalidate: 60 * 60,
   };
 };
 
 export function PluginsPage() {
-  const plugins = useSSG() as Plugin[];
+  const plugins = useData() as Plugin[];
 
   const marketplaceItems = useMemo(
     () =>

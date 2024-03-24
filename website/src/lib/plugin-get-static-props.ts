@@ -5,10 +5,10 @@ import { fetchPackageInfo } from '@theguild/components';
 import { PLUGINS } from './plugins';
 
 export const getStaticPaths: GetStaticPaths = () => ({
-  fallback: 'blocking',
   paths: PLUGINS.map(({ identifier }) => ({
     params: { name: identifier },
   })),
+  fallback: false,
 });
 
 export const getStaticProps: GetStaticProps = async ctx => {
