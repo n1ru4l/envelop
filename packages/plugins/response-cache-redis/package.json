@@ -56,7 +56,7 @@
     "@envelop/core": "^5.0.0",
     "@graphql-tools/schema": "10.0.3",
     "@types/ioredis": "4.28.10",
-    "ioredis-mock": "5.9.1",
+    "ioredis-mock": "8.9.0",
     "typescript": "5.1.3"
   },
   "publishConfig": {
