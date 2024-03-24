@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "apollo-server-caching": "^3.1.0",
-    "apollo-server-types": "^3.2.0",
+    "@apollo/server": "^4.0.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
