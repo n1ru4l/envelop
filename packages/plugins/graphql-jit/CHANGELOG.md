@@ -1,5 +1,16 @@
 # @envelop/graphql-jit
 
+## 8.0.3
+
+### Patch Changes
+
+- [#2188](https://github.com/n1ru4l/envelop/pull/2188)
+  [`3a32aa9`](https://github.com/n1ru4l/envelop/commit/3a32aa977fcf3bc9c0e3416901deadd7c2f49582)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`graphql-jit@0.8.6` ↗︎](https://www.npmjs.com/package/graphql-jit/v/0.8.6)
+    (from `0.8.5`, in `dependencies`)
+
 ## 8.0.2
 
 ### Patch Changes
