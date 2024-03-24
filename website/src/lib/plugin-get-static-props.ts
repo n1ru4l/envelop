@@ -8,7 +8,7 @@ export const getStaticPaths: GetStaticPaths = () => ({
   paths: PLUGINS.map(({ identifier }) => ({
     params: { name: identifier },
   })),
-  fallback: false
+  fallback: false,
 });
 
 export const getStaticProps: GetStaticProps = async ctx => {
