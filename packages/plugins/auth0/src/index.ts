@@ -9,7 +9,7 @@ const { decode, verify } = jwtPkg;
 
 export type Auth0PluginOptions = {
   domain: string;
-  audience: string;
+  audience: string | RegExp | Array<string | RegExp> | undefined;
 
   preventUnauthenticatedAccess?: boolean;
   onError?: (error: Error) => void;
