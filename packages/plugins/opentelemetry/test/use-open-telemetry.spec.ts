@@ -156,6 +156,66 @@ describe('useOpenTelemetry', () => {
     expect(actual[0].name).toBe('query.ping');
   });
 
+  it('can exclude operation by using list of strings', async () => {
+    const exporter = new InMemorySpanExporter();
+    const testInstance = createTestkit(
+      [
+        useTestOpenTelemetry(exporter, {
+          excludedOperationNames: ['ping'],
+        }),
+      ],
+      schema,
+    );
+
+    await testInstance.execute(/* GraphQL */ `
+      query ping {
+        ping
+      }
+    `);
+    const actual = exporter.getFinishedSpans();
+    expect(actual.length).toBe(0);
+  });
+
+  it('can exclude anonymous operations with fn', async () => {
+    const exporter = new InMemorySpanExporter();
+    const testInstance = createTestkit(
+      [
+        useTestOpenTelemetry(exporter, {
+          excludedOperationNames: name => name === undefined,
+        }),
+      ],
+      schema,
+    );
+
+    await testInstance.execute(/* GraphQL */ `
+      query {
+        ping
+      }
+    `);
+    const actual = exporter.getFinishedSpans();
+    expect(actual.length).toBe(0);
+  });
+
+  it('can exclude anonymous operations with fn', async () => {
+    const exporter = new InMemorySpanExporter();
+    const testInstance = createTestkit(
+      [
+        useTestOpenTelemetry(exporter, {
+          excludedOperationNames: name => name !== undefined && name.startsWith('pi'),
+        }),
+      ],
+      schema,
+    );
+
+    await testInstance.execute(/* GraphQL */ `
+      query ping {
+        ping
+      }
+    `);
+    const actual = exporter.getFinishedSpans();
+    expect(actual.length).toBe(0);
+  });
+
   it('execute span should add attributes', async () => {
     const exporter = new InMemorySpanExporter();
     const testInstance = createTestkit([useTestOpenTelemetry(exporter)], schema);
@@ -205,6 +265,57 @@ describe('useOpenTelemetry', () => {
     expect(actual[0].attributes).toEqual({
       [AttributeName.EXECUTION_OPERATION_NAME]: 'echo',
       [AttributeName.EXECUTION_OPERATION_TYPE]: 'query',
+    });
+  });
+
+  it('custom variables attributes with fn', async () => {
+    const exporter = new InMemorySpanExporter();
+    const testInstance = createTestkit(
+      [
+        useTestOpenTelemetry(exporter, {
+          variables: v => {
+            if (v && typeof v === 'object' && 'selector' in v) {
+              return JSON.stringify(v.selector);
+            }
+
+            return '';
+          },
+        }),
+      ],
+      schema,
+    );
+
+    const queryStr = /* GraphQL */ `
+      query echo($testVar: String!, $testVar2: String!, $selector: String!) {
+        echo1: echo(message: $testVar)
+        echo2: echo(message: $testVar2)
+        echo3: echo(message: $selector)
+      }
+    `;
+
+    const resp = await testInstance.execute(queryStr, {
+      testVar: 'hello',
+      testVar2: 'world',
+      selector: '1',
+    });
+
+    console.log(resp);
+
+    assertSingleValue(resp);
+
+    const actual = exporter.getFinishedSpans();
+    expect(actual.length).toBe(1);
+    expect(actual[0].attributes).toEqual({
+      [AttributeName.EXECUTION_OPERATION_DOCUMENT]: `
+      query echo($testVar: String!, $testVar2: String!, $selector: String!) {
+        echo1: echo(message: $testVar)
+        echo2: echo(message: $testVar2)
+        echo3: echo(message: $selector)
+      }
+    `,
+      [AttributeName.EXECUTION_OPERATION_NAME]: 'echo',
+      [AttributeName.EXECUTION_OPERATION_TYPE]: 'query',
+      [AttributeName.EXECUTION_VARIABLES]: '"1"',
     });
   });
 

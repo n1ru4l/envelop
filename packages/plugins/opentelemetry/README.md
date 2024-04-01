@@ -35,8 +35,38 @@ const getEnveloped = envelop({
 })
 ```
 
-If you wish to use custom tracer/exporter, create it and pass it. This example integrates Jaeger
-tracer:
+## Integration with `@opentelemetry` packages
+
+By default, this plugin is creating a console exporter for exporting the `Span`s.
+
+If you wish to use custom tracer/exporter, create it and pass it to the plugin factory function.
+
+The following example is taking the current global tracer:
+
+```ts
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
+import { useOpenTelemetry } from '@envelop/opentelemetry'
+import { trace } from '@opentelemetry/api'
+import { BasicTracerProvider, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base'
+
+const getEnveloped = envelop({
+  plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
+    // ... other plugins ...
+    useOpenTelemetry(
+      {
+        resolvers: true, // Tracks resolvers calls, and tracks resolvers thrown errors
+        variables: true, // Includes the operation variables values as part of the metadata collected
+        result: true // Includes execution result object as part of the metadata collected
+      },
+      trace.getTracerProvider()
+    )
+  ]
+})
+```
+
+This example integrates Jaeger tracer:
 
 ```ts
 import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
