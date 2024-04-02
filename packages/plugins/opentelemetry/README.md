@@ -66,7 +66,22 @@ const getEnveloped = envelop({
 })
 ```
 
-This example integrates Jaeger tracer:
+This example integrates Jaeger tracer. To use this example, start by running Jaeger locally in a
+Docker container (or, follow
+[other options to run Jaeger locally](https://www.npmjs.com/package/@opentelemetry/exporter-jaeger#prerequisites)):
+
+```
+docker run -d --name jaeger \
+  -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 \
+  -p 5775:5775/udp \
+  -p 6831:6831/udp \
+  -p 6832:6832/udp \
+  -p 5778:5778 \
+  -p 16686:16686 \
+  -p 14268:14268 \
+  -p 9411:9411 \
+  jaegertracing/all-in-one:latest
+```
 
 ```ts
 import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
@@ -75,10 +90,14 @@ import { useOpenTelemetry } from '@envelop/opentelemetry'
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger'
 import { BasicTracerProvider, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base'
 
+// Create your exporter
 const exporter = new JaegerExporter({
-  serviceName: 'my-service-name'
+  serviceName: 'my-service-name',
+  host: 'localhost',
+  port: 6832
 })
 
+// Configure opentelmetry to run for your service
 const provider = new BasicTracerProvider()
 provider.addSpanProcessor(new SimpleSpanProcessor(exporter))
 provider.register()
