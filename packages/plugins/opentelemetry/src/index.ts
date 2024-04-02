@@ -136,13 +136,12 @@ export const useOpenTelemetry = (
         return;
       }
 
-      const shouldReport = options.excludedOperationNames
-        ? typeof options.excludedOperationNames === 'function'
-          ? !options.excludedOperationNames(operationAst.name?.value)
-          : !options.excludedOperationNames.includes(operationAst.name?.value || '')
-        : true;
-
-      if (!shouldReport) {
+      if (
+        options.excludedOperationNames &&
+        (typeof options.excludedOperationNames === 'function'
+          ? options.excludedOperationNames(operationAst.name?.value)
+          : options.excludedOperationNames.includes(operationAst.name?.value || ''))
+      ) {
         return;
       }
 
@@ -239,13 +238,12 @@ export const useOpenTelemetry = (
         return;
       }
 
-      const shouldReport = options.excludedOperationNames
-        ? typeof options.excludedOperationNames === 'function'
-          ? !options.excludedOperationNames(operationAst.name?.value)
-          : !options.excludedOperationNames.includes(operationAst.name?.value || '')
-        : true;
-
-      if (!shouldReport) {
+      if (
+        options.excludedOperationNames &&
+        (typeof options.excludedOperationNames === 'function'
+          ? options.excludedOperationNames(operationAst.name?.value)
+          : options.excludedOperationNames.includes(operationAst.name?.value || ''))
+      ) {
         return;
       }
 
