@@ -32,12 +32,16 @@ export enum AttributeName {
 
 const tracingSpanSymbol = Symbol('OPEN_TELEMETRY_GRAPHQL');
 
+export type ResolveVariablesAttributesFn = (variableValues: any) => opentelemetry.AttributeValue;
+export type ExcludeOperationNamesFn = (operationName: string | undefined) => boolean;
+
 export type TracingOptions = {
   document?: boolean;
   resolvers?: boolean;
-  variables?: boolean;
+  variables?: boolean | ResolveVariablesAttributesFn;
   result?: boolean;
   traceIdInResult?: string;
+  excludedOperationNames?: string[] | ExcludeOperationNamesFn;
 };
 
 type PluginContext = {
@@ -131,6 +135,16 @@ export const useOpenTelemetry = (
       if (!operationAst) {
         return;
       }
+
+      if (
+        options.excludedOperationNames &&
+        (typeof options.excludedOperationNames === 'function'
+          ? options.excludedOperationNames(operationAst.name?.value)
+          : options.excludedOperationNames.includes(operationAst.name?.value || ''))
+      ) {
+        return;
+      }
+
       const operationType = operationAst.operation;
       let isDocumentLoggable: boolean;
       if (options.document == null || options.document === true) {
@@ -146,6 +160,15 @@ export const useOpenTelemetry = (
       }
       const operationName = operationAst.name?.value || 'anonymous';
       const currOtelContext = getCurrentOtelContext(args.contextValue);
+
+      const variablesAttribute = options.variables
+        ? {
+            [AttributeName.EXECUTION_VARIABLES]:
+              typeof options.variables === 'function'
+                ? options.variables(args.variableValues)
+                : JSON.stringify(args.variableValues ?? {}),
+          }
+        : {};
       const executionSpan = tracer.startSpan(
         `${spanPrefix}${operationType}.${operationName}`,
         {
@@ -157,9 +180,7 @@ export const useOpenTelemetry = (
             [AttributeName.EXECUTION_OPERATION_DOCUMENT]: isDocumentLoggable
               ? getDocumentString(args.document, print)
               : undefined,
-            ...(options.variables
-              ? { [AttributeName.EXECUTION_VARIABLES]: JSON.stringify(args.variableValues ?? {}) }
-              : {}),
+            ...variablesAttribute,
           },
         },
         currOtelContext,
@@ -216,6 +237,16 @@ export const useOpenTelemetry = (
       if (!operationAst) {
         return;
       }
+
+      if (
+        options.excludedOperationNames &&
+        (typeof options.excludedOperationNames === 'function'
+          ? options.excludedOperationNames(operationAst.name?.value)
+          : options.excludedOperationNames.includes(operationAst.name?.value || ''))
+      ) {
+        return;
+      }
+
       const operationType = 'subscription';
       let isDocumentLoggable: boolean;
       if (options.variables) {
@@ -227,6 +258,15 @@ export const useOpenTelemetry = (
       }
       const currOtelContext = getCurrentOtelContext(args.contextValue);
       const operationName = operationAst.name?.value || 'anonymous';
+      const variablesAttribute = options.variables
+        ? {
+            [AttributeName.EXECUTION_VARIABLES]:
+              typeof options.variables === 'function'
+                ? options.variables(args.variableValues)
+                : JSON.stringify(args.variableValues ?? {}),
+          }
+        : {};
+
       const subscriptionSpan = tracer.startSpan(
         `${operationType}.${operationName}`,
         {
@@ -238,9 +278,7 @@ export const useOpenTelemetry = (
             [AttributeName.EXECUTION_OPERATION_DOCUMENT]: isDocumentLoggable
               ? getDocumentString(args.document, print)
               : undefined,
-            ...(options.variables
-              ? { [AttributeName.EXECUTION_VARIABLES]: JSON.stringify(args.variableValues ?? {}) }
-              : {}),
+            ...variablesAttribute,
           },
         },
         currOtelContext,

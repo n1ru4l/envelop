@@ -3723,8 +3723,8 @@ packages:
       '@jridgewell/trace-mapping': 0.3.9
     dev: true
 
-  /@emnapi/runtime@1.1.0:
-    resolution: {integrity: sha512-gCGlE0fJGWalfy+wbFApjhKn6uoSVvopru77IPyxNKkjkaiSx2HxDS7eOYSmo9dcMIhmmIvoxiC3N9TM1c3EaA==}
+  /@emnapi/runtime@1.1.1:
+    resolution: {integrity: sha512-3bfqkzuR1KLx57nZfjr2NLnFOobvyS0aTszaEGCGqmYMVDRaGvgIZbjGSV/MHSSmLgQ/b9JFHQ5xm5WRZYd+XQ==}
     requiresBuild: true
     dependencies:
       tslib: 2.6.2
@@ -4078,8 +4078,8 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@google-cloud/firestore@7.4.0:
-    resolution: {integrity: sha512-PRukAUgeBOZu/4pK9NXkAs8ur6QUpG6bBiwcnSO1qsh0FlR93gqU+VtkCx3EJM46S10jzMhHqpA0NoVbnUs5TQ==}
+  /@google-cloud/firestore@7.5.0:
+    resolution: {integrity: sha512-bhFKaCybfK/jzqhVm1Y1o8p3wOHVEo8opj7IJGF2sdqS69xl6QD1zpnrgssi/4HUj9bxIqtcs33Ofz//deV+rg==}
     engines: {node: '>=14.0.0'}
     requiresBuild: true
     dependencies:
@@ -4633,7 +4633,7 @@ packages:
     cpu: [wasm32]
     requiresBuild: true
     dependencies:
-      '@emnapi/runtime': 1.1.0
+      '@emnapi/runtime': 1.1.1
     dev: true
     optional: true
 
@@ -11062,7 +11062,7 @@ packages:
       node-forge: 1.3.1
       uuid: 9.0.0
     optionalDependencies:
-      '@google-cloud/firestore': 7.4.0
+      '@google-cloud/firestore': 7.5.0
       '@google-cloud/storage': 7.9.0
     transitivePeerDependencies:
       - encoding
