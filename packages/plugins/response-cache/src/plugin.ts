@@ -4,7 +4,7 @@ import {
   DocumentNode,
   ExecutionArgs,
   getOperationAST,
-  GraphQLDirective,
+  GraphQLSchema,
   Kind,
   print,
   TypeInfo,
@@ -30,6 +30,7 @@ import {
   mergeIncrementalResult,
 } from '@graphql-tools/utils';
 import type { Cache, CacheEntityRecord } from './cache.js';
+import { getScopeFromQuery } from './get-scope.js';
 import { hashSHA256 } from './hash-sha256.js';
 import { createInMemoryCache } from './in-memory-cache.js';
 
@@ -47,6 +48,8 @@ export type BuildResponseCacheKeyFunction = (params: {
   sessionId: Maybe<string>;
   /** GraphQL Context */
   context: ExecutionArgs['contextValue'];
+  /** Callback to get the scope */
+  getScope: () => NonNullable<CacheControlDirective['scope']>;
 }) => Promise<string>;
 
 export type GetDocumentStringFunction = (executionArgs: ExecutionArgs) => string;
@@ -76,8 +79,8 @@ export type UseResponseCacheParameter<PluginContext extends Record<string, any> 
    * In the unusual case where you actually want to cache introspection query operations,
    * you need to provide the value `{ 'Query.__schema': undefined }`.
    */
-  ttlPerSchemaCoordinate?: Record<string, number | undefined>;
-  scopePerSchemaCoordinate?: Record<string, 'PRIVATE' | 'PUBLIC' | undefined>;
+  ttlPerSchemaCoordinate?: Record<string, CacheControlDirective['maxAge']>;
+  scopePerSchemaCoordinate?: Record<string, CacheControlDirective['scope']>;
   /**
    * Allows to cache responses based on the resolved session id.
    * Return a unique value for each session.
@@ -215,11 +218,11 @@ const getDocumentWithMetadataAndTTL = memoize4(function addTypeNameToDocument(
     ttlPerSchemaCoordinate,
   }: {
     invalidateViaMutation: boolean;
-    ttlPerSchemaCoordinate?: Record<string, number | undefined>;
+    ttlPerSchemaCoordinate?: Record<string, CacheControlDirective['maxAge']>;
   },
-  schema: any,
+  schema: GraphQLSchema,
   idFieldByTypeName: Map<string, string>,
-): [DocumentNode, number | undefined] {
+): [DocumentNode, CacheControlDirective['maxAge']] {
   const typeInfo = new TypeInfo(schema);
   let ttl: number | undefined;
   const visitor: ASTVisitor = {
@@ -238,7 +241,7 @@ const getDocumentWithMetadataAndTTL = memoize4(function addTypeNameToDocument(
         const parentType = typeInfo.getParentType();
         if (parentType) {
           const schemaCoordinate = `${parentType.name}.${fieldNode.name.value}`;
-          const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate] as unknown;
+          const maybeTtl = ttlPerSchemaCoordinate[schemaCoordinate];
           ttl = calculateTtl(maybeTtl, ttl);
         }
       },
@@ -279,10 +282,28 @@ const getDocumentWithMetadataAndTTL = memoize4(function addTypeNameToDocument(
   return [visit(document, visitWithTypeInfo(typeInfo, visitor)), ttl];
 });
 
-type CacheControlDirective = {
+export type CacheControlDirective = {
   maxAge?: number;
   scope?: 'PUBLIC' | 'PRIVATE';
 };
+
+export let schema: GraphQLSchema;
+let ttlPerSchemaCoordinate: Record<string, CacheControlDirective['maxAge']> = {};
+let scopePerSchemaCoordinate: Record<string, CacheControlDirective['scope']> = {};
+
+export function isPrivate(
+  typeName: string,
+  data?: Record<string, NonNullable<CacheControlDirective['scope']>>,
+): boolean {
+  if (scopePerSchemaCoordinate[typeName] === 'PRIVATE') {
+    return true;
+  }
+  return data
+    ? Object.keys(data).some(
+        fieldName => scopePerSchemaCoordinate[`${typeName}.${fieldName}`] === 'PRIVATE',
+      )
+    : false;
+}
 
 export function useResponseCache<PluginContext extends Record<string, any> = {}>({
   cache = createInMemoryCache(),
@@ -291,8 +312,8 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   enabled,
   ignoredTypes = [],
   ttlPerType = {},
-  ttlPerSchemaCoordinate = {},
-  scopePerSchemaCoordinate = {},
+  ttlPerSchemaCoordinate: localTtlPerSchemaCoordinate = {},
+  scopePerSchemaCoordinate: localScopePerSchemaCoordinate = {},
   idFields = ['id'],
   invalidateViaMutation = true,
   buildResponseCacheKey = defaultBuildResponseCacheKey,
@@ -308,22 +329,13 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   enabled = enabled ? memoize1(enabled) : enabled;
 
   // never cache Introspections
-  ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...ttlPerSchemaCoordinate };
+  ttlPerSchemaCoordinate = { 'Query.__schema': 0, ...localTtlPerSchemaCoordinate };
   const documentMetadataOptions = {
     queries: { invalidateViaMutation, ttlPerSchemaCoordinate },
     mutations: { invalidateViaMutation }, // remove ttlPerSchemaCoordinate for mutations to skip TTL calculation
   };
+  scopePerSchemaCoordinate = { ...localScopePerSchemaCoordinate };
   const idFieldByTypeName = new Map<string, string>();
-  let schema: any;
-
-  function isPrivate(typeName: string, data: Record<string, unknown>): boolean {
-    if (scopePerSchemaCoordinate[typeName] === 'PRIVATE') {
-      return true;
-    }
-    return Object.keys(data).some(
-      fieldName => scopePerSchemaCoordinate[`${typeName}.${fieldName}`] === 'PRIVATE',
-    );
-  }
 
   return {
     onSchemaChange({ schema: newSchema }) {
@@ -332,9 +344,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       }
       schema = newSchema;
 
-      const directive = schema.getDirective('cacheControl') as unknown as
-        | GraphQLDirective
-        | undefined;
+      const directive = schema.getDirective('cacheControl');
 
       mapSchema(schema, {
         ...(directive && {
@@ -522,6 +532,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         operationName: onExecuteParams.args.operationName,
         sessionId,
         context: onExecuteParams.args.contextValue,
+        getScope: () => getScopeFromQuery(schema, onExecuteParams.args.document.loc.source.body),
       });
 
       const cachedResponse = (await cache.get(cacheKey)) as ResponseCacheExecutionResult;
