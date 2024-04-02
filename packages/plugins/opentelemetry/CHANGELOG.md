@@ -1,5 +1,19 @@
 # @envelop/opentelemetry
 
+## 6.3.0
+
+### Minor Changes
+
+- [#2201](https://github.com/n1ru4l/envelop/pull/2201)
+  [`396bccb`](https://github.com/n1ru4l/envelop/commit/396bccbc441117c73d0d9b3d55d2391a45191651)
+  Thanks [@dotansimha](https://github.com/dotansimha)! - feat: exclude operations by using list of
+  names or a custom function
+
+- [#2201](https://github.com/n1ru4l/envelop/pull/2201)
+  [`396bccb`](https://github.com/n1ru4l/envelop/commit/396bccbc441117c73d0d9b3d55d2391a45191651)
+  Thanks [@dotansimha](https://github.com/dotansimha)! - feat: allow to use a custom function to
+  resolve/sanitize variables
+
 ## 6.2.1
 
 ### Patch Changes

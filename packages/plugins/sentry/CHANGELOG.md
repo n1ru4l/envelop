@@ -1,5 +1,14 @@
 # @envelop/sentry
 
+## 9.0.0
+
+### Major Changes
+
+- [#2163](https://github.com/n1ru4l/envelop/pull/2163)
+  [`7686b33`](https://github.com/n1ru4l/envelop/commit/7686b33db95a94b472ba3b19f274b5b4d78e8867)
+  Thanks [@MarcelCutts](https://github.com/MarcelCutts)! - Removed includedResolverArgs from
+  SentryPluginOptions as it lead to no functionality.
+
 ## 8.0.0
 
 ### Major Changes
