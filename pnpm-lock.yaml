@@ -1565,7 +1565,7 @@ importers:
     dependencies:
       '@theguild/components':
         specifier: 6.4.1
-        version: 6.4.1(@types/react@18.2.69)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.3)(webpack@4.47.0)
+        version: 6.4.1(@types/react@18.2.69)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.4)(webpack@4.47.0)
       date-fns:
         specifier: 3.6.0
         version: 3.6.0
@@ -1577,7 +1577,7 @@ importers:
         version: 4.2.3(next@14.1.4)
       nextra:
         specifier: 3.0.0-alpha.22
-        version: 3.0.0-alpha.22(@types/react@18.2.69)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.3)
+        version: 3.0.0-alpha.22(@types/react@18.2.69)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.4)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -4078,8 +4078,8 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@google-cloud/firestore@7.5.0:
-    resolution: {integrity: sha512-bhFKaCybfK/jzqhVm1Y1o8p3wOHVEo8opj7IJGF2sdqS69xl6QD1zpnrgssi/4HUj9bxIqtcs33Ofz//deV+rg==}
+  /@google-cloud/firestore@7.6.0:
+    resolution: {integrity: sha512-WUDbaLY8UnPxgwsyIaxj6uxCtSDAaUyvzWJykNH5rZ9i92/SZCsPNNMN0ajrVpAR81hPIL4amXTaMJ40y5L+Yg==}
     engines: {node: '>=14.0.0'}
     requiresBuild: true
     dependencies:
@@ -4831,7 +4831,7 @@ packages:
       collect-v8-coverage: 1.0.1
       exit: 0.1.2
       glob: 7.2.3
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.10
       istanbul-lib-coverage: 3.2.0
       istanbul-lib-instrument: 6.0.2
       istanbul-lib-report: 3.0.0
@@ -4868,7 +4868,7 @@ packages:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       callsites: 3.1.0
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.10
     dev: true
 
   /@jest/test-result@29.7.0:
@@ -4886,7 +4886,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/test-result': 29.7.0
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.10
       jest-haste-map: 29.7.0
       slash: 3.0.0
     dev: true
@@ -4902,7 +4902,7 @@ packages:
       chalk: 4.1.2
       convert-source-map: 2.0.0
       fast-json-stable-stringify: 2.1.0
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.10
       jest-haste-map: 29.7.0
       jest-regex-util: 29.6.3
       jest-util: 29.7.0
@@ -6181,11 +6181,11 @@ packages:
     resolution: {integrity: sha512-OlFvx+nyr5C8zpcMBnSGir0YPD6K11uYhouqhNmm1qLiis4GA7SsGtu07r9gKS9omks8RtQqHrJL4S+lqWK01A==}
     dev: false
 
-  /@shikijs/twoslash@1.2.0(typescript@5.4.3):
+  /@shikijs/twoslash@1.2.0(typescript@5.4.4):
     resolution: {integrity: sha512-rVIpuL40tXG5hItVf+4aYTEEwQO6R5pvzqMZa5r6bLMpHK720Op25e/BnCohNIdsUOEaFH9xqRSJo8ubjCiM1w==}
     dependencies:
       '@shikijs/core': 1.2.0
-      twoslash: 0.2.5(typescript@5.4.3)
+      twoslash: 0.2.5(typescript@5.4.4)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -6267,7 +6267,7 @@ packages:
     resolution: {integrity: sha512-P5XgYoAw/vfW65byBbJQCw+cagdXDT/qH6wmABiLt4v4YBT2q2vqCOhihe+D1Nt325F/S/0Tkv6C5z0Lv+VBQQ==}
     dev: false
 
-  /@theguild/components@6.4.1(@types/react@18.2.69)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.3)(webpack@4.47.0):
+  /@theguild/components@6.4.1(@types/react@18.2.69)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.4)(webpack@4.47.0):
     resolution: {integrity: sha512-afT5j2ysCi+CjnM3oYK42cf5mDJ+Vw4EmbrJND4WeunIaeUaugombyGpkPgehcBLOIyt529UYKi/LsRxxgnksw==}
     peerDependencies:
       next: ^13 || ^14
@@ -6281,7 +6281,7 @@ packages:
       fuzzy: 0.1.3
       next: 14.1.4(@babel/core@7.24.3)(react-dom@18.2.0)(react@18.2.0)
       next-videos: 1.5.0(webpack@4.47.0)
-      nextra: 3.0.0-alpha.22(@types/react@18.2.69)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.3)
+      nextra: 3.0.0-alpha.22(@types/react@18.2.69)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.4)
       nextra-theme-docs: 3.0.0-alpha.22(next@14.1.4)(nextra@3.0.0-alpha.22)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -7813,7 +7813,7 @@ packages:
       babel-plugin-istanbul: 6.1.1
       babel-preset-jest: 29.6.3(@babel/core@7.24.3)
       chalk: 4.1.2
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.10
       slash: 3.0.0
     transitivePeerDependencies:
       - supports-color
@@ -11049,7 +11049,7 @@ packages:
       node-forge: 1.3.1
       uuid: 9.0.0
     optionalDependencies:
-      '@google-cloud/firestore': 7.5.0
+      '@google-cloud/firestore': 7.6.0
       '@google-cloud/storage': 7.9.0
     transitivePeerDependencies:
       - encoding
@@ -12970,7 +12970,7 @@ packages:
       ci-info: 3.7.1
       deepmerge: 4.3.0
       glob: 7.2.3
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.10
       jest-circus: 29.7.0
       jest-environment-node: 29.7.0
       jest-get-type: 29.6.3
@@ -13065,7 +13065,7 @@ packages:
       '@types/node': 20.11.30
       anymatch: 3.1.3
       fb-watchman: 2.0.2
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.10
       jest-regex-util: 29.6.3
       jest-util: 29.7.0
       jest-worker: 29.7.0
@@ -13172,7 +13172,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       chalk: 4.1.2
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.10
       jest-haste-map: 29.7.0
       jest-pnp-resolver: 1.2.3(jest-resolve@29.7.0)
       jest-util: 29.7.0
@@ -13194,7 +13194,7 @@ packages:
       '@types/node': 20.11.30
       chalk: 4.1.2
       emittery: 0.13.1
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.10
       jest-docblock: 29.7.0
       jest-environment-node: 29.7.0
       jest-haste-map: 29.7.0
@@ -13227,7 +13227,7 @@ packages:
       cjs-module-lexer: 1.2.2
       collect-v8-coverage: 1.0.1
       glob: 7.2.3
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.10
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-mock: 29.7.0
@@ -13256,7 +13256,7 @@ packages:
       babel-preset-current-node-syntax: 1.0.1(@babel/core@7.24.3)
       chalk: 4.1.2
       expect: 29.7.0
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.10
       jest-diff: 29.7.0
       jest-get-type: 29.6.3
       jest-matcher-utils: 29.7.0
@@ -13482,7 +13482,7 @@ packages:
     dependencies:
       universalify: 2.0.0
     optionalDependencies:
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.10
     dev: true
 
   /jsonschema@1.4.1:
@@ -15361,14 +15361,14 @@ packages:
       intersection-observer: 0.12.2
       next: 14.1.4(@babel/core@7.24.3)(react-dom@18.2.0)(react@18.2.0)
       next-themes: 0.2.1(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)
-      nextra: 3.0.0-alpha.22(@types/react@18.2.69)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.3)
+      nextra: 3.0.0-alpha.22(@types/react@18.2.69)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.4)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       scroll-into-view-if-needed: 3.1.0
       zod: 3.22.4
     dev: false
 
-  /nextra@3.0.0-alpha.22(@types/react@18.2.69)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.3):
+  /nextra@3.0.0-alpha.22(@types/react@18.2.69)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.4):
     resolution: {integrity: sha512-4V1kLs0MiQ1KE/Dh1cnLc100Ibyo/PY46v1NdRzrYe7uzCBcSGTiG9OwHTE/34wUwbM5N7TptiDOlV79BBZ0Ng==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -15380,7 +15380,7 @@ packages:
       '@mdx-js/mdx': 3.0.1
       '@mdx-js/react': 3.0.1(@types/react@18.2.69)(react@18.2.0)
       '@napi-rs/simple-git': 0.1.16
-      '@shikijs/twoslash': 1.2.0(typescript@5.4.3)
+      '@shikijs/twoslash': 1.2.0(typescript@5.4.4)
       '@theguild/remark-mermaid': 0.0.5(react@18.2.0)
       '@theguild/remark-npm2yarn': 0.3.0
       better-react-mathjax: 2.0.3(react@18.2.0)
@@ -19049,14 +19049,14 @@ packages:
     resolution: {integrity: sha512-oUr5ZAn37CgNa6p1mrCuuR/pINffsnGCee2aS170Uj1IObxCjsHzu6sgdPUdxGLLn6++gd/qjNH1/iR6RrfLeg==}
     dev: false
 
-  /twoslash@0.2.5(typescript@5.4.3):
+  /twoslash@0.2.5(typescript@5.4.4):
     resolution: {integrity: sha512-U8rqsfVh8jQMO1NJekUtglb52b7xD9+FrzeFrgzpHsRTKl8IQgqnZP6ld4PeKaHXhLfoZPuju9K50NXJ7wom8g==}
     peerDependencies:
       typescript: '*'
     dependencies:
       '@typescript/vfs': 1.5.0
       twoslash-protocol: 0.2.5
-      typescript: 5.4.3
+      typescript: 5.4.4
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -19192,6 +19192,13 @@ packages:
     resolution: {integrity: sha512-KrPd3PKaCLr78MalgiwJnA25Nm8HAmdwN3mYUYZgG/wizIo9EainNVQI9/yDavtVFRN2h3k8uf3GLHuhDMgEHg==}
     engines: {node: '>=14.17'}
     hasBin: true
+    dev: true
+
+  /typescript@5.4.4:
+    resolution: {integrity: sha512-dGE2Vv8cpVvw28v8HCPqyb08EzbBURxDpuhJvTrusShUfGnhHBafDsLdS1EhhxyL6BJQE+2cT3dDPAv+MQ6oLw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    dev: false
 
   /unbox-primitive@1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
