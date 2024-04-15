@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
 import { StaticImageData } from 'next/image';
 import { compareDesc } from 'date-fns';
-import { useData } from 'nextra/hooks';
 import { ALL_TAGS, PLUGINS } from '@/lib/plugins';
-import { fetchPackageInfo, MarketplaceSearch } from '@theguild/components';
+import { fetchPackageInfo, MarketplaceSearch, useData } from '@theguild/components';
 
 type Plugin = {
   title: string;

@@ -6,9 +6,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "next build",
+    "build": "next build && next-sitemap --config next-sitemap.config.cjs",
     "dev": "next",
-    "postbuild": "next-sitemap --config next-sitemap.config.cjs",
     "start": "next start"
   },
   "dependencies": {
