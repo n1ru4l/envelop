@@ -9,7 +9,7 @@ You can see the results of the collected metrics if you are using
 
 This is how it looks like (note the `TRACING` section):
 
-![Example](./example.png)
+![Example](../../../packages/plugins/apollo-tracing/example.png)
 
 ## Getting Started
 
