@@ -77,8 +77,8 @@ importers:
         specifier: 16.6.2
         version: 16.6.2(eslint@8.57.0)
       eslint-plugin-package-json:
-        specifier: ^0.10.0
-        version: 0.10.4(eslint@8.57.0)(jsonc-eslint-parser@2.4.0)
+        specifier: ^0.11.0
+        version: 0.11.0(eslint@8.57.0)(jsonc-eslint-parser@2.4.0)
       eslint-plugin-promise:
         specifier: 6.1.1
         version: 6.1.1(eslint@8.57.0)
@@ -10067,8 +10067,8 @@ packages:
       semver: 7.6.0
     dev: true
 
-  /eslint-plugin-package-json@0.10.4(eslint@8.57.0)(jsonc-eslint-parser@2.4.0):
-    resolution: {integrity: sha512-dape6w9G7hCXDkoVWoPwrQjUK0V6636qAgUPewduXLH9RdEw/y4XGqCyvD5KujlMBQuagadMkxuGNluW0GC4vQ==}
+  /eslint-plugin-package-json@0.11.0(eslint@8.57.0)(jsonc-eslint-parser@2.4.0):
+    resolution: {integrity: sha512-cr9pstyKxg+PwwwJrWn1pje2fXPjU/TIijIY/fPnN7rx1+NK7CmO9qmXAR8sAXbRfBQyHjcrFSYktck9yI8rWQ==}
     engines: {node: '>=18'}
     peerDependencies:
       eslint: '>=8.0.0'
@@ -11319,7 +11319,7 @@ packages:
       '@types/glob': 7.2.0
       array-union: 2.1.0
       dir-glob: 3.0.1
-      fast-glob: 3.2.12
+      fast-glob: 3.3.2
       glob: 7.2.3
       ignore: 5.2.4
       merge2: 1.4.1
@@ -13269,7 +13269,7 @@ packages:
     resolution: {integrity: sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA==}
     hasBin: true
     dependencies:
-      minimist: 1.2.7
+      minimist: 1.2.8
 
   /json5@2.2.3:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
@@ -14874,9 +14874,6 @@ packages:
     resolution: {integrity: sha512-iotkTvxc+TwOm5Ieim8VnSNvCDjCK9S8G3scJ50ZthspSxa7jx50jkhYduuAtAjvfDUwSgOwf8+If99AlOEhyw==}
     dev: true
 
-  /minimist@1.2.7:
-    resolution: {integrity: sha512-bzfL1YUZsP41gmu/qjrEk0Q6i2ix/cVeAhbCbqH9u3zYutS1cLg00qhrD0M2MVdCcx4Sc0UpP2eBWo9rotpq6g==}
-
   /minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
 
@@ -16404,7 +16401,7 @@ packages:
     requiresBuild: true
     dependencies:
       execspawn: 1.0.1
-      minimist: 1.2.7
+      minimist: 1.2.8
       mkdirp-classic: 0.5.3
       node-abi: 3.56.0
       npm-run-path: 3.1.0
@@ -18916,7 +18913,7 @@ packages:
     dependencies:
       '@types/json5': 0.0.29
       json5: 1.0.2
-      minimist: 1.2.7
+      minimist: 1.2.8
       strip-bom: 3.0.0
     dev: true
 
