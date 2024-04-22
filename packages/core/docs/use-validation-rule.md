@@ -12,11 +12,13 @@ import { depthLimit } from '@graphile/depth-limit'
 const getEnveloped = envelop({
   plugins: [
     useEngine({ parse, validate, specifiedRules, execute, subscribe }),
-    useValidationRule(depthLimit({
-      maxDepth: 12,
-      maxListDepth: 4,
-      maxSelfReferentialDepth: 2,
-    })
+    useValidationRule(
+      depthLimit({
+        maxDepth: 12,
+        maxListDepth: 4,
+        maxSelfReferentialDepth: 2
+      })
+    )
     // ... other plugins ...
   ]
 })
