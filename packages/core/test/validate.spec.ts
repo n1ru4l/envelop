@@ -1,5 +1,6 @@
 import { GraphQLError, GraphQLSchema, validate, ValidationContext } from 'graphql';
 import { assertSingleExecutionValue, createSpiedPlugin, createTestkit } from '@envelop/testing';
+import { useValidationRule } from '../src/plugins/use-validation-rule.js';
 import { query, schema } from './common.js';
 
 describe('validate', () => {
@@ -114,6 +115,25 @@ describe('validate', () => {
             });
           },
         },
+      ],
+      schema,
+    );
+
+    const r = await teskit.execute(query);
+    assertSingleExecutionValue(r);
+
+    expect(r.errors).toBeDefined();
+    expect(r.errors!.length).toBe(1);
+    expect(r.errors![0].message).toBe('Invalid!');
+  });
+
+  it('Should allow to add validation rules (reportError, `useValidationRule`)', async () => {
+    const teskit = createTestkit(
+      [
+        useValidationRule((context: any) => {
+          context.reportError(new GraphQLError('Invalid!'));
+          return {};
+        }),
       ],
       schema,
     );
