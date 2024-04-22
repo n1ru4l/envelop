@@ -13,3 +13,4 @@ https://github.com/n1ru4l/envelop
 - [`useMaskedErrors`](./docs/use-masked-errors.md)
 - [`usePayloadFormatter`](./docs/use-payload-formatter.md)
 - [`useEngine`](./docs/use-engine.md)
+- [`useValidationRule`](./docs/use-validation-rule.md)
