@@ -73,7 +73,7 @@
     "overrides": {
       "esbuild": "^0.17.0",
       "graphql": "16.6.0",
-      "estree-util-build-jsx": "2.2.2"
+      "estree-util-build-jsx": "3.0.1"
     }
   }
 }
