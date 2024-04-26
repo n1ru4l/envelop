@@ -28,7 +28,6 @@ function buildOptions(scenarioToThresholdsMap) {
     };
 
     for (const key of Object.keys(thresholds || {})) {
-      console.log('Threshold:', `${key}{mode:${scenario}}`, thresholds[key]);
       result.thresholds[`${key}{mode:${scenario}}`] = thresholds[key];
     }
 
