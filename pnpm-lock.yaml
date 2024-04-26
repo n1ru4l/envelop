@@ -1163,7 +1163,7 @@ importers:
         specifier: ^4.1.0
         version: link:../on-resolve/dist
       '@opentelemetry/api':
-        specifier: ^1.0.0
+        specifier: ^1.8.0
         version: 1.8.0
       '@opentelemetry/sdk-trace-base':
         specifier: ^1.11.0
