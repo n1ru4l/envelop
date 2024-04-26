@@ -106,14 +106,14 @@ const getEnveloped = envelop({
     usePrometheus({
       // all optional, and by default, all set to false, please opt-in to the metrics you wish to get
       parse: createHistogram({
+        registry: registry // make sure to add your custom registry, if you are not using the default one
         histogram: new Histogram({
           name: 'my_custom_name',
           help: 'HELP ME',
           labelNames: ['opText'] as const,
-          registers: [registry] // make sure to add your custom registry, if you are not using the default one
         }),
         fillLabelsFn: params => {
-          // if you wish to fill your `lables` with metadata, you can use the params in order to get access to things like DocumentNode, operationName, operationType, `error` (for error metrics) and `info` (for resolvers metrics)
+          // if you wish to fill your `labels` with metadata, you can use the params in order to get access to things like DocumentNode, operationName, operationType, `error` (for error metrics) and `info` (for resolvers metrics)
           return {
             opText: print(params.document)
           }
