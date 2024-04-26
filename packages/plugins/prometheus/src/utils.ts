@@ -8,9 +8,18 @@ import {
   visit,
   visitWithTypeInfo,
 } from 'graphql';
-import { Counter, register as defaultRegistry, Histogram, Summary } from 'prom-client';
+import {
+  Counter,
+  register as defaultRegistry,
+  Histogram,
+  Summary,
+  type HistogramConfiguration,
+  type Registry,
+} from 'prom-client';
 import { AfterParseEventPayload } from '@envelop/core';
 import { PrometheusTracingPluginConfig } from './config.js';
+
+const histograms = new WeakMap<Registry, Map<string, Histogram>>();
 
 export type DeprecatedFieldInfo = {
   fieldName: string;
@@ -70,11 +79,36 @@ export type FillLabelsFn<LabelNames extends string> = (
   rawContext: any,
 ) => Record<LabelNames, string>;
 
-export function createHistogram<LabelNames extends string>(options: {
+export type HistogramAndLabels<LabelNames extends string> = {
   histogram: Histogram<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames>;
-}): typeof options {
-  return options;
+};
+
+export function registerHistogram<LabelNames extends string>(
+  registry: Registry,
+  conf: Omit<HistogramConfiguration<LabelNames>, 'registers'>,
+): Histogram<LabelNames> {
+  if (!histograms.has(registry)) {
+    histograms.set(registry, new Map());
+  }
+  const registryHistograms = histograms.get(registry)!;
+  if (!registryHistograms.has(conf.name)) {
+    (conf as HistogramConfiguration<LabelNames>).registers = [registry];
+    registryHistograms.set(conf.name, new Histogram(conf));
+  }
+  return registryHistograms.get(conf.name)!;
+}
+
+export function createHistogram<LabelNames extends string>(options: {
+  registry: Registry;
+  histogram: Omit<HistogramConfiguration<LabelNames>, 'registers'>;
+  fillLabelsFn: FillLabelsFn<LabelNames>;
+}): HistogramAndLabels<LabelNames> {
+  return {
+    histogram: registerHistogram(options.registry, options.histogram),
+    // histogram: new Histogram(options.histogram),
+    fillLabelsFn: options.fillLabelsFn,
+  };
 }
 
 export function createSummary<LabelNames extends string>(options: {
@@ -101,14 +135,14 @@ export function getHistogramFromConfig(
     ? (config[phase] as ReturnType<typeof createHistogram>)
     : config[phase] === true
       ? createHistogram({
-          histogram: new Histogram({
+          registry: config.registry || defaultRegistry,
+          histogram: {
             name,
             help,
             labelNames: ['operationType', 'operationName'].filter(label =>
               labelExists(config, label),
             ),
-            registers: [config.registry || defaultRegistry],
-          }),
+          },
           fillLabelsFn: params =>
             filterFillParamsFnParams(config, {
               operationName: params.operationName!,

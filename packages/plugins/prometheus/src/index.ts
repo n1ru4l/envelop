@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { ExecutionResult, GraphQLSchema, TypeInfo } from 'graphql';
-import { Counter, register as defaultRegistry, Histogram, Summary } from 'prom-client';
+import { Counter, register as defaultRegistry, Summary } from 'prom-client';
 import {
   isAsyncIterable,
   isIntrospectionOperationString,
@@ -29,11 +29,11 @@ import {
 } from './utils.js';
 
 export {
+  FillLabelsFnParams,
   PrometheusTracingPluginConfig,
   createCounter,
   createHistogram,
   createSummary,
-  FillLabelsFnParams,
 };
 
 export const fillLabelsFnParamsMap = new WeakMap<any, FillLabelsFnParams | null>();
@@ -80,7 +80,8 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
       ? config.resolvers
       : config.resolvers === true || typeof config.resolvers === 'string'
         ? createHistogram({
-            histogram: new Histogram({
+            registry: config.registry || defaultRegistry,
+            histogram: {
               name:
                 typeof config.resolvers === 'string'
                   ? config.resolvers
@@ -93,8 +94,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
                 'typeName',
                 'returnType',
               ].filter(label => labelExists(config, label)),
-              registers: [config.registry || defaultRegistry],
-            }),
+            },
             fillLabelsFn: params =>
               filterFillParamsFnParams(config, {
                 operationName: params.operationName!,
@@ -111,7 +111,8 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
       ? config.requestTotalDuration
       : config.requestTotalDuration === true || typeof config.requestTotalDuration === 'string'
         ? createHistogram({
-            histogram: new Histogram({
+            registry: config.registry || defaultRegistry,
+            histogram: {
               name:
                 typeof config.requestTotalDuration === 'string'
                   ? config.requestTotalDuration
@@ -120,8 +121,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
               labelNames: ['operationType', 'operationName'].filter(label =>
                 labelExists(config, label),
               ),
-              registers: [config.registry || defaultRegistry],
-            }),
+            },
             fillLabelsFn: params =>
               filterFillParamsFnParams(config, {
                 operationName: params.operationName!,
