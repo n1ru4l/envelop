@@ -24,6 +24,7 @@ import {
   FillLabelsFnParams,
   filterFillParamsFnParams,
   getHistogramFromConfig,
+  instrumentRegistry,
   labelExists,
   shouldTraceFieldResolver,
 } from './utils.js';
@@ -41,7 +42,7 @@ export const execStartTimeMap = new WeakMap<any, number>();
 
 export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugin => {
   let typeInfo: TypeInfo | null = null;
-  const registry = config.registry || defaultRegistry;
+  const registry = instrumentRegistry(config.registry || defaultRegistry);
 
   const parseHistogram = getHistogramFromConfig(
     config,

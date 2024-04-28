@@ -257,3 +257,17 @@ export function filterFillParamsFnParams(
 ) {
   return Object.fromEntries(Object.entries(params).filter(([key]) => labelExists(config, key)));
 }
+
+const clearRegistry = new WeakMap<Registry, () => void>();
+export function instrumentRegistry(registry: Registry) {
+  if (!clearRegistry.has(registry)) {
+    clearRegistry.set(registry, registry.clear.bind(registry));
+  }
+  registry.clear = () => {
+    histograms.delete(registry);
+    summaries.delete(registry);
+    counters.delete(registry);
+    clearRegistry.get(registry)!();
+  };
+  return registry;
+}

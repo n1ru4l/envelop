@@ -748,4 +748,17 @@ describe('Prom Metrics plugin', () => {
 
     expect(h1 === h2).toBe(false);
   });
+
+  it('should allow to clear the registry between initializations', async () => {
+    const registry = new Registry();
+
+    prepare({ parse: true }, registry); // fake initialization to make sure it doesn't break
+    registry.clear();
+    const { execute, allMetrics } = prepare({ parse: true }, registry);
+    const result = await execute('{ regularField }');
+    assertSingleExecutionValue(result);
+
+    expect(result.errors).toBeUndefined();
+    expect(await allMetrics()).toContain('graphql_envelop_phase_parse_count{');
+  });
 });
