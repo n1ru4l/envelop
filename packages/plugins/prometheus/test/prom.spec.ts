@@ -1,5 +1,5 @@
 import { ASTNode, buildSchema, print as graphQLPrint } from 'graphql';
-import { Counter, Registry } from 'prom-client';
+import { Registry } from 'prom-client';
 import { useExtendContext } from '@envelop/core';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -484,12 +484,12 @@ describe('Prom Metrics plugin', () => {
         {
           execute: true,
           errors: createCounter({
-            counter: new Counter({
+            registry,
+            counter: {
               name: 'test_error',
               help: 'HELP ME',
               labelNames: ['opText', 'errorMessage'] as const,
-              registers: [registry],
-            }),
+            },
             fillLabelsFn: params => {
               return {
                 opText: print(params.document!),

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { ExecutionResult, GraphQLSchema, TypeInfo } from 'graphql';
-import { Counter, register as defaultRegistry, Summary } from 'prom-client';
+import { register as defaultRegistry } from 'prom-client';
 import {
   isAsyncIterable,
   isIntrospectionOperationString,
@@ -41,6 +41,7 @@ export const execStartTimeMap = new WeakMap<any, number>();
 
 export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugin => {
   let typeInfo: TypeInfo | null = null;
+  const registry = config.registry || defaultRegistry;
 
   const parseHistogram = getHistogramFromConfig(
     config,
@@ -80,7 +81,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
       ? config.resolvers
       : config.resolvers === true || typeof config.resolvers === 'string'
         ? createHistogram({
-            registry: config.registry || defaultRegistry,
+            registry,
             histogram: {
               name:
                 typeof config.resolvers === 'string'
@@ -111,7 +112,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
       ? config.requestTotalDuration
       : config.requestTotalDuration === true || typeof config.requestTotalDuration === 'string'
         ? createHistogram({
-            registry: config.registry || defaultRegistry,
+            registry,
             histogram: {
               name:
                 typeof config.requestTotalDuration === 'string'
@@ -135,7 +136,8 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
       ? config.requestSummary
       : config.requestSummary === true || typeof config.requestSummary === 'string'
         ? createSummary({
-            summary: new Summary({
+            registry,
+            summary: {
               name:
                 typeof config.requestSummary === 'string'
                   ? config.requestSummary
@@ -144,8 +146,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
               labelNames: ['operationType', 'operationName'].filter(label =>
                 labelExists(config, label),
               ),
-              registers: [config.registry || defaultRegistry],
-            }),
+            },
             fillLabelsFn: params =>
               filterFillParamsFnParams(config, {
                 operationName: params.operationName!,
@@ -159,15 +160,15 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
       ? config.errors
       : config.errors === true || typeof config.errors === 'string'
         ? createCounter({
-            counter: new Counter({
+            registry,
+            counter: {
               name:
                 typeof config.errors === 'string' ? config.errors : 'graphql_envelop_error_result',
               help: 'Counts the amount of errors reported from all phases',
               labelNames: ['operationType', 'operationName', 'path', 'phase'].filter(label =>
                 labelExists(config, label),
               ),
-              registers: [config.registry || defaultRegistry],
-            }),
+            },
             fillLabelsFn: params =>
               filterFillParamsFnParams(config, {
                 operationName: params.operationName!,
@@ -183,7 +184,8 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
       ? config.requestCount
       : config.requestCount === true || typeof config.requestCount === 'string'
         ? createCounter({
-            counter: new Counter({
+            registry,
+            counter: {
               name:
                 typeof config.requestCount === 'string'
                   ? config.requestCount
@@ -192,8 +194,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
               labelNames: ['operationType', 'operationName'].filter(label =>
                 labelExists(config, label),
               ),
-              registers: [config.registry || defaultRegistry],
-            }),
+            },
             fillLabelsFn: params =>
               filterFillParamsFnParams(config, {
                 operationName: params.operationName!,
@@ -207,7 +208,8 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
       ? config.deprecatedFields
       : config.deprecatedFields === true || typeof config.deprecatedFields === 'string'
         ? createCounter({
-            counter: new Counter({
+            registry,
+            counter: {
               name:
                 typeof config.deprecatedFields === 'string'
                   ? config.deprecatedFields
@@ -216,8 +218,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
               labelNames: ['operationType', 'operationName', 'fieldName', 'typeName'].filter(
                 label => labelExists(config, label),
               ),
-              registers: [config.registry || defaultRegistry],
-            }),
+            },
             fillLabelsFn: params =>
               filterFillParamsFnParams(config, {
                 operationName: params.operationName!,
@@ -233,14 +234,14 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
       ? config.schemaChangeCount
       : config.schemaChangeCount === true || typeof config.schemaChangeCount === 'string'
         ? createCounter({
-            counter: new Counter({
+            registry,
+            counter: {
               name:
                 typeof config.schemaChangeCount === 'string'
                   ? config.schemaChangeCount
                   : 'graphql_envelop_schema_change',
               help: 'Counts the amount of schema changes',
-              registers: [config.registry || defaultRegistry],
-            }),
+            },
             fillLabelsFn: () => ({}),
           })
         : undefined;

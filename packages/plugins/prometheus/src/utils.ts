@@ -13,13 +13,17 @@ import {
   register as defaultRegistry,
   Histogram,
   Summary,
+  type CounterConfiguration,
   type HistogramConfiguration,
   type Registry,
+  type SummaryConfiguration,
 } from 'prom-client';
 import { AfterParseEventPayload } from '@envelop/core';
 import { PrometheusTracingPluginConfig } from './config.js';
 
 const histograms = new WeakMap<Registry, Map<string, Histogram>>();
+const summaries = new WeakMap<Registry, Map<string, Summary>>();
+const counters = new WeakMap<Registry, Map<string, Counter>>();
 
 export type DeprecatedFieldInfo = {
   fieldName: string;
@@ -111,18 +115,66 @@ export function createHistogram<LabelNames extends string>(options: {
   };
 }
 
-export function createSummary<LabelNames extends string>(options: {
+export type SummaryAndLabels<LabelNames extends string> = {
   summary: Summary<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames>;
-}): typeof options {
-  return options;
+};
+
+export function registerSummary<LabelNames extends string>(
+  registry: Registry,
+  conf: Omit<SummaryConfiguration<LabelNames>, 'registers'>,
+): Summary<LabelNames> {
+  if (!summaries.has(registry)) {
+    summaries.set(registry, new Map());
+  }
+  const registrySummaries = summaries.get(registry)!;
+  if (!registrySummaries.has(conf.name)) {
+    (conf as HistogramConfiguration<LabelNames>).registers = [registry];
+    registrySummaries.set(conf.name, new Summary(conf));
+  }
+  return registrySummaries.get(conf.name)!;
+}
+
+export function createSummary<LabelNames extends string>(options: {
+  registry: Registry;
+  summary: Omit<SummaryConfiguration<LabelNames>, 'registers'>;
+  fillLabelsFn: FillLabelsFn<LabelNames>;
+}): SummaryAndLabels<LabelNames> {
+  return {
+    summary: registerSummary(options.registry, options.summary),
+    fillLabelsFn: options.fillLabelsFn,
+  };
+}
+
+export type CounterAndLabels<LabelNames extends string> = {
+  counter: Counter<LabelNames>;
+  fillLabelsFn: FillLabelsFn<LabelNames>;
+};
+
+export function registerCounter<LabelNames extends string>(
+  registry: Registry,
+  conf: Omit<CounterConfiguration<LabelNames>, 'registers'>,
+): Counter<LabelNames> {
+  if (!counters.has(registry)) {
+    counters.set(registry, new Map());
+  }
+  const registryCounters = counters.get(registry)!;
+  if (!registryCounters.has(conf.name)) {
+    (conf as CounterConfiguration<LabelNames>).registers = [registry];
+    registryCounters.set(conf.name, new Counter(conf));
+  }
+  return registryCounters.get(conf.name)!;
 }
 
 export function createCounter<LabelNames extends string>(options: {
-  counter: Counter<LabelNames>;
+  registry: Registry;
+  counter: Omit<CounterConfiguration<LabelNames>, 'registers'>;
   fillLabelsFn: FillLabelsFn<LabelNames>;
-}): typeof options {
-  return options;
+}): CounterAndLabels<LabelNames> {
+  return {
+    counter: registerCounter(options.registry, options.counter),
+    fillLabelsFn: options.fillLabelsFn,
+  };
 }
 
 export function getHistogramFromConfig(
