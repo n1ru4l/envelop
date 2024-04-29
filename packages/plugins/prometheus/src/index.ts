@@ -27,11 +27,17 @@ import {
   instrumentRegistry,
   labelExists,
   shouldTraceFieldResolver,
+  type CounterAndLabels,
+  type HistogramAndLabels,
+  type SummaryAndLabels,
 } from './utils.js';
 
 export {
+  CounterAndLabels,
   FillLabelsFnParams,
+  HistogramAndLabels,
   PrometheusTracingPluginConfig,
+  SummaryAndLabels,
   createCounter,
   createHistogram,
   createSummary,
