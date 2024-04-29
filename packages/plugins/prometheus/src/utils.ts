@@ -78,14 +78,14 @@ export function createFillLabelFnParams(
   });
 }
 
-export type FillLabelsFn<LabelNames extends string> = (
-  params: FillLabelsFnParams,
+export type FillLabelsFn<LabelNames extends string, Params extends Record<string, any>> = (
+  params: Params,
   rawContext: any,
-) => Record<LabelNames, string>;
+) => Record<LabelNames, string | number>;
 
-export type HistogramAndLabels<LabelNames extends string> = {
+export type HistogramAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
   histogram: Histogram<LabelNames>;
-  fillLabelsFn: FillLabelsFn<LabelNames>;
+  fillLabelsFn: FillLabelsFn<LabelNames, Params>;
 };
 
 export function registerHistogram<LabelNames extends string>(
@@ -103,11 +103,14 @@ export function registerHistogram<LabelNames extends string>(
   return registryHistograms.get(conf.name)!;
 }
 
-export function createHistogram<LabelNames extends string>(options: {
+export function createHistogram<
+  LabelNames extends string,
+  Params extends Record<string, any> = FillLabelsFnParams,
+>(options: {
   registry: Registry;
   histogram: Omit<HistogramConfiguration<LabelNames>, 'registers'>;
-  fillLabelsFn: FillLabelsFn<LabelNames>;
-}): HistogramAndLabels<LabelNames> {
+  fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+}): HistogramAndLabels<LabelNames, Params> {
   return {
     histogram: registerHistogram(options.registry, options.histogram),
     // histogram: new Histogram(options.histogram),
@@ -115,9 +118,9 @@ export function createHistogram<LabelNames extends string>(options: {
   };
 }
 
-export type SummaryAndLabels<LabelNames extends string> = {
+export type SummaryAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
   summary: Summary<LabelNames>;
-  fillLabelsFn: FillLabelsFn<LabelNames>;
+  fillLabelsFn: FillLabelsFn<LabelNames, Params>;
 };
 
 export function registerSummary<LabelNames extends string>(
@@ -135,20 +138,23 @@ export function registerSummary<LabelNames extends string>(
   return registrySummaries.get(conf.name)!;
 }
 
-export function createSummary<LabelNames extends string>(options: {
+export function createSummary<
+  LabelNames extends string,
+  Params extends Record<string, any> = FillLabelsFnParams,
+>(options: {
   registry: Registry;
   summary: Omit<SummaryConfiguration<LabelNames>, 'registers'>;
-  fillLabelsFn: FillLabelsFn<LabelNames>;
-}): SummaryAndLabels<LabelNames> {
+  fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+}): SummaryAndLabels<LabelNames, Params> {
   return {
     summary: registerSummary(options.registry, options.summary),
     fillLabelsFn: options.fillLabelsFn,
   };
 }
 
-export type CounterAndLabels<LabelNames extends string> = {
+export type CounterAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
   counter: Counter<LabelNames>;
-  fillLabelsFn: FillLabelsFn<LabelNames>;
+  fillLabelsFn: FillLabelsFn<LabelNames, Params>;
 };
 
 export function registerCounter<LabelNames extends string>(
@@ -166,11 +172,14 @@ export function registerCounter<LabelNames extends string>(
   return registryCounters.get(conf.name)!;
 }
 
-export function createCounter<LabelNames extends string>(options: {
+export function createCounter<
+  LabelNames extends string,
+  Params extends Record<string, any> = FillLabelsFnParams,
+>(options: {
   registry: Registry;
   counter: Omit<CounterConfiguration<LabelNames>, 'registers'>;
-  fillLabelsFn: FillLabelsFn<LabelNames>;
-}): CounterAndLabels<LabelNames> {
+  fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+}): CounterAndLabels<LabelNames, Params> {
   return {
     counter: registerCounter(options.registry, options.counter),
     fillLabelsFn: options.fillLabelsFn,
