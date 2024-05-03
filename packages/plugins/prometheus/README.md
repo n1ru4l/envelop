@@ -95,7 +95,7 @@ create a custom extraction function for every `Histogram` / `Summary` / `Counter
 
 ```ts
 import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
-import { Histogram } from 'prom-client'
+import { Histogram, register as registry } from 'prom-client'
 import { envelop, useEngine } from '@envelop/core'
 import { createHistogram, usePrometheus } from '@envelop/prometheus'
 
@@ -123,3 +123,24 @@ const getEnveloped = envelop({
   ]
 })
 ```
+
+## Caveats
+
+Due to Prometheus client API limitations, if this plugin is initialized multiple times, only the
+metrics configuration of the first initialization will be applied.
+
+If necessary, use a different registry instance for each plugin instance, or clear the registry
+before plugin initialization.
+
+```ts
+function usePrometheusWithRegistry() {
+  const registry = new Registry()
+  return usePrometheus({
+    registry,
+    ...
+  })
+}
+```
+
+Keep in mind that this implies potential data loss in pull mode if some data is produced between
+last pull and the re-initialization of the plugin.
