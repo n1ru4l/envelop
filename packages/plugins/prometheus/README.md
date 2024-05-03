@@ -134,7 +134,12 @@ before plugin initialization.
 
 ```ts
 function usePrometheusWithRegistry() {
+  // create a new registry instance for each plugin instance
   const registry = new Registry()
+
+  // or just clear the registry if you use only on plugin instance at a time
+  registry.clear()
+
   return usePrometheus({
     registry,
     ...
