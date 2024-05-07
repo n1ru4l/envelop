@@ -729,10 +729,24 @@ describe('Prom Metrics plugin', () => {
 
   it('should be able to be initialized multiple times', async () => {
     const registry = new Registry();
+    const allMetrics = {
+      parse: true,
+      requestCount: true,
+      requestSummary: true,
+      errors: true,
+      contextBuilding: true,
+      deprecatedFields: true,
+      execute: true,
+      requestTotalDuration: true,
+      resolvers: true,
+      schemaChangeCount: true,
+      subscribe: true,
+      validate: true,
+    };
 
-    prepare({ parse: true }, registry); // fake initialization to make sure it doesn't break
+    prepare(allMetrics, registry); // fake initialization to make sure it doesn't break
 
-    const { execute } = prepare({ parse: true }, registry);
+    const { execute } = prepare(allMetrics, registry);
     const result = await execute('{ regularField }');
     assertSingleExecutionValue(result);
 
