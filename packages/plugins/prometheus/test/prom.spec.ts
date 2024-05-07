@@ -1,5 +1,5 @@
-import { ASTNode, buildSchema, GraphQLError, print as graphQLPrint } from 'graphql';
-import { Counter, Histogram, Registry } from 'prom-client';
+import { ASTNode, buildSchema, print as graphQLPrint } from 'graphql';
+import { Registry } from 'prom-client';
 import { useExtendContext } from '@envelop/core';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -9,6 +9,7 @@ import {
   PrometheusTracingPluginConfig,
   usePrometheus,
 } from '../src/index.js';
+import { registerHistogram } from '../src/utils.js';
 
 // Graphql.js 16 and 15 produce different results
 // Graphql.js 16 output has not trailing \n
@@ -180,12 +181,12 @@ describe('Prom Metrics plugin', () => {
         {
           errors: true,
           parse: createHistogram({
-            histogram: new Histogram({
+            registry,
+            histogram: {
               name: 'test_parse',
               help: 'HELP ME',
               labelNames: ['opText'] as const,
-              registers: [registry],
-            }),
+            },
             fillLabelsFn: params => {
               return {
                 opText: print(params.document!),
@@ -214,12 +215,12 @@ describe('Prom Metrics plugin', () => {
         {
           errors: true,
           validate: createHistogram({
-            histogram: new Histogram({
+            registry,
+            histogram: {
               name: 'test_validate',
               help: 'HELP ME',
               labelNames: ['opText'] as const,
-              registers: [registry],
-            }),
+            },
             fillLabelsFn: params => {
               return {
                 opText: print(params.document!),
@@ -288,12 +289,12 @@ describe('Prom Metrics plugin', () => {
         {
           errors: true,
           contextBuilding: createHistogram({
-            histogram: new Histogram({
+            registry,
+            histogram: {
               name: 'test_context',
               help: 'HELP ME',
               labelNames: ['opText'] as const,
-              registers: [registry],
-            }),
+            },
             fillLabelsFn: params => {
               return {
                 opText: print(params.document!),
@@ -385,12 +386,12 @@ describe('Prom Metrics plugin', () => {
         {
           errors: true,
           execute: createHistogram({
-            histogram: new Histogram({
+            registry,
+            histogram: {
               name: 'test_execute',
               help: 'HELP ME',
               labelNames: ['opText'] as const,
-              registers: [registry],
-            }),
+            },
             fillLabelsFn: params => {
               return {
                 opText: print(params.document!),
@@ -483,12 +484,12 @@ describe('Prom Metrics plugin', () => {
         {
           execute: true,
           errors: createCounter({
-            counter: new Counter({
+            registry,
+            counter: {
               name: 'test_error',
               help: 'HELP ME',
               labelNames: ['opText', 'errorMessage'] as const,
-              registers: [registry],
-            }),
+            },
             fillLabelsFn: params => {
               return {
                 opText: print(params.document!),
@@ -724,5 +725,54 @@ describe('Prom Metrics plugin', () => {
         },
       ]);
     });
+  });
+
+  it('should be able to be initialized multiple times', async () => {
+    const registry = new Registry();
+    const allMetrics = {
+      parse: true,
+      requestCount: true,
+      requestSummary: true,
+      errors: true,
+      contextBuilding: true,
+      deprecatedFields: true,
+      execute: true,
+      requestTotalDuration: true,
+      resolvers: true,
+      schemaChangeCount: true,
+      subscribe: true,
+      validate: true,
+    };
+
+    prepare(allMetrics, registry); // fake initialization to make sure it doesn't break
+
+    const { execute } = prepare(allMetrics, registry);
+    const result = await execute('{ regularField }');
+    assertSingleExecutionValue(result);
+
+    expect(result.errors).toBeUndefined();
+  });
+
+  it('should be able to register the same histogram for multiple different registries', async () => {
+    const registry1 = new Registry();
+    const registry2 = new Registry();
+
+    const h1 = registerHistogram(registry1, { name: 'h', help: 'This is a test' });
+    const h2 = registerHistogram(registry2, { name: 'h', help: 'This is a test' });
+
+    expect(h1 === h2).toBe(false);
+  });
+
+  it('should allow to clear the registry between initializations', async () => {
+    const registry = new Registry();
+
+    prepare({ parse: true }, registry); // fake initialization to make sure it doesn't break
+    registry.clear();
+    const { execute, allMetrics } = prepare({ parse: true }, registry);
+    const result = await execute('{ regularField }');
+    assertSingleExecutionValue(result);
+
+    expect(result.errors).toBeUndefined();
+    expect(await allMetrics()).toContain('graphql_envelop_phase_parse_count{');
   });
 });

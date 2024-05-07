@@ -95,7 +95,7 @@ create a custom extraction function for every `Histogram` / `Summary` / `Counter
 
 ```ts
 import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
-import { Histogram } from 'prom-client'
+import { Histogram, register as registry } from 'prom-client'
 import { envelop, useEngine } from '@envelop/core'
 import { createHistogram, usePrometheus } from '@envelop/prometheus'
 
@@ -106,14 +106,14 @@ const getEnveloped = envelop({
     usePrometheus({
       // all optional, and by default, all set to false, please opt-in to the metrics you wish to get
       parse: createHistogram({
+        registry: registry // make sure to add your custom registry, if you are not using the default one
         histogram: new Histogram({
           name: 'my_custom_name',
           help: 'HELP ME',
           labelNames: ['opText'] as const,
-          registers: [registry] // make sure to add your custom registry, if you are not using the default one
         }),
         fillLabelsFn: params => {
-          // if you wish to fill your `lables` with metadata, you can use the params in order to get access to things like DocumentNode, operationName, operationType, `error` (for error metrics) and `info` (for resolvers metrics)
+          // if you wish to fill your `labels` with metadata, you can use the params in order to get access to things like DocumentNode, operationName, operationType, `error` (for error metrics) and `info` (for resolvers metrics)
           return {
             opText: print(params.document)
           }
@@ -123,3 +123,29 @@ const getEnveloped = envelop({
   ]
 })
 ```
+
+## Caveats
+
+Due to Prometheus client API limitations, if this plugin is initialized multiple times, only the
+metrics configuration of the first initialization will be applied.
+
+If necessary, use a different registry instance for each plugin instance, or clear the registry
+before plugin initialization.
+
+```ts
+function usePrometheusWithRegistry() {
+  // create a new registry instance for each plugin instance
+  const registry = new Registry()
+
+  // or just clear the registry if you use only on plugin instance at a time
+  registry.clear()
+
+  return usePrometheus({
+    registry,
+    ...
+  })
+}
+```
+
+Keep in mind that this implies potential data loss in pull mode if some data is produced between
+last pull and the re-initialization of the plugin.

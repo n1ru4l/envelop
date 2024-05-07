@@ -8,9 +8,22 @@ import {
   visit,
   visitWithTypeInfo,
 } from 'graphql';
-import { Counter, register as defaultRegistry, Histogram, Summary } from 'prom-client';
+import {
+  Counter,
+  register as defaultRegistry,
+  Histogram,
+  Summary,
+  type CounterConfiguration,
+  type HistogramConfiguration,
+  type Registry,
+  type SummaryConfiguration,
+} from 'prom-client';
 import { AfterParseEventPayload } from '@envelop/core';
 import { PrometheusTracingPluginConfig } from './config.js';
+
+const histograms = new WeakMap<Registry, Map<string, Histogram>>();
+const summaries = new WeakMap<Registry, Map<string, Summary>>();
+const counters = new WeakMap<Registry, Map<string, Counter>>();
 
 export type DeprecatedFieldInfo = {
   fieldName: string;
@@ -65,30 +78,112 @@ export function createFillLabelFnParams(
   });
 }
 
-export type FillLabelsFn<LabelNames extends string> = (
-  params: FillLabelsFnParams,
+export type FillLabelsFn<LabelNames extends string, Params extends Record<string, any>> = (
+  params: Params,
   rawContext: any,
-) => Record<LabelNames, string>;
+) => Record<LabelNames, string | number>;
 
-export function createHistogram<LabelNames extends string>(options: {
+export type HistogramAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
   histogram: Histogram<LabelNames>;
-  fillLabelsFn: FillLabelsFn<LabelNames>;
-}): typeof options {
-  return options;
+  fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+};
+
+export function registerHistogram<LabelNames extends string>(
+  registry: Registry,
+  conf: Omit<HistogramConfiguration<LabelNames>, 'registers'>,
+): Histogram<LabelNames> {
+  if (!histograms.has(registry)) {
+    histograms.set(registry, new Map());
+  }
+  const registryHistograms = histograms.get(registry)!;
+  if (!registryHistograms.has(conf.name)) {
+    (conf as HistogramConfiguration<LabelNames>).registers = [registry];
+    registryHistograms.set(conf.name, new Histogram(conf));
+  }
+  return registryHistograms.get(conf.name)!;
 }
 
-export function createSummary<LabelNames extends string>(options: {
+export function createHistogram<
+  LabelNames extends string,
+  Params extends Record<string, any> = FillLabelsFnParams,
+>(options: {
+  registry: Registry;
+  histogram: Omit<HistogramConfiguration<LabelNames>, 'registers'>;
+  fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+}): HistogramAndLabels<LabelNames, Params> {
+  return {
+    histogram: registerHistogram(options.registry, options.histogram),
+    // histogram: new Histogram(options.histogram),
+    fillLabelsFn: options.fillLabelsFn,
+  };
+}
+
+export type SummaryAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
   summary: Summary<LabelNames>;
-  fillLabelsFn: FillLabelsFn<LabelNames>;
-}): typeof options {
-  return options;
+  fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+};
+
+export function registerSummary<LabelNames extends string>(
+  registry: Registry,
+  conf: Omit<SummaryConfiguration<LabelNames>, 'registers'>,
+): Summary<LabelNames> {
+  if (!summaries.has(registry)) {
+    summaries.set(registry, new Map());
+  }
+  const registrySummaries = summaries.get(registry)!;
+  if (!registrySummaries.has(conf.name)) {
+    (conf as HistogramConfiguration<LabelNames>).registers = [registry];
+    registrySummaries.set(conf.name, new Summary(conf));
+  }
+  return registrySummaries.get(conf.name)!;
 }
 
-export function createCounter<LabelNames extends string>(options: {
+export function createSummary<
+  LabelNames extends string,
+  Params extends Record<string, any> = FillLabelsFnParams,
+>(options: {
+  registry: Registry;
+  summary: Omit<SummaryConfiguration<LabelNames>, 'registers'>;
+  fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+}): SummaryAndLabels<LabelNames, Params> {
+  return {
+    summary: registerSummary(options.registry, options.summary),
+    fillLabelsFn: options.fillLabelsFn,
+  };
+}
+
+export type CounterAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
   counter: Counter<LabelNames>;
-  fillLabelsFn: FillLabelsFn<LabelNames>;
-}): typeof options {
-  return options;
+  fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+};
+
+export function registerCounter<LabelNames extends string>(
+  registry: Registry,
+  conf: Omit<CounterConfiguration<LabelNames>, 'registers'>,
+): Counter<LabelNames> {
+  if (!counters.has(registry)) {
+    counters.set(registry, new Map());
+  }
+  const registryCounters = counters.get(registry)!;
+  if (!registryCounters.has(conf.name)) {
+    (conf as CounterConfiguration<LabelNames>).registers = [registry];
+    registryCounters.set(conf.name, new Counter(conf));
+  }
+  return registryCounters.get(conf.name)!;
+}
+
+export function createCounter<
+  LabelNames extends string,
+  Params extends Record<string, any> = FillLabelsFnParams,
+>(options: {
+  registry: Registry;
+  counter: Omit<CounterConfiguration<LabelNames>, 'registers'>;
+  fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+}): CounterAndLabels<LabelNames, Params> {
+  return {
+    counter: registerCounter(options.registry, options.counter),
+    fillLabelsFn: options.fillLabelsFn,
+  };
 }
 
 export function getHistogramFromConfig(
@@ -101,14 +196,14 @@ export function getHistogramFromConfig(
     ? (config[phase] as ReturnType<typeof createHistogram>)
     : config[phase] === true
       ? createHistogram({
-          histogram: new Histogram({
+          registry: config.registry || defaultRegistry,
+          histogram: {
             name,
             help,
             labelNames: ['operationType', 'operationName'].filter(label =>
               labelExists(config, label),
             ),
-            registers: [config.registry || defaultRegistry],
-          }),
+          },
           fillLabelsFn: params =>
             filterFillParamsFnParams(config, {
               operationName: params.operationName!,
@@ -170,4 +265,18 @@ export function filterFillParamsFnParams(
   params: Record<string, any>,
 ) {
   return Object.fromEntries(Object.entries(params).filter(([key]) => labelExists(config, key)));
+}
+
+const clearRegistry = new WeakMap<Registry, () => void>();
+export function instrumentRegistry(registry: Registry) {
+  if (!clearRegistry.has(registry)) {
+    clearRegistry.set(registry, registry.clear.bind(registry));
+  }
+  registry.clear = () => {
+    histograms.delete(registry);
+    summaries.delete(registry);
+    counters.delete(registry);
+    clearRegistry.get(registry)!();
+  };
+  return registry;
 }
