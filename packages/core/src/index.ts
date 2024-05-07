@@ -10,4 +10,5 @@ export * from './plugins/use-extend-context.js';
 export * from './plugins/use-payload-formatter.js';
 export * from './plugins/use-masked-errors.js';
 export * from './plugins/use-engine.js';
+export * from './plugins/use-validation-rule.js';
 export { getDocumentString } from './document-string-map.js';

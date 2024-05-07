@@ -93,6 +93,17 @@ export const PLUGINS: {
     tags: ['core', 'schema'],
   },
   {
+    identifier: 'use-validation-rule',
+    title: 'useValidationRule',
+    githubReadme: {
+      repo: 'n1ru4l/envelop',
+      path: 'packages/core/docs/use-validation-rule.md',
+    },
+    npmPackage: '@envelop/core',
+    icon: envelopIcon,
+    tags: ['core', 'utilities'],
+  },
+  {
     identifier: 'use-error-handler',
     title: 'useErrorHandler',
     githubReadme: {
