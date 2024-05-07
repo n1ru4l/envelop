@@ -1,5 +1,21 @@
 # @envelop/opentelemetry
 
+## 6.3.1
+
+### Patch Changes
+
+- [#2218](https://github.com/n1ru4l/envelop/pull/2218)
+  [`75b73fb`](https://github.com/n1ru4l/envelop/commit/75b73fbc8b56f3b6e2efbb37dab42fb6c3ed171c)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+
+  - Updated dependency
+    [`@opentelemetry/api@^1.8.0` ↗︎](https://www.npmjs.com/package/@opentelemetry/api/v/1.8.0)
+    (from `^1.0.0`, in `dependencies`)
+
+- Updated dependencies
+  [[`dc1222f`](https://github.com/n1ru4l/envelop/commit/dc1222f440942ec796d72fb7ff0c77e03d29c58b)]:
+  - @envelop/core@5.0.1
+
 ## 6.3.0
 
 ### Minor Changes
