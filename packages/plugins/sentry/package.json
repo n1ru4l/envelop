@@ -55,7 +55,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@envelop/core": "^5.0.0",
+    "@envelop/core": "workspace:^",
     "@graphql-tools/schema": "10.0.3",
     "@sentry/node": "7.108.0",
     "@sentry/tracing": "7.108.0",

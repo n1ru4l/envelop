@@ -56,7 +56,7 @@
     "value-or-promise": "^1.0.12"
   },
   "devDependencies": {
-    "@envelop/core": "^5.0.0",
+    "@envelop/core": "workspace:^",
     "@graphql-tools/schema": "10.0.3",
     "graphql": "16.8.1",
     "lru-cache": "^10.0.0",
