@@ -63,7 +63,7 @@
     "tslib": "^2.6.2"
   },
   "devDependencies": {
-    "@envelop/response-cache": "^6.1.2",
+    "@envelop/response-cache": "workspace:*",
     "jest-environment-miniflare": "^2.14.1",
     "ts-jest": "29.1.2",
     "typescript": "^5.2.2"

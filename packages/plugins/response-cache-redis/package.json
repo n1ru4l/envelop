@@ -53,7 +53,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@envelop/core": "^5.0.0",
+    "@envelop/core": "workspace:*",
     "@graphql-tools/schema": "10.0.3",
     "@types/ioredis": "4.28.10",
     "ioredis-mock": "5.9.1",

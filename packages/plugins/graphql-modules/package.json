@@ -55,7 +55,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@envelop/core": "^5.0.0",
+    "@envelop/core": "workspace:*",
     "graphql": "16.8.1",
     "graphql-modules": "2.3.0",
     "reflect-metadata": "0.2.1",

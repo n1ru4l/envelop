@@ -55,7 +55,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@envelop/core": "^5.0.0",
+    "@envelop/core": "workspace:*",
     "@types/graphql-depth-limit": "1.1.6",
     "graphql": "16.8.1",
     "typescript": "5.1.3"
