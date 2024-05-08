@@ -9,7 +9,7 @@
     "compile": "tsc"
   },
   "dependencies": {
-    "@envelop/core": "*",
+    "@envelop/core": "workspace:^",
     "@graphql-tools/schema": "10.0.3",
     "aws-sdk": "2.1584.0",
     "graphql": "16.8.1",

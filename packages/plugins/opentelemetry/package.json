@@ -1,6 +1,6 @@
 {
   "name": "@envelop/opentelemetry",
-  "version": "6.3.0",
+  "version": "6.3.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -47,7 +47,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@envelop/core": "^5.0.0",
+    "@envelop/core": "^5.0.1",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
@@ -57,7 +57,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@envelop/core": "^5.0.0",
+    "@envelop/core": "workspace:^",
     "@graphql-tools/schema": "^10.0.2",
     "@opentelemetry/context-async-hooks": "^1.20.0",
     "@repeaterjs/repeater": "^3.0.5",

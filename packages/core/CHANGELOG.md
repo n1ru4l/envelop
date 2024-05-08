@@ -1,5 +1,13 @@
 # @envelop/core
 
+## 5.0.1
+
+### Patch Changes
+
+- [#2215](https://github.com/n1ru4l/envelop/pull/2215)
+  [`dc1222f`](https://github.com/n1ru4l/envelop/commit/dc1222f440942ec796d72fb7ff0c77e03d29c58b)
+  Thanks [@benjie](https://github.com/benjie)! - feat: add `useValidationRule()` plugin
+
 ## 5.0.0
 
 ### Major Changes
