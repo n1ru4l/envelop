@@ -1,5 +1,5 @@
 import { ExecutionResult } from 'graphql';
-import type { ExecutionContext, KVNamespace } from '@cloudflare/workers-types';
+import type { ExecutionContext, KVNamespace } from '@cloudflare/workers-types/2023-07-01';
 import type { Cache } from '@envelop/response-cache';
 import { buildOperationKey } from '../src/cache-key.js';
 import { createKvCache, type KvCacheConfig } from '../src/index.js';
