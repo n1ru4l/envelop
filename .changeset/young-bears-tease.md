@@ -2,8 +2,8 @@
 '@envelop/response-cache-cloudflare-kv': minor
 ---
 
-BREAKING: Now the cache implementation does not require the `ExecutionContext` but the `waitUntil`
-method from it;
+BREAKING: Now the cache implementation does not require the `ExecutionContext` or `KVNamespace`
+instance but only the name of the namespace
 
 ```ts
 import { createSchema, createYoga, YogaInitialContext } from 'graphql-yoga'
