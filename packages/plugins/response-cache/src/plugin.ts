@@ -303,6 +303,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       process.env['NODE_ENV'] === 'development' || !!process.env['DEBUG']
     : false,
 }: UseResponseCacheParameter<PluginContext>): Plugin<PluginContext> {
+  const cacheFactory = typeof cache === 'function' ? memoize1(cache) : () => cache;
   const ignoredTypesMap = new Set<string>(ignoredTypes);
   const typePerSchemaCoordinateMap = new Map<string, string[]>();
   enabled = enabled ? memoize1(enabled) : enabled;
@@ -478,8 +479,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       ): void {
         processResult(result.data);
 
-        const cacheInstance =
-          typeof cache === 'function' ? cache(onExecuteParams.args.contextValue) : cache;
+        const cacheInstance = cacheFactory(onExecuteParams.args.contextValue);
         cacheInstance.invalidate(identifier.values());
         if (includeExtensionMetadata) {
           setResult(
@@ -526,8 +526,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         context: onExecuteParams.args.contextValue,
       });
 
-      const cacheInstance =
-        typeof cache === 'function' ? cache(onExecuteParams.args.contextValue) : cache;
+      const cacheInstance = cacheFactory(onExecuteParams.args.contextValue);
       const cachedResponse = (await cacheInstance.get(cacheKey)) as ResponseCacheExecutionResult;
 
       if (cachedResponse != null) {
@@ -554,8 +553,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           return;
         }
 
-        const cacheInstance =
-          typeof cache === 'function' ? cache(onExecuteParams.args.contextValue) : cache;
+        const cacheInstance = cacheFactory(onExecuteParams.args.contextValue);
         cacheInstance.set(cacheKey, result, identifier.values(), finalTtl);
         if (includeExtensionMetadata) {
           setResult(resultWithMetadata(result, { hit: false, didCache: true, ttl: finalTtl }));
