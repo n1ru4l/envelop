@@ -29,7 +29,7 @@ describe('@envelop/response-cache-cloudflare-kv integration tests', () => {
     executionContext = new ExecutionContext();
     config = {
       KV: env.GRAPHQL_RESPONSE_CACHE,
-      ctx: executionContext,
+      waitUntil: executionContext.waitUntil,
       keyPrefix: 'vitest',
     };
     maxTtl = 60 * 1000; // 1 minute
