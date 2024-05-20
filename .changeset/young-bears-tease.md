@@ -1,27 +1,9 @@
-## `@envelop/response-cache-cloudflare-kv`
+---
+'@envelop/response-cache-cloudflare-kv': minor
+---
 
-- Supports [Cloudflare KV](https://developers.cloudflare.com/kv/) cache for
-  `@envelop/response-cache` plugin
-- Suitable for graphql servers running on [Cloudflare Workers](https://workers.cloudflare.com/)
-
-[Check out the GraphQL Response Cache Guide for more information](https://envelop.dev/docs/guides/adding-a-graphql-response-cache)
-
-## Getting Started
-
-```bash
-yarn add @envelop/response-cache
-yarn add @envelop/response-cache-cloudflare-kv
-```
-
-## Usage Example
-
-In order to use the Cloudflare KV cache, you need to:
-
-- Create a Cloudflare KV namespace
-- Add that namespace to your `wrangler.toml` in order to access it from your worker. Read the
-  [KV docs](https://developers.cloudflare.com/kv/get-started/) to get started.
-- Pass the KV namespace to the `createKvCache` function and set to the `useResponseCache` plugin
-  options. See the example below.
+BREAKING: Now the cache implementation does not require the `ExecutionContext` but the `waitUntil`
+method from it;
 
 ```ts
 import { createSchema, createYoga, YogaInitialContext } from 'graphql-yoga'

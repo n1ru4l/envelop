@@ -57,7 +57,7 @@ export type ShouldCacheResultFunction = (params: {
 }) => boolean;
 
 export type UseResponseCacheParameter<PluginContext extends Record<string, any> = {}> = {
-  cache?: Cache;
+  cache?: Cache | ((ctx: Record<string, any>) => Cache);
   /**
    * Maximum age in ms. Defaults to `Infinity`. Set it to 0 for disabling the global TTL.
    */
@@ -478,7 +478,9 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       ): void {
         processResult(result.data);
 
-        cache.invalidate(identifier.values());
+        const cacheInstance =
+          typeof cache === 'function' ? cache(onExecuteParams.args.contextValue) : cache;
+        cacheInstance.invalidate(identifier.values());
         if (includeExtensionMetadata) {
           setResult(
             resultWithMetadata(result, {
@@ -524,7 +526,9 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         context: onExecuteParams.args.contextValue,
       });
 
-      const cachedResponse = (await cache.get(cacheKey)) as ResponseCacheExecutionResult;
+      const cacheInstance =
+        typeof cache === 'function' ? cache(onExecuteParams.args.contextValue) : cache;
+      const cachedResponse = (await cacheInstance.get(cacheKey)) as ResponseCacheExecutionResult;
 
       if (cachedResponse != null) {
         return setExecutor({
@@ -550,7 +554,9 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           return;
         }
 
-        cache.set(cacheKey, result, identifier.values(), finalTtl);
+        const cacheInstance =
+          typeof cache === 'function' ? cache(onExecuteParams.args.contextValue) : cache;
+        cacheInstance.set(cacheKey, result, identifier.values(), finalTtl);
         if (includeExtensionMetadata) {
           setResult(resultWithMetadata(result, { hit: false, didCache: true, ttl: finalTtl }));
         }

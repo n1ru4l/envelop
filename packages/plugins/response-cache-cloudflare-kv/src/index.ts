@@ -1,5 +1,5 @@
 import type { ExecutionResult } from 'graphql';
-import type { ExecutionContext, KVNamespace } from '@cloudflare/workers-types';
+import type { KVNamespace } from '@cloudflare/workers-types';
 import type { Cache, CacheEntityRecord } from '@envelop/response-cache';
 import { buildOperationKey } from './cache-key.js';
 import { invalidate } from './invalidate.js';
@@ -11,9 +11,9 @@ export type KvCacheConfig = {
    */
   KV: KVNamespace;
   /**
-   * The Cloudflare worker execution context. Used to perform non-blocking actions like cache storage and invalidation.
+   * The function that should be used to wait for non-blocking actions to complete
    */
-  ctx: ExecutionContext;
+  waitUntil: (promise: Promise<unknown>) => void;
   /**
    *  Defines the length of time in milliseconds that a KV result is cached in the global network location it is accessed from.
    *
@@ -67,12 +67,12 @@ export function createKvCache(config: KvCacheConfig): Cache {
       ttl: number,
     ) {
       // Do not block execution of the worker while caching the result
-      config.ctx.waitUntil(set(id, data, entities, ttl, config));
+      config.waitUntil(set(id, data, entities, ttl, config));
     },
 
     invalidate(entities: Iterable<CacheEntityRecord>) {
       // Do not block execution of the worker while invalidating the cache
-      config.ctx.waitUntil(invalidate(entities, config));
+      config.waitUntil(invalidate(entities, config));
     },
   };
   return cache;

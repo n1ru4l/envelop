@@ -25,7 +25,7 @@ describe('invalidate.test.ts', () => {
       executionContext = new ExecutionContext();
       config = {
         KV: env.GRAPHQL_RESPONSE_CACHE,
-        ctx: executionContext,
+        waitUntil: executionContext.waitUntil,
         keyPrefix,
       };
       maxTtl = 60 * 1000; // 1 minute
@@ -102,7 +102,7 @@ describe('invalidate.test.ts', () => {
       executionContext = new ExecutionContext();
       config = {
         KV: env.GRAPHQL_RESPONSE_CACHE,
-        ctx: executionContext,
+        waitUntil: executionContext.waitUntil,
         keyPrefix,
       };
       maxTtl = 60 * 1000; // 1 minute
