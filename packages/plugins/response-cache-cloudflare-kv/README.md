@@ -33,9 +33,8 @@ import { typeDefs } from './graphql-schema/typeDefs.generated'
 export type Env = {
   GRAPHQL_RESPONSE_CACHE: KVNamespace
 }
-export type GraphQLContext = YogaInitialContext & Env & ExecutionContext
 
-const graphqlServer = createYoga<GraphQLContext>({
+const graphqlServer = createYoga<Env & ExecutionContext>({
   schema: createSchema({ typeDefs, resolvers }),
   plugins: [
     useResponseCache({
