@@ -10,10 +10,7 @@ type Env = {
 };
 
 describe('@envelop/response-cache-cloudflare-kv integration tests', () => {
-  let env: Env;
-  let config: KvCacheConfig;
   let maxTtl: number;
-  let executionContext: ExecutionContext;
   let cache: Cache;
   const dataValue: ExecutionResult<{ key: string }, { extensions: string }> = {
     errors: [],
@@ -21,19 +18,25 @@ describe('@envelop/response-cache-cloudflare-kv integration tests', () => {
     extensions: { extensions: 'value' },
   };
   const dataKey = '1B9502F92EFA53AFF0AC650794AA79891E4B6900';
+  let KV: KVNamespace;
+  let executionContext: ExecutionContext;
+  const keyPrefix = 'vitest';
+  const KVName = 'GRAPHQL_RESPONSE_CACHE';
 
   beforeEach(() => {
     // @ts-expect-error - Unable to get jest-environment-miniflare/globals working the test/build setup
-    env = getMiniflareBindings<Env>();
+    const env = getMiniflareBindings<Env>();
     // @ts-expect-error - Unable to get jest-environment-miniflare/globals working the test/build setup
     executionContext = new ExecutionContext();
-    config = {
-      KV: env.GRAPHQL_RESPONSE_CACHE,
-      waitUntil: executionContext.waitUntil,
-      keyPrefix: 'vitest',
-    };
+    KV = env[KVName];
     maxTtl = 60 * 1000; // 1 minute
-    cache = createKvCache(config);
+    cache = createKvCache({
+      KVName,
+      keyPrefix,
+    })({
+      GRAPHQL_RESPONSE_CACHE: KV,
+      waitUntil: executionContext.waitUntil.bind(executionContext),
+    });
   });
 
   test('should work with a basic set() and get()', async () => {
@@ -49,8 +52,8 @@ describe('@envelop/response-cache-cloudflare-kv integration tests', () => {
     const result = await cache.get(dataKey);
     expect(result).toEqual(dataValue);
 
-    const operationKey = buildOperationKey(dataKey, config.keyPrefix);
-    const operationValue = await env.GRAPHQL_RESPONSE_CACHE.get(operationKey, 'text');
+    const operationKey = buildOperationKey(dataKey, keyPrefix);
+    const operationValue = await KV.get(operationKey, 'text');
     expect(operationValue).toBeTruthy();
     expect(JSON.parse(operationValue!)).toEqual(dataValue);
   });
@@ -77,7 +80,7 @@ describe('@envelop/response-cache-cloudflare-kv integration tests', () => {
     const result = await cache.get(dataKey);
     expect(result).toBeUndefined();
 
-    const allKeys = await config.KV.list();
+    const allKeys = await KV.list();
     expect(allKeys.keys.length).toEqual(0);
   });
 });

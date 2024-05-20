@@ -215,12 +215,10 @@ const graphqlServer = createYoga<Env & ExecutionContext>({
   schema: createSchema({ typeDefs, resolvers }),
   plugins: [
     useResponseCache({
-      cache: ctx =>
-        createKvCache({
-          KV: ctx.GRAPHQL_RESPONSE_CACHE,
-          waitUntil: ctx.waitUntil,
-          keyPrefix: 'graphql' // optional
-        }),
+      cache: createKvCache({
+        KVName: 'GRAPHQL_RESPONSE_CACHE',
+        keyPrefix: 'graphql' // optional
+      }),
       session: () => null,
       includeExtensionMetadata: true,
       ttl: 1000 * 10 // 10 seconds

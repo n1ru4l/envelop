@@ -5,15 +5,11 @@ import { buildOperationKey } from './cache-key.js';
 import { invalidate } from './invalidate.js';
 import { set } from './set.js';
 
-export type KvCacheConfig = {
+export type KvCacheConfig<TKVNamespaceName extends string> = {
   /**
-   * The Cloudflare KV namespace that should be used to store the cache
+   * The name of the  Cloudflare KV namespace that should be used to store the cache
    */
-  KV: KVNamespace;
-  /**
-   * The function that should be used to wait for non-blocking actions to complete
-   */
-  waitUntil: (promise: Promise<unknown>) => void;
+  KVName: TKVNamespaceName;
   /**
    *  Defines the length of time in milliseconds that a KV result is cached in the global network location it is accessed from.
    *
@@ -35,7 +31,14 @@ export type KvCacheConfig = {
  * @param config Modify the behavior of the cache as it pertains to Cloudflare KV
  * @returns A cache object that can be passed to envelop's `useResponseCache` plugin
  */
-export function createKvCache(config: KvCacheConfig): Cache {
+export function createKvCache<
+  TKVNamespaceName extends string,
+  TServerContext extends {
+    [TKey in TKVNamespaceName]: KVNamespace;
+  } & {
+    waitUntil(fn: Promise<unknown>): void;
+  },
+>(config: KvCacheConfig<TKVNamespaceName>): (ctx: TServerContext) => Cache {
   if (config.cacheReadTTL && config.cacheReadTTL < 60000) {
     // eslint-disable-next-line no-console
     console.warn(
@@ -44,36 +47,37 @@ export function createKvCache(config: KvCacheConfig): Cache {
   }
   const computedTtlInSeconds = Math.max(Math.floor((config.cacheReadTTL ?? 60000) / 1000), 60); // KV TTL must be at least 60 seconds
 
-  const cache: Cache = {
-    async get(id: string) {
-      const kvResponse = await config.KV.get(buildOperationKey(id, config.keyPrefix), {
-        type: 'text',
-        cacheTtl: computedTtlInSeconds,
-      });
-      if (kvResponse) {
-        return JSON.parse(kvResponse) as ExecutionResult;
-      }
-      return undefined;
-    },
+  return function KVCacheFactory(ctx: TServerContext) {
+    return {
+      async get(id: string) {
+        const kvResponse = await ctx[config.KVName].get(buildOperationKey(id, config.keyPrefix), {
+          type: 'text',
+          cacheTtl: computedTtlInSeconds,
+        });
+        if (kvResponse) {
+          return JSON.parse(kvResponse) as ExecutionResult;
+        }
+        return undefined;
+      },
 
-    set(
-      /** id/hash of the operation */
-      id: string,
-      /** the result that should be cached */
-      data: ExecutionResult,
-      /** array of entity records that were collected during execution */
-      entities: Iterable<CacheEntityRecord>,
-      /** how long the operation should be cached (in milliseconds) */
-      ttl: number,
-    ) {
-      // Do not block execution of the worker while caching the result
-      config.waitUntil(set(id, data, entities, ttl, config));
-    },
+      set(
+        /** id/hash of the operation */
+        id: string,
+        /** the result that should be cached */
+        data: ExecutionResult,
+        /** array of entity records that were collected during execution */
+        entities: Iterable<CacheEntityRecord>,
+        /** how long the operation should be cached (in milliseconds) */
+        ttl: number,
+      ) {
+        // Do not block execution of the worker while caching the result
+        ctx.waitUntil(set(id, data, entities, ttl, ctx[config.KVName], config.keyPrefix));
+      },
 
-    invalidate(entities: Iterable<CacheEntityRecord>) {
-      // Do not block execution of the worker while invalidating the cache
-      config.waitUntil(invalidate(entities, config));
-    },
+      invalidate(entities: Iterable<CacheEntityRecord>) {
+        // Do not block execution of the worker while invalidating the cache
+        ctx.waitUntil(invalidate(entities, ctx[config.KVName], config.keyPrefix));
+      },
+    };
   };
-  return cache;
 }
