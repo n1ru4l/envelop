@@ -36,7 +36,7 @@ export function createKvCache<
   TServerContext extends {
     [TKey in TKVNamespaceName]: KVNamespace;
   } & {
-    waitUntil(fn: Promise<unknown>): void;
+    waitUntil(promise: Promise<unknown>): void;
   },
 >(config: KvCacheConfig<TKVNamespaceName>): (ctx: TServerContext) => Cache {
   if (config.cacheReadTTL && config.cacheReadTTL < 60000) {
