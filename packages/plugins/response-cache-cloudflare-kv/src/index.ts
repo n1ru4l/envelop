@@ -38,7 +38,7 @@ export function createKvCache<
   } & {
     waitUntil(promise: Promise<unknown>): void;
   },
->(config: KvCacheConfig<TKVNamespaceName>): (ctx: TServerContext) => Cache {
+>(config: KvCacheConfig<TKVNamespaceName>) {
   if (config.cacheReadTTL && config.cacheReadTTL < 60000) {
     // eslint-disable-next-line no-console
     console.warn(
@@ -47,17 +47,21 @@ export function createKvCache<
   }
   const computedTtlInSeconds = Math.max(Math.floor((config.cacheReadTTL ?? 60000) / 1000), 60); // KV TTL must be at least 60 seconds
 
-  return function KVCacheFactory(ctx: TServerContext) {
+  return function KVCacheFactory(ctx: TServerContext): Cache {
     return {
-      async get(id: string) {
-        const kvResponse = await ctx[config.KVName].get(buildOperationKey(id, config.keyPrefix), {
-          type: 'text',
+      get(id: string) {
+        if (!ctx[config.KVName]) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `Cloudflare KV namespace ${config.KVName} is not available in the server context, skipping cache read.`,
+          );
+          return;
+        }
+        const operationKey = buildOperationKey(id, config.keyPrefix);
+        return ctx[config.KVName].get(operationKey, {
+          type: 'json',
           cacheTtl: computedTtlInSeconds,
         });
-        if (kvResponse) {
-          return JSON.parse(kvResponse) as ExecutionResult;
-        }
-        return undefined;
       },
 
       set(
@@ -69,12 +73,42 @@ export function createKvCache<
         entities: Iterable<CacheEntityRecord>,
         /** how long the operation should be cached (in milliseconds) */
         ttl: number,
-      ) {
+      ): void | Promise<void> {
+        if (!ctx[config.KVName]) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `Cloudflare KV namespace ${config.KVName} is not available in the server context, skipping cache write.`,
+          );
+          return;
+        }
+        const setPromise = set(id, data, entities, ttl, ctx[config.KVName], config.keyPrefix);
+        if (!ctx.waitUntil) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            'The server context does not have a waitUntil method. This means that the cache write will not be non-blocking.',
+          );
+          return setPromise;
+        }
         // Do not block execution of the worker while caching the result
-        ctx.waitUntil(set(id, data, entities, ttl, ctx[config.KVName], config.keyPrefix));
+        ctx.waitUntil(setPromise);
       },
 
-      invalidate(entities: Iterable<CacheEntityRecord>) {
+      invalidate(entities: Iterable<CacheEntityRecord>): void | Promise<void> {
+        if (!ctx[config.KVName]) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `Cloudflare KV namespace ${config.KVName} is not available in the server context, skipping cache invalidate.`,
+          );
+          return;
+        }
+        const invalidatePromise = invalidate(entities, ctx[config.KVName], config.keyPrefix);
+        if (!ctx.waitUntil) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            'The server context does not have a waitUntil method. This means that the cache invalidation will not be non-blocking.',
+          );
+          return invalidatePromise;
+        }
         // Do not block execution of the worker while invalidating the cache
         ctx.waitUntil(invalidate(entities, ctx[config.KVName], config.keyPrefix));
       },

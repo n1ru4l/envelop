@@ -60,7 +60,7 @@ describe('@envelop/response-cache-cloudflare-kv integration tests', () => {
 
   test('should return null when calling get() on a non-existent key', async () => {
     const result = await cache.get(dataKey);
-    expect(result).toBeUndefined();
+    expect(result).toBeFalsy();
   });
 
   test('should return null when calling get() on an invalidated key', async () => {
@@ -78,7 +78,7 @@ describe('@envelop/response-cache-cloudflare-kv integration tests', () => {
     await getMiniflareWaitUntil(executionContext);
 
     const result = await cache.get(dataKey);
-    expect(result).toBeUndefined();
+    expect(result).toBeFalsy();
 
     const allKeys = await KV.list();
     expect(allKeys.keys.length).toEqual(0);

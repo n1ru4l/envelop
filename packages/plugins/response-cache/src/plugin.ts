@@ -480,6 +480,13 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         processResult(result.data);
 
         const cacheInstance = cacheFactory(onExecuteParams.args.contextValue);
+        if (cacheInstance == null) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            '[useResponseCache] Cache instance is not available for the context. Skipping invalidation.',
+          );
+          return;
+        }
         cacheInstance.invalidate(identifier.values());
         if (includeExtensionMetadata) {
           setResult(
@@ -527,6 +534,12 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       });
 
       const cacheInstance = cacheFactory(onExecuteParams.args.contextValue);
+      if (cacheInstance == null) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          '[useResponseCache] Cache instance is not available for the context. Skipping cache lookup.',
+        );
+      }
       const cachedResponse = (await cacheInstance.get(cacheKey)) as ResponseCacheExecutionResult;
 
       if (cachedResponse != null) {
@@ -553,7 +566,6 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           return;
         }
 
-        const cacheInstance = cacheFactory(onExecuteParams.args.contextValue);
         cacheInstance.set(cacheKey, result, identifier.values(), finalTtl);
         if (includeExtensionMetadata) {
           setResult(resultWithMetadata(result, { hit: false, didCache: true, ttl: finalTtl }));
