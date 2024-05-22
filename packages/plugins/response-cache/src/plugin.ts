@@ -472,13 +472,13 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         }
       }
 
-      function invalidateCache(
+      async function invalidateCache(
         result: ExecutionResult,
         setResult: (newResult: ExecutionResult) => void,
-      ): void {
+      ): Promise<void> {
         processResult(result.data);
 
-        cache.invalidate(identifier.values());
+        await cache.invalidate(identifier.values());
         if (includeExtensionMetadata) {
           setResult(
             resultWithMetadata(result, {
@@ -535,7 +535,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         });
       }
 
-      function maybeCacheResult(
+      async function maybeCacheResult(
         result: ExecutionResult,
         setResult: (newResult: ExecutionResult) => void,
       ) {
@@ -550,7 +550,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           return;
         }
 
-        cache.set(cacheKey, result, identifier.values(), finalTtl);
+        await cache.set(cacheKey, result, identifier.values(), finalTtl);
         if (includeExtensionMetadata) {
           setResult(resultWithMetadata(result, { hit: false, didCache: true, ttl: finalTtl }));
         }
@@ -580,7 +580,10 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 }
 
 function handleAsyncIterableResult<PluginContext extends Record<string, any> = {}>(
-  handler: (result: ExecutionResult, setResult: (newResult: ExecutionResult) => void) => void,
+  handler: (
+    result: ExecutionResult,
+    setResult: (newResult: ExecutionResult) => void,
+  ) => void | Promise<void>,
 ): OnExecuteDoneHookResult<PluginContext> {
   // When the result is an AsyncIterable, it means the query is using @defer or @stream.
   // This means we have to build the final result by merging the incremental results.
@@ -612,7 +615,7 @@ function handleAsyncIterableResult<PluginContext extends Record<string, any> = {
 
         if (!hasNext) {
           // The query is complete, we can process the final result
-          handler(result, payload.setResult);
+          return handler(result, payload.setResult);
         }
       }
     },
