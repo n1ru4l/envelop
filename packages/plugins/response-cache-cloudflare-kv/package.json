@@ -50,7 +50,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@cloudflare/workers-types": "^4.20231121.0",
+    "@cloudflare/workers-types": "^4.20240512.0",
     "@envelop/response-cache": "^6.1.2",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
