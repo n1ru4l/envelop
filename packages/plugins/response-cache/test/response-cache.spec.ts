@@ -3977,6 +3977,236 @@ describe('useResponseCache', () => {
     expect(result).toEqual({ data: { users: [{ id: '1' }] } });
   });
 
+  it('handles errors thrown from an asynchronous cache set', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type User {
+          id: ID!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: () => [{ id: 1 }],
+        },
+      },
+    });
+
+    const cache: Cache = {
+      get: jest.fn(),
+      invalidate: jest.fn(),
+      set: jest.fn(() => Promise.reject(new Error('Failed to set cache'))),
+    };
+
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+          cache,
+        }),
+      ],
+      schema,
+    );
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+        }
+      }
+    `;
+
+    await expect(testInstance.execute(query)).rejects.toThrow('Failed to set cache');
+    expect(cache.set).toHaveBeenCalledTimes(1);
+  });
+
+  it('handles errors thrown from an asynchronous cache invalidate', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type Mutation {
+          updateUser(id: ID!): User!
+        }
+
+        type User {
+          id: ID!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: () => [{ id: 1 }],
+        },
+        Mutation: {
+          updateUser(_, { id }) {
+            return {
+              id,
+            };
+          },
+        },
+      },
+    });
+
+    const cache: Cache = {
+      get: jest.fn(),
+      set: jest.fn(),
+      invalidate: jest.fn(() => Promise.reject(new Error('Failed to invalidate cache'))),
+    };
+
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+          cache,
+        }),
+      ],
+      schema,
+    );
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+        }
+      }
+    `;
+
+    await waitForResult(testInstance.execute(query));
+
+    const mutation = /* GraphQL */ `
+      mutation {
+        updateUser(id: "1") {
+          id
+        }
+      }
+    `;
+
+    await expect(testInstance.execute(mutation)).rejects.toThrow('Failed to invalidate cache');
+    expect(cache.invalidate).toHaveBeenCalledTimes(1);
+  });
+
+  it('handles errors thrown from a synchronous cache set', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type User {
+          id: ID!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: () => [{ id: 1 }],
+        },
+      },
+    });
+
+    const cache: Cache = {
+      get: jest.fn(),
+      invalidate: jest.fn(),
+      set: jest.fn(() => {
+        throw new Error('Failed to set cache');
+      }),
+    };
+
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+          cache,
+        }),
+      ],
+      schema,
+    );
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+        }
+      }
+    `;
+
+    await expect(testInstance.execute(query)).rejects.toThrow('Failed to set cache');
+    expect(cache.set).toHaveBeenCalledTimes(1);
+  });
+
+  it('handles errors thrown from a synchronous cache invalidate', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          users: [User!]!
+        }
+
+        type Mutation {
+          updateUser(id: ID!): User!
+        }
+
+        type User {
+          id: ID!
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: () => [{ id: 1 }],
+        },
+        Mutation: {
+          updateUser(_, { id }) {
+            return {
+              id,
+            };
+          },
+        },
+      },
+    });
+
+    const cache: Cache = {
+      get: jest.fn(),
+      set: jest.fn(),
+      invalidate: jest.fn(() => {
+        throw new Error('Failed to invalidate cache');
+      }),
+    };
+
+    const testInstance = createTestkit(
+      [
+        useResponseCache({
+          session: () => null,
+          cache,
+        }),
+      ],
+      schema,
+    );
+
+    const query = /* GraphQL */ `
+      query test {
+        users {
+          id
+        }
+      }
+    `;
+
+    await waitForResult(testInstance.execute(query));
+
+    const mutation = /* GraphQL */ `
+      mutation {
+        updateUser(id: "1") {
+          id
+        }
+      }
+    `;
+
+    await expect(testInstance.execute(mutation)).rejects.toThrow('Failed to invalidate cache');
+    expect(cache.invalidate).toHaveBeenCalledTimes(1);
+  });
+
   async function waitForResult(result: any) {
     result = await result;
     if (result.next) {
