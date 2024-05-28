@@ -110,7 +110,7 @@ export function createKvCache<
           return invalidatePromise;
         }
         // Do not block execution of the worker while invalidating the cache
-        ctx.waitUntil(invalidate(entities, ctx[config.KVName], config.keyPrefix));
+        ctx.waitUntil(invalidatePromise);
       },
     };
   };
