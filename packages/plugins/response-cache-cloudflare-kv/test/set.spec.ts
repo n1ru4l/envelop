@@ -11,10 +11,8 @@ type Env = {
 };
 
 describe('set.test.ts', () => {
-  let env: Env;
   let maxTtl: number;
-  let executionContext: ExecutionContext;
-  let config: KvCacheConfig;
+  let KV: KVNamespace;
   const keyPrefix = 'vitest';
   const dataValue: ExecutionResult<{ key: string }, { extensions: string }> = {
     errors: [],
@@ -25,7 +23,7 @@ describe('set.test.ts', () => {
 
   async function collectAllKeys(prefix: string) {
     const keys = [];
-    for await (const kvKey of getAllKvKeysForPrefix(prefix, config)) {
+    for await (const kvKey of getAllKvKeysForPrefix(prefix, KV)) {
       keys.push(kvKey);
     }
     return keys;
@@ -34,14 +32,8 @@ describe('set.test.ts', () => {
   describe('set()', () => {
     beforeEach(() => {
       // @ts-expect-error - Unable to get jest-environment-miniflare/globals working the test/build setup
-      env = getMiniflareBindings<Env>();
-      // @ts-expect-error - Unable to get jest-environment-miniflare/globals working the test/build setup
-      executionContext = new ExecutionContext();
-      config = {
-        KV: env.GRAPHQL_RESPONSE_CACHE,
-        ctx: executionContext,
-        keyPrefix: 'vitest',
-      };
+      const env = getMiniflareBindings<Env>();
+      KV = env.GRAPHQL_RESPONSE_CACHE;
       maxTtl = 60 * 1000; // 1 minute
     });
 
@@ -51,13 +43,14 @@ describe('set.test.ts', () => {
         dataValue,
         [{ typename: 'User' }, { typename: 'User', id: 1 }, { typename: 'User', id: 2 }],
         maxTtl,
-        config,
+        KV,
+        keyPrefix,
       );
-      const operationKey = buildOperationKey(dataKey, config.keyPrefix);
+      const operationKey = buildOperationKey(dataKey, keyPrefix);
       const operationKeyWithoutPrefix = buildOperationKey(dataKey);
-      const entityTypeKey = buildEntityKey('User', undefined, config.keyPrefix);
-      const entityKey1 = buildEntityKey('User', 1, config.keyPrefix);
-      const entityKey2 = buildEntityKey('User', 2, config.keyPrefix);
+      const entityTypeKey = buildEntityKey('User', undefined, keyPrefix);
+      const entityKey1 = buildEntityKey('User', 1, keyPrefix);
+      const entityKey2 = buildEntityKey('User', 2, keyPrefix);
 
       const allKeys = await collectAllKeys(keyPrefix);
       expect(allKeys.length).toEqual(4);
@@ -88,8 +81,8 @@ describe('set.test.ts', () => {
     });
 
     test('should function even if there are no entities', async () => {
-      await set(dataKey, dataValue, [], maxTtl, config);
-      const operationKey = buildOperationKey(dataKey, config.keyPrefix);
+      await set(dataKey, dataValue, [], maxTtl, KV, keyPrefix);
+      const operationKey = buildOperationKey(dataKey, keyPrefix);
       const operationKeyWithoutPrefix = buildOperationKey(dataKey);
 
       const allKeys = await collectAllKeys(keyPrefix);
@@ -102,7 +95,7 @@ describe('set.test.ts', () => {
         allKeys.find(
           k =>
             k.name ===
-            `${buildEntityKey('User', undefined, config.keyPrefix)}:${operationKeyWithoutPrefix}`,
+            `${buildEntityKey('User', undefined, keyPrefix)}:${operationKeyWithoutPrefix}`,
         ),
       ).toBeUndefined();
     });

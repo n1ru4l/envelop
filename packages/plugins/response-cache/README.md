@@ -210,33 +210,26 @@ import { typeDefs } from './graphql-schema/typeDefs.generated'
 export type Env = {
   GRAPHQL_RESPONSE_CACHE: KVNamespace
 }
-export type GraphQLContext = YogaInitialContext & Env & ExecutionContext
+
+const graphqlServer = createYoga<Env & ExecutionContext>({
+  schema: createSchema({ typeDefs, resolvers }),
+  plugins: [
+    useResponseCache({
+      cache: createKvCache({
+        KVName: 'GRAPHQL_RESPONSE_CACHE',
+        keyPrefix: 'graphql' // optional
+      }),
+      session: () => null,
+      includeExtensionMetadata: true,
+      ttl: 1000 * 10 // 10 seconds
+    })
+  ]
+})
 
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    const cache = createKvCache({
-      KV: env.GRAPHQL_RESPONSE_CACHE,
-      ctx,
-      keyPrefix: 'graphql' // optional
-    })
-
-    const graphqlServer = createYoga<GraphQLContext>({
-      schema: createSchema({ typeDefs, resolvers }),
-      plugins: [
-        useResponseCache({
-          cache,
-          session: () => null
-        })
-      ]
-    })
-
-    return graphqlServer.fetch(request, env, ctx)
-  }
+  fetch: graphqlServer
 }
 ```
-
-> Note: In the Recipes below, be sure to provide your Cloudflare KV `cache` instance with
-> `useResponseCache({ cache })`.
 
 ## Recipes
 

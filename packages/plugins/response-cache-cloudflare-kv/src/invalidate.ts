@@ -1,16 +1,17 @@
+import { KVNamespace } from '@cloudflare/workers-types';
 import type { CacheEntityRecord } from '@envelop/response-cache';
 import { buildEntityKey } from './cache-key.js';
-import type { KvCacheConfig } from './index.js';
 
 export async function invalidate(
   entities: Iterable<CacheEntityRecord>,
-  config: KvCacheConfig,
+  KV: KVNamespace,
+  keyPrefix?: string,
 ): Promise<void> {
   const kvPromises: Promise<unknown>[] = []; // Collecting all the KV operations so we can await them all at once
   const entityInvalidationPromises: Promise<unknown>[] = []; // Parallelize invalidation of each entity
 
   for (const entity of entities) {
-    entityInvalidationPromises.push(invalidateCacheEntityRecord(entity, kvPromises, config));
+    entityInvalidationPromises.push(invalidateCacheEntityRecord(entity, kvPromises, KV, keyPrefix));
   }
   await Promise.allSettled(entityInvalidationPromises);
   await Promise.allSettled(kvPromises);
@@ -20,24 +21,25 @@ export async function invalidateCacheEntityRecord(
   entity: CacheEntityRecord,
   /** Collect all inner promises to batch await all async operations outside the function */
   kvPromiseCollection: Promise<unknown>[],
-  config: KvCacheConfig,
+  KV: KVNamespace,
+  keyPrefix?: string,
 ) {
-  const entityKey = buildEntityKey(entity.typename, entity.id, config.keyPrefix);
+  const entityKey = buildEntityKey(entity.typename, entity.id, keyPrefix);
 
-  for await (const kvKey of getAllKvKeysForPrefix(entityKey, config)) {
+  for await (const kvKey of getAllKvKeysForPrefix(entityKey, KV)) {
     if (kvKey.metadata?.operationKey) {
-      kvPromiseCollection.push(config.KV.delete(kvKey.metadata?.operationKey));
-      kvPromiseCollection.push(config.KV.delete(kvKey.name));
+      kvPromiseCollection.push(KV.delete(kvKey.metadata?.operationKey));
+      kvPromiseCollection.push(KV.delete(kvKey.name));
     }
   }
 }
 
-export async function* getAllKvKeysForPrefix(prefix: string, config: KvCacheConfig) {
+export async function* getAllKvKeysForPrefix(prefix: string, KV: KVNamespace) {
   let keyListComplete = false;
   let cursor: string | undefined;
 
   do {
-    const kvListResponse = await config.KV.list<{ operationKey: string }>({
+    const kvListResponse = await KV.list<{ operationKey: string }>({
       prefix,
       cursor,
     });

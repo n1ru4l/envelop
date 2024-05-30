@@ -57,7 +57,7 @@ export type ShouldCacheResultFunction = (params: {
 }) => boolean;
 
 export type UseResponseCacheParameter<PluginContext extends Record<string, any> = {}> = {
-  cache?: Cache;
+  cache?: Cache | ((ctx: Record<string, any>) => Cache);
   /**
    * Maximum age in ms. Defaults to `Infinity`. Set it to 0 for disabling the global TTL.
    */
@@ -303,6 +303,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       process.env['NODE_ENV'] === 'development' || !!process.env['DEBUG']
     : false,
 }: UseResponseCacheParameter<PluginContext>): Plugin<PluginContext> {
+  const cacheFactory = typeof cache === 'function' ? memoize1(cache) : () => cache;
   const ignoredTypesMap = new Set<string>(ignoredTypes);
   const typePerSchemaCoordinateMap = new Map<string, string[]>();
   enabled = enabled ? memoize1(enabled) : enabled;
@@ -478,7 +479,15 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       ): void {
         processResult(result.data);
 
-        cache.invalidate(identifier.values());
+        const cacheInstance = cacheFactory(onExecuteParams.args.contextValue);
+        if (cacheInstance == null) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            '[useResponseCache] Cache instance is not available for the context. Skipping invalidation.',
+          );
+          return;
+        }
+        cacheInstance.invalidate(identifier.values());
         if (includeExtensionMetadata) {
           setResult(
             resultWithMetadata(result, {
@@ -524,7 +533,14 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         context: onExecuteParams.args.contextValue,
       });
 
-      const cachedResponse = (await cache.get(cacheKey)) as ResponseCacheExecutionResult;
+      const cacheInstance = cacheFactory(onExecuteParams.args.contextValue);
+      if (cacheInstance == null) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          '[useResponseCache] Cache instance is not available for the context. Skipping cache lookup.',
+        );
+      }
+      const cachedResponse = (await cacheInstance.get(cacheKey)) as ResponseCacheExecutionResult;
 
       if (cachedResponse != null) {
         return setExecutor({
@@ -550,7 +566,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           return;
         }
 
-        cache.set(cacheKey, result, identifier.values(), finalTtl);
+        cacheInstance.set(cacheKey, result, identifier.values(), finalTtl);
         if (includeExtensionMetadata) {
           setResult(resultWithMetadata(result, { hit: false, didCache: true, ttl: finalTtl }));
         }

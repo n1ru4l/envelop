@@ -33,29 +33,23 @@ import { typeDefs } from './graphql-schema/typeDefs.generated'
 export type Env = {
   GRAPHQL_RESPONSE_CACHE: KVNamespace
 }
-export type GraphQLContext = YogaInitialContext & Env & ExecutionContext
+
+const graphqlServer = createYoga<Env & ExecutionContext>({
+  schema: createSchema({ typeDefs, resolvers }),
+  plugins: [
+    useResponseCache({
+      cache: createKvCache({
+        KVName: 'GRAPHQL_RESPONSE_CACHE',
+        keyPrefix: 'graphql' // optional
+      }),
+      session: () => null,
+      includeExtensionMetadata: true,
+      ttl: 1000 * 10 // 10 seconds
+    })
+  ]
+})
 
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    const kvCache = createKvCache({
-      KV: env.GRAPHQL_RESPONSE_CACHE,
-      ctx,
-      keyPrefix: 'graphql' // optional
-    })
-
-    const graphqlServer = createYoga<GraphQLContext>({
-      schema: createSchema({ typeDefs, resolvers }),
-      plugins: [
-        useResponseCache({
-          cache: kvCache,
-          session: () => null,
-          includeExtensionMetadata: true,
-          ttl: 1000 * 10 // 10 seconds
-        })
-      ]
-    })
-
-    return graphqlServer.fetch(request, env, ctx)
-  }
+  fetch: graphqlServer
 }
 ```
