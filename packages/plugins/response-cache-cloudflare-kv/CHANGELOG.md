@@ -1,5 +1,51 @@
 # @envelop/response-cache-cloudflare-kv
 
+## 1.0.0
+
+### Minor Changes
+
+- [#2238](https://github.com/n1ru4l/envelop/pull/2238)
+  [`430ee7d`](https://github.com/n1ru4l/envelop/commit/430ee7d78dea04d0a44312bdfd16062a675d9772)
+  Thanks [@ardatan](https://github.com/ardatan)! - BREAKING: Now the cache implementation does not
+  require the `ExecutionContext` or `KVNamespace` instance but only the name of the namespace
+
+  ```ts
+  import { createSchema, createYoga, YogaInitialContext } from 'graphql-yoga'
+  import { useResponseCache } from '@envelop/response-cache'
+  import { createKvCache } from '@envelop/response-cache-cloudflare-kv'
+  import { resolvers } from './graphql-schema/resolvers.generated'
+  import { typeDefs } from './graphql-schema/typeDefs.generated'
+
+  export type Env = {
+    GRAPHQL_RESPONSE_CACHE: KVNamespace
+  }
+
+  const graphqlServer = createYoga<Env & ExecutionContext>({
+    schema: createSchema({ typeDefs, resolvers }),
+    plugins: [
+      useResponseCache({
+        cache: createKvCache({
+          KVName: 'GRAPHQL_RESPONSE_CACHE',
+          keyPrefix: 'graphql' // optional
+        }),
+        session: () => null,
+        includeExtensionMetadata: true,
+        ttl: 1000 * 10 // 10 seconds
+      })
+    ]
+  })
+
+  export default {
+    fetch: graphqlServer
+  }
+  ```
+
+### Patch Changes
+
+- Updated dependencies
+  [[`430ee7d`](https://github.com/n1ru4l/envelop/commit/430ee7d78dea04d0a44312bdfd16062a675d9772)]:
+  - @envelop/response-cache@6.2.0
+
 ## 0.3.0
 
 ### Minor Changes
