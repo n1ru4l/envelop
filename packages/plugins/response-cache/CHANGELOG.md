@@ -1,5 +1,14 @@
 # @envelop/response-cache
 
+## 6.2.0
+
+### Minor Changes
+
+- [#2238](https://github.com/n1ru4l/envelop/pull/2238)
+  [`430ee7d`](https://github.com/n1ru4l/envelop/commit/430ee7d78dea04d0a44312bdfd16062a675d9772)
+  Thanks [@ardatan](https://github.com/ardatan)! - Accept a factory function to `cache` that takes
+  the context and returns the cache implementation
+
 ## 6.1.2
 
 ### Patch Changes
