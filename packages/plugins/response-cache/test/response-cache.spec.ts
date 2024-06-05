@@ -4031,3 +4031,128 @@ it('calls enabled fn after context building', async () => {
     },
   });
 });
+
+it('id field in body is returned as is and not overwritten', async () => {
+  expect.assertions(1);
+  const queryResult = {
+  'id': "idString", 'header': {'id': {'fieldA': 'Tick', 'fieldB': 'Trick', 'fieldC': 'Track'}, 'someField': 'someData'}
+  }
+  const schema = makeExecutableSchema({
+    typeDefs: /* GraphQL */ `
+      type Query {
+        subgraphObject: SubgraphObject
+      },
+      type SubgraphObject {
+        id: String,
+        header: Header, 
+      },
+      type Header {
+        id: IdObject,
+        someField: String
+      },
+      type IdObject {
+        fieldA: String,
+        fieldB: String,
+        fieldC: String,
+      }
+    `,
+    resolvers: { Query: { subgraphObject: () => queryResult } },
+  });
+  const testkit = createTestkit(
+      [
+        useEngine({ ...GraphQLJS, execute: normalizedExecutor, subscribe: normalizedExecutor }),
+        useResponseCache({
+          session: () => null,
+          ttl:0,
+          ignoreIdFieldsBySchemaCoordinate:['Header.id']
+        }),
+      ],
+      schema,
+  );
+
+  const document = /* GraphQL */ `
+    query {
+      subgraphObject {
+        id
+        header {
+          id {
+            fieldA
+            fieldB
+            fieldC
+          }
+          someField
+        }
+      }
+    }
+  `;
+
+  const result = await testkit.execute(document);
+  assertSingleExecutionValue(result);
+  expect(result).toMatchObject({
+    data: {
+      subgraphObject: queryResult,
+    },
+  });
+});
+
+it('id field in body overwritten and request fails', async () => {
+  expect.assertions(1);
+  const queryResult = {
+    'id': "idString", 'header': {'id': {'fieldA': 'Tick', 'fieldB': 'Trick', 'fieldC': 'Track'}, 'someField': 'someData'}
+  }
+  const schema = makeExecutableSchema({
+    typeDefs: /* GraphQL */ `
+      type Query {
+        subgraphObject: SubgraphObject
+      },
+      type SubgraphObject {
+        id: String,
+        header: Header,
+      },
+      type Header {
+        id: IdObject,
+        someField: String
+      },
+      type IdObject {
+        fieldA: String,
+        fieldB: String,
+        fieldC: String,
+      }
+    `,
+    resolvers: { Query: { subgraphObject: () => queryResult } },
+  });
+  const testkit = createTestkit(
+      [
+        useEngine({ ...GraphQLJS, execute: normalizedExecutor, subscribe: normalizedExecutor }),
+        useResponseCache({
+          session: () => null,
+          ttl:0
+        }),
+      ],
+      schema,
+  );
+
+  const document = /* GraphQL */ `
+    query {
+      subgraphObject {
+        id
+        header {
+          id {
+            fieldA
+            fieldB
+            fieldC
+          }
+          someField
+        }
+      }
+    }
+  `;
+
+  const result = await testkit.execute(document);
+  assertSingleExecutionValue(result);
+  expect(result).toMatchObject({
+    data: {
+      subgraphObject: queryResult,
+    },
+  });
+});
