@@ -4107,16 +4107,16 @@ it('id field in body overwritten and request fails', async () => {
       },
       type SubgraphObject {
         id: String,
-        header: Header,
+        header: Header!,
       },
       type Header {
-        id: IdObject,
+        id: IdObject!,
         someField: String
       },
       type IdObject {
-        fieldA: String,
-        fieldB: String,
-        fieldC: String,
+        fieldA: String!,
+        fieldB: String!,
+        fieldC: String!,
       }
     `,
     resolvers: { Query: { subgraphObject: () => queryResult } },
@@ -4125,7 +4125,11 @@ it('id field in body overwritten and request fails', async () => {
       [
         useEngine({ ...GraphQLJS, execute: normalizedExecutor, subscribe: normalizedExecutor }),
         useResponseCache({
-          session: () => null,
+          enabled(context: any): boolean {
+            return true;
+          }, session(context: any): string | undefined | null {
+            return "sessionString";
+          },
           ttl:0
         }),
       ],
@@ -4148,11 +4152,6 @@ it('id field in body overwritten and request fails', async () => {
     }
   `;
 
-  const result = await testkit.execute(document);
-  assertSingleExecutionValue(result);
-  expect(result).toMatchObject({
-    data: {
-      subgraphObject: queryResult,
-    },
-  });
+  await expect( testkit.execute(document)).rejects.toThrow(TypeError);
+
 });
