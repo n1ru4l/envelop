@@ -4035,39 +4035,40 @@ it('calls enabled fn after context building', async () => {
 it('id field in body is returned as is and not overwritten', async () => {
   expect.assertions(1);
   const queryResult = {
-  'id': "idString", 'header': {'id': {'fieldA': 'Tick', 'fieldB': 'Trick', 'fieldC': 'Track'}, 'someField': 'someData'}
-  }
+    id: 'idString',
+    header: { id: { fieldA: 'Tick', fieldB: 'Trick', fieldC: 'Track' }, someField: 'someData' },
+  };
   const schema = makeExecutableSchema({
     typeDefs: /* GraphQL */ `
       type Query {
         subgraphObject: SubgraphObject
-      },
+      }
       type SubgraphObject {
-        id: String,
-        header: Header, 
-      },
+        id: String
+        header: Header
+      }
       type Header {
-        id: IdObject,
+        id: IdObject
         someField: String
-      },
+      }
       type IdObject {
-        fieldA: String,
-        fieldB: String,
-        fieldC: String,
+        fieldA: String
+        fieldB: String
+        fieldC: String
       }
     `,
     resolvers: { Query: { subgraphObject: () => queryResult } },
   });
   const testkit = createTestkit(
-      [
-        useEngine({ ...GraphQLJS, execute: normalizedExecutor, subscribe: normalizedExecutor }),
-        useResponseCache({
-          session: () => null,
-          ttl:0,
-          ignoreIdFieldsBySchemaCoordinate:['Header.id']
-        }),
-      ],
-      schema,
+    [
+      useEngine({ ...GraphQLJS, execute: normalizedExecutor, subscribe: normalizedExecutor }),
+      useResponseCache({
+        session: () => null,
+        ttl: 0,
+        ignoreIdFieldsBySchemaCoordinate: ['Header.id'],
+      }),
+    ],
+    schema,
   );
 
   const document = /* GraphQL */ `
@@ -4098,42 +4099,44 @@ it('id field in body is returned as is and not overwritten', async () => {
 it('id field in body overwritten and request fails', async () => {
   expect.assertions(1);
   const queryResult = {
-    'id': "idString", 'header': {'id': {'fieldA': 'Tick', 'fieldB': 'Trick', 'fieldC': 'Track'}, 'someField': 'someData'}
-  }
+    id: 'idString',
+    header: { id: { fieldA: 'Tick', fieldB: 'Trick', fieldC: 'Track' }, someField: 'someData' },
+  };
   const schema = makeExecutableSchema({
     typeDefs: /* GraphQL */ `
       type Query {
         subgraphObject: SubgraphObject
-      },
+      }
       type SubgraphObject {
-        id: String,
-        header: Header!,
-      },
+        id: String
+        header: Header!
+      }
       type Header {
-        id: IdObject!,
+        id: IdObject!
         someField: String
-      },
+      }
       type IdObject {
-        fieldA: String!,
-        fieldB: String!,
-        fieldC: String!,
+        fieldA: String!
+        fieldB: String!
+        fieldC: String!
       }
     `,
     resolvers: { Query: { subgraphObject: () => queryResult } },
   });
   const testkit = createTestkit(
-      [
-        useEngine({ ...GraphQLJS, execute: normalizedExecutor, subscribe: normalizedExecutor }),
-        useResponseCache({
-          enabled(context: any): boolean {
-            return true;
-          }, session(context: any): string | undefined | null {
-            return "sessionString";
-          },
-          ttl:0
-        }),
-      ],
-      schema,
+    [
+      useEngine({ ...GraphQLJS, execute: normalizedExecutor, subscribe: normalizedExecutor }),
+      useResponseCache({
+        enabled(context: any): boolean {
+          return true;
+        },
+        session(context: any): string | undefined | null {
+          return 'sessionString';
+        },
+        ttl: 0,
+      }),
+    ],
+    schema,
   );
 
   const document = /* GraphQL */ `
@@ -4152,6 +4155,5 @@ it('id field in body overwritten and request fails', async () => {
     }
   `;
 
-  await expect( testkit.execute(document)).rejects.toThrow(TypeError);
-
+  await expect(testkit.execute(document)).rejects.toThrow(TypeError);
 });
