@@ -115,7 +115,7 @@ export type UseResponseCacheParameter<PluginContext extends Record<string, any> 
    */
   idFields?: Array<string>;
   /**
-   * List of SchemaCoordinates which are ignored during scan for entities.
+   * List of SchemaCoordinates in format {ObjectType}.{FieldName} which are ignored during scan for entities.
    * Defaults to `[]`
    */
   ignoreIdFieldsBySchemaCoordinate?: Array<string>
