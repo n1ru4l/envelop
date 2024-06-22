@@ -4,17 +4,17 @@ import { envelop, useEngine, useLogger, useSchema } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { EnvelopSchemaLink } from '../src';
 
-describe('apolloClient', () => {
+describe('EnvelopSchemaLink', () => {
   let schema = makeExecutableSchema({
     typeDefs: `type Query { hello: String! }`,
     resolvers: {
       Query: {
-        hello: (root, args, context) => 'world',
+        hello: () => 'world',
       },
     },
   });
 
-  it('calls plugin function', async () => {
+  it('plugin function gets called when querying Apollo', async () => {
     let logMock = jest.fn();
 
     let getEnveloped = envelop({
