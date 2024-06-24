@@ -15,13 +15,13 @@ describe('EnvelopSchemaLink', () => {
   });
 
   it('plugin function gets called when querying Apollo', async () => {
-    let logMock = jest.fn();
+    let onResult = jest.fn();
 
     let testPlugin: Plugin = {
       onExecute() {
         return {
           onExecuteDone({ result }) {
-            logMock(result);
+            onResult(result);
           },
         };
       },
@@ -48,7 +48,7 @@ describe('EnvelopSchemaLink', () => {
       query,
     });
 
-    let mockCallResult = logMock.mock.calls[0][0];
-    expect(mockCallResult.data.hello).toEqual('world');
+    let mockResult = onResult.mock.calls[0][0];
+    expect(mockResult.data.hello).toEqual('world');
   });
 });
