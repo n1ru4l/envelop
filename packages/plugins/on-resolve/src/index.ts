@@ -39,6 +39,12 @@ export type UseOnResolveOptions = {
    * @default true
    */
   skipIntrospection?: boolean;
+  /**
+   * Skip wrapping fields that have the default resolver (no custom resolver).
+   *
+   * @default false
+   */
+  skipDefaultResolvers?: boolean;
 };
 
 /**
@@ -59,6 +65,7 @@ export function useOnResolve<PluginContext extends Record<string, any> = {}>(
       for (const type of Object.values(schema.getTypeMap())) {
         if ((!opts.skipIntrospection || !isIntrospectionType(type)) && isObjectType(type)) {
           for (const field of Object.values(type.getFields())) {
+            if (opts.skipDefaultResolvers && (!field.resolve || field.resolve === defaultFieldResolver)) continue;
             if (field[hasWrappedResolveSymbol]) continue;
 
             let resolver = (field.resolve || defaultFieldResolver) as Resolver<PluginContext>;
