@@ -640,8 +640,8 @@ importers:
         specifier: 10.0.4
         version: 10.0.4(graphql@16.6.0)
       '@graphql-tools/utils':
-        specifier: 10.2.3
-        version: 10.2.3(graphql@16.6.0)
+        specifier: 10.3.0
+        version: 10.3.0(graphql@16.6.0)
       '@repeaterjs/repeater':
         specifier: 3.0.5
         version: 3.0.5
@@ -928,8 +928,8 @@ importers:
         specifier: 10.0.4
         version: 10.0.4(graphql@16.6.0)
       '@graphql-tools/utils':
-        specifier: 10.2.3
-        version: 10.2.3(graphql@16.6.0)
+        specifier: 10.3.0
+        version: 10.3.0(graphql@16.6.0)
       '@types/common-tags':
         specifier: 1.8.4
         version: 1.8.4
@@ -3199,8 +3199,8 @@ packages:
     peerDependencies:
       graphql: 16.6.0
 
-  '@graphql-tools/utils@10.2.3':
-    resolution: {integrity: sha512-j7x0sO0VtWVhD3FubyY42abx+g61/at5W5Y3DSOckPkBo7yVjkcnAsXoB4jiUnznhGme/o+uX5VgA8HrjyR5ZQ==}
+  '@graphql-tools/utils@10.3.0':
+    resolution: {integrity: sha512-HFJo2F62Y6AUQsIj1hMbcRr0wKS6nwWd2QsdnOEwK+Y4gW/N8tiHCk1gqgGtPk16GrTmpjm4AAbfv/AEzulcOw==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       graphql: 16.6.0
@@ -4719,8 +4719,8 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
-  acorn@8.12.0:
-    resolution: {integrity: sha512-RTvkC4w+KNXrM39/lWCUaG0IbRkWdCv7W/IOW9oU6SawyxulvkQy5HQPVTKxEjczcUvapcrw3cFx/60VN/NRNw==}
+  acorn@8.12.1:
+    resolution: {integrity: sha512-tcpGyI9zbizT9JbV6oYE477V6mTlXvvi0T0G3SNIYE2apm/G5huBa1+K89VGeovbg+jycCrfhl3ADxErOuO6Jg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -9550,6 +9550,10 @@ packages:
     resolution: {integrity: sha512-zWmv4RSuB9r2mYQw3zxQuHWeU+42aKi1wWig/j4ele4ygELZ7PEO6MM7rim9oAQH2A5MWfsAVf/jPvTPgCbvUQ==}
     engines: {node: '>=0.6'}
 
+  qs@6.12.2:
+    resolution: {integrity: sha512-x+NLUpx9SYrcwXtX7ob1gnkSems4i/mGZX5SlYxwIau6RrUSODO89TR/XDGGpn5RPWSYIB+aSfuSlV5+CmbTBg==}
+    engines: {node: '>=0.6'}
+
   qs@6.7.0:
     resolution: {integrity: sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ==}
     engines: {node: '>=0.6'}
@@ -13226,7 +13230,7 @@ snapshots:
   '@envelop/extended-validation@4.0.0(@envelop/core@packages+core+dist)(graphql@16.6.0)':
     dependencies:
       '@envelop/core': link:packages/core/dist
-      '@graphql-tools/utils': 10.2.3(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.0(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.5.0
 
@@ -13238,7 +13242,7 @@ snapshots:
   '@envelop/response-cache@6.1.2(@envelop/core@packages+core+dist)(graphql@16.6.0)':
     dependencies:
       '@envelop/core': link:packages/core/dist
-      '@graphql-tools/utils': 10.2.3(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.0(graphql@16.6.0)
       '@whatwg-node/fetch': 0.9.17
       fast-json-stable-stringify: 2.1.0
       graphql: 16.6.0
@@ -13476,7 +13480,7 @@ snapshots:
 
   '@graphql-tools/batch-execute@9.0.2(graphql@16.6.0)':
     dependencies:
-      '@graphql-tools/utils': 10.2.3(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.0(graphql@16.6.0)
       dataloader: 2.2.2
       graphql: 16.6.0
       tslib: 2.6.2
@@ -13487,7 +13491,7 @@ snapshots:
       '@graphql-tools/batch-execute': 9.0.2(graphql@16.6.0)
       '@graphql-tools/executor': 1.1.0(graphql@16.6.0)
       '@graphql-tools/schema': 10.0.4(graphql@16.6.0)
-      '@graphql-tools/utils': 10.2.3(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.0(graphql@16.6.0)
       dataloader: 2.2.2
       graphql: 16.6.0
       tslib: 2.6.2
@@ -13504,7 +13508,7 @@ snapshots:
 
   '@graphql-tools/executor@1.1.0(graphql@16.6.0)':
     dependencies:
-      '@graphql-tools/utils': 10.2.3(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.0(graphql@16.6.0)
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.6.0)
       '@repeaterjs/repeater': 3.0.5
       graphql: 16.6.0
@@ -13525,19 +13529,19 @@ snapshots:
 
   '@graphql-tools/merge@9.0.0(graphql@16.6.0)':
     dependencies:
-      '@graphql-tools/utils': 10.2.3(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.0(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.6.2
 
   '@graphql-tools/merge@9.0.1(graphql@16.6.0)':
     dependencies:
-      '@graphql-tools/utils': 10.2.3(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.0(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.6.2
 
   '@graphql-tools/merge@9.0.3(graphql@16.6.0)':
     dependencies:
-      '@graphql-tools/utils': 10.2.3(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.0(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.6.2
 
@@ -13553,7 +13557,7 @@ snapshots:
   '@graphql-tools/schema@10.0.0(graphql@16.6.0)':
     dependencies:
       '@graphql-tools/merge': 9.0.0(graphql@16.6.0)
-      '@graphql-tools/utils': 10.2.3(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.0(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.5.0
       value-or-promise: 1.0.12
@@ -13561,7 +13565,7 @@ snapshots:
   '@graphql-tools/schema@10.0.2(graphql@16.6.0)':
     dependencies:
       '@graphql-tools/merge': 9.0.1(graphql@16.6.0)
-      '@graphql-tools/utils': 10.2.3(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.0(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.6.2
       value-or-promise: 1.0.12
@@ -13625,7 +13629,7 @@ snapshots:
       graphql: 16.6.0
       tslib: 2.6.2
 
-  '@graphql-tools/utils@10.2.3(graphql@16.6.0)':
+  '@graphql-tools/utils@10.3.0(graphql@16.6.0)':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.6.0)
       cross-inspect: 1.0.0
@@ -13659,7 +13663,7 @@ snapshots:
     dependencies:
       '@graphql-tools/delegate': 10.0.3(graphql@16.6.0)
       '@graphql-tools/schema': 10.0.4(graphql@16.6.0)
-      '@graphql-tools/utils': 10.2.3(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.0(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.6.2
       value-or-promise: 1.0.12
@@ -15478,7 +15482,7 @@ snapshots:
 
   acorn@8.11.3: {}
 
-  acorn@8.12.0: {}
+  acorn@8.12.1: {}
 
   agent-base@6.0.2:
     dependencies:
@@ -19633,7 +19637,7 @@ snapshots:
 
   jsonc-eslint-parser@2.4.0:
     dependencies:
-      acorn: 8.12.0
+      acorn: 8.12.1
       eslint-visitor-keys: 3.4.3
       espree: 9.6.1
       semver: 7.6.2
@@ -21878,6 +21882,10 @@ snapshots:
     dependencies:
       side-channel: 1.0.6
 
+  qs@6.12.2:
+    dependencies:
+      side-channel: 1.0.6
+
   qs@6.7.0: {}
 
   querystring-es3@0.2.1: {}
@@ -23145,7 +23153,7 @@ snapshots:
 
   terser@4.8.1:
     dependencies:
-      acorn: 8.12.0
+      acorn: 8.12.1
       commander: 2.20.3
       source-map: 0.6.1
       source-map-support: 0.5.21
@@ -23697,7 +23705,7 @@ snapshots:
   url@0.11.3:
     dependencies:
       punycode: 1.4.1
-      qs: 6.12.1
+      qs: 6.12.2
 
   urlpattern-polyfill@10.0.0: {}
 
