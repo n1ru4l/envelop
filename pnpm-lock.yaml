@@ -4719,8 +4719,8 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
-  acorn@8.12.0:
-    resolution: {integrity: sha512-RTvkC4w+KNXrM39/lWCUaG0IbRkWdCv7W/IOW9oU6SawyxulvkQy5HQPVTKxEjczcUvapcrw3cFx/60VN/NRNw==}
+  acorn@8.12.1:
+    resolution: {integrity: sha512-tcpGyI9zbizT9JbV6oYE477V6mTlXvvi0T0G3SNIYE2apm/G5huBa1+K89VGeovbg+jycCrfhl3ADxErOuO6Jg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -9548,6 +9548,10 @@ packages:
 
   qs@6.12.1:
     resolution: {integrity: sha512-zWmv4RSuB9r2mYQw3zxQuHWeU+42aKi1wWig/j4ele4ygELZ7PEO6MM7rim9oAQH2A5MWfsAVf/jPvTPgCbvUQ==}
+    engines: {node: '>=0.6'}
+
+  qs@6.12.2:
+    resolution: {integrity: sha512-x+NLUpx9SYrcwXtX7ob1gnkSems4i/mGZX5SlYxwIau6RrUSODO89TR/XDGGpn5RPWSYIB+aSfuSlV5+CmbTBg==}
     engines: {node: '>=0.6'}
 
   qs@6.7.0:
@@ -15478,7 +15482,7 @@ snapshots:
 
   acorn@8.11.3: {}
 
-  acorn@8.12.0: {}
+  acorn@8.12.1: {}
 
   agent-base@6.0.2:
     dependencies:
@@ -19633,7 +19637,7 @@ snapshots:
 
   jsonc-eslint-parser@2.4.0:
     dependencies:
-      acorn: 8.12.0
+      acorn: 8.12.1
       eslint-visitor-keys: 3.4.3
       espree: 9.6.1
       semver: 7.6.2
@@ -21878,6 +21882,10 @@ snapshots:
     dependencies:
       side-channel: 1.0.6
 
+  qs@6.12.2:
+    dependencies:
+      side-channel: 1.0.6
+
   qs@6.7.0: {}
 
   querystring-es3@0.2.1: {}
@@ -23145,7 +23153,7 @@ snapshots:
 
   terser@4.8.1:
     dependencies:
-      acorn: 8.12.0
+      acorn: 8.12.1
       commander: 2.20.3
       source-map: 0.6.1
       source-map-support: 0.5.21
@@ -23697,7 +23705,7 @@ snapshots:
   url@0.11.3:
     dependencies:
       punycode: 1.4.1
-      qs: 6.12.1
+      qs: 6.12.2
 
   urlpattern-polyfill@10.0.0: {}
 
