@@ -1,5 +1,15 @@
 # @envelop/response-cache
 
+## 6.2.1
+
+### Patch Changes
+
+- [#2266](https://github.com/n1ru4l/envelop/pull/2266)
+  [`389d5f6`](https://github.com/n1ru4l/envelop/commit/389d5f696a209fd82f92157769d2b28114d8c454)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - The plugin now try to reduce the size
+  of the resulting query by not adding a `__typename` aliased selection if `__typename` is already
+  selected.
+
 ## 6.2.0
 
 ### Minor Changes
