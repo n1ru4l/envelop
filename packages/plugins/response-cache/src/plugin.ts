@@ -246,7 +246,7 @@ const getDocumentWithMetadataAndTTL = memoize4(function addTypeNameToDocument(
     SelectionSet(node, _key) {
       const parentType = typeInfo.getParentType();
       const idField = parentType && idFieldByTypeName.get(parentType.name);
-      const hasTypeNameSelection = node.selections.find(
+      const hasTypeNameSelection = node.selections.some(
         selection =>
           selection.kind === Kind.FIELD &&
           selection.name.value === '__typename' &&
@@ -264,11 +264,17 @@ const getDocumentWithMetadataAndTTL = memoize4(function addTypeNameToDocument(
       }
 
       if (idField) {
-        selections.push({
-          kind: Kind.FIELD,
-          name: { kind: Kind.NAME, value: idField },
-          alias: { kind: Kind.NAME, value: '__responseCacheId' },
-        });
+        const hasIdFieldSelected = node.selections.some(
+          selection =>
+            selection.kind === Kind.FIELD && selection.name.value === idField && !selection.alias,
+        );
+        if (!hasIdFieldSelected) {
+          selections.push({
+            kind: Kind.FIELD,
+            name: { kind: Kind.NAME, value: idField },
+            alias: { kind: Kind.NAME, value: '__responseCacheId' },
+          });
+        }
       }
       return { ...node, selections };
     },
@@ -432,7 +438,8 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
 
         const typename = data.__responseCacheTypeName ?? data.__typename;
         delete data.__responseCacheTypeName;
-        const entityId = data.__responseCacheId;
+        const idField = typename && idFieldByTypeName.get(typename);
+        const entityId = data.__responseCacheId ?? (idField && data[idField]);
         delete data.__responseCacheId;
 
         // Always process nested objects, even if we are skipping cache, to ensure the result is cleaned up
