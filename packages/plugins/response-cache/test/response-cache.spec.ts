@@ -1,5 +1,5 @@
-import { getIntrospectionQuery, GraphQLObjectType, GraphQLSchema } from 'graphql';
 import * as GraphQLJS from 'graphql';
+import { getIntrospectionQuery, GraphQLObjectType, GraphQLSchema } from 'graphql';
 import { envelop, useEngine, useExtendContext, useLogger, useSchema } from '@envelop/core';
 import { useGraphQlJit } from '@envelop/graphql-jit';
 import { useParserCache } from '@envelop/parser-cache';
@@ -2389,7 +2389,7 @@ describe('useResponseCache', () => {
       });
     });
 
-    it('does not include __typename in result if mot selected via selection set', async () => {
+    it('does not include __typename in result if not selected via selection set', async () => {
       const schema = makeExecutableSchema({
         typeDefs: /* GraphQL */ `
           type Query {
@@ -2637,6 +2637,74 @@ describe('useResponseCache', () => {
       expect(cachedResult).toEqual({
         data: {
           foo: 'bar',
+        },
+      });
+    });
+    it("doesn't add a type name when not needed", async () => {
+      expect.assertions(2);
+      const schema = makeExecutableSchema({
+        typeDefs: /* GraphQL */ `
+          type Query {
+            user: User
+          }
+
+          type User {
+            id: ID!
+            friends: [User!]!
+          }
+        `,
+        resolvers: {
+          Query: {
+            user: () => ({ id: 1, friends: [{ id: 2 }, { id: 3 }] }),
+          },
+        },
+      });
+      const testkit = createTestkit(
+        [
+          {
+            onExecute({ setExecuteFn, executeFn }) {
+              setExecuteFn(args => {
+                const [rootSelection] = args.document.definitions[0].selectionSet.selections;
+                const userSelections = rootSelection.selectionSet.selections;
+                const friendsSelections = userSelections.find(
+                  ({ name }: any) => name.value === 'friends',
+                ).selectionSet.selections;
+                const aliases = [...userSelections, ...friendsSelections].map(
+                  ({ alias }: any) => alias?.value,
+                );
+
+                expect(aliases).not.toContain('__responseCacheTypeName');
+                return executeFn(args);
+              });
+            },
+          },
+          useResponseCache({ session: () => null }),
+        ],
+        schema,
+      );
+      const result = await testkit.execute(/* GraphQL */ `
+        query {
+          user {
+            __typename
+            id
+            friends {
+              __typename
+              id
+            }
+          }
+        }
+      `);
+      assertSingleExecutionValue(result);
+      expect(result).toEqual({
+        data: {
+          user: {
+            __typename: 'User',
+            id: '1',
+            friends: [
+              { __typename: 'User', id: '2' },
+              { __typename: 'User', id: '3' },
+            ],
+          },
         },
       });
     });
