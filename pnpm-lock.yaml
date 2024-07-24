@@ -640,8 +640,8 @@ importers:
         specifier: 10.0.4
         version: 10.0.4(graphql@16.6.0)
       '@graphql-tools/utils':
-        specifier: 10.3.1
-        version: 10.3.1(graphql@16.6.0)
+        specifier: 10.3.2
+        version: 10.3.2(graphql@16.6.0)
       '@repeaterjs/repeater':
         specifier: 3.0.5
         version: 3.0.5
@@ -928,8 +928,8 @@ importers:
         specifier: 10.0.4
         version: 10.0.4(graphql@16.6.0)
       '@graphql-tools/utils':
-        specifier: 10.3.1
-        version: 10.3.1(graphql@16.6.0)
+        specifier: 10.3.2
+        version: 10.3.2(graphql@16.6.0)
       '@types/common-tags':
         specifier: 1.8.4
         version: 1.8.4
@@ -3199,8 +3199,8 @@ packages:
     peerDependencies:
       graphql: 16.6.0
 
-  '@graphql-tools/utils@10.3.1':
-    resolution: {integrity: sha512-Yhk1F0MNk4/ctgl3d0DKq++ZPovvZuh1ixWuUEVAxrFloYOAVwJ+rvGI1lsopArdJly8QXClT9lkvOxQszMw/w==}
+  '@graphql-tools/utils@10.3.2':
+    resolution: {integrity: sha512-iaqOHS4f90KNADBHqVsRBjKpM6iSvsUg1q5GhWMK03loYLaDzftrEwcsl0OkSSnRhJvAsT7q4q3r3YzRoV0v1g==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       graphql: 16.6.0
@@ -13235,7 +13235,7 @@ snapshots:
   '@envelop/extended-validation@4.0.0(@envelop/core@packages+core+dist)(graphql@16.6.0)':
     dependencies:
       '@envelop/core': link:packages/core/dist
-      '@graphql-tools/utils': 10.3.1(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.2(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.5.0
 
@@ -13247,7 +13247,7 @@ snapshots:
   '@envelop/response-cache@6.1.2(@envelop/core@packages+core+dist)(graphql@16.6.0)':
     dependencies:
       '@envelop/core': link:packages/core/dist
-      '@graphql-tools/utils': 10.3.1(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.2(graphql@16.6.0)
       '@whatwg-node/fetch': 0.9.17
       fast-json-stable-stringify: 2.1.0
       graphql: 16.6.0
@@ -13485,7 +13485,7 @@ snapshots:
 
   '@graphql-tools/batch-execute@9.0.2(graphql@16.6.0)':
     dependencies:
-      '@graphql-tools/utils': 10.3.1(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.2(graphql@16.6.0)
       dataloader: 2.2.2
       graphql: 16.6.0
       tslib: 2.6.2
@@ -13496,7 +13496,7 @@ snapshots:
       '@graphql-tools/batch-execute': 9.0.2(graphql@16.6.0)
       '@graphql-tools/executor': 1.1.0(graphql@16.6.0)
       '@graphql-tools/schema': 10.0.4(graphql@16.6.0)
-      '@graphql-tools/utils': 10.3.1(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.2(graphql@16.6.0)
       dataloader: 2.2.2
       graphql: 16.6.0
       tslib: 2.6.2
@@ -13513,7 +13513,7 @@ snapshots:
 
   '@graphql-tools/executor@1.1.0(graphql@16.6.0)':
     dependencies:
-      '@graphql-tools/utils': 10.3.1(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.2(graphql@16.6.0)
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.6.0)
       '@repeaterjs/repeater': 3.0.5
       graphql: 16.6.0
@@ -13534,19 +13534,19 @@ snapshots:
 
   '@graphql-tools/merge@9.0.0(graphql@16.6.0)':
     dependencies:
-      '@graphql-tools/utils': 10.3.1(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.2(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.6.2
 
   '@graphql-tools/merge@9.0.1(graphql@16.6.0)':
     dependencies:
-      '@graphql-tools/utils': 10.3.1(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.2(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.6.2
 
   '@graphql-tools/merge@9.0.3(graphql@16.6.0)':
     dependencies:
-      '@graphql-tools/utils': 10.3.1(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.2(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.6.2
 
@@ -13562,7 +13562,7 @@ snapshots:
   '@graphql-tools/schema@10.0.0(graphql@16.6.0)':
     dependencies:
       '@graphql-tools/merge': 9.0.0(graphql@16.6.0)
-      '@graphql-tools/utils': 10.3.1(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.2(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.5.0
       value-or-promise: 1.0.12
@@ -13570,7 +13570,7 @@ snapshots:
   '@graphql-tools/schema@10.0.2(graphql@16.6.0)':
     dependencies:
       '@graphql-tools/merge': 9.0.1(graphql@16.6.0)
-      '@graphql-tools/utils': 10.3.1(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.2(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.6.2
       value-or-promise: 1.0.12
@@ -13634,7 +13634,7 @@ snapshots:
       graphql: 16.6.0
       tslib: 2.6.2
 
-  '@graphql-tools/utils@10.3.1(graphql@16.6.0)':
+  '@graphql-tools/utils@10.3.2(graphql@16.6.0)':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.6.0)
       cross-inspect: 1.0.0
@@ -13668,7 +13668,7 @@ snapshots:
     dependencies:
       '@graphql-tools/delegate': 10.0.3(graphql@16.6.0)
       '@graphql-tools/schema': 10.0.4(graphql@16.6.0)
-      '@graphql-tools/utils': 10.3.1(graphql@16.6.0)
+      '@graphql-tools/utils': 10.3.2(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.6.2
       value-or-promise: 1.0.12
