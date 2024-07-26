@@ -188,7 +188,7 @@ export function createCounter<
 
 export function getHistogramFromConfig<Params extends Record<string, any> = FillLabelsFnParams>(
   config: PrometheusTracingPluginConfig,
-  phase: keyof PrometheusTracingPluginConfig,
+  phase: keyof PrometheusTracingPluginConfig['metrics'],
   histogram: Omit<HistogramConfiguration<string>, 'registers' | 'name'>,
   fillLabelsFn: FillLabelsFn<string, Params> = params =>
     filterFillParamsFnParams(config, {
@@ -196,13 +196,14 @@ export function getHistogramFromConfig<Params extends Record<string, any> = Fill
       operationType: params.operationType!,
     }),
 ): ReturnType<typeof createHistogram<string, Params>> | undefined {
-  return typeof config[phase] === 'object'
-    ? (config[phase] as ReturnType<typeof createHistogram>)
-    : config[phase] === true
+  const { metrics } = config;
+  return typeof metrics[phase] === 'object'
+    ? (metrics[phase] as ReturnType<typeof createHistogram>)
+    : metrics[phase] === true
       ? createHistogram({
           registry: config.registry || defaultRegistry,
           histogram: {
-            name: typeof config[phase] === 'string' ? config[phase] : phase,
+            name: typeof metrics[phase] === 'string' ? metrics[phase] : phase,
             labelNames: ['operationType', 'operationName'].filter(label =>
               labelExists(config, label),
             ),
@@ -215,7 +216,7 @@ export function getHistogramFromConfig<Params extends Record<string, any> = Fill
 
 export function getSummaryFromConfig<Params extends Record<string, any> = FillLabelsFnParams>(
   config: PrometheusTracingPluginConfig,
-  phase: keyof PrometheusTracingPluginConfig,
+  phase: keyof PrometheusTracingPluginConfig['metrics'],
   summary: Omit<SummaryConfiguration<string>, 'registers' | 'name'>,
   fillLabelsFn: FillLabelsFn<string, Params> = params =>
     filterFillParamsFnParams(config, {
@@ -223,13 +224,14 @@ export function getSummaryFromConfig<Params extends Record<string, any> = FillLa
       operationType: params.operationType!,
     }),
 ): ReturnType<typeof createSummary<string, Params>> | undefined {
-  return typeof config[phase] === 'object'
-    ? (config[phase] as ReturnType<typeof createSummary<string, Params>>)
-    : config[phase] === true
+  const { metrics } = config;
+  return typeof metrics[phase] === 'object'
+    ? (metrics[phase] as ReturnType<typeof createSummary<string, Params>>)
+    : metrics[phase] === true
       ? createSummary({
           registry: config.registry || defaultRegistry,
           summary: {
-            name: typeof config[phase] === 'string' ? config[phase] : phase,
+            name: typeof metrics[phase] === 'string' ? metrics[phase] : phase,
             labelNames: ['operationType', 'operationName'].filter(label =>
               labelExists(config, label),
             ),
@@ -242,7 +244,7 @@ export function getSummaryFromConfig<Params extends Record<string, any> = FillLa
 
 export function getCounterFromConfig<Params extends Record<string, any> = FillLabelsFnParams>(
   config: PrometheusTracingPluginConfig,
-  phase: keyof PrometheusTracingPluginConfig,
+  phase: keyof PrometheusTracingPluginConfig['metrics'],
   counter: Omit<CounterConfiguration<string>, 'registers' | 'name'>,
   fillLabelsFn: FillLabelsFn<string, Params> = params =>
     filterFillParamsFnParams(config, {
@@ -250,13 +252,14 @@ export function getCounterFromConfig<Params extends Record<string, any> = FillLa
       operationType: params.operationType!,
     }),
 ): ReturnType<typeof createCounter<string, Params>> | undefined {
-  return typeof config[phase] === 'object'
-    ? (config[phase] as ReturnType<typeof createCounter<string, Params>>)
-    : config[phase] === true
+  const { metrics } = config;
+  return typeof metrics[phase] === 'object'
+    ? (metrics[phase] as ReturnType<typeof createCounter<string, Params>>)
+    : metrics[phase] === true
       ? createCounter({
           registry: config.registry || defaultRegistry,
           counter: {
-            name: typeof config[phase] === 'string' ? config[phase] : phase,
+            name: typeof metrics[phase] === 'string' ? metrics[phase] : phase,
             labelNames: ['operationType', 'operationName'].filter(label =>
               labelExists(config, label),
             ),

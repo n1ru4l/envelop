@@ -4,7 +4,14 @@ import { createCounter, createHistogram, createSummary } from './utils.js';
 export type PrometheusTracingPluginConfig = {
   registry?: Registry;
   skipIntrospection?: boolean;
+  resolversWhitelist?: string[];
 
+  metrics: MetricsConfig;
+
+  labels?: LabelsConfig;
+};
+
+export type MetricsConfig = {
   graphql_envelop_request?: boolean | string | ReturnType<typeof createCounter>;
   graphql_envelop_request_duration?: boolean | string | ReturnType<typeof createHistogram>;
   graphql_envelop_request_time_summary?: boolean | string | ReturnType<typeof createSummary>;
@@ -18,9 +25,6 @@ export type PrometheusTracingPluginConfig = {
   graphql_envelop_schema_change?: boolean | string | ReturnType<typeof createCounter>;
 
   graphql_envelop_execute_resolver?: boolean | string | ReturnType<typeof createHistogram>;
-  resolversWhitelist?: string[];
-
-  labels?: LabelsConfig;
 };
 
 export type LabelsConfig = {

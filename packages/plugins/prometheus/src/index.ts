@@ -48,7 +48,7 @@ export {
 export const fillLabelsFnParamsMap = new WeakMap<any, FillLabelsFnParams | null>();
 export const execStartTimeMap = new WeakMap<any, number>();
 
-export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugin => {
+export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => {
   let typeInfo: TypeInfo | null = null;
   config.registry = instrumentRegistry(config.registry || defaultRegistry);
 
