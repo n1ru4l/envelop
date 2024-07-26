@@ -196,14 +196,14 @@ export function getHistogramFromConfig<Params extends Record<string, any> = Fill
       operationType: params.operationType!,
     }),
 ): ReturnType<typeof createHistogram<string, Params>> | undefined {
-  const { metrics } = config;
-  return typeof metrics[phase] === 'object'
-    ? (metrics[phase] as ReturnType<typeof createHistogram>)
-    : metrics[phase] === true
+  const metric = config.metrics[phase];
+  return typeof metric === 'object'
+    ? (metric as ReturnType<typeof createHistogram>)
+    : metric === true
       ? createHistogram({
           registry: config.registry || defaultRegistry,
           histogram: {
-            name: typeof metrics[phase] === 'string' ? metrics[phase] : phase,
+            name: typeof metric === 'string' ? metric : phase,
             labelNames: ['operationType', 'operationName'].filter(label =>
               labelExists(config, label),
             ),
@@ -224,14 +224,14 @@ export function getSummaryFromConfig<Params extends Record<string, any> = FillLa
       operationType: params.operationType!,
     }),
 ): ReturnType<typeof createSummary<string, Params>> | undefined {
-  const { metrics } = config;
-  return typeof metrics[phase] === 'object'
-    ? (metrics[phase] as ReturnType<typeof createSummary<string, Params>>)
-    : metrics[phase] === true
+  const metric = config.metrics[phase];
+  return typeof metric === 'object'
+    ? (metric as ReturnType<typeof createSummary<string, Params>>)
+    : metric === true
       ? createSummary({
           registry: config.registry || defaultRegistry,
           summary: {
-            name: typeof metrics[phase] === 'string' ? metrics[phase] : phase,
+            name: typeof metric === 'string' ? metric : phase,
             labelNames: ['operationType', 'operationName'].filter(label =>
               labelExists(config, label),
             ),
@@ -252,14 +252,14 @@ export function getCounterFromConfig<Params extends Record<string, any> = FillLa
       operationType: params.operationType!,
     }),
 ): ReturnType<typeof createCounter<string, Params>> | undefined {
-  const { metrics } = config;
-  return typeof metrics[phase] === 'object'
-    ? (metrics[phase] as ReturnType<typeof createCounter<string, Params>>)
-    : metrics[phase] === true
+  const metric = config.metrics[phase];
+  return typeof metric === 'object'
+    ? (metric as ReturnType<typeof createCounter<string, Params>>)
+    : metric === true
       ? createCounter({
           registry: config.registry || defaultRegistry,
           counter: {
-            name: typeof metrics[phase] === 'string' ? metrics[phase] : phase,
+            name: typeof metric === 'string' ? metric : phase,
             labelNames: ['operationType', 'operationName'].filter(label =>
               labelExists(config, label),
             ),
@@ -310,7 +310,6 @@ export function extractDeprecatedFields(node: ASTNode, typeInfo: TypeInfo): Depr
 }
 
 export function labelExists(config: PrometheusTracingPluginConfig, label: string) {
-  // @ts-expect-error any but we don't care, we just want it to be truthy or not.
   const labelFlag = config.labels?.[label];
   if (labelFlag == null) {
     return true;
