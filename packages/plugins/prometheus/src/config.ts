@@ -20,11 +20,13 @@ export type PrometheusTracingPluginConfig = {
   graphql_envelop_execute_resolver?: boolean | string | ReturnType<typeof createHistogram>;
   resolversWhitelist?: string[];
 
-  labels?: {
-    operationName?: boolean;
-    operationType?: boolean;
-    fieldName?: boolean;
-    typeName?: boolean;
-    returnType?: boolean;
-  };
+  labels?: LabelsConfig;
+};
+
+export type LabelsConfig = {
+  operationName?: boolean;
+  operationType?: boolean;
+  fieldName?: boolean;
+  typeName?: boolean;
+  returnType?: boolean;
 };
