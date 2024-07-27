@@ -43,6 +43,9 @@ export {
   createCounter,
   createHistogram,
   createSummary,
+  getCounterFromConfig,
+  getHistogramFromConfig,
+  getSummaryFromConfig,
 };
 
 export const fillLabelsFnParamsMap = new WeakMap<any, FillLabelsFnParams | null>();
