@@ -14,7 +14,7 @@ import {
   Plugin,
 } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
-import { PrometheusTracingPluginConfig } from './config.js';
+import { PrometheusTracingPluginConfig, type MetricsConfig } from './config.js';
 import {
   createCounter,
   createFillLabelFnParams,
@@ -55,23 +55,43 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
   let typeInfo: TypeInfo | null = null;
   config.registry = instrumentRegistry(config.registry || defaultRegistry);
 
-  const parseHistogram = getHistogramFromConfig(config, 'graphql_envelop_phase_parse', {
-    help: 'Time spent on running GraphQL "parse" function',
-  });
-  const validateHistogram = getHistogramFromConfig(config, 'graphql_envelop_phase_validate', {
-    help: 'Time spent on running GraphQL "validate" function',
-  });
-  const contextBuildingHistogram = getHistogramFromConfig(config, 'graphql_envelop_phase_context', {
-    help: 'Time spent on building the GraphQL context',
-  });
-  const executeHistogram = getHistogramFromConfig(config, 'graphql_envelop_phase_execute', {
-    help: 'Time spent on running the GraphQL "execute" function',
-  });
-  const subscribeHistogram = getHistogramFromConfig(config, 'graphql_envelop_phase_subscribe', {
-    help: 'Time spent on running the GraphQL "subscribe" function',
-  });
+  const parseHistogram = getHistogramFromConfig<MetricsConfig>(
+    config,
+    'graphql_envelop_phase_parse',
+    {
+      help: 'Time spent on running GraphQL "parse" function',
+    },
+  );
+  const validateHistogram = getHistogramFromConfig<MetricsConfig>(
+    config,
+    'graphql_envelop_phase_validate',
+    {
+      help: 'Time spent on running GraphQL "validate" function',
+    },
+  );
+  const contextBuildingHistogram = getHistogramFromConfig<MetricsConfig>(
+    config,
+    'graphql_envelop_phase_context',
+    {
+      help: 'Time spent on building the GraphQL context',
+    },
+  );
+  const executeHistogram = getHistogramFromConfig<MetricsConfig>(
+    config,
+    'graphql_envelop_phase_execute',
+    {
+      help: 'Time spent on running the GraphQL "execute" function',
+    },
+  );
+  const subscribeHistogram = getHistogramFromConfig<MetricsConfig>(
+    config,
+    'graphql_envelop_phase_subscribe',
+    {
+      help: 'Time spent on running the GraphQL "subscribe" function',
+    },
+  );
 
-  const resolversHistogram = getHistogramFromConfig(
+  const resolversHistogram = getHistogramFromConfig<MetricsConfig>(
     config,
     'graphql_envelop_execute_resolver',
     {
@@ -90,15 +110,23 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       }),
   );
 
-  const requestTotalHistogram = getHistogramFromConfig(config, 'graphql_envelop_request_duration', {
-    help: 'Time spent on running the GraphQL operation from parse to execute',
-  });
+  const requestTotalHistogram = getHistogramFromConfig<MetricsConfig>(
+    config,
+    'graphql_envelop_request_duration',
+    {
+      help: 'Time spent on running the GraphQL operation from parse to execute',
+    },
+  );
 
-  const requestSummary = getSummaryFromConfig(config, 'graphql_envelop_request_time_summary', {
-    help: 'Summary to measure the time to complete GraphQL operations',
-  });
+  const requestSummary = getSummaryFromConfig<MetricsConfig>(
+    config,
+    'graphql_envelop_request_time_summary',
+    {
+      help: 'Summary to measure the time to complete GraphQL operations',
+    },
+  );
 
-  const errorsCounter = getCounterFromConfig(
+  const errorsCounter = getCounterFromConfig<MetricsConfig>(
     config,
     'graphql_envelop_error_result',
     {
@@ -116,11 +144,11 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       }),
   );
 
-  const reqCounter = getCounterFromConfig(config, 'graphql_envelop_request', {
+  const reqCounter = getCounterFromConfig<MetricsConfig>(config, 'graphql_envelop_request', {
     help: 'Counts the amount of GraphQL requests executed through Envelop',
   });
 
-  const deprecationCounter = getCounterFromConfig(
+  const deprecationCounter = getCounterFromConfig<MetricsConfig>(
     config,
     'graphql_envelop_deprecated_field',
     {
@@ -138,7 +166,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       }),
   );
 
-  const schemaChangeCounter = getCounterFromConfig(
+  const schemaChangeCounter = getCounterFromConfig<MetricsConfig>(
     config,
     'graphql_envelop_schema_change',
     {
