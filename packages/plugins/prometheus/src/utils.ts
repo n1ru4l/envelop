@@ -193,11 +193,10 @@ export function getHistogramFromConfig<
   config: PrometheusTracingPluginConfig,
   phase: keyof MetricOptions,
   histogram: Omit<HistogramConfiguration<string>, 'registers' | 'name'>,
-  fillLabelsFn: FillLabelsFn<string, Params> = params =>
-    filterFillParamsFnParams(config, {
-      operationName: params.operationName!,
-      operationType: params.operationType!,
-    }),
+  fillLabelsFn: FillLabelsFn<string, Params> = params => ({
+    operationName: params.operationName!,
+    operationType: params.operationType!,
+  }),
 ): ReturnType<typeof createHistogram<string, Params>> | undefined {
   const metric = (config.metrics as MetricOptions)[phase];
   return typeof metric === 'object'
@@ -207,12 +206,12 @@ export function getHistogramFromConfig<
           registry: config.registry || defaultRegistry,
           histogram: {
             name: typeof metric === 'string' ? metric : (phase as string),
-            labelNames: ['operationType', 'operationName'].filter(label =>
+            ...histogram,
+            labelNames: (histogram.labelNames ?? ['operationType', 'operationName']).filter(label =>
               labelExists(config, label),
             ),
-            ...histogram,
           },
-          fillLabelsFn,
+          fillLabelsFn: (...args) => filterFillParamsFnParams(config, fillLabelsFn(...args)),
         })
       : undefined;
 }

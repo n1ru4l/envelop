@@ -27,7 +27,6 @@ import {
   getHistogramFromConfig,
   getSummaryFromConfig,
   instrumentRegistry,
-  labelExists,
   shouldTraceFieldResolver,
   type CounterAndLabels,
   type HistogramAndLabels,
@@ -96,9 +95,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     'graphql_envelop_execute_resolver',
     {
       help: 'Time spent on running the GraphQL resolvers',
-      labelNames: ['operationType', 'operationName', 'fieldName', 'typeName', 'returnType'].filter(
-        label => labelExists(config, label),
-      ),
+      labelNames: ['operationType', 'operationName', 'fieldName', 'typeName', 'returnType'],
     },
     params =>
       filterFillParamsFnParams(config, {
@@ -131,9 +128,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     'graphql_envelop_error_result',
     {
       help: 'Counts the amount of errors reported from all phases',
-      labelNames: ['operationType', 'operationName', 'path', 'phase'].filter(label =>
-        labelExists(config, label),
-      ),
+      labelNames: ['operationType', 'operationName', 'path', 'phase'],
     },
     params =>
       filterFillParamsFnParams(config, {
@@ -153,9 +148,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     'graphql_envelop_deprecated_field',
     {
       help: 'Counts the amount of deprecated fields used in selection sets',
-      labelNames: ['operationType', 'operationName', 'fieldName', 'typeName'].filter(label =>
-        labelExists(config, label),
-      ),
+      labelNames: ['operationType', 'operationName', 'fieldName', 'typeName'],
     },
     params =>
       filterFillParamsFnParams(config, {
