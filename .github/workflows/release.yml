@@ -6,11 +6,9 @@ on:
 
 jobs:
   stable:
-    uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@main
+    uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@v1
     with:
       releaseScript: release
-      nodeVersion: 22
-      packageManager: 'pnpm'
     secrets:
       githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}

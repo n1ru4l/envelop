@@ -13,20 +13,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup env
-        uses: the-guild-org/shared-config/setup@main
-        with:
-          nodeVersion: 22
-          packageManager: 'pnpm'
+        uses: the-guild-org/shared-config/setup@v1
       - name: Lint Prettier
         run: pnpm run lint:prettier
 
   lint:
     name: Lint
-    uses: the-guild-org/shared-config/.github/workflows/lint.yml@main
+    uses: the-guild-org/shared-config/.github/workflows/lint.yml@v1
     with:
       script: pnpm run ci:lint
-      nodeVersion: 22
-      packageManager: 'pnpm'
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
@@ -40,10 +35,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup env
-        uses: the-guild-org/shared-config/setup@main
-        with:
-          nodeVersion: 20
-          packageManager: 'pnpm'
+        uses: the-guild-org/shared-config/setup@v1
       - name: Use GraphQL v${{matrix.graphql_version}}
         run: node ./scripts/match-graphql.js ${{matrix.graphql_version}}
       - name: Install Dependencies using pnpm
@@ -61,10 +53,7 @@ jobs:
       - name: Checkout Master
         uses: actions/checkout@v4
       - name: Setup env
-        uses: the-guild-org/shared-config/setup@main
-        with:
-          nodeVersion: 22
-          packageManager: 'pnpm'
+        uses: the-guild-org/shared-config/setup@v1
       - name: Install Dependencies
         run: pnpm install --no-frozen-lockfile && git checkout pnpm-lock.yaml
       - name: Cache Jest
@@ -93,10 +82,7 @@ jobs:
       - name: Checkout Master
         uses: actions/checkout@v4
       - name: Setup env
-        uses: the-guild-org/shared-config/setup@main
-        with:
-          nodeVersion: ${{ matrix.node-version }}
-          packageManager: 'pnpm'
+        uses: the-guild-org/shared-config/setup@v1
       - name: Use GraphQL v${{matrix.graphql_version}}
         run: node ./scripts/match-graphql.js ${{matrix.graphql_version}}
       - name: Install Dependencies
@@ -120,10 +106,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup env
-        uses: the-guild-org/shared-config/setup@main
-        with:
-          nodeVersion: 22
-          packageManager: 'pnpm'
+        uses: the-guild-org/shared-config/setup@v1
       - name: Build Packages
         run: pnpm run build
       - name: Test ESM & CJS exports integrity

@@ -6,18 +6,16 @@ on:
 
 jobs:
   dependencies:
-    uses: the-guild-org/shared-config/.github/workflows/changesets-dependencies.yaml@main
+    uses: the-guild-org/shared-config/.github/workflows/changesets-dependencies.yaml@v1
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
     with:
       installDependencies: true
-      packageManager: pnpm
-      nodeVersion: 22
       preCommit: 'pnpm run prettier'
     secrets:
       githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
 
   alpha:
-    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@main
+    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@v1
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
     with:
       npmTag: alpha
@@ -29,14 +27,12 @@ jobs:
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
   release-candidate:
-    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@main
+    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@v1
     if: ${{ github.event.pull_request.title == 'Upcoming Release Changes' }}
     with:
       npmTag: rc
       restoreDeletedChangesets: true
       buildScript: build
-      nodeVersion: 22
-      packageManager: 'pnpm'
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
