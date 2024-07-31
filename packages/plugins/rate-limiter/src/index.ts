@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo, IntValueNode, StringValueNode } from 'graphql';
-import { getGraphQLRateLimiter } from 'graphql-rate-limit';
+import { getGraphQLRateLimiter, Store } from 'graphql-rate-limit';
 import { Plugin } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
 import { getDirective } from './utils.js';
@@ -16,6 +16,7 @@ export const DIRECTIVE_SDL = /* GraphQL */ `
 
 export type RateLimiterPluginOptions = {
   identifyFn: IdentifyFn;
+  store: Store;
   rateLimitDirectiveName?: 'rateLimit' | string;
   transformError?: (message: string) => Error;
   onRateLimitError?: (event: {
@@ -31,7 +32,10 @@ interface RateLimiterContext {
 }
 
 export const useRateLimiter = (options: RateLimiterPluginOptions): Plugin<RateLimiterContext> => {
-  const rateLimiterFn = getGraphQLRateLimiter({ identifyContext: options.identifyFn });
+  const rateLimiterFn = getGraphQLRateLimiter({
+    identifyContext: options.identifyFn,
+    store: options.store,
+  });
 
   return {
     onPluginInit({ addPlugin }) {
