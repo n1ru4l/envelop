@@ -7,6 +7,8 @@
 All metric options have been moved under a mandatory `metrics` key, and the name of each options
 have been renamed to match the default metric name.
 
+The plugin option argument is also now mandatory.
+
 ```diff
 export const serveConfig = defineConfig({
   plugins: pluginCtx => [
