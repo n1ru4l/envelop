@@ -33,7 +33,7 @@
     "@babel/preset-typescript": "7.24.7",
     "@changesets/changelog-github": "0.5.0",
     "@changesets/cli": "2.24.2",
-    "@theguild/prettier-config": "2.0.6",
+    "@theguild/prettier-config": "2.0.7",
     "@types/benchmark": "2.1.5",
     "@types/jest": "29.5.12",
     "@types/k6": "0.49.3",
