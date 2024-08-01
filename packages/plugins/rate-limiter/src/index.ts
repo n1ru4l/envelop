@@ -6,6 +6,18 @@ import { getDirective } from './utils.js';
 
 export * from './utils.js';
 
+export {
+  FormatErrorInput,
+  GraphQLRateLimitConfig,
+  GraphQLRateLimitDirectiveArgs,
+  Identity,
+  InMemoryStore,
+  Options,
+  RateLimitError,
+  RedisStore,
+  Store,
+} from 'graphql-rate-limit';
+
 export class UnauthenticatedError extends Error {}
 
 export type IdentifyFn<ContextType = unknown> = (context: ContextType) => string;
