@@ -33,8 +33,8 @@ interface RateLimiterContext {
 
 export const useRateLimiter = (options: RateLimiterPluginOptions): Plugin<RateLimiterContext> => {
   const rateLimiterFn = getGraphQLRateLimiter({
-    identifyContext: options.identifyFn,
     ...options.graphQLRateLimitConfig,
+    identifyContext: options.identifyFn,
   });
 
   return {
