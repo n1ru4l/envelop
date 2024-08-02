@@ -36,8 +36,7 @@ export type RateLimiterPluginOptions = {
     context: unknown;
     info: GraphQLResolveInfo;
   }) => void;
-  graphQLRateLimitConfig?: GraphQLRateLimitConfig;
-};
+} & Omit<GraphQLRateLimitConfig, 'identifyContext'>;
 
 interface RateLimiterContext {
   rateLimiterFn: ReturnType<typeof getGraphQLRateLimiter>;
