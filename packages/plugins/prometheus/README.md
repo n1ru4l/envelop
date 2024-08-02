@@ -63,10 +63,11 @@ const getEnveloped = envelop({
 ## Available Metrics
 
 All metrics are disabled by default. You can enable the one you are interested in by setting the
-corresponding key in the `metric` option object to `true`. Histogram metrics can be passed an array
-of numbers to configure buckets. You can also provide a string to customize the metric name, or an
-object to provide more options by using `createHistogram`, `createCounter` and `createSummary` (see
+corresponding key in the `metric` option object to `true`. You can also provide a string to
+customize the metric name, or an object to provide more options by using `createHistogram`,
+`createCounter` and `createSummary` (see
 [`siimon/prom-client` documentation](https://github.com/siimon/prom-client#custom-metrics)).
+Histogram metrics can be passed an array of numbers to configure buckets.
 
 Each metric also expose a set of labels. All labels are exposed by default but can be separately
 disabled by setting the corresponding key in `labels` option object to `false`.
