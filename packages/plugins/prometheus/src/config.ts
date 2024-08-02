@@ -53,8 +53,18 @@ export type MetricsConfig = {
   /**
    * Tracks the duration of the complete GraphQL operation execution.
    * It is reported as a histogram.
+   *
+   * You can pass multiple type of values:
+   *  - boolean: Disable or Enable the metric with default configuration
+   *  - string: Enable the metric with custom name
+   *  - number[]: Enable the metric with custom buckets
+   *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
-  graphql_envelop_request_duration?: boolean | string | ReturnType<typeof createHistogram>;
+  graphql_envelop_request_duration?:
+    | boolean
+    | string
+    | number[]
+    | ReturnType<typeof createHistogram>;
   /**
    * Provides a summary of the time spent on the GraphQL operation execution.
    * It reports the same timing than graphql_envelop_request_duration but as a summary.
@@ -64,33 +74,67 @@ export type MetricsConfig = {
    * Tracks the duration of the parse phase of the GraphQL execution.
    * It reports the time spent parsing the incoming GraphQL operation.
    * It is reported as a histogram.
+   *
+   * You can pass multiple type of values:
+   *  - boolean: Disable or Enable the metric with default configuration
+   *  - string: Enable the metric with custom name
+   *  - number[]: Enable the metric with custom buckets
+   *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
-  graphql_envelop_phase_parse?: boolean | string | ReturnType<typeof createHistogram>;
+  graphql_envelop_phase_parse?: boolean | string | number[] | ReturnType<typeof createHistogram>;
   /**
    * Tracks the duration of the validate phase of the GraphQL execution.
    * It reports the time spent validating the incoming GraphQL operation.
    * It is reported as a histogram.
+   *
+   * You can pass multiple type of values:
+   *  - boolean: Disable or Enable the metric with default configuration
+   *  - string: Enable the metric with custom name
+   *  - number[]: Enable the metric with custom buckets
+   *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
-  graphql_envelop_phase_validate?: boolean | string | ReturnType<typeof createHistogram>;
+  graphql_envelop_phase_validate?: boolean | string | number[] | ReturnType<typeof createHistogram>;
   /**
    * Tracks the duration of the context phase of the GraphQL execution.
    * It reports the time spent building the context object that will be passed to the executors.
    * It is reported as a histogram.
+   *
+   * You can pass multiple type of values:
+   *  - boolean: Disable or Enable the metric with default configuration
+   *  - string: Enable the metric with custom name
+   *  - number[]: Enable the metric with custom buckets
+   *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
-  graphql_envelop_phase_context?: boolean | string | ReturnType<typeof createHistogram>;
+  graphql_envelop_phase_context?: boolean | string | number[] | ReturnType<typeof createHistogram>;
   /**
    * Tracks the duration of the execute phase of the GraphQL execution.
    * It reports the time spent actually resolving the response of the incoming operation.
    * This includes the gathering of all the data from all sources required to construct the final response.
    * It is reported as a histogram.
+   *
+   * You can pass multiple type of values:
+   *  - boolean: Disable or Enable the metric with default configuration
+   *  - string: Enable the metric with custom name
+   *  - number[]: Enable the metric with custom buckets
+   *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
-  graphql_envelop_phase_execute?: boolean | string | ReturnType<typeof createHistogram>;
+  graphql_envelop_phase_execute?: boolean | string | number[] | ReturnType<typeof createHistogram>;
   /**
    * This metric tracks the duration of the subscribe phase of the GraphQL execution.
    * It reports the time spent initiating a subscription (which doesn’t include actually sending the first response).
    * It is reported as a histogram.
+   *
+   * You can pass multiple type of values:
+   *  - boolean: Disable or Enable the metric with default configuration
+   *  - string: Enable the metric with custom name
+   *  - number[]: Enable the metric with custom buckets
+   *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
-  graphql_envelop_phase_subscribe?: boolean | string | ReturnType<typeof createHistogram>;
+  graphql_envelop_phase_subscribe?:
+    | boolean
+    | string
+    | number[]
+    | ReturnType<typeof createHistogram>;
   /**
    * This metric tracks the number of errors that returned by the GraphQL execution.
    * It counts all errors found in response, but it also includes errors from other GraphQL
@@ -117,8 +161,18 @@ export type MetricsConfig = {
    * It is highly recommended to enable this metric for debugging purposes only,
    * since it can have a significant performance impact.
    * You can use the `resolversWhitelist` option to limit metrics explosion and performance degradation.
+   *
+   * You can pass multiple type of values:
+   *  - boolean: Disable or Enable the metric with default configuration
+   *  - string: Enable the metric with custom name
+   *  - number[]: Enable the metric with custom buckets
+   *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
-  graphql_envelop_execute_resolver?: boolean | string | ReturnType<typeof createHistogram>;
+  graphql_envelop_execute_resolver?:
+    | boolean
+    | string
+    | number[]
+    | ReturnType<typeof createHistogram>;
 };
 
 export type LabelsConfig = {

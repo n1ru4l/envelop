@@ -207,6 +207,7 @@ export function getHistogramFromConfig<
           histogram: {
             name: typeof metric === 'string' ? metric : (phase as string),
             ...histogram,
+            buckets: Array.isArray(metric) ? metric : histogram.buckets,
             labelNames: (histogram.labelNames ?? ['operationType', 'operationName']).filter(label =>
               labelExists(config, label),
             ),
