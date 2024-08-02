@@ -199,6 +199,10 @@ export function getHistogramFromConfig<
   }),
 ): ReturnType<typeof createHistogram<string, Params>> | undefined {
   const metric = (config.metrics as MetricOptions)[phase];
+  if (Array.isArray(metric) && metric.length === 0) {
+    histogram.buckets = metric;
+  }
+
   return typeof metric === 'object'
     ? (metric as ReturnType<typeof createHistogram>)
     : metric === true
@@ -207,7 +211,6 @@ export function getHistogramFromConfig<
           histogram: {
             name: typeof metric === 'string' ? metric : (phase as string),
             ...histogram,
-            buckets: Array.isArray(metric) ? metric : histogram.buckets,
             labelNames: (histogram.labelNames ?? ['operationType', 'operationName']).filter(label =>
               labelExists(config, label),
             ),
