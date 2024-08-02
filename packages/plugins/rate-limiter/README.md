@@ -65,7 +65,7 @@ type Query {
 
 ## Notes
 
-The prop graphQLRateLimitConfig with an object of any options available to the graphql-rate-limit
-getGraphQLRateLimiter function may also be passed into useRateLimiter.
+All options available to the graphql-rate-limit getGraphQLRateLimiter function may also be passed
+into useRateLimiter.
 
 You can find more details here: https://github.com/teamplanes/graphql-rate-limit#readme
