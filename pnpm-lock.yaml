@@ -998,8 +998,8 @@ importers:
         specifier: 16.6.0
         version: 16.6.0
       lru-cache:
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^11.0.0
+        version: 11.0.0
       reflect-metadata:
         specifier: 0.2.1
         version: 0.2.1
@@ -1218,8 +1218,8 @@ importers:
   packages/plugins/parser-cache:
     dependencies:
       lru-cache:
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^11.0.0
+        version: 11.0.0
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -1365,8 +1365,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0
       lru-cache:
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^11.0.0
+        version: 11.0.0
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -1507,8 +1507,8 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       lru-cache:
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^11.0.0
+        version: 11.0.0
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -8105,10 +8105,6 @@ packages:
 
   lower-case@2.0.2:
     resolution: {integrity: sha512-7fm3l3NAF9WfN6W3JOmf5drwpVqX78JtoGJ3A6W0a6ZnldM41w2fV5D490psKFTpMds8TJse/eHLFFsNHHjHgg==}
-
-  lru-cache@10.0.0:
-    resolution: {integrity: sha512-svTf/fzsKHffP42sujkO/Rjs37BCIsQVRCeNYIm9WN8rgT7ffoUnRtZCqU+6BqcSBdv8gwJeTz8knJpgACeQMw==}
-    engines: {node: 14 || >=16.14}
 
   lru-cache@10.2.1:
     resolution: {integrity: sha512-tS24spDe/zXhWbNPErCHs/AGOzbKGHT+ybSBqmdLm8WZ1xXLWvH8Qn71QPAlqVhd0qUTWjy+Kl9JmISgDdEjsA==}
@@ -19834,8 +19830,6 @@ snapshots:
   lower-case@2.0.2:
     dependencies:
       tslib: 2.6.2
-
-  lru-cache@10.0.0: {}
 
   lru-cache@10.2.1: {}
 
