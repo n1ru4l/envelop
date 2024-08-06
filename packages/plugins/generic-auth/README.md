@@ -4,8 +4,8 @@ This plugin allows you to implement custom authentication flow by providing a cu
 based on the original HTTP request. The resolved user is injected into the GraphQL execution
 `context`, and you can use it in your resolvers to fetch the current user.
 
-> The plugin also comes with an optional `@auth` directive that can be added to your GraphQL schema
-> and helps you to protect your GraphQL schema in a declarative way.
+> The plugin also comes with an optional `@authenticated` directive that can be added to your
+> GraphQL schema and helps you to protect your GraphQL schema in a declarative way.
 
 There are several possible flows for using this plugin (see below for setup examples):
 
@@ -15,8 +15,8 @@ There are several possible flows for using this plugin (see below for setup exam
 - **Option #2 - Manual Validation**: the plugin will just resolve the user and injects it into the
   `context` without validating access to schema field.
 - **Option #3 - Granular field access by using schema field directives or field extensions**: Look
-  for an `@auth` directive or `auth` extension field and automatically protect those specific
-  GraphQL fields.
+  for an `@authenticated` directive or `authenticated` extension field and automatically protect
+  those specific GraphQL fields.
 
 ## Getting Started
 
@@ -70,7 +70,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
   // This method is being triggered in different flows, based on the mode you chose to implement.
 
   // If you are using the `protect-auth-directive` mode, you'll also get 2 additional parameters: the resolver parameters as object and the DirectiveNode of the auth directive.
-  // In `protect-auth-directive` mode, this function will always get called and you can use these parameters to check if the field has the `@auth` or `@skipAuth` directive
+  // In `protect-auth-directive` mode, this function will always get called and you can use these parameters to check if the field has the `@authenticated` or `@skipAuth` directive
 
   if (!user) {
     return new Error(`Unauthenticated!`)
@@ -213,8 +213,8 @@ const resolvers = {
 
 #### Option #3 - `protect-granular`
 
-This mode is similar to option #2, but it uses the `@auth` SDL directive or `auth` field extension
-for protecting specific GraphQL fields.
+This mode is similar to option #2, but it uses the `@authenticated` SDL directive or `auth` field
+extension for protecting specific GraphQL fields.
 
 ```ts
 import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
@@ -247,15 +247,15 @@ const getEnveloped = envelop({
 ##### Protect a field using a field `directive`
 
 > By default, we assume that you have the GraphQL directive definition as part of your GraphQL
-> schema (`directive @auth on FIELD_DEFINITION`).
+> schema (`directive @authenticated on FIELD_DEFINITION`).
 
-Then, in your GraphQL schema SDL, you can add `@auth` directive to your fields, and the
+Then, in your GraphQL schema SDL, you can add `@authenticated` directive to your fields, and the
 `validateUser` will get called only while resolving that specific field:
 
 ```graphql
 type Query {
-  me: User! @auth
-  protectedField: String @auth
+  me: User! @authenticated
+  protectedField: String @authenticated
   # publicField: String
 }
 ```
@@ -277,7 +277,7 @@ const GraphQLQueryType = new GraphQLObjectType({
       type: GraphQLInt,
       resolve: () => 1,
       extensions: {
-        auth: true
+        authenticated: true
       }
     }
   }
@@ -308,8 +308,8 @@ const validateUser: ValidateUserFn<UserType> = ({ user }) => {
 
 ##### With a custom directive with arguments
 
-It is possible to add custom parameters to your `@auth` directive. Here's an example for adding
-role-aware authentication:
+It is possible to add custom parameters to your `@authenticated` directive. Here's an example for
+adding role-aware authentication:
 
 ```graphql
 enum Role {
@@ -317,7 +317,7 @@ enum Role {
   MEMBER
 }
 
-directive @auth(role: Role!) on FIELD_DEFINITION
+directive @authenticated(role: Role!) on FIELD_DEFINITION
 ```
 
 Then, you use the `directiveNode` parameter to check the arguments:
@@ -371,7 +371,7 @@ const resolvers = {
     user: {
       me: (_, __, { currentUser }) => currentUser,
       extensions: {
-        auth: {
+        authenticated: {
           role: 'USER'
         }
       }
@@ -410,7 +410,7 @@ const resolvers = {
     user: {
       resolve: (_, { userId }) => getUser(userId),
       extensions: {
-        auth: {
+        authenticated: {
           validate: ({ user, variables, context }) => {
             // We can now have access to the operation and variables to decide if the user can execute the query
             if (user.id !== variables.userId) {

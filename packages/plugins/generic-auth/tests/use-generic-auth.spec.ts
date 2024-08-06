@@ -2,12 +2,11 @@ import { EnumValueNode, FieldNode, getIntrospectionQuery } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { Maybe } from '@envelop/types';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { shouldIncludeNode } from '@graphql-tools/utils';
+import { createGraphQLError, shouldIncludeNode } from '@graphql-tools/utils';
 import {
   DIRECTIVE_SDL,
   ResolveUserFn,
   SKIP_AUTH_DIRECTIVE_SDL,
-  UnauthenticatedError,
   useGenericAuth,
   ValidateUserFn,
 } from '../src/index.js';
@@ -282,7 +281,7 @@ describe('useGenericAuth', () => {
         DIRECTIVE_SDL,
         /* GraphQL */ `
           type Query {
-            protected: String @auth
+            protected: String @authenticated
             public: String
           }
         `,
@@ -360,9 +359,35 @@ describe('useGenericAuth', () => {
       const result = await testInstance.execute(`query { protected }`);
       assertSingleExecutionValue(result);
       expect(result.errors?.length).toBe(1);
-      expect(result.errors?.[0].message).toBe(
-        `Accessing 'Query.protected' requires authentication.`,
+      expect(result.errors?.[0].message).toBe(`Unauthorized field or type`);
+    });
+
+    it('Should prevent field execution when user is not authenticated correctly but continue execution for public fields', async () => {
+      const testInstance = createTestkit(
+        [
+          useGenericAuth({
+            mode: 'protect-granular',
+            resolveUserFn: invalidresolveUserFn,
+            rejectUnauthenticated: false,
+          }),
+        ],
+        schemaWithDirective,
       );
+
+      const result = await testInstance.execute(`query { public protected }`);
+      assertSingleExecutionValue(result);
+      expect(result).toMatchObject({
+        data: {
+          public: 'public',
+          protected: null,
+        },
+        errors: [
+          {
+            message: `Unauthorized field or type`,
+            path: ['protected'],
+          },
+        ],
+      });
     });
 
     describe('auth directive with role', () => {
@@ -370,10 +395,9 @@ describe('useGenericAuth', () => {
       const validateUserFn: ValidateUserFn<UserTypeWithRole> = params => {
         const schemaCoordinate = `${params.objectType.name}.${params.fieldNode.name.value}`;
         if (!params.user) {
-          return new UnauthenticatedError(
-            `Accessing '${schemaCoordinate}' requires authentication.`,
-            [params.fieldNode],
-          );
+          return createGraphQLError(`Accessing '${schemaCoordinate}' requires authentication.`, {
+            nodes: [params.fieldNode],
+          });
         }
 
         if (params.fieldAuthDirectiveNode?.arguments) {
@@ -384,9 +408,9 @@ describe('useGenericAuth', () => {
             const role = valueNode.value;
 
             if (role !== params.user.role) {
-              return new UnauthenticatedError(
+              return createGraphQLError(
                 `Missing permissions for accessing field '${schemaCoordinate}'. Requires role '${role}'. Request is authenticated with role '${params.user.role}'.`,
-                [params.fieldNode],
+                { nodes: [params.fieldNode] },
               );
             }
           }
@@ -418,11 +442,11 @@ describe('useGenericAuth', () => {
             USER
           }
 
-          directive @auth(role: Role! = USER) on FIELD_DEFINITION
+          directive @authenticated(role: Role! = USER) on FIELD_DEFINITION
 
           type Query {
-            protected: String @auth
-            admin: String @auth(role: ADMIN)
+            protected: String @authenticated
+            admin: String @authenticated(role: ADMIN)
             public: String
           }
         `,
