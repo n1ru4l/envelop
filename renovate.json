@@ -12,11 +12,11 @@
   "packageRules": [
     {
       "groupName": "graphql-tools",
-      "matchPackagePrefixes": "@graphql-tools"
+      "matchPackagePatterns": ["@graphql-tools"]
     },
     {
       "groupName": "whatwg-node",
-      "matchPackagePrefixes": "@whatwg-node"
+      "matchPackagePatterns": ["@whatwg-node/*"]
     },
     {
       "excludePackagePatterns": [
