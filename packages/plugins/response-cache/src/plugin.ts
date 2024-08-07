@@ -115,6 +115,11 @@ export type UseResponseCacheParameter<PluginContext extends Record<string, any> 
    */
   idFields?: Array<string>;
   /**
+   * List of SchemaCoordinates in format {ObjectType}.{FieldName} which are ignored during scan for entities.
+   * Defaults to `[]`
+   */
+  ignoreIdFieldsBySchemaCoordinate?: Array<string>;
+  /**
    * Whether the mutation execution result should be used for invalidating resources.
    * Defaults to `true`
    */
@@ -298,6 +303,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   ttlPerSchemaCoordinate = {},
   scopePerSchemaCoordinate = {},
   idFields = ['id'],
+  ignoreIdFieldsBySchemaCoordinate = [],
   invalidateViaMutation = true,
   buildResponseCacheKey = defaultBuildResponseCacheKey,
   getDocumentString = defaultGetDocumentString,
@@ -365,7 +371,11 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           const resultTypeNames = unwrapTypenames(fieldConfig.type);
           typePerSchemaCoordinateMap.set(schemaCoordinates, resultTypeNames);
 
-          if (idFields.includes(fieldName) && !idFieldByTypeName.has(typeName)) {
+          if (
+            idFields.includes(fieldName) &&
+            !idFieldByTypeName.has(typeName) &&
+            !ignoreIdFieldsBySchemaCoordinate?.includes(schemaCoordinates)
+          ) {
             idFieldByTypeName.set(typeName, fieldName);
           }
 
