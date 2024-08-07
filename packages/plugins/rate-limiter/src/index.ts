@@ -1,10 +1,22 @@
 import { GraphQLResolveInfo, IntValueNode, StringValueNode } from 'graphql';
-import { getGraphQLRateLimiter } from 'graphql-rate-limit';
+import { getGraphQLRateLimiter, GraphQLRateLimitConfig } from 'graphql-rate-limit';
 import { Plugin } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
 import { getDirective } from './utils.js';
 
 export * from './utils.js';
+
+export {
+  FormatErrorInput,
+  GraphQLRateLimitConfig,
+  GraphQLRateLimitDirectiveArgs,
+  Identity,
+  InMemoryStore,
+  Options,
+  RateLimitError,
+  RedisStore,
+  Store,
+} from 'graphql-rate-limit';
 
 export class UnauthenticatedError extends Error {}
 
@@ -24,14 +36,17 @@ export type RateLimiterPluginOptions = {
     context: unknown;
     info: GraphQLResolveInfo;
   }) => void;
-};
+} & Omit<GraphQLRateLimitConfig, 'identifyContext'>;
 
 interface RateLimiterContext {
   rateLimiterFn: ReturnType<typeof getGraphQLRateLimiter>;
 }
 
 export const useRateLimiter = (options: RateLimiterPluginOptions): Plugin<RateLimiterContext> => {
-  const rateLimiterFn = getGraphQLRateLimiter({ identifyContext: options.identifyFn });
+  const rateLimiterFn = getGraphQLRateLimiter({
+    ...options, // Pass through all available options
+    identifyContext: options.identifyFn,
+  });
 
   return {
     onPluginInit({ addPlugin }) {
