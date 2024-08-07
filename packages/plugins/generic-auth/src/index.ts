@@ -1,4 +1,5 @@
 import {
+  ASTNode,
   DirectiveNode,
   ExecutionArgs,
   FieldNode,
@@ -10,12 +11,11 @@ import {
   isIntrospectionType,
   isObjectType,
   isUnionType,
+  OperationDefinitionNode,
 } from 'graphql';
 import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/core';
 import { useExtendedValidation } from '@envelop/extended-validation';
-import { shouldIncludeNode } from '@graphql-tools/utils';
-
-export class UnauthenticatedError extends GraphQLError {}
+import { createGraphQLError, shouldIncludeNode } from '@graphql-tools/utils';
 
 export type ResolveUserFn<UserType, ContextType = DefaultContext> = (
   context: ContextType,
@@ -28,20 +28,24 @@ export type ValidateUserFnParams<UserType> = {
   fieldNode: FieldNode;
   /** The object type which has the field that is being validated. */
   objectType: GraphQLObjectType;
+  /** The object field */
+  field: GraphQLField<any, any>;
   /** The directive node used for the authentication (If using an SDL flow). */
   fieldAuthDirectiveNode: DirectiveNode | undefined;
   /** The extensions used for authentication (If using an extension based flow). */
   fieldAuthExtension: unknown | undefined;
   /** The args passed to the execution function (including operation context and variables) **/
   executionArgs: ExecutionArgs;
+  /** Resolve path */
+  path: ReadonlyArray<string | number>;
 };
 
 export type ValidateUserFn<UserType> = (
   params: ValidateUserFnParams<UserType>,
-) => void | UnauthenticatedError;
+) => void | GraphQLError;
 
 export const DIRECTIVE_SDL = /* GraphQL */ `
-  directive @auth on FIELD_DEFINITION
+  directive @authenticated on FIELD_DEFINITION
 `;
 
 export const SKIP_AUTH_DIRECTIVE_SDL = /* GraphQL */ `
@@ -109,28 +113,52 @@ export type GenericAuthPluginOptions<
        * @default `defaultProtectSingleValidateFn`
        */
       validateUser?: ValidateUserFn<UserType>;
+
+      /**
+       * Reject on unauthenticated requests.
+       * @default true
+       */
+      rejectUnauthenticated?: boolean;
     }
 );
 
+export function createUnauthenticatedError(params?: {
+  fieldNode?: FieldNode;
+  path?: ReadonlyArray<string | number>;
+  message?: string;
+  statusCode?: number;
+}) {
+  return createGraphQLError('Unauthorized field or type', {
+    nodes: params?.fieldNode ? [params.fieldNode] : undefined,
+    path: params?.path,
+    extensions: {
+      code: 'UNAUTHORIZED_FIELD_OR_TYPE',
+      http: {
+        status: params?.statusCode ?? 401,
+      },
+    },
+  });
+}
+
 export function defaultProtectAllValidateFn<UserType>(
   params: ValidateUserFnParams<UserType>,
-): void | UnauthenticatedError {
+): void | GraphQLError {
   if (params.user == null && !params.fieldAuthDirectiveNode && !params.fieldAuthExtension) {
-    const schemaCoordinate = `${params.objectType.name}.${params.fieldNode.name.value}`;
-    return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [
-      params.fieldNode,
-    ]);
+    return createUnauthenticatedError({
+      fieldNode: params.fieldNode,
+      path: params.path,
+    });
   }
 }
 
 export function defaultProtectSingleValidateFn<UserType>(
   params: ValidateUserFnParams<UserType>,
-): void | UnauthenticatedError {
+): void | GraphQLError {
   if (params.user == null && (params.fieldAuthDirectiveNode || params.fieldAuthExtension)) {
-    const schemaCoordinate = `${params.objectType.name}.${params.fieldNode.name.value}`;
-    return new UnauthenticatedError(`Accessing '${schemaCoordinate}' requires authentication.`, [
-      params.fieldNode,
-    ]);
+    return createUnauthenticatedError({
+      fieldNode: params.fieldNode,
+      path: params.path,
+    });
   }
 }
 
@@ -150,7 +178,7 @@ export const useGenericAuth = <
   if (options.mode === 'protect-all' || options.mode === 'protect-granular') {
     const directiveOrExtensionFieldName =
       options.directiveOrExtensionFieldName ??
-      (options.mode === 'protect-all' ? 'skipAuth' : 'auth');
+      (options.mode === 'protect-all' ? 'skipAuth' : 'authenticated');
     const validateUser =
       options.validateUser ??
       (options.mode === 'protect-all'
@@ -167,15 +195,41 @@ export const useGenericAuth = <
       };
     };
 
+    const rejectUnauthenticated =
+      'rejectUnauthenticated' in options ? options.rejectUnauthenticated !== false : true;
+
     return {
       onPluginInit({ addPlugin }) {
         addPlugin(
           useExtendedValidation({
+            rejectOnErrors: rejectUnauthenticated,
             rules: [
               function AuthorizationExtendedValidationRule(context, args) {
+                const operations: Record<string, OperationDefinitionNode> = {};
+                const fragments: Record<string, any> = {};
+                for (const definition of args.document.definitions) {
+                  if (definition.kind === 'OperationDefinition') {
+                    operations[definition.name?.value ?? args.operationName ?? 'Anonymous'] =
+                      definition;
+                  } else if (definition.kind === 'FragmentDefinition') {
+                    fragments[definition.name.value] = definition;
+                  }
+                }
                 const user = (args.contextValue as any)[contextFieldName];
 
-                const handleField = (fieldNode: FieldNode, objectType: GraphQLObjectType) => {
+                const handleField = (
+                  {
+                    node: fieldNode,
+                    path,
+                  }: {
+                    node: FieldNode;
+                    key: string | number | undefined;
+                    parent: ASTNode | readonly ASTNode[] | undefined;
+                    path: readonly (string | number)[];
+                    ancestors: readonly (ASTNode | readonly ASTNode[])[];
+                  },
+                  objectType: GraphQLObjectType,
+                ) => {
                   const field = objectType.getFields()[fieldNode.name.value];
                   if (field == null) {
                     // field is null/undefined if this is an introspection field
@@ -183,39 +237,88 @@ export const useGenericAuth = <
                   }
 
                   const { fieldAuthExtension, fieldAuthDirectiveNode } = extractAuthMeta(field);
-                  const error = validateUser({
+
+                  const resolvePath: (string | number)[] = [];
+
+                  let curr: any = args.document;
+                  for (const pathItem of path) {
+                    curr = curr[pathItem];
+                    if (curr?.kind === 'Field') {
+                      resolvePath.push(curr.name.value);
+                    }
+                  }
+
+                  return validateUser({
                     user,
                     fieldNode,
                     objectType,
                     fieldAuthDirectiveNode,
                     fieldAuthExtension,
                     executionArgs: args,
+                    field,
+                    path: resolvePath,
                   });
-                  if (error) {
-                    context.reportError(error);
-                  }
                 };
 
                 return {
-                  Field(node) {
+                  Field(node, key, parent, path, ancestors) {
                     if (!shouldIncludeNode(args.variableValues, node)) {
                       return;
                     }
 
                     const fieldType = getNamedType(context.getParentType()!);
                     if (isIntrospectionType(fieldType)) {
-                      return false;
+                      return node;
                     }
 
                     if (isObjectType(fieldType)) {
-                      handleField(node, fieldType);
+                      const error = handleField(
+                        {
+                          node,
+                          key,
+                          parent,
+                          path,
+                          ancestors,
+                        },
+                        fieldType,
+                      );
+                      if (error) {
+                        context.reportError(error);
+                        return null;
+                      }
                     } else if (isUnionType(fieldType)) {
                       for (const objectType of fieldType.getTypes()) {
-                        handleField(node, objectType);
+                        const error = handleField(
+                          {
+                            node,
+                            key,
+                            parent,
+                            path,
+                            ancestors,
+                          },
+                          objectType,
+                        );
+                        if (error) {
+                          context.reportError(error);
+                          return null;
+                        }
                       }
                     } else if (isInterfaceType(fieldType)) {
                       for (const objectType of args.schema.getImplementations(fieldType).objects) {
-                        handleField(node, objectType);
+                        const error = handleField(
+                          {
+                            node,
+                            key,
+                            parent,
+                            path,
+                            ancestors,
+                          },
+                          objectType,
+                        );
+                        if (error) {
+                          context.reportError(error);
+                          return null;
+                        }
                       }
                     }
                     return undefined;
