@@ -14,7 +14,7 @@ import {
   Plugin,
 } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
-import { PrometheusTracingPluginConfig } from './config.js';
+import { PrometheusTracingPluginConfig, type MetricsConfig } from './config.js';
 import {
   createCounter,
   createFillLabelFnParams,
@@ -23,9 +23,10 @@ import {
   extractDeprecatedFields,
   FillLabelsFnParams,
   filterFillParamsFnParams,
+  getCounterFromConfig,
   getHistogramFromConfig,
+  getSummaryFromConfig,
   instrumentRegistry,
-  labelExists,
   shouldTraceFieldResolver,
   type CounterAndLabels,
   type HistogramAndLabels,
@@ -41,217 +42,132 @@ export {
   createCounter,
   createHistogram,
   createSummary,
+  getCounterFromConfig,
+  getHistogramFromConfig,
+  getSummaryFromConfig,
 };
 
 export const fillLabelsFnParamsMap = new WeakMap<any, FillLabelsFnParams | null>();
 export const execStartTimeMap = new WeakMap<any, number>();
 
-export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugin => {
+export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => {
   let typeInfo: TypeInfo | null = null;
-  const registry = instrumentRegistry(config.registry || defaultRegistry);
+  config.registry = instrumentRegistry(config.registry || defaultRegistry);
 
-  const parseHistogram = getHistogramFromConfig(
+  const parseHistogram = getHistogramFromConfig<MetricsConfig>(
     config,
-    'parse',
-    typeof config.parse === 'string' ? config.parse : 'graphql_envelop_phase_parse',
-    'Time spent on running GraphQL "parse" function',
+    'graphql_envelop_phase_parse',
+    {
+      help: 'Time spent on running GraphQL "parse" function',
+    },
   );
-  const validateHistogram = getHistogramFromConfig(
+  const validateHistogram = getHistogramFromConfig<MetricsConfig>(
     config,
-    'validate',
-    typeof config.validate === 'string' ? config.validate : 'graphql_envelop_phase_validate',
-    'Time spent on running GraphQL "validate" function',
+    'graphql_envelop_phase_validate',
+    {
+      help: 'Time spent on running GraphQL "validate" function',
+    },
   );
-  const contextBuildingHistogram = getHistogramFromConfig(
+  const contextBuildingHistogram = getHistogramFromConfig<MetricsConfig>(
     config,
-    'contextBuilding',
-    typeof config.contextBuilding === 'string'
-      ? config.contextBuilding
-      : 'graphql_envelop_phase_context',
-    'Time spent on building the GraphQL context',
+    'graphql_envelop_phase_context',
+    {
+      help: 'Time spent on building the GraphQL context',
+    },
   );
-  const executeHistogram = getHistogramFromConfig(
+  const executeHistogram = getHistogramFromConfig<MetricsConfig>(
     config,
-    'execute',
-    typeof config.execute === 'string' ? config.execute : 'graphql_envelop_phase_execute',
-    'Time spent on running the GraphQL "execute" function',
+    'graphql_envelop_phase_execute',
+    {
+      help: 'Time spent on running the GraphQL "execute" function',
+    },
   );
-  const subscribeHistogram = getHistogramFromConfig(
+  const subscribeHistogram = getHistogramFromConfig<MetricsConfig>(
     config,
-    'subscribe',
-    typeof config.subscribe === 'string' ? config.subscribe : 'graphql_envelop_phase_subscribe',
-    'Time spent on running the GraphQL "subscribe" function',
+    'graphql_envelop_phase_subscribe',
+    {
+      help: 'Time spent on running the GraphQL "subscribe" function',
+    },
   );
 
-  const resolversHistogram =
-    typeof config.resolvers === 'object'
-      ? config.resolvers
-      : config.resolvers === true || typeof config.resolvers === 'string'
-        ? createHistogram({
-            registry,
-            histogram: {
-              name:
-                typeof config.resolvers === 'string'
-                  ? config.resolvers
-                  : 'graphql_envelop_execute_resolver',
-              help: 'Time spent on running the GraphQL resolvers',
-              labelNames: [
-                'operationType',
-                'operationName',
-                'fieldName',
-                'typeName',
-                'returnType',
-              ].filter(label => labelExists(config, label)),
-            },
-            fillLabelsFn: params =>
-              filterFillParamsFnParams(config, {
-                operationName: params.operationName!,
-                operationType: params.operationType!,
-                fieldName: params.info?.fieldName!,
-                typeName: params.info?.parentType.name!,
-                returnType: params.info?.returnType.toString()!,
-              }),
-          })
-        : undefined;
+  const resolversHistogram = getHistogramFromConfig<MetricsConfig>(
+    config,
+    'graphql_envelop_execute_resolver',
+    {
+      help: 'Time spent on running the GraphQL resolvers',
+      labelNames: ['operationType', 'operationName', 'fieldName', 'typeName', 'returnType'],
+    },
+    params =>
+      filterFillParamsFnParams(config, {
+        operationName: params.operationName!,
+        operationType: params.operationType!,
+        fieldName: params.info?.fieldName!,
+        typeName: params.info?.parentType.name!,
+        returnType: params.info?.returnType.toString()!,
+      }),
+  );
 
-  const requestTotalHistogram =
-    typeof config.requestTotalDuration === 'object'
-      ? config.requestTotalDuration
-      : config.requestTotalDuration === true || typeof config.requestTotalDuration === 'string'
-        ? createHistogram({
-            registry,
-            histogram: {
-              name:
-                typeof config.requestTotalDuration === 'string'
-                  ? config.requestTotalDuration
-                  : 'graphql_envelop_request_duration',
-              help: 'Time spent on running the GraphQL operation from parse to execute',
-              labelNames: ['operationType', 'operationName'].filter(label =>
-                labelExists(config, label),
-              ),
-            },
-            fillLabelsFn: params =>
-              filterFillParamsFnParams(config, {
-                operationName: params.operationName!,
-                operationType: params.operationType!,
-              }),
-          })
-        : undefined;
+  const requestTotalHistogram = getHistogramFromConfig<MetricsConfig>(
+    config,
+    'graphql_envelop_request_duration',
+    {
+      help: 'Time spent on running the GraphQL operation from parse to execute',
+    },
+  );
 
-  const requestSummary =
-    typeof config.requestSummary === 'object'
-      ? config.requestSummary
-      : config.requestSummary === true || typeof config.requestSummary === 'string'
-        ? createSummary({
-            registry,
-            summary: {
-              name:
-                typeof config.requestSummary === 'string'
-                  ? config.requestSummary
-                  : 'graphql_envelop_request_time_summary',
-              help: 'Summary to measure the time to complete GraphQL operations',
-              labelNames: ['operationType', 'operationName'].filter(label =>
-                labelExists(config, label),
-              ),
-            },
-            fillLabelsFn: params =>
-              filterFillParamsFnParams(config, {
-                operationName: params.operationName!,
-                operationType: params.operationType!,
-              }),
-          })
-        : undefined;
+  const requestSummary = getSummaryFromConfig<MetricsConfig>(
+    config,
+    'graphql_envelop_request_time_summary',
+    {
+      help: 'Summary to measure the time to complete GraphQL operations',
+    },
+  );
 
-  const errorsCounter =
-    typeof config.errors === 'object'
-      ? config.errors
-      : config.errors === true || typeof config.errors === 'string'
-        ? createCounter({
-            registry,
-            counter: {
-              name:
-                typeof config.errors === 'string' ? config.errors : 'graphql_envelop_error_result',
-              help: 'Counts the amount of errors reported from all phases',
-              labelNames: ['operationType', 'operationName', 'path', 'phase'].filter(label =>
-                labelExists(config, label),
-              ),
-            },
-            fillLabelsFn: params =>
-              filterFillParamsFnParams(config, {
-                operationName: params.operationName!,
-                operationType: params.operationType!,
-                path: params.error?.path?.join('.')!,
-                phase: params.errorPhase!,
-              }),
-          })
-        : undefined;
+  const errorsCounter = getCounterFromConfig<MetricsConfig>(
+    config,
+    'graphql_envelop_error_result',
+    {
+      help: 'Counts the amount of errors reported from all phases',
+      labelNames: ['operationType', 'operationName', 'path', 'phase'],
+    },
+    params =>
+      filterFillParamsFnParams(config, {
+        operationName: params.operationName!,
+        operationType: params.operationType!,
+        path: params.error?.path?.join('.')!,
+        phase: params.errorPhase!,
+      }),
+  );
 
-  const reqCounter =
-    typeof config.requestCount === 'object'
-      ? config.requestCount
-      : config.requestCount === true || typeof config.requestCount === 'string'
-        ? createCounter({
-            registry,
-            counter: {
-              name:
-                typeof config.requestCount === 'string'
-                  ? config.requestCount
-                  : 'graphql_envelop_request',
-              help: 'Counts the amount of GraphQL requests executed through Envelop',
-              labelNames: ['operationType', 'operationName'].filter(label =>
-                labelExists(config, label),
-              ),
-            },
-            fillLabelsFn: params =>
-              filterFillParamsFnParams(config, {
-                operationName: params.operationName!,
-                operationType: params.operationType!,
-              }),
-          })
-        : undefined;
+  const reqCounter = getCounterFromConfig<MetricsConfig>(config, 'graphql_envelop_request', {
+    help: 'Counts the amount of GraphQL requests executed through Envelop',
+  });
 
-  const deprecationCounter =
-    typeof config.deprecatedFields === 'object'
-      ? config.deprecatedFields
-      : config.deprecatedFields === true || typeof config.deprecatedFields === 'string'
-        ? createCounter({
-            registry,
-            counter: {
-              name:
-                typeof config.deprecatedFields === 'string'
-                  ? config.deprecatedFields
-                  : 'graphql_envelop_deprecated_field',
-              help: 'Counts the amount of deprecated fields used in selection sets',
-              labelNames: ['operationType', 'operationName', 'fieldName', 'typeName'].filter(
-                label => labelExists(config, label),
-              ),
-            },
-            fillLabelsFn: params =>
-              filterFillParamsFnParams(config, {
-                operationName: params.operationName!,
-                operationType: params.operationType!,
-                fieldName: params.deprecationInfo?.fieldName!,
-                typeName: params.deprecationInfo?.typeName!,
-              }),
-          })
-        : undefined;
+  const deprecationCounter = getCounterFromConfig<MetricsConfig>(
+    config,
+    'graphql_envelop_deprecated_field',
+    {
+      help: 'Counts the amount of deprecated fields used in selection sets',
+      labelNames: ['operationType', 'operationName', 'fieldName', 'typeName'],
+    },
+    params =>
+      filterFillParamsFnParams(config, {
+        operationName: params.operationName!,
+        operationType: params.operationType!,
+        fieldName: params.deprecationInfo?.fieldName!,
+        typeName: params.deprecationInfo?.typeName!,
+      }),
+  );
 
-  const schemaChangeCounter =
-    typeof config.schemaChangeCount === 'object'
-      ? config.schemaChangeCount
-      : config.schemaChangeCount === true || typeof config.schemaChangeCount === 'string'
-        ? createCounter({
-            registry,
-            counter: {
-              name:
-                typeof config.schemaChangeCount === 'string'
-                  ? config.schemaChangeCount
-                  : 'graphql_envelop_schema_change',
-              help: 'Counts the amount of schema changes',
-            },
-            fillLabelsFn: () => ({}),
-          })
-        : undefined;
+  const schemaChangeCounter = getCounterFromConfig<MetricsConfig>(
+    config,
+    'graphql_envelop_schema_change',
+    {
+      help: 'Counts the amount of schema changes',
+      labelNames: [],
+    },
+    () => ({}),
+  );
 
   const onParse: OnParseHook<{}> = ({ context, params }) => {
     if (config.skipIntrospection && isIntrospectionOperationString(params.source)) {
