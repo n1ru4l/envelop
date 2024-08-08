@@ -131,15 +131,20 @@ export const useSentry = <PluginContext extends Record<string, any> = {}>(
         ...addedTags,
       };
 
-      let rootSpan: Span;
+      let rootSpan: Span | undefined;
 
       if (startTransaction) {
-        rootSpan = Sentry.startTransaction({
-          name: transactionName,
-          op,
-          tags,
-          ...traceparentData,
-        });
+        Sentry.startSpan(
+          {
+            name: transactionName,
+            op,
+            attributes: tags,
+            ...traceparentData,
+          },
+          span => {
+            rootSpan = span;
+          },
+        );
 
         if (!rootSpan) {
           const error = [
@@ -149,15 +154,33 @@ export const useSentry = <PluginContext extends Record<string, any> = {}>(
           throw new Error(error.join('\n'));
         }
       } else {
-        const scope = Sentry.getCurrentHub().getScope();
-        const parentSpan = scope?.getSpan();
-        const span = parentSpan?.startChild({
-          description: transactionName,
-          op,
-          tags,
+        let childSpan: Span | undefined;
+        const scope = Sentry.getCurrentScope();
+        const parentSpan = scope?.getScopeData().span;
+        if (!parentSpan) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            [
+              `Flag "startTransaction" is disabled but Sentry failed to find a transaction.`,
+              `Try to create a transaction before GraphQL execution phase is started.`,
+            ].join('\n'),
+          );
+          return {};
+        }
+        Sentry.withActiveSpan(parentSpan, () => {
+          Sentry.startSpan(
+            {
+              name: transactionName,
+              op,
+              attributes: tags,
+            },
+            span => {
+              childSpan = span;
+            },
+          );
         });
 
-        if (!span) {
+        if (!childSpan) {
           // eslint-disable-next-line no-console
           console.warn(
             [
@@ -168,26 +191,25 @@ export const useSentry = <PluginContext extends Record<string, any> = {}>(
           return {};
         }
 
-        rootSpan = span;
+        rootSpan = childSpan;
 
         if (renameTransaction) {
           scope!.setTransactionName(transactionName);
         }
       }
 
-      Sentry.configureScope(scope => scope.setSpan(rootSpan));
-
-      rootSpan.setData('document', document);
+      rootSpan.setAttribute('document', document);
 
       if (options.configureScope) {
-        Sentry.configureScope(scope => options.configureScope!(args, scope));
+        options.configureScope(args, Sentry.getCurrentScope());
       }
 
       return {
         onExecuteDone(payload) {
           const handleResult: OnExecuteDoneHookResultOnNextHook<{}> = ({ result, setResult }) => {
             if (includeRawResult) {
-              rootSpan.setData('result', result);
+              // @ts-expect-error TODO: not sure if this is correct
+              rootSpan?.setAttribute('result', result);
             }
 
             if (result.errors && result.errors.length > 0) {
@@ -245,7 +267,7 @@ export const useSentry = <PluginContext extends Record<string, any> = {}>(
               });
             }
 
-            rootSpan.finish();
+            rootSpan?.end();
           };
           return handleStreamOrSingleExecutionResult(payload, handleResult);
         },
