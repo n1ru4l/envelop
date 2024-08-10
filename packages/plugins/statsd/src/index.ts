@@ -23,16 +23,9 @@ export const metricNames = {
   errorCount: 'operations.error_count',
   latency: 'operations.latency',
 };
-const statsDPluginTagsSymbol = Symbol('statsDPluginTagsSymbol');
-const statsDPluginExecutionStartTimeSymbol = Symbol('statsDPluginExecutionStartTimeSymbol');
 
 interface Tags {
   [key: string]: string;
-}
-
-interface PluginInternalContext {
-  [statsDPluginTagsSymbol]: Tags;
-  [statsDPluginExecutionStartTimeSymbol]: number;
 }
 
 function getOperation(document: any) {
@@ -45,11 +38,14 @@ function isParseFailure(
   return parseResult === null || parseResult instanceof Error;
 }
 
-function getTags(context: PluginInternalContext) {
-  return context[statsDPluginTagsSymbol];
+const tagsByContext = new WeakMap<any, Tags>();
+const timeByContext = new WeakMap<any, number>();
+
+function getTags(context: any) {
+  return tagsByContext.get(context);
 }
 
-export const useStatsD = (options: StatsDPluginOptions): Plugin<PluginInternalContext> => {
+export const useStatsD = (options: StatsDPluginOptions): Plugin => {
   const { client, prefix = 'graphql', skipIntrospection = false } = options;
 
   function createMetricName(name: string) {
@@ -65,10 +61,8 @@ export const useStatsD = (options: StatsDPluginOptions): Plugin<PluginInternalCo
   }
 
   return {
-    onEnveloped({ extendContext }) {
-      extendContext({
-        [statsDPluginExecutionStartTimeSymbol]: Date.now(),
-      });
+    onEnveloped({ context }) {
+      timeByContext.set(context, Date.now());
     },
     onParse({ extendContext, params }) {
       if (skipIntrospection && isIntrospectionOperationString(params.source)) {
@@ -81,11 +75,8 @@ export const useStatsD = (options: StatsDPluginOptions): Plugin<PluginInternalCo
           increaseOperationCount();
         } else {
           const operation = getOperation(payload.result);
-
-          extendContext({
-            [statsDPluginTagsSymbol]: {
-              operation: operation?.name?.value || 'anonymous',
-            },
+          tagsByContext.set(payload.context, {
+            operation: operation?.name?.value || 'anonymous',
           });
         }
       };
@@ -113,7 +104,11 @@ export const useStatsD = (options: StatsDPluginOptions): Plugin<PluginInternalCo
 
       return {
         onExecuteDone({ result }) {
-          const latency = Date.now() - args.contextValue[statsDPluginExecutionStartTimeSymbol];
+          const start = timeByContext.get(args.contextValue);
+          if (start == null) {
+            return;
+          }
+          const latency = Date.now() - start;
 
           if (isAsyncIterable(result)) {
             // eslint-disable-next-line no-console

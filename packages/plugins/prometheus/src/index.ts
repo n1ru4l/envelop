@@ -2,6 +2,7 @@
 import { ExecutionResult, GraphQLSchema, TypeInfo } from 'graphql';
 import { register as defaultRegistry } from 'prom-client';
 import {
+  getSchemaSpecificInstance,
   isAsyncIterable,
   isIntrospectionOperationString,
   OnContextBuildingHook,
@@ -552,7 +553,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig = {}): Plugi
       });
     },
     onSchemaChange({ schema }) {
-      typeInfo = new TypeInfo(schema);
+      typeInfo = getSchemaSpecificInstance(TypeInfo, schema);
       if (schemaChangeCounter && !countedSchemas.has(schema)) {
         schemaChangeCounter.counter.inc();
         countedSchemas.add(schema);

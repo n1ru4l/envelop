@@ -28,19 +28,13 @@ const DEFAULT_OPTIONS: Omit<UsePersistedOperationsOptions, 'store'> = {
   onlyPersisted: false,
 };
 
-const contextProperty = Symbol('persistedOperationId');
+const persistedOperationContext = new WeakMap<Record<string, any>, string>();
 
-export type PersistedOperationPluginContext = {
-  [contextProperty]: string;
-};
-
-export function readOperationId(context: PersistedOperationPluginContext): string {
-  return context[contextProperty];
+export function readOperationId(context: Record<string, any>) {
+  return persistedOperationContext.get(context);
 }
 
-export const usePersistedOperations = (
-  rawOptions: UsePersistedOperationsOptions,
-): Plugin<PersistedOperationPluginContext> => {
+export const usePersistedOperations = (rawOptions: UsePersistedOperationsOptions): Plugin => {
   const options: UsePersistedOperationsOptions = {
     ...DEFAULT_OPTIONS,
     ...rawOptions,
@@ -70,7 +64,7 @@ export const usePersistedOperations = (
 
       if (rawResult) {
         const document = typeof rawResult === 'string' ? parse(rawResult) : rawResult;
-        extendContext({ [contextProperty]: operationId });
+        persistedOperationContext.set(context, operationId);
         setParsedDocument(document);
 
         return;

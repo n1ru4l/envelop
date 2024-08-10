@@ -1,7 +1,7 @@
 import { applyMiddleware, IMiddleware, IMiddlewareGenerator } from 'graphql-middleware';
 import type { Plugin } from '@envelop/core';
 
-const graphqlMiddlewareAppliedTransformSymbol = Symbol('graphqlMiddleware.appliedTransform');
+const appliedSchemaSet = new WeakSet();
 
 export const useGraphQLMiddleware = <TSource = any, TContext = any, TArgs = any>(
   middlewares: (
@@ -11,16 +11,13 @@ export const useGraphQLMiddleware = <TSource = any, TContext = any, TArgs = any>
 ): Plugin => {
   return {
     onSchemaChange({ schema, replaceSchema }) {
-      if (schema.extensions?.[graphqlMiddlewareAppliedTransformSymbol]) {
+      if (appliedSchemaSet.has(schema)) {
         return;
       }
 
       if (middlewares.length > 0) {
         const wrappedSchema = applyMiddleware(schema, ...middlewares);
-        wrappedSchema.extensions = {
-          ...schema.extensions,
-          [graphqlMiddlewareAppliedTransformSymbol]: true,
-        };
+        appliedSchemaSet.add(schema);
         replaceSchema(wrappedSchema);
       }
     },

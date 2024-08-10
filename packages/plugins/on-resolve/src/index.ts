@@ -1,5 +1,6 @@
 import {
   defaultFieldResolver,
+  GraphQLField,
   GraphQLResolveInfo,
   GraphQLSchema,
   isIntrospectionType,
@@ -50,7 +51,7 @@ export function useOnResolve<PluginContext extends Record<string, any> = {}>(
   onResolve: OnResolve<PluginContext>,
   opts: UseOnResolveOptions = { skipIntrospection: true },
 ): Plugin<PluginContext> {
-  const hasWrappedResolveSymbol = Symbol('hasWrappedResolve');
+  const hasWrappedSet = new WeakSet<GraphQLField<unknown, unknown>>();
   return {
     onSchemaChange({ schema: _schema }) {
       const schema = _schema as GraphQLSchema;
@@ -59,7 +60,7 @@ export function useOnResolve<PluginContext extends Record<string, any> = {}>(
       for (const type of Object.values(schema.getTypeMap())) {
         if ((!opts.skipIntrospection || !isIntrospectionType(type)) && isObjectType(type)) {
           for (const field of Object.values(type.getFields())) {
-            if (field[hasWrappedResolveSymbol]) continue;
+            if (hasWrappedSet.has(field)) continue;
 
             let resolver = (field.resolve || defaultFieldResolver) as Resolver<PluginContext>;
 
@@ -97,7 +98,7 @@ export function useOnResolve<PluginContext extends Record<string, any> = {}>(
               return result;
             };
 
-            field[hasWrappedResolveSymbol] = true;
+            hasWrappedSet.add(field);
           }
         }
       }

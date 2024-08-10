@@ -12,8 +12,6 @@ import {
   SubscribeFunction,
 } from '@envelop/types';
 
-export const envelopIsIntrospectionSymbol = Symbol('ENVELOP_IS_INTROSPECTION');
-
 export function isIntrospectionOperationString(operation: string | any): boolean {
   return (typeof operation === 'string' ? operation : operation.body).indexOf('__schema') !== -1;
 }
@@ -223,4 +221,25 @@ export function errorAsyncIterator<TInput>(
   };
 
   return stream;
+}
+
+const schemaSpecificObjectMap = new WeakMap<any, WeakMap<any, any>>();
+
+export function getSchemaSpecificInstance<TInstance, TSchema>(
+  Ctor: {
+    new (schema: TSchema): TInstance;
+  },
+  schema: TSchema,
+): TInstance {
+  let ctorMap = schemaSpecificObjectMap.get(schema);
+  if (!ctorMap) {
+    ctorMap = new WeakMap();
+    schemaSpecificObjectMap.set(schema, ctorMap);
+  }
+  let instance = ctorMap.get(Ctor);
+  if (!instance) {
+    instance = new Ctor(schema);
+    ctorMap.set(Ctor, instance);
+  }
+  return instance;
 }

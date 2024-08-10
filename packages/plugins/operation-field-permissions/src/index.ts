@@ -8,12 +8,10 @@ import {
   isObjectType,
   isUnionType,
 } from 'graphql';
-import { Plugin, useExtendContext } from '@envelop/core';
+import { Plugin } from '@envelop/core';
 import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
 
 type PromiseOrValue<T> = T | Promise<T>;
-
-const OPERATION_PERMISSIONS_SYMBOL = Symbol('OPERATION_PERMISSIONS_SYMBOL');
 
 /**
  * Returns a set of type names that allow access to all fields in the type.
@@ -38,11 +36,17 @@ type ScopeContext = {
   schemaCoordinates: Set<string>;
 };
 
+const scopeContextMap = new WeakMap<any, ScopeContext>();
+
 const getContext = (input: unknown): ScopeContext => {
-  if (typeof input !== 'object' || !input || !(OPERATION_PERMISSIONS_SYMBOL in input)) {
+  if (typeof input !== 'object' || !input) {
     throw new Error('OperationScopeRule was used without context.');
   }
-  return input[OPERATION_PERMISSIONS_SYMBOL] as ScopeContext;
+  const scopeContext = scopeContextMap.get(input);
+  if (!scopeContext) {
+    throw new Error('OperationScopeRule was used without context.');
+  }
+  return scopeContext;
 };
 
 type OperationScopeRuleOptions = {
@@ -125,9 +129,9 @@ type OperationScopeOptions<TContext> = {
 const defaultFormatError = (schemaCoordinate: string) =>
   `Insufficient permissions for selecting '${schemaCoordinate}'.`;
 
-export const useOperationFieldPermissions = <TContext>(
+export const useOperationFieldPermissions = <TContext extends Record<string, any>>(
   opts: OperationScopeOptions<TContext>,
-): Plugin<{ [OPERATION_PERMISSIONS_SYMBOL]: ScopeContext }> => {
+): Plugin<TContext> => {
   return {
     onPluginInit({ addPlugin }) {
       addPlugin(
@@ -139,27 +143,22 @@ export const useOperationFieldPermissions = <TContext>(
           ],
         }),
       );
+    },
+    async onContextBuilding({ context }) {
+      const permissions = await opts.getPermissions(context as TContext);
 
-      addPlugin(
-        useExtendContext(async context => {
-          const permissions = await opts.getPermissions(context as TContext);
+      // Schema coordinates is a set of type-name field-name strings that
+      // describe the position of a field in the schema.
+      const schemaCoordinates = toSet(permissions);
+      const wildcardTypes = getWildcardTypes(schemaCoordinates);
 
-          // Schema coordinates is a set of type-name field-name strings that
-          // describe the position of a field in the schema.
-          const schemaCoordinates = toSet(permissions);
-          const wildcardTypes = getWildcardTypes(schemaCoordinates);
+      const scopeContext: ScopeContext = {
+        schemaCoordinates,
+        wildcardTypes,
+        allowAll: schemaCoordinates.has('*'),
+      };
 
-          const scopeContext: ScopeContext = {
-            schemaCoordinates,
-            wildcardTypes,
-            allowAll: schemaCoordinates.has('*'),
-          };
-
-          return {
-            [OPERATION_PERMISSIONS_SYMBOL]: scopeContext,
-          };
-        }),
-      );
+      scopeContextMap.set(context, scopeContext);
     },
   };
 };

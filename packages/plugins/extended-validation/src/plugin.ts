@@ -8,10 +8,8 @@ import {
   visitInParallel,
   visitWithTypeInfo,
 } from 'graphql';
-import { Plugin, TypedSubscriptionArgs } from '@envelop/core';
+import { getSchemaSpecificInstance, Plugin, TypedSubscriptionArgs } from '@envelop/core';
 import { ExtendedValidationRule } from './common.js';
-
-const symbolExtendedValidationRules = Symbol('extendedValidationContext');
 
 type ExtendedValidationContext = {
   rules: Array<ExtendedValidationRule>;
@@ -23,48 +21,40 @@ type OnValidationFailedCallback = (params: {
   result: ExecutionResult;
   setResult: (result: ExecutionResult) => void;
 }) => void;
-
+const extendedValidationContextMap = new WeakMap<Record<string, any>, ExtendedValidationContext>();
 export const useExtendedValidation = <PluginContext extends Record<string, any> = {}>(options: {
   rules: Array<ExtendedValidationRule>;
   /**
    * Callback that is invoked if the extended validation yields any errors.
    */
   onValidationFailed?: OnValidationFailedCallback;
-}): Plugin<PluginContext & { [symbolExtendedValidationRules]?: ExtendedValidationContext }> => {
-  let schemaTypeInfo: TypeInfo;
-
-  function getTypeInfo(): TypeInfo | undefined {
-    return schemaTypeInfo;
-  }
-
+}): Plugin<PluginContext> => {
   return {
-    onSchemaChange({ schema }) {
-      schemaTypeInfo = new TypeInfo(schema);
-    },
-    onContextBuilding({ context, extendContext }) {
+    onContextBuilding({ context }) {
       // We initialize the validationRules context in onContextBuilding as onExecute is already too late!
       let validationRulesContext: undefined | ExtendedValidationContext =
-        context[symbolExtendedValidationRules];
-      if (validationRulesContext === undefined) {
+        extendedValidationContextMap.get(context);
+      if (validationRulesContext == null) {
         validationRulesContext = {
           rules: [],
           didRun: false,
         };
-        extendContext({
-          ...context,
-          [symbolExtendedValidationRules]: validationRulesContext,
-        });
+        extendedValidationContextMap.set(context, validationRulesContext);
       }
       validationRulesContext.rules.push(...options.rules);
     },
-    onSubscribe: buildHandler('subscribe', getTypeInfo, options.onValidationFailed),
-    onExecute: buildHandler('execute', getTypeInfo, options.onValidationFailed),
+    onSubscribe: buildHandler(
+      'subscribe',
+      extendedValidationContextMap,
+      options.onValidationFailed,
+    ),
+    onExecute: buildHandler('execute', extendedValidationContextMap, options.onValidationFailed),
   };
 };
 
 function buildHandler(
   name: 'execute' | 'subscribe',
-  getTypeInfo: () => TypeInfo | undefined,
+  extendedValidationContextMap: WeakMap<Record<string, any>, ExtendedValidationContext>,
   onValidationFailed?: OnValidationFailedCallback,
 ) {
   return function handler({
@@ -79,7 +69,7 @@ function buildHandler(
     // same as hooking into the validation step. The benefit of this approach is that
     // we may use execution context in the validation rules.
     const validationRulesContext: ExtendedValidationContext | undefined =
-      args.contextValue[symbolExtendedValidationRules];
+      args.contextValue && extendedValidationContextMap.get(args.contextValue);
     if (validationRulesContext === undefined) {
       throw new Error(
         'Plugin has not been properly set up. ' +
@@ -93,7 +83,7 @@ function buildHandler(
         const errors: GraphQLError[] = [];
 
         // We replicate the default validation step manually before execution starts.
-        const typeInfo = getTypeInfo() ?? new TypeInfo(args.schema);
+        const typeInfo = getSchemaSpecificInstance(TypeInfo, args.schema);
         const validationContext = new ValidationContext(args.schema, args.document, typeInfo, e => {
           errors.push(e);
         });

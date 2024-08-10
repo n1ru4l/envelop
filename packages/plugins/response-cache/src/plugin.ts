@@ -14,6 +14,7 @@ import {
 import {
   ExecutionResult,
   getDocumentString,
+  getSchemaSpecificInstance,
   isAsyncIterable,
   Maybe,
   ObjMap,
@@ -220,7 +221,7 @@ const getDocumentWithMetadataAndTTL = memoize4(function addTypeNameToDocument(
   schema: any,
   idFieldByTypeName: Map<string, string>,
 ): [DocumentNode, number | undefined] {
-  const typeInfo = new TypeInfo(schema);
+  const typeInfo = getSchemaSpecificInstance(TypeInfo, schema);
   let ttl: number | undefined;
   const visitor: ASTVisitor = {
     OperationDefinition: {

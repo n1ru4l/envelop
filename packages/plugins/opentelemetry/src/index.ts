@@ -30,8 +30,6 @@ export enum AttributeName {
   EXECUTION_VARIABLES = 'graphql.execute.variables',
 }
 
-const tracingSpanSymbol = Symbol('OPEN_TELEMETRY_GRAPHQL');
-
 export type ResolveVariablesAttributesFn = (variableValues: any) => opentelemetry.AttributeValue;
 export type ExcludeOperationNamesFn = (operationName: string | undefined) => boolean;
 
@@ -42,10 +40,6 @@ export type TracingOptions = {
   result?: boolean;
   traceIdInResult?: string;
   excludedOperationNames?: string[] | ExcludeOperationNamesFn;
-};
-
-type PluginContext = {
-  [tracingSpanSymbol]: opentelemetry.Span;
 };
 
 export const otelContextMap = new WeakMap<any, opentelemetry.Context>();
@@ -66,7 +60,7 @@ export function setCurrentOtelContext(graphqlContext: any, otelContext: opentele
   return otelContext;
 }
 
-export const useOpenTelemetry = (
+export const useOpenTelemetry = <PluginContext extends Record<string, any>>(
   options: TracingOptions,
   tracingProvider?: TracerProvider,
   spanKind: SpanKind = SpanKind.SERVER,

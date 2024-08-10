@@ -25,13 +25,12 @@ const OnNonIntrospectionFieldReachedValidationRule =
     };
   };
 
-const fastIntroSpectionSymbol = Symbol('fastIntrospection');
-
 /**
  * In case a GraphQL operation only contains introspection fields the context building can be skipped completely.
  * With this plugin any further context extensions will be skipped.
  */
 export const useImmediateIntrospection = (): Plugin => {
+  const fastIntroContextSet = new WeakSet();
   return {
     onValidate({ addValidationRule }) {
       let isIntrospectionOnly = true;
@@ -41,14 +40,14 @@ export const useImmediateIntrospection = (): Plugin => {
         }),
       );
 
-      return function afterValidate({ extendContext }) {
+      return function afterValidate({ context }) {
         if (isIntrospectionOnly) {
-          extendContext({ [fastIntroSpectionSymbol]: true });
+          fastIntroContextSet.add(context);
         }
       };
     },
     onContextBuilding({ context, breakContextBuilding }) {
-      if (context[fastIntroSpectionSymbol]) {
+      if (fastIntroContextSet.has(context)) {
         // hijack and skip all other context related stuff.
         // We dont need a context!
         breakContextBuilding();

@@ -32,8 +32,6 @@ const deltaFrom = (hrtime: [number, number]): { ms: number; ns: number } => {
   };
 };
 
-const apolloTracingSymbol = Symbol('apolloTracing');
-
 type TracingContextObject = {
   startTime: Date;
   resolversTiming: ResolverCall[];
@@ -41,23 +39,27 @@ type TracingContextObject = {
 };
 
 export const useApolloTracing = (): Plugin => {
+  const tracingContextMap = new WeakMap<Record<string, any>, TracingContextObject>();
   return {
     onPluginInit({ addPlugin }) {
       addPlugin(
         useOnResolve(({ info, context }) => {
-          const ctx = context[apolloTracingSymbol] as TracingContextObject;
-          // Taken from https://github.com/apollographql/apollo-server/blob/main/packages/apollo-tracing/src/index.ts
-          const resolverCall: ResolverCall = {
-            path: info.path,
-            fieldName: info.fieldName,
-            parentType: info.parentType,
-            returnType: info.returnType,
-            startOffset: process.hrtime(ctx.hrtime),
-          };
-          return () => {
-            resolverCall.endOffset = process.hrtime(ctx.hrtime);
-            ctx.resolversTiming.push(resolverCall);
-          };
+          const ctx = tracingContextMap.get(context);
+          if (ctx) {
+            // Taken from https://github.com/apollographql/apollo-server/blob/main/packages/apollo-tracing/src/index.ts
+            const resolverCall: ResolverCall = {
+              path: info.path,
+              fieldName: info.fieldName,
+              parentType: info.parentType,
+              returnType: info.returnType,
+              startOffset: process.hrtime(ctx.hrtime),
+            };
+            return () => {
+              resolverCall.endOffset = process.hrtime(ctx.hrtime);
+              ctx.resolversTiming.push(resolverCall);
+            };
+          }
+          return undefined;
         }),
       );
     },
@@ -68,7 +70,7 @@ export const useApolloTracing = (): Plugin => {
         hrtime: process.hrtime(),
       };
 
-      onExecuteContext.extendContext({ [apolloTracingSymbol]: ctx });
+      tracingContextMap.set(onExecuteContext.args.contextValue, ctx);
 
       return {
         onExecuteDone(payload) {

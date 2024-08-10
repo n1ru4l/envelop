@@ -1,35 +1,27 @@
-import type { Application } from 'graphql-modules';
-import type { Plugin, TypedExecutionArgs } from '@envelop/core';
-
-const graphqlModulesControllerSymbol = Symbol('GRAPHQL_MODULES');
-
-function destroy<T>(context: TypedExecutionArgs<T>) {
-  if (context.contextValue?.[graphqlModulesControllerSymbol]) {
-    context.contextValue[graphqlModulesControllerSymbol].destroy();
-    context.contextValue[graphqlModulesControllerSymbol] = null;
-  }
-}
+import type { Application, OperationController } from 'graphql-modules';
+import type { Plugin } from '@envelop/core';
 
 export const useGraphQLModules = (app: Application): Plugin => {
+  const controllerMap = new WeakMap<any, OperationController>();
   return {
     onPluginInit({ setSchema }) {
       setSchema(app.schema);
     },
-    onContextBuilding({ extendContext, context }) {
+    onContextBuilding({ context, extendContext }) {
       const controller = app.createOperationController({
         context,
         autoDestroy: false,
       });
 
-      extendContext({
-        ...controller.context,
-        [graphqlModulesControllerSymbol]: controller,
-      });
+      extendContext(controller.context);
+
+      controllerMap.set(context, controller);
     },
     onExecute({ args }) {
       return {
         onExecuteDone() {
-          destroy(args);
+          const controller = controllerMap.get(args.contextValue);
+          controller?.destroy();
         },
       };
     },
@@ -38,12 +30,14 @@ export const useGraphQLModules = (app: Application): Plugin => {
         onSubscribeResult({ args }) {
           return {
             onEnd() {
-              destroy(args);
+              const controller = controllerMap.get(args.contextValue);
+              controller?.destroy();
             },
           };
         },
         onSubscribeError() {
-          destroy(args);
+          const controller = controllerMap.get(args.contextValue);
+          controller?.destroy();
         },
       };
     },
