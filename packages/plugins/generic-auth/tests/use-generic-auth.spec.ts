@@ -393,7 +393,7 @@ describe('useGenericAuth', () => {
     describe('auth directive with role', () => {
       type UserTypeWithRole = UserType & { role: 'ADMIN' | 'USER' };
       const validateUserFn: ValidateUserFn<UserTypeWithRole> = params => {
-        const schemaCoordinate = `${params.objectType.name}.${params.fieldNode.name.value}`;
+        const schemaCoordinate = `${params.parentType.name}.${params.fieldNode.name.value}`;
         if (!params.user) {
           return createGraphQLError(`Accessing '${schemaCoordinate}' requires authentication.`, {
             nodes: [params.fieldNode],

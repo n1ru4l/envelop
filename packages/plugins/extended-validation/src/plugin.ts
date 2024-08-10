@@ -159,13 +159,24 @@ function buildHandler(
                 ...result,
                 errors: [...(result.errors || []), ...errors],
               };
+              function visitPath(path: readonly (string | number)[], data: any = {}) {
+                let currentData = (data ||= typeof path[0] === 'number' ? [] : {});
+                for (const pathItemIndex in path.slice(0, -1)) {
+                  const pathItem = path[pathItemIndex];
+                  currentData = currentData[pathItem] ||=
+                    typeof path[Number(pathItemIndex) + 1] === 'number' ? [] : {};
+                  if (Array.isArray(currentData)) {
+                    currentData = currentData.map((c, i) =>
+                      visitPath(path.slice(Number(pathItemIndex) + 1), c),
+                    );
+                  }
+                }
+                currentData[path[path.length - 1]] = null;
+                return data;
+              }
               errors.forEach(e => {
                 if (e.path?.length) {
-                  let currentData: any = (newResult.data ||= {});
-                  for (const pathItem of e.path.slice(0, -1)) {
-                    currentData = currentData[pathItem] ||= {};
-                  }
-                  currentData[e.path[e.path.length - 1]] = null;
+                  newResult.data = visitPath(e.path, newResult.data);
                 }
               });
               setResult(newResult);

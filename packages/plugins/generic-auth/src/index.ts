@@ -6,6 +6,7 @@ import {
   getNamedType,
   GraphQLError,
   GraphQLField,
+  GraphQLInterfaceType,
   GraphQLObjectType,
   isInterfaceType,
   isIntrospectionType,
@@ -26,8 +27,8 @@ export type ValidateUserFnParams<UserType> = {
   user: UserType;
   /** The field node from the operation that is being validated. */
   fieldNode: FieldNode;
-  /** The object type which has the field that is being validated. */
-  objectType: GraphQLObjectType;
+  /** The parent type which has the field that is being validated. */
+  parentType: GraphQLObjectType | GraphQLInterfaceType;
   /** The object field */
   field: GraphQLField<any, any>;
   /** The directive node used for the authentication (If using an SDL flow). */
@@ -228,9 +229,9 @@ export const useGenericAuth = <
                     path: readonly (string | number)[];
                     ancestors: readonly (ASTNode | readonly ASTNode[])[];
                   },
-                  objectType: GraphQLObjectType,
+                  parentType: GraphQLInterfaceType | GraphQLObjectType,
                 ) => {
-                  const field = objectType.getFields()[fieldNode.name.value];
+                  const field = parentType.getFields()[fieldNode.name.value];
                   if (field == null) {
                     // field is null/undefined if this is an introspection field
                     return;
@@ -251,7 +252,7 @@ export const useGenericAuth = <
                   return validateUser({
                     user,
                     fieldNode,
-                    objectType,
+                    parentType,
                     fieldAuthDirectiveNode,
                     fieldAuthExtension,
                     executionArgs: args,
@@ -271,22 +272,7 @@ export const useGenericAuth = <
                       return node;
                     }
 
-                    if (isObjectType(fieldType)) {
-                      const error = handleField(
-                        {
-                          node,
-                          key,
-                          parent,
-                          path,
-                          ancestors,
-                        },
-                        fieldType,
-                      );
-                      if (error) {
-                        context.reportError(error);
-                        return null;
-                      }
-                    } else if (isUnionType(fieldType)) {
+                    if (isUnionType(fieldType)) {
                       for (const objectType of fieldType.getTypes()) {
                         const error = handleField(
                           {
@@ -303,22 +289,20 @@ export const useGenericAuth = <
                           return null;
                         }
                       }
-                    } else if (isInterfaceType(fieldType)) {
-                      for (const objectType of args.schema.getImplementations(fieldType).objects) {
-                        const error = handleField(
-                          {
-                            node,
-                            key,
-                            parent,
-                            path,
-                            ancestors,
-                          },
-                          objectType,
-                        );
-                        if (error) {
-                          context.reportError(error);
-                          return null;
-                        }
+                    } else if (isObjectType(fieldType) || isInterfaceType(fieldType)) {
+                      const error = handleField(
+                        {
+                          node,
+                          key,
+                          parent,
+                          path,
+                          ancestors,
+                        },
+                        fieldType,
+                      );
+                      if (error) {
+                        context.reportError(error);
+                        return null;
                       }
                     }
                     return undefined;
