@@ -65,19 +65,19 @@ export type ValidateUserFn<UserType> = (
 ) => void | GraphQLError;
 
 export const DIRECTIVE_SDL = /* GraphQL */ `
-  directive @authenticated on FIELD_DEFINITION
+  directive @authenticated on FIELD_DEFINITION | OBJECT | INTERFACE
 `;
 
 export const SKIP_AUTH_DIRECTIVE_SDL = /* GraphQL */ `
-  directive @skipAuth on FIELD_DEFINITION
+  directive @skipAuth on FIELD_DEFINITION | OBJECT | INTERFACE
 `;
 
 export const REQUIRES_SCOPES_DIRECTIVE_SDL = /* GraphQL */ `
-  directive @requiresScopes(scopes: [[String!]!]!) on FIELD_DEFINITION
+  directive @requiresScopes(scopes: [[String!]!]!) on FIELD_DEFINITION | OBJECT | INTERFACE
 `;
 
 export const POLICY_DIRECTIVE_SDL = /* GraphQL */ `
-  directive @policy(policies: [String!]!) on FIELD_DEFINITION
+  directive @policy(policies: [String!]!) on FIELD_DEFINITION | OBJECT | INTERFACE
 `;
 
 export type GenericAuthPluginOptions<
