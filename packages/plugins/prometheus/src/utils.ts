@@ -186,29 +186,98 @@ export function createCounter<
   };
 }
 
-export function getHistogramFromConfig(
+export function getHistogramFromConfig<
+  MetricOptions,
+  Params extends Record<string, any> = FillLabelsFnParams,
+>(
   config: PrometheusTracingPluginConfig,
-  phase: keyof PrometheusTracingPluginConfig,
-  name: string,
-  help: string,
-): ReturnType<typeof createHistogram> | undefined {
-  return typeof config[phase] === 'object'
-    ? (config[phase] as ReturnType<typeof createHistogram>)
-    : config[phase] === true
+  phase: keyof MetricOptions,
+  histogram: Omit<HistogramConfiguration<string>, 'registers' | 'name'>,
+  fillLabelsFn: FillLabelsFn<string, Params> = params => ({
+    operationName: params.operationName!,
+    operationType: params.operationType!,
+  }),
+): ReturnType<typeof createHistogram<string, Params>> | undefined {
+  const metric = (config.metrics as MetricOptions)[phase];
+  if (Array.isArray(metric) && metric.length === 0) {
+    histogram.buckets = metric;
+  }
+
+  return typeof metric === 'object'
+    ? (metric as ReturnType<typeof createHistogram>)
+    : metric === true
       ? createHistogram({
           registry: config.registry || defaultRegistry,
           histogram: {
-            name,
-            help,
-            labelNames: ['operationType', 'operationName'].filter(label =>
+            name: typeof metric === 'string' ? metric : (phase as string),
+            ...histogram,
+            labelNames: (histogram.labelNames ?? ['operationType', 'operationName']).filter(label =>
               labelExists(config, label),
             ),
           },
-          fillLabelsFn: params =>
-            filterFillParamsFnParams(config, {
-              operationName: params.operationName!,
-              operationType: params.operationType!,
-            }),
+          fillLabelsFn: (...args) => filterFillParamsFnParams(config, fillLabelsFn(...args)),
+        })
+      : undefined;
+}
+
+export function getSummaryFromConfig<
+  MetricOptions,
+  Params extends Record<string, any> = FillLabelsFnParams,
+>(
+  config: PrometheusTracingPluginConfig,
+  phase: keyof MetricOptions,
+  summary: Omit<SummaryConfiguration<string>, 'registers' | 'name'>,
+  fillLabelsFn: FillLabelsFn<string, Params> = params =>
+    filterFillParamsFnParams(config, {
+      operationName: params.operationName!,
+      operationType: params.operationType!,
+    }),
+): ReturnType<typeof createSummary<string, Params>> | undefined {
+  const metric = (config.metrics as MetricOptions)[phase];
+  return typeof metric === 'object'
+    ? (metric as ReturnType<typeof createSummary<string, Params>>)
+    : metric === true
+      ? createSummary({
+          registry: config.registry || defaultRegistry,
+          summary: {
+            name: typeof metric === 'string' ? metric : (phase as string),
+            labelNames: ['operationType', 'operationName'].filter(label =>
+              labelExists(config, label),
+            ),
+            ...summary,
+          },
+          fillLabelsFn,
+        })
+      : undefined;
+}
+
+export function getCounterFromConfig<
+  MetricOptions,
+  Params extends Record<string, any> = FillLabelsFnParams,
+>(
+  config: PrometheusTracingPluginConfig,
+  phase: keyof MetricOptions,
+  counter: Omit<CounterConfiguration<string>, 'registers' | 'name'>,
+  fillLabelsFn: FillLabelsFn<string, Params> = params =>
+    filterFillParamsFnParams(config, {
+      operationName: params.operationName!,
+      operationType: params.operationType!,
+    }),
+): ReturnType<typeof createCounter<string, Params>> | undefined {
+  const metric = (config.metrics as MetricOptions)[phase];
+  return typeof metric === 'object'
+    ? (metric as ReturnType<typeof createCounter<string, Params>>)
+    : metric === true
+      ? createCounter({
+          registry: config.registry || defaultRegistry,
+          counter: {
+            name: typeof metric === 'string' ? metric : (phase as string),
+            labelNames: ['operationType', 'operationName'].filter(label =>
+              labelExists(config, label),
+            ),
+            ...counter,
+          },
+          fillLabelsFn,
         })
       : undefined;
 }
@@ -260,11 +329,13 @@ export function labelExists(config: PrometheusTracingPluginConfig, label: string
   return labelFlag;
 }
 
-export function filterFillParamsFnParams(
+export function filterFillParamsFnParams<T extends string>(
   config: PrometheusTracingPluginConfig,
-  params: Record<string, any>,
+  params: Partial<Record<T, any>>,
 ) {
-  return Object.fromEntries(Object.entries(params).filter(([key]) => labelExists(config, key)));
+  return Object.fromEntries(
+    Object.entries(params).filter(([key]) => labelExists(config, key)),
+  ) as Record<T, any>;
 }
 
 const clearRegistry = new WeakMap<Registry, () => void>();
