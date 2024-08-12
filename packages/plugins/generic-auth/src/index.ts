@@ -1,4 +1,3 @@
-import { isPromise } from 'util/types';
 import {
   ASTNode,
   ExecutionArgs,
@@ -37,12 +36,24 @@ export type ValidateUserFnParams<UserType> = {
   typeAuthArgs?: Record<string, any>;
   /** The directives for the type */
   typeDirectives?: ReturnType<typeof getDirectiveExtensions>;
+  /** Scopes that type requires */
+  typeScopes?: string[][];
+  /** Policies that type requires */
+  typePolicies?: string[][];
   /** The object field */
   field: GraphQLField<any, any>;
   /** The auth directive arguments for the field */
   fieldAuthArgs?: Record<string, any>;
   /** The directives for the field */
   fieldDirectives?: ReturnType<typeof getDirectiveExtensions>;
+  /** Scopes that field requires */
+  fieldScopes?: string[][];
+  /** Policies that field requires */
+  fieldPolicies?: string[][];
+  /** Extracted scopes from the user object */
+  userScopes: string[];
+  /** Policies for the user */
+  userPolicies: string[];
   /** The args passed to the execution function (including operation context and variables) **/
   executionArgs: ExecutionArgs;
   /** Resolve path */
@@ -59,6 +70,14 @@ export const DIRECTIVE_SDL = /* GraphQL */ `
 
 export const SKIP_AUTH_DIRECTIVE_SDL = /* GraphQL */ `
   directive @skipAuth on FIELD_DEFINITION
+`;
+
+export const REQUIRES_SCOPES_DIRECTIVE_SDL = /* GraphQL */ `
+  directive @requiresScopes(scopes: [[String!]!]!) on FIELD_DEFINITION
+`;
+
+export const POLICY_DIRECTIVE_SDL = /* GraphQL */ `
+  directive @policy(policies: [String!]!) on FIELD_DEFINITION
 `;
 
 export type GenericAuthPluginOptions<
@@ -78,6 +97,28 @@ export type GenericAuthPluginOptions<
    * @default currentUser
    */
   contextFieldName?: CurrentUserKey;
+  /**
+   * Overrides the default directive name for marking a field that requires specific scopes.
+   *
+   * @default requiresScopes
+   */
+  scopesDirectiveName?: 'requiresScopes';
+  /**
+   * Extracts the scopes from the user object.
+   *
+   * @default defaultExtractScopes
+   */
+  extractScopes?(user: UserType): string[];
+  /**
+   * Overrides the default directive name for @policy directive
+   *
+   * @default policy
+   */
+  policyDirectiveName?: string;
+  /**
+   * Extracts the policies for the user object.
+   */
+  extractPolicies?(user: UserType, context: ContextType): PromiseOrValue<string[]>;
 } & (
   | {
       /**
@@ -136,7 +177,7 @@ export function createUnauthenticatedError(params?: {
   message?: string;
   statusCode?: number;
 }) {
-  return createGraphQLError('Unauthorized field or type', {
+  return createGraphQLError(params?.message ?? 'Unauthorized field or type', {
     nodes: params?.fieldNode ? [params.fieldNode] : undefined,
     path: params?.path,
     extensions: {
@@ -157,8 +198,47 @@ export function defaultProtectAllValidateFn<UserType>(
       path: params.path,
     });
   }
+  return validateScopes(params);
 }
 
+function areRolesValid(requiredRoles: string[][], userRoles: string[]) {
+  for (const roles of requiredRoles) {
+    if (roles.every(role => userRoles.includes(role))) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function validateScopes<UserType>(params: ValidateUserFnParams<UserType>): void | GraphQLError {
+  if (params.typeScopes && !areRolesValid(params.typeScopes, params.userScopes)) {
+    return createUnauthenticatedError({
+      fieldNode: params.fieldNode,
+      path: params.path,
+    });
+  }
+  if (params.fieldScopes && !areRolesValid(params.fieldScopes, params.userScopes)) {
+    return createUnauthenticatedError({
+      fieldNode: params.fieldNode,
+      path: params.path,
+    });
+  }
+}
+
+function validatePolicies<UserType>(params: ValidateUserFnParams<UserType>): void | GraphQLError {
+  if (params.typePolicies && !areRolesValid(params.typePolicies, params.userPolicies)) {
+    return createUnauthenticatedError({
+      fieldNode: params.fieldNode,
+      path: params.path,
+    });
+  }
+  if (params.fieldPolicies && !areRolesValid(params.fieldPolicies, params.userPolicies)) {
+    return createUnauthenticatedError({
+      fieldNode: params.fieldNode,
+      path: params.path,
+    });
+  }
+}
 export function defaultProtectSingleValidateFn<UserType>(
   params: ValidateUserFnParams<UserType>,
 ): void | GraphQLError {
@@ -168,6 +248,23 @@ export function defaultProtectSingleValidateFn<UserType>(
       path: params.path,
     });
   }
+  const error = validateScopes(params);
+  if (error) {
+    return error;
+  }
+  return validatePolicies(params);
+}
+
+export function defaultExtractScopes<UserType>(user: UserType): string[] {
+  if (user != null && typeof user === 'object' && 'scope' in user) {
+    if (typeof user.scope === 'string') {
+      return user.scope.split(' ');
+    }
+    if (Array.isArray(user.scope)) {
+      return user.scope;
+    }
+  }
+  return [];
 }
 
 export const useGenericAuth = <
@@ -184,17 +281,21 @@ export const useGenericAuth = <
   const contextFieldName = options.contextFieldName || 'currentUser';
 
   if (options.mode === 'protect-all' || options.mode === 'protect-granular') {
-    const directiveOrExtensionFieldName =
+    const authDirectiveName =
       options.authDirectiveName ?? (options.mode === 'protect-all' ? 'skipAuth' : 'authenticated');
+    const requiresScopesDirectiveName = options.scopesDirectiveName ?? 'requiresScopes';
+    const policyDirectiveName = options.policyDirectiveName ?? 'policy';
     const validateUser =
       options.validateUser ??
       (options.mode === 'protect-all'
         ? defaultProtectAllValidateFn
         : defaultProtectSingleValidateFn);
+    const extractScopes = options.extractScopes ?? defaultExtractScopes;
 
     const rejectUnauthenticated =
       'rejectUnauthenticated' in options ? options.rejectUnauthenticated !== false : true;
 
+    const policiesByContext = new WeakMap<ContextType, string[]>();
     return {
       onPluginInit({ addPlugin }) {
         addPlugin(
@@ -236,9 +337,15 @@ export const useGenericAuth = <
                   const schema = context.getSchema();
                   // @ts-expect-error - Fix this
                   const typeDirectives = parentType && getDirectiveExtensions(parentType, schema);
-                  const typeAuthArgs = typeDirectives[directiveOrExtensionFieldName]?.[0];
+                  const typeAuthArgs = typeDirectives[authDirectiveName]?.[0];
+                  const typeScopes = typeDirectives[requiresScopesDirectiveName]?.[0]?.scopes;
+                  const typePolicies = typeDirectives[policyDirectiveName]?.[0]?.policies;
                   const fieldDirectives = getDirectiveExtensions(field, schema);
-                  const fieldAuthArgs = fieldDirectives[directiveOrExtensionFieldName]?.[0];
+                  const fieldAuthArgs = fieldDirectives[authDirectiveName]?.[0];
+                  const fieldScopes = fieldDirectives[requiresScopesDirectiveName]?.[0]?.scopes;
+                  const fieldPolicies = fieldDirectives[policyDirectiveName]?.[0]?.policies;
+                  const userScopes = extractScopes(user);
+                  const policies = policiesByContext.get(context as unknown as ContextType) ?? [];
 
                   const resolvePath: (string | number)[] = [];
 
@@ -254,13 +361,19 @@ export const useGenericAuth = <
                     user,
                     fieldNode,
                     parentType,
+                    typeScopes,
+                    typePolicies,
                     typeAuthArgs,
                     typeDirectives,
                     executionArgs: args,
                     field,
                     fieldDirectives,
                     fieldAuthArgs,
+                    fieldScopes,
+                    fieldPolicies,
+                    userScopes,
                     path: resolvePath,
+                    userPolicies: policies,
                   });
                 };
 
@@ -316,24 +429,17 @@ export const useGenericAuth = <
           }),
         );
       },
-      onContextBuilding({ context, extendContext }): PromiseOrValue<void> {
-        const user$ = options.resolveUserFn(context as unknown as ContextType);
-        if (isPromise(user$)) {
-          return user$.then(user => {
-            // @ts-expect-error - Fix this
-            if (context[contextFieldName] !== user) {
-              // @ts-expect-error - Fix this
-              extendContext({
-                [contextFieldName]: user,
-              });
-            }
-          });
+      async onContextBuilding({ context, extendContext }) {
+        const user = await options.resolveUserFn(context as unknown as ContextType);
+        if (options.extractPolicies) {
+          const policies = await options.extractPolicies(user!, context as unknown as ContextType);
+          policiesByContext.set(context as unknown as ContextType, policies);
         }
         // @ts-expect-error - Fix this
-        if (context[contextFieldName] !== user$) {
+        if (context[contextFieldName] !== user) {
           // @ts-expect-error - Fix this
           extendContext({
-            [contextFieldName]: user$,
+            [contextFieldName]: user,
           });
         }
       },
