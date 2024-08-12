@@ -55,8 +55,8 @@
   },
   "devDependencies": {
     "@envelop/core": "workspace:^",
-    "@graphql-tools/schema": "10.0.4",
-    "@graphql-tools/utils": "10.3.4",
+    "@graphql-tools/schema": "10.0.5",
+    "@graphql-tools/utils": "10.5.0",
     "@types/common-tags": "1.8.4",
     "common-tags": "1.8.2",
     "graphql": "16.8.1",
