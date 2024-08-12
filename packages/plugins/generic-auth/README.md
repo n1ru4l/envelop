@@ -149,7 +149,9 @@ const GraphQLQueryType = new GraphQLObjectType({
       type: GraphQLInt,
       resolve: () => 1,
       extensions: {
-        skipAuth: true
+        directives: {
+          skipAuth: true
+        }
       }
     }
   }
@@ -277,7 +279,9 @@ const GraphQLQueryType = new GraphQLObjectType({
       type: GraphQLInt,
       resolve: () => 1,
       extensions: {
-        authenticated: true
+        directives: {
+          authenticated: true
+        }
       }
     }
   }
@@ -371,8 +375,10 @@ const resolvers = {
     user: {
       me: (_, __, { currentUser }) => currentUser,
       extensions: {
-        authenticated: {
-          role: 'USER'
+        directives: {
+          authenticated: {
+            role: 'USER'
+          }
         }
       }
     }
@@ -410,11 +416,13 @@ const resolvers = {
     user: {
       resolve: (_, { userId }) => getUser(userId),
       extensions: {
-        authenticated: {
-          validate: ({ user, variables, context }) => {
-            // We can now have access to the operation and variables to decide if the user can execute the query
-            if (user.id !== variables.userId) {
-              return new Error(`Unauthorized`)
+        directives: {
+          authenticated: {
+            validate: ({ user, variables, context }) => {
+              // We can now have access to the operation and variables to decide if the user can execute the query
+              if (user.id !== variables.userId) {
+                return new Error(`Unauthorized`)
+              }
             }
           }
         }

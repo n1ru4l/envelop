@@ -400,19 +400,12 @@ describe('useGenericAuth', () => {
           });
         }
 
-        if (params.fieldAuthDirectiveNode?.arguments) {
-          const valueNode = params.fieldAuthDirectiveNode.arguments.find(
-            arg => arg.name.value === 'role',
-          )?.value as EnumValueNode | undefined;
-          if (valueNode) {
-            const role = valueNode.value;
-
-            if (role !== params.user.role) {
-              return createGraphQLError(
-                `Missing permissions for accessing field '${schemaCoordinate}'. Requires role '${role}'. Request is authenticated with role '${params.user.role}'.`,
-                { nodes: [params.fieldNode] },
-              );
-            }
+        if (params.fieldAuthArgs) {
+          if (params.fieldAuthArgs.role !== params.user.role) {
+            return createGraphQLError(
+              `Missing permissions for accessing field '${schemaCoordinate}'. Requires role '${params.fieldAuthArgs.role}'. Request is authenticated with role '${params.user.role}'.`,
+              { nodes: [params.fieldNode] },
+            );
           }
         }
 

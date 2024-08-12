@@ -1,6 +1,6 @@
+import { isPromise } from 'util/types';
 import {
   ASTNode,
-  DirectiveNode,
   ExecutionArgs,
   FieldNode,
   getNamedType,
@@ -16,7 +16,11 @@ import {
 } from 'graphql';
 import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/core';
 import { useExtendedValidation } from '@envelop/extended-validation';
-import { createGraphQLError, shouldIncludeNode } from '@graphql-tools/utils';
+import {
+  createGraphQLError,
+  getDirectiveExtensions,
+  shouldIncludeNode,
+} from '@graphql-tools/utils';
 
 export type ResolveUserFn<UserType, ContextType = DefaultContext> = (
   context: ContextType,
@@ -29,12 +33,16 @@ export type ValidateUserFnParams<UserType> = {
   fieldNode: FieldNode;
   /** The parent type which has the field that is being validated. */
   parentType: GraphQLObjectType | GraphQLInterfaceType;
+  /** The auth directive arguments for the type */
+  typeAuthArgs?: Record<string, any>;
+  /** The directives for the type */
+  typeDirectives?: ReturnType<typeof getDirectiveExtensions>;
   /** The object field */
   field: GraphQLField<any, any>;
-  /** The directive node used for the authentication (If using an SDL flow). */
-  fieldAuthDirectiveNode: DirectiveNode | undefined;
-  /** The extensions used for authentication (If using an extension based flow). */
-  fieldAuthExtension: unknown | undefined;
+  /** The auth directive arguments for the field */
+  fieldAuthArgs?: Record<string, any>;
+  /** The directives for the field */
+  fieldDirectives?: ReturnType<typeof getDirectiveExtensions>;
   /** The args passed to the execution function (including operation context and variables) **/
   executionArgs: ExecutionArgs;
   /** Resolve path */
@@ -105,9 +113,9 @@ export type GenericAuthPluginOptions<
       mode: 'protect-granular';
       /**
        * Overrides the default directive name or extension field for marking a field available only for authorized users.
-       * @default auth
+       * @default authenticated
        */
-      directiveOrExtensionFieldName?: 'auth' | string;
+      directiveOrExtensionFieldName?: 'authenticated' | string;
       /**
        * Customize how the user is validated. E.g. apply authorization role based validation.
        * The validation is applied during the extended validation phase.
@@ -144,7 +152,7 @@ export function createUnauthenticatedError(params?: {
 export function defaultProtectAllValidateFn<UserType>(
   params: ValidateUserFnParams<UserType>,
 ): void | GraphQLError {
-  if (params.user == null && !params.fieldAuthDirectiveNode && !params.fieldAuthExtension) {
+  if (params.user == null && !params.fieldAuthArgs && !params.typeAuthArgs) {
     return createUnauthenticatedError({
       fieldNode: params.fieldNode,
       path: params.path,
@@ -155,7 +163,7 @@ export function defaultProtectAllValidateFn<UserType>(
 export function defaultProtectSingleValidateFn<UserType>(
   params: ValidateUserFnParams<UserType>,
 ): void | GraphQLError {
-  if (params.user == null && (params.fieldAuthDirectiveNode || params.fieldAuthExtension)) {
+  if (params.user == null && (params.fieldAuthArgs || params.typeAuthArgs)) {
     return createUnauthenticatedError({
       fieldNode: params.fieldNode,
       path: params.path,
@@ -185,16 +193,6 @@ export const useGenericAuth = <
       (options.mode === 'protect-all'
         ? defaultProtectAllValidateFn
         : defaultProtectSingleValidateFn);
-    const extractAuthMeta = (
-      input: GraphQLField<any, any>,
-    ): { fieldAuthDirectiveNode: DirectiveNode | undefined; fieldAuthExtension: unknown } => {
-      return {
-        fieldAuthExtension: input.extensions?.[directiveOrExtensionFieldName],
-        fieldAuthDirectiveNode: input.astNode?.directives?.find(
-          directive => directive.name.value === directiveOrExtensionFieldName,
-        ),
-      };
-    };
 
     const rejectUnauthenticated =
       'rejectUnauthenticated' in options ? options.rejectUnauthenticated !== false : true;
@@ -237,7 +235,12 @@ export const useGenericAuth = <
                     return;
                   }
 
-                  const { fieldAuthExtension, fieldAuthDirectiveNode } = extractAuthMeta(field);
+                  const schema = context.getSchema();
+                  // @ts-expect-error - Fix this
+                  const typeDirectives = parentType && getDirectiveExtensions(parentType, schema);
+                  const typeAuthArgs = typeDirectives[directiveOrExtensionFieldName]?.[0];
+                  const fieldDirectives = getDirectiveExtensions(field, schema);
+                  const fieldAuthArgs = fieldDirectives[directiveOrExtensionFieldName]?.[0];
 
                   const resolvePath: (string | number)[] = [];
 
@@ -253,10 +256,12 @@ export const useGenericAuth = <
                     user,
                     fieldNode,
                     parentType,
-                    fieldAuthDirectiveNode,
-                    fieldAuthExtension,
+                    typeAuthArgs,
+                    typeDirectives,
                     executionArgs: args,
                     field,
+                    fieldDirectives,
+                    fieldAuthArgs,
                     path: resolvePath,
                   });
                 };
@@ -313,11 +318,26 @@ export const useGenericAuth = <
           }),
         );
       },
-      async onContextBuilding({ context, extendContext }) {
-        const user = await options.resolveUserFn(context as unknown as ContextType);
-        extendContext({
-          [contextFieldName]: user,
-        } as any);
+      onContextBuilding({ context, extendContext }) {
+        const user$ = options.resolveUserFn(context as unknown as ContextType);
+        if (isPromise(user$)) {
+          return user$.then(user => {
+            // @ts-expect-error - Fix this
+            if (context[contextFieldName] !== user) {
+              // @ts-expect-error - Fix this
+              extendContext({
+                [contextFieldName]: user,
+              });
+            }
+          });
+        }
+        // @ts-expect-error - Fix this
+        if (context[contextFieldName] !== user$) {
+          // @ts-expect-error - Fix this
+          extendContext({
+            [contextFieldName]: user$,
+          });
+        }
       },
     };
   }

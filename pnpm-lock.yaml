@@ -956,8 +956,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(@envelop/core@packages+core+dist)(graphql@16.6.0)
       '@graphql-tools/utils':
-        specifier: ^10.0.6
-        version: 10.0.6(graphql@16.6.0)
+        specifier: ^10.5.0
+        version: 10.5.0(graphql@16.6.0)
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -3160,8 +3160,8 @@ packages:
     peerDependencies:
       graphql: 16.6.0
 
-  '@graphql-tools/utils@10.0.6':
-    resolution: {integrity: sha512-hZMjl/BbX10iagovakgf3IiqArx8TPsotq5pwBld37uIX1JiZoSbgbCIFol7u55bh32o6cfDEiiJgfAD5fbeyQ==}
+  '@graphql-tools/utils@10.5.0':
+    resolution: {integrity: sha512-TtdmI5nKMl7QKWENudj7MnaE1skH9y7x2XuG//kHzIox9c6Q8Z2QiWoeD6EuDxCZ4nkRoQpn/YT7kT8FoaV/xQ==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       graphql: 16.6.0
@@ -13412,9 +13412,10 @@ snapshots:
       graphql: 16.6.0
       tslib: 2.5.0
 
-  '@graphql-tools/utils@10.0.6(graphql@16.6.0)':
+  '@graphql-tools/utils@10.5.0(graphql@16.6.0)':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.6.0)
+      cross-inspect: 1.0.1
       dset: 3.1.2
       graphql: 16.6.0
       tslib: 2.6.2

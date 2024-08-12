@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@envelop/extended-validation": "^4.0.0",
-    "@graphql-tools/utils": "^10.0.6",
+    "@graphql-tools/utils": "^10.5.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
