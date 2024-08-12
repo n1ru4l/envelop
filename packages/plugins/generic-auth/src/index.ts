@@ -198,7 +198,7 @@ export function defaultProtectAllValidateFn<UserType>(
       path: params.path,
     });
   }
-  return validateScopes(params);
+  return validateScopesAndPolicies(params);
 }
 
 function areRolesValid(requiredRoles: string[][], userRoles: string[]) {
@@ -210,14 +210,12 @@ function areRolesValid(requiredRoles: string[][], userRoles: string[]) {
   return false;
 }
 
-function validateScopes<UserType>(params: ValidateUserFnParams<UserType>): void | GraphQLError {
-  if (params.typeScopes && !areRolesValid(params.typeScopes, params.userScopes)) {
-    return createUnauthenticatedError({
-      fieldNode: params.fieldNode,
-      path: params.path,
-    });
-  }
-  if (params.fieldScopes && !areRolesValid(params.fieldScopes, params.userScopes)) {
+function validateRoles<UserType>(
+  params: ValidateUserFnParams<UserType>,
+  requiredRoles: string[][],
+  userRoles: string[],
+): void | GraphQLError {
+  if (!areRolesValid(requiredRoles, userRoles)) {
     return createUnauthenticatedError({
       fieldNode: params.fieldNode,
       path: params.path,
@@ -225,18 +223,32 @@ function validateScopes<UserType>(params: ValidateUserFnParams<UserType>): void 
   }
 }
 
-function validatePolicies<UserType>(params: ValidateUserFnParams<UserType>): void | GraphQLError {
-  if (params.typePolicies && !areRolesValid(params.typePolicies, params.userPolicies)) {
-    return createUnauthenticatedError({
-      fieldNode: params.fieldNode,
-      path: params.path,
-    });
+function validateScopesAndPolicies<UserType>(
+  params: ValidateUserFnParams<UserType>,
+): void | GraphQLError {
+  if (params.typeScopes) {
+    const error = validateRoles(params, params.typeScopes, params.userScopes);
+    if (error) {
+      return error;
+    }
   }
-  if (params.fieldPolicies && !areRolesValid(params.fieldPolicies, params.userPolicies)) {
-    return createUnauthenticatedError({
-      fieldNode: params.fieldNode,
-      path: params.path,
-    });
+  if (params.typePolicies?.length) {
+    const error = validateRoles(params, params.typePolicies, params.userPolicies);
+    if (error) {
+      return error;
+    }
+  }
+  if (params.fieldScopes?.length) {
+    const error = validateRoles(params, params.fieldScopes, params.userScopes);
+    if (error) {
+      return error;
+    }
+  }
+  if (params.fieldPolicies?.length) {
+    const error = validateRoles(params, params.fieldPolicies, params.userPolicies);
+    if (error) {
+      return error;
+    }
   }
 }
 export function defaultProtectSingleValidateFn<UserType>(
@@ -248,11 +260,7 @@ export function defaultProtectSingleValidateFn<UserType>(
       path: params.path,
     });
   }
-  const error = validateScopes(params);
-  if (error) {
-    return error;
-  }
-  return validatePolicies(params);
+  return validateScopesAndPolicies(params);
 }
 
 export function defaultExtractScopes<UserType>(user: UserType): string[] {
