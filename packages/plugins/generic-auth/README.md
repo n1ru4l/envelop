@@ -134,8 +134,8 @@ type Query {
 
 > You can apply that directive to any GraphQL `field` definition, not only to root fields.
 
-> If you are using a different directive for authentication, you can pass
-> `directiveOrExtensionFieldName` configuration to customize it.
+> If you are using a different directive for authentication, you can pass `authDirectiveName`
+> configuration to customize it.
 
 ##### Allow unauthenticated access for specific fields using a field extension
 
@@ -158,8 +158,8 @@ const GraphQLQueryType = new GraphQLObjectType({
 })
 ```
 
-> If you want to use a different directive for authentication, you can use the
-> `directiveOrExtensionFieldName` configuration to customize it.
+> If you want to use a different directive for authentication, you can use the `authDirectiveName`
+> configuration to customize it.
 
 #### Option #2 - `resolve-only`
 
@@ -264,8 +264,8 @@ type Query {
 
 > You can apply that directive to any GraphQL `field` definition, not only to root fields.
 
-> If you are using a different directive for authentication, you can pass
-> `directiveOrExtensionFieldName` configuration to customize it.
+> If you are using a different directive for authentication, you can pass `authDirectiveName`
+> configuration to customize it.
 
 ##### Protect a field using a field extension
 
@@ -288,8 +288,8 @@ const GraphQLQueryType = new GraphQLObjectType({
 })
 ```
 
-> If you are using a different field extension for authentication, you can pass
-> `directiveOrExtensionFieldName` configuration to customize it.
+> If you are using a different field extension for authentication, you can pass `authDirectiveName`
+> configuration to customize it.
 
 #### Extend authentication with custom logic
 

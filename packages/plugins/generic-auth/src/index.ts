@@ -90,7 +90,7 @@ export type GenericAuthPluginOptions<
        * Overrides the default directive name or extension field for marking a field available for unauthorized users.
        * @default skipAuth
        */
-      directiveOrExtensionFieldName?: 'skipAuth' | string;
+      authDirectiveName?: 'skipAuth' | string;
       /**
        * Customize how the user is validated. E.g. apply authorization role based validation.
        * The validation is applied during the extended validation phase.
@@ -115,14 +115,13 @@ export type GenericAuthPluginOptions<
        * Overrides the default directive name or extension field for marking a field available only for authorized users.
        * @default authenticated
        */
-      directiveOrExtensionFieldName?: 'authenticated' | string;
+      authDirectiveName?: 'authenticated' | string;
       /**
        * Customize how the user is validated. E.g. apply authorization role based validation.
        * The validation is applied during the extended validation phase.
        * @default `defaultProtectSingleValidateFn`
        */
       validateUser?: ValidateUserFn<UserType>;
-
       /**
        * Reject on unauthenticated requests.
        * @default true
@@ -186,8 +185,7 @@ export const useGenericAuth = <
 
   if (options.mode === 'protect-all' || options.mode === 'protect-granular') {
     const directiveOrExtensionFieldName =
-      options.directiveOrExtensionFieldName ??
-      (options.mode === 'protect-all' ? 'skipAuth' : 'authenticated');
+      options.authDirectiveName ?? (options.mode === 'protect-all' ? 'skipAuth' : 'authenticated');
     const validateUser =
       options.validateUser ??
       (options.mode === 'protect-all'
