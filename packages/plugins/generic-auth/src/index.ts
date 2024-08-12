@@ -318,7 +318,7 @@ export const useGenericAuth = <
           }),
         );
       },
-      onContextBuilding({ context, extendContext }) {
+      onContextBuilding({ context, extendContext }): PromiseOrValue<void> {
         const user$ = options.resolveUserFn(context as unknown as ContextType);
         if (isPromise(user$)) {
           return user$.then(user => {
