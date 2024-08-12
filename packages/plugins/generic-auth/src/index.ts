@@ -353,7 +353,8 @@ export const useGenericAuth = <
                   const fieldScopes = fieldDirectives[requiresScopesDirectiveName]?.[0]?.scopes;
                   const fieldPolicies = fieldDirectives[policyDirectiveName]?.[0]?.policies;
                   const userScopes = extractScopes(user);
-                  const policies = policiesByContext.get(context as unknown as ContextType) ?? [];
+                  const userPolicies =
+                    policiesByContext.get(args.contextValue as unknown as ContextType) ?? [];
 
                   const resolvePath: (string | number)[] = [];
 
@@ -381,7 +382,7 @@ export const useGenericAuth = <
                     fieldPolicies,
                     userScopes,
                     path: resolvePath,
-                    userPolicies: policies,
+                    userPolicies,
                   });
                 };
 
