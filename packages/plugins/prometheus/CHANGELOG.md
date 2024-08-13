@@ -1,5 +1,67 @@
 # @envelop/prometheus
 
+## 11.0.0
+
+### Major Changes
+
+- [#2270](https://github.com/n1ru4l/envelop/pull/2270)
+  [`73eb69f`](https://github.com/n1ru4l/envelop/commit/73eb69fd9d67b24d7598d1ce6195911688077c5d)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - **Breaking Change:** Rename all metrics
+  options to their actual metric name to avoid confusion.
+
+  All metric options have been moved under a mandatory `metrics` key, and the name of each options
+  have been renamed to match the default metric name.
+
+  The plugin option argument is also now mandatory.
+
+  ```diff
+  export const serveConfig = defineConfig({
+    plugins: pluginCtx => [
+      usePrometheus({
+        ...pluginCtx,
+
+        // Enable all available metrics
+
+  -     requestSummary: true,
+  -     parse: true,
+  -     validate: true,
+  -     contextBuilding: true,
+  -     execute: true,
+  -     subscribe: true,
+  -     errors: true,
+  -     deprecatedFields: true,
+  -     requestTotalDuration: true,
+  -     schemaChangeCount: true,
+
+        // Warning: enabling resolvers level metrics will introduce significant overhead
+  -     resolvers: true,
+  +     metrics: {
+  +       graphql_envelop_request_time_summary: true,
+  +       graphql_envelop_phase_parse: true,
+  +       graphql_envelop_phase_validate: true,
+  +       graphql_envelop_phase_context: true,
+  +       graphql_envelop_phase_execute: true,
+  +       graphql_envelop_phase_subscribe: true,
+  +       graphql_envelop_error_result: true,
+  +       graphql_envelop_deprecated_field: true,
+  +       graphql_envelop_request_duration: true,
+  +       graphql_envelop_schema_change: true,
+
+          // Warning: enabling resolvers level metrics will introduce significant overhead
+  +       graphql_envelop_execute_resolver: true,
+  +     }
+      })
+    ]
+  })
+  ```
+
+### Minor Changes
+
+- [#2270](https://github.com/n1ru4l/envelop/pull/2270)
+  [`73eb69f`](https://github.com/n1ru4l/envelop/commit/73eb69fd9d67b24d7598d1ce6195911688077c5d)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Add missing labels `path` and `phase`
+  of `graphql_envelop_error_result` metric to the configuration.
+
 ## 10.0.0
 
 ### Major Changes
