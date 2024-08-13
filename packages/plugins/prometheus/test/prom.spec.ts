@@ -116,13 +116,15 @@ describe('Prom Metrics plugin', () => {
 
   it('integration', async () => {
     const { execute, allMetrics } = prepare({
-      errors: true,
-      execute: true,
-      parse: true,
-      validate: true,
-      contextBuilding: true,
-      deprecatedFields: true,
-      resolvers: true,
+      metrics: {
+        graphql_envelop_error_result: true,
+        graphql_envelop_phase_execute: true,
+        graphql_envelop_phase_parse: true,
+        graphql_envelop_phase_validate: true,
+        graphql_envelop_phase_context: true,
+        graphql_envelop_deprecated_field: true,
+        graphql_envelop_execute_resolver: true,
+      },
     });
     const result = await execute('query { regularField longField deprecatedField }');
     assertSingleExecutionValue(result);
@@ -141,7 +143,12 @@ describe('Prom Metrics plugin', () => {
 
   describe('parse', () => {
     it('Should trace error during parse', async () => {
-      const { execute, metricCount, metricString } = prepare({ parse: true, errors: true });
+      const { execute, metricCount, metricString } = prepare({
+        metrics: {
+          graphql_envelop_phase_parse: true,
+          graphql_envelop_error_result: true,
+        },
+      });
       const result = await execute('query {');
       assertSingleExecutionValue(result);
 
@@ -154,7 +161,12 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should trace valid parse result', async () => {
-      const { execute, metricCount, metricString } = prepare({ parse: true, errors: true });
+      const { execute, metricCount, metricString } = prepare({
+        metrics: {
+          graphql_envelop_phase_parse: true,
+          graphql_envelop_error_result: true,
+        },
+      });
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
 
@@ -167,7 +179,7 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should skip parse when parse = false', async () => {
-      const { execute, metricCount } = prepare({ parse: false });
+      const { execute, metricCount } = prepare({ metrics: { graphql_envelop_phase_parse: false } });
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
 
@@ -179,20 +191,22 @@ describe('Prom Metrics plugin', () => {
       const registry = new Registry();
       const { execute, metricCount, metricString } = prepare(
         {
-          errors: true,
-          parse: createHistogram({
-            registry,
-            histogram: {
-              name: 'test_parse',
-              help: 'HELP ME',
-              labelNames: ['opText'] as const,
-            },
-            fillLabelsFn: params => {
-              return {
-                opText: print(params.document!),
-              };
-            },
-          }),
+          metrics: {
+            graphql_envelop_error_result: true,
+            graphql_envelop_phase_parse: createHistogram({
+              registry,
+              histogram: {
+                name: 'test_parse',
+                help: 'HELP ME',
+                labelNames: ['opText'] as const,
+              },
+              fillLabelsFn: params => {
+                return {
+                  opText: print(params.document!),
+                };
+              },
+            }),
+          },
         },
         registry,
       );
@@ -213,20 +227,22 @@ describe('Prom Metrics plugin', () => {
       const registry = new Registry();
       const { execute, metricCount, metricString } = prepare(
         {
-          errors: true,
-          validate: createHistogram({
-            registry,
-            histogram: {
-              name: 'test_validate',
-              help: 'HELP ME',
-              labelNames: ['opText'] as const,
-            },
-            fillLabelsFn: params => {
-              return {
-                opText: print(params.document!),
-              };
-            },
-          }),
+          metrics: {
+            graphql_envelop_error_result: true,
+            graphql_envelop_phase_validate: createHistogram({
+              registry,
+              histogram: {
+                name: 'test_validate',
+                help: 'HELP ME',
+                labelNames: ['opText'] as const,
+              },
+              fillLabelsFn: params => {
+                return {
+                  opText: print(params.document!),
+                };
+              },
+            }),
+          },
         },
         registry,
       );
@@ -242,12 +258,22 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('should register to onValidate event when needed', () => {
-      const { plugin } = prepare({ validate: true, errors: true });
+      const { plugin } = prepare({
+        metrics: {
+          graphql_envelop_phase_validate: true,
+          graphql_envelop_error_result: true,
+        },
+      });
       expect(plugin.onValidate).toBeDefined();
     });
 
     it('Should trace error during validate, and also trace timing', async () => {
-      const { execute, metricCount, metricString } = prepare({ validate: true, errors: true });
+      const { execute, metricCount, metricString } = prepare({
+        metrics: {
+          graphql_envelop_phase_validate: true,
+          graphql_envelop_error_result: true,
+        },
+      });
       const result = await execute('query test($v: String!) { regularField }');
       assertSingleExecutionValue(result);
 
@@ -260,7 +286,12 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should trace valid validations result', async () => {
-      const { execute, metricCount, metricString } = prepare({ validate: true, errors: true });
+      const { execute, metricCount, metricString } = prepare({
+        metrics: {
+          graphql_envelop_phase_validate: true,
+          graphql_envelop_error_result: true,
+        },
+      });
       const result = await execute('query test { regularField }');
       assertSingleExecutionValue(result);
 
@@ -273,7 +304,9 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should skip validate when validate = false', async () => {
-      const { execute, metricCount } = prepare({ validate: false });
+      const { execute, metricCount } = prepare({
+        metrics: { graphql_envelop_phase_validate: false },
+      });
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
 
@@ -287,20 +320,22 @@ describe('Prom Metrics plugin', () => {
       const registry = new Registry();
       const { execute, metricCount, metricString } = prepare(
         {
-          errors: true,
-          contextBuilding: createHistogram({
-            registry,
-            histogram: {
-              name: 'test_context',
-              help: 'HELP ME',
-              labelNames: ['opText'] as const,
-            },
-            fillLabelsFn: params => {
-              return {
-                opText: print(params.document!),
-              };
-            },
-          }),
+          metrics: {
+            graphql_envelop_error_result: true,
+            graphql_envelop_phase_context: createHistogram({
+              registry,
+              histogram: {
+                name: 'test_context',
+                help: 'HELP ME',
+                labelNames: ['opText'] as const,
+              },
+              fillLabelsFn: params => {
+                return {
+                  opText: print(params.document!),
+                };
+              },
+            }),
+          },
         },
         registry,
       );
@@ -316,7 +351,9 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should trace contextBuilding timing', async () => {
-      const { execute, metricCount } = prepare({ contextBuilding: true });
+      const { execute, metricCount } = prepare({
+        metrics: { graphql_envelop_phase_context: true },
+      });
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
 
@@ -324,7 +361,9 @@ describe('Prom Metrics plugin', () => {
       expect(await metricCount('graphql_envelop_phase_context', 'count')).toBe(1);
     });
     it('Should skip contextBuilding when contextBuilding = false', async () => {
-      const { execute, metricCount } = prepare({ contextBuilding: false });
+      const { execute, metricCount } = prepare({
+        metrics: { graphql_envelop_phase_context: false },
+      });
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
 
@@ -337,8 +376,10 @@ describe('Prom Metrics plugin', () => {
       const testKit = createTestkit(
         [
           usePrometheus({
-            errors: true,
-            contextBuilding: true,
+            metrics: {
+              graphql_envelop_error_result: true,
+              graphql_envelop_phase_context: true,
+            },
             registry,
           }),
           useExtendContext<any>(() => {
@@ -384,20 +425,22 @@ describe('Prom Metrics plugin', () => {
       const registry = new Registry();
       const { execute, metricCount, metricString } = prepare(
         {
-          errors: true,
-          execute: createHistogram({
-            registry,
-            histogram: {
-              name: 'test_execute',
-              help: 'HELP ME',
-              labelNames: ['opText'] as const,
-            },
-            fillLabelsFn: params => {
-              return {
-                opText: print(params.document!),
-              };
-            },
-          }),
+          metrics: {
+            graphql_envelop_error_result: true,
+            graphql_envelop_phase_execute: createHistogram({
+              registry,
+              histogram: {
+                name: 'test_execute',
+                help: 'HELP ME',
+                labelNames: ['opText'] as const,
+              },
+              fillLabelsFn: params => {
+                return {
+                  opText: print(params.document!),
+                };
+              },
+            }),
+          },
         },
         registry,
       );
@@ -413,7 +456,12 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should trace error during execute with a single error', async () => {
-      const { execute, metricCount, metricString } = prepare({ errors: true, execute: true });
+      const { execute, metricCount, metricString } = prepare({
+        metrics: {
+          graphql_envelop_error_result: true,
+          graphql_envelop_phase_execute: true,
+        },
+      });
       const result = await execute('query { errorField }');
       assertSingleExecutionValue(result);
 
@@ -426,7 +474,12 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should trace error during execute with a multiple errors', async () => {
-      const { execute, metricCount, metricString } = prepare({ errors: true, execute: true });
+      const { execute, metricCount, metricString } = prepare({
+        metrics: {
+          graphql_envelop_error_result: true,
+          graphql_envelop_phase_execute: true,
+        },
+      });
       const result = await execute('query { errorField test: errorField }');
       assertSingleExecutionValue(result);
 
@@ -439,7 +492,12 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should trace valid execute result', async () => {
-      const { execute, metricCount } = prepare({ errors: true, execute: true });
+      const { execute, metricCount } = prepare({
+        metrics: {
+          graphql_envelop_error_result: true,
+          graphql_envelop_phase_execute: true,
+        },
+      });
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
 
@@ -449,7 +507,12 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should skip execute when execute = false', async () => {
-      const { execute, metricCount } = prepare({ errors: true, execute: false });
+      const { execute, metricCount } = prepare({
+        metrics: {
+          graphql_envelop_error_result: true,
+          graphql_envelop_phase_execute: false,
+        },
+      });
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
 
@@ -460,8 +523,10 @@ describe('Prom Metrics plugin', () => {
 
     it('should not contain operationName and operationType if disables', async () => {
       const { execute, metricString } = prepare({
-        errors: true,
-        execute: true,
+        metrics: {
+          graphql_envelop_error_result: true,
+          graphql_envelop_phase_execute: true,
+        },
         labels: {
           operationName: false,
           operationType: false,
@@ -482,21 +547,23 @@ describe('Prom Metrics plugin', () => {
       const registry = new Registry();
       const { execute, metricCount, metricString } = prepare(
         {
-          execute: true,
-          errors: createCounter({
-            registry,
-            counter: {
-              name: 'test_error',
-              help: 'HELP ME',
-              labelNames: ['opText', 'errorMessage'] as const,
-            },
-            fillLabelsFn: params => {
-              return {
-                opText: print(params.document!),
-                errorMessage: params.error!.message,
-              };
-            },
-          }),
+          metrics: {
+            graphql_envelop_phase_execute: true,
+            graphql_envelop_error_result: createCounter({
+              registry,
+              counter: {
+                name: 'test_error',
+                help: 'HELP ME',
+                labelNames: ['opText', 'errorMessage'] as const,
+              },
+              fillLabelsFn: params => {
+                return {
+                  opText: print(params.document!),
+                  errorMessage: params.error!.message,
+                };
+              },
+            }),
+          },
         },
         registry,
       );
@@ -511,7 +578,12 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should not trace parse errors when not needed', async () => {
-      const { execute, metricCount } = prepare({ parse: true, errors: false });
+      const { execute, metricCount } = prepare({
+        metrics: {
+          graphql_envelop_phase_parse: true,
+          graphql_envelop_error_result: false,
+        },
+      });
       const result = await execute('query {');
       assertSingleExecutionValue(result);
 
@@ -520,7 +592,12 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should not trace validate errors when not needed', async () => {
-      const { execute, metricCount } = prepare({ validate: true, errors: false });
+      const { execute, metricCount } = prepare({
+        metrics: {
+          graphql_envelop_phase_validate: true,
+          graphql_envelop_error_result: false,
+        },
+      });
       const result = await execute('query test($v: String!) { regularField }');
       assertSingleExecutionValue(result);
 
@@ -529,7 +606,9 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should not trace execute errors when not needed', async () => {
-      const { execute, metricCount } = prepare({ errors: false });
+      const { execute, metricCount } = prepare({
+        metrics: { graphql_envelop_error_result: false },
+      });
       const result = await execute('query { errorField }');
       assertSingleExecutionValue(result);
 
@@ -540,7 +619,12 @@ describe('Prom Metrics plugin', () => {
 
   describe('resolvers', () => {
     it('Should trace all resolvers times correctly', async () => {
-      const { execute, metricCount, metricString } = prepare({ execute: true, resolvers: true });
+      const { execute, metricCount, metricString } = prepare({
+        metrics: {
+          graphql_envelop_phase_execute: true,
+          graphql_envelop_execute_resolver: true,
+        },
+      });
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
 
@@ -554,8 +638,10 @@ describe('Prom Metrics plugin', () => {
 
     it('Should trace only specified resolvers when resolversWhitelist is used', async () => {
       const { execute, metricCount, metricString } = prepare({
-        execute: true,
-        resolvers: true,
+        metrics: {
+          graphql_envelop_phase_execute: true,
+          graphql_envelop_execute_resolver: true,
+        },
         resolversWhitelist: ['Query.regularField'],
       });
       const result = await execute('query { regularField longField }');
@@ -572,7 +658,12 @@ describe('Prom Metrics plugin', () => {
 
   describe('deprecation', () => {
     it('Should not trace deprecation when not needed', async () => {
-      const { execute, metricCount } = prepare({ execute: true, resolvers: true });
+      const { execute, metricCount } = prepare({
+        metrics: {
+          graphql_envelop_phase_execute: true,
+          graphql_envelop_execute_resolver: true,
+        },
+      });
       const result = await execute('query { regularField deprecatedField }');
       assertSingleExecutionValue(result);
 
@@ -584,9 +675,11 @@ describe('Prom Metrics plugin', () => {
 
     it('Should trace all deprecated fields times correctly', async () => {
       const { execute, metricCount } = prepare({
-        execute: true,
-        resolvers: true,
-        deprecatedFields: true,
+        metrics: {
+          graphql_envelop_phase_execute: true,
+          graphql_envelop_execute_resolver: true,
+          graphql_envelop_deprecated_field: true,
+        },
       });
       const result = await execute('query { regularField deprecatedField }');
       assertSingleExecutionValue(result);
@@ -599,13 +692,15 @@ describe('Prom Metrics plugin', () => {
 
     it('Should track deprecated arguments in mutation', async () => {
       const { execute, metricCount, allMetrics, metricString } = prepare({
-        errors: true,
-        execute: true,
-        parse: true,
-        validate: true,
-        contextBuilding: true,
-        deprecatedFields: true,
-        resolvers: true,
+        metrics: {
+          graphql_envelop_error_result: true,
+          graphql_envelop_phase_execute: true,
+          graphql_envelop_phase_parse: true,
+          graphql_envelop_phase_validate: true,
+          graphql_envelop_phase_context: true,
+          graphql_envelop_deprecated_field: true,
+          graphql_envelop_execute_resolver: true,
+        },
       });
       const result = await execute(
         /* GraphQL */ `
@@ -635,7 +730,12 @@ describe('Prom Metrics plugin', () => {
 
   describe('requestCount', () => {
     it('Should not trace requestCount when not needed', async () => {
-      const { execute, metricCount } = prepare({ requestCount: false, execute: true });
+      const { execute, metricCount } = prepare({
+        metrics: {
+          graphql_envelop_request: false,
+          graphql_envelop_phase_execute: true,
+        },
+      });
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
 
@@ -644,7 +744,12 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should trace all successful requests', async () => {
-      const { execute, metricCount } = prepare({ requestCount: true, execute: true });
+      const { execute, metricCount } = prepare({
+        metrics: {
+          graphql_envelop_request: true,
+          graphql_envelop_phase_execute: true,
+        },
+      });
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
 
@@ -654,7 +759,12 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should trace all successful requests, with multiple req', async () => {
-      const { execute, metricValue } = prepare({ requestCount: true, execute: true });
+      const { execute, metricValue } = prepare({
+        metrics: {
+          graphql_envelop_request: true,
+          graphql_envelop_phase_execute: true,
+        },
+      });
       const result1 = await execute('query { regularField }');
       const result2 = await execute('query { regularField }');
       assertSingleExecutionValue(result1);
@@ -669,7 +779,12 @@ describe('Prom Metrics plugin', () => {
 
   describe('requestSummary', () => {
     it('Should not trace requestSummary when not needed', async () => {
-      const { execute, metricCount } = prepare({ requestSummary: false, execute: true });
+      const { execute, metricCount } = prepare({
+        metrics: {
+          graphql_envelop_request_time_summary: false,
+          graphql_envelop_phase_execute: true,
+        },
+      });
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
 
@@ -678,7 +793,12 @@ describe('Prom Metrics plugin', () => {
     });
 
     it('Should trace all successful requests', async () => {
-      const { execute, metricCount } = prepare({ requestSummary: true, execute: true });
+      const { execute, metricCount } = prepare({
+        metrics: {
+          graphql_envelop_request_time_summary: true,
+          graphql_envelop_phase_execute: true,
+        },
+      });
       const result = await execute('query { regularField }');
       assertSingleExecutionValue(result);
 
@@ -693,7 +813,7 @@ describe('Prom Metrics plugin', () => {
       const registry = new Registry();
       createTestkit(
         [
-          usePrometheus({ registry, schemaChangeCount: true }),
+          usePrometheus({ registry, metrics: { graphql_envelop_schema_change: true } }),
           {
             onSchemaChange: ({ replaceSchema }) => {
               replaceSchema(
@@ -729,19 +849,21 @@ describe('Prom Metrics plugin', () => {
 
   it('should be able to be initialized multiple times', async () => {
     const registry = new Registry();
-    const allMetrics = {
-      parse: true,
-      requestCount: true,
-      requestSummary: true,
-      errors: true,
-      contextBuilding: true,
-      deprecatedFields: true,
-      execute: true,
-      requestTotalDuration: true,
-      resolvers: true,
-      schemaChangeCount: true,
-      subscribe: true,
-      validate: true,
+    const allMetrics: PrometheusTracingPluginConfig = {
+      metrics: {
+        graphql_envelop_request: true,
+        graphql_envelop_request_duration: true,
+        graphql_envelop_request_time_summary: true,
+        graphql_envelop_phase_parse: true,
+        graphql_envelop_phase_validate: true,
+        graphql_envelop_phase_context: true,
+        graphql_envelop_phase_execute: true,
+        graphql_envelop_phase_subscribe: true,
+        graphql_envelop_error_result: true,
+        graphql_envelop_deprecated_field: true,
+        graphql_envelop_schema_change: true,
+        graphql_envelop_execute_resolver: true,
+      },
     };
 
     prepare(allMetrics, registry); // fake initialization to make sure it doesn't break
@@ -766,9 +888,12 @@ describe('Prom Metrics plugin', () => {
   it('should allow to clear the registry between initializations', async () => {
     const registry = new Registry();
 
-    prepare({ parse: true }, registry); // fake initialization to make sure it doesn't break
+    prepare({ metrics: { graphql_envelop_phase_parse: true } }, registry); // fake initialization to make sure it doesn't break
     registry.clear();
-    const { execute, allMetrics } = prepare({ parse: true }, registry);
+    const { execute, allMetrics } = prepare(
+      { metrics: { graphql_envelop_phase_parse: true } },
+      registry,
+    );
     const result = await execute('{ regularField }');
     assertSingleExecutionValue(result);
 
