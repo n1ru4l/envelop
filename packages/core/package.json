@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "@graphql-tools/schema": "10.0.5",
-    "@graphql-tools/utils": "10.5.2",
+    "@graphql-tools/utils": "10.5.3",
     "@repeaterjs/repeater": "3.0.5",
     "graphql": "16.8.1",
     "typescript": "5.1.3"
