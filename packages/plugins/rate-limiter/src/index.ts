@@ -100,6 +100,7 @@ export const useRateLimiter = (options: RateLimiterPluginOptions): Plugin<RateLi
 
             let rateLimitDef = rateLimitDefs?.[0];
             let identifyFn = options.identifyFn;
+            let fieldIdentity = false;
 
             if (!rateLimitDef) {
               const foundConfig = options.configByField?.find(
@@ -110,6 +111,7 @@ export const useRateLimiter = (options: RateLimiterPluginOptions): Plugin<RateLi
                 rateLimitDef = foundConfig;
                 if (foundConfig.identifyFn) {
                   identifyFn = foundConfig.identifyFn;
+                  fieldIdentity = true;
                 }
               }
             }
@@ -122,11 +124,18 @@ export const useRateLimiter = (options: RateLimiterPluginOptions): Plugin<RateLi
 
               return mapMaybePromise(
                 rateLimiterFn(
-                  { parent: root, args, context, info },
+                  {
+                    parent: root,
+                    args: fieldIdentity ? { ...args, identifier } : args,
+                    context,
+                    info,
+                  },
                   {
                     max,
                     window,
-                    identityArgs: rateLimitDef.identityArgs,
+                    identityArgs: fieldIdentity
+                      ? ['identifier', ...(rateLimitDef.identityArgs || [])]
+                      : rateLimitDef.identityArgs,
                     arrayLengthField: rateLimitDef.arrayLengthField,
                     uncountRejected: rateLimitDef.uncountRejected,
                     readOnly: rateLimitDef.readOnly,
