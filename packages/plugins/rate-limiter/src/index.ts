@@ -1,10 +1,9 @@
-import { GraphQLResolveInfo, IntValueNode, StringValueNode } from 'graphql';
+import { GraphQLResolveInfo, responsePathAsArray } from 'graphql';
 import { getGraphQLRateLimiter, GraphQLRateLimitConfig } from 'graphql-rate-limit';
-import { Plugin } from '@envelop/core';
+import { minimatch } from 'minimatch';
+import { mapMaybePromise, Plugin } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
-import { getDirective } from './utils.js';
-
-export * from './utils.js';
+import { createGraphQLError, getDirectiveExtensions } from '@graphql-tools/utils';
 
 export {
   FormatErrorInput,
@@ -18,13 +17,40 @@ export {
   Store,
 } from 'graphql-rate-limit';
 
-export class UnauthenticatedError extends Error {}
-
 export type IdentifyFn<ContextType = unknown> = (context: ContextType) => string;
 
+export type MessageInterpolator<ContextType = unknown> = (
+  message: string,
+  identifier: string,
+  params: {
+    root: unknown;
+    args: Record<string, unknown>;
+    context: ContextType;
+    info: GraphQLResolveInfo;
+  },
+) => string;
+
 export const DIRECTIVE_SDL = /* GraphQL */ `
-  directive @rateLimit(max: Int, window: String, message: String) on FIELD_DEFINITION
+  directive @rateLimit(
+    max: Int
+    window: String
+    message: String
+    identityArgs: [String]
+    arrayLengthField: String
+    readOnly: Boolean
+    uncountRejected: Boolean
+  ) on FIELD_DEFINITION
 `;
+
+export type RateLimitDirectiveArgs = {
+  max?: number;
+  window?: string;
+  message?: string;
+  identityArgs?: string[];
+  arrayLengthField?: string;
+  readOnly?: boolean;
+  uncountRejected?: boolean;
+};
 
 export type RateLimiterPluginOptions = {
   identifyFn: IdentifyFn;
@@ -36,7 +62,18 @@ export type RateLimiterPluginOptions = {
     context: unknown;
     info: GraphQLResolveInfo;
   }) => void;
+  interpolateMessage?: MessageInterpolator;
+  configByField?: ConfigByField[];
 } & Omit<GraphQLRateLimitConfig, 'identifyContext'>;
+
+export interface ConfigByField extends RateLimitDirectiveArgs {
+  type: string;
+  field: string;
+  identifyFn?: IdentifyFn;
+}
+
+export const defaultInterpolateMessageFn: MessageInterpolator = (message, identifier) =>
+  interpolateByArgs(message, { id: identifier });
 
 interface RateLimiterContext {
   rateLimiterFn: ReturnType<typeof getGraphQLRateLimiter>;
@@ -44,65 +81,102 @@ interface RateLimiterContext {
 
 export const useRateLimiter = (options: RateLimiterPluginOptions): Plugin<RateLimiterContext> => {
   const rateLimiterFn = getGraphQLRateLimiter({
-    ...options, // Pass through all available options
+    ...options,
     identifyContext: options.identifyFn,
   });
+
+  const interpolateMessage = options.interpolateMessage || defaultInterpolateMessageFn;
 
   return {
     onPluginInit({ addPlugin }) {
       addPlugin(
-        useOnResolve(async ({ args, root, context, info }) => {
-          const rateLimitDirectiveNode = getDirective(
-            info,
-            options.rateLimitDirectiveName || 'rateLimit',
-          );
+        useOnResolve(({ root, args, context, info }) => {
+          const field = info.parentType.getFields()[info.fieldName];
+          if (field) {
+            const directives = getDirectiveExtensions<{
+              rateLimit?: RateLimitDirectiveArgs;
+            }>(field);
+            const rateLimitDefs = directives?.rateLimit;
 
-          if (rateLimitDirectiveNode && rateLimitDirectiveNode.arguments) {
-            const maxNode = rateLimitDirectiveNode.arguments.find(arg => arg.name.value === 'max')
-              ?.value as IntValueNode;
-            const windowNode = rateLimitDirectiveNode.arguments.find(
-              arg => arg.name.value === 'window',
-            )?.value as StringValueNode;
-            const messageNode = rateLimitDirectiveNode.arguments.find(
-              arg => arg.name.value === 'message',
-            )?.value as IntValueNode;
+            let rateLimitDef = rateLimitDefs?.[0];
+            let identifyFn = options.identifyFn;
 
-            const message = messageNode.value;
-            const max = parseInt(maxNode.value);
-            const window = windowNode.value;
-            const id = options.identifyFn(context);
-
-            const errorMessage = await context.rateLimiterFn(
-              { parent: root, args, context, info },
-              {
-                max,
-                window,
-                message: interpolate(message, {
-                  id,
-                }),
-              },
-            );
-            if (errorMessage) {
-              if (options.onRateLimitError) {
-                options.onRateLimitError({
-                  error: errorMessage,
-                  identifier: id,
-                  context,
-                  info,
-                });
+            if (!rateLimitDef) {
+              const foundConfig = options.configByField?.find(
+                ({ type, field }) =>
+                  minimatch(info.parentType.name, type) && minimatch(info.fieldName, field),
+              );
+              if (foundConfig) {
+                rateLimitDef = foundConfig;
+                if (foundConfig.identifyFn) {
+                  identifyFn = foundConfig.identifyFn;
+                }
               }
+            }
 
-              if (options.transformError) {
-                throw options.transformError(errorMessage);
-              }
+            if (rateLimitDef) {
+              const message = rateLimitDef.message;
+              const max = rateLimitDef.max && Number(rateLimitDef.max);
+              const window = rateLimitDef.window;
+              const identifier = identifyFn(context);
 
-              throw new Error(errorMessage);
+              return mapMaybePromise(
+                rateLimiterFn(
+                  { parent: root, args, context, info },
+                  {
+                    max,
+                    window,
+                    identityArgs: rateLimitDef.identityArgs,
+                    arrayLengthField: rateLimitDef.arrayLengthField,
+                    uncountRejected: rateLimitDef.uncountRejected,
+                    readOnly: rateLimitDef.readOnly,
+                    message:
+                      message && identifier
+                        ? interpolateMessage(message, identifier, {
+                            root,
+                            args,
+                            context,
+                            info,
+                          })
+                        : undefined,
+                  },
+                ),
+                errorMessage => {
+                  if (errorMessage) {
+                    if (options.onRateLimitError) {
+                      options.onRateLimitError({
+                        error: errorMessage,
+                        identifier,
+                        context,
+                        info,
+                      });
+                    }
+
+                    if (options.transformError) {
+                      throw options.transformError(errorMessage);
+                    }
+
+                    throw createGraphQLError(errorMessage, {
+                      extensions: {
+                        http: {
+                          statusCode: 429,
+                          headers: {
+                            'Retry-After': window,
+                          },
+                        },
+                      },
+                      path: responsePathAsArray(info.path),
+                      nodes: info.fieldNodes,
+                    });
+                  }
+                },
+              );
             }
           }
         }),
       );
     },
-    async onContextBuilding({ extendContext }) {
+    onContextBuilding({ extendContext }) {
       extendContext({
         rateLimiterFn,
       });
@@ -110,6 +184,6 @@ export const useRateLimiter = (options: RateLimiterPluginOptions): Plugin<RateLi
   };
 };
 
-function interpolate(message: string, args: { [key: string]: string }) {
+function interpolateByArgs(message: string, args: { [key: string]: string }) {
   return message.replace(/\{{([^)]*)\}}/g, (_, key) => args[key.trim()]);
 }

@@ -5,7 +5,7 @@ import {
   isIntrospectionType,
   isObjectType,
 } from 'graphql';
-import { Plugin, PromiseOrValue } from '@envelop/core';
+import { mapMaybePromise, Plugin, PromiseOrValue } from '@envelop/core';
 
 export type Resolver<Context = unknown> = (
   root: unknown,
@@ -63,39 +63,62 @@ export function useOnResolve<PluginContext extends Record<string, any> = {}>(
 
             let resolver = (field.resolve || defaultFieldResolver) as Resolver<PluginContext>;
 
-            field.resolve = async (root, args, context, info) => {
-              const afterResolve = await onResolve({
-                root,
-                args,
-                context,
-                info,
-                resolver,
-                replaceResolver: newResolver => {
-                  resolver = newResolver;
-                },
-              });
-
-              let result;
-              try {
-                result = await resolver(root, args, context, info);
-              } catch (err) {
-                result = err as Error;
-              }
-
-              if (typeof afterResolve === 'function') {
-                await afterResolve({
-                  result,
-                  setResult: newResult => {
-                    result = newResult;
+            field.resolve = (root, args, context, info) =>
+              mapMaybePromise(
+                onResolve({
+                  root,
+                  args,
+                  context,
+                  info,
+                  resolver,
+                  replaceResolver: newResolver => {
+                    resolver = newResolver;
                   },
-                });
-              }
-
-              if (result instanceof Error) {
-                throw result;
-              }
-              return result;
-            };
+                }),
+                afterResolve => {
+                  if (typeof afterResolve === 'function') {
+                    try {
+                      return mapMaybePromise(
+                        resolver(root, args, context, info),
+                        result =>
+                          mapMaybePromise(
+                            afterResolve({
+                              result,
+                              setResult: newResult => {
+                                result = newResult;
+                              },
+                            }),
+                            () => result,
+                          ),
+                        errorResult =>
+                          mapMaybePromise(
+                            afterResolve({
+                              result: errorResult,
+                              setResult: newResult => {
+                                errorResult = newResult;
+                              },
+                            }),
+                            () => {
+                              throw errorResult;
+                            },
+                          ),
+                      );
+                    } catch (err) {
+                      let errorResult = err;
+                      return mapMaybePromise(
+                        afterResolve({
+                          result: errorResult,
+                          setResult: newResult => {
+                            errorResult = newResult;
+                          },
+                        }),
+                        () => errorResult,
+                      );
+                    }
+                  }
+                  return resolver(root, args, context, info);
+                },
+              );
 
             field[hasWrappedResolveSymbol] = true;
           }

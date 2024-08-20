@@ -224,3 +224,32 @@ export function errorAsyncIterator<TInput>(
 
   return stream;
 }
+
+export function isPromise<T>(value: any): value is Promise<T> {
+  return value?.then !== undefined;
+}
+
+export function mapMaybePromise<T, R>(
+  value: PromiseOrValue<T>,
+  mapper: (v: T) => PromiseOrValue<R>,
+  errorMapper?: (e: any) => PromiseOrValue<R>,
+): PromiseOrValue<R> {
+  if (isPromise(value)) {
+    if (errorMapper) {
+      try {
+        return value.then(mapper, errorMapper);
+      } catch (e) {
+        return errorMapper(e);
+      }
+    }
+    return value.then(mapper);
+  }
+  if (errorMapper) {
+    try {
+      return mapper(value);
+    } catch (e) {
+      return errorMapper(e);
+    }
+  }
+  return mapper(value);
+}
