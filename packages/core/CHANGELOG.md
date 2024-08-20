@@ -1,5 +1,13 @@
 # @envelop/core
 
+## 5.0.2
+
+### Patch Changes
+
+- [#2292](https://github.com/n1ru4l/envelop/pull/2292)
+  [`c3dd2c3`](https://github.com/n1ru4l/envelop/commit/c3dd2c3525b42fcab773e0ae8a637caea5c33558)
+  Thanks [@ardatan](https://github.com/ardatan)! - Export `mapMaybePromise` and `isPromise`
+
 ## 5.0.1
 
 ### Patch Changes
