@@ -9,3 +9,4 @@ examples/sveltekit
 .next
 pnpm-lock.yaml
 .husky
+.changeset/

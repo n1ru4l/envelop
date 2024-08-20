@@ -1306,9 +1306,15 @@ importers:
       '@envelop/on-resolve':
         specifier: ^4.1.0
         version: 4.1.0(@envelop/core@packages+core+dist)(graphql@16.6.0)
+      '@graphql-tools/utils':
+        specifier: ^10.5.4
+        version: 10.5.4(graphql@16.6.0)
       graphql-rate-limit:
-        specifier: 3.3.0
+        specifier: ^3.3.0
         version: 3.3.0(graphql-middleware@6.1.35(graphql@16.6.0))(graphql@16.6.0)
+      minimatch:
+        specifier: ^10.0.1
+        version: 10.0.1
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -6058,8 +6064,8 @@ packages:
   elkjs@0.8.2:
     resolution: {integrity: sha512-L6uRgvZTH+4OF5NE/MBbzQx/WYpru1xCBE9respNj6qznEewGUIfhzmm7horWWxbNO2M0WckQypGctR8lH79xQ==}
 
-  elliptic@6.5.6:
-    resolution: {integrity: sha512-mpzdtpeCLuS3BmE3pO3Cpp5bbjlOPY2Q0PgoF+Od1XZrHLYI28Xe3ossCmYCQt11FQKEYd9+PF8jymTvtWJSHQ==}
+  elliptic@6.5.7:
+    resolution: {integrity: sha512-ESVCtTwiA+XhY3wyh24QqRGBoP3rEdDUl3EDUUo9tft074fi19IrdpH7hLCMMP3CIj7jb3W96rn8lt/BqIlt5Q==}
 
   emittery@0.13.1:
     resolution: {integrity: sha512-DeWwawk6r5yR9jFgnDKYt4sLS0LmHJJi3ZOnb5/JdbYwj3nW+FxQnHIjhBKz8YLC7oRNPVM9NQ47I3CVx34eqQ==}
@@ -15914,7 +15920,7 @@ snapshots:
       browserify-rsa: 4.1.0
       create-hash: 1.2.0
       create-hmac: 1.1.7
-      elliptic: 6.5.6
+      elliptic: 6.5.7
       hash-base: 3.0.4
       inherits: 2.0.4
       parse-asn1: 5.1.7
@@ -16393,7 +16399,7 @@ snapshots:
   create-ecdh@4.0.4:
     dependencies:
       bn.js: 4.12.0
-      elliptic: 6.5.6
+      elliptic: 6.5.7
 
   create-hash@1.2.0:
     dependencies:
@@ -16917,7 +16923,7 @@ snapshots:
 
   elkjs@0.8.2: {}
 
-  elliptic@6.5.6:
+  elliptic@6.5.7:
     dependencies:
       bn.js: 4.12.0
       brorand: 1.1.0
