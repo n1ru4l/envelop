@@ -1,5 +1,94 @@
 # @envelop/rate-limiter
 
+## 6.2.0
+
+### Minor Changes
+
+- [#2292](https://github.com/n1ru4l/envelop/pull/2292)
+  [`c3dd2c3`](https://github.com/n1ru4l/envelop/commit/c3dd2c3525b42fcab773e0ae8a637caea5c33558)
+  Thanks [@ardatan](https://github.com/ardatan)! - Now you can define a custom string interpolation
+  function to be used in the rate limit message. This is useful when you want to include dynamic
+  values in the message.
+
+  ```ts
+  useRateLimiter({
+    configByField: [
+      {
+        type: 'Query',
+        field: 'search', // You can also use glob patterns
+        max: 10,
+        window: '1m',
+        message:
+          'My custom message with interpolated values: ${args.searchTerm} and ${context.user.id}'
+      }
+    ],
+    interpolateMessage: (message, args, context) => {
+      return message.replace(/\${(.*?)}/g, (_, key) => {
+        return key.split('.').reduce((acc, part) => acc[part], { args, context })
+      })
+    }
+  })
+  ```
+
+- [#2292](https://github.com/n1ru4l/envelop/pull/2292)
+  [`c3dd2c3`](https://github.com/n1ru4l/envelop/commit/c3dd2c3525b42fcab773e0ae8a637caea5c33558)
+  Thanks [@ardatan](https://github.com/ardatan)! - New directive SDL;
+
+  ```graphql
+  directive @rateLimit(
+    max: Int
+    window: String
+    message: String
+    identityArgs: [String]
+    arrayLengthField: String
+    readOnly: Boolean
+    uncountRejected: Boolean
+  ) on FIELD_DEFINITION
+  ```
+
+- [#2292](https://github.com/n1ru4l/envelop/pull/2292)
+  [`c3dd2c3`](https://github.com/n1ru4l/envelop/commit/c3dd2c3525b42fcab773e0ae8a637caea5c33558)
+  Thanks [@ardatan](https://github.com/ardatan)! - Programmatic API to define rate limit
+  configuration in addition to directives
+
+  ```ts
+  useRateLimiter({
+    configByField: [
+      {
+        type: 'Query',
+        field: 'search', // You can also use glob patterns
+        max: 10,
+        window: '1m'
+      }
+    ]
+  })
+  ```
+
+### Patch Changes
+
+- [#2292](https://github.com/n1ru4l/envelop/pull/2292)
+  [`c3dd2c3`](https://github.com/n1ru4l/envelop/commit/c3dd2c3525b42fcab773e0ae8a637caea5c33558)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`graphql-rate-limit@^3.3.0` ↗︎](https://www.npmjs.com/package/graphql-rate-limit/v/3.3.0)
+    (from `3.3.0`, in `dependencies`)
+  - Added dependency
+    [`@graphql-tools/utils@^10.5.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.4)
+    (to `dependencies`)
+  - Added dependency [`minimatch@^10.0.1` ↗︎](https://www.npmjs.com/package/minimatch/v/10.0.1) (to
+    `dependencies`)
+
+- [#2276](https://github.com/n1ru4l/envelop/pull/2276)
+  [`ba368ba`](https://github.com/n1ru4l/envelop/commit/ba368bac9539177689eb9e561f388cff7f0cf048)
+  Thanks [@deggertsen](https://github.com/deggertsen)! - useRateLimiter will now accept all options
+  available to graphql-rate-limit getGraphQLRateLimiter function so that they are usable.
+- Updated dependencies
+  [[`c3dd2c3`](https://github.com/n1ru4l/envelop/commit/c3dd2c3525b42fcab773e0ae8a637caea5c33558),
+  [`c3dd2c3`](https://github.com/n1ru4l/envelop/commit/c3dd2c3525b42fcab773e0ae8a637caea5c33558)]:
+  - @envelop/on-resolve@4.1.1
+  - @envelop/core@5.0.2
+
 ## 6.1.0
 
 ### Patch Changes

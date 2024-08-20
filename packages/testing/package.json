@@ -47,7 +47,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@envelop/core": "^5.0.1",
+    "@envelop/core": "^5.0.2",
     "@envelop/types": "^5.0.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
