@@ -52,7 +52,7 @@
     "prom-client": "^15.0.0"
   },
   "dependencies": {
-    "@envelop/on-resolve": "^4.1.1",
+    "@envelop/on-resolve": "^4.1.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {

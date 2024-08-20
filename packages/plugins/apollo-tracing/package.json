@@ -52,7 +52,7 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
-    "@envelop/on-resolve": "^4.1.1",
+    "@envelop/on-resolve": "^4.1.0",
     "apollo-tracing": "^0.16.0",
     "tslib": "^2.5.0"
   },

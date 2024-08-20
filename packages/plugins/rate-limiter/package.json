@@ -51,7 +51,7 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
-    "@envelop/on-resolve": "^4.1.1",
+    "@envelop/on-resolve": "^4.1.0",
     "@graphql-tools/utils": "^10.5.4",
     "graphql-rate-limit": "^3.3.0",
     "minimatch": "^10.0.1",
