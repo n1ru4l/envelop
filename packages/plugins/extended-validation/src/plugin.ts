@@ -164,10 +164,17 @@ function buildHandler(
                 for (const pathItemIndex in path.slice(0, -1)) {
                   const pathItem = path[pathItemIndex];
                   currentData = currentData[pathItem] ||=
-                    typeof path[Number(pathItemIndex) + 1] === 'number' ? [] : {};
+                    typeof path[Number(pathItemIndex) + 1] === 'number' ||
+                    path[Number(pathItemIndex) + 1]
+                      ? []
+                      : {};
                   if (Array.isArray(currentData)) {
+                    let pathItemIndexInArray = Number(pathItemIndex) + 1;
+                    if (path[pathItemIndexInArray] === '@') {
+                      pathItemIndexInArray = Number(pathItemIndex) + 2;
+                    }
                     currentData = currentData.map((c, i) =>
-                      visitPath(path.slice(Number(pathItemIndex) + 1), c),
+                      visitPath(path.slice(pathItemIndexInArray), c),
                     );
                   }
                 }

@@ -3,15 +3,19 @@ import {
   ExecutionArgs,
   FieldNode,
   getNamedType,
+  getOperationAST,
   GraphQLError,
   GraphQLField,
   GraphQLInterfaceType,
   GraphQLObjectType,
+  GraphQLOutputType,
+  isAbstractType,
   isInterfaceType,
   isIntrospectionType,
+  isListType,
   isObjectType,
   isUnionType,
-  OperationDefinitionNode,
+  OperationTypeNode,
 } from 'graphql';
 import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/core';
 import { useExtendedValidation } from '@envelop/extended-validation';
@@ -311,16 +315,6 @@ export const useGenericAuth = <
             rejectOnErrors: rejectUnauthenticated,
             rules: [
               function AuthorizationExtendedValidationRule(context, args) {
-                const operations: Record<string, OperationDefinitionNode> = {};
-                const fragments: Record<string, any> = {};
-                for (const definition of args.document.definitions) {
-                  if (definition.kind === 'OperationDefinition') {
-                    operations[definition.name?.value ?? args.operationName ?? 'Anonymous'] =
-                      definition;
-                  } else if (definition.kind === 'FragmentDefinition') {
-                    fragments[definition.name.value] = definition;
-                  }
-                }
                 const user = (args.contextValue as any)[contextFieldName];
 
                 const handleField = (
@@ -359,10 +353,33 @@ export const useGenericAuth = <
                   const resolvePath: (string | number)[] = [];
 
                   let curr: any = args.document;
+                  const operationAST = getOperationAST(args.document, args.operationName);
+                  const operationType = operationAST?.operation ?? OperationTypeNode.QUERY;
+                  let currType: GraphQLOutputType | undefined | null =
+                    args.schema.getRootType(operationType);
                   for (const pathItem of path) {
                     curr = curr[pathItem];
                     if (curr?.kind === 'Field') {
-                      resolvePath.push(curr.name.value);
+                      const fieldName = curr.name.value;
+                      const responseKey = curr.alias?.value ?? fieldName;
+                      let field: GraphQLField<any, any> | undefined;
+                      if (isObjectType(currType)) {
+                        field = currType.getFields()[fieldName];
+                      } else if (isAbstractType(currType)) {
+                        for (const possibleType of schema.getPossibleTypes(currType)) {
+                          field = possibleType.getFields()[fieldName];
+                          if (field) {
+                            break;
+                          }
+                        }
+                      }
+                      if (isListType(field?.type)) {
+                        resolvePath.push('@');
+                      }
+                      resolvePath.push(responseKey);
+                      if (field?.type) {
+                        currType = getNamedType(field.type);
+                      }
                     }
                   }
 

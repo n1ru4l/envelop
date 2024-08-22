@@ -1,8 +1,7 @@
-import { EnumValueNode, FieldNode, getIntrospectionQuery } from 'graphql';
+import { getIntrospectionQuery } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
-import { Maybe } from '@envelop/types';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { createGraphQLError, shouldIncludeNode } from '@graphql-tools/utils';
+import { createGraphQLError } from '@graphql-tools/utils';
 import {
   DIRECTIVE_SDL,
   ResolveUserFn,
