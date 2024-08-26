@@ -21,6 +21,7 @@ import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/core';
 import { useExtendedValidation } from '@envelop/extended-validation';
 import {
   createGraphQLError,
+  getDefinedRootType,
   getDirectiveExtensions,
   shouldIncludeNode,
 } from '@graphql-tools/utils';
@@ -354,9 +355,11 @@ export const useGenericAuth = <
 
                   let curr: any = args.document;
                   const operationAST = getOperationAST(args.document, args.operationName);
-                  const operationType = operationAST?.operation ?? OperationTypeNode.QUERY;
-                  let currType: GraphQLOutputType | undefined | null =
-                    args.schema.getRootType(operationType);
+                  const operationType = operationAST?.operation ?? ('query' as OperationTypeNode);
+                  let currType: GraphQLOutputType | undefined | null = getDefinedRootType(
+                    schema,
+                    operationType,
+                  );
                   for (const pathItem of path) {
                     curr = curr[pathItem];
                     if (curr?.kind === 'Field') {
