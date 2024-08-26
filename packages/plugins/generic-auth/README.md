@@ -4,8 +4,8 @@ This plugin allows you to implement custom authentication flow by providing a cu
 based on the original HTTP request. The resolved user is injected into the GraphQL execution
 `context`, and you can use it in your resolvers to fetch the current user.
 
-> The plugin also comes with an optional `@auth` directive that can be added to your GraphQL schema
-> and helps you to protect your GraphQL schema in a declarative way.
+> The plugin also comes with an optional `@authenticated` directive that can be added to your
+> GraphQL schema and helps you to protect your GraphQL schema in a declarative way.
 
 There are several possible flows for using this plugin (see below for setup examples):
 
@@ -15,8 +15,8 @@ There are several possible flows for using this plugin (see below for setup exam
 - **Option #2 - Manual Validation**: the plugin will just resolve the user and injects it into the
   `context` without validating access to schema field.
 - **Option #3 - Granular field access by using schema field directives or field extensions**: Look
-  for an `@auth` directive or `auth` extension field and automatically protect those specific
-  GraphQL fields.
+  for an `@authenticated` directive or `authenticated` extension field and automatically protect
+  those specific GraphQL fields.
 
 ## Getting Started
 
@@ -70,7 +70,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
   // This method is being triggered in different flows, based on the mode you chose to implement.
 
   // If you are using the `protect-auth-directive` mode, you'll also get 2 additional parameters: the resolver parameters as object and the DirectiveNode of the auth directive.
-  // In `protect-auth-directive` mode, this function will always get called and you can use these parameters to check if the field has the `@auth` or `@skipAuth` directive
+  // In `protect-auth-directive` mode, this function will always get called and you can use these parameters to check if the field has the `@authenticated` or `@skipAuth` directive
 
   if (!user) {
     return new Error(`Unauthenticated!`)
@@ -134,8 +134,8 @@ type Query {
 
 > You can apply that directive to any GraphQL `field` definition, not only to root fields.
 
-> If you are using a different directive for authentication, you can pass
-> `directiveOrExtensionFieldName` configuration to customize it.
+> If you are using a different directive for authentication, you can pass `authDirectiveName`
+> configuration to customize it.
 
 ##### Allow unauthenticated access for specific fields using a field extension
 
@@ -149,15 +149,17 @@ const GraphQLQueryType = new GraphQLObjectType({
       type: GraphQLInt,
       resolve: () => 1,
       extensions: {
-        skipAuth: true
+        directives: {
+          skipAuth: true
+        }
       }
     }
   }
 })
 ```
 
-> If you want to use a different directive for authentication, you can use the
-> `directiveOrExtensionFieldName` configuration to customize it.
+> If you want to use a different directive for authentication, you can use the `authDirectiveName`
+> configuration to customize it.
 
 #### Option #2 - `resolve-only`
 
@@ -213,8 +215,8 @@ const resolvers = {
 
 #### Option #3 - `protect-granular`
 
-This mode is similar to option #2, but it uses the `@auth` SDL directive or `auth` field extension
-for protecting specific GraphQL fields.
+This mode is similar to option #2, but it uses the `@authenticated` SDL directive or `auth` field
+extension for protecting specific GraphQL fields.
 
 ```ts
 import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
@@ -244,28 +246,28 @@ const getEnveloped = envelop({
 })
 ```
 
-##### Protect a field using a field `directive`
+##### Protect a field using a field or type `directive`
 
 > By default, we assume that you have the GraphQL directive definition as part of your GraphQL
-> schema (`directive @auth on FIELD_DEFINITION`).
+> schema (`directive @authenticated on FIELD_DEFINITION | OBJECT | INTERFACE`).
 
-Then, in your GraphQL schema SDL, you can add `@auth` directive to your fields, and the
+Then, in your GraphQL schema SDL, you can add `@authenticated` directive to your fields, and the
 `validateUser` will get called only while resolving that specific field:
 
 ```graphql
 type Query {
-  me: User! @auth
-  protectedField: String @auth
+  me: User! @authenticated
+  protectedField: String @authenticated
   # publicField: String
 }
 ```
 
 > You can apply that directive to any GraphQL `field` definition, not only to root fields.
 
-> If you are using a different directive for authentication, you can pass
-> `directiveOrExtensionFieldName` configuration to customize it.
+> If you are using a different directive for authentication, you can pass `authDirectiveName`
+> configuration to customize it.
 
-##### Protect a field using a field extension
+##### Protect a field or type using extensions
 
 ```typescript
 import { GraphQLInt, GraphQLObjectType } from 'graphql'
@@ -277,15 +279,17 @@ const GraphQLQueryType = new GraphQLObjectType({
       type: GraphQLInt,
       resolve: () => 1,
       extensions: {
-        auth: true
+        directives: {
+          authenticated: true
+        }
       }
     }
   }
 })
 ```
 
-> If you are using a different field extension for authentication, you can pass
-> `directiveOrExtensionFieldName` configuration to customize it.
+> If you are using a different field extension for authentication, you can pass `authDirectiveName`
+> configuration to customize it.
 
 #### Extend authentication with custom logic
 
@@ -306,40 +310,99 @@ const validateUser: ValidateUserFn<UserType> = ({ user }) => {
 }
 ```
 
-##### With a custom directive with arguments
+##### Role/scope based authentication with `@requiresScope` directive
 
-It is possible to add custom parameters to your `@auth` directive. Here's an example for adding
-role-aware authentication:
+You can use `@requiresScope` directive to protect your schema based on the user's role or scope.
+Here's an example of how you can use it:
 
 ```graphql
-enum Role {
-  ADMIN
-  MEMBER
-}
+directive @requiresScopes(scopes: [[String!]!]!) on FIELD_DEFINITION | OBJECT | INTERFACE
 
-directive @auth(role: Role!) on FIELD_DEFINITION
+type Query {
+  me: User! @requiresScopes(scopes: [["read:user"]])
+  protectedField: String @requiresScopes(scopes: [["read:admin"]])
+  publicField: String
+}
 ```
 
-Then, you use the `directiveNode` parameter to check the arguments:
+By default, the plugin will try to extract available scopes for the current user from `scope`
+property which is expected to be a string like `read:user read:admin`. However you can customize
+this behavior by providing a custom `extractScopes` function.
 
 ```ts
-import { ValidateUserFn } from '@envelop/generic-auth'
+useGenericAuth({
+  resolveUserFn,
+  validateUser,
+  mode: 'protect-granular',
+  extractScopes: user => user.scopes // Expected to return an array of strings
+})
+```
 
-const validateUser: ValidateUserFn<UserType> = ({ user, fieldAuthDirectiveNode }) => {
-  // Now you can use the fieldAuthDirectiveNode parameter to implement custom logic for user validation, with access
-  // to the resolver auth directive arguments.
+You can also apply `AND` or `OR` logic to the scopes:
 
-  if (!user) {
-    return new Error(`Unauthenticated!`)
+```graphql
+type Query {
+  # This field requires the user to have `read:user` OR `read:admin` scopes
+  me: User! @requiresScopes(scopes: [["read:user"], ["read:admin"]])
+  # This field requires the user to have `read:user` AND `read:admin` scopes
+  protectedField: String @requiresScopes(scopes: [["read:admin", "read:user"]])
+  publicField: String
+}
+```
+
+##### `@policy` directive to fetch the roles from a policy service
+
+You can use the `@policy` directive to fetch the roles from a policy service. Here's an example of
+how you can use it:
+
+```graphql
+directive @policy(name: String!) on FIELD_DEFINITION | OBJECT | INTERFACE
+
+type Query {
+  me: User! @policy(policies: [["read:user"]])
+  protectedField: String @policy(policies: [["read:admin"]])
+  publicField: String
+}
+```
+
+It has the same logic with `@requiresScopes` but it can asynchronously fetch the roles from a
+source;
+
+```ts
+useGenericAuth({
+  resolveUserFn,
+  validateUser,
+  mode: 'protect-granular',
+  fetchPolicies: async user => {
+    const res = await fetch('https://policy-service.com', {
+      headers: {
+        Authorization: `Bearer ${user.token}`
+      }
+    })
+    // Expected to return an array of strings
+    return res.json()
   }
+})
+```
 
-  const valueNode = fieldAuthDirectiveNode.arguments.find(arg => arg.name.value === 'role')
-    .value as EnumValueNode
-  const role = valueNode.value
+##### Reject the whole operation if the user is not authenticated for the entire selection set
 
-  if (role !== user.role) {
-    return new Error(`No permissions!`)
+By default, the plugin will reject the whole operation if the user is not authenticated for the
+selection set fully. But if you want to allow partial execution, you can set `rejectUnauthorized` to
+`false`.
+
+When `rejectUnauthorized` is set to `false`, the plugin will behave like below;
+
+```graphql
+query {
+  me {
+    # This field will not be executed if the user is not authenticated
+    id
+    name
+    email
   }
+  protectedField # This field will not be executed if the user is not authenticated
+  publicField # This field will be executed even if the user is not authenticated
 }
 ```
 
@@ -349,30 +412,15 @@ You can use custom field extension to pass data to your `validateUser` function 
 directive. Here's an example for adding role-aware authentication:
 
 ```ts
-import { ValidateUserFn } from '@envelop/generic-auth'
-
-const validateUser: ValidateUserFn<UserType> = ({ user, fieldAuthExtension }) => {
-  // Now you can use the fieldAuthDirectiveNode parameter to implement custom logic for user validation, with access
-  // to the resolver auth directive arguments.
-
-  if (!user) {
-    return new Error(`Unauthenticated!`)
-  }
-
-  const role = fieldAuthExtension.role
-
-  if (role !== user.role) {
-    return new Error(`No permissions!`)
-  }
-}
-
 const resolvers = {
   Query: {
     user: {
       me: (_, __, { currentUser }) => currentUser,
       extensions: {
-        auth: {
-          role: 'USER'
+        directives: {
+          requiresScopes: {
+            scopes: [['read:user']]
+          }
         }
       }
     }
@@ -410,11 +458,13 @@ const resolvers = {
     user: {
       resolve: (_, { userId }) => getUser(userId),
       extensions: {
-        auth: {
-          validate: ({ user, variables, context }) => {
-            // We can now have access to the operation and variables to decide if the user can execute the query
-            if (user.id !== variables.userId) {
-              return new Error(`Unauthorized`)
+        directives: {
+          authenticated: {
+            validate: ({ user, variables, context }) => {
+              // We can now have access to the operation and variables to decide if the user can execute the query
+              if (user.id !== variables.userId) {
+                return new Error(`Unauthorized`)
+              }
             }
           }
         }

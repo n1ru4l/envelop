@@ -8,7 +8,15 @@ import {
   visitInParallel,
   visitWithTypeInfo,
 } from 'graphql';
-import { Plugin, TypedSubscriptionArgs } from '@envelop/core';
+import {
+  AsyncIterableIteratorOrValue,
+  isAsyncIterable,
+  OnExecuteEventPayload,
+  OnExecuteHookResult,
+  OnSubscribeEventPayload,
+  OnSubscribeHookResult,
+  Plugin,
+} from '@envelop/core';
 import { ExtendedValidationRule } from './common.js';
 
 const symbolExtendedValidationRules = Symbol('extendedValidationContext');
@@ -30,6 +38,12 @@ export const useExtendedValidation = <PluginContext extends Record<string, any> 
    * Callback that is invoked if the extended validation yields any errors.
    */
   onValidationFailed?: OnValidationFailedCallback;
+  /**
+   * Reject the execution if the validation fails.
+   *
+   * @default true
+   */
+  rejectOnErrors?: boolean;
 }): Plugin<PluginContext & { [symbolExtendedValidationRules]?: ExtendedValidationContext }> => {
   let schemaTypeInfo: TypeInfo;
 
@@ -57,8 +71,18 @@ export const useExtendedValidation = <PluginContext extends Record<string, any> 
       }
       validationRulesContext.rules.push(...options.rules);
     },
-    onSubscribe: buildHandler('subscribe', getTypeInfo, options.onValidationFailed),
-    onExecute: buildHandler('execute', getTypeInfo, options.onValidationFailed),
+    onSubscribe: buildHandler(
+      'subscribe',
+      getTypeInfo,
+      options.onValidationFailed,
+      options.rejectOnErrors !== false,
+    ),
+    onExecute: buildHandler(
+      'execute',
+      getTypeInfo,
+      options.onValidationFailed,
+      options.rejectOnErrors !== false,
+    ),
   };
 };
 
@@ -66,14 +90,14 @@ function buildHandler(
   name: 'execute' | 'subscribe',
   getTypeInfo: () => TypeInfo | undefined,
   onValidationFailed?: OnValidationFailedCallback,
+  rejectOnErrors = true,
 ) {
   return function handler({
     args,
     setResultAndStopExecution,
-  }: {
-    args: TypedSubscriptionArgs<any>;
-    setResultAndStopExecution: (newResult: ExecutionResult) => void;
-  }) {
+  }: OnExecuteEventPayload<any> | OnSubscribeEventPayload<any>):
+    | (OnExecuteHookResult<any> & OnSubscribeHookResult<any>)
+    | void {
     // We hook into onExecute/onSubscribe even though this is a validation pattern. The reasoning behind
     // it is that hooking right after validation and before execution has started is the
     // same as hooking into the validation step. The benefit of this approach is that
@@ -101,17 +125,74 @@ function buildHandler(
         const visitor = visitInParallel(
           validationRulesContext.rules.map(rule => rule(validationContext, args)),
         );
-        visit(args.document, visitWithTypeInfo(typeInfo, visitor));
+
+        args.document = visit(args.document, visitWithTypeInfo(typeInfo, visitor));
 
         if (errors.length > 0) {
-          let result: ExecutionResult = {
-            data: null,
-            errors,
-          };
-          if (onValidationFailed) {
-            onValidationFailed({ args, result, setResult: newResult => (result = newResult) });
+          if (rejectOnErrors) {
+            let result: ExecutionResult = {
+              data: null,
+              errors,
+            };
+            if (onValidationFailed) {
+              onValidationFailed({ args, result, setResult: newResult => (result = newResult) });
+            }
+            setResultAndStopExecution(result);
+          } else {
+            // eslint-disable-next-line no-inner-declarations
+            function onResult({
+              result,
+              setResult,
+            }: {
+              result: AsyncIterableIteratorOrValue<ExecutionResult>;
+              setResult: (result: AsyncIterableIteratorOrValue<ExecutionResult>) => void;
+            }) {
+              if (isAsyncIterable(result)) {
+                // rejectOnErrors is false doesn't work with async iterables
+                setResult({
+                  data: null,
+                  errors,
+                });
+                return;
+              }
+              const newResult = {
+                ...result,
+                errors: [...(result.errors || []), ...errors],
+              };
+              function visitPath(path: readonly (string | number)[], data: any = {}) {
+                let currentData = (data ||= typeof path[0] === 'number' ? [] : {});
+                for (const pathItemIndex in path.slice(0, -1)) {
+                  const pathItem = path[pathItemIndex];
+                  currentData = currentData[pathItem] ||=
+                    typeof path[Number(pathItemIndex) + 1] === 'number' ||
+                    path[Number(pathItemIndex) + 1]
+                      ? []
+                      : {};
+                  if (Array.isArray(currentData)) {
+                    let pathItemIndexInArray = Number(pathItemIndex) + 1;
+                    if (path[pathItemIndexInArray] === '@') {
+                      pathItemIndexInArray = Number(pathItemIndex) + 2;
+                    }
+                    currentData = currentData.map((c, i) =>
+                      visitPath(path.slice(pathItemIndexInArray), c),
+                    );
+                  }
+                }
+                currentData[path[path.length - 1]] = null;
+                return data;
+              }
+              errors.forEach(e => {
+                if (e.path?.length) {
+                  newResult.data = visitPath(e.path, newResult.data);
+                }
+              });
+              setResult(newResult);
+            }
+            return {
+              onSubscribeResult: onResult,
+              onExecuteDone: onResult,
+            };
           }
-          setResultAndStopExecution(result);
         }
       }
     }
