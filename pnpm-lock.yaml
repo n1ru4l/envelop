@@ -953,8 +953,8 @@ importers:
   packages/plugins/generic-auth:
     dependencies:
       '@envelop/extended-validation':
-        specifier: ^4.0.0
-        version: 4.0.0(@envelop/core@packages+core+dist)(graphql@16.6.0)
+        specifier: workspace:^
+        version: link:../extended-validation/dist
       '@graphql-tools/utils':
         specifier: ^10.5.1
         version: 10.5.4(graphql@16.6.0)
@@ -1195,8 +1195,8 @@ importers:
   packages/plugins/operation-field-permissions:
     dependencies:
       '@envelop/extended-validation':
-        specifier: ^4.0.0
-        version: 4.0.0(@envelop/core@packages+core+dist)(graphql@16.6.0)
+        specifier: workspace:^
+        version: link:../extended-validation/dist
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -1336,8 +1336,8 @@ importers:
   packages/plugins/resource-limitations:
     dependencies:
       '@envelop/extended-validation':
-        specifier: ^4.0.0
-        version: 4.0.0(@envelop/core@packages+core+dist)(graphql@16.6.0)
+        specifier: workspace:^
+        version: link:../extended-validation/dist
       '@graphql-tools/utils':
         specifier: ^10.0.0
         version: 10.0.0(graphql@16.6.0)
@@ -2806,13 +2806,6 @@ packages:
   '@envelop/core@5.0.0':
     resolution: {integrity: sha512-aJdnH/ptv+cvwfvciCBe7TSvccBwo9g0S5f6u35TBVzRVqIGkK03lFlIL+x1cnfZgN9EfR2b1PH2galrT1CdCQ==}
     engines: {node: '>=18.0.0'}
-
-  '@envelop/extended-validation@4.0.0':
-    resolution: {integrity: sha512-pvJ/OL+C+lpNiiCXezHT+vP3PTq37MQicoOB1l5MdgOOZZWRAp0NDOgvEKcXUY7AWNpvNHgSE0QFSRfGwsfwFQ==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      '@envelop/core': ^5.0.0
-      graphql: 16.6.0
 
   '@envelop/on-resolve@4.1.0':
     resolution: {integrity: sha512-2AXxf8jbBIepBUiY0KQtyCO6gnT7LKBEYdaARZBJ7ujy1+iQHQPORKvAwl51kIdD6v5x38eldZnm7A19jFimOg==}
@@ -13032,13 +13025,6 @@ snapshots:
     dependencies:
       '@envelop/types': 5.0.0
       tslib: 2.6.2
-
-  '@envelop/extended-validation@4.0.0(@envelop/core@packages+core+dist)(graphql@16.6.0)':
-    dependencies:
-      '@envelop/core': link:packages/core/dist
-      '@graphql-tools/utils': 10.5.4(graphql@16.6.0)
-      graphql: 16.6.0
-      tslib: 2.5.0
 
   '@envelop/on-resolve@4.1.0(@envelop/core@packages+core+dist)(graphql@16.6.0)':
     dependencies:

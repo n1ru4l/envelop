@@ -51,7 +51,7 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
-    "@envelop/extended-validation": "^4.0.0",
+    "@envelop/extended-validation": "workspace:^",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
