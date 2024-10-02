@@ -1,5 +1,5 @@
 ---
-'@envelop/sentry': patch
+'@envelop/sentry': major
 ---
 
 dependencies updates:
