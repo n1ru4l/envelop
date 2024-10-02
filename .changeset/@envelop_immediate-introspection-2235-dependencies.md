@@ -1,5 +1,5 @@
 ---
-'@envelop/immediate-introspection': patch
+'@envelop/immediate-introspection': major
 ---
 
 dependencies updates:
