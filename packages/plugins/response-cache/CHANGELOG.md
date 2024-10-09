@@ -1,5 +1,14 @@
 # @envelop/response-cache
 
+## 6.2.2
+
+### Patch Changes
+
+- [#2309](https://github.com/n1ru4l/envelop/pull/2309)
+  [`4fd5917`](https://github.com/n1ru4l/envelop/commit/4fd5917d09988a175624ea75540a1a8aeaf89fbf)
+  Thanks [@n1ru4l](https://github.com/n1ru4l)! - Strip `__responseCacheId` and
+  `__responseCacheTypeName` from incremental delivery execution result.
+
 ## 6.2.1
 
 ### Patch Changes

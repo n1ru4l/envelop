@@ -1,5 +1,17 @@
 # @envelop/sentry
 
+## 10.0.0
+
+### Major Changes
+
+- [#2277](https://github.com/n1ru4l/envelop/pull/2277)
+  [`9f65fcb`](https://github.com/n1ru4l/envelop/commit/9f65fcba8e0a6c37b43ac71012a46e4ff65f3157)
+  Thanks [@trixobird](https://github.com/trixobird)! - dependencies updates:
+
+  - Updated dependency
+    [`@sentry/node@^8.0.0` ↗︎](https://www.npmjs.com/package/@sentry/node/v/8.0.0) (from
+    `^6 || ^7`, in `peerDependencies`)
+
 ## 9.0.0
 
 ### Major Changes
