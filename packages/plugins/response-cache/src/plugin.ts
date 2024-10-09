@@ -411,6 +411,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           executed = true;
           return execute(args);
         });
+
         return {
           onExecuteDone(params) {
             if (!executed) {
@@ -448,32 +449,34 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           processResult(data[fieldName]);
         }
 
-        if (!skip) {
-          if (ignoredTypesMap.has(typename) || (!sessionId && isPrivate(typename, data))) {
-            skip = true;
-            return;
-          }
+        if (skip) {
+          return;
+        }
 
-          types.add(typename);
-          if (typename in ttlPerType) {
-            const maybeTtl = ttlPerType[typename] as unknown;
-            currentTtl = calculateTtl(maybeTtl, currentTtl);
-          }
-          if (entityId != null) {
-            identifier.set(`${typename}:${entityId}`, { typename, id: entityId });
-          }
-          for (const fieldName in data) {
-            const fieldData = data[fieldName];
-            if (fieldData == null || (Array.isArray(fieldData) && fieldData.length === 0)) {
-              const inferredTypes = typePerSchemaCoordinateMap.get(`${typename}.${fieldName}`);
-              inferredTypes?.forEach(inferredType => {
-                if (inferredType in ttlPerType) {
-                  const maybeTtl = ttlPerType[inferredType] as unknown;
-                  currentTtl = calculateTtl(maybeTtl, currentTtl);
-                }
-                identifier.set(inferredType, { typename: inferredType });
-              });
-            }
+        if (ignoredTypesMap.has(typename) || (!sessionId && isPrivate(typename, data))) {
+          skip = true;
+          return;
+        }
+
+        types.add(typename);
+        if (typename in ttlPerType) {
+          const maybeTtl = ttlPerType[typename] as unknown;
+          currentTtl = calculateTtl(maybeTtl, currentTtl);
+        }
+        if (entityId != null) {
+          identifier.set(`${typename}:${entityId}`, { typename, id: entityId });
+        }
+        for (const fieldName in data) {
+          const fieldData = data[fieldName];
+          if (fieldData == null || (Array.isArray(fieldData) && fieldData.length === 0)) {
+            const inferredTypes = typePerSchemaCoordinateMap.get(`${typename}.${fieldName}`);
+            inferredTypes?.forEach(inferredType => {
+              if (inferredType in ttlPerType) {
+                const maybeTtl = ttlPerType[inferredType] as unknown;
+                currentTtl = calculateTtl(maybeTtl, currentTtl);
+              }
+              identifier.set(inferredType, { typename: inferredType });
+            });
           }
         }
       }
@@ -609,22 +612,19 @@ function handleAsyncIterableResult<PluginContext extends Record<string, any> = {
   const result: ExecutionResult = {};
   return {
     onNext(payload) {
-      const { data, errors, extensions } = payload.result;
-
       // This is the first result with the initial data payload sent to the client. We use it as the base result
-      if (data) {
-        result.data = data;
+      if (payload.result.data) {
+        result.data = payload.result.data;
       }
-      if (errors) {
-        result.errors = errors;
+      if (payload.result.errors) {
+        result.errors = payload.result.errors;
       }
-      if (extensions) {
-        result.extensions = extensions;
+      if (payload.result.extensions) {
+        result.extensions = payload.result.extensions;
       }
 
       if ('hasNext' in payload.result) {
         const { incremental, hasNext } = payload.result;
-
         if (incremental) {
           for (const patch of incremental) {
             mergeIncrementalResult({ executionResult: result, incrementalResult: patch });
@@ -636,6 +636,12 @@ function handleAsyncIterableResult<PluginContext extends Record<string, any> = {
           handler(result, payload.setResult);
         }
       }
+
+      const newResult = { ...payload.result };
+      if (newResult.data) {
+        newResult.data = removeMetadataFieldsFromResult(newResult.data);
+      }
+      payload.setResult(newResult);
     },
   };
 }
@@ -684,3 +690,22 @@ export const cacheControlDirective = /* GraphQL */ `
 
   directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT
 `;
+
+function removeMetadataFieldsFromResult(data: Record<string, unknown>): any {
+  if (Array.isArray(data)) {
+    return data.map(removeMetadataFieldsFromResult);
+  }
+  // clone the data to avoid mutation
+  data = { ...data };
+
+  delete data.__responseCacheTypeName;
+  delete data.__responseCacheId;
+
+  for (const key in data) {
+    if (typeof data[key] === 'object') {
+      data[key] = removeMetadataFieldsFromResult(data[key] as Record<string, unknown>);
+    }
+  }
+
+  return data;
+}
