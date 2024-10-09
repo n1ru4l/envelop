@@ -698,12 +698,8 @@ function removeMetadataFieldsFromResult(data: Record<string, unknown>): any {
   // clone the data to avoid mutation
   data = { ...data };
 
-  if (data.__responseCacheTypeName) {
-    delete data.__responseCacheTypeName;
-  }
-  if (data.__responseCacheId) {
-    delete data.__responseCacheId;
-  }
+  delete data.__responseCacheTypeName;
+  delete data.__responseCacheId;
 
   for (const key in data) {
     if (typeof data[key] === 'object') {
