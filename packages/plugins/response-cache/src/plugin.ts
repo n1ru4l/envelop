@@ -5,6 +5,10 @@ import {
   ExecutionArgs,
   getOperationAST,
   GraphQLDirective,
+  GraphQLType,
+  isListType,
+  isNonNullType,
+  isUnionType,
   Kind,
   print,
   TypeInfo,
@@ -411,7 +415,6 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           executed = true;
           return execute(args);
         });
-
         return {
           onExecuteDone(params) {
             if (!executed) {
@@ -672,14 +675,19 @@ function calculateTtl(typeTtl: unknown, currentTtl: number | undefined): number 
   return currentTtl;
 }
 
-function unwrapTypenames(type: any): string[] {
-  if (type.ofType) {
-    return unwrapTypenames(type.ofType);
+function unwrapTypenames(ttype: GraphQLType): string[] {
+  if (isListType(ttype) || isNonNullType(ttype)) {
+    return unwrapTypenames(ttype.ofType);
   }
-  if (type._types) {
-    return type._types.map((t: any) => unwrapTypenames(t)).flat();
+
+  if (isUnionType(ttype)) {
+    return ttype
+      .getTypes()
+      .map(ttype => unwrapTypenames(ttype))
+      .flat();
   }
-  return [type.name];
+
+  return [ttype.name];
 }
 
 export const cacheControlDirective = /* GraphQL */ `
@@ -691,7 +699,7 @@ export const cacheControlDirective = /* GraphQL */ `
   directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT
 `;
 
-function removeMetadataFieldsFromResult(data: Record<string, unknown>): any {
+function removeMetadataFieldsFromResult(data: null | Record<string, unknown>): any {
   if (Array.isArray(data)) {
     return data.map(removeMetadataFieldsFromResult);
   }
