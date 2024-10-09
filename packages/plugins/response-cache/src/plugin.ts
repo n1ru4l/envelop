@@ -5,6 +5,10 @@ import {
   ExecutionArgs,
   getOperationAST,
   GraphQLDirective,
+  GraphQLType,
+  isListType,
+  isNonNullType,
+  isUnionType,
   Kind,
   print,
   TypeInfo,
@@ -411,7 +415,6 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           executed = true;
           return execute(args);
         });
-
         return {
           onExecuteDone(params) {
             if (!executed) {
@@ -425,51 +428,39 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         };
       }
 
-      function processResult(data: any) {
-        if (data == null || typeof data !== 'object') {
-          return;
-        }
-
-        if (Array.isArray(data)) {
-          for (const item of data) {
-            processResult(item);
-          }
-          return;
-        }
-
-        const typename = data.__responseCacheTypeName ?? data.__typename;
-        delete data.__responseCacheTypeName;
-        const idField = typename && idFieldByTypeName.get(typename);
-        const entityId = data.__responseCacheId ?? (idField && data[idField]);
-        delete data.__responseCacheId;
-
-        // Always process nested objects, even if we are skipping cache, to ensure the result is cleaned up
-        // of metadata fields added to the query document.
-        for (const fieldName in data) {
-          processResult(data[fieldName]);
-        }
-
+      function onEntity(entity: CacheEntityRecord, data: Record<string, unknown>): void {
         if (skip) {
           return;
         }
 
-        if (ignoredTypesMap.has(typename) || (!sessionId && isPrivate(typename, data))) {
+        if (
+          ignoredTypesMap.has(entity.typename) ||
+          (!sessionId && isPrivate(entity.typename, data))
+        ) {
           skip = true;
           return;
         }
 
-        types.add(typename);
-        if (typename in ttlPerType) {
-          const maybeTtl = ttlPerType[typename] as unknown;
+        // in case the entity has no id, we attempt to extract it from the data
+        if (!entity.id) {
+          const idField = idFieldByTypeName.get(entity.typename);
+          if (idField) {
+            entity.id = data[idField] as string | number | undefined;
+          }
+        }
+
+        types.add(entity.typename);
+        if (entity.typename in ttlPerType) {
+          const maybeTtl = ttlPerType[entity.typename] as unknown;
           currentTtl = calculateTtl(maybeTtl, currentTtl);
         }
-        if (entityId != null) {
-          identifier.set(`${typename}:${entityId}`, { typename, id: entityId });
+        if (entity.id != null) {
+          identifier.set(`${entity.typename}:${entity.id}`, entity);
         }
         for (const fieldName in data) {
           const fieldData = data[fieldName];
           if (fieldData == null || (Array.isArray(fieldData) && fieldData.length === 0)) {
-            const inferredTypes = typePerSchemaCoordinateMap.get(`${typename}.${fieldName}`);
+            const inferredTypes = typePerSchemaCoordinateMap.get(`${entity.typename}.${fieldName}`);
             inferredTypes?.forEach(inferredType => {
               if (inferredType in ttlPerType) {
                 const maybeTtl = ttlPerType[inferredType] as unknown;
@@ -485,7 +476,10 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         result: ExecutionResult,
         setResult: (newResult: ExecutionResult) => void,
       ): void {
-        processResult(result.data);
+        result = { ...result };
+        if (result.data) {
+          result.data = removeMetadataFieldsFromResult(result.data, onEntity);
+        }
 
         const cacheInstance = cacheFactory(onExecuteParams.args.contextValue);
         if (cacheInstance == null) {
@@ -563,7 +557,10 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         result: ExecutionResult,
         setResult: (newResult: ExecutionResult) => void,
       ) {
-        processResult(result.data);
+        if (result.data) {
+          result.data = removeMetadataFieldsFromResult(result.data, onEntity);
+        }
+
         // we only use the global ttl if no currentTtl has been determined.
         const finalTtl = currentTtl ?? globalTtl;
 
@@ -638,8 +635,29 @@ function handleAsyncIterableResult<PluginContext extends Record<string, any> = {
       }
 
       const newResult = { ...payload.result };
+
+      // Handle initial/single result
       if (newResult.data) {
         newResult.data = removeMetadataFieldsFromResult(newResult.data);
+      }
+
+      // Handle Incremental results
+      if ('hasNext' in newResult && newResult.incremental) {
+        newResult.incremental = newResult.incremental.map(value => {
+          if ('items' in value && value.items) {
+            return {
+              ...value,
+              items: removeMetadataFieldsFromResult(value.items),
+            };
+          }
+          if ('data' in value && value.data) {
+            return {
+              ...value,
+              data: removeMetadataFieldsFromResult(value.data),
+            };
+          }
+          return value;
+        });
       }
       payload.setResult(newResult);
     },
@@ -672,14 +690,19 @@ function calculateTtl(typeTtl: unknown, currentTtl: number | undefined): number 
   return currentTtl;
 }
 
-function unwrapTypenames(type: any): string[] {
-  if (type.ofType) {
-    return unwrapTypenames(type.ofType);
+function unwrapTypenames(ttype: GraphQLType): string[] {
+  if (isListType(ttype) || isNonNullType(ttype)) {
+    return unwrapTypenames(ttype.ofType);
   }
-  if (type._types) {
-    return type._types.map((t: any) => unwrapTypenames(t)).flat();
+
+  if (isUnionType(ttype)) {
+    return ttype
+      .getTypes()
+      .map(ttype => unwrapTypenames(ttype))
+      .flat();
   }
-  return [type.name];
+
+  return [ttype.name];
 }
 
 export const cacheControlDirective = /* GraphQL */ `
@@ -691,19 +714,53 @@ export const cacheControlDirective = /* GraphQL */ `
   directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT
 `;
 
-function removeMetadataFieldsFromResult(data: Record<string, unknown>): any {
+type OnEntityHandler = (
+  entity: CacheEntityRecord,
+  data: Record<string, unknown>,
+) => void | Promise<void>;
+
+function removeMetadataFieldsFromResult(
+  data: Record<string, unknown>,
+  onEntity?: OnEntityHandler,
+): Record<string, unknown>;
+function removeMetadataFieldsFromResult(
+  data: Array<Record<string, unknown>>,
+  onEntity?: OnEntityHandler,
+): Array<Record<string, unknown>>;
+function removeMetadataFieldsFromResult(
+  data: Record<string, unknown> | Array<Record<string, unknown>>,
+  onEntity?: OnEntityHandler,
+): Record<string, unknown> | Array<Record<string, unknown>> {
   if (Array.isArray(data)) {
-    return data.map(removeMetadataFieldsFromResult);
+    return data.map(record => removeMetadataFieldsFromResult(record, onEntity));
   }
+
   // clone the data to avoid mutation
   data = { ...data };
 
-  delete data.__responseCacheTypeName;
-  delete data.__responseCacheId;
+  const typename = data.__responseCacheTypeName ?? data.__typename;
+  if (typeof typename === 'string') {
+    const entity: CacheEntityRecord = { typename };
+    delete data.__responseCacheTypeName;
+
+    if (
+      data.__responseCacheId &&
+      (typeof data.__responseCacheId === 'string' || typeof data.__responseCacheId === 'number')
+    ) {
+      entity.id = data.__responseCacheId;
+      delete data.__responseCacheId;
+    }
+
+    onEntity?.(entity, data);
+  }
 
   for (const key in data) {
-    if (typeof data[key] === 'object') {
-      data[key] = removeMetadataFieldsFromResult(data[key] as Record<string, unknown>);
+    const value = data[key];
+    if (Array.isArray(value)) {
+      data[key] = removeMetadataFieldsFromResult(value, onEntity);
+    }
+    if (value !== null && typeof value === 'object') {
+      data[key] = removeMetadataFieldsFromResult(value as Record<string, unknown>, onEntity);
     }
   }
 
