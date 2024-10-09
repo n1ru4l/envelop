@@ -478,10 +478,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
       ): void {
         result = { ...result };
         if (result.data) {
-          result.data = removeMetadataFieldsFromResult(
-            result.data as RemoveMetadataFieldsFromResultData,
-            onEntity,
-          );
+          result.data = removeMetadataFieldsFromResult(result.data, onEntity);
         }
 
         const cacheInstance = cacheFactory(onExecuteParams.args.contextValue);
@@ -561,10 +558,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         setResult: (newResult: ExecutionResult) => void,
       ) {
         if (result.data) {
-          result.data = removeMetadataFieldsFromResult(
-            result.data as RemoveMetadataFieldsFromResultData,
-            onEntity,
-          );
+          result.data = removeMetadataFieldsFromResult(result.data, onEntity);
         }
 
         // we only use the global ttl if no currentTtl has been determined.
@@ -644,9 +638,7 @@ function handleAsyncIterableResult<PluginContext extends Record<string, any> = {
 
       // Handle initial/single result
       if (newResult.data) {
-        newResult.data = removeMetadataFieldsFromResult(
-          newResult.data as RemoveMetadataFieldsFromResultData,
-        );
+        newResult.data = removeMetadataFieldsFromResult(newResult.data);
       }
 
       // Handle Incremental results
@@ -655,17 +647,13 @@ function handleAsyncIterableResult<PluginContext extends Record<string, any> = {
           if ('items' in value && value.items) {
             return {
               ...value,
-              items: removeMetadataFieldsFromResult(
-                value.items as MaybeArray<RemoveMetadataFieldsFromResultData>,
-              ),
+              items: removeMetadataFieldsFromResult(value.items),
             };
           }
           if ('data' in value && value.data) {
             return {
               ...value,
-              data: removeMetadataFieldsFromResult(
-                value.data as RemoveMetadataFieldsFromResultData,
-              ),
+              data: removeMetadataFieldsFromResult(value.data),
             };
           }
           return value;
@@ -731,21 +719,18 @@ type OnEntityHandler = (
   data: Record<string, unknown>,
 ) => void | Promise<void>;
 
-type MaybeArray<T> = T | T[];
-
-interface RemoveMetadataFieldsFromResultData {
-  [key: string]:
-    | null
-    | string
-    | number
-    | MaybeArray<RemoveMetadataFieldsFromResultData>
-    | undefined;
-}
-
 function removeMetadataFieldsFromResult(
-  data: MaybeArray<RemoveMetadataFieldsFromResultData>,
+  data: Record<string, unknown>,
   onEntity?: OnEntityHandler,
-): any {
+): Record<string, unknown>;
+function removeMetadataFieldsFromResult(
+  data: Array<Record<string, unknown>>,
+  onEntity?: OnEntityHandler,
+): Array<Record<string, unknown>>;
+function removeMetadataFieldsFromResult(
+  data: Record<string, unknown> | Array<Record<string, unknown>>,
+  onEntity?: OnEntityHandler,
+): Record<string, unknown> | Array<Record<string, unknown>> {
   if (Array.isArray(data)) {
     return data.map(record => removeMetadataFieldsFromResult(record, onEntity));
   }
@@ -753,8 +738,9 @@ function removeMetadataFieldsFromResult(
   // clone the data to avoid mutation
   data = { ...data };
 
-  if (data.__responseCacheTypeName && typeof data.__responseCacheTypeName === 'string') {
-    const entity: CacheEntityRecord = { typename: data.__responseCacheTypeName };
+  const typename = data.__responseCacheTypeName ?? data.__typename;
+  if (typeof typename === 'string') {
+    const entity: CacheEntityRecord = { typename };
     delete data.__responseCacheTypeName;
 
     if (
@@ -769,11 +755,12 @@ function removeMetadataFieldsFromResult(
   }
 
   for (const key in data) {
-    if (data[key] != null) {
-      data[key] = removeMetadataFieldsFromResult(
-        data[key] as MaybeArray<RemoveMetadataFieldsFromResultData>,
-        onEntity,
-      );
+    const value = data[key];
+    if (Array.isArray(value)) {
+      data[key] = removeMetadataFieldsFromResult(value, onEntity);
+    }
+    if (value !== null && typeof value === 'object') {
+      data[key] = removeMetadataFieldsFromResult(value as Record<string, unknown>, onEntity);
     }
   }
 
