@@ -4099,3 +4099,77 @@ it('calls enabled fn after context building', async () => {
     },
   });
 });
+
+it('correctly remove cache keys from incremental delivery result', async () => {
+  const schema = makeExecutableSchema({
+    typeDefs: /* GraphQL */ `
+      type Query {
+        users: [User!]!
+      }
+
+      type User {
+        id: ID!
+        name: String!
+      }
+
+      directive @stream on FIELD
+    `,
+    resolvers: {
+      Query: {
+        async *users() {
+          yield { id: '1', name: 'Alice' };
+          await new Promise(resolve => setTimeout(resolve, 10));
+          yield { id: '2', name: 'Bob' };
+        },
+      },
+    },
+  });
+
+  const testInstance = createTestkit(
+    [
+      useEngine({ ...GraphQLJS, execute: normalizedExecutor, subscribe: normalizedExecutor }),
+      useResponseCache({ session: () => null }),
+    ],
+    schema,
+  );
+
+  const query = /* GraphQL */ `
+    query test {
+      users @stream {
+        id
+        name
+      }
+    }
+  `;
+  const result = await testInstance.execute(query);
+  assertStreamExecutionValue(result);
+  const result1 = (await result.next()).value;
+  const result2 = (await result.next()).value;
+  const result3 = (await result.next()).value;
+  const result4 = (await result.next()).value;
+
+  expect(result1).toEqual({ data: { users: [] }, hasNext: true });
+  expect(result2).toEqual({
+    incremental: [{ items: [{ id: '1', name: 'Alice' }], path: ['users', 0] }],
+    hasNext: true,
+  });
+  expect(result3).toEqual({
+    incremental: [{ items: [{ id: '2', name: 'Bob' }], path: ['users', 1] }],
+    hasNext: true,
+  });
+  expect(result4).toEqual({ hasNext: false });
+
+  const secondResult = await testInstance.execute(query);
+  assertSingleExecutionValue(secondResult);
+  expect(secondResult).toEqual({
+    data: {
+      users: [
+        { id: '1', name: 'Alice' },
+        {
+          id: '2',
+          name: 'Bob',
+        },
+      ],
+    },
+  });
+});
