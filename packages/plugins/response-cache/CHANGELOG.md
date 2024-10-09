@@ -1,5 +1,13 @@
 # @envelop/response-cache
 
+## 6.2.3
+
+### Patch Changes
+
+- [#2310](https://github.com/n1ru4l/envelop/pull/2310)
+  [`9ddb3bd`](https://github.com/n1ru4l/envelop/commit/9ddb3bd77772255715159d699c4273616c46e566)
+  Thanks [@n1ru4l](https://github.com/n1ru4l)! - internal refactors
+
 ## 6.2.2
 
 ### Patch Changes
