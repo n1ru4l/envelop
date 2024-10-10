@@ -1,5 +1,13 @@
 # @envelop/response-cache
 
+## 6.2.4
+
+### Patch Changes
+
+- [`c1720a8`](https://github.com/n1ru4l/envelop/commit/c1720a8ff4fb2ecc246da8e147f032ee46adda00)
+  Thanks [@n1ru4l](https://github.com/n1ru4l)! - Fix handling of primitive list values that was
+  introduced in the last release.
+
 ## 6.2.3
 
 ### Patch Changes
