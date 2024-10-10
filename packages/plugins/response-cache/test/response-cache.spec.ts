@@ -4100,6 +4100,63 @@ it('calls enabled fn after context building', async () => {
   });
 });
 
+it('array of primitives is returned correctly (issue #2314)', async () => {
+  const schema = makeExecutableSchema({
+    typeDefs: /* GraphQL */ `
+      type Query {
+        a: [String!]!
+        b: B!
+      }
+
+      type B {
+        id: ID!
+        a: [String!]!
+      }
+    `,
+    resolvers: {
+      Query: {
+        a() {
+          return ['AA', 'BB', 'CC'];
+        },
+        b() {
+          return {};
+        },
+      },
+      B: {
+        id() {
+          return '1';
+        },
+        a() {
+          return ['AA', 'BB', 'CC'];
+        },
+      },
+    },
+  });
+
+  const testInstance = createTestkit([useResponseCache({ session: () => null })], schema);
+
+  const query = /* GraphQL */ `
+    query test {
+      a
+      b {
+        id
+        a
+      }
+    }
+  `;
+  const result = await testInstance.execute(query);
+  assertSingleExecutionValue(result);
+  expect(result).toEqual({
+    data: {
+      a: ['AA', 'BB', 'CC'],
+      b: {
+        a: ['AA', 'BB', 'CC'],
+        id: '1',
+      },
+    },
+  });
+});
+
 it('correctly remove cache keys from incremental delivery result', async () => {
   const schema = makeExecutableSchema({
     typeDefs: /* GraphQL */ `

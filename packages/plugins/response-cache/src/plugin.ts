@@ -728,11 +728,19 @@ function removeMetadataFieldsFromResult(
   onEntity?: OnEntityHandler,
 ): Array<Record<string, unknown>>;
 function removeMetadataFieldsFromResult(
-  data: Record<string, unknown> | Array<Record<string, unknown>>,
+  data: null | undefined,
   onEntity?: OnEntityHandler,
-): Record<string, unknown> | Array<Record<string, unknown>> {
+): null | undefined;
+function removeMetadataFieldsFromResult(
+  data: Record<string, unknown> | Array<Record<string, unknown>> | null | undefined,
+  onEntity?: OnEntityHandler,
+): Record<string, unknown> | Array<unknown> | null | undefined {
   if (Array.isArray(data)) {
     return data.map(record => removeMetadataFieldsFromResult(record, onEntity));
+  }
+
+  if (typeof data !== 'object' || data == null) {
+    return data;
   }
 
   // clone the data to avoid mutation
