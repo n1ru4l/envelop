@@ -83,9 +83,15 @@ export type FillLabelsFn<LabelNames extends string, Params extends Record<string
   rawContext: any,
 ) => Record<LabelNames, string | number>;
 
+export type ShouldRecordFn<Params extends Record<string, any>> = (
+  params: Params,
+  rawContext: any,
+) => boolean;
+
 export type HistogramAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
   histogram: Histogram<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  shouldRecordFn: ShouldRecordFn<Params>;
 };
 
 export function registerHistogram<LabelNames extends string>(
@@ -109,18 +115,26 @@ export function createHistogram<
 >(options: {
   registry: Registry;
   histogram: Omit<HistogramConfiguration<LabelNames>, 'registers'>;
+  /**
+   * A function that should return the key-value labels for the metric based on the provided params.
+   */
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  /**
+   * A function that determines whether a metric should be recorded. Defaults to `() => true`.
+   */
+  shouldRecordFn?: ShouldRecordFn<Params>;
 }): HistogramAndLabels<LabelNames, Params> {
   return {
     histogram: registerHistogram(options.registry, options.histogram),
-    // histogram: new Histogram(options.histogram),
     fillLabelsFn: options.fillLabelsFn,
+    shouldRecordFn: options.shouldRecordFn ?? (() => true),
   };
 }
 
 export type SummaryAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
   summary: Summary<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  shouldRecordFn: ShouldRecordFn<Params>;
 };
 
 export function registerSummary<LabelNames extends string>(
@@ -144,11 +158,19 @@ export function createSummary<
 >(options: {
   registry: Registry;
   summary: Omit<SummaryConfiguration<LabelNames>, 'registers'>;
+  /**
+   * A function that should return the key-value labels for the metric based on the provided params.
+   */
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  /**
+   * A function that determines whether a metric should be recorded. Defaults to `() => true`.
+   */
+  shouldRecordFn?: ShouldRecordFn<Params>;
 }): SummaryAndLabels<LabelNames, Params> {
   return {
     summary: registerSummary(options.registry, options.summary),
     fillLabelsFn: options.fillLabelsFn,
+    shouldRecordFn: options.shouldRecordFn ?? (() => true),
   };
 }
 
@@ -197,6 +219,7 @@ export function getHistogramFromConfig<
     operationName: params.operationName!,
     operationType: params.operationType!,
   }),
+  shouldRecordFn: ShouldRecordFn<Params> = _params => true,
 ): ReturnType<typeof createHistogram<string, Params>> | undefined {
   const metric = (config.metrics as MetricOptions)[phase];
   if (Array.isArray(metric) && metric.length === 0) {
@@ -216,6 +239,7 @@ export function getHistogramFromConfig<
             ),
           },
           fillLabelsFn: (...args) => filterFillParamsFnParams(config, fillLabelsFn(...args)),
+          shouldRecordFn,
         })
       : undefined;
 }
@@ -232,6 +256,7 @@ export function getSummaryFromConfig<
       operationName: params.operationName!,
       operationType: params.operationType!,
     }),
+  shouldRecordFn: ShouldRecordFn<Params> = _params => true,
 ): ReturnType<typeof createSummary<string, Params>> | undefined {
   const metric = (config.metrics as MetricOptions)[phase];
   return typeof metric === 'object'
@@ -247,6 +272,7 @@ export function getSummaryFromConfig<
             ...summary,
           },
           fillLabelsFn,
+          shouldRecordFn,
         })
       : undefined;
 }

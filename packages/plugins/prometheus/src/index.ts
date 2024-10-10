@@ -187,11 +187,12 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       }
 
       if (fillLabelsFnParams) {
-        parseHistogram?.histogram.observe(
-          parseHistogram.fillLabelsFn(fillLabelsFnParams, context),
-          totalTime,
-        );
-
+        if (parseHistogram?.shouldRecordFn(fillLabelsFnParams, context)) {
+          parseHistogram.histogram.observe(
+            parseHistogram.fillLabelsFn(fillLabelsFnParams, context),
+            totalTime,
+          );
+        }
         if (deprecationCounter && typeInfo) {
           const deprecatedFields = extractDeprecatedFields(fillLabelsFnParams.document!, typeInfo);
 
@@ -234,7 +235,9 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
         return ({ valid }) => {
           const totalTime = (Date.now() - startTime) / 1000;
           const labels = validateHistogram.fillLabelsFn(fillLabelsFnParams, context);
-          validateHistogram.histogram.observe(labels, totalTime);
+          if (validateHistogram?.shouldRecordFn(fillLabelsFnParams, context)) {
+            validateHistogram.histogram.observe(labels, totalTime);
+          }
 
           if (!valid) {
             errorsCounter?.counter
@@ -258,11 +261,13 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
         const startTime = Date.now();
 
         return () => {
-          const totalTime = (Date.now() - startTime) / 1000;
-          contextBuildingHistogram.histogram.observe(
-            contextBuildingHistogram.fillLabelsFn(fillLabelsFnParams, context),
-            totalTime,
-          );
+          if (contextBuildingHistogram.shouldRecordFn(fillLabelsFnParams, context)) {
+            const totalTime = (Date.now() - startTime) / 1000;
+            contextBuildingHistogram.histogram.observe(
+              contextBuildingHistogram.fillLabelsFn(fillLabelsFnParams, context),
+              totalTime,
+            );
+          }
         };
       }
     : undefined;
@@ -303,23 +308,29 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
             const execStartTime = execStartTimeMap.get(args.contextValue);
             const handleEnd = () => {
               const totalTime = (Date.now() - startTime) / 1000;
-              executeHistogram.histogram.observe(
-                executeHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-                totalTime,
-              );
+              if (executeHistogram.shouldRecordFn(fillLabelsFnParams, args.contextValue)) {
+                executeHistogram.histogram.observe(
+                  executeHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                  totalTime,
+                );
+              }
 
-              requestTotalHistogram?.histogram.observe(
-                requestTotalHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-                totalTime,
-              );
+              if (requestTotalHistogram?.shouldRecordFn(fillLabelsFnParams, args.contextValue)) {
+                requestTotalHistogram.histogram.observe(
+                  requestTotalHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                  totalTime,
+                );
+              }
 
               if (requestSummary && execStartTime) {
                 const summaryTime = (Date.now() - execStartTime) / 1000;
 
-                requestSummary.summary.observe(
-                  requestSummary.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-                  summaryTime,
-                );
+                if (requestSummary.shouldRecordFn(fillLabelsFnParams, args.contextValue)) {
+                  requestSummary.summary.observe(
+                    requestSummary.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                    summaryTime,
+                  );
+                }
               }
             };
             if (!isAsyncIterable(result)) {
@@ -379,23 +390,29 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
             const execStartTime = execStartTimeMap.get(args.contextValue);
             const handleEnd = () => {
               const totalTime = (Date.now() - startTime) / 1000;
-              subscribeHistogram.histogram.observe(
-                subscribeHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-                totalTime,
-              );
+              if (subscribeHistogram.shouldRecordFn(fillLabelsFnParams, args.contextValue)) {
+                subscribeHistogram.histogram.observe(
+                  subscribeHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                  totalTime,
+                );
+              }
 
-              requestTotalHistogram?.histogram.observe(
-                requestTotalHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-                totalTime,
-              );
+              if (requestTotalHistogram?.shouldRecordFn(fillLabelsFnParams, args.contextValue)) {
+                requestTotalHistogram.histogram.observe(
+                  requestTotalHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                  totalTime,
+                );
+              }
 
               if (requestSummary && execStartTime) {
                 const summaryTime = (Date.now() - execStartTime) / 1000;
 
-                requestSummary.summary.observe(
-                  requestSummary.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-                  summaryTime,
-                );
+                if (requestSummary.shouldRecordFn(fillLabelsFnParams, args.contextValue)) {
+                  requestSummary.summary.observe(
+                    requestSummary.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                    summaryTime,
+                  );
+                }
               }
             };
             if (!isAsyncIterable(result)) {
@@ -445,10 +462,12 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
                 ...fillLabelsFnParams,
                 info,
               };
-              resolversHistogram.histogram.observe(
-                resolversHistogram.fillLabelsFn(paramsCtx, context),
-                totalTime,
-              );
+              if (resolversHistogram.shouldRecordFn(paramsCtx, context)) {
+                resolversHistogram.histogram.observe(
+                  resolversHistogram.fillLabelsFn(paramsCtx, context),
+                  totalTime,
+                );
+              }
             };
           }),
         );

@@ -455,6 +455,74 @@ describe('Prom Metrics plugin', () => {
       );
     });
 
+    describe('shouldRecordFn', () => {
+      let registry: Registry;
+      let config: ReturnType<typeof createConfig>;
+
+      const createConfig = (registry: Registry) => ({
+        metrics: {
+          graphql_envelop_error_result: true,
+          graphql_envelop_phase_execute: createHistogram({
+            registry,
+            histogram: {
+              name: 'graphql_envelop_phase_execute',
+              help: 'HELP ME',
+              labelNames: ['opText'] as const,
+            },
+            fillLabelsFn: params => {
+              return {
+                opText: print(params.document!),
+              };
+            },
+            shouldRecordFn: () => {
+              throw new Error('jest should be used to mock implementation');
+            },
+          }),
+        },
+      });
+
+      beforeEach(() => {
+        registry = new Registry();
+        config = createConfig(registry);
+      });
+
+      describe('when shouldRecordFn returns true', () => {
+        beforeEach(() => {
+          jest
+            .spyOn(config.metrics.graphql_envelop_phase_execute, 'shouldRecordFn')
+            .mockReturnValue(true);
+        });
+
+        it('performs a histogram observation', async () => {
+          const { execute, metricCount } = prepare(config, registry);
+          const result = await execute('query { regularField }');
+          assertSingleExecutionValue(result);
+
+          expect(result.errors).toBeUndefined();
+          expect(await metricCount('graphql_envelop_error_result')).toBe(0);
+          expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
+        });
+      });
+
+      describe('when shouldRecordFn returns false', () => {
+        beforeEach(() => {
+          jest
+            .spyOn(config.metrics.graphql_envelop_phase_execute, 'shouldRecordFn')
+            .mockReturnValue(false);
+        });
+
+        it('does not perform a histogram observation', async () => {
+          const { execute, metricCount } = prepare(config, registry);
+          const result = await execute('query { regularField }');
+          assertSingleExecutionValue(result);
+
+          expect(result.errors).toBeUndefined();
+          expect(await metricCount('graphql_envelop_error_result')).toBe(0);
+          expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(0);
+        });
+      });
+    });
+
     it('Should trace error during execute with a single error', async () => {
       const { execute, metricCount, metricString } = prepare({
         metrics: {
