@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-import { ExecutionResult, GraphQLSchema, TypeInfo } from 'graphql';
+import { ExecutionResult, GraphQLSchema, TypeInfo, type GraphQLError } from 'graphql';
 import { register as defaultRegistry } from 'prom-client';
 import {
   isAsyncIterable,
@@ -177,82 +177,91 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     const startTime = Date.now();
 
     return params => {
-      const totalTime = (Date.now() - startTime) / 1000;
-      let fillLabelsFnParams = fillLabelsFnParamsMap.get(params.result);
+      const fillLabelsFnParams = createFillLabelFnParams(params.result, context, params =>
+        filterFillParamsFnParams(config, params),
+      );
+      fillLabelsFnParamsMap.set(context, fillLabelsFnParams);
+
       if (!fillLabelsFnParams) {
-        fillLabelsFnParams = createFillLabelFnParams(params.result, context, params =>
-          filterFillParamsFnParams(config, params),
-        );
-        fillLabelsFnParamsMap.set(context, fillLabelsFnParams);
+        // means that we got a parse error
+        if (
+          errorsCounter?.shouldObserve?.({ error: params.result, errorPhase: 'parse' }, context)
+        ) {
+          // TODO: use fillLabelsFn
+          errorsCounter?.counter.labels({ phase: 'parse' }).inc();
+        }
+        // TODO: We should probably always report parse timing, error or not.
+        return;
       }
 
-      if (fillLabelsFnParams) {
+      const totalTime = (Date.now() - startTime) / 1000;
+
+      if (parseHistogram?.shouldObserve?.(fillLabelsFnParams, context)) {
         parseHistogram?.histogram.observe(
           parseHistogram.fillLabelsFn(fillLabelsFnParams, context),
           totalTime,
         );
+      }
 
-        if (deprecationCounter && typeInfo) {
-          const deprecatedFields = extractDeprecatedFields(fillLabelsFnParams.document!, typeInfo);
+      if (deprecationCounter && typeInfo) {
+        const deprecatedFields = extractDeprecatedFields(fillLabelsFnParams.document!, typeInfo);
 
-          if (deprecatedFields.length > 0) {
-            for (const depField of deprecatedFields) {
-              deprecationCounter.counter
-                .labels(
-                  deprecationCounter.fillLabelsFn(
-                    {
-                      ...fillLabelsFnParams,
-                      deprecationInfo: depField,
-                    },
-                    context,
-                  ),
-                )
-                .inc();
-            }
+        for (const depField of deprecatedFields) {
+          const deprecationLabelParams = {
+            ...fillLabelsFnParams,
+            deprecationInfo: depField,
+          };
+
+          if (deprecationCounter.shouldObserve?.(deprecationLabelParams, context)) {
+            deprecationCounter.counter
+              .labels(deprecationCounter.fillLabelsFn(deprecationLabelParams, context))
+              .inc();
           }
         }
-      } else {
-        // means that we got a parse error, report it
-        errorsCounter?.counter
-          .labels({
-            phase: 'parse',
-          })
-          .inc();
       }
     };
   };
 
-  const onValidate: OnValidateHook<{}> | undefined = validateHistogram
-    ? ({ context }) => {
-        const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
-        if (!fillLabelsFnParams) {
-          return undefined;
-        }
-
-        const startTime = Date.now();
-
-        return ({ valid }) => {
-          const totalTime = (Date.now() - startTime) / 1000;
-          const labels = validateHistogram.fillLabelsFn(fillLabelsFnParams, context);
-          validateHistogram.histogram.observe(labels, totalTime);
-
-          if (!valid) {
-            errorsCounter?.counter
-              .labels({
-                ...labels,
-                phase: 'validate',
-              })
-              .inc();
+  const onValidate: OnValidateHook<{}> | undefined =
+    validateHistogram || errorsCounter
+      ? ({ context }) => {
+          const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
+          if (!fillLabelsFnParams) {
+            return undefined;
           }
-        };
-      }
-    : undefined;
+
+          const startTime = Date.now();
+
+          return ({ valid }) => {
+            const totalTime = (Date.now() - startTime) / 1000;
+            let labels;
+            if (validateHistogram?.shouldObserve?.(fillLabelsFnParams, context)) {
+              labels = validateHistogram.fillLabelsFn(fillLabelsFnParams, context);
+              validateHistogram.histogram.observe(labels, totalTime);
+            }
+
+            if (!valid && errorsCounter?.shouldObserve?.(fillLabelsFnParams, context)) {
+              // TODO: we should probably iterate over validation errors to report each error.
+              errorsCounter?.counter
+                // TODO: Use fillLabelsFn
+                .labels({
+                  ...(labels ?? validateHistogram?.fillLabelsFn(fillLabelsFnParams, context)),
+                  phase: 'validate',
+                })
+                .inc();
+            }
+          };
+        }
+      : undefined;
 
   const onContextBuilding: OnContextBuildingHook<{}> | undefined = contextBuildingHistogram
     ? ({ context }) => {
         const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
-        if (!fillLabelsFnParams) {
-          return undefined;
+        if (
+          !fillLabelsFnParams ||
+          !contextBuildingHistogram.shouldObserve?.(fillLabelsFnParams, context)
+        ) {
+          return;
         }
 
         const startTime = Date.now();
@@ -267,157 +276,231 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       }
     : undefined;
 
-  const onExecute: OnExecuteHook<{}> | undefined = executeHistogram
-    ? ({ args }) => {
-        const fillLabelsFnParams = fillLabelsFnParamsMap.get(args.contextValue);
-        if (!fillLabelsFnParams) {
-          return undefined;
-        }
+  const onExecute: OnExecuteHook<{}> | undefined =
+    executeHistogram || reqCounter || requestTotalHistogram || requestSummary || errorsCounter
+      ? ({ args }) => {
+          const fillLabelsFnParams = fillLabelsFnParamsMap.get(args.contextValue);
+          if (!fillLabelsFnParams) {
+            return;
+          }
 
-        const startTime = Date.now();
-        reqCounter?.counter
-          .labels(reqCounter.fillLabelsFn(fillLabelsFnParams, args.contextValue))
-          .inc();
+          const shouldObserveRequsets = reqCounter?.shouldObserve?.(
+            fillLabelsFnParams,
+            args.contextValue,
+          );
+          const shouldObserveExecute = executeHistogram?.shouldObserve?.(
+            fillLabelsFnParams,
+            args.contextValue,
+          );
+          const shouldObserveRequestTotal = requestTotalHistogram?.shouldObserve?.(
+            fillLabelsFnParams,
+            args.contextValue,
+          );
+          const shouldObserveSummary = requestSummary?.shouldObserve?.(
+            fillLabelsFnParams,
+            args.contextValue,
+          );
 
-        function handleResult(result: ExecutionResult) {
-          if (errorsCounter && result.errors && result.errors.length > 0) {
-            for (const error of result.errors) {
-              errorsCounter.counter
-                .labels(
-                  errorsCounter.fillLabelsFn(
-                    {
-                      ...fillLabelsFnParams,
-                      errorPhase: 'execute',
-                      error,
-                    },
-                    args.contextValue,
-                  ),
-                )
-                .inc();
+          const shouldHandleEnd =
+            shouldObserveRequsets ||
+            shouldObserveExecute ||
+            shouldObserveRequestTotal ||
+            shouldObserveSummary;
+
+          const shouldHandleResult = errorsCounter !== undefined;
+
+          if (!shouldHandleEnd && !shouldHandleResult) {
+            return;
+          }
+
+          const startTime = Date.now();
+          if (shouldObserveRequsets) {
+            reqCounter?.counter
+              .labels(reqCounter.fillLabelsFn(fillLabelsFnParams, args.contextValue))
+              .inc();
+          }
+
+          function handleResult(result: ExecutionResult) {
+            if (result.errors && result.errors.length > 0) {
+              for (const error of result.errors) {
+                const labelParams = {
+                  ...fillLabelsFnParams,
+                  errorPhase: 'execute',
+                  error,
+                };
+
+                if (errorsCounter!.shouldObserve?.(labelParams, args.contextValue)) {
+                  errorsCounter!.counter
+                    .labels(errorsCounter!.fillLabelsFn(labelParams, args.contextValue))
+                    .inc();
+                }
+              }
             }
           }
-        }
 
-        const result: OnExecuteHookResult<{}> = {
-          onExecuteDone: ({ result }) => {
-            const execStartTime = execStartTimeMap.get(args.contextValue);
-            const handleEnd = () => {
-              const totalTime = (Date.now() - startTime) / 1000;
-              executeHistogram.histogram.observe(
-                executeHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-                totalTime,
-              );
+          const result: OnExecuteHookResult<{}> = {
+            onExecuteDone: ({ result }) => {
+              const handleEnd = () => {
+                const totalTime = (Date.now() - startTime) / 1000;
+                if (shouldObserveExecute) {
+                  executeHistogram!.histogram.observe(
+                    executeHistogram!.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                    totalTime,
+                  );
+                }
 
-              requestTotalHistogram?.histogram.observe(
-                requestTotalHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-                totalTime,
-              );
+                if (shouldObserveRequestTotal) {
+                  requestTotalHistogram!.histogram.observe(
+                    requestTotalHistogram!.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                    totalTime,
+                  );
+                }
 
-              if (requestSummary && execStartTime) {
-                const summaryTime = (Date.now() - execStartTime) / 1000;
+                if (shouldObserveSummary) {
+                  const execStartTime = execStartTimeMap.get(args.contextValue);
+                  if (execStartTime) {
+                    const summaryTime = (Date.now() - execStartTime) / 1000;
 
-                requestSummary.summary.observe(
-                  requestSummary.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-                  summaryTime,
-                );
-              }
-            };
-            if (!isAsyncIterable(result)) {
-              handleResult(result);
-              handleEnd();
-              return undefined;
-            } else {
-              return {
-                onNext({ result }) {
-                  handleResult(result);
-                },
-                onEnd() {
-                  handleEnd();
-                },
+                    requestSummary!.summary.observe(
+                      requestSummary!.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                      summaryTime,
+                    );
+                  }
+                }
               };
-            }
-          },
-        };
 
-        return result;
-      }
-    : undefined;
+              if (!isAsyncIterable(result)) {
+                shouldHandleResult && handleResult(result);
+                shouldHandleEnd && handleEnd();
+              } else {
+                return {
+                  onNext: shouldHandleResult
+                    ? ({ result }) => {
+                        handleResult(result);
+                      }
+                    : undefined,
+                  onEnd: shouldHandleEnd ? handleEnd : undefined,
+                };
+              }
+            },
+          };
 
-  const onSubscribe: OnSubscribeHook<{}> | undefined = subscribeHistogram
-    ? ({ args }) => {
-        const fillLabelsFnParams = fillLabelsFnParamsMap.get(args.contextValue);
-        if (!fillLabelsFnParams) {
-          return undefined;
+          return result;
         }
+      : undefined;
 
-        const startTime = Date.now();
-        reqCounter?.counter
-          .labels(reqCounter.fillLabelsFn(fillLabelsFnParams, args.contextValue))
-          .inc();
+  const onSubscribe: OnSubscribeHook<{}> | undefined =
+    subscribeHistogram || reqCounter || errorsCounter || requestTotalHistogram || requestSummary
+      ? ({ args }) => {
+          const fillLabelsFnParams = fillLabelsFnParamsMap.get(args.contextValue);
+          if (!fillLabelsFnParams) {
+            return undefined;
+          }
 
-        function handleResult(result: ExecutionResult) {
-          if (errorsCounter && result.errors && result.errors.length > 0) {
-            for (const error of result.errors) {
-              errorsCounter.counter
-                .labels(
-                  errorsCounter.fillLabelsFn(
-                    {
-                      ...fillLabelsFnParams,
-                      errorPhase: 'execute',
-                      error,
-                    },
-                    args.contextValue,
-                  ),
-                )
-                .inc();
+          const shouldObserveRequsets = reqCounter?.shouldObserve?.(
+            fillLabelsFnParams,
+            args.contextValue,
+          );
+          const shouldObserveExecute = executeHistogram?.shouldObserve?.(
+            fillLabelsFnParams,
+            args.contextValue,
+          );
+          const shouldObserveRequestTotal = requestTotalHistogram?.shouldObserve?.(
+            fillLabelsFnParams,
+            args.contextValue,
+          );
+          const shouldObserveSummary = requestSummary?.shouldObserve?.(
+            fillLabelsFnParams,
+            args.contextValue,
+          );
+
+          const shouldHandleEnd =
+            shouldObserveRequsets ||
+            shouldObserveExecute ||
+            shouldObserveRequestTotal ||
+            shouldObserveSummary;
+
+          const shouldHandleResult = errorsCounter !== undefined;
+
+          const startTime = Date.now();
+          if (shouldObserveRequsets) {
+            reqCounter?.counter
+              .labels(reqCounter.fillLabelsFn(fillLabelsFnParams, args.contextValue))
+              .inc();
+          }
+
+          function handleResult(result: ExecutionResult) {
+            if (errorsCounter && result.errors && result.errors.length > 0) {
+              for (const error of result.errors) {
+                errorsCounter.counter
+                  .labels(
+                    errorsCounter.fillLabelsFn(
+                      {
+                        ...fillLabelsFnParams,
+                        errorPhase: 'execute',
+                        error,
+                      },
+                      args.contextValue,
+                    ),
+                  )
+                  .inc();
+              }
             }
           }
-        }
 
-        const result: OnSubscribeHookResult<{}> = {
-          onSubscribeResult: ({ result }) => {
-            const execStartTime = execStartTimeMap.get(args.contextValue);
-            const handleEnd = () => {
-              const totalTime = (Date.now() - startTime) / 1000;
-              subscribeHistogram.histogram.observe(
-                subscribeHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-                totalTime,
-              );
+          if (!shouldHandleEnd && !shouldHandleResult) {
+            return;
+          }
 
-              requestTotalHistogram?.histogram.observe(
-                requestTotalHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-                totalTime,
-              );
+          const result: OnSubscribeHookResult<{}> = {
+            onSubscribeResult: ({ result }) => {
+              const handleEnd = () => {
+                const totalTime = (Date.now() - startTime) / 1000;
+                if (shouldObserveExecute) {
+                  subscribeHistogram!.histogram.observe(
+                    subscribeHistogram!.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                    totalTime,
+                  );
+                }
+                if (shouldObserveRequestTotal) {
+                  requestTotalHistogram?.histogram.observe(
+                    requestTotalHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                    totalTime,
+                  );
+                }
 
-              if (requestSummary && execStartTime) {
-                const summaryTime = (Date.now() - execStartTime) / 1000;
+                if (shouldObserveSummary) {
+                  const execStartTime = execStartTimeMap.get(args.contextValue);
+                  if (execStartTime) {
+                    const summaryTime = (Date.now() - execStartTime) / 1000;
 
-                requestSummary.summary.observe(
-                  requestSummary.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-                  summaryTime,
-                );
-              }
-            };
-            if (!isAsyncIterable(result)) {
-              handleResult(result);
-              handleEnd();
-              return undefined;
-            } else {
-              return {
-                onNext({ result }) {
-                  handleResult(result);
-                },
-                onEnd() {
-                  handleEnd();
-                },
+                    requestSummary!.summary.observe(
+                      requestSummary!.fillLabelsFn(fillLabelsFnParams, args.contextValue),
+                      summaryTime,
+                    );
+                  }
+                }
               };
-            }
-          },
-        };
+              if (!isAsyncIterable(result)) {
+                shouldHandleResult && handleResult(result);
+                shouldHandleEnd && handleEnd();
+                return undefined;
+              } else {
+                return {
+                  onNext: shouldHandleResult
+                    ? ({ result }) => {
+                        handleResult(result);
+                      }
+                    : undefined,
+                  onEnd: shouldHandleEnd ? handleEnd : undefined,
+                };
+              }
+            },
+          };
 
-        return result;
-      }
-    : undefined;
+          return result;
+        }
+      : undefined;
 
   const countedSchemas = new WeakSet<GraphQLSchema>();
   return {
@@ -453,23 +536,30 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
           }),
         );
       }
-      registerContextErrorHandler(({ context }) => {
-        const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
-        let extraLabels;
-        if (fillLabelsFnParams) {
-          extraLabels = contextBuildingHistogram?.fillLabelsFn(fillLabelsFnParams, context);
-        }
-        errorsCounter?.counter
-          .labels({
-            ...extraLabels,
-            phase: 'context',
-          })
-          .inc();
-      });
+      if (errorsCounter) {
+        registerContextErrorHandler(({ context, error }) => {
+          const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
+          if (
+            errorsCounter.shouldObserve?.(
+              { error: error as GraphQLError, errorPhase: 'context', ...fillLabelsFnParamsMap },
+              context,
+            )
+          ) {
+            errorsCounter.counter
+              // TODO: use fillLabelsFn
+              .labels({
+                ...(fillLabelsFnParams &&
+                  contextBuildingHistogram?.fillLabelsFn(fillLabelsFnParams, context)),
+                phase: 'context',
+              })
+              .inc();
+          }
+        });
+      }
     },
     onSchemaChange({ schema }) {
       typeInfo = new TypeInfo(schema);
-      if (schemaChangeCounter && !countedSchemas.has(schema)) {
+      if (schemaChangeCounter?.shouldObserve?.({}, null) && !countedSchemas.has(schema)) {
         schemaChangeCounter.counter.inc();
         countedSchemas.add(schema);
       }

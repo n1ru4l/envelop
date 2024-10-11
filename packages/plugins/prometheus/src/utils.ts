@@ -83,9 +83,15 @@ export type FillLabelsFn<LabelNames extends string, Params extends Record<string
   rawContext: any,
 ) => Record<LabelNames, string | number>;
 
+export type ShouldObservePredicate<Params extends Record<string, any>> = (
+  params: Params,
+  rawContext: any,
+) => boolean;
+
 export type HistogramAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
   histogram: Histogram<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  shouldObserve?: ShouldObservePredicate<Params>;
 };
 
 export function registerHistogram<LabelNames extends string>(
@@ -110,17 +116,20 @@ export function createHistogram<
   registry: Registry;
   histogram: Omit<HistogramConfiguration<LabelNames>, 'registers'>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  shouldObserve?: ShouldObservePredicate<Params>;
 }): HistogramAndLabels<LabelNames, Params> {
   return {
     histogram: registerHistogram(options.registry, options.histogram),
     // histogram: new Histogram(options.histogram),
     fillLabelsFn: options.fillLabelsFn,
+    shouldObserve: options.shouldObserve,
   };
 }
 
 export type SummaryAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
   summary: Summary<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  shouldObserve?: ShouldObservePredicate<Params>;
 };
 
 export function registerSummary<LabelNames extends string>(
@@ -145,16 +154,19 @@ export function createSummary<
   registry: Registry;
   summary: Omit<SummaryConfiguration<LabelNames>, 'registers'>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  shouldObserve?: ShouldObservePredicate<Params>;
 }): SummaryAndLabels<LabelNames, Params> {
   return {
     summary: registerSummary(options.registry, options.summary),
     fillLabelsFn: options.fillLabelsFn,
+    shouldObserve: options.shouldObserve,
   };
 }
 
 export type CounterAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
   counter: Counter<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  shouldObserve?: ShouldObservePredicate<Params>;
 };
 
 export function registerCounter<LabelNames extends string>(
@@ -179,10 +191,12 @@ export function createCounter<
   registry: Registry;
   counter: Omit<CounterConfiguration<LabelNames>, 'registers'>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  shouldObserve?: ShouldObservePredicate<Params>;
 }): CounterAndLabels<LabelNames, Params> {
   return {
     counter: registerCounter(options.registry, options.counter),
     fillLabelsFn: options.fillLabelsFn,
+    shouldObserve: options.shouldObserve,
   };
 }
 
@@ -321,12 +335,12 @@ export function extractDeprecatedFields(node: ASTNode, typeInfo: TypeInfo): Depr
   return found;
 }
 
-export function labelExists(config: PrometheusTracingPluginConfig, label: string) {
+export function labelExists(config: { labels?: Record<string, unknown> }, label: string): boolean {
   const labelFlag = config.labels?.[label];
   if (labelFlag == null) {
     return true;
   }
-  return labelFlag;
+  return !!labelFlag;
 }
 
 export function filterFillParamsFnParams<T extends string>(
