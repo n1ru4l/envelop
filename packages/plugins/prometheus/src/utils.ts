@@ -91,7 +91,7 @@ export type ShouldObservePredicate<Params extends Record<string, any>> = (
 export type HistogramAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
   histogram: Histogram<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
-  shouldObserve?: ShouldObservePredicate<Params>;
+  shouldObserve: ShouldObservePredicate<Params>;
 };
 
 export function registerHistogram<LabelNames extends string>(
@@ -122,14 +122,14 @@ export function createHistogram<
     histogram: registerHistogram(options.registry, options.histogram),
     // histogram: new Histogram(options.histogram),
     fillLabelsFn: options.fillLabelsFn,
-    shouldObserve: options.shouldObserve,
+    shouldObserve: options.shouldObserve ?? (() => true),
   };
 }
 
 export type SummaryAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
   summary: Summary<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
-  shouldObserve?: ShouldObservePredicate<Params>;
+  shouldObserve: ShouldObservePredicate<Params>;
 };
 
 export function registerSummary<LabelNames extends string>(
@@ -159,14 +159,14 @@ export function createSummary<
   return {
     summary: registerSummary(options.registry, options.summary),
     fillLabelsFn: options.fillLabelsFn,
-    shouldObserve: options.shouldObserve,
+    shouldObserve: options.shouldObserve ?? (() => true),
   };
 }
 
 export type CounterAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
   counter: Counter<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
-  shouldObserve?: ShouldObservePredicate<Params>;
+  shouldObserve: ShouldObservePredicate<Params>;
 };
 
 export function registerCounter<LabelNames extends string>(
@@ -196,7 +196,7 @@ export function createCounter<
   return {
     counter: registerCounter(options.registry, options.counter),
     fillLabelsFn: options.fillLabelsFn,
-    shouldObserve: options.shouldObserve,
+    shouldObserve: options.shouldObserve ?? (() => true),
   };
 }
 

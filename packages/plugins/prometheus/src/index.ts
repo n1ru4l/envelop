@@ -184,9 +184,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
 
       if (!fillLabelsFnParams) {
         // means that we got a parse error
-        if (
-          errorsCounter?.shouldObserve?.({ error: params.result, errorPhase: 'parse' }, context)
-        ) {
+        if (errorsCounter?.shouldObserve({ error: params.result, errorPhase: 'parse' }, context)) {
           // TODO: use fillLabelsFn
           errorsCounter?.counter.labels({ phase: 'parse' }).inc();
         }
@@ -196,7 +194,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
 
       const totalTime = (Date.now() - startTime) / 1000;
 
-      if (parseHistogram?.shouldObserve?.(fillLabelsFnParams, context)) {
+      if (parseHistogram?.shouldObserve(fillLabelsFnParams, context)) {
         parseHistogram?.histogram.observe(
           parseHistogram.fillLabelsFn(fillLabelsFnParams, context),
           totalTime,
@@ -212,7 +210,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
             deprecationInfo: depField,
           };
 
-          if (deprecationCounter.shouldObserve?.(deprecationLabelParams, context)) {
+          if (deprecationCounter.shouldObserve(deprecationLabelParams, context)) {
             deprecationCounter.counter
               .labels(deprecationCounter.fillLabelsFn(deprecationLabelParams, context))
               .inc();
@@ -235,12 +233,12 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
           return ({ valid }) => {
             const totalTime = (Date.now() - startTime) / 1000;
             let labels;
-            if (validateHistogram?.shouldObserve?.(fillLabelsFnParams, context)) {
+            if (validateHistogram?.shouldObserve(fillLabelsFnParams, context)) {
               labels = validateHistogram.fillLabelsFn(fillLabelsFnParams, context);
               validateHistogram.histogram.observe(labels, totalTime);
             }
 
-            if (!valid && errorsCounter?.shouldObserve?.(fillLabelsFnParams, context)) {
+            if (!valid && errorsCounter?.shouldObserve(fillLabelsFnParams, context)) {
               // TODO: we should probably iterate over validation errors to report each error.
               errorsCounter?.counter
                 // TODO: Use fillLabelsFn
@@ -259,7 +257,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
         const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
         if (
           !fillLabelsFnParams ||
-          !contextBuildingHistogram.shouldObserve?.(fillLabelsFnParams, context)
+          !contextBuildingHistogram.shouldObserve(fillLabelsFnParams, context)
         ) {
           return;
         }
@@ -284,19 +282,19 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
             return;
           }
 
-          const shouldObserveRequsets = reqCounter?.shouldObserve?.(
+          const shouldObserveRequsets = reqCounter?.shouldObserve(
             fillLabelsFnParams,
             args.contextValue,
           );
-          const shouldObserveExecute = executeHistogram?.shouldObserve?.(
+          const shouldObserveExecute = executeHistogram?.shouldObserve(
             fillLabelsFnParams,
             args.contextValue,
           );
-          const shouldObserveRequestTotal = requestTotalHistogram?.shouldObserve?.(
+          const shouldObserveRequestTotal = requestTotalHistogram?.shouldObserve(
             fillLabelsFnParams,
             args.contextValue,
           );
-          const shouldObserveSummary = requestSummary?.shouldObserve?.(
+          const shouldObserveSummary = requestSummary?.shouldObserve(
             fillLabelsFnParams,
             args.contextValue,
           );
@@ -329,7 +327,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
                   error,
                 };
 
-                if (errorsCounter!.shouldObserve?.(labelParams, args.contextValue)) {
+                if (errorsCounter!.shouldObserve(labelParams, args.contextValue)) {
                   errorsCounter!.counter
                     .labels(errorsCounter!.fillLabelsFn(labelParams, args.contextValue))
                     .inc();
@@ -372,6 +370,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
               if (!isAsyncIterable(result)) {
                 shouldHandleResult && handleResult(result);
                 shouldHandleEnd && handleEnd();
+                return undefined;
               } else {
                 return {
                   onNext: shouldHandleResult
@@ -397,19 +396,19 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
             return undefined;
           }
 
-          const shouldObserveRequsets = reqCounter?.shouldObserve?.(
+          const shouldObserveRequsets = reqCounter?.shouldObserve(
             fillLabelsFnParams,
             args.contextValue,
           );
-          const shouldObserveExecute = executeHistogram?.shouldObserve?.(
+          const shouldObserveExecute = executeHistogram?.shouldObserve(
             fillLabelsFnParams,
             args.contextValue,
           );
-          const shouldObserveRequestTotal = requestTotalHistogram?.shouldObserve?.(
+          const shouldObserveRequestTotal = requestTotalHistogram?.shouldObserve(
             fillLabelsFnParams,
             args.contextValue,
           );
-          const shouldObserveSummary = requestSummary?.shouldObserve?.(
+          const shouldObserveSummary = requestSummary?.shouldObserve(
             fillLabelsFnParams,
             args.contextValue,
           );
@@ -540,7 +539,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
         registerContextErrorHandler(({ context, error }) => {
           const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
           if (
-            errorsCounter.shouldObserve?.(
+            errorsCounter.shouldObserve(
               { error: error as GraphQLError, errorPhase: 'context', ...fillLabelsFnParamsMap },
               context,
             )
@@ -559,7 +558,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     },
     onSchemaChange({ schema }) {
       typeInfo = new TypeInfo(schema);
-      if (schemaChangeCounter?.shouldObserve?.({}, null) && !countedSchemas.has(schema)) {
+      if (schemaChangeCounter?.shouldObserve({}, null) && !countedSchemas.has(schema)) {
         schemaChangeCounter.counter.inc();
         countedSchemas.add(schema);
       }
