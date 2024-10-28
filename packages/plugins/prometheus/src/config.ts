@@ -1,5 +1,5 @@
 import { Registry } from 'prom-client';
-import { createCounter, createHistogram, createSummary } from './utils.js';
+import { createCounter, createHistogram, createSummary, type AtLeastOne } from './utils.js';
 
 export type PrometheusTracingPluginConfig = {
   /**
@@ -48,7 +48,7 @@ export type MetricsConfig = {
    * It counts all operations, either failed or successful, including subscriptions.
    * It is exposed as a counter.
    */
-  graphql_envelop_request?: boolean | string | ReturnType<typeof createCounter>;
+  graphql_envelop_request?: CounterMetricOption<AtLeastOne<'execute' | 'subscribe'>>;
 
   /**
    * Tracks the duration of the complete GraphQL operation execution.
@@ -60,16 +60,12 @@ export type MetricsConfig = {
    *  - number[]: Enable the metric with custom buckets
    *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
-  graphql_envelop_request_duration?:
-    | boolean
-    | string
-    | number[]
-    | ReturnType<typeof createHistogram>;
+  graphql_envelop_request_duration?: HistogramMetricOption<AtLeastOne<'execute' | 'subscribe'>>;
   /**
    * Provides a summary of the time spent on the GraphQL operation execution.
    * It reports the same timing than graphql_envelop_request_duration but as a summary.
    */
-  graphql_envelop_request_time_summary?: boolean | string | ReturnType<typeof createSummary>;
+  graphql_envelop_request_time_summary?: SummaryMetricOption<AtLeastOne<'execute' | 'subscribe'>>;
   /**
    * Tracks the duration of the parse phase of the GraphQL execution.
    * It reports the time spent parsing the incoming GraphQL operation.
@@ -81,7 +77,7 @@ export type MetricsConfig = {
    *  - number[]: Enable the metric with custom buckets
    *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
-  graphql_envelop_phase_parse?: boolean | string | number[] | ReturnType<typeof createHistogram>;
+  graphql_envelop_phase_parse?: HistogramMetricOption<['parse']>;
   /**
    * Tracks the duration of the validate phase of the GraphQL execution.
    * It reports the time spent validating the incoming GraphQL operation.
@@ -93,7 +89,7 @@ export type MetricsConfig = {
    *  - number[]: Enable the metric with custom buckets
    *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
-  graphql_envelop_phase_validate?: boolean | string | number[] | ReturnType<typeof createHistogram>;
+  graphql_envelop_phase_validate?: HistogramMetricOption<['validate']>;
   /**
    * Tracks the duration of the context phase of the GraphQL execution.
    * It reports the time spent building the context object that will be passed to the executors.
@@ -105,7 +101,7 @@ export type MetricsConfig = {
    *  - number[]: Enable the metric with custom buckets
    *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
-  graphql_envelop_phase_context?: boolean | string | number[] | ReturnType<typeof createHistogram>;
+  graphql_envelop_phase_context?: HistogramMetricOption<['context']>;
   /**
    * Tracks the duration of the execute phase of the GraphQL execution.
    * It reports the time spent actually resolving the response of the incoming operation.
@@ -118,7 +114,7 @@ export type MetricsConfig = {
    *  - number[]: Enable the metric with custom buckets
    *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
-  graphql_envelop_phase_execute?: boolean | string | number[] | ReturnType<typeof createHistogram>;
+  graphql_envelop_phase_execute?: HistogramMetricOption<['execute']>;
   /**
    * This metric tracks the duration of the subscribe phase of the GraphQL execution.
    * It reports the time spent initiating a subscription (which doesn’t include actually sending the first response).
@@ -130,23 +126,21 @@ export type MetricsConfig = {
    *  - number[]: Enable the metric with custom buckets
    *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
-  graphql_envelop_phase_subscribe?:
-    | boolean
-    | string
-    | number[]
-    | ReturnType<typeof createHistogram>;
+  graphql_envelop_phase_subscribe?: HistogramMetricOption<['subscribe']>;
   /**
    * This metric tracks the number of errors that returned by the GraphQL execution.
    * It counts all errors found in response, but it also includes errors from other GraphQL
    * processing phases (parsing, validation and context building).
    * It is exposed as a counter.
    */
-  graphql_envelop_error_result?: boolean | string | ReturnType<typeof createCounter>;
+  graphql_envelop_error_result?: CounterMetricOption<
+    AtLeastOne<'parse' | 'validate' | 'context' | 'execute' | 'subscribe'>
+  >;
   /**
    * This metric tracks the number of deprecated fields used in the GraphQL operation.
    * It is exposed as a counter.
    */
-  graphql_envelop_deprecated_field?: boolean | string | ReturnType<typeof createCounter>;
+  graphql_envelop_deprecated_field?: CounterMetricOption<['parse']>;
   /**
    * This metric tracks the number of schema changes that have occurred since the gateway started.
    * If you are using a plugin that modifies the schema on the fly,
@@ -154,7 +148,7 @@ export type MetricsConfig = {
    * Which means that one schema update can actually trigger multiple schema changes.
    * It is exposed as a counter.
    */
-  graphql_envelop_schema_change?: boolean | string | ReturnType<typeof createCounter>;
+  graphql_envelop_schema_change?: CounterMetricOption<[]>;
   /**
    * This metric tracks the duration of each resolver execution.
    *
@@ -168,11 +162,7 @@ export type MetricsConfig = {
    *  - number[]: Enable the metric with custom buckets
    *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
-  graphql_envelop_execute_resolver?:
-    | boolean
-    | string
-    | number[]
-    | ReturnType<typeof createHistogram>;
+  graphql_envelop_execute_resolver?: HistogramMetricOption<AtLeastOne<'subscribe' | 'execute'>>;
 };
 
 export type LabelsConfig = {
@@ -219,3 +209,23 @@ export type LabelsConfig = {
    */
   phase?: boolean;
 };
+
+export type HistogramMetricOption<Phases extends string[], LabelNames extends string = string> =
+  | boolean
+  | string
+  | BucketsConfig
+  | Phases
+  | ReturnType<typeof createHistogram<Phases, LabelNames>>;
+export type BucketsConfig = AtLeastOne<number>;
+
+export type CounterMetricOption<Phases extends string[], LabelNames extends string = string> =
+  | boolean
+  | string
+  | Phases
+  | ReturnType<typeof createCounter<Phases, LabelNames>>;
+
+export type SummaryMetricOption<Phases extends string[], LabelNames extends string = string> =
+  | boolean
+  | string
+  | Phases
+  | ReturnType<typeof createSummary<Phases, LabelNames>>;
