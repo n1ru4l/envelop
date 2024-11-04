@@ -148,7 +148,7 @@ export type MetricsConfig = {
    * Which means that one schema update can actually trigger multiple schema changes.
    * It is exposed as a counter.
    */
-  graphql_envelop_schema_change?: CounterMetricOption<[]>;
+  graphql_envelop_schema_change?: CounterMetricOption<['schema']>;
   /**
    * This metric tracks the duration of each resolver execution.
    *

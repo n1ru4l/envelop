@@ -72,6 +72,11 @@ Histogram metrics can be passed an array of numbers to configure buckets.
 Each metric also expose a set of labels. All labels are exposed by default but can be separately
 disabled by setting the corresponding key in `labels` option object to `false`.
 
+A metric can observe events in different phases of of GraphQL request pipeline. By default, if a
+metric is available, it will observe timing or events in every available phases for this metric. You
+can configure this by either providing an array instead of `true` in the metrics config, or use the
+`phases` option in the custom metric factory.
+
 ### `graphql_envelop_phase_parse`
 
 This metric tracks the duration of the `parse` phase of the GraphQL execution. It reports the time
@@ -519,6 +524,7 @@ const getEnveloped = envelop({
             help: 'HELP ME',
             labelNames: ['opText'] as const,
           }),
+          phases: ['parse'], // This is an array of phases that should be hooked for this metric
           fillLabelsFn: params => {
             // if you wish to fill your `labels` with metadata, you can use the params in order to get access to things like DocumentNode, operationName, operationType, `error` (for error metrics) and `info` (for resolvers metrics)
             return {
@@ -526,6 +532,73 @@ const getEnveloped = envelop({
             }
           }
         }),
+      }
+    })
+  ]
+})
+```
+
+### Configure metric phases
+
+Each metric observes timing or events in different phases of the GraphQL request pipeline.
+
+You can configure which phases are observed for a given metric by providing an array of phases
+instead of `true` for any metric configuration. You can also configure the phases when using custom
+metrics factories by providing the `phases` option.
+
+By default, all available phases are enabled when the metric is enabled.
+
+```ts
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
+import { usePrometheus } from '@envelop/prometheus'
+
+const getEnveloped = envelop({
+  plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
+    usePrometheus({
+      metrics: {
+        graphql_envelop_phase_error: ['execute', 'subscribe'] // only trace errors of execute and subscribe phases
+      }
+    })
+  ]
+})
+```
+
+### Skip observation based on request context
+
+To save bandwidth or storage, you can reduce the amount of reported values by filtering which events
+are observed based on the request context.
+
+For example, you can only monitor a subset of operations, because they are critical or that you want
+to debug it's performance:
+
+```ts
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
+import { envelop, useEngine } from '@envelop/core'
+import { usePrometheus } from '@envelop/prometheus'
+
+const TRACKED_OPERATION_NAMES = [
+  // make a list of operation that you want to monitor
+]
+
+const getEnveloped = envelop({
+  plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
+    usePrometheus({
+      metrics: {
+        graphql_yoga_http_duration: createHistogram({
+          registry,
+          histogram: {
+            name: 'graphql_yoga_http_duration',
+            help: 'Time spent on HTTP connection',
+            labelNames: ['operation_name']
+          },
+          fillLabelsFn: ({ operationName }, _rawContext) => ({
+            operation_name: operationName
+          }),
+          shouldObserve: context => TRACKED_OPERATIONS.includes(context?.params?.operationName)
+        })
       }
     })
   ]
