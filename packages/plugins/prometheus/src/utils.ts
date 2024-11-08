@@ -114,20 +114,46 @@ export function registerHistogram<LabelNames extends string>(
   return registryHistograms.get(conf.name)!;
 }
 
+/**
+ * Histogram metric factory allowing to define custom metrics with advanced configuration.
+ * @param options
+ * @returns
+ */
 export function createHistogram<
   Phases extends string[],
   LabelNames extends string,
   Params extends Record<string, any> = FillLabelsFnParams,
 >(options: {
+  /**
+   * The registry to be used by the plugin. If you don't have a custom registry,
+   * use `register` exported variable from `prom-client`.
+   */
   registry: Registry;
+  /**
+   * The configuration of the histogram, as expected by the `prom-client` library.
+   */
   histogram: Omit<HistogramConfiguration<LabelNames>, 'registers'>;
+  /**
+   * A function called when an event is observed to extract labels values from the context.
+   */
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  /**
+   * A list of GraphQL pipeline phases which will be observed by this metric.
+   *
+   * The possible values accepted in this list depends on the metric,
+   * please refer to metric type or documentation to know which phases ar available.
+   */
   phases: Phases;
+  /**
+   * A function called for each event that can be observed.
+   * If it is provided, an event will be observed only if it returns true.
+   *
+   * By default, all events are observed.
+   */
   shouldObserve?: ShouldObservePredicate<Params>;
 }): HistogramAndLabels<Phases, LabelNames, Params> {
   return {
     histogram: registerHistogram(options.registry, options.histogram),
-    // histogram: new Histogram(options.histogram),
     fillLabelsFn: options.fillLabelsFn,
     phases: options.phases,
     shouldObserve: options.shouldObserve ?? (() => true),
@@ -160,15 +186,42 @@ export function registerSummary<LabelNames extends string>(
   return registrySummaries.get(conf.name)!;
 }
 
+/**
+ * Summary metric factory allowing to define custom metrics with advanced configuration.
+ * @param options
+ * @returns
+ */
 export function createSummary<
   Phases extends string[],
   LabelNames extends string,
   Params extends Record<string, any> = FillLabelsFnParams,
 >(options: {
+  /**
+   * The registry to be used by the plugin. If you don't have a custom registry,
+   * use `register` exported variable from `prom-client`.
+   */
   registry: Registry;
+  /**
+   * The configuration of the summary, as expected by the `prom-client` library.
+   */
   summary: Omit<SummaryConfiguration<LabelNames>, 'registers'>;
+  /**
+   * A function called when an event is observed to extract labels values from the context.
+   */
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  /**
+   * A list of GraphQL pipeline phases which will be observed by this metric.
+   *
+   * The possible values accepted in this list depends on the metric,
+   * please refer to metric type or documentation to know which phases ar available.
+   */
   phases: Phases;
+  /**
+   * A function called for each event that can be observed.
+   * If it is provided, an event will be observed only if it returns true.
+   *
+   * By default, all events are observed.
+   */
   shouldObserve?: ShouldObservePredicate<Params>;
 }): SummaryAndLabels<Phases, LabelNames, Params> {
   return {
@@ -190,6 +243,11 @@ export type CounterAndLabels<
   shouldObserve: ShouldObservePredicate<Params>;
 };
 
+/**
+ * Counter metric factory allowing to define custom metrics with advanced configuration.
+ * @param options
+ * @returns
+ */
 export function registerCounter<LabelNames extends string>(
   registry: Registry,
   conf: Omit<CounterConfiguration<LabelNames>, 'registers'>,
@@ -210,10 +268,32 @@ export function createCounter<
   LabelNames extends string,
   Params extends Record<string, any> = FillLabelsFnParams,
 >(options: {
+  /**
+   * The registry to be used by the plugin. If you don't have a custom registry,
+   * use `register` exported variable from `prom-client`.
+   */
   registry: Registry;
+  /**
+   * The configuration of the counter, as expected by the `prom-client` library.
+   */
   counter: Omit<CounterConfiguration<LabelNames>, 'registers'>;
-  phases: Phases;
+  /**
+   * A function called when an event is observed to extract labels values from the context.
+   */
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  /**
+   * A list of GraphQL pipeline phases which will be observed by this metric.
+   *
+   * The possible values accepted in this list depends on the metric,
+   * please refer to metric type or documentation to know which phases ar available.
+   */
+  phases: Phases;
+  /**
+   * A function called for each event that can be observed.
+   * If it is provided, an event will be observed only if it returns true.
+   *
+   * By default, all events are observed.
+   */
   shouldObserve?: ShouldObservePredicate<Params>;
 }): CounterAndLabels<Phases, LabelNames, Params> {
   return {

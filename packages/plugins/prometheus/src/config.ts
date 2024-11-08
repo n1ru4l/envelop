@@ -47,6 +47,12 @@ export type MetricsConfig = {
    * Tracks the number of GraphQL operations executed.
    * It counts all operations, either failed or successful, including subscriptions.
    * It is exposed as a counter.
+   *
+   * You can pass multiple type of values:
+   *  - boolean: Disable or Enable the metric with default configuration
+   *  - string: Enable the metric with custom name
+   *  - string[]: Enable the metric on a list of phases
+   *  - ReturnType<typeof createCounter>: Enable the metric with custom configuration
    */
   graphql_envelop_request?: CounterMetricOption<AtLeastOne<'execute' | 'subscribe'>>;
 
@@ -57,6 +63,7 @@ export type MetricsConfig = {
    * You can pass multiple type of values:
    *  - boolean: Disable or Enable the metric with default configuration
    *  - string: Enable the metric with custom name
+   *  - string[]: Enable the metric on a list of phases
    *  - number[]: Enable the metric with custom buckets
    *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
@@ -64,6 +71,12 @@ export type MetricsConfig = {
   /**
    * Provides a summary of the time spent on the GraphQL operation execution.
    * It reports the same timing than graphql_envelop_request_duration but as a summary.
+   *
+   * You can pass multiple type of values:
+   *  - boolean: Disable or Enable the metric with default configuration
+   *  - string: Enable the metric with custom name
+   *  - string[]: Enable the metric on a list of phases
+   *  - ReturnType<typeof createSummary>: Enable the metric with custom configuration
    */
   graphql_envelop_request_time_summary?: SummaryMetricOption<AtLeastOne<'execute' | 'subscribe'>>;
   /**
@@ -74,6 +87,7 @@ export type MetricsConfig = {
    * You can pass multiple type of values:
    *  - boolean: Disable or Enable the metric with default configuration
    *  - string: Enable the metric with custom name
+   *  - string[]: Enable the metric on a list of phases
    *  - number[]: Enable the metric with custom buckets
    *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
@@ -86,6 +100,7 @@ export type MetricsConfig = {
    * You can pass multiple type of values:
    *  - boolean: Disable or Enable the metric with default configuration
    *  - string: Enable the metric with custom name
+   *  - string[]: Enable the metric on a list of phases
    *  - number[]: Enable the metric with custom buckets
    *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
@@ -98,6 +113,7 @@ export type MetricsConfig = {
    * You can pass multiple type of values:
    *  - boolean: Disable or Enable the metric with default configuration
    *  - string: Enable the metric with custom name
+   *  - string[]: Enable the metric on a list of phases
    *  - number[]: Enable the metric with custom buckets
    *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
@@ -111,6 +127,7 @@ export type MetricsConfig = {
    * You can pass multiple type of values:
    *  - boolean: Disable or Enable the metric with default configuration
    *  - string: Enable the metric with custom name
+   *  - string[]: Enable the metric on a list of phases
    *  - number[]: Enable the metric with custom buckets
    *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
@@ -123,6 +140,7 @@ export type MetricsConfig = {
    * You can pass multiple type of values:
    *  - boolean: Disable or Enable the metric with default configuration
    *  - string: Enable the metric with custom name
+   *  - string[]: Enable the metric on a list of phases
    *  - number[]: Enable the metric with custom buckets
    *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
@@ -132,6 +150,12 @@ export type MetricsConfig = {
    * It counts all errors found in response, but it also includes errors from other GraphQL
    * processing phases (parsing, validation and context building).
    * It is exposed as a counter.
+   *
+   * You can pass multiple type of values:
+   *  - boolean: Disable or Enable the metric with default configuration
+   *  - string: Enable the metric with custom name
+   *  - string[]: Enable the metric on a list of phases
+   *  - ReturnType<typeof createCounter>: Enable the metric with custom configuration
    */
   graphql_envelop_error_result?: CounterMetricOption<
     AtLeastOne<'parse' | 'validate' | 'context' | 'execute' | 'subscribe'>
@@ -139,6 +163,12 @@ export type MetricsConfig = {
   /**
    * This metric tracks the number of deprecated fields used in the GraphQL operation.
    * It is exposed as a counter.
+   *
+   * You can pass multiple type of values:
+   *  - boolean: Disable or Enable the metric with default configuration
+   *  - string: Enable the metric with custom name
+   *  - string[]: Enable the metric on a list of phases
+   *  - ReturnType<typeof createCounter>: Enable the metric with custom configuration
    */
   graphql_envelop_deprecated_field?: CounterMetricOption<['parse']>;
   /**
@@ -147,6 +177,12 @@ export type MetricsConfig = {
    * be aware that this metric will also include updates made by those plugins.
    * Which means that one schema update can actually trigger multiple schema changes.
    * It is exposed as a counter.
+   *
+   * You can pass multiple type of values:
+   *  - boolean: Disable or Enable the metric with default configuration
+   *  - string: Enable the metric with custom name
+   *  - string[]: Enable the metric on a list of phases
+   *  - ReturnType<typeof createCounter>: Enable the metric with custom configuration
    */
   graphql_envelop_schema_change?: CounterMetricOption<['schema']>;
   /**
@@ -159,6 +195,7 @@ export type MetricsConfig = {
    * You can pass multiple type of values:
    *  - boolean: Disable or Enable the metric with default configuration
    *  - string: Enable the metric with custom name
+   *  - string[]: Enable the metric on a list of phases
    *  - number[]: Enable the metric with custom buckets
    *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
