@@ -29,16 +29,17 @@ const getEnveloped = envelop({
         graphql_yoga_http_duration: createHistogram({
           registry,
           histogram: {
-            name: 'graphql_yoga_http_duration',
+            name: 'graphql_envelop_request_duration',
             help: 'Time spent on HTTP connection',
             labelNames: ['operation_name']
           },
           fillLabelsFn: ({ operationName }, _rawContext) => ({
             operation_name: operationName,
           }),
+          phases: ['execute', 'subscribe'],
 
           // Here `shouldObserve` control if the request timing should be observed, based on context
-          shouldObserve: context => TRACKED_OPERATIONS.includes(context?.params?.operationName),
+          shouldObserve: (_, context) => TRACKED_OPERATIONS.includes(context?.params?.operationName),
         })
       },
     })
