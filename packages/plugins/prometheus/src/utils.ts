@@ -83,9 +83,20 @@ export type FillLabelsFn<LabelNames extends string, Params extends Record<string
   rawContext: any,
 ) => Record<LabelNames, string | number>;
 
-export type HistogramAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
+export type ShouldObservePredicate<Params extends Record<string, any>> = (
+  params: Params,
+  rawContext: any,
+) => boolean;
+
+export type HistogramAndLabels<
+  Phases extends string[],
+  LabelNames extends string,
+  Params extends Record<string, any>,
+> = {
   histogram: Histogram<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  phases: Phases;
+  shouldObserve: ShouldObservePredicate<Params>;
 };
 
 export function registerHistogram<LabelNames extends string>(
@@ -103,24 +114,61 @@ export function registerHistogram<LabelNames extends string>(
   return registryHistograms.get(conf.name)!;
 }
 
+/**
+ * Histogram metric factory allowing to define custom metrics with advanced configuration.
+ * @param options
+ * @returns
+ */
 export function createHistogram<
+  Phases extends string[],
   LabelNames extends string,
   Params extends Record<string, any> = FillLabelsFnParams,
 >(options: {
+  /**
+   * The registry to be used by the plugin. If you don't have a custom registry,
+   * use `register` exported variable from `prom-client`.
+   */
   registry: Registry;
+  /**
+   * The configuration of the histogram, as expected by the `prom-client` library.
+   */
   histogram: Omit<HistogramConfiguration<LabelNames>, 'registers'>;
+  /**
+   * A function called when an event is observed to extract labels values from the context.
+   */
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
-}): HistogramAndLabels<LabelNames, Params> {
+  /**
+   * A list of GraphQL pipeline phases which will be observed by this metric.
+   *
+   * The possible values accepted in this list depends on the metric,
+   * please refer to metric type or documentation to know which phases ar available.
+   */
+  phases: Phases;
+  /**
+   * A function called for each event that can be observed.
+   * If it is provided, an event will be observed only if it returns true.
+   *
+   * By default, all events are observed.
+   */
+  shouldObserve?: ShouldObservePredicate<Params>;
+}): HistogramAndLabels<Phases, LabelNames, Params> {
   return {
     histogram: registerHistogram(options.registry, options.histogram),
-    // histogram: new Histogram(options.histogram),
     fillLabelsFn: options.fillLabelsFn,
+    phases: options.phases,
+    shouldObserve: options.shouldObserve ?? (() => true),
   };
 }
 
-export type SummaryAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
+export type SummaryAndLabels<
+  Phases extends string[],
+  LabelNames extends string,
+  Params extends Record<string, any>,
+> = {
   summary: Summary<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  phases: Phases;
+  shouldObserve: ShouldObservePredicate<Params>;
 };
 
 export function registerSummary<LabelNames extends string>(
@@ -138,25 +186,68 @@ export function registerSummary<LabelNames extends string>(
   return registrySummaries.get(conf.name)!;
 }
 
+/**
+ * Summary metric factory allowing to define custom metrics with advanced configuration.
+ * @param options
+ * @returns
+ */
 export function createSummary<
+  Phases extends string[],
   LabelNames extends string,
   Params extends Record<string, any> = FillLabelsFnParams,
 >(options: {
+  /**
+   * The registry to be used by the plugin. If you don't have a custom registry,
+   * use `register` exported variable from `prom-client`.
+   */
   registry: Registry;
+  /**
+   * The configuration of the summary, as expected by the `prom-client` library.
+   */
   summary: Omit<SummaryConfiguration<LabelNames>, 'registers'>;
+  /**
+   * A function called when an event is observed to extract labels values from the context.
+   */
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
-}): SummaryAndLabels<LabelNames, Params> {
+  /**
+   * A list of GraphQL pipeline phases which will be observed by this metric.
+   *
+   * The possible values accepted in this list depends on the metric,
+   * please refer to metric type or documentation to know which phases ar available.
+   */
+  phases: Phases;
+  /**
+   * A function called for each event that can be observed.
+   * If it is provided, an event will be observed only if it returns true.
+   *
+   * By default, all events are observed.
+   */
+  shouldObserve?: ShouldObservePredicate<Params>;
+}): SummaryAndLabels<Phases, LabelNames, Params> {
   return {
     summary: registerSummary(options.registry, options.summary),
     fillLabelsFn: options.fillLabelsFn,
+    phases: options.phases,
+    shouldObserve: options.shouldObserve ?? (() => true),
   };
 }
 
-export type CounterAndLabels<LabelNames extends string, Params extends Record<string, any>> = {
+export type CounterAndLabels<
+  Phases extends string[],
+  LabelNames extends string,
+  Params extends Record<string, any>,
+> = {
   counter: Counter<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
+  phases: Phases;
+  shouldObserve: ShouldObservePredicate<Params>;
 };
 
+/**
+ * Counter metric factory allowing to define custom metrics with advanced configuration.
+ * @param options
+ * @returns
+ */
 export function registerCounter<LabelNames extends string>(
   registry: Registry,
   conf: Omit<CounterConfiguration<LabelNames>, 'registers'>,
@@ -173,113 +264,185 @@ export function registerCounter<LabelNames extends string>(
 }
 
 export function createCounter<
+  Phases extends string[],
   LabelNames extends string,
   Params extends Record<string, any> = FillLabelsFnParams,
 >(options: {
+  /**
+   * The registry to be used by the plugin. If you don't have a custom registry,
+   * use `register` exported variable from `prom-client`.
+   */
   registry: Registry;
+  /**
+   * The configuration of the counter, as expected by the `prom-client` library.
+   */
   counter: Omit<CounterConfiguration<LabelNames>, 'registers'>;
+  /**
+   * A function called when an event is observed to extract labels values from the context.
+   */
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
-}): CounterAndLabels<LabelNames, Params> {
+  /**
+   * A list of GraphQL pipeline phases which will be observed by this metric.
+   *
+   * The possible values accepted in this list depends on the metric,
+   * please refer to metric type or documentation to know which phases ar available.
+   */
+  phases: Phases;
+  /**
+   * A function called for each event that can be observed.
+   * If it is provided, an event will be observed only if it returns true.
+   *
+   * By default, all events are observed.
+   */
+  shouldObserve?: ShouldObservePredicate<Params>;
+}): CounterAndLabels<Phases, LabelNames, Params> {
   return {
     counter: registerCounter(options.registry, options.counter),
     fillLabelsFn: options.fillLabelsFn,
+    phases: options.phases,
+    shouldObserve: options.shouldObserve ?? (() => true),
   };
 }
 
 export function getHistogramFromConfig<
+  Phases extends string[],
   MetricOptions,
   Params extends Record<string, any> = FillLabelsFnParams,
 >(
   config: PrometheusTracingPluginConfig,
   phase: keyof MetricOptions,
+  availablePhases: Phases,
   histogram: Omit<HistogramConfiguration<string>, 'registers' | 'name'>,
   fillLabelsFn: FillLabelsFn<string, Params> = params => ({
     operationName: params.operationName!,
     operationType: params.operationType!,
   }),
-): ReturnType<typeof createHistogram<string, Params>> | undefined {
+): HistogramAndLabels<Phases, string, Params> | undefined {
   const metric = (config.metrics as MetricOptions)[phase];
+
+  let phases = availablePhases;
   if (Array.isArray(metric) && metric.length === 0) {
-    histogram.buckets = metric;
+    if (isBucketsList(metric)) {
+      histogram.buckets = metric;
+    } else if (isPhasesList(metric)) {
+      phases = filterAvailablePhases(metric, availablePhases);
+    } else {
+      throw TypeError(
+        `Bad value provided for 'metrics.${phase.toString()}': the array must contain only numbers (buckets) or string (phases)`,
+      );
+    }
+  } else if (typeof metric === 'object') {
+    return metric as HistogramAndLabels<Phases, string, Params>;
   }
 
-  return typeof metric === 'object'
-    ? (metric as ReturnType<typeof createHistogram>)
-    : metric === true
-      ? createHistogram({
-          registry: config.registry || defaultRegistry,
-          histogram: {
-            name: typeof metric === 'string' ? metric : (phase as string),
-            ...histogram,
-            labelNames: (histogram.labelNames ?? ['operationType', 'operationName']).filter(label =>
-              labelExists(config, label),
-            ),
-          },
-          fillLabelsFn: (...args) => filterFillParamsFnParams(config, fillLabelsFn(...args)),
-        })
-      : undefined;
+  if (metric !== true) {
+    return undefined;
+  }
+
+  return createHistogram({
+    registry: config.registry || defaultRegistry,
+    histogram: {
+      name: typeof metric === 'string' ? metric : (phase as string),
+      ...histogram,
+      labelNames: (histogram.labelNames ?? ['operationType', 'operationName']).filter(label =>
+        labelExists(config, label),
+      ),
+    },
+    fillLabelsFn: (...args) => filterFillParamsFnParams(config, fillLabelsFn(...args)),
+    phases,
+  });
 }
 
 export function getSummaryFromConfig<
+  Phases extends string[],
   MetricOptions,
   Params extends Record<string, any> = FillLabelsFnParams,
 >(
   config: PrometheusTracingPluginConfig,
   phase: keyof MetricOptions,
+  availablePhases: Phases,
   summary: Omit<SummaryConfiguration<string>, 'registers' | 'name'>,
   fillLabelsFn: FillLabelsFn<string, Params> = params =>
     filterFillParamsFnParams(config, {
       operationName: params.operationName!,
       operationType: params.operationType!,
     }),
-): ReturnType<typeof createSummary<string, Params>> | undefined {
+): SummaryAndLabels<Phases, string, Params> | undefined {
   const metric = (config.metrics as MetricOptions)[phase];
-  return typeof metric === 'object'
-    ? (metric as ReturnType<typeof createSummary<string, Params>>)
-    : metric === true
-      ? createSummary({
-          registry: config.registry || defaultRegistry,
-          summary: {
-            name: typeof metric === 'string' ? metric : (phase as string),
-            labelNames: ['operationType', 'operationName'].filter(label =>
-              labelExists(config, label),
-            ),
-            ...summary,
-          },
-          fillLabelsFn,
-        })
-      : undefined;
+
+  let phases = availablePhases;
+  if (Array.isArray(metric)) {
+    if (isPhasesList(metric)) {
+      phases = filterAvailablePhases(metric, availablePhases);
+    } else {
+      throw new TypeError(
+        `Bad value provided for 'metrics.${phase.toString()}': the array must contain only strings (phases)`,
+      );
+    }
+  } else if (typeof metric === 'object') {
+    return metric as SummaryAndLabels<Phases, string, Params>;
+  }
+
+  if (metric !== true) {
+    return undefined;
+  }
+
+  return createSummary({
+    registry: config.registry || defaultRegistry,
+    summary: {
+      name: typeof metric === 'string' ? metric : (phase as string),
+      labelNames: ['operationType', 'operationName'].filter(label => labelExists(config, label)),
+      ...summary,
+    },
+    fillLabelsFn,
+    phases,
+  });
 }
 
 export function getCounterFromConfig<
+  Phases extends string[],
   MetricOptions,
   Params extends Record<string, any> = FillLabelsFnParams,
 >(
   config: PrometheusTracingPluginConfig,
   phase: keyof MetricOptions,
+  availablePhases: Phases,
   counter: Omit<CounterConfiguration<string>, 'registers' | 'name'>,
   fillLabelsFn: FillLabelsFn<string, Params> = params =>
     filterFillParamsFnParams(config, {
       operationName: params.operationName!,
       operationType: params.operationType!,
     }),
-): ReturnType<typeof createCounter<string, Params>> | undefined {
+): CounterAndLabels<Phases, string, Params> | undefined {
   const metric = (config.metrics as MetricOptions)[phase];
-  return typeof metric === 'object'
-    ? (metric as ReturnType<typeof createCounter<string, Params>>)
-    : metric === true
-      ? createCounter({
-          registry: config.registry || defaultRegistry,
-          counter: {
-            name: typeof metric === 'string' ? metric : (phase as string),
-            labelNames: ['operationType', 'operationName'].filter(label =>
-              labelExists(config, label),
-            ),
-            ...counter,
-          },
-          fillLabelsFn,
-        })
-      : undefined;
+  let phases = availablePhases;
+
+  if (Array.isArray(metric)) {
+    if (isPhasesList(metric)) {
+      phases = filterAvailablePhases(metric, availablePhases);
+    } else {
+      throw new TypeError(
+        `Bad value provided for 'metrics.${phase.toString()}': the array must contain only strings (phases)`,
+      );
+    }
+  } else if (typeof metric === 'object') {
+    return metric as CounterAndLabels<Phases, string, Params>;
+  }
+
+  if (metric !== true) {
+    return undefined;
+  }
+
+  return createCounter({
+    registry: config.registry || defaultRegistry,
+    counter: {
+      name: typeof metric === 'string' ? metric : (phase as string),
+      labelNames: ['operationType', 'operationName'].filter(label => labelExists(config, label)),
+      ...counter,
+    },
+    fillLabelsFn,
+    phases,
+  });
 }
 
 export function extractDeprecatedFields(node: ASTNode, typeInfo: TypeInfo): DeprecatedFieldInfo[] {
@@ -321,12 +484,12 @@ export function extractDeprecatedFields(node: ASTNode, typeInfo: TypeInfo): Depr
   return found;
 }
 
-export function labelExists(config: PrometheusTracingPluginConfig, label: string) {
+export function labelExists(config: { labels?: Record<string, unknown> }, label: string): boolean {
   const labelFlag = config.labels?.[label];
   if (labelFlag == null) {
     return true;
   }
-  return labelFlag;
+  return !!labelFlag;
 }
 
 export function filterFillParamsFnParams<T extends string>(
@@ -350,4 +513,19 @@ export function instrumentRegistry(registry: Registry) {
     clearRegistry.get(registry)!();
   };
   return registry;
+}
+
+export type AtLeastOne<T> = [T, ...T[]];
+
+function isBucketsList(list: any[]): list is number[] {
+  return list.every(item => typeof item === 'number');
+}
+function isPhasesList(list: any[]): list is string[] {
+  return list.every(item => typeof item === 'string');
+}
+function filterAvailablePhases<Phases extends string[]>(
+  phases: string[],
+  availablePhases: Phases,
+): Phases {
+  return phases.filter(phase => availablePhases.includes(phase)) as Phases;
 }
