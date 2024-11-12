@@ -16,7 +16,13 @@ import {
   type OnPluginInitHook,
 } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
-import { PrometheusTracingPluginConfig, type MetricsConfig } from './config.js';
+import {
+  CounterMetricOption,
+  HistogramMetricOption,
+  PrometheusTracingPluginConfig,
+  SummaryMetricOption,
+  type MetricsConfig,
+} from './config.js';
 import {
   createCounter,
   createFillLabelFnParams,
@@ -41,6 +47,9 @@ export {
   HistogramAndLabels,
   PrometheusTracingPluginConfig,
   SummaryAndLabels,
+  HistogramMetricOption,
+  CounterMetricOption,
+  SummaryMetricOption,
   createCounter,
   createHistogram,
   createSummary,
