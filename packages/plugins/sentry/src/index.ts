@@ -108,7 +108,7 @@ export const useSentry = <PluginContext extends Record<string, any> = {}>(
   }
 
   return {
-    onExecute({ args }) {
+    onExecute({ args, executeFn, setExecuteFn }) {
       if (skipOperation(args)) {
         return;
       }
@@ -151,6 +151,9 @@ export const useSentry = <PluginContext extends Record<string, any> = {}>(
           if (options.configureScope) {
             options.configureScope(args, Sentry.getCurrentScope());
           }
+
+          // Give access to the span during resolvers execution
+          setExecuteFn(args => Sentry.withActiveSpan(rootSpan, () => executeFn(args)));
 
           return {
             onExecuteDone(payload) {
