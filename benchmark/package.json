@@ -12,7 +12,7 @@
     "@envelop/parser-cache": "workspace:^",
     "@envelop/prometheus": "workspace:^",
     "@envelop/validation-cache": "workspace:^",
-    "@graphql-tools/schema": "10.0.6",
+    "@graphql-tools/schema": "10.0.8",
     "faker": "5.5.3",
     "fastify": "4.26.2",
     "graphql": "16.8.1"
