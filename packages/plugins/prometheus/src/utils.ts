@@ -95,8 +95,8 @@ export type HistogramAndLabels<
 > = {
   histogram: Histogram<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
-  phases: Phases;
-  shouldObserve: ShouldObservePredicate<Params>;
+  phases?: Phases;
+  shouldObserve?: ShouldObservePredicate<Params>;
 };
 
 export function registerHistogram<LabelNames extends string>(
@@ -142,8 +142,10 @@ export function createHistogram<
    *
    * The possible values accepted in this list depends on the metric,
    * please refer to metric type or documentation to know which phases ar available.
+   *
+   * By default, all available phases are observed
    */
-  phases: Phases;
+  phases?: Phases;
   /**
    * A function called for each event that can be observed.
    * If it is provided, an event will be observed only if it returns true.
@@ -167,8 +169,8 @@ export type SummaryAndLabels<
 > = {
   summary: Summary<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
-  phases: Phases;
-  shouldObserve: ShouldObservePredicate<Params>;
+  phases?: Phases;
+  shouldObserve?: ShouldObservePredicate<Params>;
 };
 
 export function registerSummary<LabelNames extends string>(
@@ -214,8 +216,10 @@ export function createSummary<
    *
    * The possible values accepted in this list depends on the metric,
    * please refer to metric type or documentation to know which phases ar available.
+   *
+   * By default, all available phases are observed
    */
-  phases: Phases;
+  phases?: Phases;
   /**
    * A function called for each event that can be observed.
    * If it is provided, an event will be observed only if it returns true.
@@ -239,8 +243,8 @@ export type CounterAndLabels<
 > = {
   counter: Counter<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
-  phases: Phases;
-  shouldObserve: ShouldObservePredicate<Params>;
+  phases?: Phases;
+  shouldObserve?: ShouldObservePredicate<Params>;
 };
 
 /**
@@ -286,8 +290,10 @@ export function createCounter<
    *
    * The possible values accepted in this list depends on the metric,
    * please refer to metric type or documentation to know which phases ar available.
+   *
+   * By default, all available phases are observed
    */
-  phases: Phases;
+  phases?: Phases;
   /**
    * A function called for each event that can be observed.
    * If it is provided, an event will be observed only if it returns true.
@@ -332,7 +338,11 @@ export function getHistogramFromConfig<
       );
     }
   } else if (typeof metric === 'object') {
-    return metric as HistogramAndLabels<Phases, string, Params>;
+    const customMetric = metric as HistogramAndLabels<Phases, string, Params>;
+    if (!customMetric.phases) {
+      customMetric.phases = availablePhases;
+    }
+    return customMetric;
   }
 
   if (metric !== true) {
@@ -380,7 +390,11 @@ export function getSummaryFromConfig<
       );
     }
   } else if (typeof metric === 'object') {
-    return metric as SummaryAndLabels<Phases, string, Params>;
+    const customMetric = metric as SummaryAndLabels<Phases, string, Params>;
+    if (!customMetric.phases) {
+      customMetric.phases = availablePhases;
+    }
+    return customMetric;
   }
 
   if (metric !== true) {
@@ -426,7 +440,11 @@ export function getCounterFromConfig<
       );
     }
   } else if (typeof metric === 'object') {
-    return metric as CounterAndLabels<Phases, string, Params>;
+    const customMetric = metric as CounterAndLabels<Phases, string, Params>;
+    if (!customMetric.phases) {
+      customMetric.phases = availablePhases;
+    }
+    return customMetric;
   }
 
   if (metric !== true) {
