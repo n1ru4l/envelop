@@ -1,19 +1,24 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-import { ExecutionResult, GraphQLSchema, TypeInfo, type GraphQLError } from 'graphql';
+import {
+  ExecutionResult,
+  GraphQLSchema,
+  OperationTypeNode,
+  TypeInfo,
+  type GraphQLError,
+} from 'graphql';
 import { register as defaultRegistry } from 'prom-client';
 import {
   isAsyncIterable,
   isIntrospectionOperationString,
   OnContextBuildingHook,
   OnExecuteHook,
-  OnExecuteHookResult,
   OnParseHook,
   OnSubscribeHook,
-  OnSubscribeHookResult,
   OnValidateHook,
   Plugin,
   type OnEnvelopedHook,
   type OnPluginInitHook,
+  type OnSchemaChangeHook,
 } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
 import {
@@ -61,9 +66,37 @@ export {
 export const fillLabelsFnParamsMap = new WeakMap<any, FillLabelsFnParams | null>();
 export const execStartTimeMap = new WeakMap<any, number>();
 
+type PhaseHandler<OtherArgs extends Record<string, unknown> = {}, Params = FillLabelsFnParams> = {
+  shouldHandle: (params: Params, context: unknown) => boolean;
+  handler: (
+    args: OtherArgs & {
+      params: Params;
+      context: unknown;
+      totalTime: number;
+    },
+  ) => void;
+};
+
 export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => {
-  let typeInfo: TypeInfo | null = null;
   config.registry = instrumentRegistry(config.registry || defaultRegistry);
+
+  const phasesToHook = {
+    parse: [] as PhaseHandler[],
+    validate: [] as PhaseHandler[],
+    context: [] as PhaseHandler[],
+    execute: {
+      end: [] as PhaseHandler[],
+      result: [] as PhaseHandler<{ result: ExecutionResult }>[],
+    },
+    subscribe: {
+      end: [] as PhaseHandler[],
+      result: [] as PhaseHandler<{ result: ExecutionResult }>[],
+      error: [] as PhaseHandler<{ error: unknown }>[],
+    },
+    pluginInit: [] as OnPluginInitHook<Record<string, unknown>>[],
+    enveloped: [] as OnEnvelopedHook<Record<string, unknown>>[],
+    schema: [] as OnSchemaChangeHook[],
+  };
 
   const parseHistogram = getHistogramFromConfig<['parse'], MetricsConfig>(
     config,
@@ -73,6 +106,15 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       help: 'Time spent on running GraphQL "parse" function',
     },
   );
+  if (parseHistogram) {
+    phasesToHook.parse.push({
+      shouldHandle: parseHistogram.shouldObserve!,
+      handler: ({ params, context, totalTime }) => {
+        parseHistogram.histogram.observe(parseHistogram.fillLabelsFn(params, context), totalTime);
+      },
+    });
+  }
+
   const validateHistogram = getHistogramFromConfig<['validate'], MetricsConfig>(
     config,
     'graphql_envelop_phase_validate',
@@ -81,6 +123,16 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       help: 'Time spent on running GraphQL "validate" function',
     },
   );
+  if (validateHistogram) {
+    phasesToHook.validate.push({
+      shouldHandle: validateHistogram.shouldObserve!,
+      handler: ({ params, context, totalTime }) => {
+        const labels = validateHistogram.fillLabelsFn(params, context);
+        validateHistogram.histogram.observe(labels, totalTime);
+      },
+    });
+  }
+
   const contextBuildingHistogram = getHistogramFromConfig<['context'], MetricsConfig>(
     config,
     'graphql_envelop_phase_context',
@@ -89,6 +141,16 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       help: 'Time spent on building the GraphQL context',
     },
   );
+  if (contextBuildingHistogram) {
+    phasesToHook.context.push({
+      shouldHandle: contextBuildingHistogram.shouldObserve!,
+      handler: ({ params, context, totalTime }) => {
+        const labels = contextBuildingHistogram.fillLabelsFn(params, context);
+        contextBuildingHistogram.histogram.observe(labels, totalTime);
+      },
+    });
+  }
+
   const executeHistogram = getHistogramFromConfig<['execute'], MetricsConfig>(
     config,
     'graphql_envelop_phase_execute',
@@ -97,6 +159,16 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       help: 'Time spent on running the GraphQL "execute" function',
     },
   );
+  if (executeHistogram) {
+    phasesToHook.execute.end.push({
+      shouldHandle: executeHistogram.shouldObserve!,
+      handler: ({ params, context, totalTime }) => {
+        const labels = executeHistogram.fillLabelsFn(params, context);
+        executeHistogram.histogram.observe(labels, totalTime);
+      },
+    });
+  }
+
   const subscribeHistogram = getHistogramFromConfig<['subscribe'], MetricsConfig>(
     config,
     'graphql_envelop_phase_subscribe',
@@ -105,6 +177,15 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       help: 'Time spent on running the GraphQL "subscribe" function',
     },
   );
+  if (subscribeHistogram) {
+    phasesToHook.subscribe.end.push({
+      shouldHandle: subscribeHistogram.shouldObserve!,
+      handler: ({ params, context, totalTime }) => {
+        const labels = subscribeHistogram.fillLabelsFn(params, context);
+        subscribeHistogram.histogram.observe(labels, totalTime);
+      },
+    });
+  }
 
   const resolversHistogram = getHistogramFromConfig<['execute', 'subscribe'], MetricsConfig>(
     config,
@@ -123,6 +204,41 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
         returnType: params.info?.returnType.toString()!,
       }),
   );
+  if (resolversHistogram) {
+    phasesToHook.pluginInit.push(({ addPlugin }) => {
+      addPlugin(
+        useOnResolve(({ info, context }) => {
+          const phase =
+            info.operation.operation === OperationTypeNode.SUBSCRIPTION ? 'subscribe' : 'execute';
+
+          if (
+            !resolversHistogram.phases?.includes(phase) ||
+            !shouldTraceFieldResolver(info, config.resolversWhitelist)
+          ) {
+            return undefined;
+          }
+
+          const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
+          const paramsCtx = { ...fillLabelsFnParams, info };
+
+          if (!resolversHistogram.shouldObserve!(paramsCtx, context)) {
+            return undefined;
+          }
+
+          const startTime = Date.now();
+
+          return () => {
+            const totalTime = (Date.now() - startTime) / 1000;
+
+            resolversHistogram.histogram.observe(
+              resolversHistogram.fillLabelsFn(paramsCtx, context),
+              totalTime,
+            );
+          };
+        }),
+      );
+    });
+  }
 
   const requestTotalHistogram = getHistogramFromConfig<['execute', 'subscribe'], MetricsConfig>(
     config,
@@ -132,6 +248,18 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       help: 'Time spent on running the GraphQL operation from parse to execute',
     },
   );
+  if (requestTotalHistogram) {
+    const handler: PhaseHandler = {
+      shouldHandle: requestTotalHistogram.shouldObserve!,
+      handler: ({ params, context, totalTime }) => {
+        const labels = requestTotalHistogram!.fillLabelsFn(params, context);
+        requestTotalHistogram!.histogram.observe(labels, totalTime);
+      },
+    };
+    for (const phase of requestTotalHistogram.phases!) {
+      phasesToHook[phase].end.push(handler);
+    }
+  }
 
   const requestSummary = getSummaryFromConfig<['execute', 'subscribe'], MetricsConfig>(
     config,
@@ -141,6 +269,26 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       help: 'Summary to measure the time to complete GraphQL operations',
     },
   );
+  if (requestSummary) {
+    phasesToHook.enveloped.push(({ context }) => {
+      if (!execStartTimeMap.has(context)) {
+        execStartTimeMap.set(context, Date.now());
+      }
+    });
+    const handler: PhaseHandler = {
+      shouldHandle: (params, context) =>
+        requestSummary.shouldObserve!(params, context) && execStartTimeMap.has(context),
+      handler: ({ params, context }) => {
+        const execStartTime = execStartTimeMap.get(context);
+        const summaryTime = (Date.now() - execStartTime!) / 1000;
+        const labels = requestSummary!.fillLabelsFn(params, context);
+        requestSummary!.summary.observe(labels, summaryTime);
+      },
+    };
+    for (const phase of requestSummary.phases!) {
+      phasesToHook[phase].end.push(handler);
+    }
+  }
 
   const errorsCounter = getCounterFromConfig<
     ['parse', 'validate', 'context', 'execute', 'subscribe'],
@@ -167,6 +315,70 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       return filterFillParamsFnParams(config, labels);
     },
   );
+  if (errorsCounter) {
+    (['parse', 'validate'] as const)
+      .filter(phase => errorsCounter.phases!.includes(phase))
+      .forEach(phase => {
+        phasesToHook[phase].push({
+          shouldHandle: (params, context) =>
+            !!params.errorPhase && errorsCounter.shouldObserve!(params, context),
+          handler: ({ params, context }) => {
+            const labels = errorsCounter.fillLabelsFn(params, context);
+            errorsCounter?.counter.labels(labels).inc();
+          },
+        });
+      });
+
+    (['execute', 'subscribe'] as const)
+      .filter(phase => errorsCounter.phases!.includes(phase))
+      .forEach(phase => {
+        phasesToHook[phase].result.push({
+          shouldHandle: errorsCounter.shouldObserve!,
+          handler: ({ result, params, context }) => {
+            if (!result.errors?.length) {
+              return;
+            }
+            for (const error of result.errors) {
+              const labelParams = { ...params, errorPhase: 'execute', error };
+
+              if (errorsCounter!.shouldObserve!(labelParams, context)) {
+                errorsCounter!.counter
+                  .labels(errorsCounter!.fillLabelsFn(labelParams, context))
+                  .inc();
+              }
+            }
+          },
+        });
+      });
+
+    if (errorsCounter.phases!.includes('subscribe')) {
+      phasesToHook.subscribe.error.push({
+        shouldHandle: errorsCounter.shouldObserve!,
+        handler: ({ params, context, error }) => {
+          const labels = errorsCounter.fillLabelsFn(params, context);
+          errorsCounter.counter.labels(labels).inc();
+        },
+      });
+    }
+
+    if (errorsCounter.phases!.includes('context')) {
+      phasesToHook.pluginInit.push(({ registerContextErrorHandler }) => {
+        registerContextErrorHandler(({ context, error }) => {
+          const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
+          // FIXME: unsafe cast here, but it's ok, fillabelfn is doing duck typing anyway
+          const params = {
+            error: error as GraphQLError,
+            errorPhase: 'context',
+            ...fillLabelsFnParams,
+          };
+
+          if (errorsCounter.shouldObserve!(params, context)) {
+            errorsCounter.counter.labels(errorsCounter?.fillLabelsFn(params, context)).inc();
+          }
+        });
+      });
+    }
+  }
 
   const reqCounter = getCounterFromConfig<['execute', 'subscribe'], MetricsConfig>(
     config,
@@ -176,6 +388,17 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       help: 'Counts the amount of GraphQL requests executed through Envelop',
     },
   );
+  if (reqCounter) {
+    const handler: PhaseHandler = {
+      shouldHandle: reqCounter.shouldObserve!,
+      handler: ({ params, context }) => {
+        reqCounter!.counter.labels(reqCounter!.fillLabelsFn(params, context)).inc();
+      },
+    };
+    for (const phase of reqCounter.phases!) {
+      phasesToHook[phase].end.push(handler);
+    }
+  }
 
   const deprecationCounter = getCounterFromConfig<['parse'], MetricsConfig>(
     config,
@@ -193,6 +416,34 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
         typeName: params.deprecationInfo?.typeName!,
       }),
   );
+  if (deprecationCounter) {
+    let typeInfo: TypeInfo | null = null;
+    phasesToHook.schema.push(({ schema }) => {
+      typeInfo = new TypeInfo(schema);
+    });
+
+    phasesToHook.parse.push({
+      shouldHandle: (params, context) =>
+        // If parse error happens, we can't explore the query document
+        !!typeInfo && !params.errorPhase && deprecationCounter.shouldObserve!(params, context),
+      handler: ({ params, context }) => {
+        const deprecatedFields = extractDeprecatedFields(params.document!, typeInfo!);
+
+        for (const depField of deprecatedFields) {
+          const deprecationLabelParams = {
+            ...params,
+            deprecationInfo: depField,
+          };
+
+          if (deprecationCounter.shouldObserve!(deprecationLabelParams, context)) {
+            deprecationCounter.counter
+              .labels(deprecationCounter.fillLabelsFn(deprecationLabelParams, context))
+              .inc();
+          }
+        }
+      },
+    });
+  }
 
   const schemaChangeCounter = getCounterFromConfig<['schema'], MetricsConfig>(
     config,
@@ -204,24 +455,15 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     },
     () => ({}),
   );
+  if (schemaChangeCounter) {
+    const countedSchemas = new WeakSet<GraphQLSchema>();
 
-  // parse is mandatory, because it sets up label params for the whole request.
-  const phasesToHook = new Set(['parse']);
-  for (const metric of [
-    parseHistogram,
-    validateHistogram,
-    contextBuildingHistogram,
-    executeHistogram,
-    subscribeHistogram,
-    resolversHistogram,
-    requestTotalHistogram,
-    requestSummary,
-    errorsCounter,
-    reqCounter,
-    deprecationCounter,
-    schemaChangeCounter,
-  ]) {
-    metric?.phases!.forEach(phase => phasesToHook.add(phase));
+    phasesToHook.schema.push(({ schema }) => {
+      if (schemaChangeCounter?.shouldObserve!({}, null) && !countedSchemas.has(schema)) {
+        schemaChangeCounter.counter.inc();
+        countedSchemas.add(schema);
+      }
+    });
   }
 
   const onParse: OnParseHook<{}> = ({ context, params }) => {
@@ -237,41 +479,15 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       );
       fillLabelsFnParamsMap.set(context, fillLabelsFnParams);
 
-      if (!fillLabelsFnParams) {
-        // means that we got a parse error
-        if (errorsCounter?.shouldObserve!({ error: params.result, errorPhase: 'parse' }, context)) {
-          // TODO: use fillLabelsFn
-          errorsCounter?.counter.labels({ phase: 'parse' }).inc();
-        }
-        // TODO: We should probably always report parse timing, error or not.
-        return;
-      }
+      const args = {
+        context,
+        totalTime: (Date.now() - startTime) / 1000,
+        params: fillLabelsFnParams ?? { error: params.result, errorPhase: 'parse' },
+      };
 
-      const totalTime = (Date.now() - startTime) / 1000;
-
-      if (parseHistogram?.shouldObserve!(fillLabelsFnParams, context)) {
-        parseHistogram?.histogram.observe(
-          parseHistogram.fillLabelsFn(fillLabelsFnParams, context),
-          totalTime,
-        );
-      }
-
-      if (deprecationCounter && typeInfo) {
-        const deprecatedFields = extractDeprecatedFields(fillLabelsFnParams.document!, typeInfo);
-
-        for (const depField of deprecatedFields) {
-          const deprecationLabelParams = {
-            ...fillLabelsFnParams,
-            deprecationInfo: depField,
-          };
-
-          if (deprecationCounter.shouldObserve!(deprecationLabelParams, context)) {
-            deprecationCounter.counter
-              .labels(deprecationCounter.fillLabelsFn(deprecationLabelParams, context))
-              .inc();
-          }
-        }
-      }
+      phasesToHook.parse
+        .filter(({ shouldHandle }) => shouldHandle(args.params, context))
+        .forEach(({ handler }) => handler(args));
     };
   };
 
@@ -284,344 +500,169 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     const startTime = Date.now();
 
     return ({ valid }) => {
-      const totalTime = (Date.now() - startTime) / 1000;
-      let labels;
-      if (validateHistogram?.shouldObserve!(fillLabelsFnParams, context)) {
-        labels = validateHistogram.fillLabelsFn(fillLabelsFnParams, context);
-        validateHistogram.histogram.observe(labels, totalTime);
-      }
+      const args = {
+        params: valid ? fillLabelsFnParams : { ...fillLabelsFnParams, errorPhase: 'validate' },
+        context,
+        totalTime: (Date.now() - startTime) / 1000,
+      };
 
-      if (
-        !valid &&
-        errorsCounter?.phases!.includes('validate') &&
-        errorsCounter?.shouldObserve!(fillLabelsFnParams, context)
-      ) {
-        // TODO: we should probably iterate over validation errors to report each error.
-        errorsCounter?.counter
-          // TODO: Use fillLabelsFn
-          .labels(
-            errorsCounter.fillLabelsFn({ ...fillLabelsFnParams, errorPhase: 'validate' }, context),
-          )
-          .inc();
-      }
+      phasesToHook.validate
+        .filter(({ shouldHandle }) => shouldHandle(args.params, context))
+        .forEach(({ handler }) => handler(args));
+
+      // TODO: we should probably iterate over validation errors to report each error.
     };
   };
 
   const onContextBuilding: OnContextBuildingHook<{}> | undefined = ({ context }) => {
     const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
-    if (
-      !fillLabelsFnParams ||
-      !contextBuildingHistogram?.shouldObserve!(fillLabelsFnParams, context)
-    ) {
+    if (!fillLabelsFnParams) {
       return;
     }
 
     const startTime = Date.now();
 
-    return () => {
-      const totalTime = (Date.now() - startTime) / 1000;
-      contextBuildingHistogram.histogram.observe(
-        contextBuildingHistogram.fillLabelsFn(fillLabelsFnParams, context),
-        totalTime,
-      );
+    const args = {
+      context,
+      params: fillLabelsFnParams,
+      totalTime: (Date.now() - startTime) / 1000,
     };
+
+    phasesToHook.context
+      .filter(({ shouldHandle }) => shouldHandle(fillLabelsFnParams, context))
+      .forEach(({ handler }) => handler(args));
   };
 
-  const onExecute: OnExecuteHook<{}> | undefined = ({ args }) => {
-    const fillLabelsFnParams = fillLabelsFnParamsMap.get(args.contextValue);
+  const onExecute: OnExecuteHook<{}> = ({ args: { contextValue: context } }) => {
+    const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
     if (!fillLabelsFnParams) {
       return;
     }
 
-    const shouldObserveRequsets = reqCounter?.shouldObserve!(fillLabelsFnParams, args.contextValue);
-    const shouldObserveExecute = executeHistogram?.shouldObserve!(
-      fillLabelsFnParams,
-      args.contextValue,
+    const endHandlers = phasesToHook.execute.end.filter(({ shouldHandle }) =>
+      shouldHandle(fillLabelsFnParams, context),
     );
-    const shouldObserveRequestTotal = requestTotalHistogram?.shouldObserve!(
-      fillLabelsFnParams,
-      args.contextValue,
-    );
-    const shouldObserveSummary = requestSummary?.shouldObserve!(
-      fillLabelsFnParams,
-      args.contextValue,
+    const resultHandlers = phasesToHook.execute.result.filter(({ shouldHandle }) =>
+      shouldHandle(fillLabelsFnParams, context),
     );
 
-    const shouldHandleEnd =
-      shouldObserveRequsets ||
-      shouldObserveExecute ||
-      shouldObserveRequestTotal ||
-      shouldObserveSummary;
-
-    const shouldHandleResult = errorsCounter !== undefined;
-
-    if (!shouldHandleEnd && !shouldHandleResult) {
-      return;
-    }
-
-    const startTime = Date.now();
-    if (shouldObserveRequsets) {
-      reqCounter?.counter
-        .labels(reqCounter.fillLabelsFn(fillLabelsFnParams, args.contextValue))
-        .inc();
-    }
-
-    function handleResult(result: ExecutionResult) {
-      if (result.errors && result.errors.length > 0) {
-        for (const error of result.errors) {
-          const labelParams = {
-            ...fillLabelsFnParams,
-            errorPhase: 'execute',
-            error,
-          };
-
-          if (errorsCounter!.shouldObserve!(labelParams, args.contextValue)) {
-            errorsCounter!.counter
-              .labels(errorsCounter!.fillLabelsFn(labelParams, args.contextValue))
-              .inc();
-          }
-        }
-      }
-    }
-
-    const result: OnExecuteHookResult<{}> = {
-      onExecuteDone: ({ result }) => {
-        const handleEnd = () => {
-          const totalTime = (Date.now() - startTime) / 1000;
-          if (shouldObserveExecute) {
-            executeHistogram!.histogram.observe(
-              executeHistogram!.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-              totalTime,
-            );
-          }
-
-          if (shouldObserveRequestTotal) {
-            requestTotalHistogram!.histogram.observe(
-              requestTotalHistogram!.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-              totalTime,
-            );
-          }
-
-          if (shouldObserveSummary) {
-            const execStartTime = execStartTimeMap.get(args.contextValue);
-            if (execStartTime) {
-              const summaryTime = (Date.now() - execStartTime) / 1000;
-
-              requestSummary!.summary.observe(
-                requestSummary!.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-                summaryTime,
-              );
-            }
-          }
-        };
-
-        if (!isAsyncIterable(result)) {
-          shouldHandleResult && handleResult(result);
-          shouldHandleEnd && handleEnd();
-          return undefined;
-        } else {
-          return {
-            onNext: shouldHandleResult
-              ? ({ result }) => {
-                  handleResult(result);
-                }
-              : undefined,
-            onEnd: shouldHandleEnd ? handleEnd : undefined,
-          };
-        }
-      },
-    };
-
-    return result;
-  };
-
-  const onSubscribe: OnSubscribeHook<{}> | undefined = ({ args }) => {
-    const fillLabelsFnParams = fillLabelsFnParamsMap.get(args.contextValue);
-    if (!fillLabelsFnParams) {
+    if (endHandlers.length + resultHandlers.length === 0) {
       return undefined;
     }
 
-    const shouldObserveRequsets = reqCounter?.shouldObserve!(fillLabelsFnParams, args.contextValue);
-    const shouldObserveExecute = executeHistogram?.shouldObserve!(
-      fillLabelsFnParams,
-      args.contextValue,
-    );
-    const shouldObserveRequestTotal = requestTotalHistogram?.shouldObserve!(
-      fillLabelsFnParams,
-      args.contextValue,
-    );
-    const shouldObserveSummary = requestSummary?.shouldObserve!(
-      fillLabelsFnParams,
-      args.contextValue,
-    );
-
-    const shouldHandleEnd =
-      shouldObserveRequsets ||
-      shouldObserveExecute ||
-      shouldObserveRequestTotal ||
-      shouldObserveSummary;
-
-    const shouldHandleResult = errorsCounter !== undefined;
-
     const startTime = Date.now();
-    if (shouldObserveRequsets) {
-      reqCounter?.counter
-        .labels(reqCounter.fillLabelsFn(fillLabelsFnParams, args.contextValue))
-        .inc();
+
+    function handleResult({ result }: { result: ExecutionResult }) {
+      const totalTime = (Date.now() - startTime) / 1000;
+      const args = { params: fillLabelsFnParams!, context, totalTime, result };
+      resultHandlers.forEach(({ handler }) => handler(args));
     }
 
-    function handleResult(result: ExecutionResult) {
-      if (errorsCounter && result.errors && result.errors.length > 0) {
-        for (const error of result.errors) {
-          errorsCounter.counter
-            .labels(
-              errorsCounter.fillLabelsFn(
-                {
-                  ...fillLabelsFnParams,
-                  errorPhase: 'execute',
-                  error,
-                },
-                args.contextValue,
-              ),
-            )
-            .inc();
-        }
-      }
-    }
+    const handleEnd = () => {
+      const totalTime = (Date.now() - startTime) / 1000;
+      const args = { params: fillLabelsFnParams, context, totalTime };
+      endHandlers.forEach(({ handler }) => handler(args));
+    };
 
-    if (!shouldHandleEnd && !shouldHandleResult) {
-      return;
-    }
-
-    const result: OnSubscribeHookResult<{}> = {
-      onSubscribeResult: ({ result }) => {
-        const handleEnd = () => {
-          const totalTime = (Date.now() - startTime) / 1000;
-          if (shouldObserveExecute) {
-            subscribeHistogram!.histogram.observe(
-              subscribeHistogram!.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-              totalTime,
-            );
-          }
-          if (shouldObserveRequestTotal) {
-            requestTotalHistogram?.histogram.observe(
-              requestTotalHistogram.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-              totalTime,
-            );
-          }
-
-          if (shouldObserveSummary) {
-            const execStartTime = execStartTimeMap.get(args.contextValue);
-            if (execStartTime) {
-              const summaryTime = (Date.now() - execStartTime) / 1000;
-
-              requestSummary!.summary.observe(
-                requestSummary!.fillLabelsFn(fillLabelsFnParams, args.contextValue),
-                summaryTime,
-              );
-            }
-          }
-        };
-        if (!isAsyncIterable(result)) {
-          shouldHandleResult && handleResult(result);
-          shouldHandleEnd && handleEnd();
-          return undefined;
-        } else {
+    return {
+      onExecuteDone: ({ result }) => {
+        if (isAsyncIterable(result)) {
           return {
-            onNext: shouldHandleResult
-              ? ({ result }) => {
-                  handleResult(result);
-                }
-              : undefined,
-            onEnd: shouldHandleEnd ? handleEnd : undefined,
+            onNext: resultHandlers.length ? handleResult : undefined,
+            onEnd: endHandlers.length ? handleEnd : undefined,
           };
+        } else {
+          handleResult({ result });
+          handleEnd();
+          return undefined;
         }
       },
     };
-
-    return result;
   };
 
-  const onPluginInit: OnPluginInitHook<{}> = ({ addPlugin, registerContextErrorHandler }) => {
-    if (resolversHistogram) {
-      addPlugin(
-        useOnResolve(({ info, context }) => {
-          const shouldTrace = shouldTraceFieldResolver(info, config.resolversWhitelist);
+  const onSubscribe: OnSubscribeHook<{}> = ({ args: { contextValue: context } }) => {
+    const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
+    if (!fillLabelsFnParams) {
+      return;
+    }
 
-          if (!shouldTrace) {
-            return undefined;
-          }
+    const endHandlers = phasesToHook.subscribe.end.filter(({ shouldHandle }) =>
+      shouldHandle(fillLabelsFnParams, context),
+    );
+    const resultHandlers = phasesToHook.subscribe.result.filter(({ shouldHandle }) =>
+      shouldHandle(fillLabelsFnParams, context),
+    );
+    const errorHandlers = phasesToHook.subscribe.error.filter(({ shouldHandle }) =>
+      shouldHandle(fillLabelsFnParams, context),
+    );
 
-          const startTime = Date.now();
+    if (endHandlers.length + resultHandlers.length + errorHandlers.length === 0) {
+      return undefined;
+    }
 
-          return () => {
-            const totalTime = (Date.now() - startTime) / 1000;
-            const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
-            const paramsCtx = {
-              ...fillLabelsFnParams,
-              info,
-            };
-            resolversHistogram.histogram.observe(
-              resolversHistogram.fillLabelsFn(paramsCtx, context),
-              totalTime,
-            );
+    const startTime = Date.now();
+
+    function handleResult({ result }: { result: ExecutionResult }) {
+      const totalTime = (Date.now() - startTime) / 1000;
+      const args = { params: fillLabelsFnParams!, context, totalTime, result };
+      resultHandlers.forEach(({ handler }) => handler(args));
+    }
+
+    const handleEnd = () => {
+      const totalTime = (Date.now() - startTime) / 1000;
+      const args = { params: fillLabelsFnParams, context, totalTime };
+      endHandlers.forEach(({ handler }) => handler(args));
+    };
+
+    const handleError = ({ error }: { error: unknown }) => {
+      const totalTime = (Date.now() - startTime) / 1000;
+      const args = { params: fillLabelsFnParams, context, totalTime, error };
+      errorHandlers.forEach(({ handler }) => handler(args));
+    };
+
+    return {
+      onSubscribeResult: ({ result }) => {
+        if (isAsyncIterable(result)) {
+          return {
+            onNext: resultHandlers.length ? handleResult : undefined,
+            onEnd: endHandlers.length ? handleEnd : undefined,
           };
-        }),
-      );
-    }
-    if (errorsCounter) {
-      registerContextErrorHandler(({ context, error }) => {
-        const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
-        if (
-          errorsCounter.shouldObserve!(
-            { error: error as GraphQLError, errorPhase: 'context', ...fillLabelsFnParamsMap },
-            context,
-          )
-        ) {
-          errorsCounter.counter
-            .labels(
-              errorsCounter?.fillLabelsFn(
-                // FIXME: unsafe cast here, but it's ok, fillabelfn is doing duck typing anyway
-                { ...fillLabelsFnParams, errorPhase: 'context', error: error as GraphQLError },
-                context,
-              ),
-            )
-            .inc();
+        } else {
+          handleResult({ result });
+          handleEnd();
+          return undefined;
         }
-      });
+      },
+      onSubscribeError: errorHandlers.length ? handleError : undefined,
+    };
+  };
+
+  const onPluginInit: OnPluginInitHook<{}> = payload => {
+    for (const handler of phasesToHook.pluginInit) {
+      handler(payload);
     }
   };
 
-  const onEnveloped: OnEnvelopedHook<{}> = ({ context }) => {
-    if (!execStartTimeMap.has(context)) {
-      execStartTimeMap.set(context, Date.now());
+  const onEnveloped: OnEnvelopedHook<{}> = payload => {
+    for (const handler of phasesToHook.enveloped) {
+      handler(payload);
     }
   };
 
-  function hookIf<T>(phase: string, hook: T): T | undefined {
-    if (phasesToHook.has(phase)) {
-      return hook;
+  const onSchemaChange: OnSchemaChangeHook = payload => {
+    for (const handler of phasesToHook.schema) {
+      handler(payload);
     }
-    return undefined;
-  }
+  };
 
-  const countedSchemas = new WeakSet<GraphQLSchema>();
   return {
-    onSchemaChange({ schema }) {
-      typeInfo = new TypeInfo(schema);
-
-      if (schemaChangeCounter?.shouldObserve!({}, null) && !countedSchemas.has(schema)) {
-        schemaChangeCounter.counter.inc();
-        countedSchemas.add(schema);
-      }
-    },
-    onEnveloped: hookIf('execute', onEnveloped) ?? hookIf('subscribe', onEnveloped),
-    onPluginInit:
-      errorsCounter?.phases!.includes('context') || resolversHistogram ? onPluginInit : undefined,
-    onParse: hookIf('parse', onParse),
-    onValidate: hookIf('validate', onValidate),
-    onContextBuilding: hookIf('context', onContextBuilding),
-    onExecute: hookIf('execute', onExecute),
-    onSubscribe: hookIf('subscribe', onSubscribe),
+    onParse, // onParse is required, because it sets up the label params WeakMap
+    onSchemaChange: phasesToHook.schema.length ? onSchemaChange : undefined,
+    onPluginInit: phasesToHook.pluginInit.length ? onPluginInit : undefined,
+    onEnveloped: phasesToHook.enveloped.length ? onEnveloped : undefined,
+    onValidate: phasesToHook.validate.length ? onValidate : undefined,
+    onContextBuilding: phasesToHook.context.length ? onContextBuilding : undefined,
+    onExecute: phasesToHook.execute ? onExecute : undefined,
+    onSubscribe: phasesToHook.subscribe ? onSubscribe : undefined,
   };
 };
