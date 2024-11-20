@@ -53,6 +53,7 @@
   "dependencies": {
     "@envelop/on-resolve": "^4.1.0",
     "@graphql-tools/utils": "^10.5.4",
+    "graphql-middleware": "^6.1.35",
     "graphql-rate-limit": "^3.3.0",
     "minimatch": "^10.0.1",
     "tslib": "^2.5.0"
