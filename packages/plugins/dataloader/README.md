@@ -2,7 +2,7 @@
 
 This plugin helps you to create a new [DataLoader](https://github.com/graphql/dataloader) instance
 every time your context is being built. The created instance is injected into the `context` with the
-name your wish to use.
+name you wish to use.
 
 ## Getting Started
 
