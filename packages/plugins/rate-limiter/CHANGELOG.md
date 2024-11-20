@@ -1,5 +1,21 @@
 # @envelop/rate-limiter
 
+## 6.2.1
+
+### Patch Changes
+
+- [#2330](https://github.com/n1ru4l/envelop/pull/2330)
+  [`b1210bc`](https://github.com/n1ru4l/envelop/commit/b1210bcb1aad1545e953c48ca3adfc064e854a2d)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Added dependency
+    [`graphql-middleware@^6.1.35` ↗︎](https://www.npmjs.com/package/graphql-middleware/v/6.1.35)
+    (to `dependencies`)
+
+- [#2330](https://github.com/n1ru4l/envelop/pull/2330)
+  [`b1210bc`](https://github.com/n1ru4l/envelop/commit/b1210bcb1aad1545e953c48ca3adfc064e854a2d)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Add graphql-middleware as a dependency
+
 ## 6.2.0
 
 ### Minor Changes
