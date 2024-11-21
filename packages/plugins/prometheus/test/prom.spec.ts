@@ -279,6 +279,15 @@ describe('Prom Metrics plugin', () => {
         name: 'disabled with all metrics',
         config: { metrics: { ...allMetrics, graphql_envelop_phase_parse: false } },
       },
+      {
+        name: 'providing empty list of phases',
+        config: {
+          metrics: {
+            graphql_envelop_phase_parse: [],
+            graphql_envelop_schema_change: [],
+          },
+        },
+      },
       ((registry: Registry) => ({
         name: 'given a shouldObserve',
         config: {
