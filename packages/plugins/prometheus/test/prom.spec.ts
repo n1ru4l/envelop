@@ -309,7 +309,7 @@ describe('Prom Metrics plugin', () => {
           },
         },
       }))(new Registry()),
-    ] as { name: string; config: PrometheusTracingPluginConfig }[])(
+    ] satisfies { name: string; config: PrometheusTracingPluginConfig }[])(
       'should not monitor parse timing when $name',
       async ({ config }) => {
         const { execute, metricCount, metricString } = prepare(config, config.registry);
