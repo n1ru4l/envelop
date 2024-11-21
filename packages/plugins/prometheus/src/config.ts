@@ -1,9 +1,11 @@
+import type { GraphQLResolveInfo } from 'graphql';
 import { Registry } from 'prom-client';
 import {
   createCounter,
   createHistogram,
   createSummary,
   type AtLeastOne,
+  type DeprecatedFieldInfo,
   type FillLabelsFnParams,
 } from './utils.js';
 
@@ -164,7 +166,12 @@ export type MetricsConfig = {
    *  - ReturnType<typeof createCounter>: Enable the metric with custom configuration
    */
   graphql_envelop_error_result?: CounterMetricOption<
-    'parse' | 'validate' | 'context' | 'execute' | 'subscribe'
+    'parse' | 'validate' | 'context' | 'execute' | 'subscribe',
+    string,
+    FillLabelsFnParams & {
+      error: unknown;
+      errorPhase: 'parse' | 'validate' | 'context' | 'execute' | 'subscribe';
+    }
   >;
   /**
    * This metric tracks the number of deprecated fields used in the GraphQL operation.
@@ -176,7 +183,11 @@ export type MetricsConfig = {
    *  - string[]: Enable the metric on a list of phases
    *  - ReturnType<typeof createCounter>: Enable the metric with custom configuration
    */
-  graphql_envelop_deprecated_field?: CounterMetricOption<'parse'>;
+  graphql_envelop_deprecated_field?: CounterMetricOption<
+    'parse',
+    string,
+    FillLabelsFnParams & { deprecationInfo: DeprecatedFieldInfo }
+  >;
   /**
    * This metric tracks the number of schema changes that have occurred since the gateway started.
    * If you are using a plugin that modifies the schema on the fly,
@@ -190,7 +201,7 @@ export type MetricsConfig = {
    *  - string[]: Enable the metric on a list of phases
    *  - ReturnType<typeof createCounter>: Enable the metric with custom configuration
    */
-  graphql_envelop_schema_change?: CounterMetricOption<'schema'>;
+  graphql_envelop_schema_change?: CounterMetricOption<'schema', string, {}>;
   /**
    * This metric tracks the duration of each resolver execution.
    *
@@ -205,7 +216,13 @@ export type MetricsConfig = {
    *  - number[]: Enable the metric with custom buckets
    *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
    */
-  graphql_envelop_execute_resolver?: HistogramMetricOption<'subscribe' | 'execute'>;
+  graphql_envelop_execute_resolver?: HistogramMetricOption<
+    'subscribe' | 'execute',
+    string,
+    FillLabelsFnParams & {
+      info: GraphQLResolveInfo;
+    }
+  >;
 };
 
 export type LabelsConfig = {
