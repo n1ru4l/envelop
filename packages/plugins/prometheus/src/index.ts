@@ -98,7 +98,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     schema: [] as OnSchemaChangeHook[],
   };
 
-  const parseHistogram = getHistogramFromConfig<['parse'], MetricsConfig>(
+  const parseHistogram = getHistogramFromConfig<'parse', MetricsConfig>(
     config,
     'graphql_envelop_phase_parse',
     ['parse'],
@@ -108,14 +108,14 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
   );
   if (parseHistogram) {
     phasesToHook.parse.push({
-      shouldHandle: parseHistogram.shouldObserve!,
+      shouldHandle: parseHistogram.shouldObserve,
       handler: ({ params, context, totalTime }) => {
         parseHistogram.histogram.observe(parseHistogram.fillLabelsFn(params, context), totalTime);
       },
     });
   }
 
-  const validateHistogram = getHistogramFromConfig<['validate'], MetricsConfig>(
+  const validateHistogram = getHistogramFromConfig<'validate', MetricsConfig>(
     config,
     'graphql_envelop_phase_validate',
     ['validate'],
@@ -125,7 +125,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
   );
   if (validateHistogram) {
     phasesToHook.validate.push({
-      shouldHandle: validateHistogram.shouldObserve!,
+      shouldHandle: validateHistogram.shouldObserve,
       handler: ({ params, context, totalTime }) => {
         const labels = validateHistogram.fillLabelsFn(params, context);
         validateHistogram.histogram.observe(labels, totalTime);
@@ -133,7 +133,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     });
   }
 
-  const contextBuildingHistogram = getHistogramFromConfig<['context'], MetricsConfig>(
+  const contextBuildingHistogram = getHistogramFromConfig<'context', MetricsConfig>(
     config,
     'graphql_envelop_phase_context',
     ['context'],
@@ -143,7 +143,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
   );
   if (contextBuildingHistogram) {
     phasesToHook.context.push({
-      shouldHandle: contextBuildingHistogram.shouldObserve!,
+      shouldHandle: contextBuildingHistogram.shouldObserve,
       handler: ({ params, context, totalTime }) => {
         const labels = contextBuildingHistogram.fillLabelsFn(params, context);
         contextBuildingHistogram.histogram.observe(labels, totalTime);
@@ -151,7 +151,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     });
   }
 
-  const executeHistogram = getHistogramFromConfig<['execute'], MetricsConfig>(
+  const executeHistogram = getHistogramFromConfig<'execute', MetricsConfig>(
     config,
     'graphql_envelop_phase_execute',
     ['execute'],
@@ -161,7 +161,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
   );
   if (executeHistogram) {
     phasesToHook.execute.end.push({
-      shouldHandle: executeHistogram.shouldObserve!,
+      shouldHandle: executeHistogram.shouldObserve,
       handler: ({ params, context, totalTime }) => {
         const labels = executeHistogram.fillLabelsFn(params, context);
         executeHistogram.histogram.observe(labels, totalTime);
@@ -169,7 +169,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     });
   }
 
-  const subscribeHistogram = getHistogramFromConfig<['subscribe'], MetricsConfig>(
+  const subscribeHistogram = getHistogramFromConfig<'subscribe', MetricsConfig>(
     config,
     'graphql_envelop_phase_subscribe',
     ['subscribe'],
@@ -179,7 +179,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
   );
   if (subscribeHistogram) {
     phasesToHook.subscribe.end.push({
-      shouldHandle: subscribeHistogram.shouldObserve!,
+      shouldHandle: subscribeHistogram.shouldObserve,
       handler: ({ params, context, totalTime }) => {
         const labels = subscribeHistogram.fillLabelsFn(params, context);
         subscribeHistogram.histogram.observe(labels, totalTime);
@@ -187,7 +187,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     });
   }
 
-  const resolversHistogram = getHistogramFromConfig<['execute', 'subscribe'], MetricsConfig>(
+  const resolversHistogram = getHistogramFromConfig<'execute' | 'subscribe', MetricsConfig>(
     config,
     'graphql_envelop_execute_resolver',
     ['execute', 'subscribe'],
@@ -221,7 +221,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
           const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
           const paramsCtx = { ...fillLabelsFnParams, info };
 
-          if (!resolversHistogram.shouldObserve!(paramsCtx, context)) {
+          if (!resolversHistogram.shouldObserve(paramsCtx, context)) {
             return undefined;
           }
 
@@ -240,7 +240,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     });
   }
 
-  const requestTotalHistogram = getHistogramFromConfig<['execute', 'subscribe'], MetricsConfig>(
+  const requestTotalHistogram = getHistogramFromConfig<'execute' | 'subscribe', MetricsConfig>(
     config,
     'graphql_envelop_request_duration',
     ['execute', 'subscribe'],
@@ -250,18 +250,18 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
   );
   if (requestTotalHistogram) {
     const handler: PhaseHandler = {
-      shouldHandle: requestTotalHistogram.shouldObserve!,
+      shouldHandle: requestTotalHistogram.shouldObserve,
       handler: ({ params, context, totalTime }) => {
         const labels = requestTotalHistogram!.fillLabelsFn(params, context);
         requestTotalHistogram!.histogram.observe(labels, totalTime);
       },
     };
-    for (const phase of requestTotalHistogram.phases!) {
+    for (const phase of requestTotalHistogram.phases) {
       phasesToHook[phase].end.push(handler);
     }
   }
 
-  const requestSummary = getSummaryFromConfig<['execute', 'subscribe'], MetricsConfig>(
+  const requestSummary = getSummaryFromConfig<'execute' | 'subscribe', MetricsConfig>(
     config,
     'graphql_envelop_request_time_summary',
     ['execute', 'subscribe'],
@@ -277,7 +277,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     });
     const handler: PhaseHandler = {
       shouldHandle: (params, context) =>
-        requestSummary.shouldObserve!(params, context) && execStartTimeMap.has(context),
+        requestSummary.shouldObserve(params, context) && execStartTimeMap.has(context),
       handler: ({ params, context }) => {
         const execStartTime = execStartTimeMap.get(context);
         const summaryTime = (Date.now() - execStartTime!) / 1000;
@@ -285,13 +285,13 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
         requestSummary!.summary.observe(labels, summaryTime);
       },
     };
-    for (const phase of requestSummary.phases!) {
+    for (const phase of requestSummary.phases) {
       phasesToHook[phase].end.push(handler);
     }
   }
 
   const errorsCounter = getCounterFromConfig<
-    ['parse', 'validate', 'context', 'execute', 'subscribe'],
+    'parse' | 'validate' | 'context' | 'execute' | 'subscribe',
     MetricsConfig
   >(
     config,
@@ -317,11 +317,11 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
   );
   if (errorsCounter) {
     (['parse', 'validate'] as const)
-      .filter(phase => errorsCounter.phases!.includes(phase))
+      .filter(phase => errorsCounter.phases.includes(phase))
       .forEach(phase => {
         phasesToHook[phase].push({
           shouldHandle: (params, context) =>
-            !!params.errorPhase && errorsCounter.shouldObserve!(params, context),
+            !!params.errorPhase && errorsCounter.shouldObserve(params, context),
           handler: ({ params, context }) => {
             const labels = errorsCounter.fillLabelsFn(params, context);
             errorsCounter?.counter.labels(labels).inc();
@@ -330,10 +330,10 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       });
 
     (['execute', 'subscribe'] as const)
-      .filter(phase => errorsCounter.phases!.includes(phase))
+      .filter(phase => errorsCounter.phases.includes(phase))
       .forEach(phase => {
         phasesToHook[phase].result.push({
-          shouldHandle: errorsCounter.shouldObserve!,
+          shouldHandle: errorsCounter.shouldObserve,
           handler: ({ result, params, context }) => {
             if (!result.errors?.length) {
               return;
@@ -341,7 +341,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
             for (const error of result.errors) {
               const labelParams = { ...params, errorPhase: 'execute', error };
 
-              if (errorsCounter!.shouldObserve!(labelParams, context)) {
+              if (errorsCounter!.shouldObserve(labelParams, context)) {
                 errorsCounter!.counter
                   .labels(errorsCounter!.fillLabelsFn(labelParams, context))
                   .inc();
@@ -351,9 +351,9 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
         });
       });
 
-    if (errorsCounter.phases!.includes('subscribe')) {
+    if (errorsCounter.phases.includes('subscribe')) {
       phasesToHook.subscribe.error.push({
-        shouldHandle: errorsCounter.shouldObserve!,
+        shouldHandle: errorsCounter.shouldObserve,
         handler: ({ params, context, error }) => {
           const labels = errorsCounter.fillLabelsFn(params, context);
           errorsCounter.counter.labels(labels).inc();
@@ -361,7 +361,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
       });
     }
 
-    if (errorsCounter.phases!.includes('context')) {
+    if (errorsCounter.phases.includes('context')) {
       phasesToHook.pluginInit.push(({ registerContextErrorHandler }) => {
         registerContextErrorHandler(({ context, error }) => {
           const fillLabelsFnParams = fillLabelsFnParamsMap.get(context);
@@ -372,7 +372,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
             ...fillLabelsFnParams,
           };
 
-          if (errorsCounter.shouldObserve!(params, context)) {
+          if (errorsCounter.shouldObserve(params, context)) {
             errorsCounter.counter.labels(errorsCounter?.fillLabelsFn(params, context)).inc();
           }
         });
@@ -380,7 +380,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     }
   }
 
-  const reqCounter = getCounterFromConfig<['execute', 'subscribe'], MetricsConfig>(
+  const reqCounter = getCounterFromConfig<'execute' | 'subscribe', MetricsConfig>(
     config,
     'graphql_envelop_request',
     ['execute', 'subscribe'],
@@ -390,17 +390,17 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
   );
   if (reqCounter) {
     const handler: PhaseHandler = {
-      shouldHandle: reqCounter.shouldObserve!,
+      shouldHandle: reqCounter.shouldObserve,
       handler: ({ params, context }) => {
         reqCounter!.counter.labels(reqCounter!.fillLabelsFn(params, context)).inc();
       },
     };
-    for (const phase of reqCounter.phases!) {
+    for (const phase of reqCounter.phases) {
       phasesToHook[phase].end.push(handler);
     }
   }
 
-  const deprecationCounter = getCounterFromConfig<['parse'], MetricsConfig>(
+  const deprecationCounter = getCounterFromConfig<'parse', MetricsConfig>(
     config,
     'graphql_envelop_deprecated_field',
     ['parse'],
@@ -425,7 +425,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     phasesToHook.parse.push({
       shouldHandle: (params, context) =>
         // If parse error happens, we can't explore the query document
-        !!typeInfo && !params.errorPhase && deprecationCounter.shouldObserve!(params, context),
+        !!typeInfo && !params.errorPhase && deprecationCounter.shouldObserve(params, context),
       handler: ({ params, context }) => {
         const deprecatedFields = extractDeprecatedFields(params.document!, typeInfo!);
 
@@ -435,7 +435,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
             deprecationInfo: depField,
           };
 
-          if (deprecationCounter.shouldObserve!(deprecationLabelParams, context)) {
+          if (deprecationCounter.shouldObserve(deprecationLabelParams, context)) {
             deprecationCounter.counter
               .labels(deprecationCounter.fillLabelsFn(deprecationLabelParams, context))
               .inc();
@@ -445,7 +445,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     });
   }
 
-  const schemaChangeCounter = getCounterFromConfig<['schema'], MetricsConfig>(
+  const schemaChangeCounter = getCounterFromConfig<'schema', MetricsConfig>(
     config,
     'graphql_envelop_schema_change',
     ['schema'],
@@ -459,7 +459,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     const countedSchemas = new WeakSet<GraphQLSchema>();
 
     phasesToHook.schema.push(({ schema }) => {
-      if (schemaChangeCounter?.shouldObserve!({}, null) && !countedSchemas.has(schema)) {
+      if (schemaChangeCounter?.shouldObserve({}, null) && !countedSchemas.has(schema)) {
         schemaChangeCounter.counter.inc();
         countedSchemas.add(schema);
       }
@@ -662,7 +662,13 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     onEnveloped: phasesToHook.enveloped.length ? onEnveloped : undefined,
     onValidate: phasesToHook.validate.length ? onValidate : undefined,
     onContextBuilding: phasesToHook.context.length ? onContextBuilding : undefined,
-    onExecute: phasesToHook.execute ? onExecute : undefined,
-    onSubscribe: phasesToHook.subscribe ? onSubscribe : undefined,
+    onExecute:
+      phasesToHook.execute.end.length + phasesToHook.execute.result.length ? onExecute : undefined,
+    onSubscribe:
+      phasesToHook.subscribe.end.length +
+      phasesToHook.subscribe.result.length +
+      phasesToHook.subscribe.error.length
+        ? onSubscribe
+        : undefined,
   };
 };

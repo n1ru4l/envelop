@@ -3,6 +3,7 @@ import { Registry } from 'prom-client';
 import { Plugin, useExtendContext } from '@envelop/core';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import type { BucketsConfig, MetricsConfig } from '../src/config.js';
 import {
   createCounter,
   createHistogram,
@@ -15,6 +16,21 @@ import { registerHistogram } from '../src/utils.js';
 // Graphql.js 16 output has not trailing \n
 // In order to produce the same output we remove any trailing white-space
 const print = (ast: ASTNode) => graphQLPrint(ast).replace(/^\s+|\s+$/g, '');
+
+const allMetrics: { [Name in keyof MetricsConfig]-?: true } = {
+  graphql_envelop_deprecated_field: true,
+  graphql_envelop_error_result: true,
+  graphql_envelop_phase_context: true,
+  graphql_envelop_phase_execute: true,
+  graphql_envelop_phase_parse: true,
+  graphql_envelop_phase_subscribe: true,
+  graphql_envelop_phase_validate: true,
+  graphql_envelop_request: true,
+  graphql_envelop_request_duration: true,
+  graphql_envelop_request_time_summary: true,
+  graphql_envelop_schema_change: true,
+  graphql_envelop_execute_resolver: true,
+};
 
 describe('Prom Metrics plugin', () => {
   const schema = makeExecutableSchema({
@@ -150,7 +166,152 @@ describe('Prom Metrics plugin', () => {
     expect(metricsStr).not.toContain('graphql_envelop_error_result{');
   });
 
+  it(`should limit it's impact on perf by adding unnecessary hooks`, () => {
+    const plugin = usePrometheus({
+      metrics: {},
+    });
+
+    const hooks = Object.entries(plugin)
+      .filter(([, value]) => value)
+      .map(([key]) => key);
+
+    // onParse is the only required hook, it sets up the params for most metric labels
+    expect(hooks).toEqual(['onParse']);
+  });
+
   describe('parse', () => {
+    it.each([
+      {
+        name: 'enabled alone',
+        config: { metrics: { graphql_envelop_phase_parse: true } },
+      },
+      {
+        name: 'enabled with all metrics',
+        config: { metrics: allMetrics },
+      },
+      {
+        name: 'given a buckets list',
+        config: { metrics: { graphql_envelop_phase_parse: [0.5, 1, 5, 10] } },
+      },
+      {
+        name: 'given a list of phase',
+        config: { metrics: { graphql_envelop_phase_parse: ['parse'] } },
+      },
+      ((registry: Registry) => ({
+        name: 'given a custom configuration',
+        config: {
+          registry,
+          metrics: {
+            graphql_envelop_phase_parse: createHistogram({
+              registry,
+              histogram: {
+                name: 'graphql_envelop_phase_parse',
+                help: 'test',
+                labelNames: ['operationName', 'operationType'],
+              },
+              fillLabelsFn: params => ({
+                operationName: params.operationName!,
+                operationType: params.operationType!,
+              }),
+            }),
+          },
+        },
+      }))(new Registry()),
+      ((registry: Registry) => ({
+        name: 'given a shouldObserve',
+        config: {
+          registry,
+          metrics: {
+            graphql_envelop_phase_parse: createHistogram({
+              registry,
+              histogram: {
+                name: 'graphql_envelop_phase_parse',
+                help: 'test',
+                labelNames: ['operationName', 'operationType'],
+              },
+              fillLabelsFn: params => ({
+                operationName: params.operationName!,
+                operationType: params.operationType!,
+              }),
+              shouldObserve: () => true,
+            }),
+          },
+        },
+      }))(new Registry()),
+      ((registry: Registry) => ({
+        name: 'given a custom config and phases',
+        config: {
+          registry,
+          metrics: {
+            graphql_envelop_phase_parse: createHistogram({
+              registry,
+              histogram: {
+                name: 'graphql_envelop_phase_parse',
+                help: 'test',
+                labelNames: ['operationName', 'operationType'],
+              },
+              fillLabelsFn: params => ({
+                operationName: params.operationName!,
+                operationType: params.operationType!,
+              }),
+              phases: ['parse'],
+            }),
+          },
+        },
+      }))(new Registry()),
+    ] as { name: string; config: PrometheusTracingPluginConfig }[])(
+      'should monitor parse timing when $name',
+      async ({ config }) => {
+        const { execute, metricCount, metricString } = prepare(config, config.registry);
+        const result = await execute('query { regularField }');
+        assertSingleExecutionValue(result);
+
+        expect(result.errors).toBeUndefined();
+        expect(await metricCount('graphql_envelop_phase_parse', 'count')).toBe(1);
+        const metricReport = await metricString('graphql_envelop_phase_parse');
+        expect(metricReport).toContain(`operationName="Anonymous"`);
+        expect(metricReport).toContain(`operationType="query"`);
+      },
+    );
+
+    it.each([
+      {
+        name: 'disabled with all metrics',
+        config: { metrics: { ...allMetrics, graphql_envelop_phase_parse: false } },
+      },
+      ((registry: Registry) => ({
+        name: 'given a shouldObserve',
+        config: {
+          registry,
+          metrics: {
+            graphql_envelop_phase_parse: createHistogram({
+              registry,
+              histogram: {
+                name: 'graphql_envelop_phase_parse',
+                help: 'test',
+                labelNames: ['operationName', 'operationType'],
+              },
+              fillLabelsFn: params => ({
+                operationName: params.operationName!,
+                operationType: params.operationType!,
+              }),
+              shouldObserve: () => false,
+            }),
+          },
+        },
+      }))(new Registry()),
+    ] as { name: string; config: PrometheusTracingPluginConfig }[])(
+      'should not monitor parse timing when $name',
+      async ({ config }) => {
+        const { execute, metricCount, metricString } = prepare(config, config.registry);
+        const result = await execute('query { regularField }');
+        assertSingleExecutionValue(result);
+
+        expect(result.errors).toBeUndefined();
+        expect(await metricCount('graphql_envelop_phase_parse', 'count')).toBe(0);
+      },
+    );
+
     it('Should trace error during parse', async () => {
       const { execute, metricCount, metricString } = prepare({
         metrics: {
