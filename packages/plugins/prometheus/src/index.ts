@@ -505,7 +505,6 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
         context,
         totalTime: (Date.now() - startTime) / 1000,
       };
-
       phasesToHook.validate
         .filter(({ shouldHandle }) => shouldHandle(args.params, context))
         .forEach(({ handler }) => handler(args));
