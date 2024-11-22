@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-import {
-  ExecutionResult,
-  GraphQLSchema,
-  OperationTypeNode,
-  TypeInfo,
-  type GraphQLError,
-} from 'graphql';
+import { ExecutionResult, GraphQLSchema, TypeInfo, type GraphQLError } from 'graphql';
 import { register as defaultRegistry } from 'prom-client';
 import {
   isAsyncIterable,
@@ -208,8 +202,7 @@ export const usePrometheus = (config: PrometheusTracingPluginConfig): Plugin => 
     phasesToHook.pluginInit.push(({ addPlugin }) => {
       addPlugin(
         useOnResolve(({ info, context }) => {
-          const phase =
-            info.operation.operation === OperationTypeNode.SUBSCRIPTION ? 'subscribe' : 'execute';
+          const phase = info.operation.operation === 'subscription' ? 'subscribe' : 'execute';
 
           if (
             !resolversHistogram.phases?.includes(phase) ||
