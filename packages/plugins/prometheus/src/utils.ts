@@ -89,14 +89,14 @@ export type ShouldObservePredicate<Params extends Record<string, any>> = (
 ) => boolean;
 
 export type HistogramAndLabels<
-  Phases extends string[],
+  Phases,
   LabelNames extends string,
   Params extends Record<string, any>,
 > = {
   histogram: Histogram<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
-  phases: Phases;
-  shouldObserve: ShouldObservePredicate<Params>;
+  phases?: AtLeastOne<Phases>;
+  shouldObserve?: ShouldObservePredicate<Params>;
 };
 
 export function registerHistogram<LabelNames extends string>(
@@ -120,7 +120,7 @@ export function registerHistogram<LabelNames extends string>(
  * @returns
  */
 export function createHistogram<
-  Phases extends string[],
+  Phases,
   LabelNames extends string,
   Params extends Record<string, any> = FillLabelsFnParams,
 >(options: {
@@ -142,8 +142,10 @@ export function createHistogram<
    *
    * The possible values accepted in this list depends on the metric,
    * please refer to metric type or documentation to know which phases ar available.
+   *
+   * By default, all available phases are observed
    */
-  phases: Phases;
+  phases?: AtLeastOne<Phases>;
   /**
    * A function called for each event that can be observed.
    * If it is provided, an event will be observed only if it returns true.
@@ -161,14 +163,14 @@ export function createHistogram<
 }
 
 export type SummaryAndLabels<
-  Phases extends string[],
+  Phases,
   LabelNames extends string,
   Params extends Record<string, any>,
 > = {
   summary: Summary<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
-  phases: Phases;
-  shouldObserve: ShouldObservePredicate<Params>;
+  phases?: AtLeastOne<Phases>;
+  shouldObserve?: ShouldObservePredicate<Params>;
 };
 
 export function registerSummary<LabelNames extends string>(
@@ -192,7 +194,7 @@ export function registerSummary<LabelNames extends string>(
  * @returns
  */
 export function createSummary<
-  Phases extends string[],
+  Phases,
   LabelNames extends string,
   Params extends Record<string, any> = FillLabelsFnParams,
 >(options: {
@@ -214,8 +216,10 @@ export function createSummary<
    *
    * The possible values accepted in this list depends on the metric,
    * please refer to metric type or documentation to know which phases ar available.
+   *
+   * By default, all available phases are observed
    */
-  phases: Phases;
+  phases?: AtLeastOne<Phases>;
   /**
    * A function called for each event that can be observed.
    * If it is provided, an event will be observed only if it returns true.
@@ -233,14 +237,14 @@ export function createSummary<
 }
 
 export type CounterAndLabels<
-  Phases extends string[],
+  Phases,
   LabelNames extends string,
   Params extends Record<string, any>,
 > = {
   counter: Counter<LabelNames>;
   fillLabelsFn: FillLabelsFn<LabelNames, Params>;
-  phases: Phases;
-  shouldObserve: ShouldObservePredicate<Params>;
+  phases?: AtLeastOne<Phases>;
+  shouldObserve?: ShouldObservePredicate<Params>;
 };
 
 /**
@@ -264,7 +268,7 @@ export function registerCounter<LabelNames extends string>(
 }
 
 export function createCounter<
-  Phases extends string[],
+  Phases,
   LabelNames extends string,
   Params extends Record<string, any> = FillLabelsFnParams,
 >(options: {
@@ -286,8 +290,10 @@ export function createCounter<
    *
    * The possible values accepted in this list depends on the metric,
    * please refer to metric type or documentation to know which phases ar available.
+   *
+   * By default, all available phases are observed
    */
-  phases: Phases;
+  phases?: AtLeastOne<Phases>;
   /**
    * A function called for each event that can be observed.
    * If it is provided, an event will be observed only if it returns true.
@@ -300,29 +306,36 @@ export function createCounter<
     counter: registerCounter(options.registry, options.counter),
     fillLabelsFn: options.fillLabelsFn,
     phases: options.phases,
-    shouldObserve: options.shouldObserve ?? (() => true),
+    shouldObserve: options.shouldObserve,
   };
 }
 
 export function getHistogramFromConfig<
-  Phases extends string[],
+  Phases,
   MetricOptions,
   Params extends Record<string, any> = FillLabelsFnParams,
 >(
   config: PrometheusTracingPluginConfig,
   phase: keyof MetricOptions,
-  availablePhases: Phases,
+  availablePhases: AtLeastOne<Phases>,
   histogram: Omit<HistogramConfiguration<string>, 'registers' | 'name'>,
   fillLabelsFn: FillLabelsFn<string, Params> = params => ({
     operationName: params.operationName!,
     operationType: params.operationType!,
   }),
-): HistogramAndLabels<Phases, string, Params> | undefined {
+): Required<HistogramAndLabels<Phases, string, Params>> | undefined {
   const metric = (config.metrics as MetricOptions)[phase];
+  if (!metric) {
+    return undefined;
+  }
 
   let phases = availablePhases;
-  if (Array.isArray(metric) && metric.length === 0) {
-    if (isBucketsList(metric)) {
+  if (Array.isArray(metric)) {
+    if (metric.length === 0) {
+      throw TypeError(
+        `Bad value provided for 'metrics.${phase.toString()}': the array must contain at least one element`,
+      );
+    } else if (isBucketsList(metric)) {
       histogram.buckets = metric;
     } else if (isPhasesList(metric)) {
       phases = filterAvailablePhases(metric, availablePhases);
@@ -332,11 +345,14 @@ export function getHistogramFromConfig<
       );
     }
   } else if (typeof metric === 'object') {
-    return metric as HistogramAndLabels<Phases, string, Params>;
-  }
-
-  if (metric !== true) {
-    return undefined;
+    const customMetric = metric as unknown as HistogramAndLabels<Phases, string, Params>;
+    if (!customMetric.phases) {
+      customMetric.phases = availablePhases;
+    }
+    if (!customMetric.shouldObserve) {
+      customMetric.shouldObserve = () => true;
+    }
+    return customMetric as Required<HistogramAndLabels<Phases, string, Params>>;
   }
 
   return createHistogram({
@@ -350,29 +366,38 @@ export function getHistogramFromConfig<
     },
     fillLabelsFn: (...args) => filterFillParamsFnParams(config, fillLabelsFn(...args)),
     phases,
-  });
+    shouldObserve: () => true,
+  }) as Required<HistogramAndLabels<Phases, string, Params>>;
 }
 
 export function getSummaryFromConfig<
-  Phases extends string[],
+  Phases,
   MetricOptions,
   Params extends Record<string, any> = FillLabelsFnParams,
 >(
   config: PrometheusTracingPluginConfig,
   phase: keyof MetricOptions,
-  availablePhases: Phases,
+  availablePhases: AtLeastOne<Phases>,
   summary: Omit<SummaryConfiguration<string>, 'registers' | 'name'>,
   fillLabelsFn: FillLabelsFn<string, Params> = params =>
     filterFillParamsFnParams(config, {
       operationName: params.operationName!,
       operationType: params.operationType!,
     }),
-): SummaryAndLabels<Phases, string, Params> | undefined {
+): Required<SummaryAndLabels<Phases, string, Params>> | undefined {
   const metric = (config.metrics as MetricOptions)[phase];
+
+  if (!metric) {
+    return undefined;
+  }
 
   let phases = availablePhases;
   if (Array.isArray(metric)) {
-    if (isPhasesList(metric)) {
+    if (metric.length === 0) {
+      throw TypeError(
+        `Bad value provided for 'metrics.${phase.toString()}': the array must contain at least one element`,
+      );
+    } else if (isPhasesList(metric)) {
       phases = filterAvailablePhases(metric, availablePhases);
     } else {
       throw new TypeError(
@@ -380,11 +405,14 @@ export function getSummaryFromConfig<
       );
     }
   } else if (typeof metric === 'object') {
-    return metric as SummaryAndLabels<Phases, string, Params>;
-  }
-
-  if (metric !== true) {
-    return undefined;
+    const customMetric = metric as unknown as SummaryAndLabels<Phases, string, Params>;
+    if (!customMetric.phases) {
+      customMetric.phases = availablePhases;
+    }
+    if (!customMetric.shouldObserve) {
+      customMetric.shouldObserve = () => true;
+    }
+    return customMetric as Required<SummaryAndLabels<Phases, string, Params>>;
   }
 
   return createSummary({
@@ -396,29 +424,38 @@ export function getSummaryFromConfig<
     },
     fillLabelsFn,
     phases,
-  });
+    shouldObserve: () => true,
+  }) as Required<SummaryAndLabels<Phases, string, Params>>;
 }
 
 export function getCounterFromConfig<
-  Phases extends string[],
+  Phases,
   MetricOptions,
   Params extends Record<string, any> = FillLabelsFnParams,
 >(
   config: PrometheusTracingPluginConfig,
   phase: keyof MetricOptions,
-  availablePhases: Phases,
+  availablePhases: AtLeastOne<Phases>,
   counter: Omit<CounterConfiguration<string>, 'registers' | 'name'>,
   fillLabelsFn: FillLabelsFn<string, Params> = params =>
     filterFillParamsFnParams(config, {
       operationName: params.operationName!,
       operationType: params.operationType!,
     }),
-): CounterAndLabels<Phases, string, Params> | undefined {
+): Required<CounterAndLabels<Phases, string, Params>> | undefined {
   const metric = (config.metrics as MetricOptions)[phase];
   let phases = availablePhases;
 
+  if (!metric) {
+    return undefined;
+  }
+
   if (Array.isArray(metric)) {
-    if (isPhasesList(metric)) {
+    if (metric.length === 0) {
+      throw TypeError(
+        `Bad value provided for 'metrics.${phase.toString()}': the array must contain at least one element`,
+      );
+    } else if (isPhasesList(metric)) {
       phases = filterAvailablePhases(metric, availablePhases);
     } else {
       throw new TypeError(
@@ -426,11 +463,14 @@ export function getCounterFromConfig<
       );
     }
   } else if (typeof metric === 'object') {
-    return metric as CounterAndLabels<Phases, string, Params>;
-  }
-
-  if (metric !== true) {
-    return undefined;
+    const customMetric = metric as unknown as CounterAndLabels<Phases, string, Params>;
+    if (!customMetric.phases) {
+      customMetric.phases = availablePhases;
+    }
+    if (!customMetric.shouldObserve) {
+      customMetric.shouldObserve = () => true;
+    }
+    return customMetric as Required<CounterAndLabels<Phases, string, Params>>;
   }
 
   return createCounter({
@@ -442,7 +482,8 @@ export function getCounterFromConfig<
     },
     fillLabelsFn,
     phases,
-  });
+    shouldObserve: () => true,
+  }) as Required<CounterAndLabels<Phases, string, Params>>;
 }
 
 export function extractDeprecatedFields(node: ASTNode, typeInfo: TypeInfo): DeprecatedFieldInfo[] {
@@ -523,9 +564,9 @@ function isBucketsList(list: any[]): list is number[] {
 function isPhasesList(list: any[]): list is string[] {
   return list.every(item => typeof item === 'string');
 }
-function filterAvailablePhases<Phases extends string[]>(
+function filterAvailablePhases<Phases>(
   phases: string[],
-  availablePhases: Phases,
-): Phases {
-  return phases.filter(phase => availablePhases.includes(phase)) as Phases;
+  availablePhases: AtLeastOne<Phases>,
+): AtLeastOne<Phases> {
+  return availablePhases.filter(phase => phases.includes(phase as string)) as AtLeastOne<Phases>;
 }
