@@ -565,7 +565,42 @@ const getEnveloped = envelop({
 })
 ```
 
-### Skip observation based on request context
+### Mitigate hight volume of exported metrics
+
+In some cases, the large variety of label values can lead to a huge amount of metrics being
+exported. To save bandwidth or storage, you can reduce the amount of reported metrics by multiple
+ways.
+
+#### Monitor only some phases
+
+Some metrics observe events in multiple phases of the graphql pipeline. The metric with the highest
+chance causing large amount of metrics is `graphql_envelop_error_result`, because it can contain
+information specific to the error reported.
+
+You can lower the amount of reported errors by changing the phases monitored by this metric.
+
+```ts
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
+import { Registry } from 'prom-client'
+import { envelop, useEngine } from '@envelop/core'
+
+const myRegistry = new Registry()
+
+const getEnveloped = envelop({
+  plugins: [
+    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
+    usePrometheus({
+      metrics: {
+        // To ignore parsing and validation error, and only monitor errors happening during
+        // resolvers executions, you can enable only the `execute` and `subscribe` phases
+        graphql_envelop_error_result: ['execute', 'subscribe']
+      }
+    })
+  ]
+})
+```
+
+#### Skip observation based on request context
 
 To save bandwidth or storage, you can reduce the amount of reported values by filtering which events
 are observed based on the request context.
@@ -604,6 +639,8 @@ const getEnveloped = envelop({
   ]
 })
 ```
+
+`
 
 ## Caveats
 
