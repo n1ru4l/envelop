@@ -1457,6 +1457,9 @@ importers:
 
   packages/plugins/sentry:
     dependencies:
+      '@envelop/opentelemetry':
+        specifier: workspace:^
+        version: link:../opentelemetry/dist
       '@opentelemetry/api':
         specifier: ^1.8.0
         version: 1.9.0

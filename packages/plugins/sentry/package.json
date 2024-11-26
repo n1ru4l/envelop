@@ -52,6 +52,7 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
+    "@envelop/opentelemetry": "workspace:^",
     "@opentelemetry/api": "^1.8.0",
     "@opentelemetry/sdk-trace-base": "^1.11.0",
     "@sentry/opentelemetry": "^8.40.0",
