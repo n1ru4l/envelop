@@ -52,6 +52,9 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.8.0",
+    "@opentelemetry/sdk-trace-base": "^1.11.0",
+    "@sentry/opentelemetry": "^8.40.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
@@ -59,7 +62,7 @@
     "@graphql-tools/schema": "10.0.8",
     "@sentry/node": "^8.22.0",
     "@sentry/tracing": "^7.114.0",
-    "@sentry/types": "^8.22.0",
+    "@sentry/types": "^8.32.0",
     "graphql": "16.8.1",
     "sentry-testkit": "5.0.9",
     "typescript": "5.1.3"
