@@ -1483,7 +1483,7 @@ importers:
         specifier: ^7.114.0
         version: 7.114.0
       '@sentry/types':
-        specifier: ^8.22.0
+        specifier: ^8.32.0
         version: 8.40.0
       graphql:
         specifier: 16.6.0
