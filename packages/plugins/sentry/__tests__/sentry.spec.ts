@@ -13,6 +13,7 @@ describe('sentry', () => {
     Sentry.init({
       dsn: 'https://public@sentry.example.com/1',
       transport: sentryTransport,
+      skipOpenTelemetrySetup: true,
     });
 
     const schema = makeExecutableSchema({
