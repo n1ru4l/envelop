@@ -4,6 +4,7 @@ import { ArbitraryObject, PromiseOrValue, Spread } from './utils.js';
 
 export { ArbitraryObject } from './utils.js';
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export type EnvelopContextFnWrapper<TFunction extends Function, ContextType = unknown> = (
   context: ContextType,
 ) => TFunction;

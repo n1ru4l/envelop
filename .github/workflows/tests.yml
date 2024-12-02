@@ -21,7 +21,7 @@ jobs:
     name: Lint
     uses: the-guild-org/shared-config/.github/workflows/lint.yml@v1
     with:
-      script: pnpm run ci:lint
+      script: pnpm run ci:lint && pnpm run lint
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
