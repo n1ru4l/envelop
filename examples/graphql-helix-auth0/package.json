@@ -12,7 +12,7 @@
     "@envelop/auth0": "workspace:^",
     "@envelop/core": "workspace:^",
     "@graphql-tools/schema": "10.0.8",
-    "fastify": "4.26.2",
+    "fastify": "5.1.0",
     "graphql": "16.8.1",
     "graphql-helix": "1.13.0"
   },
