@@ -43,8 +43,7 @@ describe('sentry', () => {
       }
     `);
 
-    // run sentry flush
-    await new Promise(res => setTimeout(res, 100));
+    await Sentry.flush(100);
 
     const reports = sentryTestkit.reports();
     expect(reports).toHaveLength(1);
@@ -89,8 +88,7 @@ describe('sentry', () => {
       }
     `);
 
-    // run sentry flush
-    await new Promise(res => setTimeout(res, 10));
+    await Sentry.flush(100);
 
     expect(sentryTestkit.reports()).toHaveLength(0);
   });
@@ -130,10 +128,10 @@ describe('sentry', () => {
       }
     `);
 
-    // run sentry flush
-    await new Promise(res => setTimeout(res, 10));
+    await Sentry.flush(100);
 
     const reports = sentryTestkit.reports();
+    console.log(sentryTestkit.transactions());
     expect(reports).toHaveLength(1);
     expect(reports[0].error).toMatchObject({
       message: 'Unexpected Error, ok?',
@@ -176,8 +174,7 @@ describe('sentry', () => {
       }
     `);
 
-    // run sentry flush
-    await new Promise(res => setTimeout(res, 10));
+    await Sentry.flush(100);
 
     expect(sentryTestkit.reports()).toHaveLength(0);
   });
@@ -246,8 +243,7 @@ describe('sentry', () => {
       }
     `);
 
-    // run sentry flush
-    await new Promise(res => setTimeout(res, 10));
+    await Sentry.flush(100);
 
     const reports = sentryTestkit.reports();
     expect(reports).toHaveLength(1);
