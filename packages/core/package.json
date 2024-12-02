@@ -60,8 +60,8 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@graphql-tools/schema": "10.0.6",
-    "@graphql-tools/utils": "10.5.4",
+    "@graphql-tools/schema": "10.0.8",
+    "@graphql-tools/utils": "10.5.6",
     "@repeaterjs/repeater": "3.0.5",
     "graphql": "16.8.1",
     "typescript": "5.1.3"

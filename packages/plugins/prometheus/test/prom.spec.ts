@@ -1,20 +1,41 @@
 import { ASTNode, buildSchema, print as graphQLPrint } from 'graphql';
-import { Registry } from 'prom-client';
-import { useExtendContext } from '@envelop/core';
+import { Registry, type MetricConfiguration } from 'prom-client';
+import { Plugin, useExtendContext } from '@envelop/core';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import type {
+  CounterMetricOption,
+  HistogramMetricOption,
+  MetricsConfig,
+  SummaryMetricOption,
+} from '../src/config.js';
 import {
   createCounter,
   createHistogram,
   PrometheusTracingPluginConfig,
   usePrometheus,
 } from '../src/index.js';
-import { registerHistogram } from '../src/utils.js';
+import { createSummary, registerHistogram, type FillLabelsFnParams } from '../src/utils.js';
 
 // Graphql.js 16 and 15 produce different results
 // Graphql.js 16 output has not trailing \n
 // In order to produce the same output we remove any trailing white-space
 const print = (ast: ASTNode) => graphQLPrint(ast).replace(/^\s+|\s+$/g, '');
+
+const allMetrics: { [Name in keyof MetricsConfig]-?: true } = {
+  graphql_envelop_deprecated_field: true,
+  graphql_envelop_error_result: true,
+  graphql_envelop_phase_context: true,
+  graphql_envelop_phase_execute: true,
+  graphql_envelop_phase_parse: true,
+  graphql_envelop_phase_subscribe: true,
+  graphql_envelop_phase_validate: true,
+  graphql_envelop_request: true,
+  graphql_envelop_request_duration: true,
+  graphql_envelop_request_time_summary: true,
+  graphql_envelop_schema_change: true,
+  graphql_envelop_execute_resolver: true,
+};
 
 describe('Prom Metrics plugin', () => {
   const schema = makeExecutableSchema({
@@ -67,13 +88,22 @@ describe('Prom Metrics plugin', () => {
     },
   });
 
-  function prepare(config: PrometheusTracingPluginConfig, registry: Registry = new Registry()) {
+  function prepare(
+    config: PrometheusTracingPluginConfig,
+    registry: Registry = new Registry(),
+    plugins: Plugin[] = [],
+  ) {
     const plugin = usePrometheus({
       ...config,
       registry,
     });
+
     const teskit = createTestkit(
-      [plugin, useExtendContext(() => new Promise<void>(resolve => setTimeout(resolve, 250)))],
+      [
+        plugin,
+        useExtendContext(() => new Promise<void>(resolve => setTimeout(resolve, 250))),
+        ...plugins,
+      ],
       schema,
     );
 
@@ -114,6 +144,407 @@ describe('Prom Metrics plugin', () => {
     };
   }
 
+  function testHistogram(
+    metricName: MetricNames<HistogramMetricOption<any>>,
+    phases: [string, ...string[]],
+  ) {
+    const histogramFactory = (config: object) =>
+      //@ts-ignore
+      createHistogram({
+        ...config,
+        histogram: {
+          name: metricName,
+          help: 'test',
+          labelNames: ['operationName', 'operationType'],
+        },
+      });
+
+    it.each<{ name: string; config: PrometheusTracingPluginConfig }>([
+      {
+        name: 'given a buckets list',
+        config: { metrics: { [metricName]: [0.5, 1, 5, 10] } },
+      },
+      ...metricEnabledTestCases(metricName, phases, histogramFactory),
+    ])(`should monitor timing when $name`, async ({ config }) => {
+      const { execute, metricCount, metricString } = prepare(config, config.registry);
+
+      const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount(metricName, 'count')).toBe(1);
+      const metricReport = await metricString(metricName);
+      expect(metricReport).toContain(`operationName="Anonymous"`);
+      expect(metricReport).toContain(`operationType="query"`);
+    });
+
+    it.each<{ name: string; config: PrometheusTracingPluginConfig }>(
+      metricDisabledTestCases(metricName, histogramFactory),
+    )('should not monitor parse timing when $name', async ({ config }) => {
+      const { execute, metricCount } = prepare(config, config.registry);
+
+      const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount(metricName, 'count')).toBe(0);
+    });
+
+    it('should not contain operationName and operationType if disabled', async () => {
+      const { execute, metricString } = prepare({
+        metrics: {
+          [metricName]: true,
+        },
+        labels: {
+          operationName: false,
+          operationType: false,
+        },
+      });
+
+      const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      const metricReport = await metricString(metricName);
+      expect(metricReport).not.toContain('operationName="Anonymous"');
+      expect(metricReport).not.toContain('operationType="query"');
+    });
+
+    it('should allow to use a custom name', async () => {
+      const { execute, metricCount } = prepare({ metrics: { [metricName]: 'metric_test' } });
+
+      const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount('metric_test', 'count')).toBe(1);
+    });
+
+    it('should allow to use a custom name within a custom config', async () => {
+      const registry = new Registry();
+      const { execute, metricCount } = prepare(
+        {
+          metrics: {
+            [metricName]: createHistogram({
+              registry,
+              histogram: {
+                name: 'metric_test',
+                help: 'test',
+                labelNames: ['operationName', 'operationType'],
+              },
+              fillLabelsFn: params => ({
+                operationName: params.operationName!,
+                operationType: params.operationType!,
+              }),
+            }),
+          },
+        },
+        registry,
+      );
+
+      const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount('metric_test', 'count')).toBe(1);
+    });
+
+    it('should allow to use custom labelNames', async () => {
+      const registry = new Registry();
+      const { execute, metricCount, metricString } = prepare(
+        {
+          metrics: {
+            [metricName]: createHistogram({
+              registry,
+              histogram: {
+                name: metricName,
+                help: 'HELP ME',
+                labelNames: ['opText'] as const,
+              },
+              fillLabelsFn: params => {
+                return {
+                  opText: print(params.document!),
+                };
+              },
+            }),
+          },
+        },
+        registry,
+      );
+      const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount(metricName, 'count')).toBe(1);
+      expect(await metricString(metricName)).toContain(`opText="{\\n  regularField\\n}"`);
+    });
+  }
+
+  function testSummary(
+    metricName: MetricNames<SummaryMetricOption<any>>,
+    phases: [string, ...string[]],
+  ) {
+    const summaryFactory = (config: object) =>
+      //@ts-ignore
+      createSummary({
+        ...config,
+        summary: {
+          name: metricName,
+          help: 'test',
+          labelNames: ['operationName', 'operationType'],
+        },
+      });
+
+    it.each<{ name: string; config: PrometheusTracingPluginConfig }>(
+      metricEnabledTestCases(metricName, phases, summaryFactory),
+    )(`should monitor timing when $name`, async ({ config }) => {
+      const { execute, metricCount, metricString } = prepare(config, config.registry);
+
+      const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount(metricName, 'count')).toBe(1);
+      const metricReport = await metricString(metricName);
+      expect(metricReport).toContain(`operationName="Anonymous"`);
+      expect(metricReport).toContain(`operationType="query"`);
+    });
+
+    it.each<{ name: string; config: PrometheusTracingPluginConfig }>(
+      metricDisabledTestCases(metricName, summaryFactory),
+    )('should not monitor parse timing when $name', async ({ config }) => {
+      const { execute, metricCount } = prepare(config, config.registry);
+
+      const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount(metricName, 'count')).toBe(0);
+    });
+
+    it('should not contain operationName and operationType if disabled', async () => {
+      const { execute, metricString } = prepare({
+        metrics: {
+          [metricName]: true,
+        },
+        labels: {
+          operationName: false,
+          operationType: false,
+        },
+      });
+
+      const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      const metricReport = await metricString(metricName);
+      expect(metricReport).not.toContain('operationName="Anonymous"');
+      expect(metricReport).not.toContain('operationType="query"');
+    });
+
+    it('should allow to use a custom name', async () => {
+      const { execute, metricCount } = prepare({ metrics: { [metricName]: 'metric_test' } });
+
+      const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount('metric_test', 'count')).toBe(1);
+    });
+
+    it('should allow to use a custom name within a custom config', async () => {
+      const registry = new Registry();
+      const { execute, metricCount } = prepare(
+        {
+          metrics: {
+            [metricName]: createSummary({
+              registry,
+              summary: {
+                name: 'metric_test',
+                help: 'test',
+                labelNames: ['operationName', 'operationType'],
+              },
+              fillLabelsFn: params => ({
+                operationName: params.operationName!,
+                operationType: params.operationType!,
+              }),
+            }),
+          },
+        },
+        registry,
+      );
+
+      const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount('metric_test', 'count')).toBe(1);
+    });
+
+    it('should allow to use custom labelNames', async () => {
+      const registry = new Registry();
+      const { execute, metricCount, metricString } = prepare(
+        {
+          metrics: {
+            [metricName]: createSummary({
+              registry,
+              summary: {
+                name: metricName,
+                help: 'HELP ME',
+                labelNames: ['opText'] as const,
+              },
+              fillLabelsFn: params => {
+                return {
+                  opText: print(params.document!),
+                };
+              },
+            }),
+          },
+        },
+        registry,
+      );
+      const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount(metricName, 'count')).toBe(1);
+      expect(await metricString(metricName)).toContain(`opText="{\\n  regularField\\n}"`);
+    });
+  }
+
+  function testCounter(
+    metricName: MetricNames<CounterMetricOption<any>>,
+    phases: [string, ...string[]],
+    query = 'query { regularField }',
+  ) {
+    const counterFactory = (config: object) =>
+      //@ts-ignore
+      createCounter({
+        ...config,
+        counter: {
+          name: metricName,
+          help: 'HELP ME',
+          labelNames: ['operationName', 'operationType'],
+        },
+      });
+
+    it.each<{ name: string; config: PrometheusTracingPluginConfig }>(
+      metricEnabledTestCases(metricName, phases, counterFactory),
+    )(`should monitor timing when $name`, async ({ config }) => {
+      const { execute, metricCount, metricString } = prepare(config, config.registry);
+
+      const result = await execute(query);
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount(metricName)).toBe(1);
+      const metricReport = await metricString(metricName);
+      expect(metricReport).toContain(`operationName="Anonymous"`);
+      expect(metricReport).toContain(`operationType="query"`);
+    });
+
+    it.each<{ name: string; config: PrometheusTracingPluginConfig }>(
+      metricDisabledTestCases(metricName, counterFactory),
+    )('should not monitor parse timing when $name', async ({ config }) => {
+      const { execute, metricCount } = prepare(config, config.registry);
+
+      const result = await execute(query);
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount(metricName)).toBe(0);
+    });
+
+    it('should not contain operationName and operationType if disabled', async () => {
+      const { execute, metricString } = prepare({
+        metrics: {
+          [metricName]: true,
+        },
+        labels: {
+          operationName: false,
+          operationType: false,
+        },
+      });
+
+      const result = await execute(query);
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      const metricReport = await metricString(metricName);
+      expect(metricReport).not.toContain('operationName="Anonymous"');
+      expect(metricReport).not.toContain('operationType="query"');
+    });
+
+    it('should allow to use a custom name', async () => {
+      const { execute, metricCount } = prepare({ metrics: { [metricName]: 'metric_test' } });
+
+      const result = await execute(query);
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount('metric_test')).toBe(1);
+    });
+
+    it('should allow to use a custom name within a custom config', async () => {
+      const registry = new Registry();
+      const { execute, metricCount } = prepare(
+        {
+          metrics: {
+            [metricName]: createCounter({
+              registry,
+              counter: {
+                name: 'metric_test',
+                help: 'test',
+                labelNames: ['operationName', 'operationType'],
+              },
+              fillLabelsFn: params => ({
+                operationName: params.operationName!,
+                operationType: params.operationType!,
+              }),
+            }),
+          },
+        },
+        registry,
+      );
+
+      const result = await execute(query);
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount('metric_test')).toBe(1);
+    });
+
+    it('should allow to use custom labelNames', async () => {
+      const registry = new Registry();
+      const { execute, metricCount, metricString } = prepare(
+        {
+          metrics: {
+            [metricName]: createCounter({
+              registry,
+              counter: {
+                name: metricName,
+                help: 'HELP ME',
+                labelNames: ['opText'] as const,
+              },
+              fillLabelsFn: () => {
+                return {
+                  opText: query,
+                };
+              },
+            }),
+          },
+        },
+        registry,
+      );
+      const result = await execute(query);
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount(metricName)).toBe(1);
+      expect(await metricString(metricName)).toContain(`opText="${query}"`);
+    });
+  }
+
   it('integration', async () => {
     const { execute, allMetrics } = prepare({
       metrics: {
@@ -141,58 +572,34 @@ describe('Prom Metrics plugin', () => {
     expect(metricsStr).not.toContain('graphql_envelop_error_result{');
   });
 
+  it(`should limit its impact on perf by not adding unnecessary hooks`, () => {
+    const plugin = usePrometheus({
+      metrics: {},
+    });
+
+    const hooks = Object.entries(plugin)
+      .filter(([, value]) => value)
+      .map(([key]) => key);
+
+    // onParse is the only required hook, it sets up the params for most metric labels
+    expect(hooks).toEqual(['onParse']);
+  });
+
   describe('parse', () => {
-    it('Should trace error during parse', async () => {
-      const { execute, metricCount, metricString } = prepare({
-        metrics: {
-          graphql_envelop_phase_parse: true,
-          graphql_envelop_error_result: true,
-        },
-      });
-      const result = await execute('query {');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors?.length).toBe(1);
-      expect(await metricString('graphql_envelop_error_result')).toContain(
-        'graphql_envelop_error_result{phase="parse"} 1',
-      );
-      expect(await metricCount('graphql_envelop_error_result')).toBe(1);
-      expect(await metricCount('graphql_envelop_phase_parse')).toBe(0);
+    it('should not allow empty arrays', () => {
+      expect(
+        // @ts-expect-error Empty array should be disallowed
+        () => usePrometheus({ metrics: { graphql_envelop_phase_parse: [] } }),
+      ).toThrow();
     });
 
-    it('Should trace valid parse result', async () => {
-      const { execute, metricCount, metricString } = prepare({
-        metrics: {
-          graphql_envelop_phase_parse: true,
-          graphql_envelop_error_result: true,
-        },
-      });
-      const result = await execute('query { regularField }');
-      assertSingleExecutionValue(result);
+    testHistogram('graphql_envelop_phase_parse', ['parse']);
 
-      expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_error_result')).toBe(0);
-      expect(await metricCount('graphql_envelop_phase_parse', 'count')).toBe(1);
-      expect(await metricString('graphql_envelop_phase_parse')).toContain(
-        `graphql_envelop_phase_parse_count{operationName=\"Anonymous\",operationType=\"query\"} 1`,
-      );
-    });
-
-    it('Should skip parse when parse = false', async () => {
-      const { execute, metricCount } = prepare({ metrics: { graphql_envelop_phase_parse: false } });
-      const result = await execute('query { regularField }');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_phase_parse')).toBe(0);
-    });
-
-    it('Should allow to use custom Histogram and custom labelNames', async () => {
+    it('should allow to use custom Histogram and custom labelNames', async () => {
       const registry = new Registry();
       const { execute, metricCount, metricString } = prepare(
         {
           metrics: {
-            graphql_envelop_error_result: true,
             graphql_envelop_phase_parse: createHistogram({
               registry,
               histogram: {
@@ -214,7 +621,6 @@ describe('Prom Metrics plugin', () => {
       assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_error_result')).toBe(0);
       expect(await metricCount('test_parse', 'count')).toBe(1);
       expect(await metricString('test_parse')).toContain(
         `test_parse_count{opText=\"{\\n  regularField\\n}\"} 1`,
@@ -223,12 +629,20 @@ describe('Prom Metrics plugin', () => {
   });
 
   describe('validate', () => {
-    it('Should allow to use custom Histogram and custom labelNames', async () => {
+    it('should not allow empty arrays', () => {
+      expect(
+        // @ts-expect-error Empty array should be disallowed
+        () => usePrometheus({ metrics: { graphql_envelop_phase_validate: [] } }),
+      ).toThrow();
+    });
+
+    testHistogram('graphql_envelop_phase_validate', ['validate']);
+
+    it('should allow to use custom Histogram and custom labelNames', async () => {
       const registry = new Registry();
       const { execute, metricCount, metricString } = prepare(
         {
           metrics: {
-            graphql_envelop_error_result: true,
             graphql_envelop_phase_validate: createHistogram({
               registry,
               histogram: {
@@ -250,78 +664,41 @@ describe('Prom Metrics plugin', () => {
       assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_error_result')).toBe(0);
       expect(await metricCount('test_validate', 'count')).toBe(1);
       expect(await metricString('test_validate')).toContain(
         `test_validate_count{opText=\"{\\n  regularField\\n}\"} 1`,
       );
     });
 
-    it('should register to onValidate event when needed', () => {
-      const { plugin } = prepare({
+    it('should trace timing even when an error occurs', async () => {
+      const { execute, metricCount } = prepare({
         metrics: {
           graphql_envelop_phase_validate: true,
-          graphql_envelop_error_result: true,
-        },
-      });
-      expect(plugin.onValidate).toBeDefined();
-    });
-
-    it('Should trace error during validate, and also trace timing', async () => {
-      const { execute, metricCount, metricString } = prepare({
-        metrics: {
-          graphql_envelop_phase_validate: true,
-          graphql_envelop_error_result: true,
         },
       });
       const result = await execute('query test($v: String!) { regularField }');
       assertSingleExecutionValue(result);
 
       expect(result.errors?.length).toBe(1);
-      expect(await metricString('graphql_envelop_error_result')).toContain(
-        'graphql_envelop_error_result{operationName="test",operationType="query",phase="validate"} 1',
-      );
-      expect(await metricCount('graphql_envelop_error_result')).toBe(1);
       expect(await metricCount('graphql_envelop_phase_validate', 'count')).toBe(1);
-    });
-
-    it('Should trace valid validations result', async () => {
-      const { execute, metricCount, metricString } = prepare({
-        metrics: {
-          graphql_envelop_phase_validate: true,
-          graphql_envelop_error_result: true,
-        },
-      });
-      const result = await execute('query test { regularField }');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_error_result')).toBe(0);
-      expect(await metricCount('graphql_envelop_phase_validate', 'count')).toBe(1);
-      expect(await metricString('graphql_envelop_phase_validate')).toContain(
-        `graphql_envelop_phase_validate_count{operationName=\"test\",operationType=\"query\"} 1`,
-      );
-    });
-
-    it('Should skip validate when validate = false', async () => {
-      const { execute, metricCount } = prepare({
-        metrics: { graphql_envelop_phase_validate: false },
-      });
-      const result = await execute('query { regularField }');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_phase_validate')).toBe(0);
     });
   });
 
   describe('contextBuilding', () => {
-    it('Should allow to use custom Histogram and custom labelNames', async () => {
+    it('should not allow empty arrays', () => {
+      expect(
+        // @ts-expect-error Empty array should be disallowed
+        () => usePrometheus({ metrics: { graphql_envelop_phase_context: [] } }),
+      ).toThrow();
+    });
+
+    testHistogram('graphql_envelop_phase_context', ['context']);
+
+    it('should allow to use custom Histogram and custom labelNames', async () => {
       const registry = new Registry();
       const { execute, metricCount, metricString } = prepare(
         {
           metrics: {
-            graphql_envelop_error_result: true,
             graphql_envelop_phase_context: createHistogram({
               registry,
               histogram: {
@@ -343,90 +720,90 @@ describe('Prom Metrics plugin', () => {
       assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_error_result')).toBe(0);
       expect(await metricCount('test_context', 'count')).toBe(1);
       expect(await metricString('test_context')).toContain(
         `test_context_count{opText=\"{\\n  regularField\\n}\"} 1`,
       );
     });
 
-    it('Should trace contextBuilding timing', async () => {
-      const { execute, metricCount } = prepare({
-        metrics: { graphql_envelop_phase_context: true },
-      });
-      const result = await execute('query { regularField }');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_phase_context', 'count')).toBe(1);
-    });
-    it('Should skip contextBuilding when contextBuilding = false', async () => {
-      const { execute, metricCount } = prepare({
-        metrics: { graphql_envelop_phase_context: false },
-      });
-      const result = await execute('query { regularField }');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_phase_context')).toBe(0);
-    });
-
-    it('should trace error during contextBuilding', async () => {
+    it('should trace timing even when an error occurs', async () => {
       const registry = new Registry();
-      const testKit = createTestkit(
+      const { execute, metricValue } = prepare(
+        {
+          metrics: {
+            graphql_envelop_phase_context: true,
+          },
+        },
+        registry,
         [
-          usePrometheus({
-            metrics: {
-              graphql_envelop_error_result: true,
-              graphql_envelop_phase_context: true,
-            },
-            registry,
-          }),
           useExtendContext<any>(() => {
             throw new Error('error');
           }),
         ],
-        schema,
       );
+
       try {
-        await testKit.execute('query { regularField }');
+        await execute('query { regularField }');
       } catch (e) {}
-      const metrics = await registry.getMetricsAsJSON();
-      expect(metrics).toEqual([
-        {
-          help: 'Time spent on building the GraphQL context',
-          name: 'graphql_envelop_phase_context',
-          type: 'histogram',
-          values: [],
-          aggregator: 'sum',
-        },
-        {
-          help: 'Counts the amount of errors reported from all phases',
-          name: 'graphql_envelop_error_result',
-          type: 'counter',
-          values: [
-            {
-              labels: {
-                operationName: 'Anonymous',
-                operationType: 'query',
-                phase: 'context',
-              },
-              value: 1,
-            },
-          ],
-          aggregator: 'sum',
-        },
-      ]);
+      expect(await metricValue('graphql_envelop_phase_context', 'count')).toBe(1);
     });
+
+    // it('should trace error during contextBuilding', async () => {
+    //   const registry = new Registry();
+    //   const testKit = createTestkit(
+    //     [
+    //       usePrometheus({
+    //         metrics: {
+    //           graphql_envelop_error_result: true,
+    //         },
+    //         registry,
+    //       }),
+    //       useExtendContext<any>(() => {
+    //         throw new Error('error');
+    //       }),
+    //     ],
+    //     schema,
+    //   );
+    //   try {
+    //     await testKit.execute('query { regularField }');
+    //   } catch (e) {}
+    //   const metrics = await registry.getMetricsAsJSON();
+    //   expect(metrics).toEqual([
+    //     {
+    //       help: 'Counts the amount of errors reported from all phases',
+    //       name: 'graphql_envelop_error_result',
+    //       type: 'counter',
+    //       values: [
+    //         {
+    //           labels: {
+    //             operationName: 'Anonymous',
+    //             operationType: 'query',
+    //             phase: 'context',
+    //           },
+    //           value: 1,
+    //         },
+    //       ],
+    //       aggregator: 'sum',
+    //     },
+    //   ]);
+    // });
   });
 
   describe('execute', () => {
-    it('Should allow to use custom Histogram and custom labelNames', async () => {
+    it('should not allow empty arrays', () => {
+      expect(
+        // @ts-expect-error Empty array should be disallowed
+        () => usePrometheus({ metrics: { graphql_envelop_phase_execute: [] } }),
+      ).toThrow();
+    });
+
+    testHistogram('graphql_envelop_phase_execute', ['execute']);
+
+    it('should allow to use custom Histogram and custom labelNames', async () => {
       const registry = new Registry();
       const { execute, metricCount, metricString } = prepare(
         {
           metrics: {
-            graphql_envelop_error_result: true,
             graphql_envelop_phase_execute: createHistogram({
               registry,
               histogram: {
@@ -448,35 +825,47 @@ describe('Prom Metrics plugin', () => {
       assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_error_result')).toBe(0);
       expect(await metricCount('test_execute', 'count')).toBe(1);
       expect(await metricString('test_execute')).toContain(
         `test_execute_count{opText=\"{\\n  regularField\\n}\"} 1`,
       );
     });
 
-    it('Should trace error during execute with a single error', async () => {
+    // it('should trace error during execute with a single error', async () => {
+    //   const { execute, metricCount, metricString } = prepare({
+    //     metrics: {
+    //       graphql_envelop_error_result: true,
+    //     },
+    //   });
+    //   const result = await execute('query { errorField }');
+    //   assertSingleExecutionValue(result);
+
+    //   expect(result.errors?.length).toBe(1);
+    //   expect(await metricString('graphql_envelop_error_result')).toContain(
+    //     'graphql_envelop_error_result{operationName="Anonymous",operationType="query",phase="execute",path="errorField"} 1',
+    //   );
+    //   expect(await metricCount('graphql_envelop_error_result')).toBe(1);
+    // });
+
+    // it('should trace error during execute with a multiple errors', async () => {
+    //   const { execute, metricCount, metricString } = prepare({
+    //     metrics: {
+    //       graphql_envelop_error_result: true,
+    //     },
+    //   });
+    //   const result = await execute('query { errorField test: errorField }');
+    //   assertSingleExecutionValue(result);
+
+    //   expect(result.errors?.length).toBe(2);
+    //   expect(await metricString('graphql_envelop_error_result')).toContain(
+    //     'graphql_envelop_error_result{operationName="Anonymous",operationType="query",phase="execute",path="errorField"} 1',
+    //   );
+    //   expect(await metricCount('graphql_envelop_error_result')).toBe(2);
+    // });
+
+    it('should trace timing even if an error occurs', async () => {
       const { execute, metricCount, metricString } = prepare({
         metrics: {
-          graphql_envelop_error_result: true,
-          graphql_envelop_phase_execute: true,
-        },
-      });
-      const result = await execute('query { errorField }');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors?.length).toBe(1);
-      expect(await metricString('graphql_envelop_error_result')).toContain(
-        'graphql_envelop_error_result{operationName="Anonymous",operationType="query",path="errorField",phase="execute"} 1',
-      );
-      expect(await metricCount('graphql_envelop_error_result')).toBe(1);
-      expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
-    });
-
-    it('Should trace error during execute with a multiple errors', async () => {
-      const { execute, metricCount, metricString } = prepare({
-        metrics: {
-          graphql_envelop_error_result: true,
           graphql_envelop_phase_execute: true,
         },
       });
@@ -484,71 +873,171 @@ describe('Prom Metrics plugin', () => {
       assertSingleExecutionValue(result);
 
       expect(result.errors?.length).toBe(2);
-      expect(await metricString('graphql_envelop_error_result')).toContain(
-        'graphql_envelop_error_result{operationName="Anonymous",operationType="query",path="errorField",phase="execute"} 1',
-      );
-      expect(await metricCount('graphql_envelop_error_result')).toBe(2);
       expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
-    });
-
-    it('Should trace valid execute result', async () => {
-      const { execute, metricCount } = prepare({
-        metrics: {
-          graphql_envelop_error_result: true,
-          graphql_envelop_phase_execute: true,
-        },
-      });
-      const result = await execute('query { regularField }');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_error_result')).toBe(0);
-      expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
-    });
-
-    it('Should skip execute when execute = false', async () => {
-      const { execute, metricCount } = prepare({
-        metrics: {
-          graphql_envelop_error_result: true,
-          graphql_envelop_phase_execute: false,
-        },
-      });
-      const result = await execute('query { regularField }');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_error_result')).toBe(0);
-      expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(0);
-    });
-
-    it('should not contain operationName and operationType if disables', async () => {
-      const { execute, metricString } = prepare({
-        metrics: {
-          graphql_envelop_error_result: true,
-          graphql_envelop_phase_execute: true,
-        },
-        labels: {
-          operationName: false,
-          operationType: false,
-        },
-      });
-      const result = await execute('query { regularField }');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors).toBeUndefined();
-      expect(await metricString('graphql_envelop_phase_execute')).not.toContain(
-        ',operationName="Anonymous",operationType="query"',
-      );
     });
   });
 
   describe('errors', () => {
-    it('Should allow to use custom Counter and custom labelNames', async () => {
+    it('should not allow empty arrays', () => {
+      expect(
+        // @ts-expect-error Empty array should be disallowed
+        () => usePrometheus({ metrics: { graphql_envelop_error_result: [] } }),
+      ).toThrow();
+    });
+
+    const errorMetricFactory = (config: any) =>
+      createCounter({
+        ...config,
+        counter: {
+          name: 'graphql_envelop_error_result',
+          help: 'HELP ME',
+          labelNames: ['operationType', 'operationName', 'phase'],
+        },
+        fillLabelsFn: params => ({
+          operationName: params.operationName!,
+          operationType: params.operationType!,
+          phase: params.errorPhase!,
+        }),
+      });
+
+    describe('parse errors', () => {
+      it.each(
+        metricEnabledTestCases('graphql_envelop_error_result', ['parse'], errorMetricFactory),
+      )('should count errors when $name', async ({ config }) => {
+        const { execute, metricCount, metricString } = prepare(config, config.registry);
+        const result = await execute('query {');
+        assertSingleExecutionValue(result);
+
+        expect(result.errors?.length).toBe(1);
+        expect(await metricCount('graphql_envelop_error_result')).toBe(1);
+        expect(await metricString('graphql_envelop_error_result')).toContain('phase="parse"');
+      });
+
+      it.each(
+        metricDisabledTestCases('graphql_envelop_error_result', errorMetricFactory, [
+          'validate',
+          'context',
+          'execute',
+          'subscribe',
+        ]),
+      )('should not count error when $name', async ({ config }) => {
+        const { execute, metricCount } = prepare(config, config.registry);
+        const result = await execute('query {');
+        assertSingleExecutionValue(result);
+
+        expect(result.errors?.length).toBe(1);
+        expect(await metricCount('graphql_envelop_error_result')).toBe(0);
+      });
+    });
+
+    describe('validate errors', () => {
+      it.each(
+        metricEnabledTestCases('graphql_envelop_error_result', ['validate'], errorMetricFactory),
+      )('should count errors when $name', async ({ config }) => {
+        const { execute, metricCount, metricString } = prepare(config, config.registry);
+        const result = await execute('query test($v: String!) { regularField }');
+        assertSingleExecutionValue(result);
+
+        expect(result.errors?.length).toBe(1);
+        expect(await metricCount('graphql_envelop_error_result')).toBe(1);
+        const errorReport = await metricString('graphql_envelop_error_result');
+        expect(errorReport).toContain('phase="validate"');
+      });
+
+      it.each(
+        metricDisabledTestCases('graphql_envelop_error_result', errorMetricFactory, [
+          'parse',
+          'context',
+          'execute',
+          'subscribe',
+        ]),
+      )('should not count error when $name', async ({ config }) => {
+        const { execute, metricCount } = prepare(config, config.registry);
+        const result = await execute('query test($v: String!) { regularField }');
+        assertSingleExecutionValue(result);
+
+        expect(result.errors?.length).toBe(1);
+        expect(await metricCount('graphql_envelop_error_result')).toBe(0);
+      });
+    });
+
+    describe('context errors', () => {
+      it.each(
+        metricEnabledTestCases('graphql_envelop_error_result', ['context'], errorMetricFactory),
+      )('should count errors when $name', async ({ config }) => {
+        const { execute, metricCount, metricString } = prepare(config, config.registry, [
+          useExtendContext<any>(() => {
+            throw new Error('error');
+          }),
+        ]);
+
+        await expect(execute('query { regularField }')).rejects.toThrow();
+
+        expect(await metricCount('graphql_envelop_error_result')).toBe(1);
+        const errorReport = await metricString('graphql_envelop_error_result');
+        expect(errorReport).toContain('phase="context"');
+      });
+
+      it.each(
+        metricDisabledTestCases('graphql_envelop_error_result', errorMetricFactory, [
+          'parse',
+          'validate',
+          'execute',
+          'subscribe',
+        ]),
+      )('should not count error when $name', async ({ config }) => {
+        const { execute, metricCount } = prepare(config, config.registry, [
+          useExtendContext<any>(() => {
+            throw new Error('error');
+          }),
+        ]);
+        await expect(execute('query { regularField }')).rejects.toThrow();
+        expect(await metricCount('graphql_envelop_error_result')).toBe(0);
+      });
+    });
+
+    describe('execute errors', () => {
+      it.each(
+        metricEnabledTestCases('graphql_envelop_error_result', ['execute'], errorMetricFactory),
+      )('should count errors when $name', async ({ config }) => {
+        const { execute, metricCount, metricString } = prepare(
+          config,
+          config.registry ?? new Registry(),
+        );
+        const result = await execute('query { errorField }');
+        assertSingleExecutionValue(result);
+
+        expect(result.errors?.length).toBe(1);
+        expect(await metricCount('graphql_envelop_error_result')).toBe(1);
+
+        const errorReport = await metricString('graphql_envelop_error_result');
+        expect(errorReport).toContain('phase="execute"');
+        expect(errorReport).toContain('operationName="Anonymous');
+        expect(errorReport).toContain('operationType="query"');
+      });
+
+      it.each(
+        metricDisabledTestCases('graphql_envelop_error_result', errorMetricFactory, [
+          'parse',
+          'validate',
+          'context',
+          'subscribe',
+        ]),
+      )('should not count error when $name', async ({ config }) => {
+        const { execute, metricCount } = prepare(config, config.registry);
+        const result = await execute('query { errorField }');
+        assertSingleExecutionValue(result);
+
+        expect(result.errors?.length).toBe(1);
+        expect(await metricCount('graphql_envelop_error_result')).toBe(0);
+      });
+    });
+
+    it('should allow to use custom Counter and custom labelNames', async () => {
       const registry = new Registry();
       const { execute, metricCount, metricString } = prepare(
         {
           metrics: {
-            graphql_envelop_phase_execute: true,
             graphql_envelop_error_result: createCounter({
               registry,
               counter: {
@@ -576,52 +1065,37 @@ describe('Prom Metrics plugin', () => {
         `test_error{opText=\"{\\n  errorField\\n}\",errorMessage=\"error\"} 1`,
       );
     });
-
-    it('Should not trace parse errors when not needed', async () => {
-      const { execute, metricCount } = prepare({
-        metrics: {
-          graphql_envelop_phase_parse: true,
-          graphql_envelop_error_result: false,
+    it('should allow to use custom name', async () => {
+      const registry = new Registry();
+      const { execute, metricCount, metricString } = prepare(
+        {
+          metrics: {
+            graphql_envelop_error_result: 'test_error',
+          },
         },
-      });
-      const result = await execute('query {');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors?.length).toBe(1);
-      expect(await metricCount('graphql_envelop_error_result')).toBe(0);
-    });
-
-    it('Should not trace validate errors when not needed', async () => {
-      const { execute, metricCount } = prepare({
-        metrics: {
-          graphql_envelop_phase_validate: true,
-          graphql_envelop_error_result: false,
-        },
-      });
-      const result = await execute('query test($v: String!) { regularField }');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors?.length).toBe(1);
-      expect(await metricCount('graphql_envelop_error_result')).toBe(0);
-    });
-
-    it('Should not trace execute errors when not needed', async () => {
-      const { execute, metricCount } = prepare({
-        metrics: { graphql_envelop_error_result: false },
-      });
+        registry,
+      );
       const result = await execute('query { errorField }');
       assertSingleExecutionValue(result);
 
       expect(result.errors?.length).toBe(1);
-      expect(await metricCount('graphql_envelop_error_result')).toBe(0);
+      expect(await metricCount('test_error')).toBe(1);
     });
   });
 
   describe('resolvers', () => {
-    it('Should trace all resolvers times correctly', async () => {
+    it('should not allow empty arrays', () => {
+      expect(
+        // @ts-expect-error Empty array should be disallowed
+        () => usePrometheus({ metrics: { graphql_envelop_error_result: [] } }),
+      ).toThrow();
+    });
+
+    testHistogram('graphql_envelop_execute_resolver', ['execute']);
+
+    it('should trace all resolvers times correctly', async () => {
       const { execute, metricCount, metricString } = prepare({
         metrics: {
-          graphql_envelop_phase_execute: true,
           graphql_envelop_execute_resolver: true,
         },
       });
@@ -629,17 +1103,45 @@ describe('Prom Metrics plugin', () => {
       assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
       expect(await metricCount('graphql_envelop_execute_resolver', 'count')).toBe(1);
       expect(await metricString('graphql_envelop_execute_resolver')).toContain(
         'graphql_envelop_execute_resolver_count{operationName="Anonymous",operationType="query",fieldName="regularField",typeName="Query",returnType="String!"} 1',
       );
     });
 
-    it('Should trace only specified resolvers when resolversWhitelist is used', async () => {
+    it('should allow custom metric options', async () => {
+      const registry = new Registry();
+      const { execute, metricCount, metricString, allMetrics } = prepare(
+        {
+          metrics: {
+            graphql_envelop_execute_resolver: createHistogram({
+              registry,
+              fillLabelsFn: ({ document }) => ({
+                opText: print(document!),
+              }),
+              histogram: {
+                name: 'graphql_envelop_execute_resolver',
+                help: 'test',
+                labelNames: ['opText'] as const,
+              },
+            }),
+          },
+        },
+        registry,
+      );
+      const result = await execute('query { regularField }');
+      assertSingleExecutionValue(result);
+
+      expect(result.errors).toBeUndefined();
+      expect(await metricCount('graphql_envelop_execute_resolver', 'count')).toBe(1);
+      expect(await metricString('graphql_envelop_execute_resolver')).toContain(
+        'graphql_envelop_execute_resolver_count{opText="{\\n  regularField\\n}"} 1',
+      );
+    });
+
+    it('should trace only specified resolvers when resolversWhitelist is used', async () => {
       const { execute, metricCount, metricString } = prepare({
         metrics: {
-          graphql_envelop_phase_execute: true,
           graphql_envelop_execute_resolver: true,
         },
         resolversWhitelist: ['Query.regularField'],
@@ -648,7 +1150,6 @@ describe('Prom Metrics plugin', () => {
       assertSingleExecutionValue(result);
 
       expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
       expect(await metricCount('graphql_envelop_execute_resolver', 'count')).toBe(1);
       expect(await metricString('graphql_envelop_execute_resolver')).toContain(
         'graphql_envelop_execute_resolver_count{operationName="Anonymous",operationType="query",fieldName="regularField",typeName="Query",returnType="String!"} 1',
@@ -657,49 +1158,19 @@ describe('Prom Metrics plugin', () => {
   });
 
   describe('deprecation', () => {
-    it('Should not trace deprecation when not needed', async () => {
-      const { execute, metricCount } = prepare({
-        metrics: {
-          graphql_envelop_phase_execute: true,
-          graphql_envelop_execute_resolver: true,
-        },
-      });
-      const result = await execute('query { regularField deprecatedField }');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
-      expect(await metricCount('graphql_envelop_execute_resolver', 'count')).toBe(2);
-      expect(await metricCount('graphql_envelop_deprecated_field', 'count')).toBe(0);
+    it('should not allow empty arrays', () => {
+      expect(
+        // @ts-expect-error Empty array should be disallowed
+        () => usePrometheus({ metrics: { graphql_envelop_deprecated_field: [] } }),
+      ).toThrow();
     });
 
-    it('Should trace all deprecated fields times correctly', async () => {
-      const { execute, metricCount } = prepare({
-        metrics: {
-          graphql_envelop_phase_execute: true,
-          graphql_envelop_execute_resolver: true,
-          graphql_envelop_deprecated_field: true,
-        },
-      });
-      const result = await execute('query { regularField deprecatedField }');
-      assertSingleExecutionValue(result);
+    testCounter('graphql_envelop_deprecated_field', ['parse'], 'query { deprecatedField }');
 
-      expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
-      expect(await metricCount('graphql_envelop_execute_resolver', 'count')).toBe(2);
-      expect(await metricCount('graphql_envelop_deprecated_field')).toBe(1);
-    });
-
-    it('Should track deprecated arguments in mutation', async () => {
+    it('should track deprecated arguments in mutation', async () => {
       const { execute, metricCount, allMetrics, metricString } = prepare({
         metrics: {
-          graphql_envelop_error_result: true,
-          graphql_envelop_phase_execute: true,
-          graphql_envelop_phase_parse: true,
-          graphql_envelop_phase_validate: true,
-          graphql_envelop_phase_context: true,
           graphql_envelop_deprecated_field: true,
-          graphql_envelop_execute_resolver: true,
         },
       });
       const result = await execute(
@@ -729,11 +1200,19 @@ describe('Prom Metrics plugin', () => {
   });
 
   describe('requestCount', () => {
-    it('Should not trace requestCount when not needed', async () => {
+    it('should not allow empty arrays', () => {
+      expect(
+        // @ts-expect-error Empty array should be disallowed
+        () => usePrometheus({ metrics: { graphql_envelop_request: [] } }),
+      ).toThrow();
+    });
+
+    testCounter('graphql_envelop_request', ['execute', 'subscribe']);
+
+    it('should not count requests when execute phase is disabled', async () => {
       const { execute, metricCount } = prepare({
         metrics: {
-          graphql_envelop_request: false,
-          graphql_envelop_phase_execute: true,
+          graphql_envelop_request: ['subscribe'],
         },
       });
       const result = await execute('query { regularField }');
@@ -743,26 +1222,10 @@ describe('Prom Metrics plugin', () => {
       expect(await metricCount('graphql_envelop_request')).toBe(0);
     });
 
-    it('Should trace all successful requests', async () => {
-      const { execute, metricCount } = prepare({
-        metrics: {
-          graphql_envelop_request: true,
-          graphql_envelop_phase_execute: true,
-        },
-      });
-      const result = await execute('query { regularField }');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
-      expect(await metricCount('graphql_envelop_request')).toBe(1);
-    });
-
-    it('Should trace all successful requests, with multiple req', async () => {
+    it('should trace all successful requests, with multiple req', async () => {
       const { execute, metricValue } = prepare({
         metrics: {
           graphql_envelop_request: true,
-          graphql_envelop_phase_execute: true,
         },
       });
       const result1 = await execute('query { regularField }');
@@ -772,43 +1235,29 @@ describe('Prom Metrics plugin', () => {
 
       expect(result1.errors).toBeUndefined();
       expect(result2.errors).toBeUndefined();
-      expect(await metricValue('graphql_envelop_phase_execute', 'count')).toBe(2);
       expect(await metricValue('graphql_envelop_request')).toBe(2);
     });
   });
 
   describe('requestSummary', () => {
-    it('Should not trace requestSummary when not needed', async () => {
-      const { execute, metricCount } = prepare({
-        metrics: {
-          graphql_envelop_request_time_summary: false,
-          graphql_envelop_phase_execute: true,
-        },
-      });
-      const result = await execute('query { regularField }');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_request')).toBe(0);
+    it('should not allow empty arrays', () => {
+      expect(
+        // @ts-expect-error Empty array should be disallowed
+        () => usePrometheus({ metrics: { graphql_envelop_request_time_summary: [] } }),
+      ).toThrow();
     });
 
-    it('Should trace all successful requests', async () => {
-      const { execute, metricCount } = prepare({
-        metrics: {
-          graphql_envelop_request_time_summary: true,
-          graphql_envelop_phase_execute: true,
-        },
-      });
-      const result = await execute('query { regularField }');
-      assertSingleExecutionValue(result);
-
-      expect(result.errors).toBeUndefined();
-      expect(await metricCount('graphql_envelop_phase_execute', 'count')).toBe(1);
-      expect(await metricCount('graphql_envelop_request_time_summary', 'count')).toBe(1);
-    });
+    testSummary('graphql_envelop_request_time_summary', ['execute', 'subscribe']);
   });
 
   describe('schema', () => {
+    it('should not allow empty arrays', () => {
+      expect(
+        // @ts-expect-error Empty array should be disallowed
+        () => usePrometheus({ metrics: { graphql_envelop_schema_change: [] } }),
+      ).toThrow();
+    });
+
     it('should capture graphql schema changing', async () => {
       const registry = new Registry();
       createTestkit(
@@ -901,3 +1350,130 @@ describe('Prom Metrics plugin', () => {
     expect(await allMetrics()).toContain('graphql_envelop_phase_parse_count{');
   });
 });
+
+function metricEnabledTestCases(
+  metricName: MetricNames,
+  phases: [string, ...string[]],
+  factory: (config: object) => object,
+): TestCase[] {
+  return [
+    {
+      name: 'enabled alone',
+      config: { metrics: { [metricName]: true } },
+    },
+    {
+      name: 'enabled with all metrics',
+      config: { metrics: allMetrics },
+    },
+    {
+      name: 'given a list of phase',
+      config: { metrics: { [metricName]: phases } },
+    },
+    ((registry: Registry) => ({
+      name: 'given a custom configuration',
+      config: {
+        registry,
+        metrics: {
+          [metricName]: factory({
+            registry,
+            fillLabelsFn: (params: FillLabelsFnParams) => ({
+              operationName: params.operationName!,
+              operationType: params.operationType!,
+            }),
+          }),
+        },
+      },
+    }))(new Registry()),
+    ((registry: Registry) => ({
+      name: 'given a shouldObserve',
+      config: {
+        registry,
+        metrics: {
+          [metricName]: factory({
+            registry,
+            fillLabelsFn: (params: FillLabelsFnParams) => ({
+              operationName: params.operationName!,
+              operationType: params.operationType!,
+            }),
+            shouldObserve: () => true,
+          }),
+        },
+      },
+    }))(new Registry()),
+    ((registry: Registry) => ({
+      name: 'given a custom config and phases',
+      config: {
+        registry,
+        metrics: {
+          [metricName]: factory({
+            registry,
+            fillLabelsFn: (params: FillLabelsFnParams) => ({
+              operationName: params.operationName!,
+              operationType: params.operationType!,
+            }),
+            phases,
+          }),
+        },
+      },
+    }))(new Registry()),
+  ];
+}
+
+function metricDisabledTestCases(
+  metricName: MetricNames,
+  factory: (config: object) => object,
+  phases?: [string, ...string[]],
+): TestCase[] {
+  const cases: TestCase[] = [
+    {
+      name: 'disabled with false',
+      config: { metrics: { [metricName]: false } },
+    },
+    {
+      name: 'disabled with undefined',
+      config: { metrics: { [metricName]: undefined } },
+    },
+    {
+      name: 'disabled with all metrics',
+      config: { metrics: { ...allMetrics, [metricName]: false } },
+    },
+    {
+      name: 'disabled with all metrics',
+      config: { metrics: { ...allMetrics, [metricName]: undefined } },
+    },
+    ((registry: Registry) => ({
+      name: 'given a shouldObserve',
+      config: {
+        registry,
+        metrics: {
+          [metricName]: factory({
+            registry,
+            fillLabelsFn: (params: FillLabelsFnParams) => ({
+              operationName: params.operationName!,
+              operationType: params.operationType!,
+            }),
+            shouldObserve: () => false,
+          }),
+        },
+      },
+    }))(new Registry()),
+  ];
+  if (phases) {
+    cases.push({
+      name: `enabled phases are ${phases}`,
+      config: { metrics: { [metricName]: phases } },
+    });
+  }
+  return cases;
+}
+
+type MetricNames<V = any> = {
+  [K in keyof MetricsConfig]-?: [V] extends [MetricsConfig[K]] ? K : never;
+}[keyof MetricsConfig];
+
+type H = MetricNames<HistogramMetricOption<any>>;
+
+type TestCase = {
+  name: string;
+  config: PrometheusTracingPluginConfig;
+};

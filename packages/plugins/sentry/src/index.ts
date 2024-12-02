@@ -1,24 +1,25 @@
 import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 import {
-  ExecuteFunction,
-  ExecutionArgs,
-  ExecutionResult,
   getDocumentString,
+  handleStreamOrSingleExecutionResult,
   isOriginalGraphQLError,
   TypedExecutionArgs,
+  type OnExecuteDoneHookResultOnNextHook,
   type Plugin,
 } from '@envelop/core';
 import * as Sentry from '@sentry/node';
-import type { Span, TraceparentData } from '@sentry/types';
+import type { TraceparentData } from '@sentry/types';
 
 export type SentryPluginOptions<PluginContext extends Record<string, any>> = {
   /**
-   * Starts a new transaction for every GraphQL Operation.
-   * When disabled, an already existing Transaction will be used.
+   * Force the creation of a new transaction for every GraphQL Operation.
+   * By default, Sentry mange the creation of transactions automatically.
+   * By enabling this option, you can ensure that the GraphQL execution pipeline
+   * is always wrapped in its own transaction.
    *
-   * @default true
+   * @default false
    */
-  startTransaction?: boolean;
+  forceTransaction?: boolean;
   /**
    * Renames Transaction.
    * @default false
@@ -40,7 +41,7 @@ export type SentryPluginOptions<PluginContext extends Record<string, any>> = {
    */
   eventIdKey?: string | null;
   /**
-   * Adds custom tags to every Transaction.
+   * Adds custom tags to every Span.
    */
   appendTags?: (args: TypedExecutionArgs<PluginContext>) => Record<string, unknown>;
   /**
@@ -48,13 +49,13 @@ export type SentryPluginOptions<PluginContext extends Record<string, any>> = {
    */
   configureScope?: (args: TypedExecutionArgs<PluginContext>, scope: Sentry.Scope) => void;
   /**
-   * Produces a name of Transaction (only when "renameTransaction" or "startTransaction" are enabled) and description of created Span.
+   * Produces a name of Transaction (only when "renameTransaction" or "forceTransaction" are enabled) and description of created Span.
    *
    * @default operation's name or "Anonymous Operation" when missing)
    */
   transactionName?: (args: TypedExecutionArgs<PluginContext>) => string;
   /**
-   * Produces tracing data for Transaction
+   * Produces tracing data for Span
    *
    * @default is empty
    */
@@ -89,7 +90,7 @@ export const useSentry = <PluginContext extends Record<string, any> = {}>(
     return options[key] ?? defaultValue;
   }
 
-  const startTransaction = pick('startTransaction', true);
+  const forceTransaction = pick('forceTransaction', false);
   const includeRawResult = pick('includeRawResult', false);
   const includeExecuteVariables = pick('includeExecuteVariables', false);
   const renameTransaction = pick('renameTransaction', false);
@@ -132,125 +133,101 @@ export const useSentry = <PluginContext extends Record<string, any> = {}>(
         ...addedTags,
       };
 
-      const createExecuteFn = async (
-        args: ExecutionArgs,
-        span: Span,
-      ): Promise<ReturnType<ExecuteFunction>> => {
-        span.setAttribute('document', document);
+      return Sentry.startSpanManual(
+        {
+          name: transactionName,
+          op,
+          attributes: tags,
+          forceTransaction,
+          ...traceparentData,
+        },
+        rootSpan => {
+          rootSpan.setAttribute('document', document);
 
-        const result: ExecutionResult = await executeFn(args);
+          if (renameTransaction) {
+            Sentry.getCurrentScope().setTransactionName(transactionName);
+          }
 
-        if (includeRawResult) {
-          // @ts-expect-error TODO: not sure if this is correct
-          span.setAttribute('result', result);
-        }
+          if (options.configureScope) {
+            options.configureScope(args, Sentry.getCurrentScope());
+          }
 
-        if (result.errors && result.errors.length > 0) {
-          Sentry.withScope(scope => {
-            scope.setTransactionName(opName);
-            scope.setTag('operation', operationType);
-            scope.setTag('operationName', opName);
-            scope.setExtra('document', document);
+          // Give access to the span during resolvers execution
+          setExecuteFn(args => Sentry.withActiveSpan(rootSpan, () => executeFn(args)));
 
-            scope.setTags(addedTags || {});
+          return {
+            onExecuteDone(payload) {
+              const handleResult: OnExecuteDoneHookResultOnNextHook<{}> = ({
+                result,
+                setResult,
+              }) => {
+                if (includeRawResult) {
+                  // @ts-expect-error TODO: not sure if this is correct
+                  rootSpan?.setAttribute('result', result);
+                }
 
-            if (includeRawResult) {
-              scope.setExtra('result', result);
-            }
+                if (result.errors && result.errors.length > 0) {
+                  Sentry.withScope(scope => {
+                    scope.setTransactionName(opName);
+                    scope.setTag('operation', operationType);
+                    scope.setTag('operationName', opName);
+                    scope.setExtra('document', document);
 
-            if (includeExecuteVariables) {
-              scope.setExtra('variables', args.variableValues);
-            }
+                    scope.setTags(addedTags || {});
 
-            const errors = result.errors?.map(err => {
-              if (skipError(err) === true) {
-                return err;
-              }
+                    if (includeRawResult) {
+                      scope.setExtra('result', result);
+                    }
 
-              const errorPath = (err.path ?? [])
-                .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
-                .join(' > ');
+                    if (includeExecuteVariables) {
+                      scope.setExtra('variables', args.variableValues);
+                    }
 
-              if (errorPath) {
-                scope.addBreadcrumb({
-                  category: 'execution-path',
-                  message: errorPath,
-                  level: 'debug',
-                });
-              }
+                    const errors = result.errors?.map(err => {
+                      if (skipError(err) === true) {
+                        return err;
+                      }
 
-              const eventId = Sentry.captureException(err.originalError, {
-                fingerprint: ['graphql', errorPath, opName, operationType],
-                contexts: {
-                  GraphQL: {
-                    operationName: opName,
-                    operationType,
-                    variables: args.variableValues,
-                  },
-                },
-              });
+                      const errorPath = (err.path ?? [])
+                        .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
+                        .join(' > ');
 
-              return addEventId(err, eventId);
-            });
+                      if (errorPath) {
+                        scope.addBreadcrumb({
+                          category: 'execution-path',
+                          message: errorPath,
+                          level: 'debug',
+                        });
+                      }
 
-            return {
-              ...result,
-              errors,
-            };
-          });
-        }
+                      const eventId = Sentry.captureException(err.originalError, {
+                        fingerprint: ['graphql', errorPath, opName, operationType],
+                        contexts: {
+                          GraphQL: {
+                            operationName: opName,
+                            operationType,
+                            variables: args.variableValues,
+                          },
+                        },
+                      });
 
-        return result;
-      };
+                      return addEventId(err, eventId);
+                    });
 
-      if (startTransaction) {
-        const executeFn: ExecuteFunction = args =>
-          Sentry.startSpan(
-            {
-              name: transactionName,
-              op,
-              attributes: tags,
-              ...traceparentData,
+                    setResult({
+                      ...result,
+                      errors,
+                    });
+                  });
+                }
+
+                rootSpan?.end();
+              };
+              return handleStreamOrSingleExecutionResult(payload, handleResult);
             },
-            span => createExecuteFn(args, span),
-          );
-        setExecuteFn(executeFn);
-      } else {
-        const scope = Sentry.getCurrentScope();
-        const parentSpan = scope?.getScopeData().span;
-        if (!parentSpan) {
-          // eslint-disable-next-line no-console
-          console.warn(
-            [
-              `Flag "startTransaction" is disabled but Sentry failed to find a transaction.`,
-              `Try to create a transaction before GraphQL execution phase is started.`,
-            ].join('\n'),
-          );
-          return {};
-        }
-        const executeFn: ExecuteFunction = args =>
-          Sentry.withActiveSpan(parentSpan, () => {
-            return Sentry.startSpan(
-              {
-                name: transactionName,
-                op,
-                attributes: tags,
-              },
-              span => createExecuteFn(args, span),
-            );
-          });
-        setExecuteFn(executeFn);
-
-        if (renameTransaction) {
-          scope!.setTransactionName(transactionName);
-        }
-      }
-
-      if (options.configureScope) {
-        options.configureScope(args, Sentry.getCurrentScope());
-      }
-
-      return {};
+          };
+        },
+      );
     },
   };
 };

@@ -58,8 +58,11 @@ const getEnveloped = envelop({
 
 ### Configuration
 
-- `startTransaction` (default: `true`) - Starts a new transaction for every GraphQL Operation. When
-  disabled, an already existing Transaction will be used.
+- `forceTransaction` (default: `true`) - Force the creation of a new transaction for every GraphQL
+  Operation. By default, Sentry mange the creation of transactions automatically. By enabling this
+  option, you can ensure that the GraphQL execution pipeline is always wrapped in its own
+  transaction.
+
 - `renameTransaction` (default: `false`) - Renames Transaction.
 - `includeRawResult` (default: `false`) - Adds result of each resolver and operation to Span's data
   (available under "result")

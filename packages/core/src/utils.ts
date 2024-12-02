@@ -55,6 +55,7 @@ export function mapAsyncIterator<T, O>(
     } catch (error) {
       try {
         await iterator.return?.();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (_error) {
         /* ignore error */
       }
