@@ -10,8 +10,8 @@
   },
   "scripts": {
     "build": "bob build",
-    "ci:lint": "eslint --config .eslintrc.json --ext .ts . --max-warnings 0 --output-file eslint_report.json --format json",
-    "lint": "eslint --config .eslintrc.json --ext .ts . --max-warnings 0",
+    "ci:lint": "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --config .eslintrc.json --ext .ts . --max-warnings 0 --output-file eslint_report.json --format json",
+    "lint": "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --config .eslintrc.json --ext .ts . --max-warnings 0",
     "lint:prettier": "prettier --cache --ignore-path .prettierignore --check .",
     "loadtest:run": "pnpm run --filter @envelop/benchmark loadtest:run",
     "loadtest:start-server": "pnpm run --filter @envelop/benchmark loadtest:start-server",
@@ -42,13 +42,14 @@
     "@typescript-eslint/parser": "8.16.0",
     "bob-the-bundler": "7.0.1",
     "chalk": "5.3.0",
-    "eslint": "8.57.0",
+    "cross-env": "7.0.3",
+    "eslint": "9.16.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-config-standard": "17.1.0",
     "eslint-plugin-import": "2.29.1",
-    "eslint-plugin-n": "16.6.2",
-    "eslint-plugin-package-json": "^0.10.0",
-    "eslint-plugin-promise": "7.0.0",
+    "eslint-plugin-n": "17.14.0",
+    "eslint-plugin-package-json": "^0.17.0",
+    "eslint-plugin-promise": "7.2.1",
     "eslint-plugin-unicorn": "56.0.1",
     "globby": "14.0.1",
     "husky": "9.0.11",
@@ -63,7 +64,7 @@
   },
   "lint-staged": {
     "packages/**/src/**/*.{ts,tsx}": [
-      "eslint --fix"
+      "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --fix"
     ],
     "**/*.{ts,tsx,graphql,yml,json,md,mdx}": [
       "prettier --write"
