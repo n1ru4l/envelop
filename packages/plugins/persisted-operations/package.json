@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@envelop/core": "workspace:^",
-    "@graphql-tools/schema": "10.0.8",
+    "@graphql-tools/schema": "10.0.10",
     "graphql": "16.8.1",
     "typescript": "5.1.3"
   },
