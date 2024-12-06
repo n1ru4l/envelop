@@ -5,7 +5,7 @@
 Make it possible to get the active span in the GraphQL resolver
 
 **Breaking Change:** With this change, this plugin now wraps the executable function.
-This plugin should be placed last so that the executable function is not overwritten by another plugin.
+This plugin should be placed last so that the execute function is not overwritten by another plugin.
 
 ```ts
 const yoga = createYoga({
