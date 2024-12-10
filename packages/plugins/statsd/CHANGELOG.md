@@ -1,5 +1,15 @@
 # @envelop/statsd
 
+## 5.0.1
+
+### Patch Changes
+
+- [#1709](https://github.com/n1ru4l/envelop/pull/1709)
+  [`e6aac57`](https://github.com/n1ru4l/envelop/commit/e6aac57c612607c5f14f9eb5cc1d6cf9bf4be2e1)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`hot-shots@^10.0.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/10.0.0)
+    (from `^8.0.0 || ^9.0.0`, in `peerDependencies`)
+
 ## 5.0.0
 
 ### Major Changes
