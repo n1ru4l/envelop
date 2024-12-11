@@ -1,5 +1,19 @@
 # @envelop/sentry
 
+## 11.0.0
+
+### Major Changes
+
+- [#2335](https://github.com/n1ru4l/envelop/pull/2335)
+  [`073774c`](https://github.com/n1ru4l/envelop/commit/073774ce7eb06b6b8f13d758046cfa8e5d4eb654)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Fix: Update code to better feat the new
+  Sentry v8 API
+
+  **Breaking Change:**
+
+  - `startTransaction` option has been removed.
+  - `forceTransaction` option has been added, disabled by default.
+
 ## 10.0.0
 
 ### Major Changes
