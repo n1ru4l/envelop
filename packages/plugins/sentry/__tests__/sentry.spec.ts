@@ -5,6 +5,7 @@ import { useSentry } from '@envelop/sentry';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import * as Sentry from '@sentry/node';
+import { Span } from '@sentry/types';
 import '@sentry/tracing';
 
 describe('sentry', () => {
@@ -251,5 +252,47 @@ describe('sentry', () => {
       message: 'Cannot return null for non-nullable field Query.hello.',
       name: 'Error',
     });
+  });
+
+  test('get the active span', async () => {
+    const { testkit: sentryTestkit, sentryTransport } = createSentryTestkit();
+    Sentry.init({
+      dsn: 'https://public@sentry.example.com/1',
+      transport: sentryTransport,
+    });
+
+    let activeSpan: Span | undefined;
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          hello: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          hello: async () => {
+            activeSpan = Sentry.getActiveSpan();
+            return 'Hello!';
+          },
+        },
+      },
+    });
+
+    const envelopTestkit = createTestkit([useSentry()], schema);
+    const result = await envelopTestkit.execute('{ hello }');
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "data": {
+          "hello": "Hello!",
+        },
+      }
+    `);
+    expect(activeSpan).not.toBeUndefined();
+
+    // run sentry flush
+    await new Promise(res => setTimeout(res, 10));
+
+    const reports = sentryTestkit.reports();
+    expect(reports).toHaveLength(0);
   });
 });
