@@ -1,5 +1,48 @@
 # @envelop/generic-auth
 
+## 8.0.1
+
+### Patch Changes
+
+- [#2347](https://github.com/n1ru4l/envelop/pull/2347)
+  [`8b7e657`](https://github.com/n1ru4l/envelop/commit/8b7e657997cff286db145502d6d86cf7bc956cd0)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-tools/executor@^1.3.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.3.6)
+    (to `dependencies`)
+
+- [#2347](https://github.com/n1ru4l/envelop/pull/2347)
+  [`8b7e657`](https://github.com/n1ru4l/envelop/commit/8b7e657997cff286db145502d6d86cf7bc956cd0)
+  Thanks [@ardatan](https://github.com/ardatan)! - Handle operations with \`@include\` and \`@skip\`
+  correctly when they have default values in the operation definition
+
+  ```ts
+  {
+      query: /* GraphQL */ `
+        query MyQuery($include: Boolean = true) {
+          field @include(if: $include)
+        }
+      `,
+      variables: {}
+  }
+  ```
+
+  should be considered same as
+
+  ```ts
+  {
+      query: /* GraphQL */ `
+        query MyQuery($include: Boolean!) {
+          field @include(if: $include)
+        }
+      `,
+      variables: {
+          include: true
+      }
+  }
+  ```
+
 ## 8.0.0
 
 ### Major Changes
