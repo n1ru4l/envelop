@@ -519,5 +519,31 @@ describe('useGenericAuth', () => {
         public: 'public',
       });
     });
+    it('should not validate fields with @include and @skip directives with default values', async () => {
+      const testInstance = createTestkit(
+        [
+          useGenericAuth({
+            mode: 'protect-granular',
+            resolveUserFn: invalidresolveUserFn,
+          }),
+        ],
+        schemaWithDirective,
+      );
+
+      const result = await testInstance.execute(/* GraphQL */ `
+        query ($skip: Boolean! = true, $include: Boolean! = false) {
+          public
+          p1: protected @skip(if: $skip)
+          p2: protected @skip(if: true)
+          p3: protected @include(if: false)
+          p4: protected @include(if: $include)
+        }
+      `);
+      assertSingleExecutionValue(result);
+      expect(result.errors).toBeUndefined();
+      expect(result.data).toEqual({
+        public: 'public',
+      });
+    });
   });
 });
