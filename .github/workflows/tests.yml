@@ -7,25 +7,7 @@ on:
   pull_request:
 
 jobs:
-  prettier:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup env
-        uses: the-guild-org/shared-config/setup@v1
-      - name: Lint Prettier
-        run: pnpm run lint:prettier
-
-  lint:
-    name: Lint
-    uses: the-guild-org/shared-config/.github/workflows/lint.yml@v1
-    with:
-      script: pnpm run ci:lint && pnpm run lint
-    secrets:
-      githubToken: ${{ secrets.GITHUB_TOKEN }}
-
-  build:
+  check:
     name: build / graphql v${{matrix.graphql_version}}
     runs-on: ubuntu-latest
     strategy:
@@ -40,37 +22,18 @@ jobs:
         run: node ./scripts/match-graphql.js ${{matrix.graphql_version}}
       - name: Install Dependencies using pnpm
         run: pnpm install --no-frozen-lockfile && git checkout pnpm-lock.yaml
+      - name: Lint Prettier
+        run: pnpm run lint:prettier
+      - name: Lint
+        run: pnpm run ci:lint && pnpm run lint
       - name: Build
         run: pnpm run ts:check
+      - name: Test ESM & CJS exports integrity
+        run: pnpm bob check
 
   unit:
-    name: Unit Test
-    runs-on: ${{matrix.os}}
-    strategy:
-      matrix:
-        os: [ubuntu-latest] # remove windows to speed up the tests
-    steps:
-      - name: Checkout Master
-        uses: actions/checkout@v4
-      - name: Setup env
-        uses: the-guild-org/shared-config/setup@v1
-      - name: Install Dependencies
-        run: pnpm install --no-frozen-lockfile && git checkout pnpm-lock.yaml
-      - name: Cache Jest
-        uses: actions/cache@v4
-        with:
-          path: .cache/jest
-          key:
-            ${{ runner.os }}-${{matrix.node-version}}-${{matrix.graphql_version}}-jest-${{
-            hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('patches/*.patch') }}
-      - name: Test
-        run: pnpm run test
-        env:
-          CI: true
-
-  core:
     name:
-      Core Test / ${{matrix.os}} / node v${{matrix.node-version}} / graphql
+      Unit Test / ${{matrix.os}} / node v${{matrix.node-version}} / graphql
       v${{matrix.graphql_version}}
     runs-on: ${{matrix.os}}
     strategy:
@@ -94,8 +57,8 @@ jobs:
           key:
             ${{ runner.os }}-${{matrix.node-version}}-${{matrix.graphql_version}}-jest-${{
             hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('patches/*.patch') }}
-      - name: Test Core
-        run: pnpm run test:core --ci
+      - name: Test
+        run: pnpm run test --ci
         env:
           CI: true
 
@@ -109,5 +72,3 @@ jobs:
         uses: the-guild-org/shared-config/setup@v1
       - name: Build Packages
         run: pnpm run build
-      - name: Test ESM & CJS exports integrity
-        run: pnpm bob check

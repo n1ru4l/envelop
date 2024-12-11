@@ -2,7 +2,6 @@
 const { makeExecutableSchema } = require('@graphql-tools/schema');
 const { envelop, useSchema, useEngine } = require('@envelop/core');
 const { useParserCache } = require('@envelop/parser-cache');
-const { usePrometheus } = require('@envelop/prometheus');
 const { useGraphQlJit } = require('@envelop/graphql-jit');
 const { useValidationCache } = require('@envelop/validation-cache');
 const { fastify } = require('fastify');
@@ -143,7 +142,7 @@ app.route({
   },
 });
 
-app.listen(3000, (error, address) => {
+app.listen({ port: 3000 }, (error, address) => {
   if (error) {
     console.error(error);
     process.exit(1);
