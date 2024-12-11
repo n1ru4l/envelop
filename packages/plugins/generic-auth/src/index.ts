@@ -19,6 +19,7 @@ import {
 } from 'graphql';
 import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/core';
 import { useExtendedValidation } from '@envelop/extended-validation';
+import { getVariableValues } from '@graphql-tools/executor';
 import {
   createGraphQLError,
   getDefinedRootType,
@@ -318,6 +319,22 @@ export const useGenericAuth = <
               function AuthorizationExtendedValidationRule(context, args) {
                 const user = (args.contextValue as any)[contextFieldName];
 
+                const schema = context.getSchema();
+                const operationAST = getOperationAST(args.document, args.operationName);
+                const variableDefinitions = operationAST?.variableDefinitions;
+                let variableValues: typeof args.variableValues | undefined;
+                if (variableDefinitions?.length) {
+                  const { coerced } = getVariableValues(
+                    schema,
+                    variableDefinitions,
+                    args.variableValues || {},
+                  );
+                  variableValues = coerced;
+                } else {
+                  variableValues = args.variableValues;
+                }
+                const operationType = operationAST?.operation ?? ('query' as OperationTypeNode);
+
                 const handleField = (
                   {
                     node: fieldNode,
@@ -337,7 +354,6 @@ export const useGenericAuth = <
                     return;
                   }
 
-                  const schema = context.getSchema();
                   // @ts-expect-error - Fix this
                   const typeDirectives = parentType && getDirectiveExtensions(parentType, schema);
                   const typeAuthArgs = typeDirectives[authDirectiveName]?.[0];
@@ -354,8 +370,6 @@ export const useGenericAuth = <
                   const resolvePath: (string | number)[] = [];
 
                   let curr: any = args.document;
-                  const operationAST = getOperationAST(args.document, args.operationName);
-                  const operationType = operationAST?.operation ?? ('query' as OperationTypeNode);
                   let currType: GraphQLOutputType | undefined | null = getDefinedRootType(
                     schema,
                     operationType,
@@ -408,7 +422,7 @@ export const useGenericAuth = <
 
                 return {
                   Field(node, key, parent, path, ancestors) {
-                    if (!shouldIncludeNode(args.variableValues, node)) {
+                    if (variableValues && !shouldIncludeNode(variableValues, node)) {
                       return;
                     }
 

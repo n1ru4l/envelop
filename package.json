@@ -22,7 +22,6 @@
     "release": "pnpm build && changeset publish",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:ci": "jest --coverage",
-    "test:core": "jest ./packages/core --coverage",
     "ts:check": "tsc --noEmit"
   },
   "devDependencies": {
