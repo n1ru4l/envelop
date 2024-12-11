@@ -1453,6 +1453,9 @@ importers:
       '@types/ioredis':
         specifier: 4.28.10
         version: 4.28.10
+      graphql:
+        specifier: 16.6.0
+        version: 16.6.0
       ioredis-mock:
         specifier: 5.9.1
         version: 5.9.1(ioredis@4.27.9)(redis-commands@1.7.0)

@@ -1,3 +1,4 @@
+import { versionInfo } from 'graphql';
 import Redis from 'ioredis';
 import { useResponseCache } from '@envelop/response-cache';
 import { createTestkit } from '@envelop/testing';
@@ -10,7 +11,9 @@ import {
 
 jest.mock('ioredis', () => require('ioredis-mock/jest'));
 
-describe('useResponseCache with Redis cache', () => {
+const describeIf = (condition: boolean) => (condition ? describe : describe.skip);
+
+describeIf(versionInfo.major >= 16)('useResponseCache with Redis cache', () => {
   const redis = new Redis();
   const cache = createRedisCache({ redis });
 
