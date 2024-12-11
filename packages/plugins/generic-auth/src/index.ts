@@ -4,7 +4,6 @@ import {
   FieldNode,
   getNamedType,
   getOperationAST,
-  getVariableValues,
   GraphQLError,
   GraphQLField,
   GraphQLInterfaceType,
@@ -20,6 +19,7 @@ import {
 } from 'graphql';
 import { DefaultContext, Maybe, Plugin, PromiseOrValue } from '@envelop/core';
 import { useExtendedValidation } from '@envelop/extended-validation';
+import { getVariableValues } from '@graphql-tools/executor';
 import {
   createGraphQLError,
   getDefinedRootType,
