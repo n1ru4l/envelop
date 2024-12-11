@@ -8,7 +8,7 @@ on:
 
 jobs:
   check:
-    name: build / graphql v${{matrix.graphql_version}}
+    name: check / graphql v${{matrix.graphql_version}}
     runs-on: ubuntu-latest
     strategy:
       matrix:
