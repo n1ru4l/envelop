@@ -61,14 +61,3 @@ jobs:
         run: pnpm run test --ci
         env:
           CI: true
-
-  test_esm:
-    name: esm
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup env
-        uses: the-guild-org/shared-config/setup@v1
-      - name: Build Packages
-        run: pnpm run build
