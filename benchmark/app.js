@@ -143,7 +143,7 @@ app.route({
   },
 });
 
-app.listen(3000, (error, address) => {
+app.listen({ port: 3000 }, (error, address) => {
   if (error) {
     console.error(error);
     process.exit(1);
