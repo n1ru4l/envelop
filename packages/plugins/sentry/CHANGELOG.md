@@ -1,5 +1,28 @@
 # @envelop/sentry
 
+## 12.0.0
+
+### Major Changes
+
+- [#2323](https://github.com/n1ru4l/envelop/pull/2323)
+  [`2993773`](https://github.com/n1ru4l/envelop/commit/299377308c1c5901e5babeecd1715088977912d9)
+  Thanks [@Karibash](https://github.com/Karibash)! - Make it possible to get the active span in the
+  GraphQL resolver
+
+  **Breaking Change:** With this change, this plugin now wraps the execute function. This plugin
+  should be placed last so that the execute function is not overwritten by another plugin.
+
+  ```ts
+  const yoga = createYoga({
+    plugins: [
+      ...otherPlugins,
+      useSentry({
+        // ...
+      })
+    ]
+  })
+  ```
+
 ## 11.0.0
 
 ### Major Changes
