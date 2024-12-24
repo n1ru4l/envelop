@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@envelop/core": "workspace:^",
-    "@graphql-tools/schema": "10.0.13",
+    "@graphql-tools/schema": "10.0.14",
     "apollo-datasource": "3.3.2",
     "apollo-server-caching": "3.3.0",
     "graphql": "16.8.1",
