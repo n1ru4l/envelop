@@ -1131,8 +1131,8 @@ importers:
         specifier: ^10.0.0
         version: 10.0.0(graphql@16.6.0)
       '@newrelic/test-utilities':
-        specifier: 6.5.5
-        version: 6.5.5
+        specifier: 9.1.0
+        version: 9.1.0
       '@types/newrelic':
         specifier: 9.14.3
         version: 9.14.3
@@ -3926,9 +3926,9 @@ packages:
     peerDependencies:
       newrelic: '>=6.11.0'
 
-  '@newrelic/test-utilities@6.5.5':
-    resolution: {integrity: sha512-O3lXP/2nZqy0my6pQHFOkv9+iUfgTIIPvwjfy/qZz9fKzllMecBTmiSVNjprBqFixKTvmrXUTCKGVa7y5bGevg==}
-    engines: {node: '>=12.0'}
+  '@newrelic/test-utilities@9.1.0':
+    resolution: {integrity: sha512-Y1avHWeqhBWt3BFKt9226+XdvQFGMSnOUj2nadctI1MDe190ujqHPnCQuaQ6hpmN7739ogL5VJKVUimRviKpIw==}
+    engines: {node: '>=18.0'}
     hasBin: true
 
   '@next/bundle-analyzer@13.4.2':
@@ -4622,6 +4622,9 @@ packages:
   '@smithy/eventstream-codec@2.0.5':
     resolution: {integrity: sha512-iqR6OuOV3zbQK8uVs9o+9AxhVk8kW9NAxA71nugwUB+kTY9C35pUd0A5/m4PRT0Y0oIW7W4kgnSR3fdYXQjECw==}
 
+  '@smithy/eventstream-codec@2.2.0':
+    resolution: {integrity: sha512-8janZoJw85nJmQZc4L8TuePp2pk1nxLgkxIR0TUjKJ5Dkj5oelB9WtiSSGXCQvNsJl0VSTvK/2ueMXxvpa9GVw==}
+
   '@smithy/eventstream-serde-browser@2.0.5':
     resolution: {integrity: sha512-8NU51y94qFJbxL6SmvgWDfITHO/svvbAigkLYk2pckX17TGCSf4EXuGpGLliJp5Ljh5+vASC7mUH2jYX7MWBxA==}
     engines: {node: '>=14.0.0'}
@@ -4650,6 +4653,10 @@ packages:
 
   '@smithy/is-array-buffer@2.0.0':
     resolution: {integrity: sha512-z3PjFjMyZNI98JFRJi/U0nGoLWMSJlDjAW4QUX2WNZLas5C0CmVV6LJ01JI0k90l7FvpmixjWxPFmENSClQ7ug==}
+    engines: {node: '>=14.0.0'}
+
+  '@smithy/is-array-buffer@2.2.0':
+    resolution: {integrity: sha512-GGP3O9QFD24uGeAXYUjwSTXARoqpZykHadOmA8G5vfJPK0/DC67qa//0qvqrJzL1xc8WQWX7/yc7fwudjPHPhA==}
     engines: {node: '>=14.0.0'}
 
   '@smithy/middleware-content-length@2.0.5':
@@ -4712,6 +4719,10 @@ packages:
     resolution: {integrity: sha512-kCTFr8wfOAWKDzGvfBElc6shHigWtHNhMQ1IbosjC4jOlayFyZMSs2PysKB+Ox/dhQ41KqOzgVjgiQ+PyWqHMQ==}
     engines: {node: '>=14.0.0'}
 
+  '@smithy/types@2.12.0':
+    resolution: {integrity: sha512-QwYgloJ0sVNBeBuBs65cIkTbfzV/Q6ZNPCJ99EICFEdJYG50nGIY/uYXp+TbsdJReIuPr0a0kXmCvren3MbRRw==}
+    engines: {node: '>=14.0.0'}
+
   '@smithy/types@2.2.2':
     resolution: {integrity: sha512-4PS0y1VxDnELGHGgBWlDksB2LJK8TG8lcvlWxIsgR+8vROI7Ms8h1P4FQUx+ftAX2QZv5g1CJCdhdRmQKyonyw==}
     engines: {node: '>=14.0.0'}
@@ -4734,6 +4745,10 @@ packages:
     resolution: {integrity: sha512-/YNnLoHsR+4W4Vf2wL5lGv0ksg8Bmk3GEGxn2vEQt52AQaPSCuaO5PM5VM7lP1K9qHRKHwrPGktqVoAHKWHxzw==}
     engines: {node: '>=14.0.0'}
 
+  '@smithy/util-buffer-from@2.2.0':
+    resolution: {integrity: sha512-IJdWBbTcMQ6DA0gdNhh/BwrLkDR+ADW5Kr1aZmd4k3DIF6ezMV4R2NIAmT08wQJ3yUK82thHWmC/TnK/wpMMIA==}
+    engines: {node: '>=14.0.0'}
+
   '@smithy/util-config-provider@2.0.0':
     resolution: {integrity: sha512-xCQ6UapcIWKxXHEU4Mcs2s7LcFQRiU3XEluM2WcCjjBtQkUN71Tb+ydGmJFPxMUrW/GWMgQEEGipLym4XG0jZg==}
     engines: {node: '>=14.0.0'}
@@ -4748,6 +4763,10 @@ packages:
 
   '@smithy/util-hex-encoding@2.0.0':
     resolution: {integrity: sha512-c5xY+NUnFqG6d7HFh1IFfrm3mGl29lC+vF+geHv4ToiuJCBmIfzx6IeHLg+OgRdPFKDXIw6pvi+p3CsscaMcMA==}
+    engines: {node: '>=14.0.0'}
+
+  '@smithy/util-hex-encoding@2.2.0':
+    resolution: {integrity: sha512-7iKXR+/4TpLK194pVjKiasIyqMtTYJsgKgM242Y9uzt5dhHnUDvMNb+3xIhRJ9QhvqGii/5cRUt4fJn3dtXNHQ==}
     engines: {node: '>=14.0.0'}
 
   '@smithy/util-middleware@2.0.0':
@@ -4768,6 +4787,10 @@ packages:
 
   '@smithy/util-utf8@2.0.0':
     resolution: {integrity: sha512-rctU1VkziY84n5OXe3bPNpKR001ZCME2JCaBBFgtiM2hfKbHFudc/BkMuPab8hRbLd0j3vbnBTTZ1igBf0wgiQ==}
+    engines: {node: '>=14.0.0'}
+
+  '@smithy/util-utf8@2.3.0':
+    resolution: {integrity: sha512-R8Rdn8Hy72KKcebgLiv8jQcQkXoLMOGGv5uI1/k0l+snqkOzQ1R0ChUBCxWMlBsFMekWjq0wRudIweFs7sKT5A==}
     engines: {node: '>=14.0.0'}
 
   '@smithy/util-waiter@2.0.5':
@@ -9213,10 +9236,6 @@ packages:
     resolution: {integrity: sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==}
     engines: {node: '>=10'}
 
-  minimatch@9.0.4:
-    resolution: {integrity: sha512-KqWh+VchfxcMNRAJjj2tnsSJdNbHsVgnkBhTNrW7AjVo6OvLtxw8zfT9oLw1JSohlFzJ8jCoTgaoXvJ+kHt6fw==}
-    engines: {node: '>=16 || 14 >=14.17'}
-
   minimatch@9.0.5:
     resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==}
     engines: {node: '>=16 || 14 >=14.17'}
@@ -10663,10 +10682,6 @@ packages:
 
   secure-json-parse@2.7.0:
     resolution: {integrity: sha512-6aU+Rwsezw7VR8/nyvKTx8QpWH9FrcYiXXlqC4z5d5XQBDRqtbfsRjnwGyqbi3gddNtWHuEk9OANUotL26qKUw==}
-
-  semver@5.7.1:
-    resolution: {integrity: sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==}
-    hasBin: true
 
   semver@5.7.2:
     resolution: {integrity: sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g==}
@@ -12632,7 +12647,7 @@ snapshots:
 
   '@aws-sdk/types@3.398.0':
     dependencies:
-      '@smithy/types': 2.2.2
+      '@smithy/types': 2.12.0
       tslib: 2.8.1
 
   '@aws-sdk/util-endpoints@3.398.0':
@@ -15100,8 +15115,10 @@ snapshots:
     dependencies:
       newrelic: 11.0.0
 
-  '@newrelic/test-utilities@6.5.5':
+  '@newrelic/test-utilities@9.1.0':
     dependencies:
+      '@smithy/eventstream-codec': 2.2.0
+      '@smithy/util-utf8': 2.3.0
       async: 3.2.3
       colors: 1.4.0
       commander: 2.20.3
@@ -15109,7 +15126,7 @@ snapshots:
       glob: 7.2.3
       lodash: 4.17.21
       log-update: 1.0.2
-      semver: 5.7.1
+      semver: 7.6.3
 
   '@next/bundle-analyzer@13.4.2':
     dependencies:
@@ -15991,6 +16008,13 @@ snapshots:
       '@smithy/util-hex-encoding': 2.0.0
       tslib: 2.8.1
 
+  '@smithy/eventstream-codec@2.2.0':
+    dependencies:
+      '@aws-crypto/crc32': 3.0.0
+      '@smithy/types': 2.12.0
+      '@smithy/util-hex-encoding': 2.2.0
+      tslib: 2.8.1
+
   '@smithy/eventstream-serde-browser@2.0.5':
     dependencies:
       '@smithy/eventstream-serde-universal': 2.0.5
@@ -16035,6 +16059,10 @@ snapshots:
       tslib: 2.8.1
 
   '@smithy/is-array-buffer@2.0.0':
+    dependencies:
+      tslib: 2.8.1
+
+  '@smithy/is-array-buffer@2.2.0':
     dependencies:
       tslib: 2.8.1
 
@@ -16132,6 +16160,10 @@ snapshots:
       '@smithy/util-stream': 2.0.5
       tslib: 2.8.1
 
+  '@smithy/types@2.12.0':
+    dependencies:
+      tslib: 2.8.1
+
   '@smithy/types@2.2.2':
     dependencies:
       tslib: 2.8.1
@@ -16160,6 +16192,11 @@ snapshots:
       '@smithy/is-array-buffer': 2.0.0
       tslib: 2.8.1
 
+  '@smithy/util-buffer-from@2.2.0':
+    dependencies:
+      '@smithy/is-array-buffer': 2.2.0
+      tslib: 2.8.1
+
   '@smithy/util-config-provider@2.0.0':
     dependencies:
       tslib: 2.8.1
@@ -16181,6 +16218,10 @@ snapshots:
       tslib: 2.8.1
 
   '@smithy/util-hex-encoding@2.0.0':
+    dependencies:
+      tslib: 2.8.1
+
+  '@smithy/util-hex-encoding@2.2.0':
     dependencies:
       tslib: 2.8.1
 
@@ -16211,6 +16252,11 @@ snapshots:
   '@smithy/util-utf8@2.0.0':
     dependencies:
       '@smithy/util-buffer-from': 2.0.0
+      tslib: 2.8.1
+
+  '@smithy/util-utf8@2.3.0':
+    dependencies:
+      '@smithy/util-buffer-from': 2.2.0
       tslib: 2.8.1
 
   '@smithy/util-waiter@2.0.5':
@@ -16689,7 +16735,7 @@ snapshots:
       debug: 4.3.7
       fast-glob: 3.3.2
       is-glob: 4.0.3
-      minimatch: 9.0.4
+      minimatch: 9.0.5
       semver: 7.6.3
       ts-api-utils: 1.4.1(typescript@5.1.3)
     optionalDependencies:
@@ -17981,7 +18027,7 @@ snapshots:
 
   concat-stream@1.6.2:
     dependencies:
-      buffer-from: 1.1.1
+      buffer-from: 1.1.2
       inherits: 2.0.4
       readable-stream: 2.3.8
       typedarray: 0.0.6
@@ -19778,7 +19824,7 @@ snapshots:
     dependencies:
       foreground-child: 3.1.1
       jackspeak: 2.3.6
-      minimatch: 9.0.4
+      minimatch: 9.0.5
       minipass: 7.0.4
       path-scurry: 1.10.2
     optional: true
@@ -22230,10 +22276,6 @@ snapshots:
     dependencies:
       brace-expansion: 2.0.1
 
-  minimatch@9.0.4:
-    dependencies:
-      brace-expansion: 2.0.1
-
   minimatch@9.0.5:
     dependencies:
       brace-expansion: 2.0.1
@@ -23922,8 +23964,6 @@ snapshots:
 
   secure-json-parse@2.7.0: {}
 
-  semver@5.7.1: {}
-
   semver@5.7.2: {}
 
   semver@6.3.1: {}
@@ -24306,7 +24346,7 @@ snapshots:
 
   source-map-support@0.5.13:
     dependencies:
-      buffer-from: 1.1.1
+      buffer-from: 1.1.2
       source-map: 0.6.1
 
   source-map-support@0.5.21:
