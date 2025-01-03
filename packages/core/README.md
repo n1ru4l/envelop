@@ -6,7 +6,7 @@ https://github.com/n1ru4l/envelop
 ### Built-in plugins
 
 - [`useSchema`](./docs/use-schema.md)
-- [`useLazyLoadedSchema`](./docs/use-lazy-loaded-schema.md)
+- [`useSchemaByContext`](./docs/use-schema-by-context.md)
 - [`useErrorHandler`](./docs/use-error-handler.md)
 - [`useExtendContext`](./docs/use-extend-context.md)
 - [`useLogger`](./docs/use-logger.md)
