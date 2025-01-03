@@ -1,4 +1,4 @@
-#### `useLazyLoadedSchema`
+#### `useSchemaByContext`
 
 This plugin is the simplest plugin for specifying your GraphQL schema. You can specify a schema
 created from any tool that emits `GraphQLSchema` object, and you can choose to load the schema based
