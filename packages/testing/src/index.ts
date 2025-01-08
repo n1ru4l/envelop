@@ -83,7 +83,9 @@ export function createSpiedPlugin() {
 type MaybePromise<T> = T | Promise<T>;
 type MaybeAsyncIterableIterator<T> = T | AsyncIterableIterator<T>;
 
-type ExecutionReturn = MaybeAsyncIterableIterator<ExecutionResult>;
+type ExecutionReturn<TData = any, TExtensions = any> = MaybeAsyncIterableIterator<
+  ExecutionResult<TData, TExtensions>
+>;
 
 export type TestkitInstance = {
   execute: (
@@ -236,17 +238,17 @@ export function createTestkit(
   };
 }
 
-export function assertSingleExecutionValue(
-  input: ExecutionReturn,
-): asserts input is ExecutionResult {
+export function assertSingleExecutionValue<TData = any, TExtensions = any>(
+  input: ExecutionReturn<TData, TExtensions>,
+): asserts input is ExecutionResult<TData, TExtensions> {
   if (isAsyncIterable(input)) {
     throw new Error('Received stream but expected single result');
   }
 }
 
-export function assertStreamExecutionValue(
-  input: ExecutionReturn,
-): asserts input is AsyncIterableIterator<ExecutionResult> {
+export function assertStreamExecutionValue<TData = any, TExtensions = any>(
+  input: ExecutionReturn<TData, TExtensions>,
+): asserts input is AsyncIterableIterator<ExecutionResult<TData, TExtensions>> {
   if (!isAsyncIterable(input)) {
     throw new Error('Received single result but expected stream.' + inspect(input));
   }
