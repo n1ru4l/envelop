@@ -355,10 +355,10 @@ export const PLUGINS: {
     identifier: 'use-graphql-hive',
     title: 'useHive',
     githubReadme: {
-      repo: 'kamilkisiela/graphql-hive',
-      path: 'packages/libraries/client/README.md',
+      repo: 'graphql-hive/console',
+      path: 'packages/libraries/envelop/README.md',
     },
-    npmPackage: '@graphql-hive/client',
+    npmPackage: '@graphql-hive/envelop',
     icon: hiveIcon,
     tags: ['tracing', 'metrics', 'devtool'],
   },
