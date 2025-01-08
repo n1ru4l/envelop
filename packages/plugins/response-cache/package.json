@@ -63,7 +63,7 @@
     "@graphql-tools/schema": "10.0.16",
     "graphql": "16.8.1",
     "ioredis-mock": "5.9.1",
-    "typescript": "5.7.2"
+    "typescript": "5.7.3"
   },
   "publishConfig": {
     "directory": "dist",
