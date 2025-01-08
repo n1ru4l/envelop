@@ -31,7 +31,9 @@ const fastIntroSpectionSymbol = Symbol('fastIntrospection');
  * In case a GraphQL operation only contains introspection fields the context building can be skipped completely.
  * With this plugin any further context extensions will be skipped.
  */
-export const useImmediateIntrospection = (): Plugin => {
+export const useImmediateIntrospection = (): Plugin<{
+  [fastIntroSpectionSymbol]?: boolean;
+}> => {
   return {
     onValidate({ addValidationRule }) {
       let isIntrospectionOnly = true;

@@ -1,7 +1,7 @@
 import { versionInfo } from 'graphql';
 import Redis from 'ioredis';
 import { useResponseCache } from '@envelop/response-cache';
-import { createTestkit } from '@envelop/testing';
+import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
   createRedisCache,
@@ -519,6 +519,7 @@ describeIf(versionInfo.major >= 16)('useResponseCache with Redis cache', () => {
 
     // query and cache
     const queryResult = await testInstance.execute(query);
+    assertSingleExecutionValue(queryResult);
 
     let cacheHitMaybe = queryResult['extensions']['responseCache']['hit'];
     expect(cacheHitMaybe).toBeFalsy();
@@ -526,6 +527,7 @@ describeIf(versionInfo.major >= 16)('useResponseCache with Redis cache', () => {
     // get from cache
     const cachedResult = await testInstance.execute(query);
 
+    assertSingleExecutionValue(cachedResult);
     cacheHitMaybe = cachedResult['extensions']['responseCache']['hit'];
     expect(cacheHitMaybe).toBeTruthy();
 
@@ -542,6 +544,7 @@ describeIf(versionInfo.major >= 16)('useResponseCache with Redis cache', () => {
       },
     );
 
+    assertSingleExecutionValue(mutationResult);
     cacheHitMaybe = mutationResult['extensions']['responseCache']['hit'];
     expect(cacheHitMaybe).toBeFalsy();
   });
@@ -623,6 +626,7 @@ describeIf(versionInfo.major >= 16)('useResponseCache with Redis cache', () => {
       },
     );
 
+    assertSingleExecutionValue(result);
     const responseCache = result['extensions']['responseCache'];
     const invalidatedEntities = responseCache['invalidatedEntities'];
     expect(invalidatedEntities).toHaveLength(1);

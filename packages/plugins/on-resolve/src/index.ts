@@ -59,7 +59,7 @@ export function useOnResolve<PluginContext extends Record<string, any> = {}>(
       for (const type of Object.values(schema.getTypeMap())) {
         if ((!opts.skipIntrospection || !isIntrospectionType(type)) && isObjectType(type)) {
           for (const field of Object.values(type.getFields())) {
-            if (field[hasWrappedResolveSymbol]) continue;
+            if ((field as { [hasWrappedResolveSymbol]?: true })[hasWrappedResolveSymbol]) continue;
 
             let resolver = (field.resolve || defaultFieldResolver) as Resolver<PluginContext>;
 
@@ -120,7 +120,7 @@ export function useOnResolve<PluginContext extends Record<string, any> = {}>(
                 },
               );
 
-            field[hasWrappedResolveSymbol] = true;
+            (field as { [hasWrappedResolveSymbol]?: true })[hasWrappedResolveSymbol] = true;
           }
         }
       }

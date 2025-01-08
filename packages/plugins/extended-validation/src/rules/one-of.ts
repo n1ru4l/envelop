@@ -8,7 +8,7 @@ import {
   isListType,
   ValidationContext,
 } from 'graphql';
-import { getArgumentValues } from '@graphql-tools/utils';
+import { createGraphQLError, getArgumentValues } from '@graphql-tools/utils';
 import { ExtendedValidationRule, getDirectiveFromAstNode } from '../common.js';
 
 export const ONE_OF_DIRECTIVE_SDL = /* GraphQL */ `
@@ -114,15 +114,20 @@ function traverseVariables(
 
   if (isOneOfInputType && Object.keys(currentValue).length !== 1) {
     validationContext.reportError(
-      new GraphQLError(`Exactly one key must be specified for input type "${inputType.name}"`, [
-        arg,
-      ]),
+      createGraphQLError(`Exactly one key must be specified for input type "${inputType.name}"`, {
+        nodes: [arg],
+      }),
     );
   }
 
   if (inputType instanceof GraphQLInputObjectType) {
     for (const [name, fieldConfig] of Object.entries(inputType.getFields())) {
-      traverseVariables(validationContext, arg, fieldConfig.type, currentValue[name]);
+      traverseVariables(
+        validationContext,
+        arg,
+        fieldConfig.type,
+        (currentValue as Record<string, VariableValue>)[name],
+      );
     }
   }
 }

@@ -255,7 +255,7 @@ function flattenPath(fieldPath: Path, delimiter = '/') {
 }
 
 function filterPropertiesByRegex(initialObject: { [key: string]: any }, pattern: RegExp) {
-  const filteredObject = {};
+  const filteredObject: Record<string, any> = {};
 
   for (const property of Object.keys(initialObject)) {
     if (pattern.test(property)) filteredObject[property] = initialObject[property];

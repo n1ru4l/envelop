@@ -119,7 +119,7 @@ export const makeExecute = (
  * Source: https://github.com/graphql/graphql-js/blob/main/src/jsutils/isAsyncIterable.ts
  */
 export function isAsyncIterable<TType>(
-  maybeAsyncIterable: unknown,
+  maybeAsyncIterable: any,
 ): maybeAsyncIterable is AsyncIterable<TType> {
   return (
     typeof maybeAsyncIterable === 'object' &&

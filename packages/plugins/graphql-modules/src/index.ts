@@ -3,7 +3,7 @@ import type { Plugin, TypedExecutionArgs } from '@envelop/core';
 
 const graphqlModulesControllerSymbol = Symbol('GRAPHQL_MODULES');
 
-function destroy<T>(context: TypedExecutionArgs<T>) {
+function destroy(context: TypedExecutionArgs<any>) {
   if (context.contextValue?.[graphqlModulesControllerSymbol]) {
     context.contextValue[graphqlModulesControllerSymbol].destroy();
     context.contextValue[graphqlModulesControllerSymbol] = null;
