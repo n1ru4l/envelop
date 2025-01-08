@@ -40,12 +40,14 @@ type TracingContextObject = {
   hrtime: [number, number];
 };
 
-export const useApolloTracing = (): Plugin => {
+export const useApolloTracing = (): Plugin<{
+  [apolloTracingSymbol]: TracingContextObject;
+}> => {
   return {
     onPluginInit({ addPlugin }) {
       addPlugin(
         useOnResolve(({ info, context }) => {
-          const ctx = context[apolloTracingSymbol] as TracingContextObject;
+          const ctx = context[apolloTracingSymbol];
           // Taken from https://github.com/apollographql/apollo-server/blob/main/packages/apollo-tracing/src/index.ts
           const resolverCall: ResolverCall = {
             path: info.path,

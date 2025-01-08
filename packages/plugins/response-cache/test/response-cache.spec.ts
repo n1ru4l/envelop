@@ -2273,7 +2273,7 @@ describe('useResponseCache', () => {
           foo: String
         }
       `,
-      resolvers: { Query: { foo: () => void mockFn() || 'hi' } },
+      resolvers: { Query: { foo: () => mockFn() || 'hi' } },
     });
     const testkit = createTestkit(
       [useValidationCache(), useResponseCache({ session: () => null }), useParserCache()],
