@@ -13,7 +13,7 @@
   "dependencies": {
     "@theguild/components": "6.5.3",
     "date-fns": "4.1.0",
-    "next": "15.1.3",
+    "next": "15.1.4",
     "next-sitemap": "4.2.3",
     "nextra": "3.0.0-alpha.22",
     "react": "18.2.0",
