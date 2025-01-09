@@ -54,7 +54,7 @@
   "dependencies": {},
   "devDependencies": {
     "graphql": "16.8.1",
-    "typescript": "5.7.2"
+    "typescript": "5.7.3"
   },
   "publishConfig": {
     "directory": "dist",
