@@ -1,5 +1,14 @@
 # @envelop/core
 
+## 5.0.3
+
+### Patch Changes
+
+- [#2366](https://github.com/n1ru4l/envelop/pull/2366)
+  [`8d89758`](https://github.com/n1ru4l/envelop/commit/8d89758abe77d7c3981966035433d225f67054c9)
+  Thanks [@ardatan](https://github.com/ardatan)! - When the schema is the same, do not trigger
+  `onSchemaChange` hook
+
 ## 5.0.2
 
 ### Patch Changes
