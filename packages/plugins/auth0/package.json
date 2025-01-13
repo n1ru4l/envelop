@@ -47,7 +47,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@envelop/core": "^5.0.2"
+    "@envelop/core": "^5.0.3"
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.0",
