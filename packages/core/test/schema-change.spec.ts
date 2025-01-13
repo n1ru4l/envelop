@@ -1,7 +1,7 @@
 import { buildSchema, GraphQLSchema } from 'graphql';
 import { createSpiedPlugin, createTestkit } from '@envelop/testing';
 import { Plugin } from '@envelop/types';
-import { query, schema } from './common.js';
+import { schema } from './common.js';
 
 describe('schemaChange', () => {
   it('Should trigger schema change initially when schema is available', async () => {
@@ -37,5 +37,37 @@ describe('schemaChange', () => {
     expect(pluginTrigger.onSchemaChange).toHaveBeenCalledTimes(0);
     expect(pluginA.onSchemaChange).toHaveBeenCalledTimes(1);
     expect(pluginB.onSchemaChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not trigger if the schema is the same', async () => {
+    let setSchemaFn: (newSchema: GraphQLSchema) => void = (newSchema: GraphQLSchema) => {
+      throw new Error('setSchemaFn not initialized');
+    };
+    const setSchemaPlugin: Plugin = {
+      onPluginInit({ setSchema }) {
+        setSchemaFn = setSchema;
+      },
+    };
+    const onSchemaChangePlugin: Plugin = {
+      onSchemaChange: jest.fn(),
+    };
+    const newSchema = buildSchema(/* GraphQL */ `
+      type Query {
+        foo: String!
+      }
+    `);
+    createTestkit([setSchemaPlugin, onSchemaChangePlugin]);
+    setSchemaFn(schema);
+    expect(onSchemaChangePlugin.onSchemaChange).toHaveBeenCalledTimes(1);
+    setSchemaFn(schema);
+    expect(onSchemaChangePlugin.onSchemaChange).toHaveBeenCalledTimes(1);
+    setSchemaFn(newSchema);
+    expect(onSchemaChangePlugin.onSchemaChange).toHaveBeenCalledTimes(2);
+    setSchemaFn(schema);
+    expect(onSchemaChangePlugin.onSchemaChange).toHaveBeenCalledTimes(3);
+    setSchemaFn(newSchema);
+    expect(onSchemaChangePlugin.onSchemaChange).toHaveBeenCalledTimes(4);
+    setSchemaFn(newSchema);
+    expect(onSchemaChangePlugin.onSchemaChange).toHaveBeenCalledTimes(4);
   });
 });
