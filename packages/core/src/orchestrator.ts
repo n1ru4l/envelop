@@ -86,6 +86,9 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
   // to allow setting the schema from the onPluginInit callback. We also need to make sure
   // here not to call the same plugin that initiated the schema switch.
   const replaceSchema = (newSchema: any, ignorePluginIndex = -1) => {
+    if (schema === newSchema) {
+      return;
+    }
     schema = newSchema;
 
     if (initDone) {
