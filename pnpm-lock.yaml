@@ -7,7 +7,7 @@ settings:
 overrides:
   esbuild: ^0.24.0
   graphql: 16.6.0
-  estree-util-build-jsx: 2.2.2
+  estree-util-build-jsx: 3.0.1
 
 importers:
 
@@ -6295,8 +6295,8 @@ packages:
   estree-util-attach-comments@3.0.0:
     resolution: {integrity: sha512-cKUwm/HUcTDsYh/9FgnuFqpfquUbwIqwKM26BVCGDPVgvaCl/nDCCjUfiLlx6lsEZ3Z4RFxNbOQ60pkaEwFxGw==}
 
-  estree-util-build-jsx@2.2.2:
-    resolution: {integrity: sha512-m56vOXcOBuaF+Igpb9OPAy7f9w9OIkb5yhjsZuaPm7HoGi4oTOQi0h2+yZ+AtKklYFZ+rPC4n0wYCJCEU1ONqg==}
+  estree-util-build-jsx@3.0.1:
+    resolution: {integrity: sha512-8U5eiL6BTrPxp/CHbs2yMgP8ftMhR5ww1eIKoWRMlqvltHF8fZn5LRDvTKuxD3DUn+shRbLGqXemcP51oFCsGQ==}
 
   estree-util-is-identifier-name@2.0.0:
     resolution: {integrity: sha512-aXXZFVMnBBDRP81vS4YtAYJ0hUkgEsXea7lNKWCOeaAquGb1Jm2rcONPB5fpzwgbNxulTvrWuKnp9UElUGAKeQ==}
@@ -17069,10 +17069,11 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.6
 
-  estree-util-build-jsx@2.2.2:
+  estree-util-build-jsx@3.0.1:
     dependencies:
       '@types/estree-jsx': 1.0.0
-      estree-util-is-identifier-name: 2.0.0
+      devlop: 1.1.0
+      estree-util-is-identifier-name: 3.0.0
       estree-walker: 3.0.1
 
   estree-util-is-identifier-name@2.0.0: {}
@@ -21206,7 +21207,7 @@ snapshots:
   recma-build-jsx@1.0.0:
     dependencies:
       '@types/estree': 1.0.6
-      estree-util-build-jsx: 2.2.2
+      estree-util-build-jsx: 3.0.1
       vfile: 6.0.1
 
   recma-jsx@1.0.0(acorn@8.14.0):
