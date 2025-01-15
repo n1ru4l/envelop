@@ -1,5 +1,15 @@
 # @envelop/response-cache-redis
 
+## 4.1.3
+
+### Patch Changes
+
+- [#1384](https://github.com/n1ru4l/envelop/pull/1384)
+  [`ed8c444`](https://github.com/n1ru4l/envelop/commit/ed8c444ae25cc5307a0aa08c67aa199b65d15586)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`ioredis@^5.4.2` ↗︎](https://www.npmjs.com/package/ioredis/v/5.4.2) (from
+    `^4.27.9`, in `dependencies`)
+
 ## 4.1.2
 
 ### Patch Changes
