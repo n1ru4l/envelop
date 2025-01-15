@@ -1,8 +1,10 @@
-import { execute, parse } from 'graphql';
+import { execute, parse, versionInfo } from 'graphql';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useApolloFederation } from '../src/index.js';
 
-describe('useApolloFederation', () => {
+const describeIf = (condition: boolean) => (condition ? describe : describe.skip);
+
+describeIf(versionInfo.major >= 16)('useApolloFederation', () => {
   const query = /* GraphQL */ `
     # A query that the gateway resolves by calling all three services
     query GetCurrentUserReviews {
