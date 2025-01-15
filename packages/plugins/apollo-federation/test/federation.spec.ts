@@ -1,4 +1,5 @@
 import { execute, parse, versionInfo } from 'graphql';
+import type { ApolloGateway } from '@apollo/gateway';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { useApolloFederation } from '../src/index.js';
 
@@ -21,36 +22,39 @@ describeIf(versionInfo.major >= 16)('useApolloFederation', () => {
     }
   `;
 
-  const {
-    ApolloGateway,
-    LocalGraphQLDataSource,
-  }: typeof import('@apollo/gateway') = require('@apollo/gateway');
-  const accounts: typeof import('./fixtures/accounts') = require('./fixtures/accounts');
-  const products: typeof import('./fixtures/products') = require('./fixtures/products');
-  const reviews: typeof import('./fixtures/reviews') = require('./fixtures/reviews');
+  let gateway: ApolloGateway;
 
-  const gateway = new ApolloGateway({
-    localServiceList: [
-      { name: 'accounts', typeDefs: accounts.typeDefs },
-      { name: 'products', typeDefs: products.typeDefs },
-      { name: 'reviews', typeDefs: reviews.typeDefs },
-    ],
-    buildService: definition => {
-      switch (definition.name) {
-        case 'accounts':
-          return new LocalGraphQLDataSource(accounts.schema);
-        case 'products':
-          return new LocalGraphQLDataSource(products.schema);
-        case 'reviews':
-          return new LocalGraphQLDataSource(reviews.schema);
-      }
-      throw new Error(`Unknown service ${definition.name}`);
-    },
+  beforeAll(() => {
+    const {
+      ApolloGateway,
+      LocalGraphQLDataSource,
+    }: typeof import('@apollo/gateway') = require('@apollo/gateway');
+    const accounts: typeof import('./fixtures/accounts') = require('./fixtures/accounts');
+    const products: typeof import('./fixtures/products') = require('./fixtures/products');
+    const reviews: typeof import('./fixtures/reviews') = require('./fixtures/reviews');
+
+    gateway = new ApolloGateway({
+      localServiceList: [
+        { name: 'accounts', typeDefs: accounts.typeDefs },
+        { name: 'products', typeDefs: products.typeDefs },
+        { name: 'reviews', typeDefs: reviews.typeDefs },
+      ],
+      buildService: definition => {
+        switch (definition.name) {
+          case 'accounts':
+            return new LocalGraphQLDataSource(accounts.schema);
+          case 'products':
+            return new LocalGraphQLDataSource(products.schema);
+          case 'reviews':
+            return new LocalGraphQLDataSource(reviews.schema);
+        }
+        throw new Error(`Unknown service ${definition.name}`);
+      },
+    });
+    return gateway.load();
   });
 
-  beforeAll(async () => {
-    await gateway.load();
-  });
+  afterAll(() => gateway.stop());
 
   const useTestFederation = () =>
     useApolloFederation({
