@@ -12,7 +12,7 @@
     "@envelop/core": "workspace:^",
     "@graphql-tools/schema": "10.0.16",
     "graphql": "16.8.1",
-    "graphql-ws": "^5.0.0",
+    "graphql-ws": "^6.0.0",
     "ws": "8.18.0"
   },
   "devDependencies": {
