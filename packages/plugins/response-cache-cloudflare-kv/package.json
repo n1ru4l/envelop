@@ -65,7 +65,7 @@
   "devDependencies": {
     "@envelop/response-cache": "workspace:^",
     "jest-environment-miniflare": "^2.14.1",
-    "ts-jest": "29.1.2",
+    "ts-jest": "29.2.5",
     "typescript": "^5.2.2"
   },
   "publishConfig": {

@@ -350,7 +350,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           [MapperKind.COMPOSITE_TYPE]: type => {
             const cacheControlAnnotations = getDirective(
               schema,
-              type,
+              type as any,
               'cacheControl',
             ) as unknown as CacheControlDirective[] | undefined;
             cacheControlAnnotations?.forEach(cacheControl => {

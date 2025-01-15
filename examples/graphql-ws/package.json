@@ -13,11 +13,11 @@
     "@graphql-tools/schema": "10.0.16",
     "graphql": "16.8.1",
     "graphql-ws": "^5.0.0",
-    "ws": "8.16.0"
+    "ws": "8.18.0"
   },
   "devDependencies": {
-    "@types/node": "22.10.1",
-    "@types/ws": "8.5.10",
+    "@types/node": "22.10.6",
+    "@types/ws": "8.5.13",
     "ts-node": "10.9.2",
     "typescript": "5.7.3"
   }

@@ -4,6 +4,9 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
   stable:
     uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@v1
