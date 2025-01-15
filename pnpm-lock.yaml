@@ -687,12 +687,12 @@ importers:
 
   packages/plugins/apollo-federation:
     dependencies:
+      '@apollo/server':
+        specifier: ^4.0.0
+        version: 4.3.2(encoding@0.1.13)(graphql@16.6.0)
       apollo-server-caching:
         specifier: ^3.1.0
         version: 3.3.0
-      apollo-server-types:
-        specifier: ^3.2.0
-        version: 3.8.0(encoding@0.1.13)(graphql@16.6.0)
       tslib:
         specifier: ^2.5.0
         version: 2.8.1
