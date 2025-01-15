@@ -60,7 +60,7 @@ export function PluginsPage() {
 
   const marketplaceItems = useMemo(
     () =>
-      plugins.map(plugin => ({
+      plugins?.map(plugin => ({
         title: plugin.title,
         description: plugin.description,
         tags: plugin.tags,
