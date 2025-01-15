@@ -1134,8 +1134,8 @@ importers:
         specifier: ^10.0.0
         version: 10.0.16(graphql@16.6.0)
       '@newrelic/test-utilities':
-        specifier: 6.5.5
-        version: 6.5.5
+        specifier: 9.1.0
+        version: 9.1.0
       '@types/newrelic':
         specifier: 9.14.7
         version: 9.14.7
@@ -3508,9 +3508,9 @@ packages:
     peerDependencies:
       newrelic: '>=6.11.0'
 
-  '@newrelic/test-utilities@6.5.5':
-    resolution: {integrity: sha512-O3lXP/2nZqy0my6pQHFOkv9+iUfgTIIPvwjfy/qZz9fKzllMecBTmiSVNjprBqFixKTvmrXUTCKGVa7y5bGevg==}
-    engines: {node: '>=12.0'}
+  '@newrelic/test-utilities@9.1.0':
+    resolution: {integrity: sha512-Y1avHWeqhBWt3BFKt9226+XdvQFGMSnOUj2nadctI1MDe190ujqHPnCQuaQ6hpmN7739ogL5VJKVUimRviKpIw==}
+    engines: {node: '>=18.0'}
     hasBin: true
 
   '@next/bundle-analyzer@13.4.2':
@@ -4053,6 +4053,9 @@ packages:
   '@smithy/eventstream-codec@2.0.5':
     resolution: {integrity: sha512-iqR6OuOV3zbQK8uVs9o+9AxhVk8kW9NAxA71nugwUB+kTY9C35pUd0A5/m4PRT0Y0oIW7W4kgnSR3fdYXQjECw==}
 
+  '@smithy/eventstream-codec@2.2.0':
+    resolution: {integrity: sha512-8janZoJw85nJmQZc4L8TuePp2pk1nxLgkxIR0TUjKJ5Dkj5oelB9WtiSSGXCQvNsJl0VSTvK/2ueMXxvpa9GVw==}
+
   '@smithy/eventstream-serde-browser@2.0.5':
     resolution: {integrity: sha512-8NU51y94qFJbxL6SmvgWDfITHO/svvbAigkLYk2pckX17TGCSf4EXuGpGLliJp5Ljh5+vASC7mUH2jYX7MWBxA==}
     engines: {node: '>=14.0.0'}
@@ -4081,6 +4084,10 @@ packages:
 
   '@smithy/is-array-buffer@2.0.0':
     resolution: {integrity: sha512-z3PjFjMyZNI98JFRJi/U0nGoLWMSJlDjAW4QUX2WNZLas5C0CmVV6LJ01JI0k90l7FvpmixjWxPFmENSClQ7ug==}
+    engines: {node: '>=14.0.0'}
+
+  '@smithy/is-array-buffer@2.2.0':
+    resolution: {integrity: sha512-GGP3O9QFD24uGeAXYUjwSTXARoqpZykHadOmA8G5vfJPK0/DC67qa//0qvqrJzL1xc8WQWX7/yc7fwudjPHPhA==}
     engines: {node: '>=14.0.0'}
 
   '@smithy/middleware-content-length@2.0.5':
@@ -4143,6 +4150,10 @@ packages:
     resolution: {integrity: sha512-kCTFr8wfOAWKDzGvfBElc6shHigWtHNhMQ1IbosjC4jOlayFyZMSs2PysKB+Ox/dhQ41KqOzgVjgiQ+PyWqHMQ==}
     engines: {node: '>=14.0.0'}
 
+  '@smithy/types@2.12.0':
+    resolution: {integrity: sha512-QwYgloJ0sVNBeBuBs65cIkTbfzV/Q6ZNPCJ99EICFEdJYG50nGIY/uYXp+TbsdJReIuPr0a0kXmCvren3MbRRw==}
+    engines: {node: '>=14.0.0'}
+
   '@smithy/types@2.2.2':
     resolution: {integrity: sha512-4PS0y1VxDnELGHGgBWlDksB2LJK8TG8lcvlWxIsgR+8vROI7Ms8h1P4FQUx+ftAX2QZv5g1CJCdhdRmQKyonyw==}
     engines: {node: '>=14.0.0'}
@@ -4165,6 +4176,10 @@ packages:
     resolution: {integrity: sha512-/YNnLoHsR+4W4Vf2wL5lGv0ksg8Bmk3GEGxn2vEQt52AQaPSCuaO5PM5VM7lP1K9qHRKHwrPGktqVoAHKWHxzw==}
     engines: {node: '>=14.0.0'}
 
+  '@smithy/util-buffer-from@2.2.0':
+    resolution: {integrity: sha512-IJdWBbTcMQ6DA0gdNhh/BwrLkDR+ADW5Kr1aZmd4k3DIF6ezMV4R2NIAmT08wQJ3yUK82thHWmC/TnK/wpMMIA==}
+    engines: {node: '>=14.0.0'}
+
   '@smithy/util-config-provider@2.0.0':
     resolution: {integrity: sha512-xCQ6UapcIWKxXHEU4Mcs2s7LcFQRiU3XEluM2WcCjjBtQkUN71Tb+ydGmJFPxMUrW/GWMgQEEGipLym4XG0jZg==}
     engines: {node: '>=14.0.0'}
@@ -4179,6 +4194,10 @@ packages:
 
   '@smithy/util-hex-encoding@2.0.0':
     resolution: {integrity: sha512-c5xY+NUnFqG6d7HFh1IFfrm3mGl29lC+vF+geHv4ToiuJCBmIfzx6IeHLg+OgRdPFKDXIw6pvi+p3CsscaMcMA==}
+    engines: {node: '>=14.0.0'}
+
+  '@smithy/util-hex-encoding@2.2.0':
+    resolution: {integrity: sha512-7iKXR+/4TpLK194pVjKiasIyqMtTYJsgKgM242Y9uzt5dhHnUDvMNb+3xIhRJ9QhvqGii/5cRUt4fJn3dtXNHQ==}
     engines: {node: '>=14.0.0'}
 
   '@smithy/util-middleware@2.0.0':
@@ -4199,6 +4218,10 @@ packages:
 
   '@smithy/util-utf8@2.0.0':
     resolution: {integrity: sha512-rctU1VkziY84n5OXe3bPNpKR001ZCME2JCaBBFgtiM2hfKbHFudc/BkMuPab8hRbLd0j3vbnBTTZ1igBf0wgiQ==}
+    engines: {node: '>=14.0.0'}
+
+  '@smithy/util-utf8@2.3.0':
+    resolution: {integrity: sha512-R8Rdn8Hy72KKcebgLiv8jQcQkXoLMOGGv5uI1/k0l+snqkOzQ1R0ChUBCxWMlBsFMekWjq0wRudIweFs7sKT5A==}
     engines: {node: '>=14.0.0'}
 
   '@smithy/util-waiter@2.0.5':
@@ -13656,8 +13679,10 @@ snapshots:
     dependencies:
       newrelic: 11.0.0
 
-  '@newrelic/test-utilities@6.5.5':
+  '@newrelic/test-utilities@9.1.0':
     dependencies:
+      '@smithy/eventstream-codec': 2.2.0
+      '@smithy/util-utf8': 2.3.0
       async: 3.2.3
       colors: 1.4.0
       commander: 2.20.3
@@ -13665,7 +13690,7 @@ snapshots:
       glob: 7.2.3
       lodash: 4.17.21
       log-update: 1.0.2
-      semver: 5.7.2
+      semver: 7.6.3
 
   '@next/bundle-analyzer@13.4.2':
     dependencies:
@@ -14267,6 +14292,13 @@ snapshots:
       '@smithy/util-hex-encoding': 2.0.0
       tslib: 2.8.1
 
+  '@smithy/eventstream-codec@2.2.0':
+    dependencies:
+      '@aws-crypto/crc32': 3.0.0
+      '@smithy/types': 2.12.0
+      '@smithy/util-hex-encoding': 2.2.0
+      tslib: 2.8.1
+
   '@smithy/eventstream-serde-browser@2.0.5':
     dependencies:
       '@smithy/eventstream-serde-universal': 2.0.5
@@ -14311,6 +14343,10 @@ snapshots:
       tslib: 2.8.1
 
   '@smithy/is-array-buffer@2.0.0':
+    dependencies:
+      tslib: 2.8.1
+
+  '@smithy/is-array-buffer@2.2.0':
     dependencies:
       tslib: 2.8.1
 
@@ -14408,6 +14444,10 @@ snapshots:
       '@smithy/util-stream': 2.0.5
       tslib: 2.8.1
 
+  '@smithy/types@2.12.0':
+    dependencies:
+      tslib: 2.8.1
+
   '@smithy/types@2.2.2':
     dependencies:
       tslib: 2.8.1
@@ -14436,6 +14476,11 @@ snapshots:
       '@smithy/is-array-buffer': 2.0.0
       tslib: 2.8.1
 
+  '@smithy/util-buffer-from@2.2.0':
+    dependencies:
+      '@smithy/is-array-buffer': 2.2.0
+      tslib: 2.8.1
+
   '@smithy/util-config-provider@2.0.0':
     dependencies:
       tslib: 2.8.1
@@ -14457,6 +14502,10 @@ snapshots:
       tslib: 2.8.1
 
   '@smithy/util-hex-encoding@2.0.0':
+    dependencies:
+      tslib: 2.8.1
+
+  '@smithy/util-hex-encoding@2.2.0':
     dependencies:
       tslib: 2.8.1
 
@@ -14487,6 +14536,11 @@ snapshots:
   '@smithy/util-utf8@2.0.0':
     dependencies:
       '@smithy/util-buffer-from': 2.0.0
+      tslib: 2.8.1
+
+  '@smithy/util-utf8@2.3.0':
+    dependencies:
+      '@smithy/util-buffer-from': 2.2.0
       tslib: 2.8.1
 
   '@smithy/util-waiter@2.0.5':
