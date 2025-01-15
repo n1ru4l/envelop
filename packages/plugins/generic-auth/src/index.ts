@@ -354,7 +354,6 @@ export const useGenericAuth = <
                     return;
                   }
 
-                  // @ts-expect-error - Fix this
                   const typeDirectives = parentType && getDirectiveExtensions(parentType, schema);
                   const typeAuthArgs = typeDirectives[authDirectiveName]?.[0];
                   const typeScopes = typeDirectives[requiresScopesDirectiveName]?.[0]?.scopes;

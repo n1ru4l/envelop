@@ -9,7 +9,7 @@ import {
   defaultBuildRedisOperationResultCacheKey,
 } from '../src/index.js';
 
-jest.mock('ioredis', () => require('ioredis-mock/jest'));
+jest.mock('ioredis', () => require('ioredis-mock'));
 
 const describeIf = (condition: boolean) => (condition ? describe : describe.skip);
 
