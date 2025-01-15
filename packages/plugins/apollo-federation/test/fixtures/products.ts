@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { buildFederatedSchema } from '@apollo/federation';
+import { buildSubgraphSchema } from '@apollo/subgraph';
 
 const products = [
   {
@@ -35,7 +35,7 @@ export const typeDefs = gql`
   }
 `;
 
-export const schema = buildFederatedSchema({
+export const schema = buildSubgraphSchema({
   typeDefs,
   resolvers: {
     Product: {

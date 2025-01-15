@@ -49,15 +49,15 @@
   "peerDependencies": {},
   "dependencies": {
     "@envelop/response-cache": "^6.1.2",
-    "ioredis": "^4.27.9",
+    "ioredis": "^5.4.2",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
     "@envelop/core": "workspace:^",
     "@graphql-tools/schema": "10.0.16",
-    "@types/ioredis": "4.28.10",
+    "@types/ioredis": "5.0.0",
     "graphql": "16.9.0",
-    "ioredis-mock": "5.9.1",
+    "ioredis-mock": "8.9.0",
     "typescript": "5.7.3"
   },
   "publishConfig": {

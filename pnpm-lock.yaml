@@ -697,12 +697,12 @@ importers:
         specifier: ^2.5.0
         version: 2.8.1
     devDependencies:
-      '@apollo/federation':
-        specifier: 0.38.1
-        version: 0.38.1(encoding@0.1.13)(graphql@16.6.0)
       '@apollo/gateway':
-        specifier: 0.54.1
-        version: 0.54.1(encoding@0.1.13)(graphql@16.6.0)
+        specifier: 2.9.3
+        version: 2.9.3(encoding@0.1.13)(graphql@16.6.0)
+      '@apollo/subgraph':
+        specifier: 2.9.3
+        version: 2.9.3(graphql@16.6.0)
       '@envelop/core':
         specifier: workspace:^
         version: link:../../core/dist
@@ -1402,8 +1402,8 @@ importers:
         specifier: 16.6.0
         version: 16.6.0
       ioredis-mock:
-        specifier: 5.9.1
-        version: 5.9.1(ioredis@4.27.9)(redis-commands@1.7.0)
+        specifier: 8.9.0
+        version: 8.9.0(@types/ioredis-mock@8.2.5)(ioredis@5.4.2)
       typescript:
         specifier: 5.7.3
         version: 5.7.3
@@ -1441,8 +1441,8 @@ importers:
         specifier: ^6.1.2
         version: 6.2.5(@envelop/core@packages+core+dist)(graphql@16.6.0)
       ioredis:
-        specifier: ^4.27.9
-        version: 4.27.9
+        specifier: ^5.4.2
+        version: 5.4.2
       tslib:
         specifier: ^2.5.0
         version: 2.8.1
@@ -1454,14 +1454,14 @@ importers:
         specifier: 10.0.16
         version: 10.0.16(graphql@16.6.0)
       '@types/ioredis':
-        specifier: 4.28.10
-        version: 4.28.10
+        specifier: 5.0.0
+        version: 5.0.0
       graphql:
         specifier: 16.6.0
         version: 16.6.0
       ioredis-mock:
-        specifier: 5.9.1
-        version: 5.9.1(ioredis@4.27.9)(redis-commands@1.7.0)
+        specifier: 8.9.0
+        version: 8.9.0(@types/ioredis-mock@8.2.5)(ioredis@5.4.2)
       typescript:
         specifier: 5.7.3
         version: 5.7.3
@@ -1641,23 +1641,21 @@ packages:
     peerDependencies:
       graphql: 16.6.0
 
-  '@apollo/core-schema@0.2.3':
-    resolution: {integrity: sha512-0MXK/rlo2Es6qp4nb5lkMcN8jz3AaXm7TiPENO9Cyyy8kIC6rTKKpHCd1yv/E5aDEIFFq44LJcL+WrLONSy7+g==}
-    engines: {node: '>=12.13.0 <18.0'}
+  '@apollo/composition@2.9.3':
+    resolution: {integrity: sha512-dcIZ5K+9sBNNPzXkYtZa91IegeMc350fXN7UMKTggqx5EBbWrakU/ltC0fp8Tr0qqlPGtEWFzXMmoqXKVPQJ1w==}
+    engines: {node: '>=14.15.0'}
     peerDependencies:
       graphql: 16.6.0
 
-  '@apollo/federation@0.38.1':
-    resolution: {integrity: sha512-miifyAEsFgiYKeM3lUHFH6+vKa2vm9dXKSyWVpX6oeJiPblFLe2/iByN3psZQO2sRdVqO1OKYrGXdgKc74XDKw==}
-    engines: {node: '>=12.13.0'}
-    deprecated: The @apollo/federation package is deprecated and will reach end-of-life September 22, 2023. It contains outdated utilities for both running subgraphs and composing supergraph schemas. Please migrate to the appropriate package for your use case (@apollo/subgraph or @apollo/composition). For more details, see our announcement blog post (https://www.apollographql.com/blog/announcement/backend/announcing-the-end-of-life-schedule-for-apollo-gateway-v0-x/) and documentation (https://www.apollographql.com/docs/federation/federation-2/backward-compatibility/#is-official-support-ending-for-apollogateway-v0x).
+  '@apollo/federation-internals@2.9.3':
+    resolution: {integrity: sha512-r50Ykc331CZUw4TxpcqprAZOlGkbzoHEiHObUqUhQopTx8i0aXNt+0pc3nzqUAoT9OD83yJqPJV1EiZF2vCupQ==}
+    engines: {node: '>=14.15.0'}
     peerDependencies:
       graphql: 16.6.0
 
-  '@apollo/gateway@0.54.1':
-    resolution: {integrity: sha512-fGN4A8bWYnF/IFS7EMBH1c78vMiI9PEeiGVu9Thqoum2VkRpKQRc2hBhvoloSPQ6yAocKlLrBep5XBT5EqOSTA==}
-    engines: {node: '>=12.13.0'}
-    deprecated: All v0.x versions of @apollo/gateway are now deprecated (end-of-life September 22, 2023). Apollo recommends upgrading to v2.x or migrating to the Apollo Router as soon as possible. For more details, see our announcement blog post (https://www.apollographql.com/blog/announcement/backend/announcing-the-end-of-life-schedule-for-apollo-gateway-v0-x/) and documentation (https://www.apollographql.com/docs/federation/federation-2/backward-compatibility/#is-official-support-ending-for-apollogateway-v0x).
+  '@apollo/gateway@2.9.3':
+    resolution: {integrity: sha512-sYBrzwET6cO08m1r0OA/lxzhaxeny/hSMfWSPz27pCY0QAlnjc+jb7f/xeOjeGWaJ4fLV87uaR2u8Gtzzv5O7g==}
+    engines: {node: '>=14.15.0'}
     peerDependencies:
       graphql: 16.6.0
 
@@ -1673,10 +1671,15 @@ packages:
     resolution: {integrity: sha512-Lahx5zntHPZia35myYDBRuF58tlwPskwHc5CWBZC/4bMKB6siTBWwtMrkqXcsNwQiFSzSx5hKdRPUmemrEp3Gg==}
     hasBin: true
 
-  '@apollo/query-planner@0.12.1':
-    resolution: {integrity: sha512-dc5GuFZ18NCdCLT1Jh33W5RZlV/btw3CTlJS0/lAaiYx5KGo8K2oq7QWKyU40ksi46MwCRU+rO8ua7aHNa9hAA==}
-    engines: {node: '>=12.13.0'}
-    deprecated: All v0.x versions of the @apollo/query-planner package are now deprecated with an end-of-life date of September 22, 2023. This package is an internal, undocumented package for use in @apollo/gateway. Apollo recommends upgrading to v2.x as soon as possible. For more details, see our announcement blog post (https://www.apollographql.com/blog/announcement/backend/announcing-the-end-of-life-schedule-for-apollo-gateway-v0-x/) and documentation (https://www.apollographql.com/docs/federation/federation-2/backward-compatibility/#is-official-support-ending-for-apollogateway-v0x).
+  '@apollo/query-graphs@2.9.3':
+    resolution: {integrity: sha512-FG0Jptr9wNTScWTRO3LFBD6mqCU5fLn4vI4NxEkK3IBNfLmWPUykyIXgrvjwg/TJkxfBBpfmBM47luvZpkbkYg==}
+    engines: {node: '>=14.15.0'}
+    peerDependencies:
+      graphql: 16.6.0
+
+  '@apollo/query-planner@2.9.3':
+    resolution: {integrity: sha512-MlZa3Gemmh9rmtfwuWLBK88uZcrmi195k7/UWfyhVIPc19/epoZd0Z031M1zGoEH0mbFaU2C7uWYbaCFx3HK1w==}
+    engines: {node: '>=14.15.0'}
     peerDependencies:
       graphql: 16.6.0
 
@@ -1698,19 +1701,17 @@ packages:
     peerDependencies:
       graphql: 16.6.0
 
-  '@apollo/subgraph@0.6.1':
-    resolution: {integrity: sha512-w/6FoubSxuzXSx8uvLE1wEuHZVHRXFyfHPKdM76wX5U/xw82zlUKseVO7wTuVODTcnUzEA30udYeCApUoC3/Xw==}
-    engines: {node: '>=12.13.0'}
-    deprecated: All v0.x versions of @apollo/subgraph are now deprecated with an end-of-life date of September 22, 2023. Apollo recommends upgrading to v2.x as soon as possible. For more details, see our announcement blog post (https://www.apollographql.com/blog/announcement/backend/announcing-the-end-of-life-schedule-for-apollo-gateway-v0-x/) and documentation (https://www.apollographql.com/docs/federation/federation-2/backward-compatibility/#is-official-support-ending-for-apollogateway-v0x).
+  '@apollo/subgraph@2.9.3':
+    resolution: {integrity: sha512-oaC79gM01kdXRBal8gGms1bpBwqe8AsX82yNYUPO/Tb7R1n+sCYcFrVqG25YeBYXWNP2qbJuD2yBGcsrEWnS1w==}
+    engines: {node: '>=14.15.0'}
     peerDependencies:
       graphql: 16.6.0
 
   '@apollo/usage-reporting-protobuf@4.0.2':
     resolution: {integrity: sha512-GfE8aDqi/lAFut95pjH9IRvH0zGsQ5G/2lYL0ZLZfML7ArX+A4UVHFANQcPCcUYGE6bI6OPhLekg4Vsjf6B1cw==}
 
-  '@apollo/utils.createhash@1.1.0':
-    resolution: {integrity: sha512-5fT4ZiW75515OlikWpIQzaVDws1yy9VgYSoHoJCrvI2UH6/7YNKXQjbjT5qVYu6ytch2wBxFMfFfYWMn/2bSCQ==}
-    engines: {node: '>=12.13.0'}
+  '@apollo/usage-reporting-protobuf@4.1.1':
+    resolution: {integrity: sha512-u40dIUePHaSKVshcedO7Wp+mPiZsaU6xjv9J+VyxpoU/zL6Jle+9zWeG98tr/+SZ0nZ4OXhrbb8SNr0rAPpIDA==}
 
   '@apollo/utils.createhash@2.0.0':
     resolution: {integrity: sha512-9GhGGD3J0HJF/VC+odwYpKi3Cg1NWrsO8GQvyGwDS5v/78I3154Hn8s4tpW+nqoaQ/lAvxdQQr3HM1b5HLM6Ww==}
@@ -1728,16 +1729,9 @@ packages:
     peerDependencies:
       graphql: 16.6.0
 
-  '@apollo/utils.fetcher@1.1.1':
-    resolution: {integrity: sha512-0vXVznO7kw5VWwxyV5wsDvYEwjDpyZ7vYQAXCseLXqBn2eWEIDViM7qRzi/Hnv4zzAQ05phdimSED99K+lg+SQ==}
-
   '@apollo/utils.fetcher@2.0.0':
     resolution: {integrity: sha512-RC0twEwwBKbhk/y4B2X4YEciRG1xoKMgiPy5xQqNMd3pG78sR+ybctG/m7c/8+NaaQOS22UPUCBd6yS6WihBIg==}
     engines: {node: '>=14'}
-
-  '@apollo/utils.isnodelike@1.1.0':
-    resolution: {integrity: sha512-q/Q82kBUSEcx1ED11JO1TYBY781mWluUnBD8NvhjHVsu1K1C5R9BZVUxShyK/V8XcePcRUB5fdWOcBMGwS0KOA==}
-    engines: {node: '>=12.13.0'}
 
   '@apollo/utils.isnodelike@2.0.0':
     resolution: {integrity: sha512-77CiAM2qDXn0haQYrgX0UgrboQykb+bOHaz5p3KKItMwUZ/EFphzuB2vqHvubneIc9dxJcTx2L7MFDswRw/JAQ==}
@@ -2890,9 +2884,6 @@ packages:
     resolution: {integrity: sha512-qnSHIoE9FK+HYnNhTI8q14evyqbc/vHRivfB4TgCIUOl4tosmKSQlp7ltymOlMP4xVIJTg5wrkfcZ60X4nUf7Q==}
     engines: {node: '>=18.0.0'}
 
-  '@gar/promisify@1.1.3':
-    resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
-
   '@giscus/react@3.0.0':
     resolution: {integrity: sha512-hgCjLpg3Wgh8VbTF5p8ZLcIHI74wvDk1VIFv12+eKhenNVUDjgwNg2B1aq/3puyHOad47u/ZSyqiMtohjy/OOA==}
     peerDependencies:
@@ -3185,6 +3176,12 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@ioredis/as-callback@3.0.0':
+    resolution: {integrity: sha512-Kqv1rZ3WbgOrS+hgzJ5xG5WQuhvzzSTRYvNeyPMLOAM78MHSnuKI20JeJGbpuAt//LCuP0vsexZcorqW7kWhJg==}
+
+  '@ioredis/commands@1.2.0':
+    resolution: {integrity: sha512-Sx1pU8EM64o2BrqNpEO1CNLtKQwyhuXuqyfH7oGKCk+1a33d2r5saW8zNwm3j6BTExtjrv2BxTgzzkMwts6vGg==}
+
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
@@ -3238,10 +3235,6 @@ packages:
     peerDependenciesMeta:
       node-notifier:
         optional: true
-
-  '@jest/schemas@28.1.3':
-    resolution: {integrity: sha512-/l/VWsdt/aBXgjshLWOFyFt3IVdYypu5y2Wn2rOO1un6nkqIn8SLXzgIMYXFyYsRWDyF5EthmKJMIdJvk08grg==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
 
   '@jest/schemas@29.6.3':
     resolution: {integrity: sha512-mo5j5X+jIZmJQveBKeS/clAueipV7KgiX1vMgCxam1RNYiqE1w62n0/tJJnHtjW8ZHcQco5gY85jA3mi0L+nSA==}
@@ -3589,14 +3582,9 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
-  '@npmcli/fs@2.1.2':
-    resolution: {integrity: sha512-yOJKRvohFOaLqipNtwYB9WugyZKhC/DZC4VYPmpaCzDBrA8YpK3qHZ8/HGscMnE4GqbkLNuVcCnxkeQEdGt6LQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-
-  '@npmcli/move-file@2.0.1':
-    resolution: {integrity: sha512-mJd2Z5TjYWq/ttPLLGqArdtnC74J6bOzg4rMDnN+p1xTacZ2yPRCk2y0oSWQtygLR9YVQXgOcONrwtnk3JupxQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-    deprecated: This functionality has been moved to @npmcli/fs
+  '@npmcli/fs@3.1.1':
+    resolution: {integrity: sha512-q9CRWjpHCMIh5sVyefoD1cA7PkvILqCZsnSOEUUivORLjxCO/Irmue2DprETiNgEqktDBZaM1Bi+jrarx1XdCg==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
   '@opentelemetry/api-logs@0.53.0':
     resolution: {integrity: sha512-8HArjKx+RaAI8uEIgcORbZIPklyh1YLjPSBus8hjRmvLi6DeFzgOcdZ7KwPabKj8mXF8dX0hyfAyGfycz0DbFw==}
@@ -4036,9 +4024,6 @@ packages:
   '@sideway/pinpoint@2.0.0':
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
 
-  '@sinclair/typebox@0.24.51':
-    resolution: {integrity: sha512-1P1OROm/rdubP5aFDSZQILU0vrLCJ4fvHt6EoqHEM+2D/G5MK3bIaymUKLit8Js9gbns5UyJnkP/TZROLw4tUA==}
-
   '@sinclair/typebox@0.27.8':
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
 
@@ -4359,8 +4344,12 @@ packages:
   '@types/hast@3.0.4':
     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
 
-  '@types/ioredis@4.28.10':
-    resolution: {integrity: sha512-69LyhUgrXdgcNDv7ogs1qXZomnfOEnSmrmMFqKgt1XMJxmoOSG/u3wYy13yACIfKuMJ8IhKgHafDO3sx19zVQQ==}
+  '@types/ioredis-mock@8.2.5':
+    resolution: {integrity: sha512-cZyuwC9LGtg7s5G9/w6rpy3IOZ6F/hFR0pQlWYZESMo1xQUYbDpa6haqB4grTePjsGzcB/YLBFCjqRunK5wieg==}
+
+  '@types/ioredis@5.0.0':
+    resolution: {integrity: sha512-zJbJ3FVE17CNl5KXzdeSPtdltc4tMT3TzC6fxQS0sQngkbFZ6h+0uTafsRqu+eSLIugf6Yb0Ea0SUuRr42Nk9g==}
+    deprecated: This is a stub types definition. ioredis provides its own type definitions, so you do not need this installed.
 
   '@types/istanbul-lib-coverage@2.0.3':
     resolution: {integrity: sha512-sz7iLqvVUg1gIedBOvlkxPlc8/uVzyS5OwGz1cKjXzkl3FpL3al0crU8YGU1WoHkxn0Wxbw5tyi6hvzJKNzFsw==}
@@ -4490,6 +4479,9 @@ packages:
 
   '@types/unist@3.0.0':
     resolution: {integrity: sha512-MFETx3tbTjE7Uk6vvnWINA/1iJ7LuMdO4fcq8UfF0pRbj01aGLduVvQcRyswuACJdpnHgg8E3rQLhaRdNEJS0w==}
+
+  '@types/uuid@9.0.8':
+    resolution: {integrity: sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==}
 
   '@types/validator@13.12.2':
     resolution: {integrity: sha512-6SlHBzUW8Jhf3liqrGGXyTJSIFe4nqlJ5A5KaMZ2l/vbM3Wh3KSybots/wfWVzNLK4D1NZluDlSQIbIEPx6oyA==}
@@ -5188,9 +5180,9 @@ packages:
   cacache@12.0.4:
     resolution: {integrity: sha512-a0tMB40oefvuInr4Cwb3GerbL9xTj1D5yg0T5xrjGCGyfvbxseIXX7BAO/u/hIXdafzOI5JC3wDwHyf24buOAQ==}
 
-  cacache@16.1.3:
-    resolution: {integrity: sha512-/+Emcj9DAXxX4cwlLmRI9c166RuL3w30zp4R7Joiv2cQTtTtA+jeuCAjH3ZlGnYS3tKENSrKhAzVVP9GVyzeYQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+  cacache@17.1.4:
+    resolution: {integrity: sha512-/aJwG2l3ZMJ1xNAnqbMpA40of9dj/pIH3QfiuQSqjfPJF747VR0J/bHn+/KdNnHKc6XQcWt/AfRSBft82W1d2A==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
   cache-base@1.0.1:
     resolution: {integrity: sha512-AKcdTnFSWATd5/GCPRxr2ChwIJ85CeyrEyjRHlKxQ56d4XJMGym0uAiKn0xbLOGOl3+yRpOTi484dVCEc5AUzQ==}
@@ -5873,8 +5865,8 @@ packages:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
 
-  denque@1.5.1:
-    resolution: {integrity: sha512-XwE+iZ4D6ZUB7mfYRMb5wByE8L74HCn30FBN7sWnXksWc1LO1bPDl67pBR9o/kC4z/xSNAwkMYcGgqDV3BE3Hw==}
+  denque@2.1.0:
+    resolution: {integrity: sha512-HVQE3AAb/pxF8fQAoiqpvg9i3evqug3hoiwakOyZAwJm+6vZehbkYXZ0l4JxS+I3QxM97v5aaRNhj8v5oBhekw==}
     engines: {node: '>=0.10'}
 
   depd@1.1.2:
@@ -6506,8 +6498,8 @@ packages:
   fecha@4.2.3:
     resolution: {integrity: sha512-OP2IUU6HeYKJi3i0z4A19kHMQoLVs4Hc+DPqqxI2h/DPZHTm/vjsfC6P0b4jCMy14XizLBqvndQ+UilD7707Jw==}
 
-  fengari-interop@0.1.2:
-    resolution: {integrity: sha512-8iTvaByZVoi+lQJhHH9vC+c/Yaok9CwOqNQZN6JrVpjmWwW4dDkeblBXhnHC+BoI6eF4Cy5NKW3z6ICEjvgywQ==}
+  fengari-interop@0.1.3:
+    resolution: {integrity: sha512-EtZ+oTu3kEwVJnoymFPBVLIbQcCoy9uWCVnMA6h3M/RqHkUBsLYp29+RRHf9rKr6GwjubWREU1O7RretFIXjHw==}
     peerDependencies:
       fengari: ^0.1.0
 
@@ -6669,6 +6661,10 @@ packages:
     resolution: {integrity: sha512-V/JgOLFCS+R6Vcq0slCuaeWEdNC3ouDlJMNIsacH2VtALiu9mV4LPrHc5cDl8k5aw6J8jwgWWpiTo5RYhmIzvg==}
     engines: {node: '>= 8'}
 
+  fs-minipass@3.0.3:
+    resolution: {integrity: sha512-XUBA9XClHbnJWSfBzjkm6RvPsyg3sryZt06BEQoXcF7EK/xpGaQYJgQKDJSUH5SGZ76Y7pFx1QBnXz09rU5Fbw==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+
   fs-write-stream-atomic@1.0.10:
     resolution: {integrity: sha512-gehEzmPn2nAwr39eay+x3X34Ra+M2QlVUTLhkXPjWdeO8RF9kszk116avgBJM3ZyNHgHXBNx+VmPaFC36k0PzA==}
     deprecated: This package is no longer supported.
@@ -6802,11 +6798,6 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Glob versions prior to v9 are no longer supported
-
-  glob@8.1.0:
-    resolution: {integrity: sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==}
-    engines: {node: '>=12'}
     deprecated: Glob versions prior to v9 are no longer supported
 
   globals@11.12.0:
@@ -7076,6 +7067,9 @@ packages:
   http-cache-semantics@4.1.0:
     resolution: {integrity: sha512-carPklcUh7ROWRK7Cv27RPtdhYhUsela/ue5/jKzjegVvXDqM2ILE9Q2BGn9JZJh1g87cp56su/FgQSzcWS8cQ==}
 
+  http-cache-semantics@4.1.1:
+    resolution: {integrity: sha512-er295DKPVsV82j5kw1Gjt+ADA/XYHsajl82cGNQG2eyoPkvgUhX+nDIyelzhIWbbsXP39EHcI6l5tYs2FYqYXQ==}
+
   http-errors@1.8.0:
     resolution: {integrity: sha512-4I8r0C5JDhT5VkvI47QktDW75rNlGVsUf/8hzjCC/wkWI/jdTRmBb9aI7erSG82r1bjKY3F6k28WnsVxB1C73A==}
     engines: {node: '>= 0.6'}
@@ -7200,16 +7194,16 @@ packages:
   intersection-observer@0.12.2:
     resolution: {integrity: sha512-7m1vEcPCxXYI8HqnL8CKI6siDyD+eIWSwgB3DZA+ZTogxk9I4CDnj4wilt9x/+/QbHI4YG5YZNmC6458/e9Ktg==}
 
-  ioredis-mock@5.9.1:
-    resolution: {integrity: sha512-ZirdGJFOqH5nP8FYXuHUJmexvtZ6r2Ybc5alaGMzt38QA0kse5/rYnBQcb4ofxkyqzhXHuaCsXiwLlfG6NyhhQ==}
-    engines: {node: '>=10'}
+  ioredis-mock@8.9.0:
+    resolution: {integrity: sha512-yIglcCkI1lvhwJVoMsR51fotZVsPsSk07ecTCgRTRlicG0Vq3lke6aAaHklyjmRNRsdYAgswqC2A0bPtQK4LSw==}
+    engines: {node: '>=12.22'}
     peerDependencies:
-      ioredis: 4.x
-      redis-commands: 1.x
+      '@types/ioredis-mock': ^8
+      ioredis: ^5
 
-  ioredis@4.27.9:
-    resolution: {integrity: sha512-hAwrx9F+OQ0uIvaJefuS3UTqW+ByOLyLIV+j0EH8ClNVxvFyH9Vmb08hCL4yje6mDYT5zMquShhypkd50RRzkg==}
-    engines: {node: '>=6'}
+  ioredis@5.4.2:
+    resolution: {integrity: sha512-0SZXGNGZ+WzISQ67QDyZ2x0+wVxjjUndtD8oSeik/4ajifeiRufed8fCb8QW8VMyi4MXcS+UO1k/0NGhvq1PAg==}
+    engines: {node: '>=12.22.0'}
 
   ip@2.0.0:
     resolution: {integrity: sha512-WKa+XuLG1A1R0UWhl2+1XQSi+fZWMsYKffMZTTYsiZaUD8k2yDAj5atimTUD2TZkyCkNEeYE5NhFZmupOGtjYQ==}
@@ -7663,6 +7657,10 @@ packages:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
     engines: {node: '>=10'}
 
+  js-levenshtein@1.1.6:
+    resolution: {integrity: sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g==}
+    engines: {node: '>=0.10.0'}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -7872,9 +7870,6 @@ packages:
   lodash.defaults@4.2.0:
     resolution: {integrity: sha512-qjxPLHd3r5DnsdGacqOMU6pb/avJzdh9tFX2ymgoZE27BmjXrNy/y4LoaiTeAb+O3gL8AfpJGtqfX/ae2leYYQ==}
 
-  lodash.flatten@4.4.0:
-    resolution: {integrity: sha512-C5N2Z3DgnnKr0LOpv/hKCgKdb7ZZwafIrsesve6lmzvZIRZRGaZ/l6Q8+2W7NaT+ZwO3fFlSCzCzrDCFdJfZ4g==}
-
   lodash.get@4.4.2:
     resolution: {integrity: sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==}
 
@@ -7898,9 +7893,6 @@ packages:
 
   lodash.uniq@4.5.0:
     resolution: {integrity: sha512-xfBaXQd9ryd9dlSDvnvI0lvxfLJlYAZzXomUYzLKtUeOQvOP5piqAWuGtrhWeqaXK9hhoM/iyJc5AV+XfsX3HQ==}
-
-  lodash.xorby@4.7.0:
-    resolution: {integrity: sha512-gYiD6nvuQy0AEkMoUju+t4f4Rn18fjsLB/7x7YZFqtFT9kmegRLrj/uGEQVyVDy7otTmSrIMXNOk2wwuLcfHCQ==}
 
   lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
@@ -7980,9 +7972,9 @@ packages:
   make-error@1.3.6:
     resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
 
-  make-fetch-happen@10.2.1:
-    resolution: {integrity: sha512-NgOPbRiaQM10DYXvN3/hhGVI2M5MtITFryzBGxHM5p4wnFxsVCbxkrBrDsk+EZ5OB4jEOT7AjDxtdF+KVEFT7w==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+  make-fetch-happen@11.1.1:
+    resolution: {integrity: sha512-rLWS7GCSTcEujjVBs2YqG7Y4643u8ucvCJeSRqiLYhesrDuzeuFIk37xREzAsfQaqzl8b9rNCE4m6J8tvX4Q8w==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
   makeerror@1.0.12:
     resolution: {integrity: sha512-JmqCvUhmt43madlpFzG4BQzG2Z3m6tvQDNKdClZnO3VbIudJYmxsT0FNJMeiB2+JTSlTQTSbU8QdesVmwJcmLg==}
@@ -8360,9 +8352,9 @@ packages:
     resolution: {integrity: sha512-6T6lH0H8OG9kITm/Jm6tdooIbogG9e0tLgpY6mphXSm/A9u8Nq1ryBG+Qspiub9LjWlBPsPS3tWQ/Botq4FdxA==}
     engines: {node: '>= 8'}
 
-  minipass-fetch@2.1.2:
-    resolution: {integrity: sha512-LT49Zi2/WMROHYoqGgdlQIZh8mLPZmOrN2NdJjMXxYe4nkN6FUyuPuOAOedNJDrx0IRGg9+4guZewtp8hE6TxA==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+  minipass-fetch@3.0.5:
+    resolution: {integrity: sha512-2N8elDQAtSnFV0Dk7gt15KHsS0Fyz6CbYZ360h0WTYV1Ty46li3rAXVOQj1THMNLdmrD9Vt5pBPtWtVkpwGBqg==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
   minipass-flush@1.0.5:
     resolution: {integrity: sha512-JmQSYYpPUqX5Jyn1mXaRwOda1uQ8HP5KAT/oDSLCzt1BYRhQU0/hDtsB1ufZfEEzMZ9aAVmsBw8+FWsIXlClWw==}
@@ -9221,10 +9213,6 @@ packages:
     resolution: {integrity: sha512-FFw039TmrBqFK8ma/7OL3sDz/VytdtJr044/QUJtH0wK9lb9jLq9tJyIxUwtQJHwar2BqtiA4iCWSwo9JLkzFg==}
     engines: {node: '>=6'}
 
-  pretty-format@28.1.3:
-    resolution: {integrity: sha512-8gFb/To0OmxHR9+ZTb14Df2vNxdGCX8g1xWGUTqUw5TiZvcQf5sHKObd5UcPyLLyowNwDAMTF3XWOG1B6mxl1Q==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-
   pretty-format@29.7.0:
     resolution: {integrity: sha512-Pdlw/oPxN+aXdmM9R00JVC9WVFoCLTKJvDVLgmJ+qAffBMxsV85l/Lu7sNx4zSzPyoL2euImuEwHhOXdEgNFZQ==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
@@ -9441,9 +9429,6 @@ packages:
 
   recma-stringify@1.0.0:
     resolution: {integrity: sha512-cjwII1MdIIVloKvC9ErQ+OgAtwHBmcZ0Bg4ciz78FtbT8In39aAYbaA7zvxQ61xVMSPE8WxhLwLbhif4Js2C+g==}
-
-  redis-commands@1.7.0:
-    resolution: {integrity: sha512-nJWqw3bTFy21hX/CPKHth6sfhZbdiHP6bTawSgQBlKOVRG7EZkfHbbHwQJnrE4vsQf0CMNE+3gJ4Fmm16vdVlQ==}
 
   redis-errors@1.2.0:
     resolution: {integrity: sha512-1qny3OExCf0UvUV/5wpYKf2YwPcOqXzkwKKSmKHiE6ZMQs5heeE/c8eXK+PNllPvmjgAbfnsbpkGZWy8cBpn9w==}
@@ -9664,11 +9649,6 @@ packages:
 
   rimraf@2.7.1:
     resolution: {integrity: sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==}
-    deprecated: Rimraf versions prior to v4 are no longer supported
-    hasBin: true
-
-  rimraf@3.0.2:
-    resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
     deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
@@ -10023,12 +10003,12 @@ packages:
   sprintf-js@1.1.2:
     resolution: {integrity: sha512-VE0SOVEHCk7Qc8ulkWw3ntAzXuqf7S2lvwQaDLRnUeIEaKNQJzV6BwmLKhOqT61aGhfUMrXeaBk+oDGCzvhcug==}
 
+  ssri@10.0.6:
+    resolution: {integrity: sha512-MGrFH9Z4NP9Iyhqn16sDtBpRRNJ0Y2hNa6D65h736fVSaPCHr4DM4sWUNvVaSuC+0OBGhwsrydQwmgfg5LncqQ==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+
   ssri@6.0.2:
     resolution: {integrity: sha512-cepbSq/neFK7xB6A50KHN0xHDotYzq58wWCa5LeWqnPrHG8GzfEjO/4O8kpmcGW+oaxkvhEJCWgbgNk4/ZV93Q==}
-
-  ssri@9.0.1:
-    resolution: {integrity: sha512-o57Wcn66jMQvfHG1FlYbWeZWW/dHZhJXjpIcTfXldXEk5nz5lStPo3mK0OJQfGR3RbZUlbISexbljkJzuEj/8Q==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
 
   stack-utils@2.0.3:
     resolution: {integrity: sha512-gL//fkxfWUsIlFL2Tl42Cl6+HFALEaB1FU76I/Fy+oZjRreP7OPMXFlGbxM7NQsI0ZpUfw76sHnv0WNYuTb7Iw==}
@@ -10373,6 +10353,10 @@ packages:
     resolution: {integrity: sha512-q5W7tVM71e2xjHZTlgfTDoPF/SmqKG5hddq9SzR49CH2hayqRKJtQ4mtRlSxKaJlR/+9rEM+mnBHf7I2/BQcpQ==}
     engines: {node: '>=6.10'}
 
+  ts-graphviz@1.8.2:
+    resolution: {integrity: sha512-5YhbFoHmjxa7pgQLkB07MtGnGJ/yhvjmc9uhsnDBEICME6gkPf83SBwLDQqGDoCa3XzUMWLk1AU2Wn1u1naDtA==}
+    engines: {node: '>=14.16'}
+
   ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
 
@@ -10581,16 +10565,16 @@ packages:
   unique-filename@1.1.1:
     resolution: {integrity: sha512-Vmp0jIp2ln35UTXuryvjzkjGdRyf9b2lTXuSYUiPmzRcl3FDtYqAwOnTJkAngD9SWhnoJzDbTKwaOrZ+STtxNQ==}
 
-  unique-filename@2.0.1:
-    resolution: {integrity: sha512-ODWHtkkdx3IAR+veKxFV+VBkUMcN+FaqzUUd7IZzt+0zhDZFPFxhlqwPF3YQvMHx1TD0tdgYl+kuPnJ8E6ql7A==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+  unique-filename@3.0.0:
+    resolution: {integrity: sha512-afXhuC55wkAmZ0P18QsVE6kp8JaxrEokN2HGIoIVv2ijHQd419H0+6EigAFcIzXeMIkcIkNBpB3L/DXB3cTS/g==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
   unique-slug@2.0.2:
     resolution: {integrity: sha512-zoWr9ObaxALD3DOPfjPSqxt4fnZiWblxHIgeWqW8x7UqDzEtHEQLzji2cuJYQFCU6KmoJikOYAZlrTHHebjx2w==}
 
-  unique-slug@3.0.0:
-    resolution: {integrity: sha512-8EyMynh679x/0gqE9fT9oilG+qEt+ibFyqjuVTsZn1+CMxH+XLlpvr2UZx4nVcCwTpx81nICr2JQFkM+HPLq4w==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+  unique-slug@4.0.0:
+    resolution: {integrity: sha512-WrcA6AyEfqDX5bWige/4NQfPZMtASNVxdmWR76WESYQVAACSgWcR6e9i0mofqqBxYFtL4oAxPIptY73/0YE1DQ==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
   unist-util-find-after@5.0.0:
     resolution: {integrity: sha512-amQa0Ep2m6hE2g72AugUItjbuM8X8cGQnFoHk0pGfrFeT9GZhzN5SW8nRsiGKK7Aif4CrACPENkA6P/Lw6fHGQ==}
@@ -11063,40 +11047,42 @@ snapshots:
     dependencies:
       graphql: 16.6.0
 
-  '@apollo/core-schema@0.2.3(graphql@16.6.0)':
+  '@apollo/composition@2.9.3(graphql@16.6.0)':
     dependencies:
+      '@apollo/federation-internals': 2.9.3(graphql@16.6.0)
+      '@apollo/query-graphs': 2.9.3(graphql@16.6.0)
       graphql: 16.6.0
 
-  '@apollo/federation@0.38.1(encoding@0.1.13)(graphql@16.6.0)':
+  '@apollo/federation-internals@2.9.3(graphql@16.6.0)':
     dependencies:
-      '@apollo/subgraph': 0.6.1(graphql@16.6.0)
-      apollo-server-types: 3.8.0(encoding@0.1.13)(graphql@16.6.0)
+      '@types/uuid': 9.0.8
+      chalk: 4.1.2
       graphql: 16.6.0
-      lodash.xorby: 4.7.0
-    transitivePeerDependencies:
-      - encoding
+      js-levenshtein: 1.1.6
+      uuid: 9.0.1
 
-  '@apollo/gateway@0.54.1(encoding@0.1.13)(graphql@16.6.0)':
+  '@apollo/gateway@2.9.3(encoding@0.1.13)(graphql@16.6.0)':
     dependencies:
-      '@apollo/core-schema': 0.2.3(graphql@16.6.0)
-      '@apollo/federation': 0.38.1(encoding@0.1.13)(graphql@16.6.0)
-      '@apollo/query-planner': 0.12.1(graphql@16.6.0)
+      '@apollo/composition': 2.9.3(graphql@16.6.0)
+      '@apollo/federation-internals': 2.9.3(graphql@16.6.0)
+      '@apollo/query-planner': 2.9.3(graphql@16.6.0)
       '@apollo/server-gateway-interface': 1.1.0(graphql@16.6.0)
-      '@apollo/utils.createhash': 1.1.0
-      '@apollo/utils.fetcher': 1.1.1
-      '@apollo/utils.logger': 1.0.1
+      '@apollo/usage-reporting-protobuf': 4.1.1
+      '@apollo/utils.createhash': 2.0.0
+      '@apollo/utils.fetcher': 2.0.0
+      '@apollo/utils.isnodelike': 2.0.0
+      '@apollo/utils.keyvaluecache': 2.1.0
+      '@apollo/utils.logger': 2.0.0
       '@josephg/resolvable': 1.0.1
       '@opentelemetry/api': 1.9.0
       '@types/node-fetch': 2.6.2
-      apollo-reporting-protobuf: 3.4.0
       async-retry: 1.3.3
       graphql: 16.6.0
       loglevel: 1.7.1
-      lru-cache: 7.14.1
-      make-fetch-happen: 10.2.1
-      pretty-format: 28.1.3
+      make-fetch-happen: 11.1.1
+      node-abort-controller: 3.0.1
+      node-fetch: 2.7.0(encoding@0.1.13)
     transitivePeerDependencies:
-      - bluebird
       - encoding
       - supports-color
 
@@ -11147,12 +11133,23 @@ snapshots:
       '@types/long': 4.0.1
       long: 4.0.0
 
-  '@apollo/query-planner@0.12.1(graphql@16.6.0)':
+  '@apollo/query-graphs@2.9.3(graphql@16.6.0)':
     dependencies:
+      '@apollo/federation-internals': 2.9.3(graphql@16.6.0)
+      deep-equal: 2.0.5
+      graphql: 16.6.0
+      ts-graphviz: 1.8.2
+      uuid: 9.0.1
+
+  '@apollo/query-planner@2.9.3(graphql@16.6.0)':
+    dependencies:
+      '@apollo/federation-internals': 2.9.3(graphql@16.6.0)
+      '@apollo/query-graphs': 2.9.3(graphql@16.6.0)
+      '@apollo/utils.keyvaluecache': 2.1.0
       chalk: 4.1.2
       deep-equal: 2.0.5
       graphql: 16.6.0
-      pretty-format: 28.1.3
+      pretty-format: 29.7.0
 
   '@apollo/server-gateway-interface@1.1.0(graphql@16.6.0)':
     dependencies:
@@ -11200,19 +11197,19 @@ snapshots:
       - encoding
       - supports-color
 
-  '@apollo/subgraph@0.6.1(graphql@16.6.0)':
+  '@apollo/subgraph@2.9.3(graphql@16.6.0)':
     dependencies:
       '@apollo/cache-control-types': 1.0.2(graphql@16.6.0)
+      '@apollo/federation-internals': 2.9.3(graphql@16.6.0)
       graphql: 16.6.0
 
   '@apollo/usage-reporting-protobuf@4.0.2':
     dependencies:
       '@apollo/protobufjs': 1.2.7
 
-  '@apollo/utils.createhash@1.1.0':
+  '@apollo/usage-reporting-protobuf@4.1.1':
     dependencies:
-      '@apollo/utils.isnodelike': 1.1.0
-      sha.js: 2.4.11
+      '@apollo/protobufjs': 1.2.7
 
   '@apollo/utils.createhash@2.0.0':
     dependencies:
@@ -11227,11 +11224,7 @@ snapshots:
     dependencies:
       graphql: 16.6.0
 
-  '@apollo/utils.fetcher@1.1.1': {}
-
   '@apollo/utils.fetcher@2.0.0': {}
-
-  '@apollo/utils.isnodelike@1.1.0': {}
 
   '@apollo/utils.isnodelike@2.0.0': {}
 
@@ -12819,8 +12812,6 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@gar/promisify@1.1.3': {}
-
   '@giscus/react@3.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       giscus: 1.6.0
@@ -13147,6 +13138,10 @@ snapshots:
   '@img/sharp-win32-x64@0.33.5':
     optional: true
 
+  '@ioredis/as-callback@3.0.0': {}
+
+  '@ioredis/commands@1.2.0': {}
+
   '@isaacs/cliui@8.0.2':
     dependencies:
       string-width: 5.1.2
@@ -13274,10 +13269,6 @@ snapshots:
       v8-to-istanbul: 9.1.0
     transitivePeerDependencies:
       - supports-color
-
-  '@jest/schemas@28.1.3':
-    dependencies:
-      '@sinclair/typebox': 0.24.51
 
   '@jest/schemas@29.6.3':
     dependencies:
@@ -13723,15 +13714,9 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.18.0
 
-  '@npmcli/fs@2.1.2':
+  '@npmcli/fs@3.1.1':
     dependencies:
-      '@gar/promisify': 1.1.3
       semver: 7.6.3
-
-  '@npmcli/move-file@2.0.1':
-    dependencies:
-      mkdirp: 1.0.4
-      rimraf: 3.0.2
 
   '@opentelemetry/api-logs@0.53.0':
     dependencies:
@@ -14243,8 +14228,6 @@ snapshots:
 
   '@sideway/pinpoint@2.0.0': {}
 
-  '@sinclair/typebox@0.24.51': {}
-
   '@sinclair/typebox@0.27.8': {}
 
   '@sindresorhus/merge-streams@2.3.0': {}
@@ -14701,9 +14684,18 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.0
 
-  '@types/ioredis@4.28.10':
+  '@types/ioredis-mock@8.2.5':
     dependencies:
       '@types/node': 22.10.6
+      ioredis: 5.4.2
+    transitivePeerDependencies:
+      - supports-color
+
+  '@types/ioredis@5.0.0':
+    dependencies:
+      ioredis: 5.4.2
+    transitivePeerDependencies:
+      - supports-color
 
   '@types/istanbul-lib-coverage@2.0.3': {}
 
@@ -14833,6 +14825,8 @@ snapshots:
   '@types/unist@2.0.3': {}
 
   '@types/unist@3.0.0': {}
+
+  '@types/uuid@9.0.8': {}
 
   '@types/validator@13.12.2': {}
 
@@ -15740,28 +15734,20 @@ snapshots:
       unique-filename: 1.1.1
       y18n: 4.0.3
 
-  cacache@16.1.3:
+  cacache@17.1.4:
     dependencies:
-      '@npmcli/fs': 2.1.2
-      '@npmcli/move-file': 2.0.1
-      chownr: 2.0.0
-      fs-minipass: 2.1.0
-      glob: 8.1.0
-      infer-owner: 1.0.4
+      '@npmcli/fs': 3.1.1
+      fs-minipass: 3.0.3
+      glob: 10.3.10
       lru-cache: 7.14.1
-      minipass: 3.3.6
+      minipass: 7.1.2
       minipass-collect: 1.0.2
       minipass-flush: 1.0.5
       minipass-pipeline: 1.2.4
-      mkdirp: 1.0.4
       p-map: 4.0.0
-      promise-inflight: 1.0.1(bluebird@3.7.2)
-      rimraf: 3.0.2
-      ssri: 9.0.1
+      ssri: 10.0.6
       tar: 6.1.15
-      unique-filename: 2.0.1
-    transitivePeerDependencies:
-      - bluebird
+      unique-filename: 3.0.0
 
   cache-base@1.0.1:
     dependencies:
@@ -16516,7 +16502,7 @@ snapshots:
 
   delayed-stream@1.0.0: {}
 
-  denque@1.5.1: {}
+  denque@2.1.0: {}
 
   depd@1.1.2: {}
 
@@ -17396,7 +17382,7 @@ snapshots:
 
   fecha@4.2.3: {}
 
-  fengari-interop@0.1.2(fengari@0.1.4):
+  fengari-interop@0.1.3(fengari@0.1.4):
     dependencies:
       fengari: 0.1.4
 
@@ -17594,6 +17580,10 @@ snapshots:
     dependencies:
       minipass: 3.3.6
 
+  fs-minipass@3.0.3:
+    dependencies:
+      minipass: 7.1.2
+
   fs-write-stream-atomic@1.0.10:
     dependencies:
       graceful-fs: 4.2.11
@@ -17747,14 +17737,6 @@ snapshots:
       minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
-
-  glob@8.1.0:
-    dependencies:
-      fs.realpath: 1.0.0
-      inflight: 1.0.6
-      inherits: 2.0.4
-      minimatch: 5.1.6
-      once: 1.4.0
 
   globals@11.12.0: {}
 
@@ -18161,6 +18143,8 @@ snapshots:
 
   http-cache-semantics@4.1.0: {}
 
+  http-cache-semantics@4.1.1: {}
+
   http-errors@1.8.0:
     dependencies:
       depd: 1.1.2
@@ -18283,25 +18267,24 @@ snapshots:
 
   intersection-observer@0.12.2: {}
 
-  ioredis-mock@5.9.1(ioredis@4.27.9)(redis-commands@1.7.0):
+  ioredis-mock@8.9.0(@types/ioredis-mock@8.2.5)(ioredis@5.4.2):
     dependencies:
+      '@ioredis/as-callback': 3.0.0
+      '@ioredis/commands': 1.2.0
+      '@types/ioredis-mock': 8.2.5
       fengari: 0.1.4
-      fengari-interop: 0.1.2(fengari@0.1.4)
-      ioredis: 4.27.9
-      lodash: 4.17.21
-      redis-commands: 1.7.0
-      standard-as-callback: 2.1.0
+      fengari-interop: 0.1.3(fengari@0.1.4)
+      ioredis: 5.4.2
+      semver: 7.6.3
 
-  ioredis@4.27.9:
+  ioredis@5.4.2:
     dependencies:
+      '@ioredis/commands': 1.2.0
       cluster-key-slot: 1.1.0
       debug: 4.4.0
-      denque: 1.5.1
+      denque: 2.1.0
       lodash.defaults: 4.2.0
-      lodash.flatten: 4.4.0
       lodash.isarguments: 3.1.0
-      p-map: 2.1.0
-      redis-commands: 1.7.0
       redis-errors: 1.2.0
       redis-parser: 3.0.0
       standard-as-callback: 2.1.0
@@ -18935,6 +18918,8 @@ snapshots:
 
   joycon@3.1.1: {}
 
+  js-levenshtein@1.1.6: {}
+
   js-tokens@4.0.0: {}
 
   js-yaml@3.14.1:
@@ -19161,8 +19146,6 @@ snapshots:
 
   lodash.defaults@4.2.0: {}
 
-  lodash.flatten@4.4.0: {}
-
   lodash.get@4.4.2: {}
 
   lodash.isarguments@3.1.0: {}
@@ -19178,8 +19161,6 @@ snapshots:
   lodash.startcase@4.4.0: {}
 
   lodash.uniq@4.5.0: {}
-
-  lodash.xorby@4.7.0: {}
 
   lodash@4.17.21: {}
 
@@ -19268,26 +19249,24 @@ snapshots:
 
   make-error@1.3.6: {}
 
-  make-fetch-happen@10.2.1:
+  make-fetch-happen@11.1.1:
     dependencies:
       agentkeepalive: 4.3.0
-      cacache: 16.1.3
-      http-cache-semantics: 4.1.0
+      cacache: 17.1.4
+      http-cache-semantics: 4.1.1
       http-proxy-agent: 5.0.0
       https-proxy-agent: 5.0.1
       is-lambda: 1.0.1
       lru-cache: 7.14.1
-      minipass: 3.3.6
-      minipass-collect: 1.0.2
-      minipass-fetch: 2.1.2
+      minipass: 5.0.0
+      minipass-fetch: 3.0.5
       minipass-flush: 1.0.5
       minipass-pipeline: 1.2.4
       negotiator: 0.6.3
       promise-retry: 2.0.1
       socks-proxy-agent: 7.0.0
-      ssri: 9.0.1
+      ssri: 10.0.6
     transitivePeerDependencies:
-      - bluebird
       - supports-color
 
   makeerror@1.0.12:
@@ -20063,9 +20042,9 @@ snapshots:
     dependencies:
       minipass: 3.3.6
 
-  minipass-fetch@2.1.2:
+  minipass-fetch@3.0.5:
     dependencies:
-      minipass: 3.3.6
+      minipass: 7.1.2
       minipass-sized: 1.0.3
       minizlib: 2.1.2
     optionalDependencies:
@@ -20988,13 +20967,6 @@ snapshots:
 
   pretty-bytes@5.6.0: {}
 
-  pretty-format@28.1.3:
-    dependencies:
-      '@jest/schemas': 28.1.3
-      ansi-regex: 5.0.1
-      ansi-styles: 5.2.0
-      react-is: 18.2.0
-
   pretty-format@29.7.0:
     dependencies:
       '@jest/schemas': 29.6.3
@@ -21260,8 +21232,6 @@ snapshots:
       estree-util-to-js: 2.0.0
       unified: 11.0.5
       vfile: 6.0.1
-
-  redis-commands@1.7.0: {}
 
   redis-errors@1.2.0: {}
 
@@ -21562,10 +21532,6 @@ snapshots:
   rfdc@1.4.1: {}
 
   rimraf@2.7.1:
-    dependencies:
-      glob: 7.2.3
-
-  rimraf@3.0.2:
     dependencies:
       glob: 7.2.3
 
@@ -22054,13 +22020,13 @@ snapshots:
 
   sprintf-js@1.1.2: {}
 
+  ssri@10.0.6:
+    dependencies:
+      minipass: 7.1.2
+
   ssri@6.0.2:
     dependencies:
       figgy-pudding: 3.5.2
-
-  ssri@9.0.1:
-    dependencies:
-      minipass: 3.3.6
 
   stack-utils@2.0.3:
     dependencies:
@@ -22462,6 +22428,8 @@ snapshots:
 
   ts-dedent@2.2.0: {}
 
+  ts-graphviz@1.8.2: {}
+
   ts-interface-checker@0.1.13: {}
 
   ts-is-defined@1.0.0:
@@ -22701,15 +22669,15 @@ snapshots:
     dependencies:
       unique-slug: 2.0.2
 
-  unique-filename@2.0.1:
+  unique-filename@3.0.0:
     dependencies:
-      unique-slug: 3.0.0
+      unique-slug: 4.0.0
 
   unique-slug@2.0.2:
     dependencies:
       imurmurhash: 0.1.4
 
-  unique-slug@3.0.0:
+  unique-slug@4.0.0:
     dependencies:
       imurmurhash: 0.1.4
 

@@ -1,7 +1,7 @@
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { CachePolicy, GraphQLRequestMetrics, Logger, SchemaHash } from 'apollo-server-types';
 import { getOperationAST, print, printSchema } from 'graphql';
-import { ApolloGateway } from '@apollo/gateway';
+import type { ApolloGateway } from '@apollo/gateway';
 import { getDocumentString, Plugin } from '@envelop/core';
 import { newCachePolicy } from './new-cache-policy.js';
 

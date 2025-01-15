@@ -7,9 +7,9 @@ export type BuildRedisOperationResultCacheKey = (responseId: string) => string;
 export type RedisCacheParameter = {
   /**
    * Redis instance
-   * @see Redis.Redis https://github.com/luin/ioredis
+   * @see Redis https://github.com/luin/ioredis
    */
-  redis: Redis.Redis;
+  redis: Redis;
   /**
    * Customize how the cache entity id is built.
    * By default the typename is concatenated with the id e.g. `User:1`
