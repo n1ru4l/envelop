@@ -78,7 +78,7 @@ export function PluginsPage() {
           className: `max-w-[3.75rem] ${plugin.className}`,
         },
         weeklyNPMDownloads: plugin.weeklyNPMDownloads,
-      })),
+      })) || [],
     [plugins],
   );
 
