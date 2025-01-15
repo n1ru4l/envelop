@@ -60,7 +60,7 @@
     "@graphql-tools/schema": "10.0.16",
     "apollo-datasource": "3.3.2",
     "apollo-server-caching": "3.3.0",
-    "graphql": "16.8.1",
+    "graphql": "16.10.0",
     "typescript": "5.7.3"
   },
   "publishConfig": {
