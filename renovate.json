@@ -26,7 +26,8 @@
         "next",
         "@whatwg-node/*",
         "@graphql-tools/*",
-        "graphql-jit"
+        "graphql-jit",
+        "graphql"
       ],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
