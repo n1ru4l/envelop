@@ -1,5 +1,16 @@
 # @envelop/apollo-federation
 
+## 5.0.1
+
+### Patch Changes
+
+- [#1384](https://github.com/n1ru4l/envelop/pull/1384)
+  [`ed8c444`](https://github.com/n1ru4l/envelop/commit/ed8c444ae25cc5307a0aa08c67aa199b65d15586)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Removed dependency
+    [`@apollo/gateway@^0.54.0` ↗︎](https://www.npmjs.com/package/@apollo/gateway/v/0.54.0) (from
+    `peerDependencies`)
+
 ## 5.0.0
 
 ### Major Changes
