@@ -34,7 +34,7 @@
     "@types/benchmark": "2.1.5",
     "@types/jest": "29.5.14",
     "@types/k6": "0.54.2",
-    "@types/node": "22.10.7",
+    "@types/node": "22.10.9",
     "@typescript-eslint/eslint-plugin": "8.21.0",
     "@typescript-eslint/parser": "8.21.0",
     "bob-the-bundler": "7.0.1",
