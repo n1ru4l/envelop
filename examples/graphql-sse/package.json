@@ -15,8 +15,8 @@
     "graphql-sse": "^2.0.0"
   },
   "devDependencies": {
-    "@types/node": "22.10.9",
-    "@types/ws": "8.5.13",
+    "@types/node": "22.10.10",
+    "@types/ws": "8.5.14",
     "ts-node": "10.9.2",
     "typescript": "5.7.3"
   }
