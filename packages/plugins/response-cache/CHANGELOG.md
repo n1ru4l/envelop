@@ -1,5 +1,14 @@
 # @envelop/response-cache
 
+## 6.3.0
+
+### Minor Changes
+
+- [#2392](https://github.com/n1ru4l/envelop/pull/2392)
+  [`7882ffb`](https://github.com/n1ru4l/envelop/commit/7882ffb5fd60ecb7dd5c1a291d6f7d619bdd2a23)
+  Thanks [@ardatan](https://github.com/ardatan)! - New `onTtl` hook to manipulate TTL of the cached
+  response
+
 ## 6.2.5
 
 ### Patch Changes
