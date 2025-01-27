@@ -695,6 +695,59 @@ const getEnveloped = envelop({
 })
 ```
 
+### Manipulate the calculated TTL
+
+If you have a some kind of custom logic, that should be used to calculate the TTL for a specific
+reason. The following example tracks the `Cache-Control` header from a remote server and uses it to
+calculate the TTL.
+
+```ts
+const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
+  plugins: [
+    useSchema(
+      makeExecutableSchema({
+        typeDefs: /* GraphQL */ `
+          type Query {
+            dataFromRemote: String
+          }
+        `,
+        resolvers: {
+          Query: {
+            dataFromRemote: async (_, __, context) => {
+              const res = await fetch('https://api.example.com/data')
+              const cacheControlHeader = res.headers.get('Cache-Control')
+              if (cacheControlHeader) {
+                const maxAgeInSeconds = cacheControlHeader.match(/max-age=(\d+)/)
+                if (maxAgeInSeconds) {
+                  const ttl = parseInt(maxAgeInSeconds[1]) * 1000
+                  if (context.ttl == null || ttl < context.ttl) {
+                    context.ttl = ttl
+                  }
+                }
+              }
+              return res.text()
+            }
+          }
+        }
+      })
+    ),
+    useResponseCache({
+      session: () => null,
+      onTtl({ ttl, context }) {
+        if (context.ttl != null && context.ttl < ttl) {
+          return context.ttl
+        }
+        return ttl
+      }
+    })
+  ]
+})
+```
+
 ### Expose cache metadata via extensions
 
 For debugging or monitoring it might be useful to know whether a response got served from the cache
