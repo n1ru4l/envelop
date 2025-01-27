@@ -29,6 +29,7 @@ import {
   getDirective,
   MapperKind,
   mapSchema,
+  MaybePromise,
   memoize1,
   memoize4,
   mergeIncrementalResult,
@@ -51,7 +52,7 @@ export type BuildResponseCacheKeyFunction = (params: {
   sessionId: Maybe<string>;
   /** GraphQL Context */
   context: ExecutionArgs['contextValue'];
-}) => Promise<string>;
+}) => MaybePromise<string>;
 
 export type GetDocumentStringFunction = (executionArgs: ExecutionArgs) => string;
 
@@ -147,7 +148,16 @@ export type UseResponseCacheParameter<PluginContext extends Record<string, any> 
    * Use this function to customize the behavior, such as caching results that have an EnvelopError.
    */
   shouldCacheResult?: ShouldCacheResultFunction;
+  /**
+   * Hook that when TTL is calculated, allows to modify the TTL value.
+   */
+  onTtl?: ResponseCacheOnTtlFunction<PluginContext>;
 };
+
+export type ResponseCacheOnTtlFunction<PluginContext> = (payload: {
+  ttl: number;
+  context: PluginContext;
+}) => number;
 
 /**
  * Default function used for building the response cache key.
@@ -306,6 +316,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   buildResponseCacheKey = defaultBuildResponseCacheKey,
   getDocumentString = defaultGetDocumentString,
   shouldCacheResult = defaultShouldCacheResult,
+  onTtl,
   includeExtensionMetadata = typeof process !== 'undefined'
     ? // eslint-disable-next-line dot-notation
       process.env['NODE_ENV'] === 'development' || !!process.env['DEBUG']
@@ -562,7 +573,13 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         }
 
         // we only use the global ttl if no currentTtl has been determined.
-        const finalTtl = currentTtl ?? globalTtl;
+        let finalTtl = currentTtl ?? globalTtl;
+        if (onTtl) {
+          finalTtl = onTtl({
+            ttl: finalTtl,
+            context: onExecuteParams.args.contextValue,
+          });
+        }
 
         if (skip || !shouldCacheResult({ cacheKey, result }) || finalTtl === 0) {
           if (includeExtensionMetadata) {

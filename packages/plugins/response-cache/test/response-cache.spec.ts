@@ -19,6 +19,7 @@ import {
   cacheControlDirective,
   createInMemoryCache,
   defaultBuildResponseCacheKey,
+  ResponseCacheOnTtlFunction,
   useResponseCache,
 } from '../src/index.js';
 
@@ -4228,5 +4229,61 @@ it('correctly remove cache keys from incremental delivery result', async () => {
         },
       ],
     },
+  });
+});
+
+it('manipulates the TTL', async () => {
+  const schema = makeExecutableSchema({
+    typeDefs: /* GraphQL */ `
+      type Query {
+        foo: String
+      }
+    `,
+    resolvers: {
+      Query: {
+        foo: () => 'bar',
+      },
+    },
+  });
+  const expectedFinalTtl = 5000;
+  const onTtlOriginal: ResponseCacheOnTtlFunction<unknown> = () => expectedFinalTtl;
+  const onTtl = jest.fn(onTtlOriginal);
+  const testkit = createTestkit(
+    [
+      useResponseCache({
+        session: () => null,
+        ttl: 1000,
+        ttlPerSchemaCoordinate: { 'Query.foo': 2000 },
+        includeExtensionMetadata: true,
+        onTtl,
+      }),
+    ],
+    schema,
+  );
+
+  const operation = /* GraphQL */ `
+    query {
+      foo
+    }
+  `;
+
+  const context = {};
+
+  const result = await testkit.execute(operation, {}, context);
+  expect(result).toEqual({
+    data: {
+      foo: 'bar',
+    },
+    extensions: {
+      responseCache: {
+        didCache: true,
+        hit: false,
+        ttl: expectedFinalTtl,
+      },
+    },
+  });
+  expect(onTtl).toHaveBeenCalledWith({
+    ttl: 2000,
+    context,
   });
 });
