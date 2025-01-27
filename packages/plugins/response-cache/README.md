@@ -695,6 +695,63 @@ const getEnveloped = envelop({
 })
 ```
 
+### Manipulate the calculated TTL
+
+If you have a some kind of custom logic, that should be used to calculate the TTL for a specific
+reason. The following example tracks the `Cache-Control` header from a remote server and uses it to
+calculate the TTL.
+
+```ts
+const ttlByContext = new WeakMap()
+
+const getEnveloped = envelop({
+  parse,
+  validate,
+  execute,
+  subscribe,
+  plugins: [
+    useSchema(
+      makeExecutableSchema({
+        typeDefs: /* GraphQL */ `
+          type Query {
+            dataFromRemote: String
+          }
+        `,
+        resolvers: {
+          Query: {
+            dataFromRemote: async (_, __, context) => {
+              const res = await fetch('https://api.example.com/data')
+              const cacheControlHeader = res.headers.get('Cache-Control')
+              if (cacheControlHeader) {
+                const maxAgeInSeconds = cacheControlHeader.match(/max-age=(\d+)/)
+                if (maxAgeInSeconds) {
+                  const ttl = parseInt(maxAgeInSeconds[1]) * 1000
+                  let existingTtl = ttlByContext.get(context)
+                  if (existingTtl == null || ttl < existingTtl) {
+                    ttlByContext.set(context, ttl)
+                  }
+                }
+              }
+              return res.text()
+            }
+          }
+        }
+      })
+    ),
+    useResponseCache({
+      session: () => null,
+      onTtl({ ttl, context }) {
+        const ttlFromContext = ttlByContext.get(context)
+        if (ttlFromContext != null && ttlFromContext < ttl) {
+          return ttlFromContext
+        }
+        return ttl
+      }
+    })
+  ]
+})
+```
+
 ### Expose cache metadata via extensions
 
 For debugging or monitoring it might be useful to know whether a response got served from the cache
