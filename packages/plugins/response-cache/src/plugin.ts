@@ -29,6 +29,7 @@ import {
   getDirective,
   MapperKind,
   mapSchema,
+  MaybePromise,
   memoize1,
   memoize4,
   mergeIncrementalResult,
@@ -51,7 +52,7 @@ export type BuildResponseCacheKeyFunction = (params: {
   sessionId: Maybe<string>;
   /** GraphQL Context */
   context: ExecutionArgs['contextValue'];
-}) => Promise<string>;
+}) => MaybePromise<string>;
 
 export type GetDocumentStringFunction = (executionArgs: ExecutionArgs) => string;
 
@@ -147,7 +148,18 @@ export type UseResponseCacheParameter<PluginContext extends Record<string, any> 
    * Use this function to customize the behavior, such as caching results that have an EnvelopError.
    */
   shouldCacheResult?: ShouldCacheResultFunction;
+  /**
+   * Hook that when TTL is calculated, allows to modify the TTL value.
+   */
+  onTtl?: ResponseCacheOnTtlFunction<PluginContext>;
 };
+
+export type ResponseCacheOnTtlFunction<PluginContext> = (payload: {
+  ttl: number;
+  result: ExecutionResult<ObjMap<unknown>, ObjMap<unknown>>;
+  cacheKey: string;
+  context: PluginContext;
+}) => number;
 
 /**
  * Default function used for building the response cache key.
@@ -292,6 +304,14 @@ type CacheControlDirective = {
   scope?: 'PUBLIC' | 'PRIVATE';
 };
 
+export interface ResponseCachePluginExtensions {
+  http?: {
+    headers?: Record<string, string>;
+  };
+  responseCache: ResponseCacheExtensions;
+  [key: string]: unknown;
+}
+
 export function useResponseCache<PluginContext extends Record<string, any> = {}>({
   cache = createInMemoryCache(),
   ttl: globalTtl = Infinity,
@@ -306,6 +326,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
   buildResponseCacheKey = defaultBuildResponseCacheKey,
   getDocumentString = defaultGetDocumentString,
   shouldCacheResult = defaultShouldCacheResult,
+  onTtl,
   includeExtensionMetadata = typeof process !== 'undefined'
     ? // eslint-disable-next-line dot-notation
       process.env['NODE_ENV'] === 'development' || !!process.env['DEBUG']
@@ -562,7 +583,16 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         }
 
         // we only use the global ttl if no currentTtl has been determined.
-        const finalTtl = currentTtl ?? globalTtl;
+        let finalTtl = currentTtl ?? globalTtl;
+        if (onTtl) {
+          finalTtl =
+            onTtl({
+              ttl: finalTtl,
+              result,
+              cacheKey,
+              context: onExecuteParams.args.contextValue,
+            }) || finalTtl;
+        }
 
         if (skip || !shouldCacheResult({ cacheKey, result }) || finalTtl === 0) {
           if (includeExtensionMetadata) {
@@ -570,11 +600,19 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           }
           return;
         }
-
         cacheInstance.set(cacheKey, result, identifier.values(), finalTtl);
         if (includeExtensionMetadata) {
           setResult(resultWithMetadata(result, { hit: false, didCache: true, ttl: finalTtl }));
         }
+
+        const extensions = (result.extensions ||= {}) as ResponseCachePluginExtensions;
+        const httpExtensions = (extensions.http ||= {});
+        const headers = (httpExtensions.headers ||= {});
+        const now = new Date();
+        const expires = new Date(now.getTime() + finalTtl);
+        headers.ETag = cacheKey;
+        headers['Last-Modified'] = now.toUTCString();
+        headers.Expires = expires.toUTCString();
       }
 
       return setExecutor({
