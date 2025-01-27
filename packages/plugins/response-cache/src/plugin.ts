@@ -585,13 +585,12 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         // we only use the global ttl if no currentTtl has been determined.
         let finalTtl = currentTtl ?? globalTtl;
         if (onTtl) {
-          finalTtl =
-            onTtl({
-              ttl: finalTtl,
-              result,
-              cacheKey,
-              context: onExecuteParams.args.contextValue,
-            }) || finalTtl;
+          finalTtl = onTtl({
+            ttl: finalTtl,
+            result,
+            cacheKey,
+            context: onExecuteParams.args.contextValue,
+          });
         }
 
         if (skip || !shouldCacheResult({ cacheKey, result }) || finalTtl === 0) {
@@ -604,15 +603,6 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         if (includeExtensionMetadata) {
           setResult(resultWithMetadata(result, { hit: false, didCache: true, ttl: finalTtl }));
         }
-
-        const extensions = (result.extensions ||= {}) as ResponseCachePluginExtensions;
-        const httpExtensions = (extensions.http ||= {});
-        const headers = (httpExtensions.headers ||= {});
-        const now = new Date();
-        const expires = new Date(now.getTime() + finalTtl);
-        headers.ETag = cacheKey;
-        headers['Last-Modified'] = now.toUTCString();
-        headers.Expires = expires.toUTCString();
       }
 
       return setExecutor({
