@@ -304,14 +304,6 @@ type CacheControlDirective = {
   scope?: 'PUBLIC' | 'PRIVATE';
 };
 
-export interface ResponseCachePluginExtensions {
-  http?: {
-    headers?: Record<string, string>;
-  };
-  responseCache: ResponseCacheExtensions;
-  [key: string]: unknown;
-}
-
 export function useResponseCache<PluginContext extends Record<string, any> = {}>({
   cache = createInMemoryCache(),
   ttl: globalTtl = Infinity,
@@ -599,6 +591,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
           }
           return;
         }
+
         cacheInstance.set(cacheKey, result, identifier.values(), finalTtl);
         if (includeExtensionMetadata) {
           setResult(resultWithMetadata(result, { hit: false, didCache: true, ttl: finalTtl }));
