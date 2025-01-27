@@ -156,8 +156,6 @@ export type UseResponseCacheParameter<PluginContext extends Record<string, any> 
 
 export type ResponseCacheOnTtlFunction<PluginContext> = (payload: {
   ttl: number;
-  result: ExecutionResult<ObjMap<unknown>, ObjMap<unknown>>;
-  cacheKey: string;
   context: PluginContext;
 }) => number;
 
@@ -579,8 +577,6 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         if (onTtl) {
           finalTtl = onTtl({
             ttl: finalTtl,
-            result,
-            cacheKey,
             context: onExecuteParams.args.contextValue,
           });
         }
