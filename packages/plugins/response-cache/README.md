@@ -702,8 +702,6 @@ reason. The following example tracks the `Cache-Control` header from a remote se
 calculate the TTL.
 
 ```ts
-const ttlByContext = new WeakMap()
-
 const getEnveloped = envelop({
   parse,
   validate,
@@ -726,9 +724,8 @@ const getEnveloped = envelop({
                 const maxAgeInSeconds = cacheControlHeader.match(/max-age=(\d+)/)
                 if (maxAgeInSeconds) {
                   const ttl = parseInt(maxAgeInSeconds[1]) * 1000
-                  let existingTtl = ttlByContext.get(context)
-                  if (existingTtl == null || ttl < existingTtl) {
-                    ttlByContext.set(context, ttl)
+                  if (context.ttl == null || ttl < context.ttl) {
+                    context.ttl = ttl
                   }
                 }
               }
@@ -741,9 +738,8 @@ const getEnveloped = envelop({
     useResponseCache({
       session: () => null,
       onTtl({ ttl, context }) {
-        const ttlFromContext = ttlByContext.get(context)
-        if (ttlFromContext != null && ttlFromContext < ttl) {
-          return ttlFromContext
+        if (context.ttl != null && context.ttl < ttl) {
+          return context.ttl
         }
         return ttl
       }
