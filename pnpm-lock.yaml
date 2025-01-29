@@ -227,8 +227,8 @@ importers:
         version: 0.7.3
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: 4.20250124.3
-        version: 4.20250124.3
+        specifier: 4.20250129.0
+        version: 4.20250129.0
       '@types/node':
         specifier: 22.12.0
         version: 22.12.0
@@ -2621,8 +2621,8 @@ packages:
   '@cloudflare/workers-types@4.20250109.0':
     resolution: {integrity: sha512-Y1zgSaEOOevl9ORpzgMcm4j535p3nK2lrblHHvYM2yxR50SBKGh+wvkRFAIxWRfjUGZEU+Fp6923EGioDBbobA==}
 
-  '@cloudflare/workers-types@4.20250124.3':
-    resolution: {integrity: sha512-WRZ+ol4RnMroF3tc7en6w8b0MqLrmGnLr2LIhG8EWqIoy8MeYk5uhyNXMZ0WPBhwkRtDcTRwOt61xwnJrthskA==}
+  '@cloudflare/workers-types@4.20250129.0':
+    resolution: {integrity: sha512-H7g/sDB9GaV+fIPf3utNEYncFhryIvDThiBbfZtu0bZmVXcVd9ApP3OMqUYhNV8MShWQASvgWletKKBZGT9/oA==}
 
   '@colors/colors@1.5.0':
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
@@ -12648,7 +12648,7 @@ snapshots:
 
   '@cloudflare/workers-types@4.20250109.0': {}
 
-  '@cloudflare/workers-types@4.20250124.3': {}
+  '@cloudflare/workers-types@4.20250129.0': {}
 
   '@colors/colors@1.5.0': {}
 
@@ -13541,7 +13541,7 @@ snapshots:
 
   '@miniflare/shared-test-environment@2.14.1':
     dependencies:
-      '@cloudflare/workers-types': 4.20250124.3
+      '@cloudflare/workers-types': 4.20250129.0
       '@miniflare/cache': 2.14.1
       '@miniflare/core': 2.14.1
       '@miniflare/d1': 2.14.1
