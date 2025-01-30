@@ -2,7 +2,7 @@ import { StaticImageData } from 'next/image';
 import apolloIcon from '../../public/assets/logos/apollo.svg';
 import assetsIcon from '../../public/assets/logos/assets.png';
 import auth0Icon from '../../public/assets/logos/auth0.png';
-import datadogIcon from '../../public/assets/logos/datadog.png';
+import datadogIcon from '../../public/assets/logos/datadog.svg';
 import genericAuthIcon from '../../public/assets/logos/generic_auth.png';
 import graphqlArmorIcon from '../../public/assets/logos/graphql-armor.svg';
 import graphqlIcon from '../../public/assets/logos/graphql.png';
