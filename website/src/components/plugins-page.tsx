@@ -108,35 +108,50 @@ export function PluginsPage({ className }: { className?: string }) {
   );
 
   return (
-    <MarketplaceSearch
-      title="Explore Plugins"
-      tagsFilter={ALL_TAGS}
-      placeholder="Find plugins..."
-      primaryList={{
-        title: 'Trending',
-        items: trendingItems,
-        placeholder: '0 items',
-        pagination: 10,
-      }}
-      secondaryList={{
-        title: 'Recently Updated',
-        items: recentlyUpdatedItems,
-        placeholder: '0 items',
-        pagination: 10,
-      }}
-      queryList={{
-        title: 'Search Results',
-        items: marketplaceItems,
-        placeholder: 'No results for {query}',
-        pagination: 10,
-      }}
-      className={cn(
-        className,
-        // hacky, but we'd have to update all logos and this
-        // makes the current ones look okay
-        // - only .png logos have padding, because .svg logos have background & correct inner padding
-        '[&_a>div:has(>img[src$=".png"])]:p-2 [&_a_img]:ring-transparent [&_a>div:has(>img)]:ring-[rgb(from_var(--fg)_r_g_b_/_0.1)] [&_a>div:has(>img)]:ring-inset [&_a>div:has(>img)]:ring-1',
-      )}
-    />
+    <>
+      <MarketplaceSearch
+        title="Explore Plugins"
+        tagsFilter={ALL_TAGS}
+        placeholder="Find plugins..."
+        primaryList={{
+          title: 'Trending',
+          items: trendingItems,
+          placeholder: '0 items',
+          pagination: 10,
+        }}
+        secondaryList={{
+          title: 'Recently Updated',
+          items: recentlyUpdatedItems,
+          placeholder: '0 items',
+          pagination: 10,
+        }}
+        queryList={{
+          title: 'Search Results',
+          items: marketplaceItems,
+          placeholder: 'No results for {query}',
+          pagination: 10,
+        }}
+        className={cn(
+          className,
+          // hacky, but we'd have to update all logos and this
+          // makes the current ones look okay
+          // - only .png logos have padding, because .svg logos have background & correct inner padding
+          '[&_a>div:has(>img[src$=".png"])]:p-2 [&_a_img]:ring-transparent [&_a>div:has(>img)]:ring-[rgb(from_var(--fg)_r_g_b_/_0.1)] [&_a>div:has(>img)]:ring-inset [&_a>div:has(>img)]:ring-1',
+        )}
+      />
+      <style href="envelop-plugin-logos">
+        {
+          /* css */ `
+          @media (prefers-color-scheme: dark) {
+            .MarketplaceSearch img[src*=rate_limiter],
+            .MarketplaceSearch img[src*=persisted_operations],
+            .MarketplaceSearch img[src*=assets] {
+                filter: invert(1);
+            }
+          }
+        `
+        }
+      </style>
+    </>
   );
 }

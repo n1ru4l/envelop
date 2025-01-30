@@ -15,7 +15,7 @@ import prometheusIcon from '../../public/assets/logos/prometheus.png';
 import rateLimiterIcon from '../../public/assets/logos/rate_limiter.png';
 import sentryIcon from '../../public/assets/logos/sentry.svg';
 import envelopIcon from '../../public/logo.png';
-import hiveIcon from 'https://the-guild.dev/static/shared-logos/products/hive.svg';
+import hiveIcon from './hive-plugins-logo-green.svg';
 
 export const ALL_TAGS = [
   'tracing',
