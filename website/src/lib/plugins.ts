@@ -13,7 +13,7 @@ import openTelemetryIcon from '../../public/assets/logos/opentelemetry.png';
 import persistedOperationsIcon from '../../public/assets/logos/persisted_operations.png';
 import prometheusIcon from '../../public/assets/logos/prometheus.png';
 import rateLimiterIcon from '../../public/assets/logos/rate_limiter.png';
-import sentryIcon from '../../public/assets/logos/sentry.png';
+import sentryIcon from '../../public/assets/logos/sentry.svg';
 import envelopIcon from '../../public/logo.png';
 import hiveIcon from 'https://the-guild.dev/static/shared-logos/products/hive.svg';
 
