@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { StaticImageData } from 'next/image';
 import { compareDesc } from 'date-fns';
+import { useData } from 'nextra/hooks';
 import { ALL_TAGS, PLUGINS } from '@/lib/plugins';
-import { fetchPackageInfo, MarketplaceSearch, useData } from '@theguild/components';
+import { fetchPackageInfo, MarketplaceSearch } from '@theguild/components';
 
 type Plugin = {
   title: string;
@@ -44,7 +45,13 @@ export const getStaticProps = async () => {
         };
       },
     ),
-  );
+  ).catch(err => {
+    console.error('failed to fetch plugins', err);
+    if (process.env.NODE_ENV === 'development') {
+      return []; // flakily fails on HMR
+    }
+    throw err;
+  });
 
   return {
     props: {
