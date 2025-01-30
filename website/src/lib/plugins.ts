@@ -1,5 +1,5 @@
 import { StaticImageData } from 'next/image';
-import apolloIcon from '../../public/assets/logos/apollo.png';
+import apolloIcon from '../../public/assets/logos/apollo.svg';
 import assetsIcon from '../../public/assets/logos/assets.png';
 import auth0Icon from '../../public/assets/logos/auth0.png';
 import datadogIcon from '../../public/assets/logos/datadog.png';
