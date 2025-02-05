@@ -68,12 +68,14 @@ describe('execute', () => {
           definitions: expect.any(Array),
         }),
       },
+      data: expect.objectContaining({ forOperation: expect.any(Object) }),
     });
 
     expect(spiedPlugin.spies.afterExecute).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.afterExecute).toHaveBeenCalledWith({
       args: expect.any(Object),
       setResult: expect.any(Function),
+      data: { forOperation: {} },
       result: {
         data: {
           me: {

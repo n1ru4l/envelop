@@ -12,10 +12,12 @@ describe('contextFactory', () => {
       context: expect.any(Object),
       extendContext: expect.any(Function),
       breakContextBuilding: expect.any(Function),
+      data: { forOperation: {} },
     });
 
     expect(spiedPlugin.spies.afterContextBuilding).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.afterContextBuilding).toHaveBeenCalledWith({
+      data: { forOperation: {} },
       context: expect.any(Object),
       extendContext: expect.any(Function),
     });
@@ -27,6 +29,7 @@ describe('contextFactory', () => {
     await teskit.execute(query, {}, { test: true });
     expect(spiedPlugin.spies.beforeContextBuilding).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.beforeContextBuilding).toHaveBeenCalledWith({
+      data: { forOperation: {} },
       context: expect.objectContaining({
         test: true,
       }),
@@ -57,6 +60,7 @@ describe('contextFactory', () => {
 
     await teskit.execute(query, {}, {});
     expect(afterContextSpy).toHaveBeenCalledWith({
+      data: { forOperation: {} },
       context: expect.objectContaining({
         test: true,
       }),

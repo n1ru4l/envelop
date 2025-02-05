@@ -146,6 +146,7 @@ export function handleStreamOrSingleExecutionResult<ContextType = DefaultContext
     args: payload.args,
     result: payload.result,
     setResult: payload.setResult,
+    data: payload.data,
   });
 
   return undefined;

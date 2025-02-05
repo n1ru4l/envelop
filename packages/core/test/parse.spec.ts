@@ -18,6 +18,7 @@ describe('parse', () => {
       parseFn: parse,
       setParseFn: expect.any(Function),
       setParsedDocument: expect.any(Function),
+      data: { forOperation: {} },
     });
 
     expect(spiedPlugin.spies.afterParse).toHaveBeenCalledTimes(1);
@@ -26,6 +27,7 @@ describe('parse', () => {
       extendContext: expect.any(Function),
       result: expect.any(Object),
       replaceParseResult: expect.any(Function),
+      data: { forOperation: {} },
     });
   });
 
@@ -67,6 +69,7 @@ describe('parse', () => {
     expect(replacementFn).toHaveBeenCalledTimes(0);
     expect(afterFn).toHaveBeenCalledTimes(1);
     expect(afterFn).toHaveBeenCalledWith({
+      data: { forOperation: {} },
       context: expect.any(Object),
       extendContext: expect.any(Function),
       result: fakeRes,

@@ -23,10 +23,12 @@ describe('validate', () => {
       setResult: expect.any(Function),
       setValidationFn: expect.any(Function),
       validateFn: validate,
+      data: { forOperation: {} },
     });
 
     expect(spiedPlugin.spies.afterValidate).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.afterValidate).toHaveBeenCalledWith({
+      data: { forOperation: {} },
       context: expect.any(Object),
       extendContext: expect.any(Function),
       result: [],
@@ -96,6 +98,7 @@ describe('validate', () => {
     await teskit.execute(query);
     expect(after).toHaveBeenCalledTimes(1);
     expect(after).toHaveBeenCalledWith({
+      data: { forOperation: {} },
       valid: false,
       result: [e],
       setResult: expect.any(Function),
