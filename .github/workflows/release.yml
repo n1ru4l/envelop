@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   stable:
-    uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@v1-corepack
+    uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@v1
     with:
       releaseScript: release
     secrets:
