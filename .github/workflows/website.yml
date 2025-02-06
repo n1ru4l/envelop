@@ -23,7 +23,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: the-guild-org/shared-config/setup@v1
+      - uses: the-guild-org/shared-config/setup@v1-corepack
         name: setup env
         with:
           node-version-file: '.node-version'
