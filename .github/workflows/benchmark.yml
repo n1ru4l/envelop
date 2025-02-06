@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup env
-        uses: the-guild-org/shared-config/setup@v1
+        uses: the-guild-org/shared-config/setup@v1-corepack
         with:
           node-version-file: '.node-version'
 
