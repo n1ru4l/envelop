@@ -10,3 +10,4 @@ examples/sveltekit
 pnpm-lock.yaml
 .husky
 .changeset/
+CHANGELOG.md
