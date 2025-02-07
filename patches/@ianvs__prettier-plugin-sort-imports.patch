@@ -1,0 +1,13 @@
+diff --git a/lib/src/preprocessors/preprocessor.js b/lib/src/preprocessors/preprocessor.js
+index 67f6c45a4ca2ae0796abc5af442d145ef9b5c0c2..63ac2ec13841ca0ab0c4e651499f89a8b98af3f4 100644
+--- a/lib/src/preprocessors/preprocessor.js
++++ b/lib/src/preprocessors/preprocessor.js
+@@ -26,7 +26,7 @@ function preprocessor(code, options) {
+         ast = (0, parser_1.parse)(code, parserOptions);
+     }
+     catch (_) {
+-        console.error(' [error] [prettier-plugin-sort-imports]: import sorting aborted due to babel parsing error.');
++        console.warn(' [warn] [prettier-plugin-sort-imports]: import sorting aborted due to babel parsing error.');
+         return code;
+     }
+     const directives = ast.program.directives;
