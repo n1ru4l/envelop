@@ -6,7 +6,7 @@
   "packageManager": "pnpm@10.2.1",
   "engines": {
     "node": ">=18.0.0",
-    "pnpm": ">=9.1.0"
+    "pnpm": ">=10.2.1"
   },
   "scripts": {
     "build": "bob build",
@@ -54,6 +54,7 @@
     "jest": "29.7.0",
     "lint-staged": "15.4.3",
     "prettier": "3.4.2",
+    "prettier-plugin-pkg": "0.18.1",
     "prettier-plugin-sh": "0.14.0",
     "ts-jest": "29.2.5",
     "ts-node": "10.9.2",

@@ -106,6 +106,9 @@ importers:
       prettier:
         specifier: 3.4.2
         version: 3.4.2
+      prettier-plugin-pkg:
+        specifier: 0.18.1
+        version: 0.18.1(prettier@3.4.2)
       prettier-plugin-sh:
         specifier: 0.14.0
         version: 0.14.0(prettier@3.4.2)
@@ -9168,11 +9171,11 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
-  prettier-plugin-pkg@0.18.0:
-    resolution: {integrity: sha512-cme+OUHj25cVj3HwGK6ek/GkCHhlhM1u/IYspOHYsFImaXMJCmjs8xeCcvLreD0HMX5QxObot+3TtQR3Bd2wHw==}
+  prettier-plugin-pkg@0.18.1:
+    resolution: {integrity: sha512-FuUxvsYZR/8rsLH8s/jbPQmgYvv0yxW8LoIHCy6+Q7p4FBjjdP3DNKx8fMTOsc0SlEB1skB4o1LcahRceIh87A==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
-      prettier: ^3.0.0
+      prettier: ^3.0.3
 
   prettier-plugin-sh@0.14.0:
     resolution: {integrity: sha512-hfXulj5+zEl/ulrO5kMuuTPKmXvOg0bnLHY1hKFNN/N+/903iZbNp8NyZBTsgI8dtkSgFfAEIQq0IQTyP1ZVFQ==}
@@ -14504,7 +14507,7 @@ snapshots:
     dependencies:
       '@ianvs/prettier-plugin-sort-imports': 4.3.1(prettier@3.4.2)
       prettier: 3.4.2
-      prettier-plugin-pkg: 0.18.0(prettier@3.4.2)
+      prettier-plugin-pkg: 0.18.1(prettier@3.4.2)
       prettier-plugin-sh: 0.14.0(prettier@3.4.2)
     transitivePeerDependencies:
       - '@vue/compiler-sfc'
@@ -20898,7 +20901,7 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prettier-plugin-pkg@0.18.0(prettier@3.4.2):
+  prettier-plugin-pkg@0.18.1(prettier@3.4.2):
     dependencies:
       prettier: 3.4.2
 
