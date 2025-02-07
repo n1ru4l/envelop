@@ -12,11 +12,11 @@
     "build": "bob build",
     "ci:lint": "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --config .eslintrc.json --ext .ts . --max-warnings 0 --output-file eslint_report.json --format json",
     "lint": "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --config .eslintrc.json --ext .ts . --max-warnings 0",
-    "lint:prettier": "prettier --cache --ignore-path .prettierignore --check .",
+    "lint:prettier": "prettier --ignore-path .prettierignore --check .",
     "loadtest:run": "pnpm run --filter @envelop/benchmark loadtest:run",
     "loadtest:start-server": "pnpm run --filter @envelop/benchmark loadtest:start-server",
     "prebuild": "rimraf packages/*/dist packages/plugins/*/dist",
-    "prettier": "prettier --cache --ignore-path .prettierignore --write --list-different .",
+    "prettier": "prettier --ignore-path .prettierignore --write --list-different .",
     "release": "pnpm build && changeset publish",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:ci": "jest --coverage",
@@ -75,6 +75,9 @@
       "esbuild": "^0.24.0",
       "graphql": "16.6.0",
       "estree-util-build-jsx": "3.0.1"
+    },
+    "patchedDependencies": {
+      "@ianvs/prettier-plugin-sort-imports": "patches/@ianvs__prettier-plugin-sort-imports.patch"
     }
   }
 }
