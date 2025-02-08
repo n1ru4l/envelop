@@ -1,7 +1,12 @@
-import type { DataSource } from 'apollo-datasource';
-import { InMemoryLRUCache } from 'apollo-server-caching';
-import type { KeyValueCache } from 'apollo-server-caching';
-import { Plugin } from '@envelop/core';
+import { InMemoryLRUCache, type KeyValueCache } from '@apollo/utils.keyvaluecache';
+import { isPromise, Plugin } from '@envelop/core';
+
+interface DataSource {
+  initialize?(config: {
+    context?: Record<string, any>;
+    cache?: KeyValueCache;
+  }): void | Promise<void>;
+}
 
 export interface ApolloDataSourcesConfig {
   dataSources(): {
@@ -16,19 +21,22 @@ export function useApolloDataSources(config: ApolloDataSourcesConfig): Plugin {
   return {
     async onExecute({ extendContext, args }) {
       const dataSources = config.dataSources();
-      const initializers: Array<void | Promise<void>> = [];
+      const initializers: Array<Promise<void>> = [];
       for (const dataSource of Object.values(dataSources)) {
         if (dataSource.initialize) {
-          initializers.push(
-            dataSource.initialize({
-              context: args.contextValue,
-              cache,
-            }),
-          );
+          const init$ = dataSource.initialize({
+            context: args.contextValue,
+            cache,
+          });
+          if (isPromise(init$)) {
+            initializers.push(init$);
+          }
         }
       }
 
-      await Promise.all(initializers);
+      if (initializers.length) {
+        await Promise.all(initializers);
+      }
 
       if ('dataSources' in args.contextValue) {
         throw new Error(

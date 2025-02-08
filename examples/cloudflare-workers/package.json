@@ -13,6 +13,7 @@
     "@graphql-tools/schema": "10.0.16",
     "graphql": "16.8.1",
     "graphql-helix": "1.13.0",
+    "tslib": "2.8.1",
     "worktop": "0.7.3"
   },
   "devDependencies": {
