@@ -1,19 +1,66 @@
-import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
-import { CachePolicy, GraphQLRequestMetrics, Logger, SchemaHash } from 'apollo-server-types';
-import { getOperationAST, print, printSchema } from 'graphql';
-import type { ApolloGateway } from '@apollo/gateway';
+import {
+  DocumentNode,
+  ExecutionResult,
+  getOperationAST,
+  GraphQLSchema,
+  OperationDefinitionNode,
+  print,
+  printSchema,
+} from 'graphql';
+import { InMemoryLRUCache, type KeyValueCache } from '@apollo/utils.keyvaluecache';
 import { getDocumentString, Plugin } from '@envelop/core';
-import { newCachePolicy } from './new-cache-policy.js';
+import { CachePolicy, newCachePolicy } from './new-cache-policy.js';
 
-export interface ApolloFederationPluginConfig {
-  gateway: ApolloGateway;
-  metrics?: GraphQLRequestMetrics;
+interface GatewayLogger {
+  warn(message: unknown): void;
+  debug(message: unknown): void;
+  info(message: unknown): void;
+  error(message: unknown): void;
+}
+
+type GatewayExecutor = (args: {
+  document: DocumentNode;
+  request: {
+    query: string;
+    operationName?: string;
+    variables?: Record<string, any>;
+  };
+  overallCachePolicy: CachePolicy;
+  operationName: string | null;
+  cache: KeyValueCache;
+  context: Record<string, any>;
+  queryHash: string;
+  logger: GatewayLogger;
+  metrics: any;
+  source: string;
+  operation: OperationDefinitionNode;
+  schema: GraphQLSchema;
+  schemaHash: any;
+}) => Promise<ExecutionResult>;
+
+interface ApolloFederationGateway {
+  schema?: GraphQLSchema;
+  executor: GatewayExecutor;
+  load(): Promise<{ schema: GraphQLSchema; executor: GatewayExecutor }>;
+  onSchemaLoadOrUpdate(
+    callback: (args: { apiSchema: GraphQLSchema; coreSupergraphSdl?: string }) => void,
+  ): void;
+}
+
+export interface ApolloFederationPluginConfig<TFederationGateway extends ApolloFederationGateway> {
+  gateway: TFederationGateway;
+  metrics?: unknown;
   cache?: KeyValueCache;
-  logger?: Logger;
+  logger?: GatewayLogger;
   overallCachePolicy?: CachePolicy;
 }
 
-export const useApolloFederation = (options: ApolloFederationPluginConfig): Plugin => {
+export const useApolloFederation = <
+  TFederationGateway extends ApolloFederationGateway,
+  TContext extends Record<string, any>,
+>(
+  options: ApolloFederationPluginConfig<TFederationGateway>,
+): Plugin<TContext> => {
   const {
     gateway,
     cache = new InMemoryLRUCache(),
@@ -21,7 +68,7 @@ export const useApolloFederation = (options: ApolloFederationPluginConfig): Plug
     metrics = Object.create(null),
     overallCachePolicy = newCachePolicy(),
   } = options;
-  let schemaHash: SchemaHash;
+  let schemaHash: any;
   return {
     onPluginInit({ setSchema }) {
       if (gateway.schema) {
@@ -34,7 +81,7 @@ export const useApolloFederation = (options: ApolloFederationPluginConfig): Plug
       }
       gateway.onSchemaLoadOrUpdate(({ apiSchema, coreSupergraphSdl = printSchema(apiSchema) }) => {
         setSchema(apiSchema);
-        schemaHash = (coreSupergraphSdl || printSchema(apiSchema)) as SchemaHash;
+        schemaHash = coreSupergraphSdl || printSchema(apiSchema);
       });
     },
     onExecute({ args, setExecuteFn }) {

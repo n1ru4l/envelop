@@ -1,5 +1,4 @@
-import type { DataSourceConfig } from 'apollo-datasource';
-import { InMemoryLRUCache } from 'apollo-server-caching';
+import { InMemoryLRUCache } from '@apollo/utils.keyvaluecache';
 import 'reflect-metadata';
 import { assertSingleExecutionValue, createTestkit } from '@envelop/testing';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -43,7 +42,7 @@ describe('useApolloDataSources', () => {
     expect(result.data).toBeDefined();
     expect(initialize).toHaveBeenCalledTimes(1);
 
-    const dataSourceConfig: DataSourceConfig<unknown> = initialize.mock.calls[0][0];
+    const dataSourceConfig = initialize.mock.calls[0][0];
 
     expect(dataSourceConfig.cache).toBeInstanceOf(InMemoryLRUCache);
     expect(dataSourceConfig.context).toEqual(
@@ -86,7 +85,7 @@ describe('useApolloDataSources', () => {
     expect(result.data).toBeDefined();
     expect(initialize).toHaveBeenCalledTimes(1);
 
-    const dataSourceConfig: DataSourceConfig<unknown> = initialize.mock.calls[0][0];
+    const dataSourceConfig = initialize.mock.calls[0][0];
 
     expect(dataSourceConfig.cache).toBe(cache);
   });

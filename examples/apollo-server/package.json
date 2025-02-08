@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@apollo/server": "^4.3.2",
-    "@apollo/server-plugin-landing-page-graphql-playground": "^4.0.0",
+    "@apollo/server-gateway-interface": "^1.1.1",
     "@envelop/core": "workspace:^",
     "@graphql-tools/schema": "10.0.16",
     "graphql": "16.8.1"

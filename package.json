@@ -79,6 +79,14 @@
     },
     "patchedDependencies": {
       "@ianvs/prettier-plugin-sort-imports": "patches/@ianvs__prettier-plugin-sort-imports.patch"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@contrast/fn-inspect",
+      "@newrelic/native-metrics",
+      "esbuild",
+      "protobufjs",
+      "sharp",
+      "type-graphql"
+    ]
   }
 }
