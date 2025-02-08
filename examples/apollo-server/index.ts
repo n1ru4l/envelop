@@ -57,10 +57,10 @@ class Gateway implements GatewayInterface {
 
   onSchemaLoadOrUpdate(callback: GatewaySchemaLoadOrUpdateCallback): GatewayUnsubscriber {
     this.schemaCallback = callback;
-    return () => { };
+    return () => {};
   }
 
-  async stop() { }
+  async stop() {}
 }
 
 const server = new ApolloServer({
