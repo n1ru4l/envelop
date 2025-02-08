@@ -171,9 +171,6 @@ importers:
       '@apollo/server':
         specifier: ^4.3.2
         version: 4.11.3(encoding@0.1.13)(graphql@16.6.0)
-      '@apollo/server-plugin-landing-page-graphql-playground':
-        specifier: ^4.0.0
-        version: 4.0.1(@apollo/server@4.11.3(encoding@0.1.13)(graphql@16.6.0))
       '@envelop/core':
         specifier: workspace:^
         version: link:../../packages/core/dist
@@ -781,6 +778,9 @@ importers:
       graphql:
         specifier: 16.6.0
         version: 16.6.0
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       typescript:
         specifier: 5.7.3
         version: 5.7.3
@@ -1157,7 +1157,7 @@ importers:
         specifier: 16.6.0
         version: 16.6.0
       newrelic:
-        specifier: ^11.0.0
+        specifier: 11.0.0
         version: 11.0.0
       typescript:
         specifier: 5.7.3
@@ -1694,13 +1694,6 @@ packages:
     resolution: {integrity: sha512-pGwCl/po6+rxRmDMFgozKQo2pbsSwE91TpsDBAOgf74CRDPXHHtM88wbwjab0wMMZh95QfR45GGyDIdhY24bkQ==}
     peerDependencies:
       graphql: 16.6.0
-
-  '@apollo/server-plugin-landing-page-graphql-playground@4.0.1':
-    resolution: {integrity: sha512-tWhQzD7DtiTO/wfbGvasryz7eJSuEh9XJHgRTMZI7+Wu/omylG5gH6K6ksg1Vccg8/Xuglfi2f1M5Nm/IlBBGw==}
-    engines: {node: '>=14.0'}
-    deprecated: The use of GraphQL Playground in Apollo Server was supported in previous versions, but this is no longer the case as of December 31, 2022. This package exists for v4 migration purposes only. We do not intend to resolve security issues or other bugs with this package if they arise, so please migrate away from this to [Apollo Server's default Explorer](https://www.apollographql.com/docs/apollo-server/api/plugin/landing-pages) as soon as possible.
-    peerDependencies:
-      '@apollo/server': ^4.0.0
 
   '@apollo/server@4.11.3':
     resolution: {integrity: sha512-mW8idE2q0/BN14mimfJU5DAnoPHZRrAWgwsVLBEdACds+mxapIYxIbI6AH4AsOpxfrpvHts3PCYDbopy1XPW1g==}
@@ -11374,11 +11367,6 @@ snapshots:
       '@apollo/utils.keyvaluecache': 2.1.1
       '@apollo/utils.logger': 2.0.1
       graphql: 16.6.0
-
-  '@apollo/server-plugin-landing-page-graphql-playground@4.0.1(@apollo/server@4.11.3(encoding@0.1.13)(graphql@16.6.0))':
-    dependencies:
-      '@apollo/server': 4.11.3(encoding@0.1.13)(graphql@16.6.0)
-      '@apollographql/graphql-playground-html': 1.6.29
 
   '@apollo/server@4.11.3(encoding@0.1.13)(graphql@16.6.0)':
     dependencies:

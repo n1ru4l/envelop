@@ -12,7 +12,7 @@ module.exports = {
   rootDir: ROOT_DIR,
   projects: [
     {
-      displayName: 'Standard Tests',
+      displayName: 'Unit Tests',
       testMatch: [
         '<rootDir>/**/*.spec.ts',
         '<rootDir>/**/*.spec.js',
