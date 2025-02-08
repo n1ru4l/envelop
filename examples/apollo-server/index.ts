@@ -9,7 +9,6 @@ import {
   GatewaySchemaLoadOrUpdateCallback,
   GatewayUnsubscriber,
 } from '@apollo/server-gateway-interface';
-import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { envelop, useEngine, useSchema } from '@envelop/core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -58,15 +57,14 @@ class Gateway implements GatewayInterface {
 
   onSchemaLoadOrUpdate(callback: GatewaySchemaLoadOrUpdateCallback): GatewayUnsubscriber {
     this.schemaCallback = callback;
-    return () => {};
+    return () => { };
   }
 
-  async stop() {}
+  async stop() { }
 }
 
 const server = new ApolloServer({
   gateway: new Gateway(),
-  plugins: [ApolloServerPluginLandingPageGraphQLPlayground({ endpoint: '/graphql' })],
 });
 
 (async () => {
