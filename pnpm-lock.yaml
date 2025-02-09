@@ -41,10 +41,10 @@ importers:
         version: 2.27.12
       '@ianvs/prettier-plugin-sort-imports':
         specifier: 4.4.1
-        version: 4.4.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.4.2)
+        version: 4.4.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.0)
       '@theguild/prettier-config':
         specifier: 2.0.7
-        version: 2.0.7(prettier@3.4.2)
+        version: 2.0.7(prettier@3.5.0)
       '@types/benchmark':
         specifier: 2.1.5
         version: 2.1.5
@@ -91,8 +91,8 @@ importers:
         specifier: 17.15.1
         version: 17.15.1(eslint@9.20.0(jiti@1.21.7))
       eslint-plugin-package-json:
-        specifier: ^0.23.0
-        version: 0.23.1(@types/estree@1.0.6)(eslint@9.20.0(jiti@1.21.7))(jsonc-eslint-parser@2.4.0)
+        specifier: ^0.25.0
+        version: 0.25.0(@types/estree@1.0.6)(eslint@9.20.0(jiti@1.21.7))(jsonc-eslint-parser@2.4.0)
       eslint-plugin-promise:
         specifier: 7.2.1
         version: 7.2.1(eslint@9.20.0(jiti@1.21.7))
@@ -112,14 +112,14 @@ importers:
         specifier: 15.4.3
         version: 15.4.3
       prettier:
-        specifier: 3.4.2
-        version: 3.4.2
+        specifier: 3.5.0
+        version: 3.5.0
       prettier-plugin-pkg:
         specifier: 0.18.1
-        version: 0.18.1(prettier@3.4.2)
+        version: 0.18.1(prettier@3.5.0)
       prettier-plugin-sh:
         specifier: 0.14.0
-        version: 0.14.0(prettier@3.4.2)
+        version: 0.14.0(prettier@3.5.0)
       rimraf:
         specifier: 6.0.1
         version: 6.0.1
@@ -6354,8 +6354,8 @@ packages:
     peerDependencies:
       eslint: '>=8.23.0'
 
-  eslint-plugin-package-json@0.23.1:
-    resolution: {integrity: sha512-+7pUmk6y1rMLQhL4Pe7bKcWJqIc9nvb/N2P9qCK8U2nOsKRT6uXo2kDFNfpSREbOsZYCZDGBwGWbZdESJ/W1JA==}
+  eslint-plugin-package-json@0.25.0:
+    resolution: {integrity: sha512-X1BDDn98xHWfxEylRpYHoiPMUvda83hd+H1if83Ny8gZ5LiLB0FcwXng1Or+gY3GLuYSaiYTy6r78Adeg48unw==}
     engines: {node: '>=18'}
     peerDependencies:
       eslint: '>=8.0.0'
@@ -9435,8 +9435,8 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
 
-  prettier@3.4.2:
-    resolution: {integrity: sha512-e9MewbtFo+Fevyuxn/4rrcDAaq0IYxPGLvObpQjiZBMAzB9IGmzlnG9RZy3FFas+eBMu2vA0CszMeduow5dIuQ==}
+  prettier@3.5.0:
+    resolution: {integrity: sha512-quyMrVt6svPS7CjQ9gKb3GLEX/rl3BCL2oa/QkNcXv4YNVBC9olt3s+H7ukto06q7B1Qz46PbrKLO34PR6vXcA==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -13311,25 +13311,25 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.1': {}
 
-  '@ianvs/prettier-plugin-sort-imports@4.3.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.4.2)':
+  '@ianvs/prettier-plugin-sort-imports@4.3.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.0)':
     dependencies:
       '@babel/core': 7.26.8
       '@babel/generator': 7.26.8
       '@babel/parser': 7.26.8
       '@babel/traverse': 7.26.8
       '@babel/types': 7.26.8
-      prettier: 3.4.2
+      prettier: 3.5.0
       semver: 7.7.1
     transitivePeerDependencies:
       - supports-color
 
-  '@ianvs/prettier-plugin-sort-imports@4.4.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.4.2)':
+  '@ianvs/prettier-plugin-sort-imports@4.4.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.0)':
     dependencies:
       '@babel/generator': 7.26.8
       '@babel/parser': 7.26.8
       '@babel/traverse': 7.26.8
       '@babel/types': 7.26.8
-      prettier: 3.4.2
+      prettier: 3.5.0
       semver: 7.7.1
     transitivePeerDependencies:
       - supports-color
@@ -14872,12 +14872,12 @@ snapshots:
       - utf-8-validate
       - webpack
 
-  '@theguild/prettier-config@2.0.7(prettier@3.4.2)':
+  '@theguild/prettier-config@2.0.7(prettier@3.5.0)':
     dependencies:
-      '@ianvs/prettier-plugin-sort-imports': 4.3.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.4.2)
-      prettier: 3.4.2
-      prettier-plugin-pkg: 0.18.1(prettier@3.4.2)
-      prettier-plugin-sh: 0.14.0(prettier@3.4.2)
+      '@ianvs/prettier-plugin-sort-imports': 4.3.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.0)
+      prettier: 3.5.0
+      prettier-plugin-pkg: 0.18.1(prettier@3.5.0)
+      prettier-plugin-sh: 0.14.0(prettier@3.5.0)
     transitivePeerDependencies:
       - '@vue/compiler-sfc'
       - supports-color
@@ -17350,7 +17350,7 @@ snapshots:
       minimatch: 9.0.5
       semver: 7.7.1
 
-  eslint-plugin-package-json@0.23.1(@types/estree@1.0.6)(eslint@9.20.0(jiti@1.21.7))(jsonc-eslint-parser@2.4.0):
+  eslint-plugin-package-json@0.25.0(@types/estree@1.0.6)(eslint@9.20.0(jiti@1.21.7))(jsonc-eslint-parser@2.4.0):
     dependencies:
       '@altano/repository-tools': 0.1.1
       detect-indent: 6.1.0
@@ -21490,19 +21490,19 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prettier-plugin-pkg@0.18.1(prettier@3.4.2):
+  prettier-plugin-pkg@0.18.1(prettier@3.5.0):
     dependencies:
-      prettier: 3.4.2
+      prettier: 3.5.0
 
-  prettier-plugin-sh@0.14.0(prettier@3.4.2):
+  prettier-plugin-sh@0.14.0(prettier@3.5.0):
     dependencies:
       mvdan-sh: 0.10.1
-      prettier: 3.4.2
+      prettier: 3.5.0
       sh-syntax: 0.4.2
 
   prettier@2.8.8: {}
 
-  prettier@3.4.2: {}
+  prettier@3.5.0: {}
 
   pretty-bytes@5.6.0: {}
 
