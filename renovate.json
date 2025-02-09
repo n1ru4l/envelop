@@ -27,7 +27,8 @@
         "@whatwg-node/*",
         "@graphql-tools/*",
         "graphql-jit",
-        "graphql"
+        "graphql",
+        "newrelic"
       ],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
