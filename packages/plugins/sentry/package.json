@@ -48,7 +48,7 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@envelop/core": "^5.0.3",
-    "@sentry/node": "^8.0.0",
+    "@sentry/node": "^9.0.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
@@ -57,9 +57,9 @@
   "devDependencies": {
     "@envelop/core": "workspace:^",
     "@graphql-tools/schema": "10.0.16",
-    "@sentry/node": "^8.22.0",
+    "@sentry/node": "^9.0.0",
     "@sentry/tracing": "^7.114.0",
-    "@sentry/types": "^8.22.0",
+    "@sentry/types": "^9.0.0",
     "graphql": "16.8.1",
     "sentry-testkit": "5.0.9",
     "typescript": "5.7.3"
