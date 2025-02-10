@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@envelop/core": "workspace:^",
-    "@graphql-tools/schema": "10.0.16",
+    "@graphql-tools/schema": "10.0.17",
     "firebase-admin": "13.1.0",
     "firebase-functions": "6.3.1",
     "graphql": "16.8.1",
