@@ -59,7 +59,7 @@
     "@graphql-tools/utils": "10.8.1",
     "@types/common-tags": "1.8.4",
     "common-tags": "1.8.2",
-    "graphql": "16.10.0",
+    "graphql": "16.8.1",
     "jest-diff": "29.7.0",
     "oneline": "1.0.3",
     "typescript": "5.7.3"

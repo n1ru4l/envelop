@@ -53,7 +53,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "graphql": "16.10.0",
+    "graphql": "16.8.1",
     "typescript": "5.7.3"
   },
   "publishConfig": {

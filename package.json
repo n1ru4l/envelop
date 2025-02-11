@@ -74,7 +74,7 @@
   "pnpm": {
     "overrides": {
       "esbuild": "^0.25.0",
-      "graphql": "16.10.0",
+      "graphql": "16.8.1",
       "estree-util-build-jsx": "3.0.1"
     },
     "patchedDependencies": {

@@ -57,7 +57,7 @@
     "@envelop/core": "workspace:^",
     "@graphql-tools/schema": "10.0.18",
     "dataloader": "2.2.3",
-    "graphql": "16.10.0",
+    "graphql": "16.8.1",
     "reflect-metadata": "0.2.2",
     "typescript": "5.7.3"
   },
