@@ -12,7 +12,7 @@
     "@envelop/core": "workspace:^",
     "@graphql-tools/schema": "10.0.18",
     "aws-sdk": "2.1692.0",
-    "graphql": "16.10.0",
+    "graphql": "16.8.1",
     "graphql-helix": "1.13.0"
   },
   "devDependencies": {

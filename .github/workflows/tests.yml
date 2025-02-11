@@ -30,6 +30,8 @@ jobs:
         run: pnpm run ci:lint && pnpm run lint
       - name: Use GraphQL v${{matrix.graphql_version}}
         run: node ./scripts/match-graphql.js ${{matrix.graphql_version}}
+      - name: Install Dependencies using pnpm
+        run: pnpm install --no-frozen-lockfile && git checkout pnpm-lock.yaml
       - name: Build
         run: pnpm run ts:check
       - name: Test ESM & CJS exports integrity
@@ -55,6 +57,8 @@ jobs:
 
       - name: Use GraphQL v${{matrix.graphql_version}}
         run: node ./scripts/match-graphql.js ${{matrix.graphql_version}}
+      - name: Install Dependencies using pnpm
+        run: pnpm install --no-frozen-lockfile && git checkout pnpm-lock.yaml
       - name: Cache Jest
         uses: actions/cache@v4
         with:

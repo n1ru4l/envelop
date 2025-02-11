@@ -58,7 +58,7 @@
     "@apollo/gateway": "2.9.3",
     "@apollo/subgraph": "2.9.3",
     "@envelop/core": "workspace:^",
-    "graphql": "16.10.0",
+    "graphql": "16.8.1",
     "graphql-tag": "2.12.6",
     "typescript": "5.7.3"
   },

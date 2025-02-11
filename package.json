@@ -3,7 +3,7 @@
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "private": true,
-  "packageManager": "pnpm@10.2.1",
+  "packageManager": "pnpm@10.3.0",
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=10.2.1"
@@ -47,7 +47,7 @@
     "eslint-config-standard": "17.1.0",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-n": "17.15.1",
-    "eslint-plugin-package-json": "^0.25.0",
+    "eslint-plugin-package-json": "^0.26.0",
     "eslint-plugin-promise": "7.2.1",
     "eslint-plugin-unicorn": "56.0.1",
     "globby": "14.1.0",
@@ -74,7 +74,7 @@
   "pnpm": {
     "overrides": {
       "esbuild": "^0.25.0",
-      "graphql": "16.10.0",
+      "graphql": "16.8.1",
       "estree-util-build-jsx": "3.0.1"
     },
     "patchedDependencies": {
