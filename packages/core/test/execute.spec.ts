@@ -49,15 +49,17 @@ describe('execute', () => {
   it('Should wrap and trigger events correctly', async () => {
     const spiedPlugin = createSpiedPlugin();
     const teskit = createTestkit([spiedPlugin.plugin], schema);
-    await teskit.execute(query, {}, { test: 1 });
+    const context = { test: 1 };
+    await teskit.execute(query, {}, context);
     expect(spiedPlugin.spies.beforeExecute).toHaveBeenCalledTimes(1);
     expect(spiedPlugin.spies.beforeExecute).toHaveBeenCalledWith({
       executeFn: expect.any(Function),
       setExecuteFn: expect.any(Function),
       extendContext: expect.any(Function),
       setResultAndStopExecution: expect.any(Function),
+      context,
       args: {
-        contextValue: expect.objectContaining({ test: 1 }),
+        contextValue: context,
         rootValue: {},
         schema: expect.any(GraphQLSchema),
         operationName: undefined,

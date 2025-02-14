@@ -48,18 +48,16 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@envelop/core": "^5.0.3",
-    "apollo-datasource": "^3",
-    "apollo-server-caching": "^3",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
+    "@apollo/utils.keyvaluecache": "^3.1.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@apollo/datasource-rest": "6.4.1",
     "@envelop/core": "workspace:^",
-    "@graphql-tools/schema": "10.0.16",
-    "apollo-datasource": "3.3.2",
-    "apollo-server-caching": "3.3.0",
+    "@graphql-tools/schema": "10.0.18",
     "graphql": "16.8.1",
     "typescript": "5.7.3"
   },

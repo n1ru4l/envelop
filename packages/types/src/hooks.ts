@@ -296,6 +296,10 @@ export type OnExecuteEventPayload<ContextType> = {
    */
   setResultAndStopExecution: (newResult: ExecutionResult) => void;
   /**
+   * The context object.
+   */
+  context: Readonly<ContextType>;
+  /**
    * Extend the context object with a partial.
    */
   extendContext: (contextExtension: Partial<ContextType>) => void;
@@ -412,6 +416,10 @@ export type OnSubscribeEventPayload<ContextType> = {
    * Replace the current subscribe function with a new one that will be used for setting up the subscription.
    */
   setSubscribeFn: (newSubscribe: SubscribeFunction) => void;
+  /**
+   * The context object.
+   */
+  context: Readonly<ContextType>;
   /**
    * Extend the context object with a partial.
    */

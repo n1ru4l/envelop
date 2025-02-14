@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@envelop/core": "workspace:^",
-    "@graphql-tools/schema": "10.0.16",
+    "@graphql-tools/schema": "10.0.18",
     "@n1ru4l/socket-io-graphql-client": "0.13.0",
     "@n1ru4l/socket-io-graphql-server": "0.13.0",
     "graphql": "16.8.1",
@@ -21,7 +21,7 @@
     "ws": "8.18.0"
   },
   "devDependencies": {
-    "@types/node": "22.12.0",
+    "@types/node": "22.13.4",
     "@types/ws": "8.5.14",
     "ts-node": "10.9.2",
     "typescript": "5.7.3"

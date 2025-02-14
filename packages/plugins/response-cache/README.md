@@ -53,7 +53,7 @@ const getEnveloped = envelop({
   plugins: [
     useResponseCache(),
     // Here, useEngine will override the `execute` function, leading to a non working cache.
-    useEngine({ parse, validate, specifiedRules, execute, subscribe }),
+    useEngine({ parse, validate, specifiedRules, execute, subscribe })
   ]
 })
 
@@ -62,7 +62,7 @@ const getEnveloped = envelop({
   plugins: [
     useEngine({ parse, validate, specifiedRules, execute, subscribe }),
     // Here, the plugin can control the `execute` function
-    useResponseCache(),
+    useResponseCache()
   ]
 })
 ```

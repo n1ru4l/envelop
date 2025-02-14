@@ -380,6 +380,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
             setSubscribeFn: newSubscribeFn => {
               subscribeFn = newSubscribeFn;
             },
+            context,
             extendContext: extension => {
               Object.assign(context, extension);
             },
@@ -494,6 +495,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
             setResultAndStopExecution: stopResult => {
               result = stopResult;
             },
+            context,
             extendContext: extension => {
               if (typeof extension === 'object') {
                 Object.assign(context, extension);

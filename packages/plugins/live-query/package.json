@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "@envelop/core": "workspace:^",
-    "@graphql-tools/schema": "10.0.16",
+    "@graphql-tools/schema": "10.0.18",
     "@n1ru4l/graphql-live-query-patch-jsondiffpatch": "0.8.0",
     "graphql": "16.8.1",
     "typescript": "5.7.3"

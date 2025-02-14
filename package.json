@@ -3,57 +3,60 @@
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "private": true,
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@10.4.0",
   "engines": {
     "node": ">=18.0.0",
-    "pnpm": ">=9.1.0"
+    "pnpm": ">=10.2.1"
   },
   "scripts": {
     "build": "bob build",
     "ci:lint": "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --config .eslintrc.json --ext .ts . --max-warnings 0 --output-file eslint_report.json --format json",
     "lint": "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --config .eslintrc.json --ext .ts . --max-warnings 0",
-    "lint:prettier": "prettier --cache --ignore-path .prettierignore --check .",
+    "lint:prettier": "prettier --ignore-path .prettierignore --check .",
     "loadtest:run": "pnpm run --filter @envelop/benchmark loadtest:run",
     "loadtest:start-server": "pnpm run --filter @envelop/benchmark loadtest:start-server",
     "prebuild": "rimraf packages/*/dist packages/plugins/*/dist",
-    "prettier": "prettier --cache --ignore-path .prettierignore --write --list-different .",
+    "prettier": "prettier --ignore-path .prettierignore --write --list-different .",
     "release": "pnpm build && changeset publish",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:ci": "jest --coverage",
     "ts:check": "tsc --noEmit"
   },
   "devDependencies": {
-    "@babel/core": "7.26.7",
-    "@babel/plugin-proposal-class-properties": "7.18.6",
+    "@babel/core": "7.26.8",
     "@babel/plugin-proposal-decorators": "7.25.9",
-    "@babel/preset-env": "7.26.7",
+    "@babel/plugin-transform-class-properties": "7.25.9",
+    "@babel/preset-env": "7.26.8",
     "@babel/preset-typescript": "7.26.0",
     "@changesets/changelog-github": "0.5.0",
     "@changesets/cli": "2.27.12",
+    "@ianvs/prettier-plugin-sort-imports": "4.4.1",
     "@theguild/prettier-config": "2.0.7",
     "@types/benchmark": "2.1.5",
     "@types/jest": "29.5.14",
     "@types/k6": "0.54.2",
-    "@types/node": "22.12.0",
-    "@typescript-eslint/eslint-plugin": "8.22.0",
-    "@typescript-eslint/parser": "8.22.0",
+    "@types/node": "22.13.4",
+    "@typescript-eslint/eslint-plugin": "8.24.0",
+    "@typescript-eslint/parser": "8.24.0",
     "bob-the-bundler": "7.0.1",
     "caniuse-lite": "^1.0.30001692",
     "chalk": "5.4.1",
     "cross-env": "7.0.3",
-    "eslint": "9.19.0",
+    "eslint": "9.20.1",
     "eslint-config-prettier": "10.0.1",
     "eslint-config-standard": "17.1.0",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-n": "17.15.1",
-    "eslint-plugin-package-json": "^0.21.0",
+    "eslint-plugin-package-json": "^0.26.0",
     "eslint-plugin-promise": "7.2.1",
     "eslint-plugin-unicorn": "56.0.1",
-    "globby": "14.0.2",
+    "globby": "14.1.0",
     "husky": "9.1.7",
     "jest": "29.7.0",
     "lint-staged": "15.4.3",
-    "prettier": "3.4.2",
+    "prettier": "3.5.1",
+    "prettier-plugin-pkg": "0.18.1",
+    "prettier-plugin-sh": "0.14.0",
     "rimraf": "6.0.1",
     "ts-jest": "29.2.5",
     "ts-node": "10.9.2",
@@ -70,9 +73,20 @@
   },
   "pnpm": {
     "overrides": {
-      "esbuild": "^0.24.0",
-      "graphql": "16.6.0",
+      "esbuild": "^0.25.0",
+      "graphql": "16.8.1",
       "estree-util-build-jsx": "3.0.1"
-    }
+    },
+    "patchedDependencies": {
+      "@ianvs/prettier-plugin-sort-imports": "patches/@ianvs__prettier-plugin-sort-imports.patch"
+    },
+    "onlyBuiltDependencies": [
+      "@contrast/fn-inspect",
+      "@newrelic/native-metrics",
+      "esbuild",
+      "protobufjs",
+      "sharp",
+      "type-graphql"
+    ]
   }
 }

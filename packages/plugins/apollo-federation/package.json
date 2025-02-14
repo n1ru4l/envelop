@@ -51,13 +51,12 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
-    "apollo-server-caching": "^3.1.0",
-    "apollo-server-types": "^3.2.0",
+    "@apollo/utils.keyvaluecache": "^3.1.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@apollo/gateway": "2.9.3",
-    "@apollo/subgraph": "2.9.3",
+    "@apollo/gateway": "2.10.0",
+    "@apollo/subgraph": "2.10.0",
     "@envelop/core": "workspace:^",
     "graphql": "16.8.1",
     "graphql-tag": "2.12.6",
