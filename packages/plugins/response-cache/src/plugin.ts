@@ -760,6 +760,12 @@ function removeMetadataFieldsFromResult(
     return data;
   }
 
+  const dataPrototype = Object.getPrototypeOf(data);
+
+  if (dataPrototype != null && dataPrototype !== Object.prototype) {
+    return data;
+  }
+
   // clone the data to avoid mutation
   data = { ...data };
 

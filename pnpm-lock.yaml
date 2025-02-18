@@ -1421,6 +1421,9 @@ importers:
       graphql:
         specifier: 16.8.1
         version: 16.8.1
+      graphql-scalars:
+        specifier: 1.24.1
+        version: 1.24.1(graphql@16.8.1)
       ioredis-mock:
         specifier: 8.9.0
         version: 8.9.0(@types/ioredis-mock@8.2.5)(ioredis@5.4.2)
@@ -7431,6 +7434,12 @@ packages:
   graphql-rate-limit@3.3.0:
     resolution: {integrity: sha512-mbbEv5z3SjkDLvVVdHi0XrVLavw2Mwo93GIqgQB/fx8dhcNSEv3eYI1OGdp8mhsm/MsZm7hjrRlwQMVRKBVxhA==}
     engines: {node: '>=12.0', pnpm: '>=6'}
+    peerDependencies:
+      graphql: 16.8.1
+
+  graphql-scalars@1.24.1:
+    resolution: {integrity: sha512-3L553TMPh3YpHQM4x9G4tXcyD+AX8QQOYA6tUn1nrNiWEXE0JfAnWdjoe3WGxRuGjnZrzvHDz62q8S+sSGXXwA==}
+    engines: {node: '>=10'}
     peerDependencies:
       graphql: 16.8.1
 
@@ -19251,6 +19260,11 @@ snapshots:
       ms: 2.1.3
     transitivePeerDependencies:
       - graphql-middleware
+
+  graphql-scalars@1.24.1(graphql@16.8.1):
+    dependencies:
+      graphql: 16.8.1
+      tslib: 2.8.1
 
   graphql-shield@7.6.5(graphql-middleware@6.1.35(graphql@16.8.1))(graphql@16.8.1):
     dependencies:
