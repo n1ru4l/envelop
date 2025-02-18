@@ -19,25 +19,22 @@ export function envelop<PluginsType extends Optional<Plugin<any>>[]>(options: {
   });
 
   const getEnveloped = <TInitialContext extends ArbitraryObject>(
-    initialContext: TInitialContext = {} as TInitialContext,
+    context: TInitialContext = {} as TInitialContext,
   ) => {
-    const traced = getTraced(initialContext);
+    const traced = getTraced<{ context: any }>({ context });
     const typedOrchestrator = orchestrator as EnvelopOrchestrator<
       TInitialContext,
       ComposeContext<ExcludeFalsy<PluginsType>>
     >;
 
-    traced.sync(tracer?.init, orchestrator.init)(initialContext);
+    traced.fn(tracer?.init, orchestrator.init)(context);
 
     return {
-      parse: traced.sync(tracer?.parse, typedOrchestrator.parse(initialContext)),
-      validate: traced.sync(tracer?.validate, typedOrchestrator.validate(initialContext)),
-      contextFactory: traced.sync(
-        tracer?.context,
-        typedOrchestrator.contextFactory(initialContext as any),
-      ),
-      execute: traced.maybeAsync(tracer?.execute, typedOrchestrator.execute),
-      subscribe: traced.maybeAsync(tracer?.subscribe, typedOrchestrator.subscribe),
+      parse: traced.fn(tracer?.parse, typedOrchestrator.parse(context)),
+      validate: traced.fn(tracer?.validate, typedOrchestrator.validate(context)),
+      contextFactory: traced.fn(tracer?.context, typedOrchestrator.contextFactory(context as any)),
+      execute: traced.asyncFn(tracer?.execute, typedOrchestrator.execute),
+      subscribe: traced.asyncFn(tracer?.subscribe, typedOrchestrator.subscribe),
       schema: typedOrchestrator.getCurrentSchema(),
     };
   };

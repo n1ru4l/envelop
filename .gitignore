@@ -115,3 +115,5 @@ website/public/sitemap.xml
 .tool-versions
 
 .mise.toml
+.helix/config.toml
+.helix/languages.toml
