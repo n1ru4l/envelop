@@ -16,9 +16,9 @@ export function getTracer<PluginsContext extends Record<string, any>>(
   return tracer;
 }
 
-export const getTraced = <TResult, TArgs extends any[]>(context: any) => ({
-  sync(
-    tracer: ((payload: { context: any }, wrapped: () => void) => void) | undefined,
+export const getTraced = <TPayload>(payload: TPayload) => ({
+  fn<TResult, TArgs extends any[]>(
+    tracer: ((payload: TPayload, wrapped: () => void) => void) | undefined,
     wrapped: (...args: TArgs) => TResult,
   ): (...args: TArgs) => TResult {
     if (!tracer) {
@@ -27,16 +27,16 @@ export const getTraced = <TResult, TArgs extends any[]>(context: any) => ({
 
     return (...args) => {
       let result: TResult;
-      tracer({ context }, () => {
+      tracer(payload, () => {
         result = wrapped(...args);
       });
       return result!;
     };
   },
 
-  maybeAsync(
+  asyncFn<TResult, TArgs extends any[]>(
     tracer:
-      | ((payload: { context: any }, wrapped: () => PromiseOrValue<void>) => PromiseOrValue<void>)
+      | ((payload: TPayload, wrapped: () => PromiseOrValue<void>) => PromiseOrValue<void>)
       | undefined,
     wrapped: (...args: TArgs) => PromiseOrValue<TResult>,
   ): (...args: TArgs) => PromiseOrValue<TResult> {
@@ -47,7 +47,7 @@ export const getTraced = <TResult, TArgs extends any[]>(context: any) => ({
     return (...args) => {
       let result: PromiseOrValue<TResult>;
       return mapMaybePromise(
-        tracer({ context }, () => {
+        tracer(payload, () => {
           result = wrapped(...args);
           return isPromise(result) ? result.then(undefined) : undefined;
         }),
