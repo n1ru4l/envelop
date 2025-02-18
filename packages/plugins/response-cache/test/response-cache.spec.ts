@@ -1,5 +1,6 @@
 import * as GraphQLJS from 'graphql';
 import { getIntrospectionQuery, GraphQLObjectType, GraphQLSchema } from 'graphql';
+import { DateTimeResolver } from 'graphql-scalars';
 import { envelop, useEngine, useExtendContext, useLogger, useSchema } from '@envelop/core';
 import { useGraphQlJit } from '@envelop/graphql-jit';
 import { useParserCache } from '@envelop/parser-cache';
@@ -4286,4 +4287,43 @@ it('manipulates the TTL', async () => {
     ttl: 2000,
     context,
   });
+});
+
+it('handles DateTime scalar', async () => {
+  let fooTime: Date | undefined;
+  const schema = makeExecutableSchema({
+    typeDefs: /* GraphQL */ `
+      scalar DateTime
+
+      type Query {
+        foo: DateTime
+      }
+    `,
+    resolvers: {
+      Query: {
+        foo: () => (fooTime ||= new Date()),
+      },
+      DateTime: DateTimeResolver,
+    },
+  });
+  const testkit = createTestkit([useResponseCache({ session: () => null })], schema);
+
+  const operation = /* GraphQL */ `
+    query {
+      foo
+    }
+  `;
+
+  async function checkResult() {
+    const result = await testkit.execute(operation);
+    assertSingleExecutionValue(result);
+    expect(result).toEqual({
+      data: {
+        foo: fooTime,
+      },
+    });
+  }
+
+  await checkResult();
+  await checkResult();
 });
