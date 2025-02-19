@@ -49,7 +49,7 @@
   "peerDependencies": {
     "@envelop/core": "workspace:^",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0",
-    "graphql-modules": "^1 || ^2.0.0"
+    "graphql-modules": "^1 || ^2.0.0 || ^3.0.0"
   },
   "dependencies": {
     "tslib": "^2.5.0"
@@ -57,7 +57,7 @@
   "devDependencies": {
     "@envelop/core": "workspace:^",
     "graphql": "16.8.1",
-    "graphql-modules": "2.4.0",
+    "graphql-modules": "3.0.0",
     "reflect-metadata": "0.2.2",
     "typescript": "5.7.3"
   },

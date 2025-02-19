@@ -1079,8 +1079,8 @@ importers:
         specifier: 16.8.1
         version: 16.8.1
       graphql-modules:
-        specifier: 2.4.0
-        version: 2.4.0(graphql@16.8.1)
+        specifier: 3.0.0
+        version: 3.0.0(graphql@16.8.1)
       reflect-metadata:
         specifier: 0.2.2
         version: 0.2.2
@@ -7395,8 +7395,8 @@ packages:
     peerDependencies:
       graphql: 16.8.1
 
-  graphql-modules@2.4.0:
-    resolution: {integrity: sha512-2KgsHC/ivsdiEWX97MA3V0eAo6TE8BhPW9BZgYzhivNDfz+3UUTCxZ0/GpSXXScolfoGyo0m3lVlXXg0zQk5ew==}
+  graphql-modules@3.0.0:
+    resolution: {integrity: sha512-ADQRySHp7SMqLHsv/NMkEBqOcyAC5bT6bTYuQemjmvSsF+gj1iQbzNF1pjy1lsE6UWxvRRzZN+sovp85Z6c3Vw==}
     peerDependencies:
       graphql: 16.8.1
 
@@ -9974,8 +9974,8 @@ packages:
   quick-format-unescaped@4.0.4:
     resolution: {integrity: sha512-tYC1Q1hgyRuHgloV/YXs2w15unPVh8qfu/qCTfhTYamaw7fyhumKa2yGpdSo87vY32rIclj+4fWYQXUMs9EHvg==}
 
-  ramda@0.29.0:
-    resolution: {integrity: sha512-BBea6L67bYLtdbOqfp8f58fPMqEwx0doL+pAi8TZyp2YWz8R9G8z9x75CZI8W+ftqhFHCpEX2cRnUUXK130iKA==}
+  ramda@0.30.1:
+    resolution: {integrity: sha512-tEF5I22zJnuclswcZMc8bDIrwRHRzf+NqVEmqg50ShAZMP7MWeR/RGDthfM/p+BlqvF2fXAzpn8i+SJcYD3alw==}
 
   randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
@@ -19181,13 +19181,13 @@ snapshots:
       '@graphql-tools/schema': 8.5.1(graphql@16.8.1)
       graphql: 16.8.1
 
-  graphql-modules@2.4.0(graphql@16.8.1):
+  graphql-modules@3.0.0(graphql@16.8.1):
     dependencies:
       '@graphql-tools/schema': 10.0.18(graphql@16.8.1)
       '@graphql-tools/wrap': 10.0.31(graphql@16.8.1)
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.8.1)
       graphql: 16.8.1
-      ramda: 0.29.0
+      ramda: 0.30.1
 
   graphql-query-complexity@0.7.2(graphql@16.8.1):
     dependencies:
@@ -22613,7 +22613,7 @@ snapshots:
 
   quick-format-unescaped@4.0.4: {}
 
-  ramda@0.29.0: {}
+  ramda@0.30.1: {}
 
   randombytes@2.1.0:
     dependencies:
