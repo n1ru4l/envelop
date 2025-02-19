@@ -1,5 +1,16 @@
 # @envelop/graphql-modules
 
+## 7.0.1
+
+### Patch Changes
+
+- [#2440](https://github.com/n1ru4l/envelop/pull/2440)
+  [`61a88d8`](https://github.com/n1ru4l/envelop/commit/61a88d8bbcbbbdfc390b249f41f62c6df244a499)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`graphql-modules@^1 || ^2.0.0 || ^3.0.0` ↗︎](https://www.npmjs.com/package/graphql-modules/v/1.0.0)
+    (from `^1 || ^2.0.0`, in `peerDependencies`)
+
 ## 7.0.0
 
 ### Patch Changes
