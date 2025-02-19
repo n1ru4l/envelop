@@ -78,7 +78,8 @@
       "estree-util-build-jsx": "3.0.1"
     },
     "patchedDependencies": {
-      "@ianvs/prettier-plugin-sort-imports": "patches/@ianvs__prettier-plugin-sort-imports.patch"
+      "@ianvs/prettier-plugin-sort-imports": "patches/@ianvs__prettier-plugin-sort-imports.patch",
+      "@changesets/assemble-release-plan": "patches/@changesets__assemble-release-plan.patch"
     },
     "onlyBuiltDependencies": [
       "@contrast/fn-inspect",

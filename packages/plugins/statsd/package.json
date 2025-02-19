@@ -1,6 +1,6 @@
 {
   "name": "@envelop/statsd",
-  "version": "6.0.0",
+  "version": "5.0.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -54,7 +54,7 @@
     "telegraf"
   ],
   "peerDependencies": {
-    "@envelop/core": "^5.1.0",
+    "@envelop/core": "workspace:^",
     "hot-shots": "^10.0.0"
   },
   "dependencies": {
