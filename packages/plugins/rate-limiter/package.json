@@ -1,6 +1,6 @@
 {
   "name": "@envelop/rate-limiter",
-  "version": "6.2.1",
+  "version": "7.0.0",
   "type": "module",
   "repository": {
     "type": "git",

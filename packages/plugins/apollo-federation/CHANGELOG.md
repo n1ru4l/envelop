@@ -1,5 +1,25 @@
 # @envelop/apollo-federation
 
+## 6.0.0
+
+### Patch Changes
+
+- [#2438](https://github.com/n1ru4l/envelop/pull/2438)
+  [`9bd1b20`](https://github.com/n1ru4l/envelop/commit/9bd1b207861540f9bee085026b9fab725a88e84e)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@apollo/utils.keyvaluecache@^3.1.0` ↗︎](https://www.npmjs.com/package/@apollo/utils.keyvaluecache/v/3.1.0)
+    (to `dependencies`)
+  - Removed dependency
+    [`apollo-server-caching@^3.1.0` ↗︎](https://www.npmjs.com/package/apollo-server-caching/v/3.1.0)
+    (from `dependencies`)
+  - Removed dependency
+    [`apollo-server-types@^3.2.0` ↗︎](https://www.npmjs.com/package/apollo-server-types/v/3.2.0)
+    (from `dependencies`)
+- Updated dependencies
+  [[`9bd1b20`](https://github.com/n1ru4l/envelop/commit/9bd1b207861540f9bee085026b9fab725a88e84e)]:
+  - @envelop/core@5.1.0
+
 ## 5.0.1
 
 ### Patch Changes

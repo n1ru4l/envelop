@@ -1,5 +1,17 @@
 # @envelop/response-cache
 
+## 7.0.0
+
+### Patch Changes
+
+- [#2438](https://github.com/n1ru4l/envelop/pull/2438)
+  [`9bd1b20`](https://github.com/n1ru4l/envelop/commit/9bd1b207861540f9bee085026b9fab725a88e84e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Handle instance objects properly (JS Date etc)
+
+- Updated dependencies
+  [[`9bd1b20`](https://github.com/n1ru4l/envelop/commit/9bd1b207861540f9bee085026b9fab725a88e84e)]:
+  - @envelop/core@5.1.0
+
 ## 6.3.0
 
 ### Minor Changes
