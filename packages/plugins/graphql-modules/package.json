@@ -49,7 +49,7 @@
   "peerDependencies": {
     "@envelop/core": "workspace:^",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0",
-    "graphql-modules": "^3.0.0"
+    "graphql-modules": "^1 || ^2.0.0 || ^3.0.0"
   },
   "dependencies": {
     "tslib": "^2.5.0"
