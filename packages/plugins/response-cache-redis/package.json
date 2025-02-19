@@ -48,7 +48,7 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {},
   "dependencies": {
-    "@envelop/response-cache": "^6.1.2",
+    "@envelop/response-cache": "workspace:^",
     "ioredis": "^5.4.2",
     "tslib": "^2.5.0"
   },
