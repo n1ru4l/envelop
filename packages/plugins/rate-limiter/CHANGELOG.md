@@ -1,5 +1,22 @@
 # @envelop/rate-limiter
 
+## 7.0.1
+
+### Patch Changes
+
+- [#2443](https://github.com/n1ru4l/envelop/pull/2443)
+  [`75ae40e`](https://github.com/n1ru4l/envelop/commit/75ae40e9fe744fb74fea71c098589a2211c142fc)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency [`lodash.get@^4.4.2` ↗︎](https://www.npmjs.com/package/lodash.get/v/4.4.2) (to
+    `dependencies`)
+  - Added dependency [`ms@^2.1.3` ↗︎](https://www.npmjs.com/package/ms/v/2.1.3) (to `dependencies`)
+  - Removed dependency
+    [`graphql-middleware@^6.1.35` ↗︎](https://www.npmjs.com/package/graphql-middleware/v/6.1.35)
+    (from `dependencies`)
+  - Removed dependency
+    [`graphql-rate-limit@^3.3.0` ↗︎](https://www.npmjs.com/package/graphql-rate-limit/v/3.3.0)
+    (from `dependencies`)
+
 ## 7.0.0
 
 ### Patch Changes
