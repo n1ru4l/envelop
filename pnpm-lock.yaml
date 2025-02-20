@@ -121,8 +121,8 @@ importers:
         specifier: 0.18.1
         version: 0.18.1(prettier@3.5.1)
       prettier-plugin-sh:
-        specifier: 0.14.0
-        version: 0.14.0(prettier@3.5.1)
+        specifier: 0.15.0
+        version: 0.15.0(prettier@3.5.1)
       rimraf:
         specifier: 6.0.1
         version: 6.0.1
@@ -9845,6 +9845,12 @@ packages:
     peerDependencies:
       prettier: ^3.0.3
 
+  prettier-plugin-sh@0.15.0:
+    resolution: {integrity: sha512-U0PikJr/yr2bzzARl43qI0mApBj0C1xdAfA04AZa6LnvIKawXHhuy2fFo6LNA7weRzGlAiNbaEFfKMFo0nZr/A==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      prettier: ^3.0.3
+
   prettier@2.8.8:
     resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
     engines: {node: '>=10.13.0'}
@@ -10467,6 +10473,10 @@ packages:
 
   sh-syntax@0.4.1:
     resolution: {integrity: sha512-MW/ZsCYTu11EIYYTSZcfAgMFszAodCmQVB27XssHoIN6L4EG0KSA3h32x8whaSOKuYBX5wz9EybfnPBUFQMCKA==}
+    engines: {node: '>=16.0.0'}
+
+  sh-syntax@0.4.2:
+    resolution: {integrity: sha512-/l2UZ5fhGZLVZa16XQM9/Vq/hezGGbdHeVEA01uWjOL1+7Ek/gt6FquW0iKKws4a9AYPYvlz6RyVvjh3JxOteg==}
     engines: {node: '>=16.0.0'}
 
   sha.js@2.4.11:
@@ -22482,6 +22492,12 @@ snapshots:
       prettier: 3.5.1
       sh-syntax: 0.4.1
 
+  prettier-plugin-sh@0.15.0(prettier@3.5.1):
+    dependencies:
+      mvdan-sh: 0.10.1
+      prettier: 3.5.1
+      sh-syntax: 0.4.2
+
   prettier@2.8.8: {}
 
   prettier@3.5.1: {}
@@ -23306,6 +23322,10 @@ snapshots:
   setprototypeof@1.2.0: {}
 
   sh-syntax@0.4.1:
+    dependencies:
+      tslib: 2.8.1
+
+  sh-syntax@0.4.2:
     dependencies:
       tslib: 2.8.1
 
