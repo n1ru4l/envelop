@@ -55,8 +55,8 @@ importers:
         specifier: 29.5.14
         version: 29.5.14
       '@types/k6':
-        specifier: 0.57.0
-        version: 0.57.0
+        specifier: 0.57.1
+        version: 0.57.1
       '@types/node':
         specifier: 22.13.4
         version: 22.13.4
@@ -4826,8 +4826,8 @@ packages:
   '@types/jsonwebtoken@9.0.8':
     resolution: {integrity: sha512-7fx54m60nLFUVYlxAB1xpe9CBWX2vSrk50Y6ogRJ1v5xxtba7qXTg5BgYDN5dq+yuQQ9HaVlHJyAAt1/mxryFg==}
 
-  '@types/k6@0.57.0':
-    resolution: {integrity: sha512-82wFNqZByg0edG3RMQBEMbWji8J6EXEPl7EH1pgXzbf9Y9uxWqkf6iIMCTTR6mG0WT0HpfM3t7I3u81H9Nrmew==}
+  '@types/k6@0.57.1':
+    resolution: {integrity: sha512-S/p2RQAYUBXyYROkR2fgeON/LaxJ0YR+KIlnPQW/TOeLBXD7tX4RfDSWaIecuDTWKblmc6UwANyP0e5QDZPhMw==}
 
   '@types/katex@0.16.3':
     resolution: {integrity: sha512-CeVMX9EhVUW8MWnei05eIRks4D5Wscw/W9Byz1s3PA+yJvcdvq9SaDjiUKvRvEgjpdTyJMjQA43ae4KTwsvOPg==}
@@ -15951,7 +15951,7 @@ snapshots:
       '@types/ms': 0.7.31
       '@types/node': 22.13.4
 
-  '@types/k6@0.57.0': {}
+  '@types/k6@0.57.1': {}
 
   '@types/katex@0.16.3': {}
 

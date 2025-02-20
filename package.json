@@ -34,7 +34,7 @@
     "@theguild/prettier-config": "2.0.7",
     "@types/benchmark": "2.1.5",
     "@types/jest": "29.5.14",
-    "@types/k6": "0.57.0",
+    "@types/k6": "0.57.1",
     "@types/node": "22.13.4",
     "@typescript-eslint/eslint-plugin": "8.24.1",
     "@typescript-eslint/parser": "8.24.1",
