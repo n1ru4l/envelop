@@ -1,9 +1,20 @@
 import { GraphQLResolveInfo, responsePathAsArray } from 'graphql';
-import { getGraphQLRateLimiter, GraphQLRateLimitConfig } from 'graphql-rate-limit';
 import { minimatch } from 'minimatch';
 import { mapMaybePromise, Plugin } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
 import { createGraphQLError, getDirectiveExtensions } from '@graphql-tools/utils';
+import { getGraphQLRateLimiter } from './get-graphql-rate-limiter.js';
+import { InMemoryStore } from './in-memory-store.js';
+import { RateLimitError } from './rate-limit-error.js';
+import { RedisStore } from './redis-store.js';
+import { Store } from './store.js';
+import {
+  FormatErrorInput,
+  GraphQLRateLimitConfig,
+  GraphQLRateLimitDirectiveArgs,
+  Identity,
+  Options,
+} from './types.js';
 
 export {
   FormatErrorInput,
@@ -15,7 +26,7 @@ export {
   RateLimitError,
   RedisStore,
   Store,
-} from 'graphql-rate-limit';
+};
 
 export type IdentifyFn<ContextType = unknown> = (context: ContextType) => string;
 

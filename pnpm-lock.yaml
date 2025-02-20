@@ -1341,28 +1341,40 @@ importers:
       '@graphql-tools/utils':
         specifier: ^10.5.4
         version: 10.8.1(graphql@16.8.1)
-      graphql-middleware:
-        specifier: ^6.1.35
-        version: 6.1.35(graphql@16.8.1)
-      graphql-rate-limit:
-        specifier: ^3.3.0
-        version: 3.3.0(graphql-middleware@6.1.35(graphql@16.8.1))(graphql@16.8.1)
+      lodash.get:
+        specifier: ^4.4.2
+        version: 4.4.2
       minimatch:
         specifier: ^10.0.1
         version: 10.0.1
+      ms:
+        specifier: ^2.1.3
+        version: 2.1.3
       tslib:
         specifier: ^2.5.0
         version: 2.8.1
     devDependencies:
       '@envelop/core':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../core/dist
       '@graphql-tools/schema':
         specifier: 10.0.18
         version: 10.0.18(graphql@16.8.1)
+      '@types/lodash.get':
+        specifier: 4.4.9
+        version: 4.4.9
+      '@types/ms':
+        specifier: 2.1.0
+        version: 2.1.0
+      '@types/redis-mock':
+        specifier: 0.17.3
+        version: 0.17.3
       graphql:
         specifier: 16.8.1
         version: 16.8.1
+      redis-mock:
+        specifier: 0.56.3
+        version: 0.56.3
       typescript:
         specifier: 5.7.3
         version: 5.7.3
@@ -4832,6 +4844,9 @@ packages:
   '@types/katex@0.16.3':
     resolution: {integrity: sha512-CeVMX9EhVUW8MWnei05eIRks4D5Wscw/W9Byz1s3PA+yJvcdvq9SaDjiUKvRvEgjpdTyJMjQA43ae4KTwsvOPg==}
 
+  '@types/lodash.get@4.4.9':
+    resolution: {integrity: sha512-J5dvW98sxmGnamqf+/aLP87PYXyrha9xIgc2ZlHl6OHMFR2Ejdxep50QfU0abO1+CH6+ugx+8wEUN1toImAinA==}
+
   '@types/lodash@4.14.191':
     resolution: {integrity: sha512-BdZ5BCCvho3EIXw6wUCXHe7rS53AIDPLE+JzwgT+OsJk53oBfbSmZZ7CX4VaRoN78N+TJpFi9QPlfIVNmJYWxQ==}
 
@@ -4855,6 +4870,9 @@ packages:
 
   '@types/ms@0.7.31':
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
+
+  '@types/ms@2.1.0':
+    resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
   '@types/mysql@2.15.26':
     resolution: {integrity: sha512-DSLCOXhkvfS5WNNPbfn2KdICAmk8lLc+/PNvnPnF7gOdMZCxopXduqv0OQ13y/yA/zXTSikZZqVgybUxOEg6YQ==}
@@ -4903,6 +4921,12 @@ packages:
 
   '@types/react@18.3.18':
     resolution: {integrity: sha512-t4yC+vtgnkYjNSKlFx1jkAhH8LgTo2N/7Qvi83kdEaUtMDiwpbLAktKDaAMlRcJ5eSxZkH74eEGt1ky31d7kfQ==}
+
+  '@types/redis-mock@0.17.3':
+    resolution: {integrity: sha512-1baXyGxRKEDog8p1ReiypODwiST2n3/0pBbgUKEuv9pBXnY6ttRzKATcW5Xz20ZOl9qkKtPIeq20tHgHSdQBAQ==}
+
+  '@types/redis@2.8.32':
+    resolution: {integrity: sha512-7jkMKxcGq9p242exlbsVzuJb57KqHRhNl4dHoQu2Y5v9bCAbtIXXH0R3HleSQW4CTOqpHIYUW3t6tpUj4BVQ+w==}
 
   '@types/request@2.48.12':
     resolution: {integrity: sha512-G3sY+NpsA9jnwm0ixhAFQSJ3Q9JkpLZpJbI3GMv0mIAT0y3mRabYeINzal5WOChIiaTEGQYlHOKgkaM9EisWHw==}
@@ -7402,12 +7426,6 @@ packages:
 
   graphql-query-complexity@0.7.2:
     resolution: {integrity: sha512-+VgmrfxGEjHI3zuojWOR8bsz7Ycz/BZjNjxnlUieTz5DsB92WoIrYCSZdWG7UWZ3rfcA1Gb2Nf+wB80GsaZWuQ==}
-    peerDependencies:
-      graphql: 16.8.1
-
-  graphql-rate-limit@3.3.0:
-    resolution: {integrity: sha512-mbbEv5z3SjkDLvVVdHi0XrVLavw2Mwo93GIqgQB/fx8dhcNSEv3eYI1OGdp8mhsm/MsZm7hjrRlwQMVRKBVxhA==}
-    engines: {node: '>=12.0', pnpm: '>=6'}
     peerDependencies:
       graphql: 16.8.1
 
@@ -10085,6 +10103,10 @@ packages:
   redis-errors@1.2.0:
     resolution: {integrity: sha512-1qny3OExCf0UvUV/5wpYKf2YwPcOqXzkwKKSmKHiE6ZMQs5heeE/c8eXK+PNllPvmjgAbfnsbpkGZWy8cBpn9w==}
     engines: {node: '>=4'}
+
+  redis-mock@0.56.3:
+    resolution: {integrity: sha512-ynaJhqk0Qf3Qajnwvy4aOjS4Mdf9IBkELWtjd+NYhpiqu4QCNq6Vf3Q7c++XRPGiKiwRj9HWr0crcwy7EiPjYQ==}
+    engines: {node: '>=6'}
 
   redis-parser@3.0.0:
     resolution: {integrity: sha512-DJnGAeenTdpMEH6uAJRK/uiyEIH9WVsUmoLwzudwGJUwZPp80PDBWPHXSAGNPwNvIXAbe7MSUB1zQFugFml66A==}
@@ -15870,7 +15892,7 @@ snapshots:
 
   '@types/debug@4.1.7':
     dependencies:
-      '@types/ms': 0.7.31
+      '@types/ms': 2.1.0
 
   '@types/estree-jsx@1.0.0':
     dependencies:
@@ -15955,6 +15977,10 @@ snapshots:
 
   '@types/katex@0.16.3': {}
 
+  '@types/lodash.get@4.4.9':
+    dependencies:
+      '@types/lodash': 4.14.191
+
   '@types/lodash@4.14.191': {}
 
   '@types/long@4.0.1': {}
@@ -15974,6 +16000,8 @@ snapshots:
   '@types/minimatch@3.0.5': {}
 
   '@types/ms@0.7.31': {}
+
+  '@types/ms@2.1.0': {}
 
   '@types/mysql@2.15.26':
     dependencies:
@@ -16026,6 +16054,14 @@ snapshots:
     dependencies:
       '@types/prop-types': 15.7.3
       csstype: 3.0.9
+
+  '@types/redis-mock@0.17.3':
+    dependencies:
+      '@types/redis': 2.8.32
+
+  '@types/redis@2.8.32':
+    dependencies:
+      '@types/node': 22.13.4
 
   '@types/request@2.48.12':
     dependencies:
@@ -19203,16 +19239,6 @@ snapshots:
     dependencies:
       graphql: 16.8.1
       lodash.get: 4.4.2
-
-  graphql-rate-limit@3.3.0(graphql-middleware@6.1.35(graphql@16.8.1))(graphql@16.8.1):
-    dependencies:
-      '@graphql-tools/utils': 7.10.0(graphql@16.8.1)
-      graphql: 16.8.1
-      graphql-shield: 7.6.5(graphql-middleware@6.1.35(graphql@16.8.1))(graphql@16.8.1)
-      lodash.get: 4.4.2
-      ms: 2.1.3
-    transitivePeerDependencies:
-      - graphql-middleware
 
   graphql-scalars@1.24.1(graphql@16.8.1):
     dependencies:
@@ -22771,6 +22797,8 @@ snapshots:
       vfile: 6.0.1
 
   redis-errors@1.2.0: {}
+
+  redis-mock@0.56.3: {}
 
   redis-parser@3.0.0:
     dependencies:
