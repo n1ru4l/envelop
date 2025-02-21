@@ -1,0 +1,5 @@
+---
+"@envelop/immediate-introspection": patch
+---
+dependencies updates:
+  - Updated dependency [`@envelop/core@workspace:^` ↗︎](https://www.npmjs.com/package/@envelop/core/v/workspace:^) (from `^5.0.0`, in `peerDependencies`)
