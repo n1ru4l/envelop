@@ -44,10 +44,10 @@ importers:
         version: 2.28.1
       '@ianvs/prettier-plugin-sort-imports':
         specifier: 4.4.1
-        version: 4.4.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.1)
+        version: 4.4.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.2)
       '@theguild/prettier-config':
         specifier: 2.0.7
-        version: 2.0.7(prettier@3.5.1)
+        version: 2.0.7(prettier@3.5.2)
       '@types/benchmark':
         specifier: 2.1.5
         version: 2.1.5
@@ -115,14 +115,14 @@ importers:
         specifier: 15.4.3
         version: 15.4.3
       prettier:
-        specifier: 3.5.1
-        version: 3.5.1
+        specifier: 3.5.2
+        version: 3.5.2
       prettier-plugin-pkg:
         specifier: 0.18.1
-        version: 0.18.1(prettier@3.5.1)
+        version: 0.18.1(prettier@3.5.2)
       prettier-plugin-sh:
         specifier: 0.15.0
-        version: 0.15.0(prettier@3.5.1)
+        version: 0.15.0(prettier@3.5.2)
       rimraf:
         specifier: 6.0.1
         version: 6.0.1
@@ -811,8 +811,8 @@ importers:
         specifier: workspace:^
         version: link:../../core/dist
       '@types/jsonwebtoken':
-        specifier: 9.0.8
-        version: 9.0.8
+        specifier: 9.0.9
+        version: 9.0.9
       typescript:
         specifier: 5.7.3
         version: 5.7.3
@@ -4849,8 +4849,8 @@ packages:
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
 
-  '@types/jsonwebtoken@9.0.8':
-    resolution: {integrity: sha512-7fx54m60nLFUVYlxAB1xpe9CBWX2vSrk50Y6ogRJ1v5xxtba7qXTg5BgYDN5dq+yuQQ9HaVlHJyAAt1/mxryFg==}
+  '@types/jsonwebtoken@9.0.9':
+    resolution: {integrity: sha512-uoe+GxEuHbvy12OUQct2X9JenKM3qAscquYymuQN4fMWG9DBQtykrQEFcAbVACF7qaLw9BePSodUL0kquqBJpQ==}
 
   '@types/k6@0.57.1':
     resolution: {integrity: sha512-S/p2RQAYUBXyYROkR2fgeON/LaxJ0YR+KIlnPQW/TOeLBXD7tX4RfDSWaIecuDTWKblmc6UwANyP0e5QDZPhMw==}
@@ -4881,9 +4881,6 @@ packages:
 
   '@types/minimatch@3.0.5':
     resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
-
-  '@types/ms@0.7.31':
-    resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
 
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
@@ -9888,8 +9885,8 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
 
-  prettier@3.5.1:
-    resolution: {integrity: sha512-hPpFQvHwL3Qv5AdRvBFMhnKo4tYxp0ReXiPn2bxkiohEX6mBeBwEpBSQTkD458RaaDKQMYSp4hX4UtfUTA5wDw==}
+  prettier@3.5.2:
+    resolution: {integrity: sha512-lc6npv5PH7hVqozBR7lkBNOGXV9vMwROAPlumdBkX0wTbbzPu/U1hk5yL8p2pt4Xoc+2mkT8t/sow2YrV/M5qg==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -13912,25 +13909,25 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.2': {}
 
-  '@ianvs/prettier-plugin-sort-imports@4.3.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.1)':
+  '@ianvs/prettier-plugin-sort-imports@4.3.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.2)':
     dependencies:
       '@babel/core': 7.26.9
       '@babel/generator': 7.26.9
       '@babel/parser': 7.26.9
       '@babel/traverse': 7.26.9
       '@babel/types': 7.26.9
-      prettier: 3.5.1
+      prettier: 3.5.2
       semver: 7.6.3
     transitivePeerDependencies:
       - supports-color
 
-  '@ianvs/prettier-plugin-sort-imports@4.4.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.1)':
+  '@ianvs/prettier-plugin-sort-imports@4.4.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.2)':
     dependencies:
       '@babel/generator': 7.26.9
       '@babel/parser': 7.26.9
       '@babel/traverse': 7.26.9
       '@babel/types': 7.26.9
-      prettier: 3.5.1
+      prettier: 3.5.2
       semver: 7.6.3
     transitivePeerDependencies:
       - supports-color
@@ -15691,12 +15688,12 @@ snapshots:
       - utf-8-validate
       - webpack
 
-  '@theguild/prettier-config@2.0.7(prettier@3.5.1)':
+  '@theguild/prettier-config@2.0.7(prettier@3.5.2)':
     dependencies:
-      '@ianvs/prettier-plugin-sort-imports': 4.3.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.1)
-      prettier: 3.5.1
-      prettier-plugin-pkg: 0.18.1(prettier@3.5.1)
-      prettier-plugin-sh: 0.14.0(prettier@3.5.1)
+      '@ianvs/prettier-plugin-sort-imports': 4.3.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.2)
+      prettier: 3.5.2
+      prettier-plugin-pkg: 0.18.1(prettier@3.5.2)
+      prettier-plugin-sh: 0.14.0(prettier@3.5.2)
     transitivePeerDependencies:
       - '@vue/compiler-sfc'
       - supports-color
@@ -15999,9 +15996,9 @@ snapshots:
 
   '@types/json5@0.0.29': {}
 
-  '@types/jsonwebtoken@9.0.8':
+  '@types/jsonwebtoken@9.0.9':
     dependencies:
-      '@types/ms': 0.7.31
+      '@types/ms': 2.1.0
       '@types/node': 22.13.5
 
   '@types/k6@0.57.1': {}
@@ -16029,8 +16026,6 @@ snapshots:
   '@types/mime@1.3.2': {}
 
   '@types/minimatch@3.0.5': {}
-
-  '@types/ms@0.7.31': {}
 
   '@types/ms@2.1.0': {}
 
@@ -20436,7 +20431,7 @@ snapshots:
   jwks-rsa@3.1.0:
     dependencies:
       '@types/express': 4.17.21
-      '@types/jsonwebtoken': 9.0.8
+      '@types/jsonwebtoken': 9.0.9
       debug: 4.4.0
       jose: 4.15.9
       limiter: 1.1.5
@@ -22539,25 +22534,25 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prettier-plugin-pkg@0.18.1(prettier@3.5.1):
+  prettier-plugin-pkg@0.18.1(prettier@3.5.2):
     dependencies:
-      prettier: 3.5.1
+      prettier: 3.5.2
 
-  prettier-plugin-sh@0.14.0(prettier@3.5.1):
+  prettier-plugin-sh@0.14.0(prettier@3.5.2):
     dependencies:
       mvdan-sh: 0.10.1
-      prettier: 3.5.1
+      prettier: 3.5.2
       sh-syntax: 0.4.1
 
-  prettier-plugin-sh@0.15.0(prettier@3.5.1):
+  prettier-plugin-sh@0.15.0(prettier@3.5.2):
     dependencies:
       mvdan-sh: 0.10.1
-      prettier: 3.5.1
+      prettier: 3.5.2
       sh-syntax: 0.4.2
 
   prettier@2.8.8: {}
 
-  prettier@3.5.1: {}
+  prettier@3.5.2: {}
 
   pretty-bytes@5.6.0: {}
 
