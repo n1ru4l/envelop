@@ -1,6 +1,6 @@
-const config = require('@theguild/tailwind-config');
+import config from '@theguild/tailwind-config';
 
-module.exports = {
+export default {
   ...config,
   safelist: ['dark:invert'], // because `dark:invert` not in tsx file but in ts
 };
