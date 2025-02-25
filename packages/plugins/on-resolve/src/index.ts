@@ -5,19 +5,20 @@ import {
   isIntrospectionType,
   isObjectType,
 } from 'graphql';
-import { mapMaybePromise, Plugin, PromiseOrValue } from '@envelop/core';
+import type { Plugin } from '@envelop/core';
+import { handleMaybePromise, mapMaybePromise, MaybePromise } from '@whatwg-node/promise-helpers';
 
 export type Resolver<Context = unknown> = (
   root: unknown,
   args: Record<string, unknown>,
   context: Context,
   info: GraphQLResolveInfo,
-) => PromiseOrValue<unknown>;
+) => MaybePromise<unknown>;
 
 export type AfterResolver = (options: {
   result: unknown;
   setResult: (newResult: unknown) => void;
-}) => PromiseOrValue<void>;
+}) => MaybePromise<void>;
 
 export interface OnResolveOptions<PluginContext extends Record<string, any> = {}> {
   context: PluginContext;
@@ -30,7 +31,7 @@ export interface OnResolveOptions<PluginContext extends Record<string, any> = {}
 
 export type OnResolve<PluginContext extends Record<string, any> = {}> = (
   options: OnResolveOptions<PluginContext>,
-) => PromiseOrValue<AfterResolver | void>;
+) => MaybePromise<AfterResolver | void>;
 
 export type UseOnResolveOptions = {
   /**
@@ -64,57 +65,46 @@ export function useOnResolve<PluginContext extends Record<string, any> = {}>(
             let resolver = (field.resolve || defaultFieldResolver) as Resolver<PluginContext>;
 
             field.resolve = (root, args, context, info) =>
-              mapMaybePromise(
-                onResolve({
-                  root,
-                  args,
-                  context,
-                  info,
-                  resolver,
-                  replaceResolver: newResolver => {
-                    resolver = newResolver;
-                  },
-                }),
+              handleMaybePromise(
+                () =>
+                  onResolve({
+                    root,
+                    args,
+                    context,
+                    info,
+                    resolver,
+                    replaceResolver: newResolver => {
+                      resolver = newResolver;
+                    },
+                  }),
                 afterResolve => {
                   if (typeof afterResolve === 'function') {
-                    try {
-                      return mapMaybePromise(
-                        resolver(root, args, context, info),
-                        result =>
-                          mapMaybePromise(
-                            afterResolve({
-                              result,
-                              setResult: newResult => {
-                                result = newResult;
-                              },
-                            }),
-                            () => result,
-                          ),
-                        errorResult =>
-                          mapMaybePromise(
+                    return handleMaybePromise(
+                      () => resolver(root, args, context, info),
+                      result =>
+                        mapMaybePromise(
+                          afterResolve({
+                            result,
+                            setResult: newResult => {
+                              result = newResult;
+                            },
+                          }),
+                          () => result,
+                        ),
+                      errorResult =>
+                        handleMaybePromise(
+                          () =>
                             afterResolve({
                               result: errorResult,
                               setResult: newResult => {
                                 errorResult = newResult;
                               },
                             }),
-                            () => {
-                              throw errorResult;
-                            },
-                          ),
-                      );
-                    } catch (err) {
-                      let errorResult = err;
-                      return mapMaybePromise(
-                        afterResolve({
-                          result: errorResult,
-                          setResult: newResult => {
-                            errorResult = newResult;
+                          () => {
+                            throw errorResult;
                           },
-                        }),
-                        () => errorResult,
-                      );
-                    }
+                        ),
+                    );
                   }
                   return resolver(root, args, context, info);
                 },

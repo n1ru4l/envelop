@@ -53,6 +53,7 @@
   "dependencies": {
     "@envelop/on-resolve": "workspace:^",
     "@graphql-tools/utils": "^10.5.4",
+    "@whatwg-node/promise-helpers": "^1.0.0",
     "lodash.get": "^4.4.2",
     "minimatch": "^10.0.1",
     "ms": "^2.1.3",

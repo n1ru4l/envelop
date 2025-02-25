@@ -40,53 +40,7 @@ export const makeSubscribe = (subscribeFn: (args: ExecutionArgs) => any): Subscr
   ((...polyArgs: PolymorphicSubscribeArguments): PromiseOrValue<AsyncIterableIterator<any>> =>
     subscribeFn(getSubscribeArgs(polyArgs))) as SubscribeFunction;
 
-export function mapAsyncIterator<T, O>(
-  source: AsyncIterable<T>,
-  mapper: (input: T) => Promise<O> | O,
-): AsyncGenerator<O> {
-  const iterator = source[Symbol.asyncIterator]();
-
-  async function mapResult(result: IteratorResult<T, O>): Promise<IteratorResult<O>> {
-    if (result.done) {
-      return result;
-    }
-    try {
-      return { value: await mapper(result.value), done: false };
-    } catch (error) {
-      try {
-        await iterator.return?.();
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (_error) {
-        /* ignore error */
-      }
-      throw error;
-    }
-  }
-
-  const stream: AsyncGenerator<O> = {
-    [Symbol.asyncIterator]() {
-      return stream;
-    },
-    async next() {
-      return await mapResult(await iterator.next());
-    },
-    async return() {
-      const promise = iterator.return?.();
-      return promise ? await mapResult(await promise) : { value: undefined as any, done: true };
-    },
-    async throw(error: unknown) {
-      const promise = iterator.throw?.();
-      if (promise) {
-        return await mapResult(await promise);
-      }
-      // if the source has no throw method we just re-throw error
-      // usually throw is not called anyways
-      throw error;
-    },
-  };
-
-  return stream;
-}
+export { mapAsyncIterator } from '@whatwg-node/promise-helpers';
 
 function getExecuteArgs(args: PolymorphicExecuteArguments): ExecutionArgs {
   return args.length === 1
@@ -226,31 +180,4 @@ export function errorAsyncIterator<TInput>(
   return stream;
 }
 
-export function isPromise<T>(value: any): value is Promise<T> {
-  return value?.then !== undefined;
-}
-
-export function mapMaybePromise<T, R>(
-  value: PromiseOrValue<T>,
-  mapper: (v: T) => PromiseOrValue<R>,
-  errorMapper?: (e: any) => PromiseOrValue<R>,
-): PromiseOrValue<R> {
-  if (isPromise(value)) {
-    if (errorMapper) {
-      try {
-        return value.then(mapper, errorMapper);
-      } catch (e) {
-        return errorMapper(e);
-      }
-    }
-    return value.then(mapper);
-  }
-  if (errorMapper) {
-    try {
-      return mapper(value);
-    } catch (e) {
-      return errorMapper(e);
-    }
-  }
-  return mapper(value);
-}
+export { mapMaybePromise, isPromise } from '@whatwg-node/promise-helpers';

@@ -1,8 +1,9 @@
 import { GraphQLResolveInfo, responsePathAsArray } from 'graphql';
 import { minimatch } from 'minimatch';
-import { mapMaybePromise, Plugin } from '@envelop/core';
+import type { Plugin } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
 import { createGraphQLError, getDirectiveExtensions } from '@graphql-tools/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { getGraphQLRateLimiter } from './get-graphql-rate-limiter.js';
 import { InMemoryStore } from './in-memory-store.js';
 import { RateLimitError } from './rate-limit-error.js';
@@ -133,34 +134,35 @@ export const useRateLimiter = (options: RateLimiterPluginOptions): Plugin<RateLi
               const window = rateLimitDef.window;
               const identifier = identifyFn(context);
 
-              return mapMaybePromise(
-                rateLimiterFn(
-                  {
-                    parent: root,
-                    args: fieldIdentity ? { ...args, identifier } : args,
-                    context,
-                    info,
-                  },
-                  {
-                    max,
-                    window,
-                    identityArgs: fieldIdentity
-                      ? ['identifier', ...(rateLimitDef.identityArgs || [])]
-                      : rateLimitDef.identityArgs,
-                    arrayLengthField: rateLimitDef.arrayLengthField,
-                    uncountRejected: rateLimitDef.uncountRejected,
-                    readOnly: rateLimitDef.readOnly,
-                    message:
-                      message && identifier
-                        ? interpolateMessage(message, identifier, {
-                            root,
-                            args,
-                            context,
-                            info,
-                          })
-                        : undefined,
-                  },
-                ),
+              return handleMaybePromise(
+                () =>
+                  rateLimiterFn(
+                    {
+                      parent: root,
+                      args: fieldIdentity ? { ...args, identifier } : args,
+                      context,
+                      info,
+                    },
+                    {
+                      max,
+                      window,
+                      identityArgs: fieldIdentity
+                        ? ['identifier', ...(rateLimitDef.identityArgs || [])]
+                        : rateLimitDef.identityArgs,
+                      arrayLengthField: rateLimitDef.arrayLengthField,
+                      uncountRejected: rateLimitDef.uncountRejected,
+                      readOnly: rateLimitDef.readOnly,
+                      message:
+                        message && identifier
+                          ? interpolateMessage(message, identifier, {
+                              root,
+                              args,
+                              context,
+                              info,
+                            })
+                          : undefined,
+                    },
+                  ),
                 errorMessage => {
                   if (errorMessage) {
                     if (options.onRateLimitError) {

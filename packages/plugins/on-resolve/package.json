@@ -50,7 +50,9 @@
     "@envelop/core": "workspace:^",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@whatwg-node/promise-helpers": "^1.0.0"
+  },
   "devDependencies": {
     "@envelop/core": "workspace:^",
     "@graphql-tools/schema": "10.0.19",
