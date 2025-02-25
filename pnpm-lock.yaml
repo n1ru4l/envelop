@@ -658,6 +658,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@envelop/instruments':
+        specifier: workspace:^
+        version: link:../instruments/dist
       '@envelop/types':
         specifier: workspace:^
         version: link:../types/dist

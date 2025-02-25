@@ -1,4 +1,4 @@
-import { chain, envelop, GenericInstruments, Instruments, useEngine } from '@envelop/core';
+import { chain, GenericInstruments } from '../src';
 
 describe('instruments', () => {
   describe('chain', () => {
