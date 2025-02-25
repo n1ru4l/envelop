@@ -28,8 +28,8 @@ export function chain<First extends GenericInstruments, Next extends GenericInst
  * The order of execution will respect the order of the array,
  * the first one being the outter most call, the last one the inner most call.
  */
-export function composeInstruments<T extends GenericInstruments>(instrumentations: T[]): T {
-  return instrumentations.reduce(chain);
+export function composeInstruments<T extends GenericInstruments>(instruments: T[]): T | undefined {
+  return instruments.length > 0 ? instruments.reduce(chain) : undefined;
 }
 
 /**
