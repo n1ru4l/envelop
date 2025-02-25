@@ -1,5 +1,15 @@
 # @envelop/newrelic
 
+## 8.0.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5b6a166`](https://github.com/n1ru4l/envelop/commit/5b6a166f5e2c12e6aa4679eb4e3209de43b0efc1),
+  [`5b6a166`](https://github.com/n1ru4l/envelop/commit/5b6a166f5e2c12e6aa4679eb4e3209de43b0efc1)]:
+  - @envelop/core@5.1.1
+  - @envelop/on-resolve@5.0.1
+
 ## 8.0.0
 
 ### Patch Changes
