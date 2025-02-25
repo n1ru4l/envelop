@@ -1,4 +1,4 @@
-import { chain, envelop, GenericInstruments, Instruments, useEngine } from '@envelop/core';
+import { envelop, Instruments, useEngine } from '@envelop/core';
 
 describe('instruments', () => {
   it('should instrument all graphql phases', async () => {

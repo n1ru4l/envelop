@@ -27,6 +27,7 @@
       "@envelop/core": ["packages/core/src/index.ts"],
       "@envelop/testing": ["packages/testing/src/index.ts"],
       "@envelop/types": ["packages/types/src/index.ts"],
+      "@envelop/instruments": ["packages/instruments/src/index.ts"],
       "@envelop/*": ["packages/plugins/*/src/index.ts"]
     }
   },
