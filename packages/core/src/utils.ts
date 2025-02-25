@@ -32,7 +32,6 @@ function getSubscribeArgs(args: PolymorphicSubscribeArguments): ExecutionArgs {
         subscribeFieldResolver: args[7],
       };
 }
-
 /**
  * Utility function for making a subscribe function that handles polymorphic arguments.
  */

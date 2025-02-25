@@ -11,7 +11,10 @@ import {
 import type { PromiseOrValue } from './utils.js';
 
 export interface Plugin<PluginContext extends Record<string, any> = {}> {
-  tracer?: Tracer<PluginContext>;
+  /**
+   * Instruments wrapping each phases, including hooks executions.
+   */
+  instruments?: Instruments<PluginContext>;
   /**
    * Invoked for each call to getEnveloped.
    */
@@ -46,7 +49,7 @@ export interface Plugin<PluginContext extends Record<string, any> = {}> {
   onContextBuilding?: OnContextBuildingHook<PluginContext>;
 }
 
-export type Tracer<TContext extends Record<string, any>> = {
+export type Instruments<TContext extends Record<string, any>> = {
   init?: (payload: { context: TContext }, wrapped: () => void) => void;
   parse?: (payload: { context: TContext }, wrapped: () => void) => void;
   validate?: (payload: { context: TContext }, wrapped: () => void) => void;

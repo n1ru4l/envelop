@@ -1,6 +1,13 @@
-import { ArbitraryObject, ComposeContext, GetEnvelopedFn, Optional, Plugin } from '@envelop/types';
+import {
+  ArbitraryObject,
+  ComposeContext,
+  GetEnvelopedFn,
+  Instruments,
+  Optional,
+  Plugin,
+} from '@envelop/types';
 import { createEnvelopOrchestrator, EnvelopOrchestrator } from './orchestrator.js';
-import { getTraced, getTracer } from './tracer.js';
+import { composeInstruments, getInstrumented, getInstrumentsAndPlugins } from './tracer.js';
 
 type ExcludeFalsy<TArray extends any[]> = Exclude<TArray[0], null | undefined | false>[];
 
@@ -12,8 +19,10 @@ export function envelop<PluginsType extends Optional<Plugin<any>>[]>(options: {
   plugins: PluginsType;
   enableInternalTracing?: boolean;
 }): GetEnvelopedFn<ComposeContext<ExcludeFalsy<PluginsType>>> {
-  const plugins = options.plugins.filter(notEmpty);
-  const tracer = getTracer<ComposeContext<ExcludeFalsy<PluginsType>>>(plugins);
+  const { pluginInstruments, plugins } = getInstrumentsAndPlugins<Instruments<any>, Plugin<any>>(
+    options.plugins.filter(notEmpty),
+  );
+  const instruments = composeInstruments(pluginInstruments);
   const orchestrator = createEnvelopOrchestrator<ComposeContext<ExcludeFalsy<PluginsType>>>({
     plugins,
   });
@@ -21,20 +30,23 @@ export function envelop<PluginsType extends Optional<Plugin<any>>[]>(options: {
   const getEnveloped = <TInitialContext extends ArbitraryObject>(
     context: TInitialContext = {} as TInitialContext,
   ) => {
-    const traced = getTraced<{ context: any }>({ context });
+    const instrumented = getInstrumented<{ context: any }>({ context });
     const typedOrchestrator = orchestrator as EnvelopOrchestrator<
       TInitialContext,
       ComposeContext<ExcludeFalsy<PluginsType>>
     >;
 
-    traced.fn(tracer?.init, orchestrator.init)(context);
+    instrumented.fn(instruments?.init, orchestrator.init)(context);
 
     return {
-      parse: traced.fn(tracer?.parse, typedOrchestrator.parse(context)),
-      validate: traced.fn(tracer?.validate, typedOrchestrator.validate(context)),
-      contextFactory: traced.fn(tracer?.context, typedOrchestrator.contextFactory(context as any)),
-      execute: traced.asyncFn(tracer?.execute, typedOrchestrator.execute),
-      subscribe: traced.asyncFn(tracer?.subscribe, typedOrchestrator.subscribe),
+      parse: instrumented.fn(instruments?.parse, typedOrchestrator.parse(context)),
+      validate: instrumented.fn(instruments?.validate, typedOrchestrator.validate(context)),
+      contextFactory: instrumented.fn(
+        instruments?.context,
+        typedOrchestrator.contextFactory(context as any),
+      ),
+      execute: instrumented.asyncFn(instruments?.execute, typedOrchestrator.execute),
+      subscribe: instrumented.asyncFn(instruments?.subscribe, typedOrchestrator.subscribe),
       schema: typedOrchestrator.getCurrentSchema(),
     };
   };
