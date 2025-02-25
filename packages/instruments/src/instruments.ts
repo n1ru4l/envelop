@@ -1,9 +1,8 @@
-import { isPromise, mapMaybePromise } from '@envelop/core';
-import type { PromiseOrValue } from '@envelop/types';
+import { handleMaybePromise, isPromise, MaybePromise } from '@whatwg-node/promise-helpers';
 
 export type GenericInstruments = Record<
   string,
-  (payload: any, wrapped: () => PromiseOrValue<void>) => PromiseOrValue<void>
+  (payload: any, wrapped: () => MaybePromise<void>) => MaybePromise<void>
 >;
 
 /**
@@ -88,21 +87,22 @@ export const getInstrumented = <TPayload>(payload: TPayload) => ({
    */
   asyncFn<TResult, TArgs extends any[]>(
     instrument:
-      | ((payload: TPayload, wrapped: () => PromiseOrValue<void>) => PromiseOrValue<void>)
+      | ((payload: TPayload, wrapped: () => MaybePromise<void>) => MaybePromise<void>)
       | undefined,
-    wrapped: (...args: TArgs) => PromiseOrValue<TResult>,
-  ): (...args: TArgs) => PromiseOrValue<TResult> {
+    wrapped: (...args: TArgs) => MaybePromise<TResult>,
+  ): (...args: TArgs) => MaybePromise<TResult> {
     if (!instrument) {
       return wrapped;
     }
 
     return (...args) => {
-      let result: PromiseOrValue<TResult>;
-      return mapMaybePromise(
-        instrument(payload, () => {
-          result = wrapped(...args);
-          return isPromise(result) ? result.then(() => undefined) : undefined;
-        }),
+      let result: MaybePromise<TResult>;
+      return handleMaybePromise(
+        () =>
+          instrument(payload, () => {
+            result = wrapped(...args);
+            return isPromise(result) ? result.then(() => undefined) : undefined;
+          }),
         () => {
           return result;
         },
