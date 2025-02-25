@@ -36,7 +36,7 @@ export type TuplifyUnion<T, L = LastOf<T>, N = [T] extends [never] ? true : fals
 export type Unarray<T> = T extends Array<infer U> ? U : T;
 
 export type ArbitraryObject = Record<string | number | symbol, any>;
-export type PromiseOrValue<T> = T | Promise<T>;
+export { MaybePromise as PromiseOrValue } from '@whatwg-node/promise-helpers';
 export type AsyncIterableIteratorOrValue<T> = T | AsyncIterableIterator<T>;
 export type Maybe<T> = T | null | undefined;
 export type Optional<T> = T | Maybe<T> | false;

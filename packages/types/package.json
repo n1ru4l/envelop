@@ -47,6 +47,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "dependencies": {
+    "@whatwg-node/promise-helpers": "^1.0.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
