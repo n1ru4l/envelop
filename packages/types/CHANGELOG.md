@@ -1,5 +1,16 @@
 # @envelop/types
 
+## 5.1.1
+
+### Patch Changes
+
+- [#2455](https://github.com/n1ru4l/envelop/pull/2455)
+  [`5b6a166`](https://github.com/n1ru4l/envelop/commit/5b6a166f5e2c12e6aa4679eb4e3209de43b0efc1)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@whatwg-node/promise-helpers@^1.0.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/1.0.0)
+    (to `dependencies`)
+
 ## 5.1.0
 
 ### Minor Changes
