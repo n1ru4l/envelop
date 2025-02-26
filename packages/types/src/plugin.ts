@@ -8,8 +8,13 @@ import {
   OnSubscribeHook,
   OnValidateHook,
 } from './hooks.js';
+import type { PromiseOrValue } from './utils.js';
 
 export interface Plugin<PluginContext extends Record<string, any> = {}> {
+  /**
+   * Instruments wrapping each phases, including hooks executions.
+   */
+  instruments?: Instruments<PluginContext>;
   /**
    * Invoked for each call to getEnveloped.
    */
@@ -43,3 +48,18 @@ export interface Plugin<PluginContext extends Record<string, any> = {}> {
    */
   onContextBuilding?: OnContextBuildingHook<PluginContext>;
 }
+
+export type Instruments<TContext extends Record<string, any>> = {
+  init?: (payload: { context: TContext }, wrapped: () => void) => void;
+  parse?: (payload: { context: TContext }, wrapped: () => void) => void;
+  validate?: (payload: { context: TContext }, wrapped: () => void) => void;
+  context?: (payload: { context: TContext }, wrapped: () => void) => void;
+  execute?: (
+    payload: { context: TContext },
+    wrapped: () => PromiseOrValue<void>,
+  ) => PromiseOrValue<void>;
+  subscribe?: (
+    payload: { context: TContext },
+    wrapped: () => PromiseOrValue<void>,
+  ) => PromiseOrValue<void>;
+};
