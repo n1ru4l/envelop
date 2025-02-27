@@ -26,6 +26,7 @@ import {
   getDirectiveExtensions,
   shouldIncludeNode,
 } from '@graphql-tools/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 export type ResolveUserFn<UserType, ContextType = DefaultContext> = (
   context: ContextType,
@@ -471,30 +472,43 @@ export const useGenericAuth = <
           }),
         );
       },
-      async onContextBuilding({ context, extendContext }) {
-        const user = await options.resolveUserFn(context as unknown as ContextType);
-        if (options.extractPolicies) {
-          const policies = await options.extractPolicies(user!, context as unknown as ContextType);
-          policiesByContext.set(context as unknown as ContextType, policies);
-        }
-        // @ts-expect-error - Fix this
-        if (context[contextFieldName] !== user) {
-          // @ts-expect-error - Fix this
-          extendContext({
-            [contextFieldName]: user,
-          });
-        }
+      onContextBuilding({ context, extendContext }) {
+        return handleMaybePromise(
+          () => options.resolveUserFn(context as unknown as ContextType),
+          user => {
+            // @ts-expect-error - Fix this
+            if (context[contextFieldName] !== user) {
+              // @ts-expect-error - Fix this
+              extendContext({
+                [contextFieldName]: user,
+              });
+            }
+            if (options.extractPolicies) {
+              return handleMaybePromise(
+                () => user && options.extractPolicies?.(user, context as unknown as ContextType),
+                policies => {
+                  if (policies?.length) {
+                    policiesByContext.set(context as unknown as ContextType, policies);
+                  }
+                },
+              );
+            }
+          },
+        );
       },
     };
   }
   if (options.mode === 'resolve-only') {
     return {
-      async onContextBuilding({ context, extendContext }) {
-        const user = await options.resolveUserFn(context as unknown as ContextType);
-
-        extendContext({
-          [contextFieldName]: user,
-        } as any);
+      onContextBuilding({ context, extendContext }) {
+        return handleMaybePromise(
+          () => options.resolveUserFn(context as unknown as ContextType),
+          user => {
+            extendContext({
+              [contextFieldName]: user,
+            } as any);
+          },
+        );
       },
     };
   }

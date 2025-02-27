@@ -11,6 +11,7 @@ import {
   PromiseOrValue,
   SubscribeFunction,
 } from '@envelop/types';
+import { fakePromise } from '@whatwg-node/promise-helpers';
 
 export const envelopIsIntrospectionSymbol = Symbol('ENVELOP_IS_INTROSPECTION');
 
@@ -115,26 +116,27 @@ export function finalAsyncIterator<TInput>(
     [Symbol.asyncIterator]() {
       return stream;
     },
-    async next() {
-      const result = await iterator.next();
-      if (result.done && isDone === false) {
-        isDone = true;
-        onFinal();
-      }
-      return result;
+    next() {
+      return iterator.next().then(result => {
+        if (result.done && isDone === false) {
+          isDone = true;
+          onFinal();
+        }
+        return result;
+      });
     },
-    async return() {
+    return() {
       const promise = iterator.return?.();
       if (isDone === false) {
         isDone = true;
         onFinal();
       }
-      return promise ? await promise : { done: true, value: undefined };
+      return promise || fakePromise({ done: true, value: undefined });
     },
-    async throw(error: unknown) {
+    throw(error: unknown) {
       const promise = iterator.throw?.();
       if (promise) {
-        return await promise;
+        return promise;
       }
       // if the source has no throw method we just re-throw error
       // usually throw is not called anyways
@@ -154,22 +156,20 @@ export function errorAsyncIterator<TInput>(
     [Symbol.asyncIterator]() {
       return stream;
     },
-    async next() {
-      try {
-        return await iterator.next();
-      } catch (error) {
+    next() {
+      return iterator.next().catch(error => {
         onError(error);
         return { done: true, value: undefined };
-      }
+      });
     },
-    async return() {
+    return() {
       const promise = iterator.return?.();
-      return promise ? await promise : { done: true, value: undefined };
+      return promise || fakePromise({ done: true, value: undefined });
     },
-    async throw(error: unknown) {
+    throw(error: unknown) {
       const promise = iterator.throw?.();
       if (promise) {
-        return await promise;
+        return promise;
       }
       // if the source has no throw method we just re-throw error
       // usually throw is not called anyways
