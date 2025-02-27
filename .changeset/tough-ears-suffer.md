@@ -1,7 +1,7 @@
 ---
 '@envelop/types': minor
 '@envelop/core': minor
-'@envelop/insturments': major
+'@envelop/instruments': major
 ---
 
 Add new Tracer API
