@@ -58,7 +58,7 @@
   "dependencies": {
     "@envelop/instruments": "workspace:^",
     "@envelop/types": "workspace:^",
-    "@whatwg-node/promise-helpers": "^1.0.0",
+    "@whatwg-node/promise-helpers": "^1.2.1",
     "tslib": "^2.5.0"
   },
   "devDependencies": {

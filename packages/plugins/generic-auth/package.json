@@ -54,6 +54,7 @@
     "@envelop/extended-validation": "workspace:^",
     "@graphql-tools/executor": "^1.3.6",
     "@graphql-tools/utils": "^10.5.1",
+    "@whatwg-node/promise-helpers": "^1.2.1",
     "tslib": "^2.5.0"
   },
   "devDependencies": {

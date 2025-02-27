@@ -15,12 +15,14 @@ import {
   OnContextBuildingHook,
   OnContextErrorHandler,
   OnEnvelopedHook,
-  OnExecuteDoneHook,
+  OnExecuteDoneHookResult,
   OnExecuteDoneHookResultOnEndHook,
   OnExecuteDoneHookResultOnNextHook,
   OnExecuteHook,
+  OnExecuteHookResult,
   OnParseHook,
   OnSubscribeHook,
+  OnSubscribeHookResult,
   OnSubscribeResultResultOnEndHook,
   OnSubscribeResultResultOnNextHook,
   OnValidateHook,
@@ -33,6 +35,7 @@ import {
   TypedSubscriptionArgs,
   ValidateFunction,
 } from '@envelop/types';
+import { handleMaybePromise, iterateAsync, iterateAsyncVoid } from '@whatwg-node/promise-helpers';
 import { documentStringMap } from './document-string-map.js';
 import {
   errorAsyncIterator,
@@ -116,15 +119,14 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
   for (let i = 0; i < plugins.length; i++) {
     const plugin = plugins[i];
     const pluginsToAdd: Plugin[] = [];
-    plugin.onPluginInit &&
-      plugin.onPluginInit({
-        plugins,
-        addPlugin: newPlugin => {
-          pluginsToAdd.push(newPlugin);
-        },
-        setSchema: modifiedSchema => replaceSchema(modifiedSchema, i),
-        registerContextErrorHandler: handler => contextErrorHandlers.push(handler),
-      });
+    plugin.onPluginInit?.({
+      plugins,
+      addPlugin: newPlugin => {
+        pluginsToAdd.push(newPlugin);
+      },
+      setSchema: modifiedSchema => replaceSchema(modifiedSchema, i),
+      registerContextErrorHandler: handler => contextErrorHandlers.push(handler),
+    });
     pluginsToAdd.length && plugins.splice(i + 1, 0, ...pluginsToAdd);
   }
 
@@ -197,7 +199,9 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
             },
           });
 
-          afterFn && afterCalls.push(afterFn);
+          if (afterFn) {
+            afterCalls.push(afterFn);
+          }
         }
 
         if (result === null) {
@@ -307,7 +311,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
 
   const customContextFactory: EnvelopContextFnWrapper<(orchestratorCtx?: any) => any, any> =
     beforeCallbacks.context.length
-      ? initialContext => async orchestratorCtx => {
+      ? initialContext => orchestratorCtx => {
           const afterCalls: AfterContextBuildingHook<any>[] = [];
 
           // In order to have access to the "last working" context object we keep this outside of the try block:
@@ -315,53 +319,56 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
           if (orchestratorCtx) {
             Object.assign(context, orchestratorCtx);
           }
+          let isBreakingContextBuilding = false;
 
-          try {
-            let isBreakingContextBuilding = false;
-
-            for (const onContext of beforeCallbacks.context) {
-              const afterHookResult = await onContext({
-                context,
-                extendContext: extension => {
-                  Object.assign(context, extension);
-                },
-                breakContextBuilding: () => {
-                  isBreakingContextBuilding = true;
-                },
-              });
-
-              if (typeof afterHookResult === 'function') {
-                afterCalls.push(afterHookResult);
+          return handleMaybePromise(
+            () =>
+              iterateAsync(
+                beforeCallbacks.context,
+                (onContext, stopEarly) =>
+                  onContext({
+                    context,
+                    extendContext: extension => {
+                      Object.assign(context, extension);
+                    },
+                    breakContextBuilding: () => {
+                      isBreakingContextBuilding = true;
+                      stopEarly();
+                    },
+                  }),
+                afterCalls,
+              ),
+            () => {
+              if (!isBreakingContextBuilding) {
+                return handleMaybePromise(
+                  () =>
+                    iterateAsync(afterCalls, afterCb =>
+                      afterCb({
+                        context,
+                        extendContext(extension) {
+                          Object.assign(context, extension);
+                        },
+                      }),
+                    ),
+                  () => context,
+                );
               }
-
-              if ((isBreakingContextBuilding as boolean) === true) {
-                break;
+              return context;
+            },
+            err => {
+              let error: unknown = err;
+              for (const errorCb of contextErrorHandlers) {
+                errorCb({
+                  context,
+                  error,
+                  setError: err => {
+                    error = err;
+                  },
+                });
               }
-            }
-
-            for (const afterCb of afterCalls) {
-              afterCb({
-                context,
-                extendContext: extension => {
-                  Object.assign(context, extension);
-                },
-              });
-            }
-
-            return context;
-          } catch (err) {
-            let error: unknown = err;
-            for (const errorCb of contextErrorHandlers) {
-              errorCb({
-                context,
-                error,
-                setError: err => {
-                  error = err;
-                },
-              });
-            }
-            throw error;
-          }
+              throw error;
+            },
+          );
         }
       : initialContext => orchestratorCtx => {
           if (orchestratorCtx) {
@@ -373,211 +380,225 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
   const useCustomSubscribe = beforeCallbacks.subscribe.length;
 
   const customSubscribe = useCustomSubscribe
-    ? makeSubscribe(async args => {
+    ? makeSubscribe(args => {
         let subscribeFn = subscribe as SubscribeFunction;
 
-        const afterCalls: SubscribeResultHook<PluginsContext>[] = [];
-        const subscribeErrorHandlers: SubscribeErrorHook[] = [];
+        const afterCallbacks: OnSubscribeHookResult<PluginsContext>[] = [];
 
         const context = (args.contextValue as {}) || {};
         let result: AsyncIterableIteratorOrValue<ExecutionResult> | undefined;
 
-        for (const onSubscribe of beforeCallbacks.subscribe) {
-          const after = await onSubscribe({
-            subscribeFn,
-            setSubscribeFn: newSubscribeFn => {
-              subscribeFn = newSubscribeFn;
-            },
-            context,
-            extendContext: extension => {
-              Object.assign(context, extension);
-            },
-            args: args as TypedSubscriptionArgs<PluginsContext>,
-            setResultAndStopExecution: stopResult => {
-              result = stopResult;
-            },
-          });
+        return handleMaybePromise(
+          () =>
+            iterateAsync(
+              beforeCallbacks.subscribe,
+              (onSubscribe, endEarly) =>
+                onSubscribe({
+                  subscribeFn,
+                  setSubscribeFn: newSubscribeFn => {
+                    subscribeFn = newSubscribeFn;
+                  },
+                  context,
+                  extendContext: extension => {
+                    Object.assign(context, extension);
+                  },
+                  args: args as TypedSubscriptionArgs<PluginsContext>,
+                  setResultAndStopExecution: stopResult => {
+                    result = stopResult;
+                    endEarly();
+                  },
+                }) as OnSubscribeHookResult<PluginsContext>,
+              afterCallbacks,
+            ),
+          () => {
+            const afterCalls: SubscribeResultHook<PluginsContext>[] = [];
+            const subscribeErrorHandlers: SubscribeErrorHook[] = [];
 
-          if (after) {
-            if (after.onSubscribeResult) {
-              afterCalls.push(after.onSubscribeResult);
+            for (const { onSubscribeResult, onSubscribeError } of afterCallbacks) {
+              if (onSubscribeResult) {
+                afterCalls.push(onSubscribeResult);
+              }
+              if (onSubscribeError) {
+                subscribeErrorHandlers.push(onSubscribeError);
+              }
             }
-            if (after.onSubscribeError) {
-              subscribeErrorHandlers.push(after.onSubscribeError);
-            }
-          }
 
-          if (result !== undefined) {
-            break;
-          }
-        }
+            return handleMaybePromise(
+              () => result || subscribeFn(args),
+              result => {
+                const onNextHandler: OnSubscribeResultResultOnNextHook<PluginsContext>[] = [];
+                const onEndHandler: OnSubscribeResultResultOnEndHook[] = [];
 
-        if (result === undefined) {
-          result = await subscribeFn({
-            ...args,
-            contextValue: context,
-            // Casted for GraphQL.js 15 compatibility
-            // Can be removed once we drop support for GraphQL.js 15
-          });
-        }
-        if (!result) {
-          return;
-        }
+                for (const afterCb of afterCalls) {
+                  const hookResult = afterCb({
+                    args: args as TypedSubscriptionArgs<PluginsContext>,
+                    result,
+                    setResult: newResult => {
+                      result = newResult;
+                    },
+                  });
+                  if (hookResult) {
+                    if (hookResult.onNext) {
+                      onNextHandler.push(hookResult.onNext);
+                    }
+                    if (hookResult.onEnd) {
+                      onEndHandler.push(hookResult.onEnd);
+                    }
+                  }
+                }
 
-        const onNextHandler: OnSubscribeResultResultOnNextHook<PluginsContext>[] = [];
-        const onEndHandler: OnSubscribeResultResultOnEndHook[] = [];
+                if (onNextHandler.length && isAsyncIterable(result)) {
+                  result = mapAsyncIterator(result, (result: any) =>
+                    handleMaybePromise(
+                      () =>
+                        iterateAsync(onNextHandler, onNext =>
+                          onNext({
+                            args: args as TypedSubscriptionArgs<PluginsContext>,
+                            result,
+                            setResult: newResult => (result = newResult),
+                          }),
+                        ),
+                      () => result,
+                    ),
+                  );
+                }
+                if (onEndHandler.length && isAsyncIterable(result)) {
+                  result = finalAsyncIterator(result, () => {
+                    for (const onEnd of onEndHandler) {
+                      onEnd();
+                    }
+                  });
+                }
 
-        for (const afterCb of afterCalls) {
-          const hookResult = afterCb({
-            args: args as TypedSubscriptionArgs<PluginsContext>,
-            result,
-            setResult: newResult => {
-              result = newResult;
-            },
-          });
-          if (hookResult) {
-            if (hookResult.onNext) {
-              onNextHandler.push(hookResult.onNext);
-            }
-            if (hookResult.onEnd) {
-              onEndHandler.push(hookResult.onEnd);
-            }
-          }
-        }
+                if (subscribeErrorHandlers.length && isAsyncIterable(result)) {
+                  result = errorAsyncIterator(result, err => {
+                    let error = err;
+                    for (const handler of subscribeErrorHandlers) {
+                      handler({
+                        error,
+                        setError: err => {
+                          error = err;
+                        },
+                      });
+                    }
+                    throw error;
+                  });
+                }
 
-        if (onNextHandler.length && isAsyncIterable(result)) {
-          result = mapAsyncIterator(result, async result => {
-            for (const onNext of onNextHandler) {
-              await onNext({
-                args: args as TypedSubscriptionArgs<PluginsContext>,
-                result,
-                setResult: newResult => (result = newResult),
-              });
-            }
-            return result;
-          });
-        }
-        if (onEndHandler.length && isAsyncIterable(result)) {
-          result = finalAsyncIterator(result, () => {
-            for (const onEnd of onEndHandler) {
-              onEnd();
-            }
-          });
-        }
-
-        if (subscribeErrorHandlers.length && isAsyncIterable(result)) {
-          result = errorAsyncIterator(result, err => {
-            let error = err;
-            for (const handler of subscribeErrorHandlers) {
-              handler({
-                error,
-                setError: err => {
-                  error = err;
-                },
-              });
-            }
-            throw error;
-          });
-        }
-
-        return result as AsyncIterableIterator<ExecutionResult>;
+                return result;
+              },
+            );
+          },
+        );
       })
     : makeSubscribe(subscribe as any);
 
   const useCustomExecute = beforeCallbacks.execute.length;
 
   const customExecute = useCustomExecute
-    ? makeExecute(async args => {
+    ? makeExecute(args => {
         let executeFn = execute as ExecuteFunction;
         let result: AsyncIterableIteratorOrValue<ExecutionResult> | undefined;
 
-        const afterCalls: OnExecuteDoneHook<PluginsContext>[] = [];
+        const afterCalls: OnExecuteHookResult<PluginsContext>[] = [];
+        const afterDoneCalls: OnExecuteDoneHookResult<any>[] = [];
         const context = (args.contextValue as {}) || {};
 
-        for (const onExecute of beforeCallbacks.execute) {
-          const after = await onExecute({
-            executeFn,
-            setExecuteFn: newExecuteFn => {
-              executeFn = newExecuteFn;
-            },
-            setResultAndStopExecution: stopResult => {
-              result = stopResult;
-            },
-            context,
-            extendContext: extension => {
-              if (typeof extension === 'object') {
-                Object.assign(context, extension);
-              } else {
-                throw new Error(
-                  `Invalid context extension provided! Expected "object", got: "${JSON.stringify(
-                    extension,
-                  )}" (${typeof extension})`,
-                );
-              }
-            },
-            args: args as TypedExecutionArgs<PluginsContext>,
-          });
+        return handleMaybePromise(
+          () =>
+            iterateAsync(
+              beforeCallbacks.execute,
+              (onExecute, endEarly) =>
+                onExecute({
+                  executeFn,
+                  setExecuteFn: newExecuteFn => {
+                    executeFn = newExecuteFn;
+                  },
+                  setResultAndStopExecution: stopResult => {
+                    result = stopResult;
+                    endEarly();
+                  },
+                  context,
+                  extendContext: extension => {
+                    if (typeof extension === 'object') {
+                      Object.assign(context, extension);
+                    } else {
+                      throw new Error(
+                        `Invalid context extension provided! Expected "object", got: "${JSON.stringify(
+                          extension,
+                        )}" (${typeof extension})`,
+                      );
+                    }
+                  },
+                  args: args as TypedExecutionArgs<PluginsContext>,
+                }) as OnExecuteHookResult<PluginsContext>,
+              afterCalls,
+            ),
+          () =>
+            handleMaybePromise(
+              () =>
+                result ||
+                executeFn({
+                  ...args,
+                  contextValue: context,
+                }),
+              result =>
+                handleMaybePromise(
+                  () =>
+                    iterateAsync(
+                      afterCalls,
+                      afterCb =>
+                        afterCb.onExecuteDone?.({
+                          args: args as TypedExecutionArgs<PluginsContext>,
+                          result,
+                          setResult: newResult => {
+                            result = newResult;
+                          },
+                        }),
+                      afterDoneCalls,
+                    ),
+                  () => {
+                    const onNextHandler: OnExecuteDoneHookResultOnNextHook<PluginsContext>[] = [];
+                    const onEndHandler: OnExecuteDoneHookResultOnEndHook[] = [];
+                    for (const { onNext, onEnd } of afterDoneCalls) {
+                      if (onNext) {
+                        onNextHandler.push(onNext);
+                      }
+                      if (onEnd) {
+                        onEndHandler.push(onEnd);
+                      }
+                    }
 
-          if (after?.onExecuteDone) {
-            afterCalls.push(after.onExecuteDone);
-          }
+                    if (onNextHandler.length && isAsyncIterable(result)) {
+                      result = mapAsyncIterator(result, result =>
+                        handleMaybePromise(
+                          () =>
+                            iterateAsyncVoid(onNextHandler, onNext =>
+                              onNext({
+                                args: args as TypedExecutionArgs<PluginsContext>,
+                                result: result as ExecutionResult,
+                                setResult: newResult => {
+                                  result = newResult;
+                                },
+                              }),
+                            ),
+                          () => result,
+                        ),
+                      );
+                    }
+                    if (onEndHandler.length && isAsyncIterable(result)) {
+                      result = finalAsyncIterator(result, () => {
+                        for (const onEnd of onEndHandler) {
+                          onEnd();
+                        }
+                      });
+                    }
 
-          if (result !== undefined) {
-            break;
-          }
-        }
-
-        if (result === undefined) {
-          result = (await executeFn({
-            ...args,
-            contextValue: context,
-          })) as AsyncIterableIteratorOrValue<ExecutionResult>;
-        }
-
-        const onNextHandler: OnExecuteDoneHookResultOnNextHook<PluginsContext>[] = [];
-        const onEndHandler: OnExecuteDoneHookResultOnEndHook[] = [];
-
-        for (const afterCb of afterCalls) {
-          const hookResult = await afterCb({
-            args: args as TypedExecutionArgs<PluginsContext>,
-            result,
-            setResult: newResult => {
-              result = newResult;
-            },
-          });
-          if (hookResult) {
-            if (hookResult.onNext) {
-              onNextHandler.push(hookResult.onNext);
-            }
-            if (hookResult.onEnd) {
-              onEndHandler.push(hookResult.onEnd);
-            }
-          }
-        }
-
-        if (onNextHandler.length && isAsyncIterable(result)) {
-          result = mapAsyncIterator(result, async result => {
-            for (const onNext of onNextHandler) {
-              await onNext({
-                args: args as TypedExecutionArgs<PluginsContext>,
-                result,
-                setResult: newResult => {
-                  result = newResult;
-                },
-              });
-            }
-            return result;
-          });
-        }
-        if (onEndHandler.length && isAsyncIterable(result)) {
-          result = finalAsyncIterator(result, () => {
-            for (const onEnd of onEndHandler) {
-              onEnd();
-            }
-          });
-        }
-
-        return result;
+                    return result;
+                  },
+                ),
+            ),
+        );
       })
     : makeExecute(execute);
 
@@ -587,11 +608,10 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
   // eagerly to have it.
   if (schema) {
     for (const [i, plugin] of plugins.entries()) {
-      plugin.onSchemaChange &&
-        plugin.onSchemaChange({
-          schema,
-          replaceSchema: modifiedSchema => replaceSchema(modifiedSchema, i),
-        });
+      plugin.onSchemaChange?.({
+        schema,
+        replaceSchema: modifiedSchema => replaceSchema(modifiedSchema, i),
+      });
     }
   }
 
