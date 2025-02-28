@@ -88,5 +88,5 @@ sequenceDiagram
     Opentelemetry->>Sentry: 
     Sentry->>Envelop: 
     Envelop->>Sentry: 
-    Sentry->>Opentelemtry: 
+    Sentry->>Opentelemetry: 
 ```
