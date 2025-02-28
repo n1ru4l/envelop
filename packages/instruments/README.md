@@ -3,7 +3,7 @@
 This package contains utility functions and types to ease the use of instruments accross Envelop,
 Yoga, whatwg-node and Hive Gateway plugins.
 
-> [!INFO]: Instruments are automatically composed together. This should only be used if the default
+> [!NOTE]: Instruments are automatically composed together. This should only be used if the default
 > ordering doesn't suite your need (ie. instruments and hooks should not be executed in the same
 > order)
 
