@@ -1,48 +1,42 @@
-import { envelop, Instruments, useEngine } from '@envelop/core';
+import { envelop, Instruments, Plugin, useEngine } from '@envelop/core';
 
 describe('instruments', () => {
   it('should instrument all graphql phases', async () => {
     const result: string[] = [];
-    const instrument: Instruments<any> = {
-      init: (_, w) => {
-        result.push('pre-init');
-        expect(w()).toBeUndefined();
-        result.push('post-init');
-        return 'instrument';
+    const make = (name: string): Plugin => ({
+      instruments: {
+        init: (_, w) => {
+          result.push(`pre-init-${name}`);
+          expect(w()).toBeUndefined();
+          result.push(`post-init-${name}`);
+        },
+        parse: (_, w) => {
+          result.push(`pre-parse-${name}`);
+          expect(w()).toBeUndefined();
+          result.push(`post-parse-${name}`);
+        },
+        validate: (_, w) => {
+          result.push(`pre-validate-${name}`);
+          expect(w()).toBeUndefined();
+          result.push(`post-validate-${name}`);
+        },
+        context: (_, w) => {
+          result.push(`pre-context-${name}`);
+          expect(w()).toBeUndefined();
+          result.push(`post-context-${name}`);
+        },
+        execute: async (_, w) => {
+          result.push(`pre-execute-${name}`);
+          expect(await w()).toBeUndefined();
+          result.push(`post-execute-${name}`);
+        },
+        subscribe: async (_, w) => {
+          result.push(`pre-subscribe-${name}`);
+          expect(await w()).toBeUndefined();
+          result.push(`post-subscribe-${name}`);
+        },
       },
-      parse: (_, w) => {
-        result.push('pre-parse');
-        expect(w()).toBeUndefined();
-        result.push('post-parse');
-        return 'instrument';
-      },
-      validate: (_, w) => {
-        result.push('pre-validate');
-        expect(w()).toBeUndefined();
-        result.push('post-validate');
-        return 'instrument';
-      },
-      context: (_, w) => {
-        result.push('pre-context');
-        expect(w()).toBeUndefined();
-        result.push('post-context');
-        return 'instrument';
-      },
-      // @ts-expect-error Returning something other than undefined should not be allowed
-      execute: async (_, w) => {
-        result.push('pre-execute');
-        expect(await w()).toBeUndefined();
-        result.push('post-execute');
-        return 'instrument';
-      },
-      // @ts-expect-error Returning something other than undefined shoould not be allowed
-      subscribe: async (_, w) => {
-        result.push('pre-subscribe');
-        expect(await w()).toBeUndefined();
-        result.push('post-subscribe');
-        return 'instrument';
-      },
-    };
+    });
 
     const getEnveloped = envelop({
       plugins: [
@@ -64,7 +58,9 @@ describe('instruments', () => {
             return 'test';
           },
         }),
-        { instruments: instrument },
+        make('1'),
+        make('2'),
+        make('3'),
       ],
     });
 
@@ -75,23 +71,25 @@ describe('instruments', () => {
     expect(await gql.execute({ document: {}, schema: {} })).toEqual('test');
     expect(await gql.subscribe({ document: {}, schema: {} })).toEqual('test');
 
+    const withPrefix = (prefix: string) => [`${prefix}-1`, `${prefix}-2`, `${prefix}-3`];
+
     expect(result).toEqual([
-      'pre-init',
-      'post-init',
-      'pre-parse',
+      ...withPrefix('pre-init'),
+      ...withPrefix('post-init').reverse(),
+      ...withPrefix('pre-parse'),
       'parse',
-      'post-parse',
-      'pre-validate',
+      ...withPrefix('post-parse').reverse(),
+      ...withPrefix('pre-validate'),
       'validate',
-      'post-validate',
-      'pre-context',
-      'post-context',
-      'pre-execute',
+      ...withPrefix('post-validate').reverse(),
+      ...withPrefix('pre-context'),
+      ...withPrefix('post-context').reverse(),
+      ...withPrefix('pre-execute'),
       'execute',
-      'post-execute',
-      'pre-subscribe',
+      ...withPrefix('post-execute').reverse(),
+      ...withPrefix('pre-subscribe'),
       'subscribe',
-      'post-subscribe',
+      ...withPrefix('post-subscribe').reverse(),
     ]);
   });
 });
