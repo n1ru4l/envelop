@@ -4,7 +4,7 @@
 '@envelop/instruments': major
 ---
 
-** New `Instruments` API
+## New `Instruments` API
 
 Introducation of a new API allowing to instrument the graphql pipeline.
 
@@ -14,7 +14,7 @@ of a phase**, incuding plugins hooks executions.
 
 The main use case of this new API is observability (monitoring, tracing, etc...).
 
-*** Basic usage
+### Basic usage
 
 ```ts
 import Sentry from '@sentry/node'
@@ -42,7 +42,7 @@ const getEnveloped = envelop({
 
 ```
 
-*** Mutliple instruments plugins
+### Mutliple instruments plugins
 
 It is possilbe to have multiple instruments plugins (Prometheus and Sentry for example), they will
 be automatically composed by envelop in the same order than the plugin array (first is outtermost, last is inner most).
@@ -64,7 +64,7 @@ sequenceDiagram
     Opentelemetry->>Sentry: 
 ```
 
-*** Custom instruments ordering
+### Custom instruments ordering
 
 If the default composition ordering doesn't suite your need, you can mannually compose instruments.
 This allows to have a different execution order of hooks and instruments.
