@@ -286,6 +286,27 @@ All instruments takes 2 parameters:
   returns `void` (or `Promise<void>` for asynchrone phases). **This function must always be
   called**.
 
+#### Instruments composition
+
+If multiple plugins have `instruments`, they are composed in the same order they are defined the
+plugin array (the first is outtermost call, the last is inner most call).
+
+It is possible to customize this composition if it doesn't suite your need (ie. you need hooks and
+instruments to have a different oreder of execution).
+
+```ts
+import { composeInstruments, envelop } from '@envelop/core'
+
+const { instruments: instruments1, ...plugin1 } = usePlugin1()
+const { instruments: instruments2, ...plugin2 } = usePlugin2()
+
+const instruments = composeInstruments([instruments2, instruments1])
+
+const getEnveloped = envelop({
+  plugin: [{ insturments }, plugin1, plugin2]
+})
+```
+
 #### `init`
 
 Wraps the envelop (the call to `envelop` function) initialisation.
