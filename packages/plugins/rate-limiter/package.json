@@ -67,7 +67,7 @@
     "@types/redis-mock": "0.17.3",
     "graphql": "16.8.1",
     "redis-mock": "0.56.3",
-    "typescript": "5.7.3"
+    "typescript": "5.8.2"
   },
   "publishConfig": {
     "directory": "dist",
