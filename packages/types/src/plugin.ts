@@ -8,8 +8,13 @@ import {
   OnSubscribeHook,
   OnValidateHook,
 } from './hooks.js';
+import type { PromiseOrValue } from './utils.js';
 
 export interface Plugin<PluginContext extends Record<string, any> = {}> {
+  /**
+   * Instruments wrapping each phases, including hooks executions.
+   */
+  instruments?: Instruments<PluginContext>;
   /**
    * Invoked for each call to getEnveloped.
    */
@@ -43,3 +48,36 @@ export interface Plugin<PluginContext extends Record<string, any> = {}> {
    */
   onContextBuilding?: OnContextBuildingHook<PluginContext>;
 }
+
+export type Instruments<TContext extends Record<string, any>> = {
+  /**
+   * Wraps the initialization phase (`envelop` function call and `onEnvelop` hooks)
+   */
+  init?: (payload: { context: TContext }, wrapped: () => void) => void;
+  /**
+   * Wraps the parse phase (`parse` function call and `onParse` hooks)
+   */
+  parse?: (payload: { context: TContext }, wrapped: () => void) => void;
+  /**
+   * Wraps the validate phase (`validate` function call and `onValidate` hooks)
+   */
+  validate?: (payload: { context: TContext }, wrapped: () => void) => void;
+  /**
+   * Wraps the context building phase (`buildContext` function call)
+   */
+  context?: (payload: { context: TContext }, wrapped: () => void) => void;
+  /**
+   * Wraps the execute phase (`execute` function call and `onExecute` hooks)
+   */
+  execute?: (
+    payload: { context: TContext },
+    wrapped: () => PromiseOrValue<void>,
+  ) => PromiseOrValue<void>;
+  /**
+   * Wraps the subscribe phase (`subscribe` function call and `onSubsrcibe` hooks)
+   */
+  subscribe?: (
+    payload: { context: TContext },
+    wrapped: () => PromiseOrValue<void>,
+  ) => PromiseOrValue<void>;
+};
