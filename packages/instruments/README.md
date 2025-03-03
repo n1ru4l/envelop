@@ -4,8 +4,7 @@ This package contains utility functions and types to ease the use of instruments
 Yoga, whatwg-node and Hive Gateway plugins.
 
 > [!NOTE] Instruments are automatically composed together. This should only be used if the default
-> ordering doesn't suit your needs (ie. instruments and hooks should be executed in different
-> order)
+> ordering doesn't suit your needs (ie. instruments and hooks should be executed in different order)
 
 ## `composeInstruments(instruments: Instruments[]): Instruments`
 
