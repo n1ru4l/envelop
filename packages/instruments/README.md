@@ -13,7 +13,7 @@ This function composes all the instruments into one. The instruments will be cal
 order than they are in the array (first is outer most call, last is inner most).
 
 ```ts
-import { getInstrumentsAndPlugins } from '@envelop/instruments'
+import { composeInstruments } from '@envelop/instruments'
 
 // Extract instruments to compose from their plugins
 const { instruments: instruments1, ...plugin1 } = usePlugin1()
