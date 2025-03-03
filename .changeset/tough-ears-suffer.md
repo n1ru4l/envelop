@@ -1,7 +1,6 @@
 ---
 '@envelop/types': minor
 '@envelop/core': minor
-'@envelop/instruments': major
 ---
 
 ## New `Instruments` API
