@@ -1,16 +1,5 @@
-import {
-  composeInstruments,
-  getInstrumented,
-  getInstrumentsAndPlugins,
-} from '@envelop/instruments';
-import {
-  ArbitraryObject,
-  ComposeContext,
-  GetEnvelopedFn,
-  Instruments,
-  Optional,
-  Plugin,
-} from '@envelop/types';
+import { getInstrumented } from '@envelop/instruments';
+import { ArbitraryObject, ComposeContext, GetEnvelopedFn, Optional, Plugin } from '@envelop/types';
 import { createEnvelopOrchestrator, EnvelopOrchestrator } from './orchestrator.js';
 
 type ExcludeFalsy<TArray extends any[]> = Exclude<TArray[0], null | undefined | false>[];
@@ -23,13 +12,11 @@ export function envelop<PluginsType extends Optional<Plugin<any>>[]>(options: {
   plugins: PluginsType;
   enableInternalTracing?: boolean;
 }): GetEnvelopedFn<ComposeContext<ExcludeFalsy<PluginsType>>> {
-  const { pluginInstruments, plugins } = getInstrumentsAndPlugins<Instruments<any>, Plugin<any>>(
-    options.plugins.filter(notEmpty),
-  );
-  const instruments = composeInstruments(pluginInstruments);
+  const plugins = options.plugins.filter(notEmpty);
   const orchestrator = createEnvelopOrchestrator<ComposeContext<ExcludeFalsy<PluginsType>>>({
     plugins,
   });
+  const instruments = orchestrator.instruments;
 
   const getEnveloped = <TInitialContext extends ArbitraryObject>(
     context: TInitialContext = {} as TInitialContext,

@@ -1,3 +1,4 @@
+import { chain } from '@envelop/instruments';
 import {
   AfterContextBuildingHook,
   AfterParseHook,
@@ -9,6 +10,7 @@ import {
   ExecuteFunction,
   ExecutionResult,
   GetEnvelopedFn,
+  Instruments,
   Maybe,
   OnContextBuildingHook,
   OnContextErrorHandler,
@@ -61,6 +63,7 @@ export type EnvelopOrchestrator<
     PluginsContext
   >;
   getCurrentSchema: () => Maybe<any>;
+  instruments?: Instruments<PluginsContext>;
 };
 
 type EnvelopOrchestratorOptions = {
@@ -81,6 +84,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
   const validate: ValidateFunction = () => throwEngineFunctionError('validate');
   const execute: ExecuteFunction = () => throwEngineFunctionError('execute');
   const subscribe: SubscribeFunction = () => throwEngineFunctionError('subscribe');
+  let instruments: Instruments<PluginsContext> | undefined;
 
   // Define the initial method for replacing the GraphQL schema, this is needed in order
   // to allow setting the schema from the onPluginInit callback. We also need to make sure
@@ -141,6 +145,7 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     onSubscribe,
     onValidate,
     onEnveloped,
+    instruments: pluginInstruments,
   } of plugins) {
     onEnveloped && beforeCallbacks.init.push(onEnveloped);
     onContextBuilding && beforeCallbacks.context.push(onContextBuilding);
@@ -148,6 +153,9 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     onParse && beforeCallbacks.parse.push(onParse);
     onSubscribe && beforeCallbacks.subscribe.push(onSubscribe);
     onValidate && beforeCallbacks.validate.push(onValidate);
+    if (pluginInstruments) {
+      instruments = instruments ? chain(instruments, pluginInstruments) : pluginInstruments;
+    }
   }
 
   const init: EnvelopOrchestrator['init'] = initialContext => {
@@ -597,5 +605,6 @@ export function createEnvelopOrchestrator<PluginsContext extends DefaultContext>
     execute: customExecute as ExecuteFunction,
     subscribe: customSubscribe,
     contextFactory: customContextFactory,
+    instruments,
   };
 }
