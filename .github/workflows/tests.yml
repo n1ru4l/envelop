@@ -33,7 +33,7 @@ jobs:
       - name: Install Dependencies using pnpm
         run: pnpm install --no-frozen-lockfile && git checkout pnpm-lock.yaml
       - name: Build
-        run: pnpm run ts:check
+        run: pnpm run build
       - name: Test ESM & CJS exports integrity
         run: pnpm bob check
 

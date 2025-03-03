@@ -1,3 +1,4 @@
+import { getInstrumented } from '@envelop/instruments';
 import { ArbitraryObject, ComposeContext, GetEnvelopedFn, Optional, Plugin } from '@envelop/types';
 import { createEnvelopOrchestrator, EnvelopOrchestrator } from './orchestrator.js';
 
@@ -15,22 +16,28 @@ export function envelop<PluginsType extends Optional<Plugin<any>>[]>(options: {
   const orchestrator = createEnvelopOrchestrator<ComposeContext<ExcludeFalsy<PluginsType>>>({
     plugins,
   });
+  const instruments = orchestrator.instruments;
 
   const getEnveloped = <TInitialContext extends ArbitraryObject>(
-    initialContext: TInitialContext = {} as TInitialContext,
+    context: TInitialContext = {} as TInitialContext,
   ) => {
+    const instrumented = getInstrumented<{ context: any }>({ context });
     const typedOrchestrator = orchestrator as EnvelopOrchestrator<
       TInitialContext,
       ComposeContext<ExcludeFalsy<PluginsType>>
     >;
-    typedOrchestrator.init(initialContext);
+
+    instrumented.fn(instruments?.init, orchestrator.init)(context);
 
     return {
-      parse: typedOrchestrator.parse(initialContext),
-      validate: typedOrchestrator.validate(initialContext),
-      contextFactory: typedOrchestrator.contextFactory(initialContext as any),
-      execute: typedOrchestrator.execute,
-      subscribe: typedOrchestrator.subscribe,
+      parse: instrumented.fn(instruments?.parse, typedOrchestrator.parse(context)),
+      validate: instrumented.fn(instruments?.validate, typedOrchestrator.validate(context)),
+      contextFactory: instrumented.fn(
+        instruments?.context,
+        typedOrchestrator.contextFactory(context as any),
+      ),
+      execute: instrumented.asyncFn(instruments?.execute, typedOrchestrator.execute),
+      subscribe: instrumented.asyncFn(instruments?.subscribe, typedOrchestrator.subscribe),
       schema: typedOrchestrator.getCurrentSchema(),
     };
   };
