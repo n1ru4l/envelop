@@ -54,10 +54,10 @@ const getEnveloped = envelop({
 
 ```mermaid
 sequenceDiagram
-  Sentry->>Opentelemetry:;
-  Opentelemetry->>Envelop:;
-  Envelop->>Opentelemetry:;
-  Opentelemetry->>Sentry:;
+  Sentry->>Opentelemetry: ;
+  Opentelemetry->>Envelop: ;
+  Envelop->>Opentelemetry: ;
+  Opentelemetry->>Sentry: ;
 ```
 
 ### Custom instruments ordering
@@ -80,8 +80,8 @@ const getEnveloped = envelop({
 
 ```mermaid
 sequenceDiagram
-  Opentelemetry->>Sentry:;
-  Sentry->>Envelop:;
-  Envelop->>Sentry:;
-  Sentry->>Opentelemetry:;
+  Opentelemetry->>Sentry: ;
+  Sentry->>Envelop: ;
+  Envelop->>Sentry: ;
+  Sentry->>Opentelemetry: ;
 ```
