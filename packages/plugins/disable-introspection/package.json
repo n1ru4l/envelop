@@ -1,6 +1,6 @@
 {
   "name": "@envelop/disable-introspection",
-  "version": "7.0.1",
+  "version": "7.1.0",
   "type": "module",
   "repository": {
     "type": "git",
