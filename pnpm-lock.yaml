@@ -1186,8 +1186,8 @@ importers:
         specifier: 6.5.5
         version: 6.5.5
       '@types/newrelic':
-        specifier: 9.14.7
-        version: 9.14.7
+        specifier: 9.14.8
+        version: 9.14.8
       graphql:
         specifier: 16.8.1
         version: 16.8.1
@@ -4916,8 +4916,8 @@ packages:
   '@types/mysql@2.15.26':
     resolution: {integrity: sha512-DSLCOXhkvfS5WNNPbfn2KdICAmk8lLc+/PNvnPnF7gOdMZCxopXduqv0OQ13y/yA/zXTSikZZqVgybUxOEg6YQ==}
 
-  '@types/newrelic@9.14.7':
-    resolution: {integrity: sha512-d22uZq5lc6Wwxc4h6dz9mSNBv7doxMhorkNrX5//aE8jISxs85TLGHi/gPr/Xkxfe/d43bEIMe4EhQvpvgCJ/w==}
+  '@types/newrelic@9.14.8':
+    resolution: {integrity: sha512-rkOTEVR7Lui4TTEykDUxIxCbFkcI/yw3C8URLOWM84zjuHh9W35RAequHTEvGBbbrLCdn43FVTHMLji4uunDWQ==}
 
   '@types/nlcst@1.0.4':
     resolution: {integrity: sha512-ABoYdNQ/kBSsLvZAekMhIPMQ3YUZvavStpKYs7BjLLuKVmIMA0LUgZ7b54zzuWJRbHF80v1cNf4r90Vd6eMQDg==}
@@ -15906,7 +15906,7 @@ snapshots:
     dependencies:
       '@types/node': 22.13.9
 
-  '@types/newrelic@9.14.7': {}
+  '@types/newrelic@9.14.8': {}
 
   '@types/nlcst@1.0.4':
     dependencies:
