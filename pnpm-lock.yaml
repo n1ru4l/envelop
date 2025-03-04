@@ -11,7 +11,7 @@ overrides:
 
 patchedDependencies:
   '@changesets/assemble-release-plan':
-    hash: 5bb9eede8c30e81867b3e090b3f282db4eca7ea4a0cb9c9e24efc1495a7c6d22
+    hash: e929d4d48a9e0237e7a5b5283297e70eec7ad4472c14fd4f5a8fbab66387eb00
     path: patches/@changesets__assemble-release-plan.patch
   '@ianvs/prettier-plugin-sort-imports':
     hash: db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce
@@ -13104,7 +13104,7 @@ snapshots:
       resolve-from: 5.0.0
       semver: 7.7.1
 
-  '@changesets/assemble-release-plan@6.0.6(patch_hash=5bb9eede8c30e81867b3e090b3f282db4eca7ea4a0cb9c9e24efc1495a7c6d22)':
+  '@changesets/assemble-release-plan@6.0.6(patch_hash=e929d4d48a9e0237e7a5b5283297e70eec7ad4472c14fd4f5a8fbab66387eb00)':
     dependencies:
       '@changesets/errors': 0.2.0
       '@changesets/get-dependents-graph': 2.1.3
@@ -13128,7 +13128,7 @@ snapshots:
   '@changesets/cli@2.28.1':
     dependencies:
       '@changesets/apply-release-plan': 7.0.10
-      '@changesets/assemble-release-plan': 6.0.6(patch_hash=5bb9eede8c30e81867b3e090b3f282db4eca7ea4a0cb9c9e24efc1495a7c6d22)
+      '@changesets/assemble-release-plan': 6.0.6(patch_hash=e929d4d48a9e0237e7a5b5283297e70eec7ad4472c14fd4f5a8fbab66387eb00)
       '@changesets/changelog-git': 0.2.1
       '@changesets/config': 3.1.1
       '@changesets/errors': 0.2.0
@@ -13186,7 +13186,7 @@ snapshots:
 
   '@changesets/get-release-plan@4.0.8':
     dependencies:
-      '@changesets/assemble-release-plan': 6.0.6(patch_hash=5bb9eede8c30e81867b3e090b3f282db4eca7ea4a0cb9c9e24efc1495a7c6d22)
+      '@changesets/assemble-release-plan': 6.0.6(patch_hash=e929d4d48a9e0237e7a5b5283297e70eec7ad4472c14fd4f5a8fbab66387eb00)
       '@changesets/config': 3.1.1
       '@changesets/pre': 2.0.2
       '@changesets/read': 0.6.3
