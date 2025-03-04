@@ -1,5 +1,15 @@
 # @envelop/operation-field-permissions
 
+## 7.1.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a107c89`](https://github.com/n1ru4l/envelop/commit/a107c896d7a7b1af7417ed0708be336db2ecbb54),
+  [`a107c89`](https://github.com/n1ru4l/envelop/commit/a107c896d7a7b1af7417ed0708be336db2ecbb54)]:
+  - @envelop/core@5.2.0
+  - @envelop/extended-validation@5.1.0
+
 ## 7.0.1
 
 ### Patch Changes
