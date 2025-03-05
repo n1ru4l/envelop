@@ -11,6 +11,7 @@ import {
 import { envelop, getDocumentString, isAsyncIterable, useEngine, useSchema } from '@envelop/core';
 import { GetEnvelopedFn, Plugin } from '@envelop/types';
 import { mapSchema as cloneSchema, isDocumentNode } from '@graphql-tools/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 export const useGraphQLJSEngine = () => {
   return useEngine(GraphQLJS);
@@ -138,12 +139,7 @@ export function createTestkit(
       phasesReplacements.push(phaseReplacement);
     },
     wait: ms => new Promise(resolve => setTimeout(resolve, ms)),
-    execute: async (
-      operation,
-      variableValues = {},
-      initialContext = {},
-      operationName?: string,
-    ) => {
+    execute: (operation, variableValues = {}, initialContext = {}, operationName?: string) => {
       const proxy = getEnveloped(initialContext);
 
       for (const replacement of phasesReplacements) {
@@ -198,42 +194,46 @@ export function createTestkit(
         };
       }
 
-      const contextValue = await proxy.contextFactory({
-        request: {
-          headers: {},
-          method: 'POST',
-          query: '',
-          body: {
-            query: getDocumentString(document, print),
+      return handleMaybePromise(
+        () =>
+          proxy.contextFactory({
+            request: {
+              headers: {},
+              method: 'POST',
+              query: '',
+              body: {
+                query: getDocumentString(document, print),
+                variables: variableValues,
+              },
+            },
+            document,
+            operation: getDocumentString(document, print),
             variables: variableValues,
-          },
+            operationName,
+            ...initialContext,
+          }),
+        contextValue => {
+          if (mainOperation.operation === 'subscription') {
+            return proxy.subscribe({
+              variableValues,
+              contextValue,
+              schema: proxy.schema,
+              document,
+              rootValue: {},
+              operationName,
+            });
+          }
+
+          return proxy.execute({
+            variableValues,
+            contextValue,
+            schema: proxy.schema,
+            document,
+            rootValue: {},
+            operationName,
+          });
         },
-        document,
-        operation: getDocumentString(document, print),
-        variables: variableValues,
-        operationName,
-        ...initialContext,
-      });
-
-      if (mainOperation.operation === 'subscription') {
-        return proxy.subscribe({
-          variableValues,
-          contextValue,
-          schema: proxy.schema,
-          document,
-          rootValue: {},
-          operationName,
-        });
-      }
-
-      return proxy.execute({
-        variableValues,
-        contextValue,
-        schema: proxy.schema,
-        document,
-        rootValue: {},
-        operationName,
-      });
+      );
     },
   };
 }
