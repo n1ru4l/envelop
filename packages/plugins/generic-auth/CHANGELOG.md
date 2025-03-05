@@ -1,5 +1,27 @@
 # @envelop/generic-auth
 
+## 9.1.1
+
+### Patch Changes
+
+- [#2473](https://github.com/n1ru4l/envelop/pull/2473)
+  [`90dd1a6`](https://github.com/n1ru4l/envelop/commit/90dd1a665e027ec309df4411f04a310806ee8f15)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Added dependency
+    [`@whatwg-node/promise-helpers@^1.2.1` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/1.2.1)
+    (to `dependencies`)
+
+- [#2473](https://github.com/n1ru4l/envelop/pull/2473)
+  [`90dd1a6`](https://github.com/n1ru4l/envelop/commit/90dd1a665e027ec309df4411f04a310806ee8f15)
+  Thanks [@renovate](https://github.com/apps/renovate)! - Use Promise helpers
+
+- Updated dependencies
+  [[`90dd1a6`](https://github.com/n1ru4l/envelop/commit/90dd1a665e027ec309df4411f04a310806ee8f15),
+  [`90dd1a6`](https://github.com/n1ru4l/envelop/commit/90dd1a665e027ec309df4411f04a310806ee8f15)]:
+  - @envelop/core@5.2.1
+  - @envelop/extended-validation@5.1.1
+
 ## 9.1.0
 
 ### Patch Changes
