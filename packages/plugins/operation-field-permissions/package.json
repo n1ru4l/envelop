@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@envelop/extended-validation": "workspace:^",
+    "@whatwg-node/promise-helpers": "^1.2.4",
     "tslib": "^2.5.0"
   },
   "devDependencies": {

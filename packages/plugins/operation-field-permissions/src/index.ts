@@ -8,10 +8,9 @@ import {
   isObjectType,
   isUnionType,
 } from 'graphql';
-import { Plugin, useExtendContext } from '@envelop/core';
+import { Plugin, PromiseOrValue, useExtendContext } from '@envelop/core';
 import { ExtendedValidationRule, useExtendedValidation } from '@envelop/extended-validation';
-
-type PromiseOrValue<T> = T | Promise<T>;
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 const OPERATION_PERMISSIONS_SYMBOL = Symbol('OPERATION_PERMISSIONS_SYMBOL');
 
@@ -141,24 +140,27 @@ export const useOperationFieldPermissions = <TContext>(
       );
 
       addPlugin(
-        useExtendContext(async context => {
-          const permissions = await opts.getPermissions(context as TContext);
+        useExtendContext(context =>
+          handleMaybePromise(
+            () => opts.getPermissions(context as TContext),
+            permissions => {
+              // Schema coordinates is a set of type-name field-name strings that
+              // describe the position of a field in the schema.
+              const schemaCoordinates = toSet(permissions);
+              const wildcardTypes = getWildcardTypes(schemaCoordinates);
 
-          // Schema coordinates is a set of type-name field-name strings that
-          // describe the position of a field in the schema.
-          const schemaCoordinates = toSet(permissions);
-          const wildcardTypes = getWildcardTypes(schemaCoordinates);
+              const scopeContext: ScopeContext = {
+                schemaCoordinates,
+                wildcardTypes,
+                allowAll: schemaCoordinates.has('*'),
+              };
 
-          const scopeContext: ScopeContext = {
-            schemaCoordinates,
-            wildcardTypes,
-            allowAll: schemaCoordinates.has('*'),
-          };
-
-          return {
-            [OPERATION_PERMISSIONS_SYMBOL]: scopeContext,
-          };
-        }),
+              return {
+                [OPERATION_PERMISSIONS_SYMBOL]: scopeContext,
+              };
+            },
+          ),
+        ),
       );
     },
   };

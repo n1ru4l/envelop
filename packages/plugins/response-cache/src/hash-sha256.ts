@@ -1,16 +1,20 @@
 import { crypto, TextEncoder } from '@whatwg-node/fetch';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
-export const hashSHA256 = async (text: string): Promise<string> => {
+export function hashSHA256(text: string) {
   const inputUint8Array = new TextEncoder().encode(text);
+  return handleMaybePromise(
+    () => crypto.subtle.digest({ name: 'SHA-256' }, inputUint8Array),
+    arrayBuf => {
+      const outputUint8Array = new Uint8Array(arrayBuf);
 
-  const arrayBuf = await crypto.subtle.digest({ name: 'SHA-256' }, inputUint8Array);
-  const outputUint8Array = new Uint8Array(arrayBuf);
+      let hash = '';
+      for (let i = 0, l = outputUint8Array.length; i < l; i++) {
+        const hex = outputUint8Array[i].toString(16);
+        hash += '00'.slice(0, Math.max(0, 2 - hex.length)) + hex;
+      }
 
-  let hash = '';
-  for (let i = 0, l = outputUint8Array.length; i < l; i++) {
-    const hex = outputUint8Array[i].toString(16);
-    hash += '00'.slice(0, Math.max(0, 2 - hex.length)) + hex;
-  }
-
-  return hash;
-};
+      return hash;
+    },
+  );
+}

@@ -46,9 +46,9 @@
     "./package.json": "./package.json"
   },
   "typings": "dist/typings/index.d.ts",
-  "peerDependencies": {},
   "dependencies": {
     "@envelop/response-cache": "workspace:^",
+    "@whatwg-node/promise-helpers": "^1.2.4",
     "ioredis": "^5.4.2",
     "tslib": "^2.5.0"
   },
