@@ -140,34 +140,23 @@ describe('contextFactory', () => {
       schema,
     );
 
-    const execution = teskit.execute(query, {}, { test: true });
-    return new Promise<void>((resolve, reject) => {
-      if (execution instanceof Promise) {
-        return execution.then().catch(() => {
-          try {
-            expect(registerContextErrorHandlerSpy).toHaveBeenCalledWith(
-              expect.objectContaining({
-                context: expect.objectContaining({
-                  contextSoFar: 'all good',
-                  document: expect.any(Object),
-                  operation: expect.any(String),
-                  request: expect.any(Object),
-                  test: true,
-                  variables: expect.any(Object),
-                }),
-                error: new Error('The server was about to step on a turtle'),
-                setError: expect.any(Function),
-              }),
-            );
-          } catch (e) {
-            reject(e);
-          }
-          return resolve();
-        });
-      } else {
-        return reject('Expected result of testkit.execute to return a promise');
-      }
-    });
+    try {
+      await teskit.execute(query, {}, { test: true });
+    } catch {}
+    expect(registerContextErrorHandlerSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        context: expect.objectContaining({
+          contextSoFar: 'all good',
+          document: expect.any(Object),
+          operation: expect.any(String),
+          request: expect.any(Object),
+          test: true,
+          variables: expect.any(Object),
+        }),
+        error: new Error('The server was about to step on a turtle'),
+        setError: expect.any(Function),
+      }),
+    );
   });
 
   it('should preserve referential stability of the context', async () => {
