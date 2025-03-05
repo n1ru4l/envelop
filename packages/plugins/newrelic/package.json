@@ -60,7 +60,7 @@
     "@graphql-tools/schema": "^10.0.0",
     "@newrelic/test-utilities": "6.5.5",
     "@types/newrelic": "9.14.8",
-    "graphql": "16.8.1",
+    "graphql": "16.10.0",
     "newrelic": "11.0.0",
     "typescript": "5.8.2"
   },
