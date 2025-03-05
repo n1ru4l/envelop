@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { DocumentNode, ExecutionArgs, ExecutionResult } from 'graphql';
 import { CompiledQuery, compileQuery, CompilerOptions, isCompiledQuery } from 'graphql-jit';
-import { ValueOrPromise } from 'value-or-promise';
 import { getDocumentString, makeExecute, makeSubscribe, Plugin } from '@envelop/core';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 type JSONStringifier = (result: any) => string;
 
@@ -91,19 +91,18 @@ export const useGraphQlJit = (
     const cacheEntry = getCacheEntry(args);
     const executeFn = cacheEntry.subscribe ? cacheEntry.subscribe : cacheEntry.query;
 
-    return new ValueOrPromise(
+    return handleMaybePromise(
       () =>
         executeFn(
           args.rootValue,
           args.contextValue,
           args.variableValues,
         ) as ExecutionResultWithSerializer,
-    )
-      .then(result => {
+      result => {
         result.stringify = cacheEntry.stringify;
         return result;
-      })
-      .resolve();
+      },
+    );
   }
 
   const executeFn = makeExecute(jitExecutor);
@@ -113,25 +112,27 @@ export const useGraphQlJit = (
   return {
     onExecute({ args, setExecuteFn }) {
       if (enableIfFn) {
-        return new ValueOrPromise(() => enableIfFn(args))
-          .then(enableIfRes => {
+        return handleMaybePromise(
+          () => enableIfFn(args),
+          enableIfRes => {
             if (enableIfRes) {
               setExecuteFn(executeFn);
             }
-          })
-          .resolve();
+          },
+        );
       }
       setExecuteFn(executeFn);
     },
     onSubscribe({ args, setSubscribeFn }) {
       if (enableIfFn) {
-        return new ValueOrPromise(() => enableIfFn(args))
-          .then(enableIfRes => {
+        return handleMaybePromise(
+          () => enableIfFn(args),
+          enableIfRes => {
             if (enableIfRes) {
               setSubscribeFn(subscribeFn);
             }
-          })
-          .resolve();
+          },
+        );
       }
       setSubscribeFn(subscribeFn);
     },

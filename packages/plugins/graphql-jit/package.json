@@ -51,9 +51,9 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {
+    "@whatwg-node/promise-helpers": "^1.2.3",
     "graphql-jit": "0.8.7",
-    "tslib": "^2.5.0",
-    "value-or-promise": "^1.0.12"
+    "tslib": "^2.5.0"
   },
   "devDependencies": {
     "@envelop/core": "workspace:^",
