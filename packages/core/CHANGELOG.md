@@ -1,5 +1,21 @@
 # @envelop/core
 
+## 5.2.1
+
+### Patch Changes
+
+- [#2473](https://github.com/n1ru4l/envelop/pull/2473)
+  [`90dd1a6`](https://github.com/n1ru4l/envelop/commit/90dd1a665e027ec309df4411f04a310806ee8f15)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@whatwg-node/promise-helpers@^1.2.1` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/1.2.1)
+    (from `^1.0.0`, in `dependencies`)
+
+- [#2473](https://github.com/n1ru4l/envelop/pull/2473)
+  [`90dd1a6`](https://github.com/n1ru4l/envelop/commit/90dd1a665e027ec309df4411f04a310806ee8f15)
+  Thanks [@renovate](https://github.com/apps/renovate)! - Use Promise helpers
+
 ## 5.2.0
 
 ### Minor Changes

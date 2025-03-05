@@ -1,5 +1,12 @@
 # @envelop/response-cache-cloudflare-kv
 
+## 3.1.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @envelop/response-cache@7.1.1
+
 ## 3.1.0
 
 ### Patch Changes

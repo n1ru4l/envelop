@@ -1,5 +1,15 @@
 # @envelop/prometheus
 
+## 12.1.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`90dd1a6`](https://github.com/n1ru4l/envelop/commit/90dd1a665e027ec309df4411f04a310806ee8f15),
+  [`90dd1a6`](https://github.com/n1ru4l/envelop/commit/90dd1a665e027ec309df4411f04a310806ee8f15)]:
+  - @envelop/core@5.2.1
+  - @envelop/on-resolve@5.1.1
+
 ## 12.1.0
 
 ### Patch Changes
