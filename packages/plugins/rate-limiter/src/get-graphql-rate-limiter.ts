@@ -1,6 +1,7 @@
 import type { GraphQLResolveInfo } from 'graphql';
 import get from 'lodash.get';
 import ms from 'ms';
+import { handleMaybePromise, MaybePromise } from '@whatwg-node/promise-helpers';
 import { getNoOpCache, getWeakMapCache } from './batch-request-cache.js';
 import { InMemoryStore } from './in-memory-store.js';
 import type {
@@ -64,7 +65,7 @@ const getGraphQLRateLimiter = (
     message,
     uncountRejected,
   }: GraphQLRateLimitDirectiveArgs,
-) => Promise<string | undefined>) => {
+) => MaybePromise<string | undefined>) => {
   // Default directive config
   const defaultConfig = {
     enableBatchRequestCache: false,
@@ -90,7 +91,7 @@ const getGraphQLRateLimiter = (
    * @param args - pass the resolver args as an object
    * @param config - field level config
    */
-  const rateLimiter = async (
+  const rateLimiter = (
     // Resolver args
     {
       args,
@@ -112,7 +113,7 @@ const getGraphQLRateLimiter = (
       readOnly,
       uncountRejected,
     }: GraphQLRateLimitDirectiveArgs,
-  ): Promise<string | undefined> => {
+  ): MaybePromise<string | undefined> => {
     // Identify the user or client on the context
     const contextIdentity = identifyContext(context);
     // User defined window in ms that this field can be accessed for before the call is expired
@@ -145,37 +146,43 @@ const getGraphQLRateLimiter = (
 
     // Fetch timestamps from previous requests out of the store
     // and get all the timestamps that haven't expired
-    const filteredAccessTimestamps = (await store.getForIdentity(identity)).filter(t => {
-      return t + windowMs > Date.now();
-    });
+    return handleMaybePromise(
+      () => store.getForIdentity(identity),
+      accessTimestamps => {
+        const filteredAccessTimestamps = accessTimestamps.filter(t => {
+          return t + windowMs > Date.now();
+        });
+        // Flag indicating requests limit reached
+        const limitReached = filteredAccessTimestamps.length + batchedTimestamps.length > maxCalls;
 
-    // Flag indicating requests limit reached
-    const limitReached = filteredAccessTimestamps.length + batchedTimestamps.length > maxCalls;
+        // Confogure access timestamps to save according to uncountRejected setting
+        const timestampsToStore: readonly any[] = [
+          ...filteredAccessTimestamps,
+          ...(!uncountRejected || !limitReached ? batchedTimestamps : []),
+        ];
 
-    // Confogure access timestamps to save according to uncountRejected setting
-    const timestampsToStore: readonly any[] = [
-      ...filteredAccessTimestamps,
-      ...(!uncountRejected || !limitReached ? batchedTimestamps : []),
-    ];
+        // Save these access timestamps for future requests.
+        return handleMaybePromise(
+          () =>
+            readOnly ? undefined : store.setForIdentity(identity, timestampsToStore, windowMs),
+          () => {
+            // Field level custom message or a global formatting function
+            const errorMessage =
+              message ||
+              formatError({
+                contextIdentity,
+                fieldIdentity,
+                fieldName: info.fieldName,
+                max: maxCalls,
+                window: windowMs,
+              });
 
-    // Save these access timestamps for future requests.
-    if (!readOnly) {
-      await store.setForIdentity(identity, timestampsToStore, windowMs);
-    }
-
-    // Field level custom message or a global formatting function
-    const errorMessage =
-      message ||
-      formatError({
-        contextIdentity,
-        fieldIdentity,
-        fieldName: info.fieldName,
-        max: maxCalls,
-        window: windowMs,
-      });
-
-    // Returns an error message or undefined if no error
-    return limitReached ? errorMessage : undefined;
+            // Returns an error message or undefined if no error
+            return limitReached ? errorMessage : undefined;
+          },
+        );
+      },
+    );
   };
 
   return rateLimiter;

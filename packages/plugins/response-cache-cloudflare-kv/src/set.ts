@@ -3,7 +3,7 @@ import { KVNamespace } from '@cloudflare/workers-types';
 import type { CacheEntityRecord } from '@envelop/response-cache';
 import { buildEntityKey, buildOperationKey } from './cache-key.js';
 
-export async function set(
+export function set(
   /** id/hash of the operation */
   id: string,
   /** the result that should be cached */
@@ -39,5 +39,5 @@ export async function set(
     );
   }
 
-  await Promise.allSettled(kvPromises);
+  return Promise.allSettled(kvPromises).then(() => undefined);
 }

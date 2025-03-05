@@ -2,7 +2,7 @@ import { KVNamespace } from '@cloudflare/workers-types';
 import type { CacheEntityRecord } from '@envelop/response-cache';
 import { buildEntityKey } from './cache-key.js';
 
-export async function invalidate(
+export function invalidate(
   entities: Iterable<CacheEntityRecord>,
   KV: KVNamespace,
   keyPrefix?: string,
@@ -13,8 +13,7 @@ export async function invalidate(
   for (const entity of entities) {
     entityInvalidationPromises.push(invalidateCacheEntityRecord(entity, kvPromises, KV, keyPrefix));
   }
-  await Promise.allSettled(entityInvalidationPromises);
-  await Promise.allSettled(kvPromises);
+  return Promise.allSettled([...entityInvalidationPromises, ...kvPromises]).then(() => undefined);
 }
 
 export async function invalidateCacheEntityRecord(

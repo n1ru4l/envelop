@@ -1,5 +1,6 @@
 import Redis from 'ioredis';
 import type { Cache } from '@envelop/response-cache';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 export type BuildRedisEntityId = (typename: string, id: number | string) => string;
 export type BuildRedisOperationResultCacheKey = (responseId: string) => string;
@@ -62,7 +63,7 @@ export const createRedisCache = (params: RedisCacheParameter): Cache => {
   }
 
   return {
-    async set(responseId, result, collectedEntities, ttl) {
+    set(responseId, result, collectedEntities, ttl) {
       const pipeline = store.pipeline();
 
       if (ttl === Infinity) {
@@ -89,12 +90,13 @@ export const createRedisCache = (params: RedisCacheParameter): Cache => {
         }
       }
 
-      await pipeline.exec();
+      return pipeline.exec().then(() => undefined);
     },
-    async get(responseId) {
-      const result = await store.get(responseId);
-
-      return result && JSON.parse(result);
+    get(responseId) {
+      return handleMaybePromise(
+        () => store.get(responseId),
+        (result: any) => (result ? JSON.parse(result) : undefined),
+      );
     },
     async invalidate(entitiesToRemove) {
       const invalidationKeys: string[][] = [];

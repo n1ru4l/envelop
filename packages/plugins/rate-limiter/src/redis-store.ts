@@ -30,7 +30,7 @@ class RedisStore implements Store {
     });
   }
 
-  public async getForIdentity(identity: Identity): Promise<readonly number[]> {
+  public getForIdentity(identity: Identity): Promise<readonly number[]> {
     return new Promise<readonly number[]>((res, rej): void => {
       this.store.get(
         this.generateNamedSpacedKey(identity),

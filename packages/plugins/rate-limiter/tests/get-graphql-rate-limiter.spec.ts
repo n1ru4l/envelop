@@ -68,7 +68,7 @@ test('getGraphQLRateLimiter should block a batch of rate limited fields in a sin
     info: { fieldName: 'myField' } as any as GraphQLResolveInfo,
   };
   const requests = Array.from({ length: 5 })
-    .map(() => rateLimit(field, config))
+    .map((_, i) => sleep(i * 1000).then(() => rateLimit(field, config)))
     .map(p => p.catch(e => e));
 
   (await Promise.all(requests)).forEach((result, idx) => {
