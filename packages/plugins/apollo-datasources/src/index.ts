@@ -19,7 +19,7 @@ export function useApolloDataSources(config: ApolloDataSourcesConfig): Plugin {
   const cache = config.cache || new InMemoryLRUCache();
 
   return {
-    async onExecute({ extendContext, args }) {
+    onExecute({ extendContext, args }) {
       const dataSources = config.dataSources();
       const initializers: Array<Promise<void>> = [];
       for (const dataSource of Object.values(dataSources)) {
@@ -34,8 +34,9 @@ export function useApolloDataSources(config: ApolloDataSourcesConfig): Plugin {
         }
       }
 
+      let init$: Promise<any> | undefined;
       if (initializers.length) {
-        await Promise.all(initializers);
+        init$ = Promise.all(initializers);
       }
 
       if ('dataSources' in args.contextValue) {
@@ -47,6 +48,8 @@ export function useApolloDataSources(config: ApolloDataSourcesConfig): Plugin {
       extendContext({
         dataSources,
       });
+
+      return init$;
     },
   };
 }

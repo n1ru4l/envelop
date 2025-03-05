@@ -116,11 +116,13 @@ describe('useExtendedValidation', () => {
       ],
     })();
     await expect(
-      execute({
-        document: parse(operation),
-        contextValue: {},
-        schema,
-      }),
+      Promise.resolve().then(() =>
+        execute({
+          document: parse(operation),
+          contextValue: {},
+          schema,
+        }),
+      ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `"Plugin has not been properly set up. The 'contextFactory' function is not invoked and the result has not been passed to 'execute'."`,
     );
