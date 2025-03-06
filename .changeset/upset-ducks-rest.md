@@ -1,5 +1,4 @@
 ---
-'@envelop/instrumentation': patch
 '@envelop/types': patch
 '@envelop/core': patch
 ---
