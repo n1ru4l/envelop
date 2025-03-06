@@ -4,6 +4,7 @@
 import jwtPkg, { DecodeOptions, VerifyOptions } from 'jsonwebtoken';
 import * as JwksRsa from 'jwks-rsa';
 import { Plugin } from '@envelop/core';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 const { decode, verify } = jwtPkg;
 
@@ -89,7 +90,7 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(
       return null;
     });
 
-  const verifyToken = async (token: string): Promise<any> => {
+  const verifyToken = (token: string) => {
     const decodedToken =
       (decode(token, { complete: true, ...options.jwtDecodeOptions }) as Record<
         string,
@@ -97,41 +98,50 @@ export const useAuth0 = <TOptions extends Auth0PluginOptions>(
       >) || {};
 
     if (decodedToken && decodedToken.header && decodedToken.header.kid) {
-      const secret = await jkwsClient.getSigningKey(decodedToken.header.kid);
-      const signingKey = secret.getPublicKey();
-      const decoded = verify(token, signingKey, {
-        algorithms: ['RS256'],
-        audience: options.audience,
-        issuer: `https://${options.domain}/`,
-        ...options.jwtVerifyOptions,
-      }) as { sub: string };
+      return handleMaybePromise(
+        () => jkwsClient.getSigningKey(decodedToken.header.kid),
+        secret => {
+          const signingKey = secret.getPublicKey();
+          const decoded = verify(token, signingKey, {
+            algorithms: ['RS256'],
+            audience: options.audience,
+            issuer: `https://${options.domain}/`,
+            ...options.jwtVerifyOptions,
+          }) as { sub: string };
 
-      return decoded;
+          return decoded;
+        },
+      );
     }
     throw new Error(`Failed to decode authentication token!`);
   };
 
   return {
-    async onContextBuilding({ context, extendContext }) {
-      try {
-        const token = await extractFn(context);
-
-        if (token) {
-          const decodedPayload = await verifyToken(token);
-
-          extendContext({
-            [contextField]: decodedPayload,
-          } as BuildContext<TOptions>);
-        } else if (options.preventUnauthenticatedAccess) {
-          throw new UnauthenticatedError(`Unauthenticated!`);
-        }
-      } catch (e) {
-        if (options.onError) {
-          options.onError(e as Error);
-        } else {
-          throw e;
-        }
-      }
+    onContextBuilding({ context, extendContext }) {
+      return handleMaybePromise(
+        () => extractFn(context),
+        token => {
+          if (token) {
+            return handleMaybePromise(
+              () => verifyToken(token),
+              decodedPayload => {
+                extendContext({
+                  [contextField]: decodedPayload,
+                } as BuildContext<TOptions>);
+              },
+            );
+          } else if (options.preventUnauthenticatedAccess) {
+            throw new UnauthenticatedError(`Unauthenticated!`);
+          }
+        },
+        e => {
+          if (options.onError) {
+            options.onError(e as Error);
+          } else {
+            throw e;
+          }
+        },
+      );
     },
   };
 };

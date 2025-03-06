@@ -29,11 +29,11 @@ import {
   getDirective,
   MapperKind,
   mapSchema,
-  MaybePromise,
   memoize1,
   memoize4,
   mergeIncrementalResult,
 } from '@graphql-tools/utils';
+import { handleMaybePromise, MaybePromise } from '@whatwg-node/promise-helpers';
 import type { Cache, CacheEntityRecord } from './cache.js';
 import { hashSHA256 } from './hash-sha256.js';
 import { createInMemoryCache } from './in-memory-cache.js';
@@ -168,7 +168,7 @@ export const defaultBuildResponseCacheKey = (params: {
   variableValues: ExecutionArgs['variableValues'];
   operationName?: Maybe<string>;
   sessionId: Maybe<string>;
-}): Promise<string> =>
+}): MaybePromise<string> =>
   hashSHA256(
     [
       params.documentString,
@@ -403,7 +403,7 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         },
       });
     },
-    async onExecute(onExecuteParams) {
+    onExecute(onExecuteParams) {
       if (enabled && !enabled(onExecuteParams.args.contextValue)) {
         return;
       }
@@ -538,81 +538,91 @@ export function useResponseCache<PluginContext extends Record<string, any> = {}>
         }
       }
 
-      const cacheKey = await buildResponseCacheKey({
-        documentString: getDocumentString(onExecuteParams.args),
-        variableValues: onExecuteParams.args.variableValues,
-        operationName: onExecuteParams.args.operationName,
-        sessionId,
-        context: onExecuteParams.args.contextValue,
-      });
-
-      const cacheInstance = cacheFactory(onExecuteParams.args.contextValue);
-      if (cacheInstance == null) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          '[useResponseCache] Cache instance is not available for the context. Skipping cache lookup.',
-        );
-      }
-      const cachedResponse = (await cacheInstance.get(cacheKey)) as ResponseCacheExecutionResult;
-
-      if (cachedResponse != null) {
-        return setExecutor({
-          execute: () =>
-            includeExtensionMetadata
-              ? resultWithMetadata(cachedResponse, { hit: true })
-              : cachedResponse,
-        });
-      }
-
-      function maybeCacheResult(
-        result: ExecutionResult,
-        setResult: (newResult: ExecutionResult) => void,
-      ) {
-        if (result.data) {
-          result.data = removeMetadataFieldsFromResult(result.data, onEntity);
-        }
-
-        // we only use the global ttl if no currentTtl has been determined.
-        let finalTtl = currentTtl ?? globalTtl;
-        if (onTtl) {
-          finalTtl = onTtl({
-            ttl: finalTtl,
+      return handleMaybePromise(
+        () =>
+          buildResponseCacheKey({
+            documentString: getDocumentString(onExecuteParams.args),
+            variableValues: onExecuteParams.args.variableValues,
+            operationName: onExecuteParams.args.operationName,
+            sessionId,
             context: onExecuteParams.args.contextValue,
-          });
-        }
-
-        if (skip || !shouldCacheResult({ cacheKey, result }) || finalTtl === 0) {
-          if (includeExtensionMetadata) {
-            setResult(resultWithMetadata(result, { hit: false, didCache: false }));
+          }),
+        cacheKey => {
+          const cacheInstance = cacheFactory(onExecuteParams.args.contextValue);
+          if (cacheInstance == null) {
+            // eslint-disable-next-line no-console
+            console.warn(
+              '[useResponseCache] Cache instance is not available for the context. Skipping cache lookup.',
+            );
           }
-          return;
-        }
 
-        cacheInstance.set(cacheKey, result, identifier.values(), finalTtl);
-        if (includeExtensionMetadata) {
-          setResult(resultWithMetadata(result, { hit: false, didCache: true, ttl: finalTtl }));
-        }
-      }
+          return handleMaybePromise(
+            () => cacheInstance.get(cacheKey),
+            cachedResponse => {
+              if (cachedResponse != null) {
+                return setExecutor({
+                  execute: () =>
+                    includeExtensionMetadata
+                      ? resultWithMetadata(cachedResponse, { hit: true })
+                      : cachedResponse,
+                });
+              }
 
-      return setExecutor({
-        execute(args) {
-          const [document, ttl] = getDocumentWithMetadataAndTTL(
-            args.document,
-            documentMetadataOptions.queries,
-            schema,
-            idFieldByTypeName,
+              function maybeCacheResult(
+                result: ExecutionResult,
+                setResult: (newResult: ExecutionResult) => void,
+              ) {
+                if (result.data) {
+                  result.data = removeMetadataFieldsFromResult(result.data, onEntity);
+                }
+
+                // we only use the global ttl if no currentTtl has been determined.
+                let finalTtl = currentTtl ?? globalTtl;
+                if (onTtl) {
+                  finalTtl = onTtl({
+                    ttl: finalTtl,
+                    context: onExecuteParams.args.contextValue,
+                  });
+                }
+
+                if (skip || !shouldCacheResult({ cacheKey, result }) || finalTtl === 0) {
+                  if (includeExtensionMetadata) {
+                    setResult(resultWithMetadata(result, { hit: false, didCache: false }));
+                  }
+                  return;
+                }
+
+                cacheInstance.set(cacheKey, result, identifier.values(), finalTtl);
+                if (includeExtensionMetadata) {
+                  setResult(
+                    resultWithMetadata(result, { hit: false, didCache: true, ttl: finalTtl }),
+                  );
+                }
+              }
+
+              return setExecutor({
+                execute(args) {
+                  const [document, ttl] = getDocumentWithMetadataAndTTL(
+                    args.document,
+                    documentMetadataOptions.queries,
+                    schema,
+                    idFieldByTypeName,
+                  );
+                  currentTtl = ttl;
+                  return onExecuteParams.executeFn({ ...args, document });
+                },
+                onExecuteDone({ result, setResult }) {
+                  if (isAsyncIterable(result)) {
+                    return handleAsyncIterableResult(maybeCacheResult);
+                  }
+
+                  return maybeCacheResult(result, setResult);
+                },
+              });
+            },
           );
-          currentTtl = ttl;
-          return onExecuteParams.executeFn({ ...args, document });
         },
-        onExecuteDone({ result, setResult }) {
-          if (isAsyncIterable(result)) {
-            return handleAsyncIterableResult(maybeCacheResult);
-          }
-
-          return maybeCacheResult(result, setResult);
-        },
-      });
+      );
     },
   };
 }

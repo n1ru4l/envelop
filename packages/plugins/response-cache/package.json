@@ -53,6 +53,7 @@
   "dependencies": {
     "@graphql-tools/utils": "^10.0.3",
     "@whatwg-node/fetch": "^0.10.0",
+    "@whatwg-node/promise-helpers": "^1.2.4",
     "fast-json-stable-stringify": "^2.1.0",
     "lru-cache": "^10.0.0",
     "tslib": "^2.5.0"

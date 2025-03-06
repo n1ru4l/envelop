@@ -20,8 +20,9 @@ export class JsonFileStore implements PersistedOperationsStore {
     this.storeData = new Map(Object.entries(data));
   }
 
-  public async loadFromFile(path: string): Promise<void> {
-    const data = JSON.parse(await promises.readFile(path, 'utf-8'));
-    this.storeData = new Map(Object.entries(data));
+  public loadFromFile(path: string): Promise<void> {
+    return promises.readFile(path, 'utf-8').then(data => {
+      this.storeData = new Map(Object.entries(JSON.parse(data)));
+    });
   }
 }
