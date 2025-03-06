@@ -1,5 +1,14 @@
 # @envelop/apollo-server-errors
 
+## 7.1.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`914f9ed`](https://github.com/n1ru4l/envelop/commit/914f9ed3b753f771d938b4beb8fd31753b48771e),
+  [`914f9ed`](https://github.com/n1ru4l/envelop/commit/914f9ed3b753f771d938b4beb8fd31753b48771e)]:
+  - @envelop/core@5.2.3
+
 ## 7.1.2
 
 ### Patch Changes

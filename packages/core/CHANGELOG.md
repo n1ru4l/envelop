@@ -1,5 +1,29 @@
 # @envelop/core
 
+## 5.2.3
+
+### Patch Changes
+
+- [#2486](https://github.com/n1ru4l/envelop/pull/2486)
+  [`914f9ed`](https://github.com/n1ru4l/envelop/commit/914f9ed3b753f771d938b4beb8fd31753b48771e)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+
+  - Added dependency
+    [`@envelop/instrumentation@workspace:^` ↗︎](https://www.npmjs.com/package/@envelop/instrumentation/v/workspace:^)
+    (to `dependencies`)
+  - Removed dependency
+    [`@envelop/instruments@workspace:^` ↗︎](https://www.npmjs.com/package/@envelop/instruments/v/workspace:^)
+    (from `dependencies`)
+
+- [#2486](https://github.com/n1ru4l/envelop/pull/2486)
+  [`914f9ed`](https://github.com/n1ru4l/envelop/commit/914f9ed3b753f771d938b4beb8fd31753b48771e)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Fix the name of the new envelop
+  instrumentation API
+
+- Updated dependencies
+  [[`914f9ed`](https://github.com/n1ru4l/envelop/commit/914f9ed3b753f771d938b4beb8fd31753b48771e)]:
+  - @envelop/types@5.2.1
+
 ## 5.2.2
 
 ### Patch Changes
