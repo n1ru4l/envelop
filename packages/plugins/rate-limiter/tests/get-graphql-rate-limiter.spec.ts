@@ -1,5 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { GraphQLResolveInfo } from 'graphql';
+import { RedisClient } from 'redis-mock';
+import { RedisStore } from '@envelop/rate-limiter';
 import { getFieldIdentity, getGraphQLRateLimiter } from '../src/get-graphql-rate-limiter.js';
 import { InMemoryStore } from '../src/in-memory-store.js';
 import { GraphQLRateLimitDirectiveArgs } from '../src/types.js';
@@ -56,7 +58,7 @@ test('getGraphQLRateLimiter with an empty store passes, but second time fails', 
 
 test('getGraphQLRateLimiter should block a batch of rate limited fields in a single query', async () => {
   const rateLimit = getGraphQLRateLimiter({
-    store: new InMemoryStore(),
+    store: new RedisStore(new RedisClient({})),
     identifyContext: context => context.id,
     enableBatchRequestCache: true,
   });
@@ -67,8 +69,9 @@ test('getGraphQLRateLimiter should block a batch of rate limited fields in a sin
     context: { id: '1' },
     info: { fieldName: 'myField' } as any as GraphQLResolveInfo,
   };
+
   const requests = Array.from({ length: 5 })
-    .map((_, i) => sleep(i * 1000).then(() => rateLimit(field, config)))
+    .map(async () => rateLimit(field, config))
     .map(p => p.catch(e => e));
 
   (await Promise.all(requests)).forEach((result, idx) => {
