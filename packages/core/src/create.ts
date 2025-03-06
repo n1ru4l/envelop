@@ -1,4 +1,4 @@
-import { getInstrumented } from '@envelop/instruments';
+import { getInstrumented } from '@envelop/instrumentation';
 import { ArbitraryObject, ComposeContext, GetEnvelopedFn, Optional, Plugin } from '@envelop/types';
 import { createEnvelopOrchestrator, EnvelopOrchestrator } from './orchestrator.js';
 
@@ -16,7 +16,7 @@ export function envelop<PluginsType extends Optional<Plugin<any>>[]>(options: {
   const orchestrator = createEnvelopOrchestrator<ComposeContext<ExcludeFalsy<PluginsType>>>({
     plugins,
   });
-  const instruments = orchestrator.instruments;
+  const instrumentation = orchestrator.instrumentation;
 
   const getEnveloped = <TInitialContext extends ArbitraryObject>(
     context: TInitialContext = {} as TInitialContext,
@@ -27,17 +27,17 @@ export function envelop<PluginsType extends Optional<Plugin<any>>[]>(options: {
       ComposeContext<ExcludeFalsy<PluginsType>>
     >;
 
-    instrumented.fn(instruments?.init, orchestrator.init)(context);
+    instrumented.fn(instrumentation?.init, orchestrator.init)(context);
 
     return {
-      parse: instrumented.fn(instruments?.parse, typedOrchestrator.parse(context)),
-      validate: instrumented.fn(instruments?.validate, typedOrchestrator.validate(context)),
+      parse: instrumented.fn(instrumentation?.parse, typedOrchestrator.parse(context)),
+      validate: instrumented.fn(instrumentation?.validate, typedOrchestrator.validate(context)),
       contextFactory: instrumented.fn(
-        instruments?.context,
+        instrumentation?.context,
         typedOrchestrator.contextFactory(context as any),
       ),
-      execute: instrumented.asyncFn(instruments?.execute, typedOrchestrator.execute),
-      subscribe: instrumented.asyncFn(instruments?.subscribe, typedOrchestrator.subscribe),
+      execute: instrumented.asyncFn(instrumentation?.execute, typedOrchestrator.execute),
+      subscribe: instrumented.asyncFn(instrumentation?.subscribe, typedOrchestrator.subscribe),
       schema: typedOrchestrator.getCurrentSchema(),
     };
   };

@@ -56,7 +56,7 @@
     "typescript"
   ],
   "dependencies": {
-    "@envelop/instruments": "workspace:^",
+    "@envelop/instrumentation": "workspace:^",
     "@envelop/types": "workspace:^",
     "@whatwg-node/promise-helpers": "^1.2.4",
     "tslib": "^2.5.0"

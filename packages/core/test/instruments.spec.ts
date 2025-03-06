@@ -1,10 +1,10 @@
-import { envelop, Instruments, Plugin, useEngine } from '@envelop/core';
+import { envelop, Plugin, useEngine } from '@envelop/core';
 
-describe('instruments', () => {
+describe('instrumentation', () => {
   it('should instrument all graphql phases', async () => {
     const result: string[] = [];
     const make = (name: string): Plugin => ({
-      instruments: {
+      instrumentation: {
         init: (_, w) => {
           result.push(`pre-init-${name}`);
           expect(w()).toBeUndefined();
