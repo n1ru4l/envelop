@@ -1,11 +1,11 @@
 {
-  "name": "@envelop/instruments",
-  "version": "1.0.0",
+  "name": "@envelop/instrumentation",
+  "version": "0.0.0",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/n1ru4l/envelop.git",
-    "directory": "packages/instruments"
+    "directory": "packages/instrumentation"
   },
   "author": "Valentin Cocaud <v.cocaud@gmail.com>",
   "license": "MIT",

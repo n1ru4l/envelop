@@ -12,9 +12,9 @@ import type { PromiseOrValue } from './utils.js';
 
 export interface Plugin<PluginContext extends Record<string, any> = {}> {
   /**
-   * Instruments wrapping each phases, including hooks executions.
+   * Instrumentation wrapping each phases, including hooks executions.
    */
-  instruments?: Instruments<PluginContext>;
+  instrumentation?: Instrumentation<PluginContext>;
   /**
    * Invoked for each call to getEnveloped.
    */
@@ -49,7 +49,7 @@ export interface Plugin<PluginContext extends Record<string, any> = {}> {
   onContextBuilding?: OnContextBuildingHook<PluginContext>;
 }
 
-export type Instruments<TContext extends Record<string, any>> = {
+export type Instrumentation<TContext extends Record<string, any>> = {
   /**
    * Wraps the initialization phase (`envelop` function call and `onEnvelop` hooks)
    */

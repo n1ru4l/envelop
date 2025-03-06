@@ -658,9 +658,9 @@ importers:
 
   packages/core:
     dependencies:
-      '@envelop/instruments':
+      '@envelop/instrumentation':
         specifier: workspace:^
-        version: link:../instruments/dist
+        version: link:../instrumentation/dist
       '@envelop/types':
         specifier: workspace:^
         version: link:../types/dist
@@ -688,7 +688,7 @@ importers:
         version: 5.8.2
     publishDirectory: dist
 
-  packages/instruments:
+  packages/instrumentation:
     dependencies:
       '@whatwg-node/promise-helpers':
         specifier: ^1.2.1

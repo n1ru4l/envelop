@@ -1,6 +1,6 @@
 import { handleMaybePromise, isPromise, MaybePromise } from '@whatwg-node/promise-helpers';
 
-export type GenericInstruments = Record<
+export type GenericInstrumentation = Record<
   string,
   (payload: any, wrapped: () => MaybePromise<void>) => MaybePromise<void>
 >;
@@ -9,11 +9,11 @@ export type GenericInstruments = Record<
  * Composes 2 instrumentations together into one instrumentation.
  * The first one will be the outer call, the second one the inner call.
  */
-export function chain<First extends GenericInstruments, Next extends GenericInstruments>(
+export function chain<First extends GenericInstrumentation, Next extends GenericInstrumentation>(
   first: First,
   next: Next,
 ) {
-  const merged: GenericInstruments = { ...next, ...first };
+  const merged: GenericInstrumentation = { ...next, ...first };
 
   for (const key of Object.keys(merged)) {
     if (key in first && key in next) {
@@ -24,39 +24,41 @@ export function chain<First extends GenericInstruments, Next extends GenericInst
 }
 
 /**
- * Composes a list of instruments together into one instruments object.
+ * Composes a list of instrumentation together into one instrumentation object.
  * The order of execution will respect the order of the array,
  * the first one being the outter most call, the last one the inner most call.
  */
-export function composeInstruments<T extends GenericInstruments>(instruments: T[]): T | undefined {
-  return instruments.length > 0 ? instruments.reduce(chain) : undefined;
+export function composeInstrumentation<T extends GenericInstrumentation>(
+  instrumentation: T[],
+): T | undefined {
+  return instrumentation.length > 0 ? instrumentation.reduce(chain) : undefined;
 }
 
 /**
- * Extract instruments from a list of plugins.
- * It returns instruments found, and the list of plugins without their insturments.
+ * Extract instrumentation from a list of plugins.
+ * It returns instrumentation found, and the list of plugins without their instrumentation.
  *
- * You can use this to easily customize the composition of the instruments if the default one
+ * You can use this to easily customize the composition of the instrumentation if the default one
  * doesn't suits your needs.
  */
-export function getInstrumentsAndPlugins<T, P extends { instruments?: T }>(
+export function getInstrumentationAndPlugin<T, P extends { instrumentation?: T }>(
   plugins: P[],
-): { pluginInstruments: T[]; plugins: Omit<P, 'instruments'>[] } {
-  const pluginInstruments: T[] = [];
-  const newPlugins: Omit<P, 'instruments'>[] = [];
-  for (const { instruments, ...plugin } of plugins) {
-    if (instruments) {
-      pluginInstruments.push(instruments);
+): { pluginInstrumentation: T[]; plugins: Omit<P, 'instrumentation'>[] } {
+  const pluginInstrumentation: T[] = [];
+  const newPlugins: Omit<P, 'instrumentation'>[] = [];
+  for (const { instrumentation, ...plugin } of plugins) {
+    if (instrumentation) {
+      pluginInstrumentation.push(instrumentation);
     }
     newPlugins.push(plugin);
   }
-  return { pluginInstruments, plugins: newPlugins };
+  return { pluginInstrumentation, plugins: newPlugins };
 }
 
 /**
  * A helper to instrument a function.
  *
- * @param payload: The first argument that will be passed to the instruments on each function call
+ * @param payload: The first argument that will be passed to the instrumentation on each function call
  * @returns Function and Async Functions factories allowing to wrap a function with a given instrument.
  */
 export const getInstrumented = <TPayload>(payload: TPayload) => ({

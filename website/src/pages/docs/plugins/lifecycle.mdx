@@ -268,42 +268,42 @@ Some plugins (like gateway implementations) could potentially change the schema 
 - `replaceSchema` - replaces the schema. Calling this will trigger `onSchemaChange` for all other
   plugins (except for the one that initiated the change);
 
-### `instruments`
+### `instrumentation`
 
-An optional `instruments` instance can be present in the plugin.
+An optional `instrumentation` instance can be present in the plugin.
 
-This `Instruments` instance allows wrapping an entire phase execution (including all plugin hooks);
-meaning, running code just before, just after and around the execution of the phase.
+This `Instrumentation` instance allows wrapping an entire phase execution (including all plugin
+hooks); meaning, running code just before, just after and around the execution of the phase.
 
-Instruments don't have access to the input and outputs of a phase, use hooks to access that data. If
-needed, we recommend to share data between instruments and hooks with a `WeakMap` and the given
-`context` as the key.
+Instrumentation don't have access to the input and outputs of a phase, use hooks to access that
+data. If needed, we recommend to share data between instrumentation and hooks with a `WeakMap` and
+the given `context` as the key.
 
-All instruments take 2 parameters:
+All instrumentation take 2 parameters:
 
 - `payload`: an object containing the graphql context.
 - `wrapped`: The function representing the execution of the phase. It takes no parameters, and
   returns `void` (or `Promise<void>` for asynchronous phases). **This function must always be
   called**.
 
-#### Instruments composition
+#### Instrumentation composition
 
-If multiple plugins have `instruments`, they are composed in the same order as they are defined in
-the plugin array (from top to bottom).
+If multiple plugins have `instrumentation`, they are composed in the same order as they are defined
+in the plugin array (from top to bottom).
 
 It is possible to customize this composition if it doesn't suit your needs (ie. you need hooks and
-instruments to have a different order of execution).
+instrumentation to have a different order of execution).
 
 ```ts
-import { composeInstruments, envelop } from '@envelop/core'
+import { composeInstrumentation, envelop } from '@envelop/core'
 
-const { instruments: instruments1, ...plugin1 } = usePlugin1()
-const { instruments: instruments2, ...plugin2 } = usePlugin2()
+const { instrumentation: instrumentation1, ...plugin1 } = usePlugin1()
+const { instrumentation: instrumentation2, ...plugin2 } = usePlugin2()
 
-const instruments = composeInstruments([instruments2, instruments1])
+const instrumentation = composeInstrumentation([instrumentation2, instrumentation1])
 
 const getEnveloped = envelop({
-  plugin: [{ insturments }, plugin1, plugin2]
+  plugin: [{ instrumentation }, plugin1, plugin2]
 })
 ```
 

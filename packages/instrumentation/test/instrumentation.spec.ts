@@ -1,10 +1,10 @@
-import { chain, GenericInstruments } from '../src';
+import { chain, GenericInstrumentation } from '../src';
 
-describe('instruments', () => {
+describe('instrumentation', () => {
   describe('chain', () => {
     it('should execute instrument in the same order than the array', () => {
       const result: number[] = [];
-      const createInstrument = (name: number): GenericInstruments => ({
+      const createInstrument = (name: number): GenericInstrumentation => ({
         execute: (_, wrapped) => {
           result.push(name);
           wrapped();
@@ -12,14 +12,14 @@ describe('instruments', () => {
         },
       });
 
-      let [instrument, ...instruments] = [
+      let [instrument, ...instrumentation] = [
         createInstrument(1),
         createInstrument(2),
         createInstrument(3),
         createInstrument(4),
       ];
 
-      for (const other of instruments) {
+      for (const other of instrumentation) {
         instrument = chain(instrument, other);
       }
 
@@ -29,7 +29,7 @@ describe('instruments', () => {
 
     it('should execute instrument in the same order when async', async () => {
       const result: number[] = [];
-      const createInstrument = (name: number): GenericInstruments => ({
+      const createInstrument = (name: number): GenericInstrumentation => ({
         execute: async (_, wrapped) => {
           result.push(name);
           await wrapped();
@@ -37,14 +37,14 @@ describe('instruments', () => {
         },
       });
 
-      let [instrument, ...instruments] = [
+      let [instrument, ...instrumentation] = [
         createInstrument(1),
         createInstrument(2),
         createInstrument(3),
         createInstrument(4),
       ];
 
-      for (const other of instruments) {
+      for (const other of instrumentation) {
         instrument = chain(instrument, other);
       }
 
@@ -86,12 +86,12 @@ describe('instruments', () => {
         execute: jest.fn().mockImplementation(dumbInstrument),
       });
 
-      const instruments = [make(), make(), make(), make()];
+      const instrumentation = [make(), make(), make(), make()];
 
       const payload = { test: 'foo' };
 
-      instruments.reduce(chain).execute(payload, () => {});
-      for (const instrument of instruments) {
+      instrumentation.reduce(chain).execute(payload, () => {});
+      for (const instrument of instrumentation) {
         expect(instrument.execute).toHaveBeenCalledWith(payload, expect.anything());
       }
     });
