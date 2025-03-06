@@ -299,11 +299,11 @@ importers:
         specifier: 10.0.21
         version: 10.0.21(graphql@16.8.1)
       firebase-admin:
-        specifier: 13.1.0
-        version: 13.1.0(encoding@0.1.13)
+        specifier: 13.2.0
+        version: 13.2.0(encoding@0.1.13)
       firebase-functions:
         specifier: 6.3.2
-        version: 6.3.2(firebase-admin@13.1.0(encoding@0.1.13))
+        version: 6.3.2(firebase-admin@13.2.0(encoding@0.1.13))
       graphql:
         specifier: 16.8.1
         version: 16.8.1
@@ -7101,8 +7101,8 @@ packages:
     resolution: {integrity: sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng==}
     engines: {node: '>=10'}
 
-  firebase-admin@13.1.0:
-    resolution: {integrity: sha512-XPKiTyPyvUMZ22EPk4M1oSiZ8/4qFeYwjK88o/DYpGtNbOLKrM6Oc9jTaK+P6Vwn3Vr1+OCyLLJ93Bci382UqA==}
+  firebase-admin@13.2.0:
+    resolution: {integrity: sha512-qQBTKo0QWCDaWwISry989pr8YfZSSk00rNCKaucjOgltEm3cCYzEe4rODqBd1uUwma+Iu5jtAzg89Nfsjr3fGg==}
     engines: {node: '>=18'}
 
   firebase-functions@6.3.2:
@@ -18641,7 +18641,7 @@ snapshots:
       locate-path: 6.0.0
       path-exists: 4.0.0
 
-  firebase-admin@13.1.0(encoding@0.1.13):
+  firebase-admin@13.2.0(encoding@0.1.13):
     dependencies:
       '@fastify/busboy': 3.1.1
       '@firebase/database-compat': 2.0.3
@@ -18660,13 +18660,13 @@ snapshots:
       - encoding
       - supports-color
 
-  firebase-functions@6.3.2(firebase-admin@13.1.0(encoding@0.1.13)):
+  firebase-functions@6.3.2(firebase-admin@13.2.0(encoding@0.1.13)):
     dependencies:
       '@types/cors': 2.8.17
       '@types/express': 4.17.21
       cors: 2.8.5
       express: 4.21.2
-      firebase-admin: 13.1.0(encoding@0.1.13)
+      firebase-admin: 13.2.0(encoding@0.1.13)
       protobufjs: 7.4.0
     transitivePeerDependencies:
       - supports-color
