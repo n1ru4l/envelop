@@ -9,14 +9,6 @@ overrides:
   graphql: 16.8.1
   estree-util-build-jsx: 3.0.1
 
-patchedDependencies:
-  '@changesets/assemble-release-plan':
-    hash: e929d4d48a9e0237e7a5b5283297e70eec7ad4472c14fd4f5a8fbab66387eb00
-    path: patches/@changesets__assemble-release-plan.patch
-  '@ianvs/prettier-plugin-sort-imports':
-    hash: db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce
-    path: patches/@ianvs__prettier-plugin-sort-imports.patch
-
 importers:
 
   .:
@@ -44,7 +36,7 @@ importers:
         version: 2.28.1
       '@ianvs/prettier-plugin-sort-imports':
         specifier: 4.4.1
-        version: 4.4.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.3)
+        version: 4.4.1(prettier@3.5.3)
       '@theguild/prettier-config':
         specifier: 2.0.7
         version: 2.0.7(prettier@3.5.3)
@@ -213,8 +205,8 @@ importers:
         version: 1.13.0(graphql@16.8.1)
     devDependencies:
       '@azure/functions':
-        specifier: 4.6.1
-        version: 4.6.1
+        specifier: 4.7.0
+        version: 4.7.0
       '@types/node':
         specifier: 22.13.9
         version: 22.13.9
@@ -312,8 +304,8 @@ importers:
         version: 1.13.0(graphql@16.8.1)
     devDependencies:
       '@azure/functions':
-        specifier: 4.6.1
-        version: 4.6.1
+        specifier: 4.7.0
+        version: 4.7.0
       '@types/node':
         specifier: 22.13.9
         version: 22.13.9
@@ -2030,8 +2022,8 @@ packages:
       aws-crt:
         optional: true
 
-  '@azure/functions@4.6.1':
-    resolution: {integrity: sha512-Py2Az29yk+A21vHES/rL6iU3ptKB+vVz3sGTjm0jSPFjG4kPbhFLi5vFI7YkCPMGeoD4WMIjHqTAeXvnFrBUBA==}
+  '@azure/functions@4.7.0':
+    resolution: {integrity: sha512-y1caGX6LYrA7msAckQVb/quFOhWHSPiGzWfIML17t0ee2ydpinJTBF+Sti+URfLAH63dtmXJR4meraZkhhK9tw==}
     engines: {node: '>=18.0'}
 
   '@babel/code-frame@7.26.2':
@@ -12332,7 +12324,7 @@ snapshots:
       '@smithy/types': 4.1.0
       tslib: 2.8.1
 
-  '@azure/functions@4.6.1':
+  '@azure/functions@4.7.0':
     dependencies:
       cookie: 0.7.2
       long: 4.0.0
@@ -13115,7 +13107,7 @@ snapshots:
       resolve-from: 5.0.0
       semver: 7.7.1
 
-  '@changesets/assemble-release-plan@6.0.6(patch_hash=e929d4d48a9e0237e7a5b5283297e70eec7ad4472c14fd4f5a8fbab66387eb00)':
+  '@changesets/assemble-release-plan@6.0.6':
     dependencies:
       '@changesets/errors': 0.2.0
       '@changesets/get-dependents-graph': 2.1.3
@@ -13139,7 +13131,7 @@ snapshots:
   '@changesets/cli@2.28.1':
     dependencies:
       '@changesets/apply-release-plan': 7.0.10
-      '@changesets/assemble-release-plan': 6.0.6(patch_hash=e929d4d48a9e0237e7a5b5283297e70eec7ad4472c14fd4f5a8fbab66387eb00)
+      '@changesets/assemble-release-plan': 6.0.6
       '@changesets/changelog-git': 0.2.1
       '@changesets/config': 3.1.1
       '@changesets/errors': 0.2.0
@@ -13197,7 +13189,7 @@ snapshots:
 
   '@changesets/get-release-plan@4.0.8':
     dependencies:
-      '@changesets/assemble-release-plan': 6.0.6(patch_hash=e929d4d48a9e0237e7a5b5283297e70eec7ad4472c14fd4f5a8fbab66387eb00)
+      '@changesets/assemble-release-plan': 6.0.6
       '@changesets/config': 3.1.1
       '@changesets/pre': 2.0.2
       '@changesets/read': 0.6.3
@@ -13748,7 +13740,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.2': {}
 
-  '@ianvs/prettier-plugin-sort-imports@4.3.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.3)':
+  '@ianvs/prettier-plugin-sort-imports@4.3.1(prettier@3.5.3)':
     dependencies:
       '@babel/core': 7.26.9
       '@babel/generator': 7.26.9
@@ -13760,7 +13752,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@ianvs/prettier-plugin-sort-imports@4.4.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.3)':
+  '@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3)':
     dependencies:
       '@babel/generator': 7.26.9
       '@babel/parser': 7.26.9
@@ -15530,7 +15522,7 @@ snapshots:
 
   '@theguild/prettier-config@2.0.7(prettier@3.5.3)':
     dependencies:
-      '@ianvs/prettier-plugin-sort-imports': 4.3.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.3)
+      '@ianvs/prettier-plugin-sort-imports': 4.3.1(prettier@3.5.3)
       prettier: 3.5.3
       prettier-plugin-pkg: 0.18.1(prettier@3.5.3)
       prettier-plugin-sh: 0.14.0(prettier@3.5.3)
