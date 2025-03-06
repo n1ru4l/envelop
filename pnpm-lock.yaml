@@ -1123,9 +1123,6 @@ importers:
       '@envelop/core':
         specifier: workspace:^
         version: link:../../core/dist
-      '@sentry/node':
-        specifier: ^8.0.0
-        version: 8.55.0
     devDependencies:
       graphql:
         specifier: 16.8.1

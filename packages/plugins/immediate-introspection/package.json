@@ -48,7 +48,6 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@envelop/core": "workspace:^",
-    "@sentry/node": "^8.0.0",
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "dependencies": {},
