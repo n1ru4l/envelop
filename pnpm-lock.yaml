@@ -1569,8 +1569,8 @@ importers:
         specifier: 16.8.1
         version: 16.8.1
       sentry-testkit:
-        specifier: 5.0.10
-        version: 5.0.10
+        specifier: 6.1.0
+        version: 6.1.0
       typescript:
         specifier: 5.8.2
         version: 5.8.2
@@ -10378,8 +10378,8 @@ packages:
     resolution: {integrity: sha512-dW41u5VfLXu8SJh5bwRmyYUbAoSB3c9uQh6L8h/KtsFREPWpbX1lrljJo186Jc4nmci/sGUZ9a0a0J2zgfq2hw==}
     engines: {node: '>= 0.8.0'}
 
-  sentry-testkit@5.0.10:
-    resolution: {integrity: sha512-wpvt29IIK+L1Pe02uc0y7rJkXQcnIk46hvB02Zqd4UNgP2lIhzv80GjR2lu8RtsbAmf7LJnGz8zLuV3rVa69ew==}
+  sentry-testkit@6.1.0:
+    resolution: {integrity: sha512-mW1aOvJQFy42QSKev91rF0e+JlkP51oqficRNEwdC1efI/uYSyfpRL7pJATmHMsMMAb1ZFa5tMpyJg1dWPqE+Q==}
 
   serialize-javascript@4.0.0:
     resolution: {integrity: sha512-GaNA54380uFefWghODBWEGisLZFj00nS5ACs6yHa9nLqlLpVLO8ChDGeKRjZnV4Nh4n0Qi7nhYZD/9fCPzEqkw==}
@@ -23028,7 +23028,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  sentry-testkit@5.0.10:
+  sentry-testkit@6.1.0:
     dependencies:
       body-parser: 1.20.3
       express: 4.21.2
