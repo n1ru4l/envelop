@@ -1,6 +1,6 @@
 {
   "name": "@envelop/graphql-middleware",
-  "version": "7.1.2",
+  "version": "7.1.3",
   "type": "module",
   "repository": {
     "type": "git",

@@ -1,5 +1,14 @@
 # @envelop/types
 
+## 5.2.1
+
+### Patch Changes
+
+- [#2486](https://github.com/n1ru4l/envelop/pull/2486)
+  [`914f9ed`](https://github.com/n1ru4l/envelop/commit/914f9ed3b753f771d938b4beb8fd31753b48771e)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Fix the name of the new envelop
+  instrumentation API
+
 ## 5.2.0
 
 ### Minor Changes
