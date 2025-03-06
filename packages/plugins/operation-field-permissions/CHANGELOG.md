@@ -1,5 +1,29 @@
 # @envelop/operation-field-permissions
 
+## 7.1.2
+
+### Patch Changes
+
+- [#2484](https://github.com/n1ru4l/envelop/pull/2484)
+  [`26137e7`](https://github.com/n1ru4l/envelop/commit/26137e7c3d0ff349af90724867c715f3b3809a7d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Added dependency
+    [`@whatwg-node/promise-helpers@^1.2.4` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/1.2.4)
+    (to `dependencies`)
+
+- [#2484](https://github.com/n1ru4l/envelop/pull/2484)
+  [`26137e7`](https://github.com/n1ru4l/envelop/commit/26137e7c3d0ff349af90724867c715f3b3809a7d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Added dependency
+    [`@whatwg-node/promise-helpers@^1.2.4` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/1.2.4)
+    (to `dependencies`)
+- Updated dependencies
+  [[`26137e7`](https://github.com/n1ru4l/envelop/commit/26137e7c3d0ff349af90724867c715f3b3809a7d),
+  [`26137e7`](https://github.com/n1ru4l/envelop/commit/26137e7c3d0ff349af90724867c715f3b3809a7d)]:
+  - @envelop/core@5.2.2
+  - @envelop/extended-validation@5.1.2
+
 ## 7.1.1
 
 ### Patch Changes
