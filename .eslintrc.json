@@ -9,9 +9,7 @@
   ],
   "plugins": ["@typescript-eslint", "unicorn", "package-json"],
   "rules": {
-    "unicorn/filename-case": "error",
     "no-lonely-if": "error",
-    "unicorn/no-lonely-if": "error",
     "no-empty": "off",
     "no-console": "error",
     "no-prototype-builtins": "off",
@@ -42,7 +40,6 @@
     "@typescript-eslint/ban-ts-ignore": "off",
     "@typescript-eslint/ban-types": "off",
     "import/no-default-export": "error",
-    "unicorn/no-useless-fallback-in-spread": "error",
     "import/no-extraneous-dependencies": [
       "error",
       {
