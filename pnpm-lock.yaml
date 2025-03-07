@@ -9,6 +9,14 @@ overrides:
   graphql: 16.8.1
   estree-util-build-jsx: 3.0.1
 
+patchedDependencies:
+  '@changesets/assemble-release-plan':
+    hash: e929d4d48a9e0237e7a5b5283297e70eec7ad4472c14fd4f5a8fbab66387eb00
+    path: patches/@changesets__assemble-release-plan.patch
+  '@ianvs/prettier-plugin-sort-imports':
+    hash: db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce
+    path: patches/@ianvs__prettier-plugin-sort-imports.patch
+
 importers:
 
   .:
@@ -36,7 +44,7 @@ importers:
         version: 2.28.1
       '@ianvs/prettier-plugin-sort-imports':
         specifier: 4.4.1
-        version: 4.4.1(prettier@3.5.3)
+        version: 4.4.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.3)
       '@theguild/prettier-config':
         specifier: 2.0.7
         version: 2.0.7(prettier@3.5.3)
@@ -74,8 +82,8 @@ importers:
         specifier: 9.21.0
         version: 9.21.0(jiti@1.21.7)
       eslint-config-prettier:
-        specifier: 10.0.2
-        version: 10.0.2(eslint@9.21.0(jiti@1.21.7))
+        specifier: 10.1.1
+        version: 10.1.1(eslint@9.21.0(jiti@1.21.7))
       eslint-config-standard:
         specifier: 17.1.0
         version: 17.1.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.26.0(eslint@9.21.0(jiti@1.21.7))(typescript@5.8.2))(eslint@9.21.0(jiti@1.21.7)))(eslint-plugin-n@17.16.2(eslint@9.21.0(jiti@1.21.7)))(eslint-plugin-promise@7.2.1(eslint@9.21.0(jiti@1.21.7)))(eslint@9.21.0(jiti@1.21.7))
@@ -6650,8 +6658,8 @@ packages:
     peerDependencies:
       eslint: '>=6.0.0'
 
-  eslint-config-prettier@10.0.2:
-    resolution: {integrity: sha512-1105/17ZIMjmCOJOPNfVdbXafLCLj3hPmkmB7dLgt7XsQ/zkxSuDerE/xgO3RxoHysR1N1whmquY0lSn2O0VLg==}
+  eslint-config-prettier@10.1.1:
+    resolution: {integrity: sha512-4EQQr6wXwS+ZJSzaR5ZCrYgLxqvUjdXctaEtBqHcbkW944B1NQyO4qpdHQbXBONfwxXdkAY81HH4+LUfrg+zPw==}
     hasBin: true
     peerDependencies:
       eslint: '>=7.0.0'
@@ -13107,7 +13115,7 @@ snapshots:
       resolve-from: 5.0.0
       semver: 7.7.1
 
-  '@changesets/assemble-release-plan@6.0.6':
+  '@changesets/assemble-release-plan@6.0.6(patch_hash=e929d4d48a9e0237e7a5b5283297e70eec7ad4472c14fd4f5a8fbab66387eb00)':
     dependencies:
       '@changesets/errors': 0.2.0
       '@changesets/get-dependents-graph': 2.1.3
@@ -13131,7 +13139,7 @@ snapshots:
   '@changesets/cli@2.28.1':
     dependencies:
       '@changesets/apply-release-plan': 7.0.10
-      '@changesets/assemble-release-plan': 6.0.6
+      '@changesets/assemble-release-plan': 6.0.6(patch_hash=e929d4d48a9e0237e7a5b5283297e70eec7ad4472c14fd4f5a8fbab66387eb00)
       '@changesets/changelog-git': 0.2.1
       '@changesets/config': 3.1.1
       '@changesets/errors': 0.2.0
@@ -13189,7 +13197,7 @@ snapshots:
 
   '@changesets/get-release-plan@4.0.8':
     dependencies:
-      '@changesets/assemble-release-plan': 6.0.6
+      '@changesets/assemble-release-plan': 6.0.6(patch_hash=e929d4d48a9e0237e7a5b5283297e70eec7ad4472c14fd4f5a8fbab66387eb00)
       '@changesets/config': 3.1.1
       '@changesets/pre': 2.0.2
       '@changesets/read': 0.6.3
@@ -13740,7 +13748,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.2': {}
 
-  '@ianvs/prettier-plugin-sort-imports@4.3.1(prettier@3.5.3)':
+  '@ianvs/prettier-plugin-sort-imports@4.3.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.3)':
     dependencies:
       '@babel/core': 7.26.9
       '@babel/generator': 7.26.9
@@ -13752,7 +13760,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3)':
+  '@ianvs/prettier-plugin-sort-imports@4.4.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.3)':
     dependencies:
       '@babel/generator': 7.26.9
       '@babel/parser': 7.26.9
@@ -15522,7 +15530,7 @@ snapshots:
 
   '@theguild/prettier-config@2.0.7(prettier@3.5.3)':
     dependencies:
-      '@ianvs/prettier-plugin-sort-imports': 4.3.1(prettier@3.5.3)
+      '@ianvs/prettier-plugin-sort-imports': 4.3.1(patch_hash=db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce)(prettier@3.5.3)
       prettier: 3.5.3
       prettier-plugin-pkg: 0.18.1(prettier@3.5.3)
       prettier-plugin-sh: 0.14.0(prettier@3.5.3)
@@ -17980,7 +17988,7 @@ snapshots:
       eslint: 9.21.0(jiti@1.21.7)
       semver: 7.7.1
 
-  eslint-config-prettier@10.0.2(eslint@9.21.0(jiti@1.21.7)):
+  eslint-config-prettier@10.1.1(eslint@9.21.0(jiti@1.21.7)):
     dependencies:
       eslint: 9.21.0(jiti@1.21.7)
 
