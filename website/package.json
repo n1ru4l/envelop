@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@theguild/tailwind-config": "0.6.3",
-    "@types/node": "22.13.9",
+    "@types/node": "22.13.10",
     "@types/react": "18.3.18",
     "sharp": "0.33.5"
   },
