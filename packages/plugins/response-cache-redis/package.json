@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@envelop/core": "workspace:^",
-    "@graphql-tools/schema": "10.0.21",
+    "@graphql-tools/schema": "10.0.22",
     "graphql": "16.8.1",
     "ioredis-mock": "8.9.0",
     "typescript": "5.8.2"
