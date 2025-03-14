@@ -58,7 +58,7 @@
     "@envelop/core": "workspace:^",
     "@graphql-tools/schema": "10.0.23",
     "apollo-server-core": "3.13.0",
-    "graphql": "16.8.1",
+    "graphql": "16.10.0",
     "typescript": "5.8.2"
   },
   "publishConfig": {
