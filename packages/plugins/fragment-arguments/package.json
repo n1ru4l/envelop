@@ -61,7 +61,7 @@
     "common-tags": "1.8.2",
     "graphql": "16.8.1",
     "jest-diff": "29.7.0",
-    "oneline": "1.0.3",
+    "oneline": "1.0.4",
     "typescript": "5.8.2"
   },
   "publishConfig": {
