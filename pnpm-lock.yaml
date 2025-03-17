@@ -998,8 +998,8 @@ importers:
         specifier: 29.7.0
         version: 29.7.0
       oneline:
-        specifier: 1.0.4
-        version: 1.0.4
+        specifier: 2.0.0
+        version: 2.0.0
       typescript:
         specifier: 5.8.2
         version: 5.8.2
@@ -9401,9 +9401,9 @@ packages:
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
 
-  oneline@1.0.4:
-    resolution: {integrity: sha512-+hK7NemLRAJhl+cIi+G6cGrAcIlUIO0bY5XkP6OKFB6Gz3kVFrkh4Ad8t4bkiAWdsCN25OF/rNb1K/BE1ldivg==}
-    engines: {node: '>=6.0.0'}
+  oneline@2.0.0:
+    resolution: {integrity: sha512-kA9pfu5nYoFnmp5KSo+ROicnI1XaIIaOYXKSy7+02IGavKxv7BRkEk3JEKQW5vPkozE9fejy1Z+6Jl67UaeC3g==}
+    engines: {node: '>=18.0.0'}
 
   onetime@1.1.0:
     resolution: {integrity: sha512-GZ+g4jayMqzCRMgB2sol7GiCLjKfS1PINkjmx8spcKce1LiVqcbQreXwqs2YAFXC6R03VIG28ZS31t8M866v6A==}
@@ -21913,7 +21913,7 @@ snapshots:
     dependencies:
       wrappy: 1.0.2
 
-  oneline@1.0.4: {}
+  oneline@2.0.0: {}
 
   onetime@1.1.0: {}
 
