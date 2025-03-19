@@ -1,6 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>the-guild-org/shared-config:renovate", ":preserveSemverRanges"],
+  "extends": [
+    "github>the-guild-org/shared-config:renovate",
+    ":preserveSemverRanges"
+  ],
   "automerge": true,
   "major": {
     "automerge": false
@@ -12,31 +15,36 @@
   "packageRules": [
     {
       "groupName": "graphql-tools",
-      "matchPackagePatterns": ["@graphql-tools"]
+      "matchPackageNames": ["/@graphql-tools/"]
     },
     {
       "groupName": "whatwg-node",
-      "matchPackagePatterns": ["@whatwg-node/*"]
+      "matchPackageNames": ["/@whatwg-node/*/"]
     },
     {
-      "excludePackagePatterns": [
-        "@changesets/*",
-        "typescript",
-        "^@theguild/",
-        "next",
-        "@whatwg-node/*",
-        "@graphql-tools/*",
-        "graphql-jit",
-        "graphql",
-        "newrelic"
-      ],
-      "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "all non-major dependencies",
-      "groupSlug": "all-minor-patch"
+      "groupSlug": "all-minor-patch",
+      "matchPackageNames": [
+        "!/@changesets/*/",
+        "!/typescript/",
+        "!/^@theguild//",
+        "!/next/",
+        "!/@whatwg-node/*/",
+        "!/@graphql-tools/*/",
+        "!/graphql-jit/",
+        "!/graphql/",
+        "!/newrelic/",
+        "*"
+      ]
     }
   ],
-  "ignorePaths": ["**/__tests__/**", "**/test/**", "**/tests/**", "**/__fixtures__/**"],
+  "ignorePaths": [
+    "**/__tests__/**",
+    "**/test/**",
+    "**/tests/**",
+    "**/__fixtures__/**"
+  ],
   "ignoreDeps": ["faker", "nextra"],
   "baseBranches": ["main"]
 }
