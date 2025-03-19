@@ -13,5 +13,5 @@ jobs:
     with:
       releaseScript: release
     secrets:
-      githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
