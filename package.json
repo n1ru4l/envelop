@@ -77,7 +77,12 @@
     "overrides": {
       "esbuild": "^0.25.0",
       "graphql": "16.8.1",
-      "estree-util-build-jsx": "3.0.1"
+      "estree-util-build-jsx": "3.0.1",
+      "braces": "3.0.3",
+      "cross-spawn": "7.0.5",
+      "micromatch": "4.0.8",
+      "dompurify": "3.2.4",
+      "webpack": "5.94.0"
     },
     "patchedDependencies": {
       "@ianvs/prettier-plugin-sort-imports": "patches/@ianvs__prettier-plugin-sort-imports.patch",
