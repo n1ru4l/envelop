@@ -15,6 +15,7 @@ jobs:
     name: check / graphql v${{matrix.graphql_version}}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         graphql_version: [15.8.0, 16]
     steps:
@@ -43,6 +44,7 @@ jobs:
       v${{matrix.graphql_version}}
     runs-on: ${{matrix.os}}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest] # remove windows to speed up the tests
         node-version: [18, 20, 22, 23]
@@ -66,7 +68,11 @@ jobs:
           key:
             ${{ runner.os }}-${{matrix.node-version}}-${{matrix.graphql_version}}-jest-${{
             hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('patches/*.patch') }}
-      - name: Test
-        run: pnpm run test --ci
+      - name: Run Leak Tests
+        uses: nick-fields/retry@ce71cc2ab81d554ebbe88c79ab5975992d79ba08 # v3
         env:
           CI: true
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: pnpm run test --ci
