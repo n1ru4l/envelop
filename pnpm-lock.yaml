@@ -21,6 +21,9 @@ patchedDependencies:
   '@changesets/assemble-release-plan':
     hash: e929d4d48a9e0237e7a5b5283297e70eec7ad4472c14fd4f5a8fbab66387eb00
     path: patches/@changesets__assemble-release-plan.patch
+  '@eslint/eslintrc':
+    hash: a0d2a06b3b47afeb51607aa94a8724c9c0904e3b3fb53665d5a6294d00489681
+    path: patches/@eslint__eslintrc.patch
   '@ianvs/prettier-plugin-sort-imports':
     hash: db9ab7a110c54b5d60464680286f2c0d90ea2331a1142bc3fc068b09696655ce
     path: patches/@ianvs__prettier-plugin-sort-imports.patch
@@ -13274,7 +13277,7 @@ snapshots:
     dependencies:
       '@types/json-schema': 7.0.15
 
-  '@eslint/eslintrc@3.3.0':
+  '@eslint/eslintrc@3.3.0(patch_hash=a0d2a06b3b47afeb51607aa94a8724c9c0904e3b3fb53665d5a6294d00489681)':
     dependencies:
       ajv: 6.12.6
       debug: 4.4.0
@@ -17940,7 +17943,7 @@ snapshots:
       '@eslint/config-array': 0.19.2
       '@eslint/config-helpers': 0.1.0
       '@eslint/core': 0.12.0
-      '@eslint/eslintrc': 3.3.0
+      '@eslint/eslintrc': 3.3.0(patch_hash=a0d2a06b3b47afeb51607aa94a8724c9c0904e3b3fb53665d5a6294d00489681)
       '@eslint/js': 9.22.0
       '@eslint/plugin-kit': 0.2.7
       '@humanfs/node': 0.16.6

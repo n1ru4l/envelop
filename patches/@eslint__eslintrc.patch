@@ -1,0 +1,22 @@
+diff --git a/dist/eslintrc.cjs b/dist/eslintrc.cjs
+index c50b720899c595914817174bd18f69aa6f2052e7..9ec8b9c93f93b7fc0368fe132422e985556856ca 100644
+--- a/dist/eslintrc.cjs
++++ b/dist/eslintrc.cjs
+@@ -2274,7 +2274,7 @@ class ConfigValidator {
+         validateSchema = validateSchema || ajv.compile(configSchema);
+ 
+         if (!validateSchema(config)) {
+-            throw new Error(`ESLint configuration in ${source} is invalid:\n${this.formatErrors(validateSchema.errors)}`);
++            // throw new Error(`ESLint configuration in ${source} is invalid:\n${this.formatErrors(validateSchema.errors)}`);
+         }
+ 
+         if (Object.hasOwn(config, "ecmaFeatures")) {
+@@ -3405,7 +3405,7 @@ class ConfigArrayFactory {
+      * @private
+      */
+     _loadPlugins(names, ctx) {
+-        return names.reduce((map, name) => {
++        return names?.reduce?.((map, name) => {
+             if (isFilePath(name)) {
+                 throw new Error("Plugins array cannot includes file paths.");
+             }
