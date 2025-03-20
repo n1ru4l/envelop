@@ -82,7 +82,10 @@
       "cross-spawn": "7.0.5",
       "micromatch": "4.0.8",
       "dompurify": "3.2.4",
-      "webpack": "5.94.0"
+      "webpack": "5.94.0",
+      "axios": "1.8.2",
+      "undici": "5.28.5",
+      "cookie": "1.0.0"
     },
     "patchedDependencies": {
       "@ianvs/prettier-plugin-sort-imports": "patches/@ianvs__prettier-plugin-sort-imports.patch",
