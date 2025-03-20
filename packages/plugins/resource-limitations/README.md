@@ -1,7 +1,7 @@
 ## `@envelop/resource-limitations`
 
 This plugins uses `extended-validation` concept
-([details here](https://github.com/n1ru4l/envelop/tree/main/packages/plugins/extended-validation#envelopextended-validation))
+([details here](https://github.com/graphql-hive/envelop/tree/main/packages/plugins/extended-validation#envelopextended-validation))
 for implementing a resource-limitations rate-limit similar to GitHub GraphQL API (see
 https://docs.github.com/en/graphql/overview/resource-limitations for more details)
 

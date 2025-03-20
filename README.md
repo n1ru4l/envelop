@@ -113,7 +113,7 @@ const getEnveloped = envelop({
 
 You can explore all plugins in our [Plugins Hub](https://www.envelop.dev/plugins). If you wish your
 plugin to be listed here and under PluginsHub, feel free to add your plugin information
-[in this file](https://github.com/n1ru4l/envelop/edit/main/website/src/lib/plugins.ts#L23) and
+[in this file](https://github.com/graphql-hive/envelop/edit/main/website/src/lib/plugins.ts#L23) and
 create a Pull Request!
 
 We provide a few built-in plugins within the `@envelop/core`, and many more plugins as standalone

@@ -51,7 +51,7 @@ export const PLUGINS: {
     identifier: 'use-sentry',
     title: 'useSentry',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/sentry/README.md',
     },
     npmPackage: '@envelop/sentry',
@@ -63,7 +63,7 @@ export const PLUGINS: {
     identifier: 'use-statsd',
     title: 'useStatsD',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/statsd/README.md',
     },
     npmPackage: '@envelop/statsd',
@@ -74,7 +74,7 @@ export const PLUGINS: {
     identifier: 'use-schema',
     title: 'useSchema',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/core/docs/use-schema.md',
     },
     npmPackage: '@envelop/core',
@@ -85,7 +85,7 @@ export const PLUGINS: {
     identifier: 'use-schema-by-context',
     title: 'useSchemaByContext',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/core/docs/use-schema-by-context.md',
     },
     npmPackage: '@envelop/core',
@@ -96,7 +96,7 @@ export const PLUGINS: {
     identifier: 'use-validation-rule',
     title: 'useValidationRule',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/core/docs/use-validation-rule.md',
     },
     npmPackage: '@envelop/core',
@@ -107,7 +107,7 @@ export const PLUGINS: {
     identifier: 'use-error-handler',
     title: 'useErrorHandler',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/core/docs/use-error-handler.md',
     },
     npmPackage: '@envelop/core',
@@ -118,7 +118,7 @@ export const PLUGINS: {
     identifier: 'use-masked-errors',
     title: 'useMaskedErrors',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/core/docs/use-masked-errors.md',
     },
     npmPackage: '@envelop/core',
@@ -129,7 +129,7 @@ export const PLUGINS: {
     identifier: 'use-engine',
     title: 'useEngine',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/core/docs/use-engine.md',
     },
     npmPackage: '@envelop/core',
@@ -140,7 +140,7 @@ export const PLUGINS: {
     identifier: 'use-extend-context',
     title: 'useExtendContext',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/core/docs/use-extend-context.md',
     },
     npmPackage: '@envelop/core',
@@ -151,7 +151,7 @@ export const PLUGINS: {
     identifier: 'use-immediate-introspection',
     title: 'useImmediateIntrospection',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/immediate-introspection/README.md',
     },
     npmPackage: '@envelop/immediate-introspection',
@@ -162,7 +162,7 @@ export const PLUGINS: {
     identifier: 'use-logger',
     title: 'useLogger',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/core/docs/use-logger.md',
     },
     npmPackage: '@envelop/core',
@@ -173,7 +173,7 @@ export const PLUGINS: {
     identifier: 'use-payload-formatter',
     title: 'usePayloadFormatter',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/core/docs/use-payload-formatter.md',
     },
     npmPackage: '@envelop/core',
@@ -184,7 +184,7 @@ export const PLUGINS: {
     identifier: 'use-graphql-jit',
     title: 'useGraphQLJit',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/graphql-jit/README.md',
     },
     npmPackage: '@envelop/graphql-jit',
@@ -195,7 +195,7 @@ export const PLUGINS: {
     identifier: 'use-parser-cache',
     title: 'useParserCache',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/parser-cache/README.md',
     },
     npmPackage: '@envelop/parser-cache',
@@ -206,7 +206,7 @@ export const PLUGINS: {
     identifier: 'use-validation-cache',
     title: 'useValidationCache',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/validation-cache/README.md',
     },
     npmPackage: '@envelop/validation-cache',
@@ -217,7 +217,7 @@ export const PLUGINS: {
     identifier: 'use-data-loader',
     title: 'useDataLoader',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/dataloader/README.md',
     },
     npmPackage: '@envelop/dataloader',
@@ -228,7 +228,7 @@ export const PLUGINS: {
     identifier: 'use-apollo-tracing',
     title: 'useApolloTracing',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/apollo-tracing/README.md',
     },
     npmPackage: '@envelop/apollo-tracing',
@@ -240,7 +240,7 @@ export const PLUGINS: {
     identifier: 'use-apollo-datasources',
     title: 'useApolloDataSources',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/apollo-datasources/README.md',
     },
     npmPackage: '@envelop/apollo-datasources',
@@ -252,7 +252,7 @@ export const PLUGINS: {
     identifier: 'use-open-telemetry',
     title: 'useOpenTelemetry',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/opentelemetry/README.md',
     },
     npmPackage: '@envelop/opentelemetry',
@@ -263,7 +263,7 @@ export const PLUGINS: {
     identifier: 'use-generic-auth',
     title: 'useGenericAuth',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/generic-auth/README.md',
     },
     npmPackage: '@envelop/generic-auth',
@@ -275,7 +275,7 @@ export const PLUGINS: {
     identifier: 'use-auth0',
     title: 'useAuth0',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/auth0/README.md',
     },
     npmPackage: '@envelop/auth0',
@@ -286,7 +286,7 @@ export const PLUGINS: {
     identifier: 'use-graphql-modules',
     title: 'useGraphQLModules',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/graphql-modules/README.md',
     },
     npmPackage: '@envelop/graphql-modules',
@@ -297,7 +297,7 @@ export const PLUGINS: {
     identifier: 'use-rate-limiter',
     title: 'useRateLimiter',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/rate-limiter/README.md',
     },
     npmPackage: '@envelop/rate-limiter',
@@ -309,7 +309,7 @@ export const PLUGINS: {
     identifier: 'use-disable-introspection',
     title: 'useDisableIntrospection',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/disable-introspection/README.md',
     },
     npmPackage: '@envelop/disable-introspection',
@@ -320,7 +320,7 @@ export const PLUGINS: {
     identifier: 'use-filter-allowed-operations',
     title: 'useFilterAllowedOperations',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/filter-operation-type/README.md',
     },
     npmPackage: '@envelop/filter-operation-type',
@@ -331,7 +331,7 @@ export const PLUGINS: {
     identifier: 'use-preload-assets',
     title: 'usePreloadAssets',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/preload-assets/README.md',
     },
     npmPackage: '@envelop/preload-assets',
@@ -343,7 +343,7 @@ export const PLUGINS: {
     identifier: 'use-persisted-operations',
     title: 'usePersistedOperations',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/persisted-operations/README.md',
     },
     npmPackage: '@envelop/persisted-operations',
@@ -366,7 +366,7 @@ export const PLUGINS: {
     identifier: 'use-newrelic',
     title: 'useNewRelic',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/newrelic/README.md',
     },
     npmPackage: '@envelop/newrelic',
@@ -377,7 +377,7 @@ export const PLUGINS: {
     identifier: 'use-live-query',
     title: 'useLiveQuery',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/live-query/README.md',
     },
     npmPackage: '@envelop/live-query',
@@ -388,7 +388,7 @@ export const PLUGINS: {
     identifier: 'use-fragment-arguments',
     title: 'useFragmentArguments',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/fragment-arguments/README.md',
     },
     npmPackage: '@envelop/fragment-arguments',
@@ -399,7 +399,7 @@ export const PLUGINS: {
     identifier: 'use-apollo-server-errors',
     title: 'useApolloServerErrors',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/apollo-server-errors/README.md',
     },
     npmPackage: '@envelop/apollo-server-errors',
@@ -411,7 +411,7 @@ export const PLUGINS: {
     identifier: 'use-operation-field-permissions',
     title: 'useOperationFieldPermissions',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/operation-field-permissions/README.md',
     },
     npmPackage: '@envelop/operation-field-permissions',
@@ -422,7 +422,7 @@ export const PLUGINS: {
     identifier: 'use-extended-validation',
     title: 'useExtendedValidation',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/extended-validation/README.md',
     },
     npmPackage: '@envelop/extended-validation',
@@ -433,7 +433,7 @@ export const PLUGINS: {
     identifier: 'use-prometheus',
     title: 'usePrometheus',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/prometheus/README.md',
     },
     npmPackage: '@envelop/prometheus',
@@ -447,7 +447,7 @@ export const PLUGINS: {
     icon: graphqlIcon,
     tags: ['utilities', 'subscription'],
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/execute-subscription-event/README.md',
     },
   },
@@ -455,7 +455,7 @@ export const PLUGINS: {
     identifier: 'use-resource-limitations',
     title: 'useResourceLimitations',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/resource-limitations/README.md',
     },
     npmPackage: '@envelop/resource-limitations',
@@ -467,7 +467,7 @@ export const PLUGINS: {
     identifier: 'use-response-cache',
     title: 'useResponseCache',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/response-cache/README.md',
     },
     npmPackage: '@envelop/response-cache',
@@ -478,7 +478,7 @@ export const PLUGINS: {
     identifier: 'use-apollo-federation',
     title: 'useApolloFederation',
     githubReadme: {
-      repo: 'n1ru4l/envelop',
+      repo: 'graphql-hive/envelop',
       path: 'packages/plugins/apollo-federation/README.md',
     },
     npmPackage: '@envelop/apollo-federation',

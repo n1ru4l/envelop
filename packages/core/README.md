@@ -1,7 +1,7 @@
 ## `@envelop/core`
 
 This is the core package for Envelop. You can find a complete documentation here:
-https://github.com/n1ru4l/envelop
+https://github.com/graphql-hive/envelop
 
 ### Built-in plugins
 

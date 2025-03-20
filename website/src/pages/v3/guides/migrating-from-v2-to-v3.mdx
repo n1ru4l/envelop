@@ -1,7 +1,7 @@
 # Migrating from `v2` to `v3`
 
-With [new major version](https://github.com/n1ru4l/envelop/pull/1487) comes breaking changes. This
-section will guide you through the process of migrating from `v2` to `v3`.
+With [new major version](https://github.com/graphql-hive/envelop/pull/1487) comes breaking changes.
+This section will guide you through the process of migrating from `v2` to `v3`.
 
 ## 1. Remove `graphql` as a peer dependency
 
@@ -29,8 +29,8 @@ tracing themselves.
 ### 1. Removed `onResolverCalled`
 
 We decided to drop `onResolverCalled` hook and instead
-[provide a new plugin](https://github.com/n1ru4l/envelop/pull/1500) that will let you hook into this
-phase.
+[provide a new plugin](https://github.com/graphql-hive/envelop/pull/1500) that will let you hook
+into this phase.
 
 ```diff
 import { parse, validate, specifiedRules,execute, subscribe } from 'graphql'

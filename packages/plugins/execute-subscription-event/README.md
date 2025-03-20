@@ -6,7 +6,7 @@ Utilities for hooking into the
 ### `useContextValuePerExecuteSubscriptionEvent`
 
 Create a new context object per `ExecuteSubscriptionEvent` phase, allowing to bypass common issues
-with context objects such as [`DataLoader`](https://github.com/n1ru4l/envelop/issues/80)
+with context objects such as [`DataLoader`](https://github.com/graphql-hive/envelop/issues/80)
 [caching](https://github.com/graphql/graphql-js/issues/894)
 [issues](https://github.com/apollographql/subscriptions-transport-ws/issues/330).
 
