@@ -1490,8 +1490,8 @@ importers:
         specifier: 16.8.1
         version: 16.8.1
       graphql-scalars:
-        specifier: 1.24.1
-        version: 1.24.1(graphql@16.8.1)
+        specifier: 1.24.2
+        version: 1.24.2(graphql@16.8.1)
       ioredis-mock:
         specifier: 8.9.0
         version: 8.9.0(@types/ioredis-mock@8.2.5)(ioredis@5.6.0)
@@ -7406,8 +7406,8 @@ packages:
     peerDependencies:
       graphql: 16.8.1
 
-  graphql-scalars@1.24.1:
-    resolution: {integrity: sha512-3L553TMPh3YpHQM4x9G4tXcyD+AX8QQOYA6tUn1nrNiWEXE0JfAnWdjoe3WGxRuGjnZrzvHDz62q8S+sSGXXwA==}
+  graphql-scalars@1.24.2:
+    resolution: {integrity: sha512-FoZ11yxIauEnH0E5rCUkhDXHVn/A6BBfovJdimRZCQlFCl+h7aVvarKmI15zG4VtQunmCDdqdtNs6ixThy3uAg==}
     engines: {node: '>=10'}
     peerDependencies:
       graphql: 16.8.1
@@ -18769,7 +18769,7 @@ snapshots:
       graphql: 16.8.1
       lodash.get: 4.4.2
 
-  graphql-scalars@1.24.1(graphql@16.8.1):
+  graphql-scalars@1.24.2(graphql@16.8.1):
     dependencies:
       graphql: 16.8.1
       tslib: 2.8.1
