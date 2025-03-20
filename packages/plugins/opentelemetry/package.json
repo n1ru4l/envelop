@@ -61,7 +61,7 @@
     "@graphql-tools/schema": "^10.0.2",
     "@opentelemetry/context-async-hooks": "^1.20.0",
     "@repeaterjs/repeater": "^3.0.5",
-    "graphql": "16.8.1",
+    "graphql": "16.10.0",
     "typescript": "5.8.2"
   },
   "publishConfig": {
