@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@2.1.0/schema.json",
-  "changelog": ["@changesets/changelog-github", { "repo": "n1ru4l/envelop" }],
+  "changelog": ["@changesets/changelog-github", { "repo": "graphql-hive/envelop" }],
   "commit": false,
   "linked": [],
   "access": "public",

@@ -6,7 +6,7 @@ import { PLUGINS } from '@/lib/plugins';
 import { defineConfig, Giscus, PRODUCTS, useTheme } from '@theguild/components';
 
 export default defineConfig({
-  docsRepositoryBase: 'https://github.com/n1ru4l/envelop/tree/main/website',
+  docsRepositoryBase: 'https://github.com/graphql-hive/envelop/tree/main/website',
   main({ children }) {
     const { resolvedTheme } = useTheme();
     const { route } = useRouter();
@@ -15,7 +15,7 @@ export default defineConfig({
       <Giscus
         // ensure giscus is reloaded when client side route is changed
         key={route}
-        repo="n1ru4l/envelop"
+        repo="graphql-hive/envelop"
         repoId="MDEwOlJlcG9zaXRvcnkzMzk2NzQ1NjU="
         category="Docs Discussions"
         categoryId="DIC_kwDOFD8Fxc4CSDSX"
@@ -37,7 +37,7 @@ export default defineConfig({
     component({ children, className, filePath }) {
       const router = useRouter();
 
-      let url = `n1ru4l/envelop/tree/main/website/${filePath}`;
+      let url = `graphql-hive/envelop/tree/main/website/${filePath}`;
 
       if (router.route === '/plugins/[name]') {
         const { name } = router.query;
