@@ -3,7 +3,7 @@
   "author": "Dotan Simha <dotansimha@gmail.com>",
   "license": "MIT",
   "private": true,
-  "packageManager": "pnpm@10.6.3",
+  "packageManager": "pnpm@10.6.5",
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=10.2.1"
@@ -48,7 +48,7 @@
     "eslint-config-standard": "17.1.0",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-n": "17.16.2",
-    "eslint-plugin-package-json": "^0.26.0",
+    "eslint-plugin-package-json": "^0.29.0",
     "eslint-plugin-promise": "7.2.1",
     "eslint-plugin-unicorn": "57.0.0",
     "globby": "14.1.0",
@@ -79,13 +79,13 @@
       "graphql": "16.8.1",
       "estree-util-build-jsx": "3.0.1",
       "braces": "3.0.3",
-      "cross-spawn": "7.0.5",
+      "cross-spawn": "7.0.6",
       "micromatch": "4.0.8",
       "dompurify": "3.2.4",
-      "webpack": "5.94.0",
-      "axios": "1.8.2",
-      "undici": "5.28.5",
-      "cookie": "1.0.0"
+      "webpack": "5.98.0",
+      "axios": "1.8.4",
+      "undici": "5.29.0",
+      "cookie": "1.0.2"
     },
     "patchedDependencies": {
       "@ianvs/prettier-plugin-sort-imports": "patches/@ianvs__prettier-plugin-sort-imports.patch",
