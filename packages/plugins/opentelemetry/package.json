@@ -53,13 +53,13 @@
   "dependencies": {
     "@envelop/on-resolve": "workspace:^",
     "@opentelemetry/api": "^1.8.0",
-    "@opentelemetry/sdk-trace-base": "^1.11.0",
+    "@opentelemetry/sdk-trace-base": "^2.0.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
     "@envelop/core": "workspace:^",
     "@graphql-tools/schema": "^10.0.2",
-    "@opentelemetry/context-async-hooks": "^1.20.0",
+    "@opentelemetry/context-async-hooks": "^2.0.0",
     "@repeaterjs/repeater": "^3.0.5",
     "graphql": "16.8.1",
     "typescript": "5.8.2"
