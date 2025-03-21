@@ -84,7 +84,7 @@
       "dompurify": "3.2.4",
       "webpack": "5.98.0",
       "axios": "1.8.4",
-      "undici": "5.29.0",
+      "undici": "7.5.0",
       "cookie": "1.0.2"
     },
     "patchedDependencies": {
