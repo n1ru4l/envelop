@@ -14,7 +14,7 @@ overrides:
   dompurify: 3.2.4
   webpack: 5.98.0
   axios: 1.8.4
-  undici: 5.29.0
+  undici: 7.5.0
   cookie: 1.0.2
 
 patchedDependencies:
@@ -2988,10 +2988,6 @@ packages:
 
   '@fastify/ajv-compiler@4.0.2':
     resolution: {integrity: sha512-Rkiu/8wIjpsf46Rr+Fitd3HRP+VsxUFDDeag0hs9L0ksfnwx2g7SPQQTFL0E8Qv+rfXzQOxBJnjUB9ITUDjfWQ==}
-
-  '@fastify/busboy@2.1.1':
-    resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
-    engines: {node: '>=14'}
 
   '@fastify/busboy@3.1.1':
     resolution: {integrity: sha512-5DGmA8FTdB2XbDeEwc/5ZXBl6UbBAyBOOLlPuBnZ/N1SwdH9Ii+cOX3tBROlDgcTXxjOYnLMVoKk9+FXAw0CJw==}
@@ -10988,9 +10984,9 @@ packages:
   undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
 
-  undici@5.29.0:
-    resolution: {integrity: sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==}
-    engines: {node: '>=14.0'}
+  undici@7.5.0:
+    resolution: {integrity: sha512-NFQG741e8mJ0fLQk90xKxFdaSM7z4+IQpAgsFI36bCDY9Z2+aXXZjVy2uUksMouWfMI9+w5ejOq5zYYTBCQJDQ==}
+    engines: {node: '>=20.18.1'}
 
   unenv@2.0.0-rc.15:
     resolution: {integrity: sha512-J/rEIZU8w6FOfLNz/hNKsnY+fFHWnu9MH4yRbSZF3xbbGHovcetXPs7sD+9p8L6CeNC//I9bhRYAOsBt2u7/OA==}
@@ -12194,7 +12190,7 @@ snapshots:
     dependencies:
       cookie: 1.0.2
       long: 4.0.0
-      undici: 5.29.0
+      undici: 7.5.0
 
   '@babel/code-frame@7.26.2':
     dependencies:
@@ -13306,8 +13302,6 @@ snapshots:
       ajv-formats: 3.0.1(ajv@8.17.1)
       fast-uri: 3.0.6
 
-  '@fastify/busboy@2.1.1': {}
-
   '@fastify/busboy@3.1.1': {}
 
   '@fastify/error@4.1.0': {}
@@ -14031,7 +14025,7 @@ snapshots:
       '@miniflare/core': 2.14.4
       '@miniflare/shared': 2.14.4
       http-cache-semantics: 4.1.1
-      undici: 5.29.0
+      undici: 7.5.0
 
   '@miniflare/core@2.14.4':
     dependencies:
@@ -14043,7 +14037,7 @@ snapshots:
       dotenv: 10.0.0
       kleur: 4.1.5
       set-cookie-parser: 2.7.1
-      undici: 5.29.0
+      undici: 7.5.0
       urlpattern-polyfill: 4.0.3
 
   '@miniflare/d1@2.14.4':
@@ -14056,14 +14050,14 @@ snapshots:
       '@miniflare/core': 2.14.4
       '@miniflare/shared': 2.14.4
       '@miniflare/storage-memory': 2.14.4
-      undici: 5.29.0
+      undici: 7.5.0
 
   '@miniflare/html-rewriter@2.14.4':
     dependencies:
       '@miniflare/core': 2.14.4
       '@miniflare/shared': 2.14.4
       html-rewriter-wasm: 0.4.1
-      undici: 5.29.0
+      undici: 7.5.0
 
   '@miniflare/kv@2.14.4':
     dependencies:
@@ -14077,7 +14071,7 @@ snapshots:
     dependencies:
       '@miniflare/core': 2.14.4
       '@miniflare/shared': 2.14.4
-      undici: 5.29.0
+      undici: 7.5.0
 
   '@miniflare/runner-vm@2.14.4':
     dependencies:
@@ -14132,7 +14126,7 @@ snapshots:
     dependencies:
       '@miniflare/core': 2.14.4
       '@miniflare/shared': 2.14.4
-      undici: 5.29.0
+      undici: 7.5.0
       ws: 8.18.1
     transitivePeerDependencies:
       - bufferutil
@@ -21009,7 +21003,7 @@ snapshots:
       exit-hook: 2.2.1
       glob-to-regexp: 0.4.1
       stoppable: 1.1.0
-      undici: 5.29.0
+      undici: 7.5.0
       workerd: 1.20250319.0
       ws: 8.18.0
       youch: 3.2.3
@@ -23563,9 +23557,7 @@ snapshots:
 
   undici-types@6.20.0: {}
 
-  undici@5.29.0:
-    dependencies:
-      '@fastify/busboy': 2.1.1
+  undici@7.5.0: {}
 
   unenv@2.0.0-rc.15:
     dependencies:
