@@ -57,7 +57,7 @@
   "devDependencies": {
     "@envelop/core": "workspace:^",
     "@types/graphql-depth-limit": "1.1.6",
-    "graphql": "16.8.1",
+    "graphql": "16.10.0",
     "typescript": "5.8.2"
   },
   "publishConfig": {
