@@ -1073,8 +1073,8 @@ importers:
         specifier: 16.8.1
         version: 16.8.1
       lru-cache:
-        specifier: ^10.0.0
-        version: 10.4.3
+        specifier: ^11.0.0
+        version: 11.0.2
       reflect-metadata:
         specifier: 0.2.2
         version: 0.2.2
@@ -1297,8 +1297,8 @@ importers:
   packages/plugins/parser-cache:
     dependencies:
       lru-cache:
-        specifier: ^10.0.0
-        version: 10.4.3
+        specifier: ^11.0.0
+        version: 11.0.2
       tslib:
         specifier: ^2.5.0
         version: 2.8.1
@@ -1471,8 +1471,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0
       lru-cache:
-        specifier: ^10.0.0
-        version: 10.4.3
+        specifier: ^11.0.0
+        version: 11.0.2
       tslib:
         specifier: ^2.5.0
         version: 2.8.1
@@ -1619,8 +1619,8 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       lru-cache:
-        specifier: ^10.0.0
-        version: 10.4.3
+        specifier: ^11.0.0
+        version: 11.0.2
       tslib:
         specifier: ^2.5.0
         version: 2.8.1
